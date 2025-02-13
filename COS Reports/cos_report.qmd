@@ -1,0 +1,165 @@
+---
+title: "SMART Competition Data Report"
+author: 
+  - Lukas Röseler
+  - Lukas Wallrich
+  - Sarah Ashcroft-Jones
+  - Flavio Azevedo
+date: "`r Sys.Date()`"
+format:
+  html:
+    embed-resources: true
+editor: visual
+---
+
+------------------------------------------------------------------------
+
+![](images/cos-full-tag-h.webp){width="411"} ![](images/forrt_logo.png){width="237"}
+
+The Center for Open Science and the Framework for Open and Reproducible Research Training are [collaborating for the SMART competition](https://www.cos.io/blog/cos-and-forrt-partner-to-increase-discoverability-and-usability-of-replication-evidence). As a result, FORRT will provide validated training data to competition participants. This report describes the data provided alongside it.
+
+------------------------------------------------------------------------
+
+### Delivery of Data
+
+-   Start date: October 21, 2024
+
+-   300 entries by January 31, 2025 (deadline extended to February 7, 2025)
+
+-   \~500 additional entries until June 30, 2025
+
+-   \~1000 entries in total until the end date of FReD data extension: September 30, 2025
+
+### Terminology
+
+The relation between an article reporting a replication study and the corresponding original study can be complex. The following terms allow for almost every combination of original and replication studies to be documented in the dataset.
+
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Term   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
++========+=======================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
+| Entry  | One entry consists of a pair of studies, one of which self-identifies as a replication of the other, using different data than the original study. The replication study investigates at least one central claim from the original report. Each entry has been coded by two independent FReD Data Curators and validated by either a FReD Data Curator or a member of the FReD Core Team. Two entries may originate from the same study but not from the same sample. |
+|        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|        | One entry consists of at least one row but can consist of hundreds of rows: For example, some entries have multiple pairs of original and replication findings (e.g., for many different sub-groups) or do not have a 1:1 correspondence between original and replication study/reference but a different ratio. When assigning entries to FReD Data Curators, entries with overlapping studies are typically assigned to the same FReD Data Curator pair.            |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Study  | A study is an empirical investigation made in one of the reports. One entry usually consists of exactly two references/reports. Each of the references/reports can consist of multiple studies.                                                                                                                                                                                                                                                                       |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Row    | One row in the database consists of one pair of original and replication effects that correspond to a claim made in the original study. In other words, one row is one pair of *findings*.                                                                                                                                                                                                                                                                            |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Claim  | Each row must contain a claim that was made in the original report and that is tested again in the replication report. Multiple rows from one entry can have the same claim (e.g., a claim is tested using multiple statistical tests). Specific differences between identical claims are noted in a *description* variable.                                                                                                                                          |
++--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+### Internal Process
+
+Entries are drawn from the [FORRT Replication Database](https://forrt-replications.shinyapps.io/fred_explorer/), which consists of crowdsourced data that has been single-coded and partially validated, an unsystematic list of additional replications we have maintained, and a planned systematic literature search. A snapshot description of the FORRT Replication Database from October 2023 was published [here](https://doi.org/10.5334/jopd.101). In the starting phase of the data curation process, large-scale replication projects have been prioritized so that psychology replications make up the majority of the dataset. Over time, we expect greater disciplinary diversity in the reports.
+
+Each entry is assigned to two FReD Data Curators, who independentFly complete all variables. They are collected by the FReD-team in a Google Spreadsheet for validation. Most of the time, the values from one Data Curator are revised and chosen and the others are superseded. It is possible to choose a combination or all of the rows of an entry if different effects were coded by the FReD Data Curators.
+
+### Current Status
+
+```{r status, echo = FALSE}
+#print("Date of report:", Sys.Date())
+
+## via link (requires access)
+# spreadsheet_link <- "https://docs.google.com/spreadsheets/d/1q9uygApXnyaIaod_SNSK3Omdz-OQKJBedIjYi__x0H4/export?gid=1875710842&format=xlsx"
+
+ds_raw <- openxlsx::read.xlsx("FReD Validation - USE THIS - data here when phase 1 comes back.xlsx", sheet = "COS coding", startRow = 2)
+
+# filter out excluded studies
+ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
+
+# filter for empty rows
+ds_raw <- ds_raw[!is.na(ds_raw$id), ]
+
+# filter for validated - chosen entries
+ds <- ds_raw[ds_raw$status == "validated - chosen", ]
+
+# save descriptives
+rows_total <- nrow(ds_raw)
+rows <- nrow(ds)
+# entries <- length(unique(ds$entry))
+
+entries <- sum(!duplicated(ds[, c("ref_o", "study_o", "ref_r", "study_r")]))
+
+studies_o <- length(unique(ds$ref_o))
+studies_r <- length(unique(ds$ref_r))
+
+overview <- data.frame(
+  "Type" = c("Rows (including discarded and non-validated)", "Rows", "Entries", "Original Reports", "Replication Reports")
+  , "Quantity" = c(rows_total, rows, entries, studies_o, studies_r))
+
+DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength = 300, dom = 't', scrollX = FALSE, scrollCollapse = TRUE), rownames = FALSE)
+
+# paste("Currently,", entries, "Entries are validated and ready for delivery.")
+```
+
+### Computation of Standardized Effect Sizes
+
+Based on the function that we use for effect size conversion, not all effects were converted to *r*. For exact computation details, see the [function in the FReD R package](https://forrt.org/FReD/reference/convert_effect_sizes.html). Please note that the choice of effect sizes conversions is particularly complex for test statistics and effect sizes that do not express an unconditional bivariate relationship (e.g., interaction effects or partial correlations) so that we leave the choice of whether and how to convert those to individual analysts.
+
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Action                           | Effect Size Types                                                                                                                                                             |
++==================================+===============================================================================================================================================================================+
+| Use as correlation               | r, R², Phi                                                                                                                                                                    |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Convert to correlation           | Odds Ratio, Cohen's d, Hedges's g, Eta squared, test statistics (t test and F tests for df = 1), Z values                                                                     |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| No conversion                    | Cohen's f, test statistics (F test for df~1~ \> 1, Chi-squared test, proportion test, binomial test), partial Eta squared, partial correlation, Cohen's dz, Cramer's V, Omega |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+```{r effectsize conversion, include = FALSE, echo = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+# devtools::install_github("forrtproject/FReD") 
+library(FReD) 
+
+# convert original effect sizes
+ds$r_o <- FReD::convert_effect_sizes(es_values = ds$es_value_o, es_types = ds$es_type_o)  
+
+# convert replication effect sizes
+ds$r_r <- FReD::convert_effect_sizes(es_values = ds$es_value_r, es_types = ds$es_type_r)
+```
+
+### Codebook
+
+```{r codebook, echo = FALSE}
+
+codebook <- openxlsx::read.xlsx("cos_codebook.xlsx")
+
+DT::datatable(codebook, extensions = 'FixedColumns', options = list(pageLength = 300, dom = 't', rownames = FALSE, scroller = FALSE), rownames = FALSE)
+```
+
+### Validated Dataset
+
+The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data's format is planned for spring 2025.
+
+```{r final dataset, echo = FALSE}
+
+# replace effect ids with numbers
+ds$entry_id <- NA
+ds$effect_id <- NA
+counter <- 0
+
+ds$entry <- do.call(paste0, ds[, c("ref_o", "study_o", "ref_r", "study_r")])
+
+for (i in unique(ds$entry)) {
+  counter <- counter+1
+  # ds[ds$entry == i, "effect_id"] <- paste(counter, 1:length(ds[ds$entry == i, "effect_id"]), sep = "_")
+  ds[ds$entry == i, "effect_id"] <- 1:length(ds[ds$entry == i, "effect_id"])
+  ds[ds$entry == i, "entry_id"] <- rep(counter, length(ds[ds$entry == i, "effect_id"]))
+}
+
+# omit validation variables
+ds_final <- ds[, c((ncol(ds)-1):ncol(ds), 6, 12:14, 17:20, 25, 27:48, ncol(ds)-3,  ncol(ds)-2, 15, 21)]
+
+# rename id variable to fred_id
+names(ds_final)[3] <- "fred_id"
+
+openxlsx::write.xlsx(ds_final, file = paste(Sys.Date(), "_COSdata_validated.xlsx", sep = ""))
+
+list_of_studies <- ds_final[, c("ref_o", "ref_r", "discipline")]
+list_of_studies <- list_of_studies[!duplicated(list_of_studies), ]
+list_of_studies <- list_of_studies[order(list_of_studies$ref_o), ] # sort by original study
+list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by replication study
+
+# print table with all references and their respective fields
+DT::datatable(list_of_studies, extensions = 'FixedColumns', options = list(pageLength = 300, dom = 't', rownames = FALSE, scroller = FALSE), rownames = FALSE)
+```
