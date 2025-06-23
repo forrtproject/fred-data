@@ -70,25 +70,27 @@ library(stringr)
 
 **Version 1.6 (2025-06-23)**
 
--   Correct effect size conversion table (F tests are never converted).
+-   Updated entry numbers.
+-   Synchronized with Github repository (FReD-data).
+-   Corrected effect size conversion table (F tests are never converted).
 
 ### Terminology
 
 The relation between an article reporting a replication study and the corresponding original study can be complex. The following terms allow for almost every combination of original and replication studies to be documented in the dataset.
 
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Term   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-+========+=======================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
-| Entry  | One entry consists of a pair of studies, one of which self-identifies as a replication of the other, using different data than the original study. The replication study investigates at least one central claim from the original report. Each entry has been coded by two independent FReD Data Curators and validated by either a FReD Data Curator or a member of the FReD Core Team. Two entries may originate from the same study but not from the same sample. |
-|        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-|        | One entry consists of at least one row but can consist of hundreds of rows: For example, some entries have multiple pairs of original and replication findings (e.g., for many different sub-groups) or do not have a 1:1 correspondence between original and replication study/reference but a different ratio. When assigning entries to FReD Data Curators, entries with overlapping studies are typically assigned to the same FReD Data Curator pair.            |
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Study  | A study is an empirical investigation made in one of the reports. One entry usually consists of exactly two references/reports. Each of the references/reports can consist of multiple studies.                                                                                                                                                                                                                                                                       |
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Row    | One row in the database consists of one pair of original and replication effects that correspond to a claim made in the original study. In other words, one row is one pair of *findings*.                                                                                                                                                                                                                                                                            |
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Claim  | Each row must contain a claim that was made in the original report and that is tested again in the replication report. Multiple rows from one entry can have the same claim (e.g., a claim is tested using multiple statistical tests). Specific differences between identical claims are noted in a *description* variable.                                                                                                                                          |
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Term  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
++=======+=======================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
+| Entry | One entry consists of a pair of studies, one of which self-identifies as a replication of the other, using different data than the original study. The replication study investigates at least one central claim from the original report. Each entry has been coded by two independent FReD Data Curators and validated by either a FReD Data Curator or a member of the FReD Core Team. Two entries may originate from the same study but not from the same sample. |
+|       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|       | One entry consists of at least one row but can consist of hundreds of rows: For example, some entries have multiple pairs of original and replication findings (e.g., for many different sub-groups) or do not have a 1:1 correspondence between original and replication study/reference but a different ratio. When assigning entries to FReD Data Curators, entries with overlapping studies are typically assigned to the same FReD Data Curator pair.            |
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Study | A study is an empirical investigation made in one of the reports. One entry usually consists of exactly two references/reports. Each of the references/reports can consist of multiple studies.                                                                                                                                                                                                                                                                       |
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Row   | One row in the database consists of one pair of original and replication effects that correspond to a claim made in the original study. In other words, one row is one pair of *findings*.                                                                                                                                                                                                                                                                            |
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Claim | Each row must contain a claim that was made in the original report and that is tested again in the replication report. Multiple rows from one entry can have the same claim (e.g., a claim is tested using multiple statistical tests). Specific differences between identical claims are noted in a *description* variable.                                                                                                                                          |
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ### Internal Process
 
@@ -103,6 +105,7 @@ Each entry is assigned to two FReD Data Curators, who independentFly complete al
 
 entries_in_last_report <- 308 # february 7, 2025
 entries_in_last_report <- 357 # March 27, 2025
+entries_in_last_report <- 507 # May, 2025
 
 ## via link (requires access)
 # spreadsheet_link <- "https://docs.google.com/spreadsheets/d/1q9uygApXnyaIaod_SNSK3Omdz-OQKJBedIjYi__x0H4/export?gid=1875710842&format=xlsx"
@@ -152,15 +155,17 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE)
 progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27-03-2025"
                                                  , "23-04-2025"
                                                  , "23-05-2025"
-                                                 , "30-06-2025"  # date for end of May report [update manually]
+                                                 , "23-06-2025"  # date for end of June report [update manually]
+                                                 , format(Sys.Date(), format = "%d-%m-%Y") # current date
                                                  , "30-09-2025"
                                                  ))
                        , "entries" = c(0, 308, 357, 403 # end of April number of entries
                                        , 507 # end of May number of entries
-                                       , entries # June 30th number of entries 
+                                       , 528 # June 30th number of entries
+                                       , entries # current nnumber of entries
                                        , NA # September 30th number of entries
                                        )
-                       , "target" =  c(0, 300, NA , NA  , NA, 800, 1000))
+                       , "target" =  c(0, 300, NA , NA  , NA, 800, NA, 1000))
 progress_plot <- ggplot(progress, aes(x = date, y = entries)) + geom_point() + geom_line() + theme_bw() + xlab("Date") + ylab("Number of Validated Entries") +
   geom_point(aes(x = date, y = target), color = "red")
 
@@ -171,17 +176,12 @@ suppressWarnings(print(progress_plot))
 
 Based on the function that we use for effect size conversion, not all effects were converted to *r*. For exact computation details, see the [function in the FReD R package](https://forrt.org/FReD/reference/convert_effect_sizes.html). Please note that the choice of effect sizes conversions is particularly complex for test statistics and effect sizes that do not express an unconditional bivariate relationship (e.g., interaction effects or partial correlations) so that we leave the choice of whether and how to convert those to individual analysts. Please also note that some effect sizes are non-directional (e.g., R² or F-statistics), which is why we did not convert them despite functions being available. In these cases, the quantitative replication results will not show whether the pattern matches (e.g., two F test could be significant due to opposite interaction patterns).
 
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| Action                                                                                     | Effect Size Types                                                                                                      |
-+============================================================================================+========================================================================================================================+
-| Use as correlation                                                                         | r, Phi                                                                                                                 |
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| Convert to correlation                                                                     | Odds Ratio, Cohen's d, Hedges's g, test statistics (t test), Z values                                                  |
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| Convert but beware the lack of information about specific effect size pattern or direction | R², Eta squared, test statistics (F test), Cohen's f, Cohen's f², partial Eta squared                                  |
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| No conversion                                                                              | test statistics (Chi-squared test, proportion test, binomial test), partial correlation, Cohen's dz, Cramer's V, Omega |
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
+| Action | Effect Size Types |
+|----|----|
+| Use as correlation | r, Phi |
+| Convert to correlation | Odds Ratio, Cohen's d, Hedges's g, test statistics (t test), Z values |
+| Convert but beware the lack of information about specific effect size pattern or direction | R², Eta squared, test statistics (F test), Cohen's f, Cohen's f², partial Eta squared |
+| No conversion | test statistics (Chi-squared test, proportion test, binomial test), partial correlation, Cohen's dz, Cramer's V, Omega |
 
 ```{r effectsize conversion, include = FALSE, echo = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
