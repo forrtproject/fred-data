@@ -128,6 +128,12 @@ clean_fred_data <- function(data) {
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
+  # --- 6. Clean DOIs (remove spaces) ---
+
+  cleaned_data <- cleaned_data %>%
+    mutate(across(all_of(doi_cols), ~ str_remove_all(., " ")))
+
+
   # --- Finalize Report ---
   final_report_string <- ""
   if (length(cleaning_report) > 0) {
