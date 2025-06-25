@@ -114,6 +114,10 @@ entries_in_last_report <- 507 # May, 2025
 
 ds_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
 
+cleaned <- clean_fred_data(ds_raw)
+
+ds_raw <- cleaned$cleaned_data
+
 # filter out excluded studies
 ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
 
@@ -151,9 +155,7 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 
 ```{r cleaning, include = FALSE, echo = FALSE}
 
-cleaned <- clean_fred_data(ds)
 
-ds <- cleaned$cleaned_data
 ```
 
 The following plot displays the progress (black dots and line) and the targets (red dots) that were agreed on. Note that these numbers were corrected in June 2025; earlier reports had included some double-counting.

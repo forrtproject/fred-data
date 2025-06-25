@@ -137,7 +137,10 @@ clean_fred_data <- function(data) {
   cleaned_data <- cleaned_data %>%
     arrange(as.numeric(rowid)) %>%
     mutate(fred_id = str_remove(id, "_[a-z]{1,2}$"),
-           effect_id = rowid)
+           effect_id = rowid) %>%
+    group_by(ref_o, study_o, ref_r, study_r) %>%
+    mutate(entry_id = first(rowid)) %>%
+    ungroup()
 
 
   # --- Finalize Report ---
