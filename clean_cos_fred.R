@@ -133,15 +133,21 @@ clean_fred_data <- function(data) {
   cleaned_data <- cleaned_data %>%
     mutate(across(all_of(doi_cols), ~ str_remove_all(., " ")))
 
+  # --- 7. Fix ids
+  cleaned_data <- cleaned_data %>%
+    arrange(as.numeric(rowid)) %>%
+    mutate(fred_id = str_remove(id, "_[a-z]{1,2}$"),
+           effect_id = rowid)
+
 
   # --- Finalize Report ---
   final_report_string <- ""
   if (length(cleaning_report) > 0) {
     report_header <- "## FReD Automatic Cleaning Report\n\n"
     report_body <- paste0("- ✅ ", cleaning_report, collapse = "\n")
-    final_report_string <- paste0(report_header, report_body)
+    final_report_string <- paste0(report_header, "\nSorted by rowid and generated fred_id and effect_id\n\n", report_body)
   } else {
-    final_report_string <- "## FReD Automatic Cleaning Report\n\n- No automatic cleaning actions were required."
+    final_report_string <- "## FReD Automatic Cleaning Report\n\noSrted by rowid and generated fred_id and effect_id.\n\n- No automatic cleaning actions were required."
   }
 
   return(list(cleaned_data = cleaned_data, report = final_report_string))
