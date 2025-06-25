@@ -27,6 +27,9 @@ library(lubridate)
 library(ggplot2)
 library(dplyr)
 library(stringr)
+library(tidyverse)
+library(glue)
+source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
 ```
 
 ### Delivery of Data
@@ -68,12 +71,13 @@ library(stringr)
 -   Added preliminary plot with converted effect sizes.
 -   Updated description of variable fred_id to clarify why there are duplicate values for fred_id.
 
-**Version 1.6 (2025-06-23)**
+**Version 1.6 (2025-06-25)**
 
 -   Updated entry numbers.
 -   Synchronized with Github repository (FReD-data).
 -   Corrected effect size conversion table (F tests are never converted).
 -   Added point descriptions to the scatterplot (visible by hovering over them).
+-   Incorporated [cleaning script](https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R).
 
 ### Terminology
 
@@ -97,7 +101,7 @@ The relation between an article reporting a replication study and the correspond
 
 Entries are drawn from the [FORRT Replication Database](https://forrt-replications.shinyapps.io/fred_explorer/), which consists of crowdsourced data that has been single-coded and partially validated, an unsystematic list of additional replications we have maintained, and a planned systematic literature search. A snapshot description of the FORRT Replication Database from October 2023 was published [here](https://doi.org/10.5334/jopd.101). In the starting phase of the data curation process, large-scale replication projects have been prioritized so that psychology replications make up the majority of the dataset. Over time, we expect greater disciplinary diversity in the reports.
 
-Each entry is assigned to two FReD Data Curators, who independentFly complete all variables. They are collected by the FReD-team in a Google Spreadsheet for validation. Most of the time, the values from one Data Curator are revised and chosen and the others are superseded. It is possible to choose a combination or all of the rows of an entry if different effects were coded by the FReD Data Curators.
+Each entry is assigned to two FReD Data Curators, who independently complete all variables. They are collected by the FReD-team in a Google Spreadsheet for validation and run through a [cleaning-script](https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R). Most of the time, the values from one Data Curator are revised and chosen and the others are superseded. It is possible to choose a combination or all of the rows of an entry if different effects were coded by the FReD Data Curators.
 
 ### Current Status
 
@@ -148,6 +152,13 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 # paste("Currently,", entries, "Entries are validated and ready for delivery.")
 ```
 
+```{r cleaning, include = FALSE, echo = FALSE}
+
+cleaned <- clean_fred_data(ds)
+
+ds <- cleaned$cleaned_data
+```
+
 The following plot displays the progress (black dots and line) and the targets (red dots) that were agreed on.
 
 ```{r progress, include = TRUE, echo = FALSE}
@@ -156,13 +167,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE)
 progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27-03-2025"
                                                  , "23-04-2025"
                                                  , "23-05-2025"
-                                                 , "23-06-2025"  # date for end of June report [update manually]
+                                                 , "25-06-2025"  # date for end of June report [update manually]
                                                  , format(Sys.Date(), format = "%d-%m-%Y") # current date
                                                  , "30-09-2025"
                                                  ))
                        , "entries" = c(0, 308, 357, 403 # end of April number of entries
                                        , 507 # end of May number of entries
-                                       , 528 # June 30th number of entries
+                                       , 534 # June 30th number of entries
                                        , entries # current nnumber of entries
                                        , NA # September 30th number of entries
                                        )
