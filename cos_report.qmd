@@ -79,6 +79,7 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Added point descriptions to the scatterplot including replication success colors (visible by hovering over them).
 -   Incorporated [cleaning script](https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R).
 -   Made progress plot interactive (plotly)
+-   Corrected entry progress numbers (some of the past numbers were erroneous due to an erroneous entry counting function)
 
 ### Terminology
 
@@ -109,9 +110,9 @@ Each entry is assigned to two FReD Data Curators, who independently complete all
 ```{r status, echo = FALSE, warning = FALSE, message = FALSE}
 #print("Date of report:", Sys.Date())
 
-entries_in_last_report <- 308 # february 7, 2025
+entries_in_last_report <- 301 # february 7, 2025
 entries_in_last_report <- 357 # March 27, 2025
-entries_in_last_report <- 507 # May, 2025
+entries_in_last_report <- 490 # May, 2025
 
 ds_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
 
@@ -272,29 +273,26 @@ ds <- ds %>% mutate(
 
 ```{r scatterplot, echo = FALSE}
 df_temp <- ds
+df_temp$replication_success <- as.character(df_temp$replication_success)
+df_temp$replication_success[is.na(df_temp$replication_success)] <- "uncertain"
+df_temp$replication_success[df_temp$replication_success == "TRUE"] <- "yes"
+df_temp$replication_success[df_temp$replication_success == "FALSE"] <- "no"
 
-    scatterplot <-
-      ggplot(df_temp, aes(x = r_o, y = r_r, text = description
-                          )) + # , col = discipline
-      
-      geom_point(aes(color = replication_success)) +
-      scale_color_manual(name = "Replication Success"
-                         , values = c("TRUE" = "#2ECC40", "FALSE" = "#FF4136", "NA" = "grey50")
-                         , breaks = c("yes", "no", "uncertain")
-                         , labels = c("yes" = "Yes", "no" = "No", "uncertain" = "Uncertain")) +
-      
-      geom_hline(aes(yintercept = 0), linetype = 2) +
-      geom_abline(intercept = 0, slope = 1, color = "Grey60") +
-      
-      scale_x_continuous(name = "Original Effect Size", limits = c(0, 1), breaks = c(0, .25, .5, .75, 1)) +
-      scale_y_continuous(name = "Replication Effect Size", limits = c(-.5, 1), breaks = c(-.5, -.25, 0, .25, .5, .75, 1)) +
-      
-      # ggtitle("") + #xlab("") + ylab("") +
-      # scale_size_continuous(name="Power",range=c(.5,3.5)) +
-      theme_bw() +
-      # theme(legend.position=c(.9,.6), plot.margin = unit(c(-2,-1.5,2,2), "lines")) +
-      theme(legend.position = "top") +
-      labs(fill = "Outcome")
+scatterplot <-
+  ggplot(df_temp, aes(x = r_o, y = r_r, text = description)) +
+    geom_point(aes(color = replication_success)) +
+    scale_color_manual(
+      name = "Replication Success",
+      values = c("yes" = "#2ECC40", "no" = "#FF4136", "uncertain" = "grey50"),
+      breaks = c("yes", "no", "uncertain"),
+      labels = c("yes" = "Yes", "no" = "No", "uncertain" = "Uncertain")
+    ) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_abline(intercept = 0, slope = 1, color = "Grey60") +
+    scale_x_continuous(name = "Original Effect Size", limits = c(0, 1), breaks = c(0, .25, .5, .75, 1)) +
+    scale_y_continuous(name = "Replication Effect Size", limits = c(-.5, 1), breaks = c(-.5, -.25, 0, .25, .5, .75, 1)) +
+    theme_bw() +
+    theme(legend.position = "top")
     
     plotly::ggplotly(scatterplot, tooltip = "text") %>%
       plotly::config(displayModeBar = FALSE) %>%
