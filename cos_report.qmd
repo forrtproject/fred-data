@@ -112,7 +112,7 @@ Each entry is assigned to two FReD Data Curators, who independently complete all
 
 entries_in_last_report <- 301 # february 7, 2025
 entries_in_last_report <- 357 # March 27, 2025
-entries_in_last_report <- 490 # May, 2025
+entries_in_last_report <- 490 # May 23, 2025
 
 ds_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
 
@@ -165,7 +165,9 @@ The following plot displays the progress (black dots and line) and the targets (
 ```{r progress, include = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE) 
 
-progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27-03-2025"
+progress <- data.frame("date" = lubridate::dmy(c("01-11-2024"
+                                                 , "07-02-2025"
+                                                 , "27-03-2025"
                                                  , "23-04-2025"
                                                  , "23-05-2025"
                                                  , "25-06-2025"  # date for end of June report [update manually]
@@ -173,13 +175,16 @@ progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27
                                                  , "15-08-2025"  # August deadline
                                                  , "15-10-2025"
                                                  ))
-                       , "entries" = c(0, 308, 357, 403 # end of April number of entries
-                                       , 507 # end of May number of entries
+                       , "entries" = c(0, 301, 357, 403 # end of April number of entries
+                                       , 490 # end of May number of entries
                                        , entries # June 30th number of entries
                                        , NA # current number of entries
                                        , NA # September 30th number of entries
                                        )
-                       , "target" =  c(0, 300, NA , NA  , NA, NA , 750, 1000))
+                       , "target" =  c(0, 300 # Feb 07 deadline
+                                       , NA , NA  , NA, NA , 750 # mid August deadline
+                                       , 1000 # Mid Oct deadline
+                                       ))
 progress_plot <- ggplot(progress, aes(x = date, y = entries)) + 
   geom_line() + 
   geom_point(aes(text = paste(entries, date, sep = " entries on "))) + 
