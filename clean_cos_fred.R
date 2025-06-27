@@ -32,7 +32,7 @@ clean_fred_data <- function(data) {
     cleaned_data <- cleaned_data %>%
       mutate(across(all_of(char_cols), ~ str_squish(.))) %>%
       mutate(across(all_of(char_cols), ~ str_trim(.)))
-    report_message <- glue("Trimmed leading/trailing/repeated whitespace from {sum(trimmed_changes$value)} cell(s) in columns: `{paste(trimmed_changes$name, collapse=', ')}`.")
+    report_message <- glue::glue("Trimmed leading/trailing/repeated whitespace from {sum(trimmed_changes$value)} cell(s) in columns: `{paste(trimmed_changes$name, collapse=', ')}`.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -49,7 +49,7 @@ clean_fred_data <- function(data) {
   na_rows_affected <- na_changes_after - na_changes_before
 
   if (na_rows_affected > 0) {
-    report_message <- glue("Converted {na_rows_affected} string(s) ('NA' or 'N/A') to proper `NA` values.")
+    report_message <- glue::glue("Converted {na_rows_affected} string(s) ('NA' or 'N/A') to proper `NA` values.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -67,7 +67,7 @@ clean_fred_data <- function(data) {
     cleaned_data <- cleaned_data %>%
       mutate(across(all_of(ref_cols), ~ str_remove_all(., regex(doi_pattern, ignore_case = TRUE))))
     total_ref_changes <- sum(ref_changes$value)
-    report_message <- glue("Removed DOI strings (both URL and prefix format) from {total_ref_changes} cell(s) in `ref_o`/`ref_r` columns.")
+    report_message <- glue::glue("Removed DOI strings (both URL and prefix format) from {total_ref_changes} cell(s) in `ref_o`/`ref_r` columns.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -84,7 +84,7 @@ clean_fred_data <- function(data) {
     cleaned_data <- cleaned_data %>%
       mutate(across(all_of(doi_cols), ~ str_remove(., fixed(url_prefix))))
     total_doi_prefix_changes <- sum(doi_prefix_changes$value)
-    report_message <- glue("Removed '{url_prefix}' prefix from {total_doi_prefix_changes} cell(s) in `doi_o`/`doi_r` columns.")
+    report_message <- glue::glue("Removed '{url_prefix}' prefix from {total_doi_prefix_changes} cell(s) in `doi_o`/`doi_r` columns.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -124,7 +124,7 @@ clean_fred_data <- function(data) {
     sum(cleaned_data$es_value_r != data_before_es_clean$es_value_r, na.rm = TRUE)
 
   if (es_changes > 0) {
-    report_message <- glue("Standardized formatting for {es_changes} cell(s) in `es_value_o`/`es_value_r` (e.g., 'X2', spacing around '=', brackets).")
+    report_message <- glue::glue("Standardized formatting for {es_changes} cell(s) in `es_value_o`/`es_value_r` (e.g., 'X2', spacing around '=', brackets).")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -133,15 +133,24 @@ clean_fred_data <- function(data) {
   cleaned_data <- cleaned_data %>%
     mutate(across(all_of(doi_cols), ~ str_remove_all(., " ")))
 
+  # --- 7. Fix ids
+  cleaned_data <- cleaned_data %>%
+    arrange(as.numeric(rowid)) %>%
+    mutate(fred_id = str_remove(id, "_[a-z]{1,2}$"),
+           effect_id = rowid) %>%
+    group_by(ref_o, study_o, ref_r, study_r) %>%
+    mutate(entry_id = first(rowid)) %>%
+    ungroup()
+
 
   # --- Finalize Report ---
   final_report_string <- ""
   if (length(cleaning_report) > 0) {
     report_header <- "## FReD Automatic Cleaning Report\n\n"
     report_body <- paste0("- ✅ ", cleaning_report, collapse = "\n")
-    final_report_string <- paste0(report_header, report_body)
+    final_report_string <- paste0(report_header, "\nSorted by rowid and generated fred_id and effect_id\n\n", report_body)
   } else {
-    final_report_string <- "## FReD Automatic Cleaning Report\n\n- No automatic cleaning actions were required."
+    final_report_string <- "## FReD Automatic Cleaning Report\n\noSrted by rowid and generated fred_id and effect_id.\n\n- No automatic cleaning actions were required."
   }
 
   return(list(cleaned_data = cleaned_data, report = final_report_string))
