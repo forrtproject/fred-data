@@ -121,6 +121,15 @@ cleaned <- clean_fred_data(ds_raw)
 
 ds_raw <- cleaned$cleaned_data
 
+# check for invalid xml characters
+# invalid_xml_regex <- "[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD]"
+# bad <- sapply(ds_raw, function(col) any(grepl(invalid_xml_regex, col, perl=TRUE)))
+# which_cols <- names(ds_raw)[bad]
+ds_raw <- ds_raw %>%
+  mutate_if(is.character, ~gsub('[^ -~]', '', .))
+
+
+
 # filter out excluded studies
 ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
 
