@@ -27,6 +27,9 @@ library(lubridate)
 library(ggplot2)
 library(dplyr)
 library(stringr)
+library(tidyverse)
+library(glue)
+source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
 ```
 
 ### Delivery of Data
@@ -35,9 +38,9 @@ library(stringr)
 
 -   300 entries by January 31, 2025 (deadline extended to February 7, 2025)
 
--   \~500 additional entries until June 30, 2025
+-   \~450 additional entries until August 15, 2025
 
--   \~1000 entries in total until the end date of FReD data extension: September 30, 2025
+-   \~1000 entries in total until October 15, 2025
 
 ### Changelog
 
@@ -68,11 +71,19 @@ library(stringr)
 -   Added preliminary plot with converted effect sizes.
 -   Updated description of variable fred_id to clarify why there are duplicate values for fred_id.
 
-**Version 1.6 (2025-06-23)**
+**Version 1.6 (2025-06-27)**
 
 -   Updated entry numbers.
 -   Synchronized with Github repository (FReD-data).
 -   Corrected effect size conversion table (F tests are never converted).
+-   Added point descriptions to the scatterplot including replication success colors (visible by hovering over them).
+-   Incorporated [cleaning script](https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R).
+-   Made progress plot interactive (plotly)
+-   Corrected entry progress numbers (some of the past numbers were erroneous due to an erroneous entry counting function)
+
+**Version 1.7 (2025-07-01)**
+
+-   
 
 ### Terminology
 
@@ -96,21 +107,23 @@ The relation between an article reporting a replication study and the correspond
 
 Entries are drawn from the [FORRT Replication Database](https://forrt-replications.shinyapps.io/fred_explorer/), which consists of crowdsourced data that has been single-coded and partially validated, an unsystematic list of additional replications we have maintained, and a planned systematic literature search. A snapshot description of the FORRT Replication Database from October 2023 was published [here](https://doi.org/10.5334/jopd.101). In the starting phase of the data curation process, large-scale replication projects have been prioritized so that psychology replications make up the majority of the dataset. Over time, we expect greater disciplinary diversity in the reports.
 
-Each entry is assigned to two FReD Data Curators, who independentFly complete all variables. They are collected by the FReD-team in a Google Spreadsheet for validation. Most of the time, the values from one Data Curator are revised and chosen and the others are superseded. It is possible to choose a combination or all of the rows of an entry if different effects were coded by the FReD Data Curators.
+Each entry is assigned to two FReD Data Curators, who independently complete all variables. They are collected by the FReD-team in a Google Spreadsheet for validation and run through a [cleaning-script](https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R). Most of the time, the values from one Data Curator are revised and chosen and the others are superseded. It is possible to choose a combination or all of the rows of an entry if different effects were coded by the FReD Data Curators.
 
 ### Current Status
 
-```{r status, echo = FALSE}
+```{r status, echo = FALSE, warning = FALSE, message = FALSE}
 #print("Date of report:", Sys.Date())
 
-entries_in_last_report <- 308 # february 7, 2025
+entries_in_last_report <- 301 # february 7, 2025
 entries_in_last_report <- 357 # March 27, 2025
-entries_in_last_report <- 507 # May, 2025
+entries_in_last_report <- 490 # May, 2025
+entries_in_last_report <- 543 # June 30, 2025
 
-## via link (requires access)
-# spreadsheet_link <- "https://docs.google.com/spreadsheets/d/1q9uygApXnyaIaod_SNSK3Omdz-OQKJBedIjYi__x0H4/export?gid=1875710842&format=xlsx"
+ds_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
 
-ds_raw <- openxlsx::read.xlsx("FReD Validation - USE THIS - data here when phase 1 comes back.xlsx", sheet = "COS coding", startRow = 2)
+cleaned <- clean_fred_data(ds_raw)
+
+ds_raw <- cleaned$cleaned_data
 
 # filter out excluded studies
 ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
@@ -120,7 +133,7 @@ ds_raw <- ds_raw[!is.na(ds_raw$id), ]
 
 
 # Number of coded but not validated entries
-ds_awaitingvalidation <- ds_raw[ds_raw$status == "awaiting validation", ]
+ds_awaitingvalidation <- ds_raw[ds_raw$status %in% c("awaiting validation", "validated - chosen (external)"), ]
 
 # filter for validated - chosen entries
 ds <- ds_raw[ds_raw$status == "validated - chosen", ]
@@ -139,7 +152,7 @@ studies_o <- length(unique(ds$ref_o))
 studies_r <- length(unique(ds$ref_r))
 
 overview <- data.frame(
-  "Type" = c("Rows (including discarded and non-validated)", "Rows", "Entries awaiting validation", "Entries", "New Entries since last report", "Original Reports", "Replication Reports")
+  "Type" = c("Coded rows (including discarded and non-validated)", "Validated rows", "Entries awaiting validation", "Validated entries", "New validated entries since last report", "Original reports", "Replication reports")
   , "Quantity" = c(rows_total, rows, awaiting_validation, entries, new_entries, studies_o, studies_r))
 
 DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength = 300, dom = 't', scrollX = FALSE, scrollCollapse = TRUE), rownames = FALSE)
@@ -147,29 +160,43 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 # paste("Currently,", entries, "Entries are validated and ready for delivery.")
 ```
 
-The following plot displays the progress (black dots and line) and the targets (red dots) that were agreed on.
+```{r cleaning, include = FALSE, echo = FALSE}
 
-```{r progress, include = TRUE, echo = FALSE}
+
+```
+
+The following plot displays the progress (black dots and line) and the targets (red dots) that were agreed on. Note that these numbers were corrected in June 2025; earlier reports had included some double-counting.
+
+```{r progress, include = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE) 
 
 progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27-03-2025"
                                                  , "23-04-2025"
                                                  , "23-05-2025"
-                                                 , "23-06-2025"  # date for end of June report [update manually]
+                                                 , "30-06-2025"  # date for end of June report [update manually]
                                                  , format(Sys.Date(), format = "%d-%m-%Y") # current date
-                                                 , "30-09-2025"
+                                                 , "15-08-2025"  # August deadline
+                                                 , "15-10-2025"
                                                  ))
                        , "entries" = c(0, 308, 357, 403 # end of April number of entries
                                        , 507 # end of May number of entries
-                                       , 528 # June 30th number of entries
-                                       , entries # current nnumber of entries
+                                       , 543 # June 30th number of entries
+                                       , entries # July number of entries
+                                       , NA # current number of entries
                                        , NA # September 30th number of entries
                                        )
-                       , "target" =  c(0, 300, NA , NA  , NA, 800, NA, 1000))
-progress_plot <- ggplot(progress, aes(x = date, y = entries)) + geom_point() + geom_line() + theme_bw() + xlab("Date") + ylab("Number of Validated Entries") +
+                       , "target" =  c(0, 300, NA , NA, NA, NA, NA , 750, 1000))
+progress_plot <- ggplot(progress, aes(x = date, y = entries)) + 
+  geom_line() + 
+  geom_point(aes(text = paste(entries, date, sep = " entries on "))) + 
+  theme_bw() + xlab("Date") + ylab("Number of Validated Entries") +
   geom_point(aes(x = date, y = target), color = "red")
 
-suppressWarnings(print(progress_plot))
+# suppressWarnings(print(progress_plot))
+
+plotly::ggplotly(progress_plot, tooltip = "text") %>%
+      plotly::config(displayModeBar = FALSE) %>%
+      plotly::layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
 ```
 
 ### Computation of Standardized Effect Sizes
@@ -247,33 +274,26 @@ ds <- ds %>% mutate(
 
 ```{r scatterplot, echo = FALSE}
 df_temp <- ds
+df_temp$replication_success <- as.character(df_temp$replication_success)
+df_temp$replication_success[is.na(df_temp$replication_success)] <- "uncertain"
+df_temp$replication_success[df_temp$replication_success == "TRUE"] <- "yes"
+df_temp$replication_success[df_temp$replication_success == "FALSE"] <- "no"
 
-
-    scatterplot <-
-      ggplot(df_temp, aes(x = r_o, y = r_r)) +
-      geom_hline(aes(yintercept = 0), linetype = 2) +
-      geom_abline(intercept = 0, slope = 1, color = "Grey60") +
-      geom_point(color = "Grey30", shape = 21, alpha = .8) +
-      # scale_fill_manual(values = outcome_colors(), drop = FALSE) +
-      # highlighted studies
-      # geom_point(data = df_temp[s3, ], mapping = aes(size = power), fill= "Grey30",color="Grey30",shape=4) +
-      # Rugs colored manually as plotly legend turns messy otherwise
-      # geom_rug(data = subset(df_temp, significant_original == "Significant"),
-      #          color = "#4DCCD0", linewidth = 1, sides = "b", alpha = .6) +
-      # geom_rug(data = subset(df_temp, significant_original == "Not significant"),
-      #          color = "#FA948C", linewidth = 1, sides = "b", alpha = .6) +
-      # geom_rug(data = subset(df_temp, significant_replication == "Significant"),
-      #          color = "#4DCCD0", linewidth = 1, sides = "l", alpha = .6) +
-      # geom_rug(data = subset(df_temp, significant_replication == "Not significant"),
-      #          color = "#FA948C", linewidth = 1, sides = "l", alpha = .6) +
-      scale_x_continuous(name = "Original Effect Size", limits = c(0, 1), breaks = c(0, .25, .5, .75, 1)) +
-      scale_y_continuous(name = "Replication Effect Size", limits = c(-.5, 1), breaks = c(-.5, -.25, 0, .25, .5, .75, 1)) +
-      # ggtitle("") + #xlab("") + ylab("") +
-      # scale_size_continuous(name="Power",range=c(.5,3.5)) +
-      theme_bw() +
-      # theme(legend.position=c(.9,.6), plot.margin = unit(c(-2,-1.5,2,2), "lines")) +
-      theme(legend.position = "top") +
-      labs(fill = "Outcome")
+scatterplot <-
+  ggplot(df_temp, aes(x = r_o, y = r_r, text = description)) +
+    geom_point(aes(color = replication_success)) +
+    scale_color_manual(
+      name = "Replication Success",
+      values = c("yes" = "#2ECC40", "no" = "#FF4136", "uncertain" = "grey50"),
+      breaks = c("yes", "no", "uncertain"),
+      labels = c("yes" = "Yes", "no" = "No", "uncertain" = "Uncertain")
+    ) +
+    geom_hline(aes(yintercept = 0), linetype = 2) +
+    geom_abline(intercept = 0, slope = 1, color = "Grey60") +
+    scale_x_continuous(name = "Original Effect Size", limits = c(0, 1), breaks = c(0, .25, .5, .75, 1)) +
+    scale_y_continuous(name = "Replication Effect Size", limits = c(-.5, 1), breaks = c(-.5, -.25, 0, .25, .5, .75, 1)) +
+    theme_bw() +
+    theme(legend.position = "top")
     
     plotly::ggplotly(scatterplot, tooltip = "text") %>%
       plotly::config(displayModeBar = FALSE) %>%
@@ -282,7 +302,7 @@ df_temp <- ds
 
 ### Codebook
 
-The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data's format is planned for spring 2025.
+The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data's format is planned for fall 2025.
 
 ```{r codebook, echo = FALSE}
 
@@ -310,7 +330,7 @@ for (i in unique(ds$entry)) {
   ds[ds$entry == i, "entry_id"] <- rep(counter, length(ds[ds$entry == i, "effect_id"]))
 }
 
-ds <- ds %>% rename(fred_id = id)
+# ds <- ds %>% rename(fred_id = id)
 
 ds_final <- ds %>% select(all_of(codebook$Variable))
 
@@ -322,8 +342,6 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_o), ] # sort by ori
 list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by replication study
 
 ```
-
-### 
 
 <details>
 
