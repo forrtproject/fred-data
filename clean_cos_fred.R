@@ -18,12 +18,12 @@ clean_fred_data <- function(data) {
   }
 
   # --- 1. Trim and squish Whitespace from all character columns ---
-  # Calculate changes before applying them
   char_cols <- names(cleaned_data)[sapply(cleaned_data, is.character)]
   trimmed_changes <- cleaned_data %>%
-    mutate(across(all_of(char_cols), ~ str_squish(.))) %>%
-    mutate(across(all_of(char_cols), ~ str_trim(.))) %>%
-    summarise(across(all_of(char_cols), ~ sum(.x != data[[cur_column()]], na.rm = TRUE))) %>%
+    select(all_of(char_cols)) %>% # Operate only on character columns
+    mutate(across(everything(), ~ str_squish(.))) %>%
+    mutate(across(everything(), ~ str_trim(.))) %>%
+    summarise(across(everything(), ~ sum(.x != data[[cur_column()]], na.rm = TRUE))) %>%
     pivot_longer(everything()) %>%
     filter(value > 0)
 
@@ -36,14 +36,53 @@ clean_fred_data <- function(data) {
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
-  # --- 2. Standardize NA values (convert "NA", "N/A" to NA) ---
+  # --- 2. Remove Non-Printable Characters ---
+  non_printable_pattern <- "[^[:print:]]"
+
+  # Find all cells with non-printable characters before cleaning
+  affected_cells <- cleaned_data %>%
+    select(all_of(char_cols)) %>%
+    mutate(row = row_number()) %>%
+    pivot_longer(-row, names_to = "column", values_to = "value") %>%
+    filter(str_detect(value, non_printable_pattern))
+
+  if (nrow(affected_cells) > 0) {
+    # Extract the specific characters for descriptive reporting
+    all_bad_chars <- unlist(str_extract_all(affected_cells$value, non_printable_pattern))
+    unique_bad_chars <- unique(all_bad_chars)
+
+    # Helper function to describe characters by their common name or Unicode point
+    describe_char <- function(ch) {
+      code_point <- utf8ToInt(ch)
+      known_chars <- c(
+        "\v" = "Vertical Tab", "\0" = "Null", "\u00A0" = "Non-Breaking Space",
+        "\a" = "Bell", "\b" = "Backspace", "\f" = "Form Feed"
+      )
+      # Check for name, otherwise return Unicode ID
+      if (ch %in% names(known_chars)) {
+        return(sprintf("%s (U+%04X)", known_chars[ch], code_point))
+      } else {
+        return(sprintf("U+%04X", code_point))
+      }
+    }
+    char_descriptions <- sapply(unique_bad_chars, describe_char, USE.NAMES = FALSE)
+
+    # Generate the report message
+    report_message <- glue::glue("Removed non-printable characters from {nrow(affected_cells)} cell(s). Characters found: `{paste(char_descriptions, collapse=', ')}`.")
+    cleaning_report <- add_report_item(cleaning_report, report_message)
+
+    # Apply the cleaning action
+    cleaned_data <- cleaned_data %>%
+      mutate(across(all_of(char_cols), ~ str_replace_all(., non_printable_pattern, "")))
+  }
+
+  # --- 3. Standardize NA values (convert "NA", "N/A" to NA) ---
   na_changes_before <- sum(sapply(cleaned_data, function(x) sum(is.na(x))))
 
   cleaned_data <- cleaned_data %>%
     mutate(across(where(is.character), ~ na_if(., "NA"))) %>%
     mutate(across(where(is.character), ~ na_if(., "N/A"))) %>%
     mutate(across(where(is.character), ~ na_if(., "#N/A")))
-
 
   na_changes_after <- sum(sapply(cleaned_data, function(x) sum(is.na(x))))
   na_rows_affected <- na_changes_after - na_changes_before
@@ -53,9 +92,8 @@ clean_fred_data <- function(data) {
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
-  # --- 3. Clean Reference Columns (remove DOIs) ---
+  # --- 4. Clean Reference Columns (remove DOIs) ---
   ref_cols <- c("ref_o", "ref_r")
-  # Pattern to find DOIs formatted as a prefix OR a full URL
   doi_pattern <- "\\s*(doi: ?10[./]\\S+|https?://(dx\\.)?doi\\.org/10[./]\\S+)"
 
   ref_changes <- cleaned_data %>%
@@ -71,7 +109,7 @@ clean_fred_data <- function(data) {
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
-  # --- 4. Clean DOI Columns (remove URL prefix) ---
+  # --- 5. Clean DOI Columns (remove URL prefix) ---
   doi_cols <- c("doi_o", "doi_r")
   url_prefix <- "https://doi.org/"
 
@@ -88,38 +126,26 @@ clean_fred_data <- function(data) {
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
-  # --- 5. Clean ES Value Columns (Standardize stats, spacing, brackets) ---
+  # --- 6. Clean ES Value Columns (Standardize stats, spacing, brackets) ---
   es_cols <- c("es_value_o", "es_value_r")
-
-  # Capture state before changes to count modifications
   data_before_es_clean <- cleaned_data
 
-  # Apply all transformations sequentially to the target columns
   cleaned_data <- cleaned_data %>%
     mutate(across(all_of(es_cols), ~ {
-      # Assign to a temporary variable for modification
       val <- .
-      # Standardize various spellings of X2 [χ², x2, χ2] into X2
       val <- str_replace_all(val, regex("[χx]2|χ²", ignore_case = TRUE), "X2")
-      # Remove a space after ^t and ^F
       val <- str_replace_all(val, "(^t|^F)\\s+", "\\1")
-      # Ensure there are single spaces around any =
       val <- str_replace_all(val, "\\s*=\\s*", " = ")
       val <- str_replace_all(val, "-\\s+", "-")
-      # Capitalise Z
       val <- str_replace_all(val, "^z", "Z")
-      # Ensure - is not a longer dash, e.g. en (–) or em (—) dash
       val <- str_replace_all(val, "[-–—]", "-")
-      # Replace [] with ()
       val <- str_replace_all(val, "\\[", "(")
       val <- str_replace_all(val, "\\]", ")")
       val <- str_replace_all(val, "X2\\((\\d+),\\s*N\\s*=\\s*\\d+\\)", "X2(\\1)")
       val <- str_trim(str_squish(val))
-      # Return the modified value
       val
-    }, .names = "{.col}")) # Ensure the operation modifies the columns in place
+    }, .names = "{.col}"))
 
-  # Calculate the total number of cells changed in the es_value columns
   es_changes <- sum(cleaned_data$es_value_o != data_before_es_clean$es_value_o, na.rm = TRUE) +
     sum(cleaned_data$es_value_r != data_before_es_clean$es_value_r, na.rm = TRUE)
 
@@ -128,12 +154,11 @@ clean_fred_data <- function(data) {
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
-  # --- 6. Clean DOIs (remove spaces) ---
-
+  # --- 7. Clean DOIs (remove spaces) ---
   cleaned_data <- cleaned_data %>%
     mutate(across(all_of(doi_cols), ~ str_remove_all(., " ")))
 
-  # --- 7. Fix ids
+  # --- 8. Fix ids ---
   cleaned_data <- cleaned_data %>%
     arrange(as.numeric(rowid)) %>%
     mutate(fred_id = str_remove(id, "_[a-z]{1,2}$"),
@@ -142,15 +167,14 @@ clean_fred_data <- function(data) {
     mutate(entry_id = first(rowid)) %>%
     ungroup()
 
-
   # --- Finalize Report ---
   final_report_string <- ""
   if (length(cleaning_report) > 0) {
     report_header <- "## FReD Automatic Cleaning Report\n\n"
     report_body <- paste0("- ✅ ", cleaning_report, collapse = "\n")
-    final_report_string <- paste0(report_header, "\nSorted by rowid and generated fred_id and effect_id\n\n", report_body)
+    final_report_string <- paste0(report_header, "Sorted by rowid and generated fred_id and effect_id.\n\n", report_body)
   } else {
-    final_report_string <- "## FReD Automatic Cleaning Report\n\noSrted by rowid and generated fred_id and effect_id.\n\n- No automatic cleaning actions were required."
+    final_report_string <- "## FReD Automatic Cleaning Report\n\nSorted by rowid and generated fred_id and effect_id.\n\n- No automatic cleaning actions were required."
   }
 
   return(list(cleaned_data = cleaned_data, report = final_report_string))
