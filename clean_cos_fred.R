@@ -55,7 +55,7 @@ clean_fred_data <- function(data) {
     describe_char <- function(ch) {
       code_point <- utf8ToInt(ch)
       known_chars <- c(
-        "\v" = "Vertical Tab", "\0" = "Null", "\u00A0" = "Non-Breaking Space",
+        "\v" = "Vertical Tab", "\u00A0" = "Non-Breaking Space",
         "\a" = "Bell", "\b" = "Backspace", "\f" = "Form Feed"
       )
       # Check for name, otherwise return Unicode ID
