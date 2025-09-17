@@ -135,6 +135,9 @@ clean_fred_data <- function(data) {
       val <- .
       val <- str_replace_all(val, regex("[χx]2|χ²", ignore_case = TRUE), "X2")
       val <- str_replace_all(val, "(^t|^F)\\s+", "\\1")
+      val <- str_replace_all(val, "F\\( ", "F\\(")
+      val <- stringr::str_replace_all(val, "\\s*<\\s*", " < ")
+      val <- stringr::str_replace_all(val, "\\s*≤\\s*", " ≤ ")
       val <- str_replace_all(val, "\\s*=\\s*", " = ")
       val <- str_replace_all(val, "-\\s+", "-")
       val <- str_replace_all(val, "^z", "Z")
