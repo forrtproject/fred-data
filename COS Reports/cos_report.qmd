@@ -244,6 +244,34 @@ ds$r_o <- convert_effect_sizes(es_values = ds$es_value_o, es_types = ds$es_type_
 ds$r_r <- convert_effect_sizes(es_values = ds$es_value_r, es_types = ds$es_type_r)
 ```
 
+```{r cleaning, include = FALSE, echo = FALSE}
+
+# remove empty rows
+ds <- ds[!is.na(ds$ref_o), ]
+
+# replace effect ids with numbers
+ds$entry_id <- NA
+ds$effect_id <- NA
+counter <- 0
+
+ds$entry <- do.call(paste0, ds[, c("ref_o", "study_o", "ref_r", "study_r")])
+
+# for (i in unique(ds$entry)) {
+#   counter <- counter+1
+#   # ds[ds$entry == i, "effect_id"] <- paste(counter, 1:length(ds[ds$entry == i, "effect_id"]), sep = "_")
+#   ds[ds$entry == i, "effect_id"] <- 1:length(ds[ds$entry == i, "effect_id"])
+#   ds[ds$entry == i, "entry_id"] <- rep(counter, length(ds[ds$entry == i, "effect_id"]))
+# }
+
+ds <- ds %>%
+  group_by(entry) %>%
+  mutate(
+    entry_id = cur_group_id(),
+    effect_id = row_number()
+  ) %>%
+  ungroup()
+```
+
 ### Success variable
 
 There are many different indicators of replication success (many of which can be calculated with the [FReD package](https://forrt.org/FReD/articles/success_criteria.html)). However, for this project COS defines success as a significant result *in the same direction* as the original finding.
@@ -350,6 +378,7 @@ If there are multiple replication studies of the same target study in a paper, w
 
 ```{r outcome, echo = FALSE}
 
+
 # leave only one entry per fred_id
 ds_outcome <- ds[!duplicated(ds$fred_id), ]
 
@@ -416,32 +445,6 @@ DT::datatable(codebook, extensions = 'FixedColumns', options = list(pageLength =
 ### Validated Dataset
 
 ```{r final dataset, echo = FALSE}
-
-# remove empty rows
-ds <- ds[!is.na(ds$ref_o), ]
-
-# replace effect ids with numbers
-ds$entry_id <- NA
-ds$effect_id <- NA
-counter <- 0
-
-ds$entry <- do.call(paste0, ds[, c("ref_o", "study_o", "ref_r", "study_r")])
-
-# for (i in unique(ds$entry)) {
-#   counter <- counter+1
-#   # ds[ds$entry == i, "effect_id"] <- paste(counter, 1:length(ds[ds$entry == i, "effect_id"]), sep = "_")
-#   ds[ds$entry == i, "effect_id"] <- 1:length(ds[ds$entry == i, "effect_id"])
-#   ds[ds$entry == i, "entry_id"] <- rep(counter, length(ds[ds$entry == i, "effect_id"]))
-# }
-
-ds <- ds %>%
-  group_by(entry) %>%
-  mutate(
-    entry_id = cur_group_id(),
-    effect_id = row_number()
-  ) %>%
-  ungroup()
-
 
 # ds <- ds %>% rename(fred_id = id)
 
