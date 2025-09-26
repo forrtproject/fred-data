@@ -448,6 +448,8 @@ ds <- ds %>%
 # ds_final <- ds %>% dplyr::select(all_of(codebook$Variable))
 ds_final <- ds[, codebook$Variable]
 
+# sort by ds$entry_id
+ds_final <- ds_final[order(ds_final$entry_id), ]
 
 openxlsx::write.xlsx(ds_final, file = paste(Sys.Date(), "_COSdata_validated.xlsx", sep = "")) # , encoding = "iso-8859-1"
 
