@@ -38,11 +38,16 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 
 -   300 entries by January 31, 2025 (deadline extended to February 7, 2025)
 
--   \~450 additional entries until August 15, 2025
+-   ~400 additional entries until September 2025
 
--   \~1000 entries in total until October 15, 2025
+-   Final dataset delivery by the end of October 2025 
 
 ### Changelog
+
+<details>
+
+<summary>Click here to see the full changelog for the dataset and report</summary>
+
 
 **Version 1.1 (2025-03-27)**
 
@@ -81,9 +86,14 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Made progress plot interactive (plotly)
 -   Corrected entry progress numbers (some of the past numbers were erroneous due to an erroneous entry counting function)
 
-**Version 1.7 (2025-07-01)**
+</details>
 
--   
+**Version 1.7 (2025-09-27)**
+
+-   Clarified subjective success coding based on replication authors' interpretation (aka ground truth) and add distribution chart
+-   Rename outcome variables into `reported_success` and `statistical_success` to avoid risk of confusion
+-   Rearranged the document to first describe the dataset and shift the internal process to the end
+
 
 ### Terminology
 
@@ -103,11 +113,6 @@ The relation between an article reporting a replication study and the correspond
 | Claim  | Each row must contain a claim that was made in the original report and that is tested again in the replication report. Multiple rows from one entry can have the same claim (e.g., a claim is tested using multiple statistical tests). Specific differences between identical claims are noted in a *description* variable.                                                                                                                                          |
 +--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-### Internal Process
-
-Entries are drawn from the [FORRT Replication Database](https://forrt-replications.shinyapps.io/fred_explorer/), which consists of crowdsourced data that has been single-coded and partially validated, an unsystematic list of additional replications we have maintained, and a planned systematic literature search. A snapshot description of the FORRT Replication Database from October 2023 was published [here](https://doi.org/10.5334/jopd.101). In the starting phase of the data curation process, large-scale replication projects have been prioritized so that psychology replications make up the majority of the dataset. Over time, we expect greater disciplinary diversity in the reports.
-
-Each entry is assigned to two FReD Data Curators, who independently complete all variables. They are collected by the FReD-team in a Google Spreadsheet for validation and run through a [cleaning-script](https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R). Most of the time, the values from one Data Curator are revised and chosen and the others are superseded. It is possible to choose a combination or all of the rows of an entry if different effects were coded by the FReD Data Curators.
 
 ### Current Status
 
@@ -119,37 +124,57 @@ entries_in_last_report <- 357 # March 27, 2025
 entries_in_last_report <- 490 # May, 2025
 entries_in_last_report <- 543 # June 30, 2025
 
-ds_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
+ds_fully_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
 
-cleaned <- clean_fred_data(ds_raw)
+cleaned <- clean_fred_data(ds_fully_raw)
 
 ds_raw <- cleaned$cleaned_data
 
+
+replace_na_filename <- function(filename) {
+  filename %>% 
+    na_if(".pdf") %>% 
+    na_if("na.pdf") %>% 
+    na_if("NA - USE URL")
+}
+
+ds_raw <- ds_raw %>% 
+  mutate(file_o = replace_na_filename(file_o),
+         file_r = replace_na_filename(file_r))
+
+# filter empty rows
+ds_raw <- ds_raw %>% filter(!is.na(ref_o), !is.na(ref_r))
+
+# ID to distinguish replications where multiple are in same paper
+ds_raw$id_r <- coalesce(ds_raw$url_r, ds_raw$doi_r)
+
 # filter out excluded studies
 ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
-
-# filter for empty rows
-ds_raw <- ds_raw[!is.na(ds_raw$id), ]
-
 
 # Number of coded but not validated entries
 ds_awaitingvalidation <- ds_raw[ds_raw$status %in% c("awaiting validation", "validated - chosen (external)"), ]
 
 # filter for validated - chosen entries
-ds <- ds_raw[ds_raw$status == "validated - chosen", ]
+# changed this as base-R subsetting struggles with NAs
+ds <- ds_raw %>% filter(status == "validated - chosen")
 
 # save descriptives
 rows_total <- nrow(ds_raw)
 rows <- nrow(ds)
 # entries <- length(unique(ds$entry))
 
-awaiting_validation <- sum(!duplicated(ds_awaitingvalidation[, c("ref_o", "study_o", "ref_r", "study_r")]))
-
-entries <- sum(!duplicated(ds[, c("ref_o", "study_o", "ref_r", "study_r")]))
+awaiting_validation <- nrow(
+    ds_awaitingvalidation[, c("doi_o", "id_r")] %>% 
+      distinct() %>% 
+      anti_join(
+        ds[, c("doi_o", "id_r")]
+      ))
+  
+entries <- sum(!duplicated(ds[, c("doi_o", "study_o", "id_r", "study_r")]))
 new_entries <- entries - entries_in_last_report
 
-studies_o <- length(unique(ds$ref_o))
-studies_r <- length(unique(ds$ref_r))
+studies_o <- length(unique(ds$doi_o))
+studies_r <- length(unique(ds$id_r))
 
 overview <- data.frame(
   "Type" = c("Coded rows (including discarded and non-validated)", "Validated rows", "Entries awaiting validation", "Validated entries", "New validated entries since last report", "Original reports", "Replication reports")
@@ -160,8 +185,21 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 # paste("Currently,", entries, "Entries are validated and ready for delivery.")
 ```
 
-```{r cleaning, include = FALSE, echo = FALSE}
+```{r add-clean-refs, include = FALSE, echo = FALSE}
 
+refs <- readxl::read_excel("crossref_retrieved_references.xlsx")
+
+ds <- ds %>% 
+  mutate(doi_r = tolower(doi_r),
+         doi_o = tolower(doi_o)) %>% 
+  left_join(
+  refs %>% rename(doi_o = doi, ref_o_new = reference)
+) %>% left_join(
+  refs %>% rename(doi_r = doi, ref_r_new = reference)
+) %>% 
+  mutate(ref_o = coalesce(ref_o_new, ref_o),
+         ref_r = coalesce(ref_r_new, ref_r)) %>% 
+  select(-ref_o_new, -ref_r_new)
 
 ```
 
@@ -173,24 +211,26 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE)
 progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27-03-2025"
                                                  , "23-04-2025"
                                                  , "23-05-2025"
-                                                 , "30-06-2025"  # date for end of June report [update manually]
-                                                 , format(Sys.Date(), format = "%d-%m-%Y") # current date
-                                                 , "15-08-2025"  # August deadline
-                                                 , "15-10-2025"
+                                                 , "30-06-2025" 
+                                                                                                  , format(Sys.Date(), format = "%d-%m-%Y") # current date
+
                                                  ))
                        , "entries" = c(0, 308, 357, 403 # end of April number of entries
                                        , 507 # end of May number of entries
                                        , 543 # June 30th number of entries
                                        , entries # July number of entries
-                                       , NA # current number of entries
-                                       , NA # September 30th number of entries
                                        )
-                       , "target" =  c(0, 300, NA , NA, NA, NA, NA , 750, 1000))
+)
+
+targets <- data.frame("date" = lubridate::dmy(c("07-02-2025"
+                                                 , "15-08-2025" ))
+                       , "target" =  c(300, 750))
+
 progress_plot <- ggplot(progress, aes(x = date, y = entries)) + 
   geom_line() + 
   geom_point(aes(text = paste(entries, date, sep = " entries on "))) + 
   theme_bw() + xlab("Date") + ylab("Number of Validated Entries") +
-  geom_point(aes(x = date, y = target), color = "red")
+  geom_point(data = targets, aes(x = date, y = target), color = "red")
 
 # suppressWarnings(print(progress_plot))
 
@@ -199,21 +239,57 @@ plotly::ggplotly(progress_plot, tooltip = "text") %>%
       plotly::layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
 ```
 
+```{r disciplines, include = FALSE, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+
+# Fixed capitalisation issues for now - but recheck in future
+disciplines <- ds$discipline %>% unique() 
+disciplines[duplicated(tolower(disciplines))]
+
+ds %>% 
+  group_by(doi_o, study_o, id_r, study_r) %>% 
+  summarise(discipline = first(na.omit(discipline)), .groups = "drop") %>% 
+  count(discipline, sort = TRUE) %>% 
+  mutate(share = n / sum(n),
+         discipline = if_else(share < 0.01, "Other", discipline)) %>% 
+  group_by(discipline) %>% 
+  summarise(n = sum(n), .groups = "drop") %>% 
+  mutate(share = n / sum(n)) %>% 
+  arrange(discipline == "Other", desc(n)) %>% 
+  mutate(summary = paste0(discipline, ": ", n, " (", round(share*100, 1), "%)")) %>% 
+  pull(summary) %>% 
+  paste(collapse = "\n") %>% 
+  clipr::write_clip()
+
+
+ds %>% 
+  count(discipline, sort = TRUE) %>% 
+  mutate(share = n / sum(n),
+         discipline = if_else(share < 0.01, "Other", discipline)) %>% 
+  group_by(discipline) %>% 
+  summarise(n = sum(n), .groups = "drop") %>% 
+  mutate(share = n / sum(n)) %>% 
+  arrange(discipline == "Other", desc(n)) %>% 
+  mutate(summary = paste0(discipline, ": ", n, " (", round(share*100, 1), "%)")) %>% 
+  pull(summary) %>% 
+  paste(collapse = "\n") %>% 
+  clipr::write_clip()
+
+
+
+```
+
+
 ### Computation of Standardized Effect Sizes
 
-Based on the function that we use for effect size conversion, not all effects were converted to *r*. For exact computation details, see the [function in the FReD R package](https://forrt.org/FReD/reference/convert_effect_sizes.html). Please note that the choice of effect sizes conversions is particularly complex for test statistics and effect sizes that do not express an unconditional bivariate relationship (e.g., interaction effects or partial correlations) so that we leave the choice of whether and how to convert those to individual analysts. Please also note that some effect sizes are non-directional (e.g., R² or F-statistics), which is why we did not convert them despite functions being available. In these cases, the quantitative replication results will not show whether the pattern matches (e.g., two F test could be significant due to opposite interaction patterns).
+Original studies and replications report effect sizes in a wide range of metrics. Where meaningful, we provide the reported values alongside a conversion to *r* (Pearson's correlation coefficient), using the [function in the FReD R package](https://forrt.org/FReD/reference/convert_effect_sizes.html). However, this is not always possible or meaningful, particularly where effect sizes do not express an unconditional bivariate relationship (e.g., interaction effects or partial correlations), and where they do not encode the direction of an effect (e.g., R² or F-statistics). In these cases, the quantitative replication results will not show whether the pattern matches (e.g., two F test could be significant due to opposite interaction patterns). The table below shows how we have proceeded in this dataset.
 
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
 | Action                                                                                     | Effect Size Types                                                                                                      |
-+============================================================================================+========================================================================================================================+
-| Use as correlation                                                                         | r, Phi                                                                                                                 |
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| Convert to correlation                                                                     | Odds Ratio, Cohen's d, Hedges's g, test statistics (t test), Z values                                                  |
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| Convert but beware the lack of information about specific effect size pattern or direction | R², Eta squared, test statistics (F test), Cohen's f, Cohen's f², partial Eta squared                                  |
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
-| No conversion                                                                              | test statistics (Chi-squared test, proportion test, binomial test), partial correlation, Cohen's dz, Cramer's V, Omega |
-+--------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------+
+|--------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| Used as correlation                                                                         | r, Phi                                                                                                                 |
+| Converted to correlation                                                                    | Odds Ratio, Cohen's d, Hedges's g, test statistics (t test), Z values                                                  |
+| Did not convert, but provide [function](https://forrt.org/FReD/reference/convert_effect_sizes.html) if analysts wish to convert | R², Eta squared, test statistics (F with df1 = 1 and χ² test), Cohen's f, Cohen's f², partial Eta squared             |
+| No conversion                                                                              | test statistics (F with df1 > 1, proportion test, binomial test), partial correlation, Cohen's dz, Cramer's V, Omega, regression coefficients |
+
 
 ```{r effectsize conversion, include = FALSE, echo = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
@@ -225,11 +301,90 @@ ds$r_o <- convert_effect_sizes(es_values = ds$es_value_o, es_types = ds$es_type_
 ds$r_r <- convert_effect_sizes(es_values = ds$es_value_r, es_types = ds$es_type_r)
 ```
 
-### Success variable
+## Replication success
 
-There are many different indicators of replication success (many of which can be calculated with the [FReD package](https://forrt.org/FReD/articles/success_criteria.html)). However, for this project COS defines success as a significant result *in the same direction* as the original finding.
+Replication success can be defined in different ways. Here, we provide two variables - one that is based on the authors' subjective interpretation of the replication results *at the study/entry level* and one that is based on a statistical criterion at the level of *individual claims*.
 
-This is not trivial to derive from the data where effect sizes are not directional. Therefore, we provide a `replication_success` variable that is defined as follows:
+### Author's reported success variable
+
+We reviewed the reports to identify how authors interpreted their results. This is coded based on the abstract where possible, and the conclusion/discussion/results section otherwise. The variable `reported_success` is coded as follows:
+
+- `success` when the authors interpret their replication as successful (e.g., "we successfully replicated...")
+- `failure` when the authors interpret their replication as unsuccessful (e.g., "we failed to replicate...")
+- `mixed` when the authors describe their results as mixed or as a partial replication
+
+There are a few more specific categories that are used less frequently:
+
+- `uninformative` when the authors explicitly describe their results as uninformative, e.g. due to a small sample size
+- `statistically successful but flawed` when the authors replicate the original finding but *primarily* do so to show that the method is flawed, and that an alternative analysis yields different results
+- `descriptive only` when authors describe patterns but do not draw comparative conclusions.
+
+The variables `reported_success_quote` and `reported_success_quote_source` provide the quote (or decision rule) that was used to code the variable and the section of the report where it was found.
+
+```{r add-subjective-success, include = TRUE, echo = FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE)
+
+reported_success <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv", skip = 1)
+
+reported_success <- reported_success %>% 
+  mutate(id_r = coalesce(url_r, doi_r)) %>%
+  filter(!is.na(outcome), validation != "validated - discarded") %>% 
+  group_by(doi_o, id_r, study_o, study_r) %>%
+  arrange(desc(validation == "validated - chosen")) %>% 
+  slice_head(n = 1) %>% 
+  ungroup()
+
+reported_success <- reported_success %>% 
+  select(doi_o, id_r, study_o, study_r, 
+                              reported_success = outcome,
+                              reported_success_quote = outcome_quote,
+                              reported_success_quote_source = out_quote_source) 
+# Check for missing entries
+# setdiff(paste(ds$doi_o, ds$id_r, ds$study_o, ds$study_r),
+#        paste(reported_success$doi_o, reported_success$id_r, reported_success$study_o, reported_success$study_r)) %>% sort() %>% clipr::write_clip()
+
+ds <- ds %>% left_join(reported_success, by = c("doi_o", "id_r", "study_o", "study_r"))
+
+
+p_data <- ds %>% 
+  select(doi_o, id_r, study_o, study_r, reported_success) %>%
+  distinct() %>% 
+  mutate(reported_success = factor(
+    reported_success, 
+    levels = rev(c("successful", "failed", "mixed", "uninformative", 
+                   "statistically successful but flawed", "descriptive only"))
+  )) %>%
+  count(reported_success) %>%
+  mutate(pct = 100 * n / sum(n),
+         label = paste0(round(pct, 1), " % (", n, ")"))
+
+ #p_data %>% mutate(label = paste0(reported_success, ": ", label)) %>% pull(label) %>% clipr::write_clip()
+
+  ggplot(p_data, aes(y = reported_success, x = n, fill = reported_success)) +
+    geom_col() + 
+    geom_text(aes(label = label), hjust = -0.1) +
+    labs(title = "Subjective success distribution", 
+         x = "", y = "", 
+         caption = "NB: Coded at the entry/study level.") +
+    scale_fill_manual(values = c(
+      "successful" = "#2ECC40", 
+      "failed" = "#FF4136", 
+      "mixed" = "#FF851B", 
+      "uninformative" = "grey50", 
+      "statistically successful but flawed" = "purple", 
+      "descriptive only" = "lightblue"
+    )) +
+    expand_limits(x = max(p_data$n) * 1.5)  + # ensure space for labels
+        theme_bw() +
+        theme(legend.position = "none")
+
+```
+
+### Statistical success variable
+
+There are many different statistical indicators of replication success (many of which can be calculated with the [FReD package](https://forrt.org/FReD/articles/success_criteria.html)). However, for this project COS defines success as a significant result *in the same direction* as the original finding.
+
+This is not trivial to derive from the data where effect sizes are not directional. We provide a `statistical_success` variable that is defined as follows:
 
 -   `TRUE` when the replication is significant (based on the reported p-value, at alpha = .05) and the reported effect size is directional and in the same direction as the original. Note that this includes cases where effect sizes cannot be converted into a common metric, such as regression coefficients.
 
@@ -262,10 +417,11 @@ ds <- ds %>%
 ds <- ds %>% mutate(
   p_val_temp_r = coalesce(as.numeric(pval_value_r), FReD:::p_from_r(r_r, as.numeric(n_r))),
    p_val_temp_o = coalesce(as.numeric(pval_value_o), FReD:::p_from_r(r_o, as.numeric(n_o))),
-  convertible = 
-    (es_type_o %in% dir_types | str_detect(es_value_o, "^t|^Z|^z")) & 
-       (es_type_r %in% dir_types | str_detect(es_value_r, "^t|^Z|^z")),
-  replication_success = case_when(
+  convertible_o = 
+    es_type_o %in% dir_types | str_detect(es_value_o, "^t|^Z|^z"),
+  convertible_r = es_type_r %in% dir_types | str_detect(es_value_r, "^t|^Z|^z"),
+  convertible = convertible_o & convertible_r,
+  statistical_success = case_when(
     !convertible |  p_val_temp_o > .05 | 
       (p_val_temp_o == .05 & pval_type_o == "g (>)") | is.na(es_value_o) |
       is.na(es_value_r) | is.na(p_val_temp_r) | is.na(p_val_temp_o) ~ NA,
@@ -273,20 +429,24 @@ ds <- ds %>% mutate(
     sign(if_else(!is.na(r_r), r_r, as.numeric(es_value_r))) == 
     sign(if_else(!is.na(r_o), r_o, as.numeric(es_value_o))) ~ TRUE,
     .default = FALSE
-  )) %>% 
+  ),
+  r_o = if_else(convertible_o, r_o, NA_real_),
+  r_r = if_else(convertible_r, r_r, NA_real_)) %>% 
   select(-convertible, p_val_temp_r, p_val_temp_o)
 ```
 
+Out of `r nrow(ds)` rows, `statistical_success` could be calculated for `r sum(!is.na(ds$statistical_success))` rows. Among these, `r round(mean(ds$statistical_success, na.rm = TRUE)*100, 1)`% were statistically successful (significant in the same direction) and `r round(mean(!ds$statistical_success, na.rm = TRUE)*100, 1)`% could be considered failures.
+
 ```{r scatterplot, echo = FALSE}
 df_temp <- ds
-df_temp$replication_success <- as.character(df_temp$replication_success)
-df_temp$replication_success[is.na(df_temp$replication_success)] <- "uncertain"
-df_temp$replication_success[df_temp$replication_success == "TRUE"] <- "yes"
-df_temp$replication_success[df_temp$replication_success == "FALSE"] <- "no"
+df_temp$statistical_success <- as.character(df_temp$statistical_success)
+df_temp$statistical_success[is.na(df_temp$statistical_success)] <- "uncertain"
+df_temp$statistical_success[df_temp$statistical_success == "TRUE"] <- "yes"
+df_temp$statistical_success[df_temp$statistical_success == "FALSE"] <- "no"
 
 scatterplot <-
   ggplot(df_temp, aes(x = r_o, y = r_r, text = description)) +
-    geom_point(aes(color = replication_success)) +
+    geom_point(aes(color = statistical_success)) +
     scale_color_manual(
       name = "Replication Success",
       values = c("yes" = "#2ECC40", "no" = "#FF4136", "uncertain" = "grey50"),
@@ -298,7 +458,8 @@ scatterplot <-
     scale_x_continuous(name = "Original Effect Size", limits = c(0, 1), breaks = c(0, .25, .5, .75, 1)) +
     scale_y_continuous(name = "Replication Effect Size", limits = c(-.5, 1), breaks = c(-.5, -.25, 0, .25, .5, .75, 1)) +
     theme_bw() +
-    theme(legend.position = "top")
+    theme(legend.position = "top") +
+  labs(caption = "Coded at the row/claim level. Only includes directional effect sizes that could be converted to *r*")
     
     plotly::ggplotly(scatterplot, tooltip = "text") %>%
       plotly::config(displayModeBar = FALSE) %>%
@@ -307,7 +468,9 @@ scatterplot <-
 
 ### Codebook
 
-The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data's format is planned for fall 2025.
+The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data format is planned for fall 2025.
+
+NB: Beware that the `entry_id` and `effect_id` variables are *not* stable across versions of the dataset. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
 
 ```{r codebook, echo = FALSE}
 
@@ -355,3 +518,10 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by rep
 `r DT::datatable(list_of_studies, extensions = 'FixedColumns', options = list(pageLength = 300, dom = 't', rownames = FALSE, scroller = FALSE), rownames = FALSE)`
 
 </details>
+
+
+### Internal Process
+
+Entries were initially drawn from the [FORRT Replication Database](https://forrt-replications.shinyapps.io/fred_explorer/), which consists of crowdsourced data that has been single-coded and partially validated, an unsystematic list of additional replications we have maintained, and a broad literature search. A snapshot description of the FORRT Replication Database from October 2023 was published [here](https://doi.org/10.5334/jopd.101). Given that psychology has conducted the largest replication projets to date, the dataset is biased towards psychology, but we aimed to include other fields where possible.
+
+Each entry is assigned to two FReD Data Curators, who independently complete all variables. They are collected by the FReD-team in a Google Spreadsheet for validation and run through a [cleaning-script](https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R). Most of the time, the values from one Data Curator are revised and chosen and the others are superseded. It is possible to choose a combination or all of the rows of an entry if different effects were coded by the FReD Data Curators.

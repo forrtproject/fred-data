@@ -1,0 +1,123 @@
+---
+title: "PDF preparation"
+format: html
+---
+
+
+
+```{r}
+library(googledrive)
+library(tidyverse)
+library(glue)
+source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
+
+
+ds_fully_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
+
+cleaned <- clean_fred_data(ds_fully_raw)
+
+ds_raw <- cleaned$cleaned_data
+
+# filter empty rows
+ds_raw <- ds_raw %>% filter(!is.na(ref_o), !is.na(ref_r))
+
+# ID to distinguish replications where multiple are in same paper
+ds_raw$id_r <- coalesce(ds_raw$url_r, ds_raw$doi_r)
+
+# filter out excluded studies
+ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
+
+
+# Number of coded but not validated entries
+ds_awaitingvalidation <- ds_raw[ds_raw$status %in% c("awaiting validation", "validated - chosen (external)"), ]
+
+# filter for validated - chosen entries
+# changed this as base-R subsetting struggles with NAs
+ds <- ds_raw %>% filter(status == "validated - chosen")
+
+
+
+# Deauthenticate (useful for public folders)
+drive_deauth()
+
+# Replace with your actual folder ID
+folder_id <- "1VMbkD0_rORNE9MH_0aO_yywfZ-y5_ir1"
+
+# List files in the folder
+files <- drive_ls(as_id(folder_id))
+print(files)
+
+
+files_found <- union(intersect(ds$file_o, files$name),
+                     intersect(ds$file_r, files$name))
+
+files_missing <- union(setdiff(ds$file_o, files$name),
+                     setdiff(ds$file_r, files$name))
+
+files_case_issue <- setdiff(files_missing,
+                            union(setdiff(tolower(ds$file_o), tolower(files$name)),
+                                  setdiff(tolower(ds$file_r), tolower(files$name))))
+                              
+files_missing <- setdiff(files_missing, files_case_issue)
+
+drive_auth() 
+
+# Copy relevant files into shareable folder
+
+dest_id <- as_id("10GSKukVmMe9SmzcDvATxTjm_VqMyDqc5")
+
+relevant_files <- files %>% filter(name %in% files_found)
+
+copied <- map(relevant_files$id, ~ drive_cp(as_id(.x), path = dest_id), .progress = TRUE)
+
+map2(
+  copied,
+  relevant_files$name,
+  ~ drive_rename(.x, .y)
+)
+
+intersect(list.files("/Users/lukaswallrich/Downloads/pdf_downloads"), files_missing)
+
+file.rename(list.files("/Users/lukaswallrich/Downloads/pdf_downloads", full.names = TRUE),
+            file.path("/Users/lukaswallrich/Downloads/pdf_downloads",
+                      tolower(basename(list.files("/Users/lukaswallrich/Downloads/pdf_downloads")))))
+
+
+
+replace_na_filename <- function(filename) {
+  filename %>% 
+    na_if(".pdf") %>% 
+    na_if("na.pdf") %>% 
+    na_if("NA - USE URL")
+}
+
+files_missing <- replace_na_filename(files_missing) %>% unique()
+
+files_missing <- setdiff(files_missing, list.files("/Users/lukaswallrich/Downloads/pdf_downloads/found"))
+
+# Move the relevant files into a "found" subdirectory
+files_moved <- file.rename(from = file.path("/Users/lukaswallrich/Downloads/pdf_downloads", intersect(list.files("/Users/lukaswallrich/Downloads/pdf_downloads"), files_missing)),
+                            to = file.path("/Users/lukaswallrich/Downloads/pdf_downloads/found",
+                                           intersect(list.files("/Users/lukaswallrich/Downloads/pdf_downloads"), files_missing)))
+
+
+probs <- ds %>% select(file = file_o, doi = doi_o) %>% 
+  bind_rows(ds %>% select(file = file_r, doi = doi_r)) %>%
+  distinct() %>%
+  filter(file %in% files_missing)
+
+probs %>% 
+  pull(doi) %>% 
+  str_subset("^10\\.") %>% clipr::write_clip()
+
+
+```
+
+You can add options to executable code like this 
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
