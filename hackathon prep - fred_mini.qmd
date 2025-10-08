@@ -1,0 +1,219 @@
+---
+title: "FReD mini"
+format: html
+---
+
+## FReD mini for hackathon/tools
+
+For the Zotero plugin and preprint bot, we need a list of originals and replications, with outcomes and full bibliographic information.
+
+```{r setup}
+library(dplyr)
+library(readr)
+library(rcrossref)
+library(purrr)
+library(jsonlite)
+library(glue)
+
+reported_success <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv", skip = 1)
+```
+
+Select relevant fields and deduplicate (we do not report study level)
+
+```{r}
+fred_mini <- reported_success %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome) %>%
+  group_by(doi_o, doi_r, ref_o, ref_r, url_r) %>%
+  summarise(outcome = case_when(
+    length(unique(outcome)) == 1 ~ unique(outcome),
+    TRUE ~ "mixed"
+  )) %>% 
+  distinct()
+```
+
+Augment with bibliometric details
+
+```{r}
+get_doi_data <- function(doi) {
+  #100 at a time to avoid URL too long CR error
+  doi <- str_replace_all(doi, "https?://doi.org/", "")
+  doi <- str_subset(doi, "^10\\.\\d+/\\S+$")
+  doi <- unique(doi)
+  
+  message(glue("Fetching data for {length(doi)} DOIs from CrossRef..."))
+  
+  if (length(doi) == 0) return(tibble())
+  
+  for (i in seq(1, length(doi), by = 100)) {
+    doisub <- doi[i:min(i+99, length(doi))]
+    names(doisub) <- rep("doi", length(doisub))
+    res <- cr_works(filter = doisub, limit = 100)
+    message(glue("  Retrieved {nrow(res$data)} records (of {length(doisub)} requested)"))
+    if(i == 1) out <- res$data else out <- bind_rows(out, res$data)
+  }
+  message(glue("Done. Retrieved {nrow(out)} records in total."))
+  
+  return(out)
+}
+
+
+jsonify_authors <- function(author_list) {
+  
+  if (all(c("family", "given") %in% names(author_list))) {
+    out <-   tibble(
+    given = author_list[["given"]] %||% NA_character_,
+    family = author_list[["family"]] %||% NA_character_,
+    sequence = author_list[["sequence"]] %||% NA_character_,
+    ORCID = author_list[["ORCID"]] %||% NA_character_
+  )
+  } else if ("name" %in% names(author_list)) {
+      out <-   tibble(
+    given = author_list[["given"]] %||% NA_character_,
+    family = author_list[["name"]] %||% NA_character_,
+    sequence = author_list[["sequence"]] %||% NA_character_,
+    ORCID = author_list[["ORCID"]] %||% NA_character_
+  )
+
+} else {
+  message("Unknown author format - field names: ", paste(names(author_list), collapse = ", "), ". Returning NULL entry.")
+        out <-   tibble(
+    given = author_list[["given"]] %||% NA_character_,
+    family = author_list[["name"]] %||% NA_character_,
+    sequence = author_list[["sequence"]] %||% NA_character_,
+    ORCID = author_list[["ORCID"]] %||% NA_character_
+  )
+}
+  
+ out |>
+    toJSON(pretty = FALSE, na = "null")
+}
+
+
+safe_year <- function(df) {
+  pub_cols <- c("published.print", "published.online", "published")
+  existing <- pub_cols[pub_cols %in% names(df)]
+
+  if (length(existing) == 0) {
+    return(NA_integer_)
+  }
+
+  year_str <- dplyr::coalesce(!!!df[existing])
+  as.integer(stringr::str_sub(as.character(year_str), 1, 4))
+}
+
+apa_reference_md <- function(doi, title, author_json, journal, year, volume, issue, pages) {
+  n <- length(doi)
+
+  map_chr(seq_len(n), function(i) {
+    # --- parse authors safely ---
+    authors <- tryCatch(fromJSON(author_json[i]), error = function(e) NULL)
+
+    fmt_author <- function(given, family) {
+      initials <- if (!is.na(given) && nzchar(given)) {
+        parts <- strsplit(given, "\\s+")[[1]]
+        paste0(substr(parts, 1, 1), collapse = ". ")
+      } else ""
+      paste0(family, ", ", initials, ".")
+    }
+
+    if (is.null(authors) || nrow(authors) == 0) {
+      author_str <- "(n.a.)"
+    } else {
+      author_strs <- pmap_chr(authors, \(given, family, sequence, ORCID)
+        fmt_author(given, family))
+      n_auth <- length(author_strs)
+      author_str <-
+        if (n_auth == 1) author_strs
+        else if (n_auth == 2) paste(author_strs, collapse = " & ")
+        else paste0(paste(author_strs[-n_auth], collapse = ", "), ", & ", author_strs[n_auth])
+    }
+
+    # --- APA-style markdown (title not bold) ---
+    glue(
+      "{author_str} ({year[i]}). {title[i]}. *{journal[i]}*, *{volume[i]}*({issue[i]}), {pages[i]}. [https://doi.org/{doi[i]}](https://doi.org/{doi[i]})"
+    )
+  })
+}
+
+bibtex_reference <- function(doi, title, author_json, journal, year, volume, issue, pages) {
+  n <- length(doi)
+
+  map_chr(seq_len(n), function(i) {
+    # --- parse authors safely ---
+    authors <- tryCatch(fromJSON(author_json[i]), error = function(e) NULL)
+
+    fmt_author_bib <- function(given, family) {
+      if (!is.na(given) && nzchar(given)) {
+        paste0(family, ", ", given)
+      } else {
+        family
+      }
+    }
+
+    if (is.null(authors) || nrow(authors) == 0) {
+      author_str <- "Unknown"
+    } else {
+      author_strs <- pmap_chr(authors, \(given, family, sequence, ORCID)
+        fmt_author_bib(given, family))
+      author_str <- paste(author_strs, collapse = " and ")
+    }
+
+    key <- str_remove_all(paste0(str_to_lower(word(author_strs[1], 1)), year[i]), "[^a-z0-9]")
+
+    glue(
+"@article{{{key},
+  author = {{{author_str}}},
+  title = {{{title[i]}}},
+  journal = {{{journal[i]}}},
+  year = {{{year[i]}}},
+  volume = {{{volume[i]}}},
+  number = {{{issue[i]}}},
+  pages = {{{pages[i]}}},
+  doi = {{{doi[i]}}}
+}}"
+    )
+  })
+}
+
+doi_data_o <- get_doi_data(fred_mini$doi_o)
+
+doi_data_o_parsed <- doi_data_o %>% 
+  transmute(
+    doi = tolower(doi),
+    title_o = title,
+    author_o = map_chr(author, jsonify_authors),
+    journal_o = container.title,
+ year_o = safe_year(pick(everything())),
+    volume_o = volume,
+    issue_o = issue,
+    pages_o = page,
+ apa_ref_o = apa_reference_md(doi, title, author_o, journal_o, year_o, volume_o, issue_o, pages_o),
+ bibtex_ref_o = bibtex_reference(doi, title, author_o, journal_o, year_o, volume_o, issue_o, pages_o)
+  )
+
+doi_data_r <- get_doi_data(fred_mini$doi_r)
+
+doi_data_r_parsed <- doi_data_r %>% 
+  transmute(
+    doi = tolower(doi),
+    title_r = title,
+    author_r = map_chr(author, jsonify_authors),
+    journal_r = container.title,
+    year_r = safe_year(pick(everything())),
+    volume_r = volume,
+    issue_r = issue,
+    pages_r = page,
+    apa_ref_r = apa_reference_md(doi, title, author_r, journal_r, year_r, volume_r, issue_r, pages_r),
+    bibtex_ref_r = bibtex_reference(doi, title, author_r, journal_r, year_r, volume_r, issue_r, pages_r)
+  )
+
+fred_mini %>% 
+  mutate(doi_o = tolower(doi_o),
+         doi_r = tolower(doi_r)) %>%
+  left_join(doi_data_o_parsed, by = c("doi_o" = "doi")) %>%
+  left_join(doi_data_r_parsed, by = c("doi_r" = "doi")) %>%
+  select(doi_o, title_o, author_o, journal_o, year_o, volume_o, issue_o, pages_o, apa_ref_o, bibtex_ref_o,
+         doi_r, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r, apa_ref_r, bibtex_ref_r,
+         ref_o, ref_r, url_r, outcome) %>%
+  write_csv("fred_mini.csv")
+```
+
