@@ -18,6 +18,22 @@ editor: visual
 
 The Center for Open Science and the Framework for Open and Reproducible Research Training are [collaborating for the SMART competition](https://www.cos.io/blog/cos-and-forrt-partner-to-increase-discoverability-and-usability-of-replication-evidence). As a result, FORRT will provide validated training data to competition participants. This report describes the data provided alongside it.
 
+::: {.callout-warning}
+Check that `entry_id`s are incremented before sharing further data!
+Ad hoc fix for September data below
+:::
+
+```{r}
+sep_df <- readxl::read_excel("2025-09-28_COSdata_validated.xlsx")
+
+sep_df %>% group_by(entry_id) %>% 
+  mutate(effect_id = row_number())
+
+sep_df %>% openxlsx::write.xlsx(file = "2025-09-28_COSdata_validated_fixed.xlsx")
+
+```
+
+
 ------------------------------------------------------------------------
 
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
