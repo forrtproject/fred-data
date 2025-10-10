@@ -18,22 +18,6 @@ editor: visual
 
 The Center for Open Science and the Framework for Open and Reproducible Research Training are [collaborating for the SMART competition](https://www.cos.io/blog/cos-and-forrt-partner-to-increase-discoverability-and-usability-of-replication-evidence). As a result, FORRT will provide validated training data to competition participants. This report describes the data provided alongside it.
 
-::: {.callout-warning}
-Check that `entry_id`s are incremented before sharing further data!
-Ad hoc fix for September data below
-:::
-
-```{r}
-sep_df <- readxl::read_excel("2025-09-28_COSdata_validated.xlsx")
-
-sep_df %>% group_by(entry_id) %>% 
-  mutate(effect_id = row_number())
-
-sep_df %>% openxlsx::write.xlsx(file = "2025-09-28_COSdata_validated_fixed.xlsx")
-
-```
-
-
 ------------------------------------------------------------------------
 
 ```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
@@ -110,6 +94,10 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Rename outcome variables into `reported_success` and `statistical_success` to avoid risk of confusion
 -   Rearranged the document to first describe the dataset and shift the internal process to the end
 
+**Version 1.8 (2025-10-10)**
+
+-   Fixed numbering in `effect_id` so that they count rows within each `entry_id`
+-   Added `fred_id_old`, which is largely (!) in line with `fred_id` from versions up until 1.4 to facilitate merging
 
 ### Terminology
 
@@ -500,21 +488,14 @@ DT::datatable(codebook, extensions = 'FixedColumns', options = list(pageLength =
 
 ```{r final dataset, echo = FALSE}
 
-# replace effect ids with numbers
-ds$entry_id <- NA
-ds$effect_id <- NA
-counter <- 0
+# number entries and effects
 
-ds$entry <- do.call(paste0, ds[, c("ref_o", "study_o", "ref_r", "study_r")])
-
-for (i in unique(ds$entry)) {
-  counter <- counter+1
-  # ds[ds$entry == i, "effect_id"] <- paste(counter, 1:length(ds[ds$entry == i, "effect_id"]), sep = "_")
-  ds[ds$entry == i, "effect_id"] <- 1:length(ds[ds$entry == i, "effect_id"])
-  ds[ds$entry == i, "entry_id"] <- rep(counter, length(ds[ds$entry == i, "effect_id"]))
-}
-
-# ds <- ds %>% rename(fred_id = id)
+ds <- ds %>% 
+  mutate(entry = paste(doi_o, study_o, id_r, study_r),
+         entry_id = match(entry, unique(entry))) %>%
+  group_by(entry) %>%
+  mutate(effect_id = row_number()) %>% 
+  ungroup()
 
 ds_final <- ds %>% select(all_of(codebook$Variable))
 
