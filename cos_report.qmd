@@ -38,16 +38,15 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 
 -   300 entries by January 31, 2025 (deadline extended to February 7, 2025)
 
--   ~400 additional entries until September 2025
+-   \~400 additional entries until September 2025
 
--   Final dataset delivery by the end of October 2025 
+-   Final dataset delivery by the end of October 2025
 
 ### Changelog
 
 <details>
 
 <summary>Click here to see the full changelog for the dataset and report</summary>
-
 
 **Version 1.1 (2025-03-27)**
 
@@ -103,20 +102,19 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 
 The relation between an article reporting a replication study and the corresponding original study can be complex. The following terms allow for almost every combination of original and replication studies to be documented in the dataset.
 
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Term   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-+========+=======================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
-| Entry  | One entry consists of a pair of studies, one of which self-identifies as a replication of the other, using different data than the original study. The replication study investigates at least one central claim from the original report. Each entry has been coded by two independent FReD Data Curators and validated by either a FReD Data Curator or a member of the FReD Core Team. Two entries may originate from the same study but not from the same sample. |
-|        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-|        | One entry consists of at least one row but can consist of hundreds of rows: For example, some entries have multiple pairs of original and replication findings (e.g., for many different sub-groups) or do not have a 1:1 correspondence between original and replication study/reference but a different ratio. When assigning entries to FReD Data Curators, entries with overlapping studies are typically assigned to the same FReD Data Curator pair.            |
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Study  | A study is an empirical investigation made in one of the reports. One entry usually consists of exactly two references/reports. Each of the references/reports can consist of multiple studies.                                                                                                                                                                                                                                                                       |
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Row    | One row in the database consists of one pair of original and replication effects that correspond to a claim made in the original study. In other words, one row is one pair of *findings*.                                                                                                                                                                                                                                                                            |
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Claim  | Each row must contain a claim that was made in the original report and that is tested again in the replication report. Multiple rows from one entry can have the same claim (e.g., a claim is tested using multiple statistical tests). Specific differences between identical claims are noted in a *description* variable.                                                                                                                                          |
-+--------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Term  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
++=======+=======================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
+| Entry | One entry consists of a pair of studies, one of which self-identifies as a replication of the other, using different data than the original study. The replication study investigates at least one central claim from the original report. Each entry has been coded by two independent FReD Data Curators and validated by either a FReD Data Curator or a member of the FReD Core Team. Two entries may originate from the same study but not from the same sample. |
+|       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+|       | One entry consists of at least one row but can consist of hundreds of rows: For example, some entries have multiple pairs of original and replication findings (e.g., for many different sub-groups) or do not have a 1:1 correspondence between original and replication study/reference but a different ratio. When assigning entries to FReD Data Curators, entries with overlapping studies are typically assigned to the same FReD Data Curator pair.            |
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Study | A study is an empirical investigation made in one of the reports. One entry usually consists of exactly two references/reports. Each of the references/reports can consist of multiple studies.                                                                                                                                                                                                                                                                       |
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Row   | One row in the database consists of one pair of original and replication effects that correspond to a claim made in the original study. In other words, one row is one pair of *findings*.                                                                                                                                                                                                                                                                            |
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Claim | Each row must contain a claim that was made in the original report and that is tested again in the replication report. Multiple rows from one entry can have the same claim (e.g., a claim is tested using multiple statistical tests). Specific differences between identical claims are noted in a *description* variable.                                                                                                                                          |
++-------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ### Current Status
 
@@ -282,18 +280,16 @@ ds %>%
 
 ```
 
-
 ### Computation of Standardized Effect Sizes
 
 Original studies and replications report effect sizes in a wide range of metrics. Where meaningful, we provide the reported values alongside a conversion to *r* (Pearson's correlation coefficient), using the [function in the FReD R package](https://forrt.org/FReD/reference/convert_effect_sizes.html). However, this is not always possible or meaningful, particularly where effect sizes do not express an unconditional bivariate relationship (e.g., interaction effects or partial correlations), and where they do not encode the direction of an effect (e.g., R² or F-statistics). In these cases, the quantitative replication results will not show whether the pattern matches (e.g., two F test could be significant due to opposite interaction patterns). The table below shows how we have proceeded in this dataset.
 
-| Action                                                                                     | Effect Size Types                                                                                                      |
-|--------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| Used as correlation                                                                         | r, Phi                                                                                                                 |
-| Converted to correlation                                                                    | Odds Ratio, Cohen's d, Hedges's g, test statistics (t test), Z values                                                  |
-| Did not convert, but provide [function](https://forrt.org/FReD/reference/convert_effect_sizes.html) if analysts wish to convert | R², Eta squared, test statistics (F with df1 = 1 and χ² test), Cohen's f, Cohen's f², partial Eta squared             |
-| No conversion                                                                              | test statistics (F with df1 > 1, proportion test, binomial test), partial correlation, Cohen's dz, Cramer's V, Omega, regression coefficients |
-
+| Action | Effect Size Types |
+|----|----|
+| Used as correlation | r, Phi |
+| Converted to correlation | Odds Ratio, Cohen's d, Hedges's g, test statistics (t test), Z values |
+| Did not convert, but provide [function](https://forrt.org/FReD/reference/convert_effect_sizes.html) if analysts wish to convert | R², Eta squared, test statistics (F with df1 = 1 and χ² test), Cohen's f, Cohen's f², partial Eta squared |
+| No conversion | test statistics (F with df1 \> 1, proportion test, binomial test), partial correlation, Cohen's dz, Cramer's V, Omega, regression coefficients |
 
 ```{r effectsize conversion, include = FALSE, echo = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
@@ -313,15 +309,15 @@ Replication success can be defined in different ways. Here, we provide two varia
 
 We reviewed the reports to identify how authors interpreted their results. This is coded based on the abstract where possible, and the conclusion/discussion/results section otherwise. The variable `reported_success` is coded as follows:
 
-- `success` when the authors interpret their replication as successful (e.g., "we successfully replicated...")
-- `failure` when the authors interpret their replication as unsuccessful (e.g., "we failed to replicate...")
-- `mixed` when the authors describe their results as mixed or as a partial replication
+-   `success` when the authors interpret their replication as successful (e.g., "we successfully replicated...")
+-   `failure` when the authors interpret their replication as unsuccessful (e.g., "we failed to replicate...")
+-   `mixed` when the authors describe their results as mixed or as a partial replication
 
 There are a few more specific categories that are used less frequently:
 
-- `uninformative` when the authors explicitly describe their results as uninformative, e.g. due to a small sample size
-- `statistically successful but flawed` when the authors replicate the original finding but *primarily* do so to show that the method is flawed, and that an alternative analysis yields different results
-- `descriptive only` when authors describe patterns but do not draw comparative conclusions.
+-   `uninformative` when the authors explicitly describe their results as uninformative, e.g. due to a small sample size
+-   `statistically successful but flawed` when the authors replicate the original finding but *primarily* do so to show that the method is flawed, and that an alternative analysis yields different results
+-   `descriptive only` when authors describe patterns but do not draw comparative conclusions.
 
 The variables `reported_success_quote` and `reported_success_quote_source` provide the quote (or decision rule) that was used to code the variable and the section of the report where it was found.
 
@@ -515,7 +511,6 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by rep
 `r DT::datatable(list_of_studies, extensions = 'FixedColumns', options = list(pageLength = 300, dom = 't', rownames = FALSE, scroller = FALSE), rownames = FALSE)`
 
 </details>
-
 
 ### Internal Process
 
