@@ -141,7 +141,7 @@ clean_fred_data <- function(data) {
       val <- str_replace_all(val, "\\s*=\\s*", " = ")
       val <- str_replace_all(val, "-\\s+", "-")
       val <- str_replace_all(val, "^z", "Z")
-      val <- str_replace_all(val, "[-–—]", "-")
+      val <- str_replace_all(val, "[-–—−]", "-")
       val <- str_replace_all(val, "\\[", "(")
       val <- str_replace_all(val, "\\]", ")")
       val <- str_replace_all(val, "X2\\((\\d+),\\s*N\\s*=\\s*\\d+\\)", "X2(\\1)")
