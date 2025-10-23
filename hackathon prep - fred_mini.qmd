@@ -14,8 +14,18 @@ library(rcrossref)
 library(purrr)
 library(jsonlite)
 library(glue)
+library(stringr)
+library(rlang)
 
-reported_success <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv", skip = 1)
+reported_success <- read_csv(
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv",
+  skip = 1,
+  show_col_types = FALSE
+) %>%
+  # ✅ validate DOI prefix: starts with 10., has 4–9 digits, and then a slash
+  filter(str_detect(doi_o, regex("^10\\.[0-9]{4,9}/", ignore_case = TRUE))) %>%
+  filter(str_detect(doi_r, regex("^10\\.[0-9]{4,9}/", ignore_case = TRUE)))
+
 ```
 
 Select relevant fields and deduplicate (we do not report study level)
@@ -23,11 +33,11 @@ Select relevant fields and deduplicate (we do not report study level)
 ```{r}
 fred_mini <- reported_success %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome) %>%
   group_by(doi_o, doi_r, ref_o, ref_r, url_r) %>%
-  summarise(outcome = case_when(
-    length(unique(outcome)) == 1 ~ unique(outcome),
-    TRUE ~ "mixed"
-  )) %>% 
-  distinct()
+  summarise(
+  outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
+  .groups = "drop"
+  ) %>% 
+  distinct(doi_o,doi_r,.keep_all = TRUE)
 ```
 
 Augment with bibliometric details
