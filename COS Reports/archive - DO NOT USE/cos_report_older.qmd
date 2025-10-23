@@ -14,7 +14,7 @@ editor: visual
 
 ------------------------------------------------------------------------
 
-![](images/cos-full-tag-h.webp){width="411"} ![](images/forrt_logo.png){width="237"}
+![](images/cos-full-tag-h.webp){width="342"} ![](images/forrt_logo.png){width="188"}
 
 The Center for Open Science and the Framework for Open and Reproducible Research Training are [collaborating for the SMART competition](https://www.cos.io/blog/cos-and-forrt-partner-to-increase-discoverability-and-usability-of-replication-evidence). As a result, FORRT will provide validated training data to competition participants. This report describes the data provided alongside it.
 
@@ -29,7 +29,6 @@ library(dplyr)
 library(stringr)
 library(tidyverse)
 library(glue)
-library(openxlsx)
 source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
 ```
 
@@ -41,7 +40,7 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 
 -   \~450 additional entries until August 15, 2025
 
--   \~1000 entries in total until October 15, 2025
+-   Further entries until October 1, 2025
 
 ### Changelog
 
@@ -82,6 +81,30 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Made progress plot interactive (plotly)
 -   Corrected entry progress numbers (some of the past numbers were erroneous due to an erroneous entry counting function)
 
+**Version 1.7 (2025-07-15)**
+
+-   Added outcome variable to codebook and dataset.
+
+-   Added preliminary outcome bar chart.
+
+**Version 1.8 (2025-09-26)**
+
+-   Fixed entry_id.
+
+-   Removed empty entry.
+
+-   Minor update to outcome variable explanation.
+
+-   Replaced Ground Truth plot with plotly version that shows frequency upon hovering over bars.
+
+-   Removed target entries from Current Status plot.
+
+-   Added details to ground truth.
+
+-   Removed note on lack of double-coding from Outcome variable section.
+
+-   Updated "Delivery of Data" targets.
+
 ### Terminology
 
 The relation between an article reporting a replication study and the corresponding original study can be complex. The following terms allow for almost every combination of original and replication studies to be documented in the dataset.
@@ -113,22 +136,14 @@ Each entry is assigned to two FReD Data Curators, who independently complete all
 
 entries_in_last_report <- 301 # february 7, 2025
 entries_in_last_report <- 357 # March 27, 2025
-entries_in_last_report <- 490 # May 23, 2025
+entries_in_last_report <- 490 # May, 2025
+entries_in_last_report <- 543 # June 30, 2025
 
 ds_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
 
 cleaned <- clean_fred_data(ds_raw)
 
 ds_raw <- cleaned$cleaned_data
-
-# check for invalid xml characters
-# invalid_xml_regex <- "[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD]"
-# bad <- sapply(ds_raw, function(col) any(grepl(invalid_xml_regex, col, perl=TRUE)))
-# which_cols <- names(ds_raw)[bad]
-ds_raw <- ds_raw %>%
-  mutate_if(is.character, ~gsub('[^ -~]', '', .))
-
-
 
 # filter out excluded studies
 ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
@@ -165,35 +180,30 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 # paste("Currently,", entries, "Entries are validated and ready for delivery.")
 ```
 
-```{r cleaning, include = FALSE, echo = FALSE}
-
-
-```
-
-The following plot displays the progress (black dots and line) and the targets (red dots) that were agreed on. Note that these numbers were corrected in June 2025; earlier reports had included some double-counting.
+The following plot displays the progress (black dots and line). Note that these numbers were corrected in June 2025; earlier reports had included some double-counting.
 
 ```{r progress, include = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE) 
 
-progress <- data.frame("date" = lubridate::dmy(c("01-11-2024"
-                                                 , "07-02-2025"
-                                                 , "27-03-2025"
+progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27-03-2025"
                                                  , "23-04-2025"
                                                  , "23-05-2025"
                                                  , "30-06-2025"  # date for end of June report [update manually]
-                                                 #, format(Sys.Date(), format = "%d-%m-%Y") # current date
-                                                 , "15-08-2025"  # August deadline
-                                                 , "15-10-2025"
+                                                 , format(Sys.Date(), format = "%d-%m-%Y") # current date
+                                                 # , "15-08-2025"  # August deadline
+                                                 # , "15-10-2025"
                                                  ))
-                       , "entries" = c(0, 301, 357, 403 # end of April number of entries
-                                       , 490 # end of May number of entries
-                                       , entries # June 30th number of entries
-                                       , NA # current number of entries
-                                       , NA # September 30th number of entries
+                       , "entries" = c(0, 308, 357, 403 # end of April number of entries
+                                       , 507 # end of May number of entries
+                                       , 543 # June 30th number of entries
+                                       , entries # current number of entries
+                                       # , NA # current number of entries
+                                       # , NA # September 30th number of entries
                                        )
-                       , "target" =  c(0, 300 # Feb 07 deadline
-                                       , NA , NA  , NA, NA , 750 # mid August deadline
-                                       , 1000 # Mid Oct deadline
+                       , "target" =  c(0
+                                       , 300 # NA
+                                       , NA , NA, NA, NA, NA 
+                                       # , 750, 1000
                                        ))
 progress_plot <- ggplot(progress, aes(x = date, y = entries)) + 
   geom_line() + 
@@ -232,6 +242,34 @@ ds$r_o <- convert_effect_sizes(es_values = ds$es_value_o, es_types = ds$es_type_
 
 # convert replication effect sizes
 ds$r_r <- convert_effect_sizes(es_values = ds$es_value_r, es_types = ds$es_type_r)
+```
+
+```{r cleaning, include = FALSE, echo = FALSE}
+
+# remove empty rows
+ds <- ds[!is.na(ds$ref_o), ]
+
+# replace effect ids with numbers
+ds$entry_id <- NA
+ds$effect_id <- NA
+counter <- 0
+
+ds$entry <- do.call(paste0, ds[, c("ref_o", "study_o", "ref_r", "study_r")])
+
+# for (i in unique(ds$entry)) {
+#   counter <- counter+1
+#   # ds[ds$entry == i, "effect_id"] <- paste(counter, 1:length(ds[ds$entry == i, "effect_id"]), sep = "_")
+#   ds[ds$entry == i, "effect_id"] <- 1:length(ds[ds$entry == i, "effect_id"])
+#   ds[ds$entry == i, "entry_id"] <- rep(counter, length(ds[ds$entry == i, "effect_id"]))
+# }
+
+ds <- ds %>%
+  group_by(entry) %>%
+  mutate(
+    entry_id = cur_group_id(),
+    effect_id = row_number()
+  ) %>%
+  ungroup()
 ```
 
 ### Success variable
@@ -314,6 +352,84 @@ scatterplot <-
       plotly::layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
 ```
 
+### Outcome variable (Ground truth)
+
+Given the complexity of deriving the success of a replication based on multiple statements, findings, methods, and theories, an alternative pathway to defining the success relies on the replication authors' judgment. From this perspective, they are seen as the experts of the original and replication studies and there is no need to apply a formal method to derive replication success solely from statistical parameters.
+
+The outcome variable has been coded on a replication **study level** (as opposed to the claim level of the success variable) and can be *successful, failed, mixed, uninformative, or statistically successful but flawed*.
+
+For cases where the outcome can be coded from the abstract, an LLM and a human coder independently determine the outcome. Other cases are coded by two human coders (e.g., multi-study articles). Outcomes for all cases are validated by a person.
+
+***Outcomes***
+
+We trust the replication authors whether they describe results as clear (successful or failed) or mixed. There are two special cases:
+
+-   *uninformative* should is coded if the replication authors explicitly say so, e.g., because their sample was too small
+
+-   *statistically successful but flawed* refers to replications where that is *the main message* (e.g., “we replicated x using the original methods, but show that they are not a valid test of the hypotheses”)
+
+***Data source***
+
+During determining the values, we looked at the most prominent quote that summarises the outcome (abstract \> conclusion \> discussion \> results).
+
+***Level***
+
+If there are multiple replication studies of the same target study in a paper, we tried to code what the authors say about each individual study (if they have different results).\
+
+```{r outcome, echo = FALSE}
+
+
+# leave only one entry per fred_id
+ds_outcome <- ds[!duplicated(ds$fred_id), ]
+
+# create table with outcomes for plotting
+oc <- as.data.frame(table(ds_outcome$outcome, useNA = "always"))
+names(oc) <- c("outcome", "freq")
+
+oc$percent <- oc$freq / sum(oc$freq)
+
+# plot
+ocplot <- ggplot(oc, aes(x = factor(outcome, levels = c(
+    NA, 
+    "statistically successful but flawed",
+    "uninformative",
+    "failed",
+    "mixed",
+    "successful"
+  )),
+  y = freq,
+  fill = factor(outcome, levels = c(
+    "successful",
+    "mixed",
+    "failed",
+    "uninformative",
+    "statistically successful but flawed",
+    NA
+  ))
+)) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = c(
+    "successful" = "lightgreen",
+    "mixed" = "orange",
+    "failed" = "red",
+    "uninformative" = "grey",
+    "statistically successful but flawed" = "darkgrey",
+    "NA" = "black"
+  )) +
+  scale_y_continuous(
+    name = "Frequency",
+    sec.axis = sec_axis(~ . / sum(oc$freq) * 100, name = "Percent")
+  ) +
+  coord_flip() +
+  labs(x = "Outcome") +
+  theme_minimal()
+
+plotly::ggplotly(ocplot, tooltip = "freq") %>% 
+      plotly::config(displayModeBar = FALSE) %>%
+      plotly::layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
+
+```
+
 ### Codebook
 
 The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data's format is planned for fall 2025.
@@ -330,25 +446,18 @@ DT::datatable(codebook, extensions = 'FixedColumns', options = list(pageLength =
 
 ```{r final dataset, echo = FALSE}
 
-# replace effect ids with numbers
-ds$entry_id <- NA
-ds$effect_id <- NA
-counter <- 0
-
-ds$entry <- do.call(paste0, ds[, c("ref_o", "study_o", "ref_r", "study_r")])
-
-for (i in unique(ds$entry)) {
-  counter <- counter+1
-  # ds[ds$entry == i, "effect_id"] <- paste(counter, 1:length(ds[ds$entry == i, "effect_id"]), sep = "_")
-  ds[ds$entry == i, "effect_id"] <- 1:length(ds[ds$entry == i, "effect_id"])
-  ds[ds$entry == i, "entry_id"] <- rep(counter, length(ds[ds$entry == i, "effect_id"]))
-}
-
 # ds <- ds %>% rename(fred_id = id)
 
-ds_final <- ds %>% select(all_of(codebook$Variable))
+# ds_final <- ds %>% dplyr::select(all_of(codebook$Variable))
+ds_final <- ds[, codebook$Variable]
 
-openxlsx::write.xlsx(ds_final, file = paste(Sys.Date(), '_COSdata_validated.xlsx', sep = ""))
+# sort by ds$entry_id
+ds_final <- ds_final[order(ds_final$entry_id), ]
+
+openxlsx::write.xlsx(ds_final, file = paste(Sys.Date(), "_COSdata_validated.xlsx", sep = "")) # , encoding = "iso-8859-1"
+
+write.csv(ds_final, file = paste(Sys.Date(), "_COSdata_validated.csv", sep = ""))
+
 
 list_of_studies <- ds_final[, c("ref_o", "ref_r", "discipline")]
 list_of_studies <- list_of_studies[!duplicated(list_of_studies), ]
