@@ -126,6 +126,19 @@ clean_fred_data <- function(data) {
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
+  # Convert DOI to lowercase
+  doi_lowercase_changes <- cleaned_data %>%
+    summarise(across(all_of(doi_cols), ~ sum(. != tolower(.), na.rm = TRUE))) %>%
+    pivot_longer(everything()) %>%
+    filter(value > 0)
+  if (nrow(doi_lowercase_changes) > 0) {
+    cleaned_data <- cleaned_data %>%
+      mutate(across(all_of(doi_cols), ~ tolower(.)))
+    total_doi_lowercase_changes <- sum(doi_lowercase_changes$value)
+    report_message <- glue::glue("Converted {total_doi_lowercase_changes} cell(s) in `doi_o`/`doi_r` columns to lowercase.")
+    cleaning_report <- add_report_item(cleaning_report, report_message)
+  }
+
   # --- 6. Clean ES Value Columns (Standardize stats, spacing, brackets) ---
   es_cols <- c("es_value_o", "es_value_r")
   data_before_es_clean <- cleaned_data
