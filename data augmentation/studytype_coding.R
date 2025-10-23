@@ -6,30 +6,6 @@
 # download most recent version
 ds <- openxlsx::read.xlsx("https://github.com/forrtproject/FReD-data/raw/refs/heads/main/COS%20Reports/2025-10-22_COSdata_validated.xlsx")
 
-ds$identifier_r <- paste(ds$doi_r, ds$url_r, sep = ", ")
-
-# count number of findings per doi_r
-entry_counter <- aggregate(ds, r_r ~ identifier_r, FUN = function(x){length(x)})
-names(entry_counter) <- c("identifier_r", "doicounter")
-
-# add counter to dataset
-ds_entrycount <- merge(x = ds, y = entry_counter, by = "identifier_r")
-names(ds_entrycount)
-
-keep <- c(
-  "doi_r",             "ref_o",
-  "doi_o",               "study_o",             "ref_r",               "url_r",               "study_r",
-  "description",         "claim_text_o",        "claim_page_o",
-  "n_o",                 "es_value_o",          "es_type_o",
-  "n_r", "es_value_r",          "es_type_r",
-  # "file_o",              "file_r",
-  "replication_success", "outcome",             "outcome_quote",
-  "out_quote_source",    "doicounter", "identifier_r"
-)
-
-ds_ec <- ds_entrycount[, keep]
-
-ds_ec <- ds_ec[!duplicated(ds_ec$ref_r), ]
 
 # code any of these entries as meta papers
 metapapers <- c(
@@ -50,7 +26,6 @@ metapapers <- c(
 "10.1126/science.aaf0918" # Camerer 2016
 )
 
-ds_ec$metapaper_r <- ds_ec$doi_r %in% metapapers
 
-openxlsx::write.xlsx(ds_ec, file = "data augmentation/ds_for_homogeneitycoding_identifier.xlsx")
-
+# determine metapaper_r = 1 for metapapers
+ds$metapaper_r <- as.integer(ds$doi_r %in% metapapers)

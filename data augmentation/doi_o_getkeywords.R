@@ -3,7 +3,7 @@
 # Get Keywords for doi_o --------------------------------------------------
 
 
-# download 2025-09-26 version
+# download most recent version
 ds <- openxlsx::read.xlsx("https://github.com/forrtproject/FReD-data/raw/refs/heads/main/COS%20Reports/2025-09-26_COSdata_validated.xlsx")
 
 
@@ -102,6 +102,5 @@ for (idx in seq_along(dois)) {
 
 kwdat
 
-
-
+write.csv(kwdat, file = "data augmentation/doio_keywords.csv")
 
