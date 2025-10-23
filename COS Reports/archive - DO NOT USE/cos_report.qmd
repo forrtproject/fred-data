@@ -9,7 +9,6 @@ date: "`r Sys.Date()`"
 format:
   html:
     embed-resources: true
-    toc: true
 editor: visual
 ---
 
@@ -86,25 +85,18 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Made progress plot interactive (plotly)
 -   Corrected entry progress numbers (some of the past numbers were erroneous due to an erroneous entry counting function)
 
+</details>
+
 **Version 1.7 (2025-09-27)**
 
 -   Clarified subjective success coding based on replication authors' interpretation (aka ground truth) and add distribution chart
--   Rename outcome variables into `reported_success` and `statistical_success` to avoid risk of confusion and added outcome charts
+-   Rename outcome variables into `reported_success` and `statistical_success` to avoid risk of confusion
 -   Rearranged the document to first describe the dataset and shift the internal process to the end
 
 **Version 1.8 (2025-10-10)**
 
 -   Fixed numbering in `effect_id` so that they count rows within each `entry_id`
 -   Added `fred_id_old`, which is largely (!) in line with `fred_id` from versions up until 1.4 to facilitate merging
-
-</details>
-
-**Version 1.9 (2025-10-16)**
-
--   Reformatted ground truth / `reported_success` plot
--   Removed \~10 duplicate effects
--   Added section with warnings and caveats for dataset users
--   Normalized all doi to lowercase, as they are inconsistently reported but not case sensitive
 
 ### Terminology
 
@@ -133,7 +125,6 @@ entries_in_last_report <- 301 # february 7, 2025
 entries_in_last_report <- 357 # March 27, 2025
 entries_in_last_report <- 490 # May, 2025
 entries_in_last_report <- 543 # June 30, 2025
-entries_in_last_report <- 689 # end of September
 
 ds_fully_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
 
@@ -223,14 +214,12 @@ progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27
                                                  , "23-04-2025"
                                                  , "23-05-2025"
                                                  , "30-06-2025" 
-                                                 , "30-09-2025"
                                                                                                   , format(Sys.Date(), format = "%d-%m-%Y") # current date
 
                                                  ))
                        , "entries" = c(0, 308, 357, 403 # end of April number of entries
                                        , 507 # end of May number of entries
                                        , 543 # June 30th number of entries
-                                       , 689
                                        , entries # July number of entries
                                        )
 )
@@ -362,6 +351,7 @@ reported_success <- reported_success %>%
 
 ds <- ds %>% left_join(reported_success, by = c("doi_o", "id_r", "study_o", "study_r"))
 
+
 p_data <- ds %>% 
   select(doi_o, id_r, study_o, study_r, reported_success) %>%
   distinct() %>% 
@@ -372,14 +362,13 @@ p_data <- ds %>%
   )) %>%
   count(reported_success) %>%
   mutate(pct = 100 * n / sum(n),
-         frequency = paste0(round(pct, 1), " % (", n, ")"))
+         label = paste0(round(pct, 1), " % (", n, ")"))
 
  #p_data %>% mutate(label = paste0(reported_success, ": ", label)) %>% pull(label) %>% clipr::write_clip()
 
-  ggplot(p_data, aes(y = reported_success, x = n, 
-                          fill = reported_success, label = frequency)) +
+  ggplot(p_data, aes(y = reported_success, x = n, fill = reported_success)) +
     geom_col() + 
-    geom_text(hjust = -0.1) +
+    geom_text(aes(label = label), hjust = -0.1) +
     labs(title = "Subjective success distribution", 
          x = "", y = "", 
          caption = "NB: Coded at the entry/study level.") +
@@ -392,17 +381,13 @@ p_data <- ds %>%
       "descriptive only" = "lightblue"
     )) +
     expand_limits(x = max(p_data$n) * 1.5)  + # ensure space for labels
-        theme_classic() +
-        theme(legend.position = "none") +
-      scale_x_continuous(
-    name = "Frequency",
-    sec.axis = sec_axis(~ . / sum(p_data$n) * 100, name = "Percent")
-      )
+        theme_bw() +
+        theme(legend.position = "none")
 
   # Missing success
-  # ds %>%
-  # select(fred_id, ref_o, doi_o, study_o, ref_r, doi_r, url_r, study_r, link_r, reported_success) %>%
-  # distinct(ref_o, doi_o, study_o, ref_r, doi_r, url_r, study_r, link_r, reported_success, .keep_all = TRUE) %>%
+  # ds %>% 
+  # select(doi_o, id_r, study_o, study_r, reported_success) %>%
+  # distinct() %>% 
   #   filter(is.na(reported_success)) %>% clipr::write_clip()
   
   
@@ -494,7 +479,7 @@ scatterplot <-
       plotly::layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
 ```
 
-## Codebook
+### Codebook
 
 The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data format is planned for fall 2025.
 
@@ -508,7 +493,7 @@ DT::datatable(codebook, extensions = 'FixedColumns', options = list(pageLength =
 
 ```
 
-## Validated Dataset
+### Validated Dataset
 
 ```{r final dataset, echo = FALSE}
 
@@ -540,18 +525,7 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by rep
 
 </details>
 
-## Some warnings and caveats
-
--   **Study numbers**: Please note that for large scale replication projects, there are no consistently reported study numbers. In this dataset, we use study numbers to consistently identify them but not necessarily to reflect the study order in the replication article or the associated dataset.
-
--   **Pre-Prints**: It is possible that some replication studies that are coded as preprints have been published in a journal in the meantime.
-
--   **Eta-squared**: Our [conversion function](https://forrt.org/FReD/reference/convert_effect_sizes.html) converts eta-squared but not partial eta-squared. It is possible that authors misreported one as the other.
-
--   **`entry_id` and `effect_id` variables are _not_ stable across versions of the dataset**. They should thus not be used to identify entries over time. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
-
-
-## Internal Process
+### Internal Process
 
 Entries were initially drawn from the [FORRT Replication Database](https://forrt-replications.shinyapps.io/fred_explorer/), which consists of crowdsourced data that has been single-coded and partially validated, an unsystematic list of additional replications we have maintained, and a broad literature search. A snapshot description of the FORRT Replication Database from October 2023 was published [here](https://doi.org/10.5334/jopd.101). Given that psychology has conducted the largest replication projets to date, the dataset is biased towards psychology, but we aimed to include other fields where possible.
 
