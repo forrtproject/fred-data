@@ -1,0 +1,243 @@
+---
+title: "COS/FReD merger & coding status"
+format: html
+---
+
+
+```{r setup}
+#devtools::install_github("forrtproject/FReD") 
+library(FReD)
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(glue)
+source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
+```
+
+
+```{r}
+ds_fully_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
+
+cleaned <- clean_fred_data(ds_fully_raw)
+
+ds_raw <- cleaned$cleaned_data
+
+replace_na_filename <- function(filename) {
+  filename %>% 
+    na_if(".pdf") %>% 
+    na_if("na.pdf") %>% 
+    na_if("NA - USE URL")
+}
+
+ds_raw <- ds_raw %>% 
+  mutate(file_o = replace_na_filename(file_o),
+         file_r = replace_na_filename(file_r))
+
+# filter empty rows
+ds_raw <- ds_raw %>% filter(!is.na(ref_o), !is.na(ref_r))
+
+# ID to distinguish replications where multiple are in same paper
+ds_raw$id_r <- coalesce(ds_raw$url_r, ds_raw$doi_r)
+
+# Remove the sub-heading row
+ds_raw <- ds_raw %>% filter(is.na(status) | !str_detect(status, "- assigned: the entry has been assigned to a coder"))
+
+ds_raw$fred_id <- ds_raw$id %>% str_replace("_[a-z]{1,2}$", "")
+ds_raw$fred_id_old <- ds_raw$id
+
+
+```
+
+## Identify entries to be double-coded
+
+```{r}
+status_not_validated <- ds_raw %>% group_by(doi_o, id_r) %>% 
+  filter(!any(status %in% c("validated - chosen", "validated - FReD but not COS", "study-pair excluded")), !all(status == "validated - discarded")) %>%
+  mutate(ready_validation = length(unique(coder_1)) > 1, needs_second = length(unique(coder_1)) == 1) %>% 
+  select(fred_id, ref_o, study_o, ref_r, study_r, doi_o, doi_r, url_r, id_r, ready_validation, needs_second) %>%
+  ungroup() %>% 
+  distinct(doi_o, id_r, .keep_all = TRUE)
+
+ready_validation <- status_not_validated %>% filter(ready_validation) %>% 
+  mutate(inconsistently_coded = fred_id %in% (ds_raw %>% filter(status == "validated - chosen") %>% pull(fred_id)),
+         help_needed = fred_id %in% (ds_raw %>% filter(status %in% c("help needed", "on hold - future validation")) %>% pull(fred_id))) 
+  
+ds_raw %>% semi_join(status_not_validated %>% filter(needs_second)) %>% filter(!is.na(exclusion)) %>% select(rowid, fred_id, status, exclusion, ref_o, study_o, ref_r, study_r) %>% clipr::write_clip()
+
+ready_validation %>% filter(inconsistently_coded) %>% clipr::write_clip()
+ready_validation %>% filter(!inconsistently_coded) %>% arrange(help_needed) %>% clipr::write_clip()
+
+second_coding <- status_not_validated %>% 
+  mutate(inconsistently_coded = fred_id %in% (ds_raw %>% filter(status == "validated - chosen") %>% pull(fred_id))) %>% 
+  filter(!inconsistently_coded, needs_second) 
+
+second_coding %>% clipr::write_clip()
+```
+
+## Identify coded crowd-sourced entries not yet in COS
+
+```{r}
+
+fred_data <- FReD::load_fred_data()
+
+fred_effects <- fred_data %>% filter(!is.na(es_orig_value), !is.na(es_rep_value), is.na(exclusion)) %>%
+  mutate(doi_original = tolower(doi_original),
+         doi_replication = tolower(doi_replication),
+         id_r = coalesce(osf_link, doi_replication)) %>% 
+  filter(!str_detect(id, "curatescience"))
+
+coded <-  fred_effects %>% semi_join(ds_raw %>% mutate(doi_o = tolower(doi_o), doi_r = tolower(doi_r), id_r = coalesce(url_r, doi_r)) , by = c("doi_original" = "doi_o", "id_r" = "id_r")) %>% 
+  bind_rows(
+    fred_effects %>% semi_join(ds_raw %>% mutate(doi_o = tolower(doi_o), doi_r = tolower(doi_r)) , by = c("doi_original" = "doi_o", "doi_replication" = "doi_r"))
+  ) %>% 
+  distinct()
+
+ as_second_coding <- fred_effects %>% 
+  semi_join(second_coding %>% mutate(doi_o = tolower(doi_o), doi_r = tolower(doi_r), id_r = coalesce(url_r, doi_r)) , by = c("doi_original" = "doi_o", "id_r" = "id_r")) %>% 
+  bind_rows(
+    fred_effects %>% semi_join(second_coding %>% mutate(doi_o = tolower(doi_o), doi_r = tolower(doi_r)) , by = c("doi_original" = "doi_o", "doi_replication" = "doi_r"))
+  ) %>% 
+  distinct()
+
+changed_identifiers <- fred_effects %>% 
+  semi_join(ds_raw, by = c("id" = "fred_id"))
+
+  
+for_cos <- as_second_coding %>%
+  transmute(
+    id = id,
+    contributors = contributors,
+    date_entered = date_entered,
+    date_updated = date_updated,
+    notes_coder = NA_character_,
+    notes_validation = notes_validation,
+    ref_o = ref_original,
+    doi_o = doi_original,
+    study_o = study_original,
+    file_o = NA_character_,
+    link_o = NA_character_,
+    ref_r = ref_replication,
+    doi_r = doi_replication,
+    url_r = osf_link,
+    study_r = study_replication,
+    file_r = NA_character_,
+    label_r = NA_character_,
+    link_r = NA_character_,
+    exclusion = exclusion,
+    discipline = discipline,
+    effect = effect,
+    tags = tags,
+    description = description,
+    claim_text_o = claim_text_orig,
+    claim_page_o = claim_text_orig_page,
+    n_o = n_original,
+    es_value_o = es_orig_value,
+    es_type_o = es_orig_estype,
+    es_repr_o = NA_character_,
+    pval_value_o = pval_value_o,
+    pval_type_o = pval_type_o,
+    pval_tails_o = pval_tails_o,
+    nested_o = nesting,
+    prereg_o = preregistration,
+    n_r = n_replication,
+    es_value_r = es_rep_value,
+    es_type_r = es_rep_estype,
+    es_repr_r = NA_character_,
+    pval_value_r = pval_value_r,
+    pval_type_r = pval_type_r,
+    pval_tails_r = pval_tails_r,
+    nested_r = nesting,
+    prereg_r = preregistration,
+    closeness_r = closeness
+  )
+
+for_cos %>% writexl::write_xlsx("old_to_add_to_COS.xlsx")
+
+remaining_effects <- fred_effects %>% 
+  anti_join(coded) %>% 
+  anti_join(as_second_coding) %>% 
+  anti_join(changed_identifiers)
+
+
+remaining_entries <- remaining_effects %>% 
+  mutate(id_orig = coalesce(doi_original, refonly_original),
+         id_rep = coalesce(osf_link, doi_replication)) %>%
+  distinct(id_orig, id_rep, .keep_all = TRUE) %>% 
+  anti_join(
+    bind_rows(coded, as_second_coding, changed_identifiers) %>% 
+      mutate(id_orig = coalesce(doi_original, refonly_original),
+         id_rep = coalesce(osf_link, doi_replication)),
+    by = c("doi_original", "doi_replication"))
+
+remaining_entries <- remaining_entries %>% 
+  mutate(decision = case_when(
+        str_detect(ref_replication, "[Rr]+eplica") ~ "in",
+    str_detect(ref_replication, "meta-an") ~ "out",
+    TRUE ~ "unclear"
+  ))
+remaining_entries$abstract <- NA_character_
+remaining_entries[remaining_entries$decision == "unclear",]$abstract <- map(remaining_entries[remaining_entries$decision == "unclear",]$doi_replication,
+                                                                           possibly(rcrossref::cr_abstract, otherwise = NA)) %>% unlist()
+
+remaining_entries <- remaining_entries %>% 
+  mutate(decision = case_when(
+        str_detect(abstract, "[Rr]+eplica") ~ "in",
+        TRUE ~ decision
+  ))
+
+
+remaining_entries %>% 
+  # ML2 was coded with different IDs
+  filter(decision=="in", !str_detect(id, "Manylabs2")) %>% 
+  transmute(
+    id = id,
+    contributors = contributors,
+    date_entered = date_entered,
+    date_updated = date_updated,
+    notes_coder = NA_character_,
+    notes_validation = notes_validation,
+    ref_o = ref_original,
+    doi_o = doi_original,
+    study_o = study_original,
+    file_o = NA_character_,
+    link_o = NA_character_,
+    ref_r = ref_replication,
+    doi_r = doi_replication,
+    url_r = osf_link,
+    study_r = study_replication,
+    file_r = NA_character_,
+    label_r = NA_character_,
+    link_r = NA_character_,
+    exclusion = exclusion,
+    discipline = discipline,
+    effect = effect,
+    tags = tags,
+    description = description,
+    claim_text_o = claim_text_orig,
+    claim_page_o = claim_text_orig_page,
+    n_o = n_original,
+    es_value_o = es_orig_value,
+    es_type_o = es_orig_estype,
+    es_repr_o = NA_character_,
+    pval_value_o = pval_value_o,
+    pval_type_o = pval_type_o,
+    pval_tails_o = pval_tails_o,
+    nested_o = nesting,
+    prereg_o = preregistration,
+    n_r = n_replication,
+    es_value_r = es_rep_value,
+    es_type_r = es_rep_estype,
+    es_repr_r = NA_character_,
+    pval_value_r = pval_value_r,
+    pval_type_r = pval_type_r,
+    pval_tails_r = pval_tails_r,
+    nested_r = nesting,
+    prereg_r = preregistration,
+    closeness_r = closeness
+  ) %>% 
+  writexl::write_xlsx("extra_to_add_to_COS.xlsx")
+
+
+```
