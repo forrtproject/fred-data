@@ -36,12 +36,12 @@ Look up replication families by **full original DOI**.
 
 #### POST
 ```bash
-curl -X POST "https://ouj1xoiypb.execute-api.eu-central-1.amazonaws.com/v1/original-lookup"   -H "Content-Type: application/json"   -d '{"dois":["10.1234/abcde.2020.001"]}'
+curl -X POST "https://ouj1xoiypb.execute-api.eu-central-1.amazonaws.com/v1/original-lookup"   -H "Content-Type: application/json"   -d '{"dois":["10.1037/0022-3514.45.4.805"]}'
 ```
 
 #### GET
 ```
-https://ouj1xoiypb.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1234/abcde.2020.001
+https://ouj1xoiypb.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1037/0022-3514.45.4.805
 ```
 
 ---
