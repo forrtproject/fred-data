@@ -217,11 +217,13 @@ doi_data_r_parsed <- doi_data_r %>%
   )
 
 fred_mini %>% 
+  rowwise() %>% 
   mutate(doi_o = tolower(doi_o),
          doi_r = tolower(doi_r),
          doi_o_hash = str_sub(digest::digest(doi_o, "md5", serialize = FALSE), 1, 3),
          doi_r_hash = str_sub(digest::digest(doi_r, "md5", serialize = FALSE), 1, 3)
          ) %>%
+  ungroup() %>% 
   left_join(doi_data_o_parsed, by = c("doi_o" = "doi")) %>%
   left_join(doi_data_r_parsed, by = c("doi_r" = "doi")) %>%
   select(doi_o, doi_o_hash, title_o, author_o, journal_o, year_o, volume_o, issue_o, pages_o, apa_ref_o, bibtex_ref_o,
