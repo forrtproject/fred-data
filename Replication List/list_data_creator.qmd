@@ -11,8 +11,6 @@ Notes: This is heavily based on the fred-mini creator. Currently, it includes co
 
 ## TO DOs
 
--   exclude meta papers without URLs (Boyce, Soto, possible others)
-
 -   add further variables
 
 ```{r setup}
@@ -312,7 +310,7 @@ dois <- dois[!is.na(dois)]
 # dois is vector of DOIs
 kwdat <- data.frame(
   doi_o = dois,
-  keywords = NA_character_,
+  keywords_o = NA_character_, # variable name of keywords is determined here
   error = NA_character_,
   stringsAsFactors = FALSE
 )
@@ -365,16 +363,53 @@ metapapers <- c(
 # determine metapaper_r = 1 for metapapers
 fred_mini$metapaper_r <- as.integer(fred_mini$doi_r %in% metapapers)
 
-# excluding cases
 
-# keep only those with url_r non missing: Boyce, Soto, XPHI
+```
+
+## Exclusions
+
+```{r Exclusion of cases}
+
 # TO DO: [check others]
+
+# show meta studies
+metarefs <- unique(fred_mini[fred_mini$metapaper_r == 1, "ref_r"])
+
+# keep only those metastudies with url_r non missing: Boyce, Soto, XPHI
+keep <- !(fred_mini$metapaper_r == 1 & is.na(fred_mini$url_r))
+fred_mini <- fred_mini[keep, ]
+```
+
+## Peer Review Status
+
+```{r review_r}
+
+# NA = working paper
+# "Thesis"
+# all else: "Peer-reviewed (published in a journal)"
+# preprint servers: "Not peer-reviewed (e.g., preprint)"
+preprint_servers <- c(
+"SSRN Electronic Journal"
+, "Open Research Europe"
+)
+
+
+fred_mini <- fred_mini %>%
+mutate(
+publicationstatus_r = case_when(
+is.na(journal_r) ~ "Working paper",
+journal_r %in% .env$preprint_servers ~ "Not peer-reviewed (e.g., preprint)",
+TRUE ~ "Peer-reviewed (published in a journal)"
+)
+)
 
 ```
 
 ## Variable names
 
 ```{r renaming}
+
+# nothing is happening here, yet
 
 varnames <- data.frame("old" = names(fred_mini)
                             , "new" = NA)
