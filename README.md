@@ -180,6 +180,3 @@ console.log(await res.json());
 Function	Source	Purpose	DynamoDB Table
 prefixLookup	src/handler.ts	Looks up replication families via prefix hashes	zotero-replication-backend-prefix
 originalLookup	src/original.ts	Looks up replication families via original DOIs	zotero-replication-backend-original
-
-
-### Python
