@@ -1,10 +1,57 @@
 ---
 title: "SMART Competition Data Report"
 author: 
-  - Lukas Röseler
-  - Lukas Wallrich
-  - Sarah Ashcroft-Jones
-  - Flavio Azevedo
+  - name: Lukas Röseler
+    orcid: 0000-0002-6446-1901
+  - name: Lukas Wallrich
+    orcid: 0000-0003-2121-5177
+  - name: Flavio Azevedo
+    orcid: 0000-0001-9000-8513
+  - name: Sarah Ashcroft-Jones
+    orcid: 0000-0002-8614-9310
+  - name: Sriraj Aiyer
+    orcid: 0000-0002-1755-948X
+  - name: Ognjen Bobičić
+    orcid: 0009-0007-7743-480X
+  - name: Kathryn Bottitta
+  - name: Antony Casula
+    orcid: 0009-0000-8170-1455
+  - name: Adira Daniel
+    orcid: 0009-0004-6830-2141
+  - name: Teshome Kebede Deressa
+    orcid: 0000-0003-1351-1849
+  - name: Corinna Gemmecke
+    orcid: 0009-0001-9449-7569
+  - name: Marta Kołczyńska
+    orcid: 0000-0003-4981-0437
+  - name: Radoslaw P. Lach
+    orcid: 0009-0008-5585-0324
+  - name: Diego Manriquez-Robles
+    orcid: 0000-0002-6394-7854
+  - name: Brinna E. Mawhinney
+    orcid: 0000-0002-4926-3026
+  - name: Maureen Osano
+    orcid: 0009-0005-5333-2038
+  - name: Nikita Otstavnov
+    orcid: 0000-0001-9818-4642
+  - name: Aleksandr Pravednikov
+    orcid: 0000-0002-2553-2359
+  - name: Husnain Raza
+    orcid: 0000-0002-2051-985X
+  - name: Hakile Resulbegoviq
+    orcid: 0009-0006-2864-4424
+  - name: Julia Fabienne Sandkühler
+    orcid: 0000-0002-4184-2963
+  - name: Alejandro Sandoval-Lentisco
+    orcid: 0000-0002-7876-0101
+  - name: Sophie Schüller
+    orcid: 0009-0002-7471-5116
+  - name: Roksana Sobolak
+    orcid: 0009-0001-9534-6439
+  - name: Maria Stogianni
+    orcid: 0000-0002-3238-4331
+  - name: Mariem Younssi
+    orcid: 0009-0006-3739-7795
 date: "`r Sys.Date()`"
 format:
   html:
@@ -198,7 +245,12 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 
 ```{r add-clean-refs, include = FALSE, echo = FALSE}
 
-refs <- readxl::read_excel("crossref_retrieved_references.xlsx")
+# refs <- readxl::read_excel("FReD-data/crossref_retrieved_references.xlsx")
+
+url <- "https://raw.githubusercontent.com/forrtproject/FReD-data/main/crossref_retrieved_references.xlsx"
+tf <- tempfile(fileext = ".xlsx")
+download.file(url, tf, mode = "wb")
+refs <- readxl::read_excel(tf)
 
 ds <- ds %>% 
   mutate(doi_r = tolower(doi_r),
@@ -395,7 +447,7 @@ p_data <- ds %>%
         theme_classic() +
         theme(legend.position = "none") +
       scale_x_continuous(
-    name = "Frequency",
+  - name = "Frequency",
     sec.axis = sec_axis(~ . / sum(p_data$n) * 100, name = "Percent")
       )
 
@@ -548,8 +600,7 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by rep
 
 -   **Eta-squared**: Our [conversion function](https://forrt.org/FReD/reference/convert_effect_sizes.html) converts eta-squared but not partial eta-squared. It is possible that authors misreported one as the other.
 
--   **`entry_id` and `effect_id` variables are _not_ stable across versions of the dataset**. They should thus not be used to identify entries over time. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
-
+-   **`entry_id` and `effect_id` variables are *not* stable across versions of the dataset**. They should thus not be used to identify entries over time. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
 
 ## Internal Process
 
