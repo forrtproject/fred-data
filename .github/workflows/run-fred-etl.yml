@@ -3,7 +3,7 @@ name: Run FReD ETL
 on:
   workflow_dispatch:   # manual trigger from GitHub UI
    inputs:
-    target _tables:
+    target_tables:
       description: 'Which database to load data into (test or original)'
       required: true
       default: 'test'
@@ -34,7 +34,7 @@ jobs:
 
       - name: Select target table(s)
         run: |
-          if [ "${{ github.event.inputs.target_table }}" = "original" ]; then
+          if [ "${{ github.event.inputs.target_tables }}" = "original" ]; then
             echo "Using ORIGINAL tables"
             echo "TABLE=${{ secrets.TABLE }}" >> $GITHUB_ENV
             echo "ORIGINAL_TABLE=${{ secrets.ORIGINAL_TABLE }}" >> $GITHUB_ENV
