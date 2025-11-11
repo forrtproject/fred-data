@@ -265,6 +265,22 @@ ds <- ds %>%
 
 ```
 
+```{r add-author-overlap, include = FALSE, echo = FALSE}
+
+author_overlap <- readxl::read_excel("../crossref_author_overlap.xlsx")
+
+ds <- ds %>% 
+  mutate(doi_r = tolower(doi_r),
+         doi_o = tolower(doi_o)) %>% 
+  left_join(
+    author_overlap %>% 
+      mutate(doi_o = tolower(doi_o),
+             doi_r = tolower(doi_r)),
+    by = c("doi_o", "doi_r")
+  )
+
+```
+
 The following plot displays the progress (black dots and line) and the targets (red dots) that were agreed on. Note that these numbers were corrected in June 2025; earlier reports had included some double-counting.
 
 ```{r progress, include = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
