@@ -7,6 +7,8 @@ format: html
 
 This code retrieves author information from CrossRef for original and replication studies, then checks for author overlap between them.
 
+**Note:** This script should be run periodically (similar to `crossref_ref_retrieval.qmd`) to update the author data for new entries. The results are stored in `crossref_retrieved_authors.xlsx` and `crossref_author_overlap.xlsx`, which are then loaded by the COS report to add the `author_overlap` variable to the dataset.
+
 ```{r}
 library(tidyverse)
 library(rcrossref)
@@ -91,6 +93,7 @@ if (length(missing_dois) > 0) {
 
 ```{r}
 # Function to extract author names from JSON
+# Returns a vector of lowercased family names for comparison
 extract_author_names <- function(author_json) {
   if (is.na(author_json) || author_json == "" || is.null(author_json)) {
     return(character(0))
@@ -108,14 +111,24 @@ extract_author_names <- function(author_json) {
       names_vec <- character(nrow(authors))
       for (i in seq_len(nrow(authors))) {
         family <- if ("family" %in% names(authors)) authors$family[i] else NA
-        given <- if ("given" %in% names(authors)) authors$given[i] else NA
         name <- if ("name" %in% names(authors)) authors$name[i] else NA
         
         # Use family name primarily, fallback to name field
-        final_name <- if (!is.na(family)) family else name
-        names_vec[i] <- if (!is.na(final_name)) tolower(trimws(final_name)) else NA_character_
+        final_name <- if (!is.na(family) && nzchar(as.character(family))) {
+          family 
+        } else if (!is.na(name) && nzchar(as.character(name))) {
+          name
+        } else {
+          NA_character_
+        }
+        
+        names_vec[i] <- if (!is.na(final_name)) {
+          tolower(trimws(as.character(final_name)))
+        } else {
+          NA_character_
+        }
       }
-      return(na.omit(names_vec))
+      return(na.omit(names_vec[nzchar(names_vec)]))
     }
     
     # Handle list format
@@ -124,18 +137,29 @@ extract_author_names <- function(author_json) {
       for (i in seq_along(authors)) {
         author <- authors[[i]]
         family <- if ("family" %in% names(author)) author$family else NA
-        given <- if ("given" %in% names(author)) author$given else NA
         name <- if ("name" %in% names(author)) author$name else NA
         
         # Use family name primarily, fallback to name field
-        final_name <- if (!is.na(family)) family else name
-        names_vec[i] <- if (!is.na(final_name)) tolower(trimws(final_name)) else NA_character_
+        final_name <- if (!is.na(family) && nzchar(as.character(family))) {
+          family
+        } else if (!is.na(name) && nzchar(as.character(name))) {
+          name
+        } else {
+          NA_character_
+        }
+        
+        names_vec[i] <- if (!is.na(final_name)) {
+          tolower(trimws(as.character(final_name)))
+        } else {
+          NA_character_
+        }
       }
-      return(na.omit(names_vec))
+      return(na.omit(names_vec[nzchar(names_vec)]))
     }
     
     return(character(0))
   }, error = function(e) {
+    message("Error extracting author names: ", e$message)
     return(character(0))
   })
 }
