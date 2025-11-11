@@ -1,9 +1,9 @@
 ---
-title: "FReD mini"
+title: "FLoRA"
 format: html
 ---
 
-## FReD mini for hackathon/tools
+## FLoRA for hackathon/tools
 
 For the Zotero plugin and preprint bot, we need a list of originals and replications, with outcomes and full bibliographic information.
 
@@ -31,7 +31,7 @@ reported_success <- read_csv(
 Select relevant fields and deduplicate (we do not report study level)
 
 ```{r}
-fred_mini <- reported_success %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome) %>%
+flora <- reported_success %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome) %>%
   group_by(doi_o, doi_r, ref_o, ref_r, url_r) %>%
   summarise(
   outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
@@ -184,7 +184,7 @@ bibtex_reference <- function(doi, title, author_json, journal, year, volume, iss
   })
 }
 
-doi_data_o <- get_doi_data(fred_mini$doi_o)
+doi_data_o <- get_doi_data(flora$doi_o)
 
 doi_data_o_parsed <- doi_data_o %>% 
   transmute(
@@ -200,7 +200,7 @@ doi_data_o_parsed <- doi_data_o %>%
  bibtex_ref_o = bibtex_reference(doi, title, author_o, journal_o, year_o, volume_o, issue_o, pages_o)
   )
 
-doi_data_r <- get_doi_data(fred_mini$doi_r)
+doi_data_r <- get_doi_data(flora$doi_r)
 
 doi_data_r_parsed <- doi_data_r %>% 
   transmute(
@@ -216,7 +216,7 @@ doi_data_r_parsed <- doi_data_r %>%
     bibtex_ref_r = bibtex_reference(doi, title, author_r, journal_r, year_r, volume_r, issue_r, pages_r)
   )
 
-fred_mini %>% 
+flora %>% 
   rowwise() %>% 
   mutate(doi_o = tolower(doi_o),
          doi_r = tolower(doi_r),
@@ -230,6 +230,6 @@ fred_mini %>%
          doi_r, doi_r_hash, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r, apa_ref_r, bibtex_ref_r,
          ref_o, ref_r, url_r, outcome) %>%
   filter(!is.na(title_o), !is.na(title_r)) %>% 
-  write_csv("fred_mini.csv")
+  write_csv("flora.csv")
 ```
 
