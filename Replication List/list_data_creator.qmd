@@ -38,7 +38,7 @@ reported_success <- read_csv(
 ## Select relevant fields and deduplicate (we do not report study level)
 
 ```{r deduplication}
-fred_mini <- reported_success %>% filter(validation == "validated - chosen")  %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome, outcome_quote, out_quote_source) %>%
+flora <- reported_success %>% filter(validation == "validated - chosen")  %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome, outcome_quote, out_quote_source) %>%
   group_by(doi_o, doi_r, ref_o, ref_r, url_r) %>%
   summarise(
   outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
@@ -193,7 +193,7 @@ bibtex_reference <- function(doi, title, author_json, journal, year, volume, iss
   })
 }
 
-doi_data_o <- get_doi_data(fred_mini$doi_o)
+doi_data_o <- get_doi_data(flora$doi_o)
 
 doi_data_o_parsed <- doi_data_o %>% 
   transmute(
@@ -209,7 +209,7 @@ doi_data_o_parsed <- doi_data_o %>%
  bibtex_ref_o = bibtex_reference(doi, title, author_o, journal_o, year_o, volume_o, issue_o, pages_o)
   )
 
-doi_data_r <- get_doi_data(fred_mini$doi_r)
+doi_data_r <- get_doi_data(flora$doi_r)
 
 doi_data_r_parsed <- doi_data_r %>% 
   transmute(
@@ -225,7 +225,7 @@ doi_data_r_parsed <- doi_data_r %>%
     bibtex_ref_r = bibtex_reference(doi, title, author_r, journal_r, year_r, volume_r, issue_r, pages_r)
   )
 
-fred_mini <- fred_mini %>% 
+flora <- flora %>% 
   rowwise() %>% 
   mutate(doi_o = tolower(doi_o),
          doi_r = tolower(doi_r),
@@ -303,7 +303,7 @@ get_openalex_keywords <- function(doi, mailto = NULL, fallback_to_concepts = TRU
 `%||%` <- function(a, b) if (!is.null(a) && length(a) > 0) a else b
 
 
-dois <- unique(fred_mini$doi_o)
+dois <- unique(flora$doi_o)
 dois <- dois[!is.na(dois) & grepl("^10", dois)]
 dois <- dois[!is.na(dois)]
 
@@ -333,7 +333,7 @@ kwdat <- data.frame(
 kwdat <- read.csv("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/data%20augmentation/doio_keywords.csv")
 kwdat <- kwdat[ ,-1]
 
-fred_mini <- merge(fred_mini, kwdat[, 1:2], by = "doi_o")
+flora <- merge(flora, kwdat[, 1:2], by = "doi_o")
 ```
 
 ## Manually coded values
@@ -361,7 +361,7 @@ metapapers <- c(
 
 
 # determine metapaper_r = 1 for metapapers
-fred_mini$metapaper_r <- as.integer(fred_mini$doi_r %in% metapapers)
+flora$metapaper_r <- as.integer(flora$doi_r %in% metapapers)
 
 
 ```
@@ -373,11 +373,11 @@ fred_mini$metapaper_r <- as.integer(fred_mini$doi_r %in% metapapers)
 # TO DO: [check others]
 
 # show meta studies
-metarefs <- unique(fred_mini[fred_mini$metapaper_r == 1, "ref_r"])
+metarefs <- unique(flora[flora$metapaper_r == 1, "ref_r"])
 
 # keep only those metastudies with url_r non missing: Boyce, Soto, XPHI
-keep <- !(fred_mini$metapaper_r == 1 & is.na(fred_mini$url_r))
-fred_mini <- fred_mini[keep, ]
+keep <- !(flora$metapaper_r == 1 & is.na(flora$url_r))
+flora <- flora[keep, ]
 ```
 
 ## Peer Review Status
@@ -394,7 +394,7 @@ preprint_servers <- c(
 )
 
 
-fred_mini <- fred_mini %>%
+flora <- flora %>%
 mutate(
 publicationstatus_r = case_when(
 is.na(journal_r) ~ "Working paper",
@@ -411,7 +411,7 @@ TRUE ~ "Peer-reviewed (published in a journal)"
 
 # nothing is happening here, yet
 
-varnames <- data.frame("old" = names(fred_mini)
+varnames <- data.frame("old" = names(flora)
                             , "new" = NA)
 # varnames$new <- dplyr::case_match(varnames$old, )
 ```
@@ -419,6 +419,6 @@ varnames <- data.frame("old" = names(fred_mini)
 ## Save dataset
 
 ```{r saving}
-write_csv(fred_mini, "libre2.csv")
-openxlsx::write.xlsx(fred_mini, file = "libre2.xlsx")
+write_csv(flora, "libre2.csv")
+openxlsx::write.xlsx(flora, file = "libre2.xlsx")
 ```
