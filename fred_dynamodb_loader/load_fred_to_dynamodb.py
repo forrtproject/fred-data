@@ -29,6 +29,7 @@ import os, sys, json
 from collections import defaultdict
 import boto3
 import pandas as pd
+import html
 
 TABLE          = os.getenv("TABLE")
 AWS_REGION     = os.getenv("AWS_REGION", "eu-central-1")
@@ -48,20 +49,46 @@ if not ORIGINAL_TABLE:
         print("ERROR: set ORIGINAL_TABLE (or name TABLE like ...-prefix)", file=sys.stderr)
         sys.exit(1)
 
+from ftfy import fix_text
+import html
+import json
+import pandas as pd
+from ftfy import fix_text
+
 def to_jsonable(value):
-    """Convert pandas NA to None; parse JSON-looking strings into objects; else return as-is."""
+    """
+    Cleans and converts a single cell value for JSON storage:
+      - NaN / NA -> None
+      - Decodes HTML entities (&amp; -> &)
+      - Fixes encoding errors (mojibake like √± -> ñ)
+      - Parses JSON-looking strings ({...} or [...]) safely
+      - Returns clean string / number / bool / None
+    """
     if pd.isna(value):
         return None
+
     if isinstance(value, str):
+        # Trim and clean
         s = value.strip()
+
+        # Step 1: Decode HTML entities
+        s = html.unescape(s)
+
+        # Step 2: Fix encoding issues (mojibake)
+        s = fix_text(s)
+
+        # Step 3: Parse JSON-like strings if valid
         if s.startswith("{") or s.startswith("["):
             try:
                 return json.loads(s)
             except Exception:
-                return value  # keep original string if not valid JSON
+                return s  # not valid JSON, return as-is
+
+        return s  # normal string, cleaned
+    else:
+        # numbers / booleans stay as-is
         return value
-    # numbers/bools are fine as-is
-    return value
+
 
 def clear_table(table):
     """Delete all items from a DynamoDB table (scans in batches)."""
@@ -109,7 +136,7 @@ def main():
         print(f"ERROR: file not found: {csv_path}", file=sys.stderr); sys.exit(3)
 
     print(f"Reading CSV: {csv_path}")
-    df = pd.read_csv(csv_path)
+    df = pd.read_csv(csv_path, encoding="utf-8", engine="python", on_bad_lines="warn")
 
     # verify required columns exist (case-insensitive)
     cols_lower = {c.lower(): c for c in df.columns}
