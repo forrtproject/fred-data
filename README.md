@@ -162,29 +162,49 @@ curl " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-looku
 
 Fetch replication studies directly linked to a **full DOI** of an original publication.
 
-**URLs**
+**URLs of Primary API**
 
 | Method | URL                                                                                         |
 | :----- | :------------------------------------------------------------------------------------------ |
 | `POST` | `https://rep-api.forrt.org/v1/original-lookup`                                              |
 | `GET`  | `https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004`              |
 
+**URLs of Test API**
+
+| Method | URL                                                                |
+| :----- | :----------------------------------------------------------------- |
+| `POST` | ` https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup`                       |
+| `GET`  | `https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598`      |
+
+
 #### Example Requests
 
-**POST**
+**POST of Primary API**
 
 ```bash
 curl -X POST "https://rep-api.forrt.org/v1/original-lookup" \
   -H "Content-Type: application/json" \
-  -d '{"dois": ["10.1016/j.jesp.2015.04.004"]}'
+  -d '{"dois": ["doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"]}'
 ```
-
-**GET**
+**POST of Test API**
 
 ```bash
-curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004"
+curl -X POST " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup" \
+  -H "Content-Type: application/json" \
+  -d '{"dois": ["doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"]}'
 ```
 
+
+**GET of Primary API**
+
+```bash
+curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
+```
+**GET of Test API**
+
+```bash
+curl "[https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
+```
 #### Example Response — `200 OK`
 
 ```json
