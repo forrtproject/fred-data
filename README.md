@@ -45,10 +45,8 @@ https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com
 ## Quick Start
 
 **Check a hash prefix (GET)**
-
-
 ---
-```The "198" is a real hash prefix, and the "30e" does not exist in the database so that we could monitor the API's behaviour.```
+The "198" is a real hash prefix, and the "30e" does not exist in the database so that we could monitor the API's behaviour.
 The Primary API:
 ```bash
 curl "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e"
@@ -71,9 +69,6 @@ The test API:
 ```bash
 curl "https://iaq17d1dw6.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
 ```
-
-
-
 ---
 
 ## Endpoints
