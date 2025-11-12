@@ -6,11 +6,15 @@ Query the database of replications either via **privacy-preserving 3-character D
 > This API powers the **Zotero Replication Checker** plugin, connecting Zotero items to replication data from the FReD database.
 
 **Base URL**
+We have two separate APIs with two different URLs, one serves a Primary, and the URL is : 
 
 ```
-https://rep-api.forrt.org/v1
+The Base API URL(Dev1): https://rep-api.forrt.org/v1
 ```
-
+The test API URL is(Dev0) :
+```
+https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com
+```
 ---
 
 ## Table of Contents
