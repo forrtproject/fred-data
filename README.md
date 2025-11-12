@@ -6,10 +6,10 @@ Query the database of replications either via **privacy-preserving 3-character D
 > This API powers the **Zotero Replication Checker** plugin, connecting Zotero items to replication data from the FReD database.
 
 **Base URL**
-We have two separate APIs with two different URLs, one serves a Primary, and the URL is : 
+We have two separate APIs with two different URLs, one serves a Primary, and the URL is(Dev1) : 
 
 ```
-The Base API URL(Dev1): https://rep-api.forrt.org/v1
+https://rep-api.forrt.org/v1
 ```
 The test API URL is(Dev0) :
 ```
@@ -45,16 +45,31 @@ https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com
 ## Quick Start
 
 **Check a hash prefix (GET)**
-
+```bash
+The "198" is a real hash prefix, and the "30e" does not exist in the database so that we could monitor the API's behaviour.
+```
+The Primary API:
 ```bash
 curl "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e"
 ```
-
-**Lookup by full DOI (GET)**
-
+The test API:
 ```bash
-curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004"
+curl " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup?prefixes=198,30e"
 ```
+**Lookup by full DOI (GET)**
+```bash
+The "10.1037/a0027598" is a real DOI, and the "10.1016/j.jesp.2015.04.004" does not exist in the database so that we could monitor the API's behaviour.
+```
+The Primary API:
+```bash
+curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
+```
+The test API:
+```bash
+curl "https://iaq17d1dw6.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
+```
+
+
 
 ---
 
