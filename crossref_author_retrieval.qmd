@@ -39,7 +39,11 @@ all_dois <- c(study_pairs$doi_o, study_pairs$doi_r) %>%
 ```{r}
 # Check if we have an existing author file
 authors_df <- if (file.exists("crossref_retrieved_authors.xlsx")) {
-  readxl::read_excel("crossref_retrieved_authors.xlsx")
+  df <- readxl::read_excel("crossref_retrieved_authors.xlsx")
+  # Ensure columns are character type (even if file is empty)
+  df %>%
+    mutate(across(everything(), as.character)) %>%
+    filter(!is.na(doi) | !is.na(authors))
 } else {
   tibble(doi = character(), authors = character())
 }
@@ -74,12 +78,15 @@ if (length(missing_dois) > 0) {
   # Convert author lists to JSON strings for storage
   authors_new <- authors_new %>%
     rowwise() %>%
-    mutate(authors = jsonlite::toJSON(author, auto_unbox = TRUE)) %>%
+    mutate(authors = as.character(jsonlite::toJSON(author, auto_unbox = TRUE))) %>%
     ungroup() %>%
-    select(doi, authors)
-  
+    select(doi, authors) %>%
+    mutate(across(everything(), as.character))
+
   # Combine with existing data
-  authors_df <- bind_rows(authors_df, authors_new) %>%
+  authors_df <- authors_df %>%
+    mutate(across(everything(), as.character)) %>%
+    bind_rows(authors_new) %>%
     distinct(doi, .keep_all = TRUE)
   
   message(sprintf("Retrieved author data for %d new DOIs", nrow(authors_new)))
@@ -94,77 +101,43 @@ if (length(missing_dois) > 0) {
 ```{r}
 # Function to extract author names from JSON
 # Returns a vector of lowercased family names for comparison
+# More robust handling of various CrossRef author formats
 extract_author_names <- function(author_json) {
+  # Extract family names from CrossRef author JSON data
+  # CrossRef consistently returns dataframes with "family", "given", "sequence" columns
   if (is.na(author_json) || author_json == "" || is.null(author_json)) {
     return(character(0))
   }
-  
+
   tryCatch({
     authors <- jsonlite::fromJSON(author_json)
-    
-    if (is.null(authors) || (!is.data.frame(authors) && !is.list(authors))) {
+
+    # Handle empty author lists (e.g., from OSF preprints)
+    if (is.null(authors) || nrow(authors) == 0) {
       return(character(0))
     }
-    
-    # Handle data frame format
-    if (is.data.frame(authors)) {
-      names_vec <- character(nrow(authors))
-      for (i in seq_len(nrow(authors))) {
-        family <- if ("family" %in% names(authors)) authors$family[i] else NA
-        name <- if ("name" %in% names(authors)) authors$name[i] else NA
-        
-        # Use family name primarily, fallback to name field
-        final_name <- if (!is.na(family) && nzchar(as.character(family))) {
-          family 
-        } else if (!is.na(name) && nzchar(as.character(name))) {
-          name
-        } else {
-          NA_character_
-        }
-        
-        names_vec[i] <- if (!is.na(final_name)) {
-          tolower(trimws(as.character(final_name)))
-        } else {
-          NA_character_
-        }
-      }
-      return(na.omit(names_vec[nzchar(names_vec)]))
+
+    # Extract family names (normalized: lowercase, trimmed)
+    if ("family" %in% names(authors)) {
+      names_extracted <- authors$family %>%
+        as.character() %>%
+        trimws() %>%
+        tolower() %>%
+        unique() %>%
+        .[!is.na(.) & nzchar(.)]
+
+      return(names_extracted)
     }
-    
-    # Handle list format
-    if (is.list(authors)) {
-      names_vec <- character(length(authors))
-      for (i in seq_along(authors)) {
-        author <- authors[[i]]
-        family <- if ("family" %in% names(author)) author$family else NA
-        name <- if ("name" %in% names(author)) author$name else NA
-        
-        # Use family name primarily, fallback to name field
-        final_name <- if (!is.na(family) && nzchar(as.character(family))) {
-          family
-        } else if (!is.na(name) && nzchar(as.character(name))) {
-          name
-        } else {
-          NA_character_
-        }
-        
-        names_vec[i] <- if (!is.na(final_name)) {
-          tolower(trimws(as.character(final_name)))
-        } else {
-          NA_character_
-        }
-      }
-      return(na.omit(names_vec[nzchar(names_vec)]))
-    }
-    
+
     return(character(0))
+
   }, error = function(e) {
-    message("Error extracting author names: ", e$message)
     return(character(0))
   })
 }
 
 # Compute author overlap for each study pair
+# Also track extraction quality for debugging
 author_overlap <- study_pairs %>%
   left_join(authors_df %>% rename(doi_o = doi, authors_o = authors), by = "doi_o") %>%
   left_join(authors_df %>% rename(doi_r = doi, authors_r = authors), by = "doi_r") %>%
@@ -172,9 +145,36 @@ author_overlap <- study_pairs %>%
   mutate(
     authors_o_names = list(extract_author_names(authors_o)),
     authors_r_names = list(extract_author_names(authors_r)),
+    # Flag extraction status for quality tracking
+    o_extracted = length(authors_o_names) > 0,
+    r_extracted = length(authors_r_names) > 0,
+    both_extracted = o_extracted & r_extracted,
     author_overlap = length(intersect(authors_o_names, authors_r_names)) > 0
   ) %>%
-  ungroup() %>%
+  ungroup()
+
+# Generate quality report
+extraction_quality <- author_overlap %>%
+  summarise(
+    total_pairs = n(),
+    both_have_data = sum(!is.na(authors_o) & !is.na(authors_r)),
+    both_extracted = sum(both_extracted, na.rm = TRUE),
+    extraction_rate = if (sum(!is.na(authors_o) & !is.na(authors_r)) > 0) {
+      100 * sum(both_extracted, na.rm = TRUE) / sum(!is.na(authors_o) & !is.na(authors_r))
+    } else {
+      0
+    }
+  )
+
+message(sprintf("\n=== AUTHOR EXTRACTION QUALITY ==="))
+message(sprintf("Study pairs with both studies having data: %d",
+                extraction_quality$both_have_data[1]))
+message(sprintf("Pairs where names could be extracted from both: %d (%.1f%% of pairs with data)",
+                extraction_quality$both_extracted[1],
+                extraction_quality$extraction_rate[1]))
+
+# Keep only the essential columns for final output
+author_overlap <- author_overlap %>%
   select(doi_o, doi_r, author_overlap)
 
 # Handle cases where author data is missing
