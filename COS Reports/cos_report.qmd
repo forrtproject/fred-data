@@ -53,6 +53,8 @@ author:
   - name: Mariem Younssi
     orcid: 0009-0006-3739-7795
 date: "`r Sys.Date()`"
+params:
+  verbose: false
 format:
   html:
     embed-resources: true
@@ -600,6 +602,114 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by rep
 -   **Eta-squared**: Our [conversion function](https://forrt.org/FReD/reference/convert_effect_sizes.html) converts eta-squared but not partial eta-squared. It is possible that authors misreported one as the other.
 
 -   **`entry_id` and `effect_id` variables are *not* stable across versions of the dataset**. They should thus not be used to identify entries over time. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
+
+```{r data-quality-checks, include = params$verbose, echo = FALSE, warning = FALSE, message = FALSE}
+if (params$verbose) {
+  cat("# Data Quality Challenges Report\n\nThis section identifies potential data quality issues that may require attention or clarification.\n\n")
+
+  # Missing references
+  missing_refs <- ds_final %>%
+    filter(is.na(ref_o) | is.na(ref_r)) %>%
+    select(entry_id, effect_id, doi_o, study_o, ref_o, doi_r, url_r, study_r, ref_r) %>%
+    arrange(entry_id)
+
+  if (nrow(missing_refs) > 0) {
+    cat("## Missing References\n\n")
+    cat("The following rows are missing reference information for either the original or replication study:\n\n")
+    print(DT::datatable(missing_refs, extensions = 'FixedColumns',
+                        options = list(pageLength = 50, dom = 'lftp', rownames = FALSE, scrollX = TRUE)))
+  }
+
+  # Missing author-reported success codings
+  missing_success <- ds_final %>%
+    filter(is.na(reported_success)) %>%
+    select(entry_id, effect_id, ref_o, ref_r, doi_o, doi_r, url_r, study_o, study_r) %>%
+    arrange(entry_id)
+
+  if (nrow(missing_success) > 0) {
+    cat("\n## Missing Author-Reported Success Coding\n\n")
+    cat("The following entries are missing author-reported success classification:\n\n")
+    print(DT::datatable(missing_success, extensions = 'FixedColumns',
+                        options = list(pageLength = 50, dom = 'lftp', rownames = FALSE, scrollX = TRUE)))
+  }
+
+  # Missing effect sizes
+  missing_es <- ds_final %>%
+    filter(is.na(es_value_o) | is.na(es_value_r) | is.na(es_type_o) | is.na(es_type_r)) %>%
+    select(entry_id, effect_id, ref_o, ref_r, es_value_o, es_type_o, es_value_r, es_type_r, description) %>%
+    arrange(entry_id)
+
+  if (nrow(missing_es) > 0) {
+    cat("\n## Missing Effect Size Information\n\n")
+    cat("The following rows are missing effect size values or types:\n\n")
+    print(DT::datatable(missing_es, extensions = 'FixedColumns',
+                        options = list(pageLength = 50, dom = 'lftp', rownames = FALSE, scrollX = TRUE)))
+  }
+
+  # Missing p-values
+  missing_pvals <- ds_final %>%
+    filter(is.na(pval_value_o) | is.na(pval_value_r)) %>%
+    select(entry_id, effect_id, ref_o, ref_r, pval_value_o, pval_type_o, pval_value_r, pval_type_r, description) %>%
+    arrange(entry_id)
+
+  if (nrow(missing_pvals) > 0) {
+    cat("\n## Missing P-Value Information\n\n")
+    cat("The following rows are missing p-value data:\n\n")
+    print(DT::datatable(missing_pvals, extensions = 'FixedColumns',
+                        options = list(pageLength = 50, dom = 'lftp', rownames = FALSE, scrollX = TRUE)))
+  }
+
+  # Missing sample sizes
+  missing_n <- ds_final %>%
+    filter(is.na(n_o) | is.na(n_r)) %>%
+    select(entry_id, effect_id, ref_o, ref_r, n_o, n_r, description) %>%
+    arrange(entry_id)
+
+  if (nrow(missing_n) > 0) {
+    cat("\n## Missing Sample Size Information\n\n")
+    cat("The following rows are missing sample size data:\n\n")
+    print(DT::datatable(missing_n, extensions = 'FixedColumns',
+                        options = list(pageLength = 50, dom = 'lftp', rownames = FALSE, scrollX = TRUE)))
+  }
+
+  # Missing DOI for original studies
+  missing_doi_o <- ds_final %>%
+    filter(is.na(doi_o)) %>%
+    select(entry_id, effect_id, ref_o, study_o, doi_o) %>%
+    distinct() %>%
+    arrange(entry_id)
+
+  if (nrow(missing_doi_o) > 0) {
+    cat("\n## Missing DOI for Original Studies\n\n")
+    cat("The following original studies are missing DOI information:\n\n")
+    print(DT::datatable(missing_doi_o, extensions = 'FixedColumns',
+                        options = list(pageLength = 50, dom = 'lftp', rownames = FALSE, scrollX = TRUE)))
+  }
+
+  # Summary statistics
+  cat("\n## Data Quality Summary\n\n")
+  quality_summary <- data.frame(
+    "Data Quality Issue" = c(
+      "Rows with missing references",
+      "Entries with missing success coding",
+      "Rows with missing effect sizes",
+      "Rows with missing p-values",
+      "Rows with missing sample sizes",
+      "Original studies without DOI"
+    ),
+    "Count" = c(
+      nrow(missing_refs),
+      nrow(missing_success),
+      nrow(missing_es),
+      nrow(missing_pvals),
+      nrow(missing_n),
+      nrow(missing_doi_o)
+    )
+  )
+  print(DT::datatable(quality_summary, extensions = 'FixedColumns',
+                      options = list(pageLength = 50, dom = 't', rownames = FALSE)))
+}
+```
 
 ## Internal Process
 
