@@ -75,11 +75,20 @@ if (length(missing_dois) > 0) {
     }
   }
   
+  if(nrow(authors_new) == 0) {
+    message("No author data retrieved for missing DOIs.")
+  } else {
+  
   # Convert author lists to JSON strings for storage
   authors_new <- authors_new %>%
-    rowwise() %>%
-    mutate(authors = as.character(jsonlite::toJSON(author, auto_unbox = TRUE))) %>%
-    ungroup() %>%
+    mutate(
+      authors = sapply(author, function(x) {
+        tryCatch(
+          jsonlite::toJSON(x, auto_unbox = TRUE),
+          error = function(e) NA_character_
+        )
+      }, USE.NAMES = FALSE)
+    ) %>%
     select(doi, authors) %>%
     mutate(across(everything(), as.character))
 
@@ -90,6 +99,7 @@ if (length(missing_dois) > 0) {
     distinct(doi, .keep_all = TRUE)
   
   message(sprintf("Retrieved author data for %d new DOIs", nrow(authors_new)))
+  }
 } else {
   message("No new DOIs to retrieve")
 }
@@ -99,14 +109,23 @@ if (length(missing_dois) > 0) {
 ## Compute author overlap
 
 ```{r}
-# Function to extract author names from JSON
-# Returns a vector of lowercased family names for comparison
-# More robust handling of various CrossRef author formats
-extract_author_names <- function(author_json) {
-  # Extract family names from CrossRef author JSON data
+# Function to normalize names to ASCII (remove diacritics)
+normalize_to_ascii <- function(text) {
+  # Convert to NFD (decomposed form), remove combining marks, convert back to ASCII
+  normalized <- iconv(text, from = "UTF-8", to = "ASCII//TRANSLIT")
+  # Handle cases where transliteration results in special characters
+  normalized <- gsub("[^a-zA-Z0-9\\s]", "", normalized)
+  return(normalized)
+}
+
+# Function to extract author identifiers from JSON
+# Returns a dataframe with family name, first initial (and full given name for debugging)
+# Handles character encoding inconsistencies and requires both family name and first initial for matching
+extract_author_identifiers <- function(author_json) {
+  # Extract author identifiers from CrossRef author JSON data
   # CrossRef consistently returns dataframes with "family", "given", "sequence" columns
   if (is.na(author_json) || author_json == "" || is.null(author_json)) {
-    return(character(0))
+    return(data.frame(family = character(), first_initial = character(), stringsAsFactors = FALSE))
   }
 
   tryCatch({
@@ -114,42 +133,67 @@ extract_author_names <- function(author_json) {
 
     # Handle empty author lists (e.g., from OSF preprints)
     if (is.null(authors) || nrow(authors) == 0) {
-      return(character(0))
+      return(data.frame(family = character(), first_initial = character(), stringsAsFactors = FALSE))
     }
 
-    # Extract family names (normalized: lowercase, trimmed)
+    # Extract family names and given names
     if ("family" %in% names(authors)) {
-      names_extracted <- authors$family %>%
-        as.character() %>%
-        trimws() %>%
-        tolower() %>%
-        unique() %>%
-        .[!is.na(.) & nzchar(.)]
+      author_identifiers <- data.frame(
+        family = authors$family %>% as.character() %>% trimws(),
+        given = if ("given" %in% names(authors)) {
+          authors$given %>% as.character() %>% trimws()
+        } else {
+          rep("", length(authors$family))
+        },
+        stringsAsFactors = FALSE
+      )
 
-      return(names_extracted)
+      # Normalize family names to ASCII and lowercase
+      author_identifiers <- author_identifiers %>%
+        mutate(
+          family_normalized = tolower(normalize_to_ascii(family)),
+          # Extract first initial from given name (before space or first char)
+          first_initial = ifelse(
+            nzchar(given),
+            tolower(substr(given, 1, 1)),
+            ""
+          ),
+          # Create combined identifier: family_given_initial
+          author_id = paste0(family_normalized, "_", first_initial)
+        ) %>%
+        filter(nzchar(family_normalized) & nzchar(first_initial)) %>%
+        distinct(author_id, .keep_all = TRUE) %>%
+        select(family_normalized, first_initial, author_id)
+
+      return(author_identifiers)
     }
 
-    return(character(0))
+    return(data.frame(family = character(), first_initial = character(), stringsAsFactors = FALSE))
 
   }, error = function(e) {
-    return(character(0))
+    return(data.frame(family = character(), first_initial = character(), stringsAsFactors = FALSE))
   })
 }
 
 # Compute author overlap for each study pair
-# Also track extraction quality for debugging
+# Now requires matching on both family name AND first initial
 author_overlap <- study_pairs %>%
   left_join(authors_df %>% rename(doi_o = doi, authors_o = authors), by = "doi_o") %>%
   left_join(authors_df %>% rename(doi_r = doi, authors_r = authors), by = "doi_r") %>%
   rowwise() %>%
   mutate(
-    authors_o_names = list(extract_author_names(authors_o)),
-    authors_r_names = list(extract_author_names(authors_r)),
+    authors_o_ids = list(extract_author_identifiers(authors_o)),
+    authors_r_ids = list(extract_author_identifiers(authors_r)),
     # Flag extraction status for quality tracking
-    o_extracted = length(authors_o_names) > 0,
-    r_extracted = length(authors_r_names) > 0,
+    o_extracted = nrow(authors_o_ids) > 0,
+    r_extracted = nrow(authors_r_ids) > 0,
     both_extracted = o_extracted & r_extracted,
-    author_overlap = length(intersect(authors_o_names, authors_r_names)) > 0
+    # Check for overlap: must match on both family name AND first initial
+    author_overlap = if (both_extracted) {
+      length(intersect(authors_o_ids$author_id, authors_r_ids$author_id)) > 0
+    } else {
+      NA
+    }
   ) %>%
   ungroup()
 
