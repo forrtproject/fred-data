@@ -7,7 +7,7 @@ format: html
 
 The successor to the meta-analyses-focused FORRT Replication Database (FReD) is a library of replications **and reproductions** that does not include methodological features such as sample and effect sizes.
 
-Notes: This is heavily based on the FLoRA creator. Currently, it includes code to download crossref keywords. It is, however, also possible to attach the already downloaded keywords instead of getting them all from scratch.
+Notes: This is heavily based on the fred-mini creator. Currently, it includes code to download crossref keywords. It is, however, also possible to attach the already downloaded keywords instead of getting them all from scratch.
 
 ## TO DOs
 
@@ -38,7 +38,7 @@ reported_success <- read_csv(
 ## Select relevant fields and deduplicate (we do not report study level)
 
 ```{r deduplication}
-flora <- reported_success %>% filter(validation == "validated - chosen")  %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome, outcome_quote, out_quote_source) %>%
+fred_mini <- reported_success %>% filter(validation == "validated - chosen")  %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome, outcome_quote, out_quote_source) %>%
   group_by(doi_o, doi_r, ref_o, ref_r, url_r) %>%
   summarise(
   outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
@@ -193,7 +193,7 @@ bibtex_reference <- function(doi, title, author_json, journal, year, volume, iss
   })
 }
 
-doi_data_o <- get_doi_data(flora$doi_o)
+doi_data_o <- get_doi_data(fred_mini$doi_o)
 
 doi_data_o_parsed <- doi_data_o %>% 
   transmute(
@@ -209,7 +209,7 @@ doi_data_o_parsed <- doi_data_o %>%
  bibtex_ref_o = bibtex_reference(doi, title, author_o, journal_o, year_o, volume_o, issue_o, pages_o)
   )
 
-doi_data_r <- get_doi_data(flora$doi_r)
+doi_data_r <- get_doi_data(fred_mini$doi_r)
 
 doi_data_r_parsed <- doi_data_r %>% 
   transmute(
@@ -225,7 +225,7 @@ doi_data_r_parsed <- doi_data_r %>%
     bibtex_ref_r = bibtex_reference(doi, title, author_r, journal_r, year_r, volume_r, issue_r, pages_r)
   )
 
-flora <- flora %>% 
+fred_mini <- fred_mini %>% 
   rowwise() %>% 
   mutate(doi_o = tolower(doi_o),
          doi_r = tolower(doi_r),
@@ -241,99 +241,148 @@ flora <- flora %>%
   filter(!is.na(title_o), !is.na(title_r))
 ```
 
-## Keywords
+## Open Alex Data
 
-```{r keywords}
+-   keywords
 
-get_openalex_keywords <- function(doi, mailto = NULL, fallback_to_concepts = TRUE, n_concepts = 10) {
-  base_url <- "https://api.openalex.org/works/"
-  # Encode only the DOI part so slashes become %2F but keep "doi:" literal
-  encoded_doi <- URLencode(doi, reserved = TRUE)
-  url <- paste0(base_url, "doi:", encoded_doi)
+-   field (e.g, psychology)
 
-  q <- list(select = "id,doi,display_name,keywords,concepts")
-  if (!is.null(mailto)) q$mailto <- mailto
+-   language
 
-  resp <- GET(url, query = q, user_agent("R script (OpenAlex lookup)"))
-  if (http_error(resp)) {
-    stop(sprintf("HTTP %s: %s", status_code(resp), content(resp, as = "text", encoding = "UTF-8")))
-  }
-  x <- fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
+```{r get openalex data}
+# keywords, language, field
 
-  # Try explicit keywords first
-  kws <- NULL
-  if (!is.null(x$keywords)) {
-    if (is.character(x$keywords)) {
-      kws <- x$keywords
-    } else if (is.data.frame(x$keywords)) {
-      nm <- names(x$keywords)
-      pick <- intersect(c("display_name", "keyword", "name", "value"), nm)
-      if (length(pick)) kws <- unique(na.omit(as.character(x$keywords[[pick[1]]])))
-    } else if (is.list(x$keywords)) {
-      # list of lists
-      kws <- unique(na.omit(as.character(unlist(lapply(
-        x$keywords,
-        function(k) k[["display_name"]] %||% k[["keyword"]] %||% k[["name"]] %||% k
-      )))))
-    }
-  }
 
-  # Fallback to top-N concepts if no explicit keywords
-  if ((is.null(kws) || length(kws) == 0) && fallback_to_concepts && !is.null(x$concepts)) {
-    cons <- x$concepts
-    if (is.data.frame(cons) && "display_name" %in% names(cons)) {
-      if ("score" %in% names(cons)) {
-        cons <- cons[order(cons$score, decreasing = TRUE), , drop = FALSE]
-      }
-      kws <- head(unique(as.character(cons$display_name)), n_concepts)
-    } else if (is.list(cons)) {
-      # list of concepts
-      dn <- unlist(lapply(cons, function(cn) cn[["display_name"]]))
-      sc <- unlist(lapply(cons, function(cn) cn[["score"]]))
-      ord <- order(ifelse(is.na(sc), 0, sc), decreasing = TRUE)
-      kws <- head(unique(as.character(dn[ord])), n_concepts)
-    }
-  }
+'%||%' <- function(a, b) if (!is.null(a) && length(a) > 0) a else b
 
-  # Clean up
-  kws <- unique(trimws(kws))
-  kws[nzchar(kws)]
+get_openalex_meta <- function(doi, mailto = NULL, fallback_to_concepts = TRUE, n_concepts = 10) {
+base_url <- "https://api.openalex.org/works/"
+encoded_doi <- URLencode(doi, reserved = TRUE)
+url <- paste0(base_url, "doi:", encoded_doi)
+
+q <- list(select = "id,doi,display_name,language,keywords,concepts,primary_topic")
+if (!is.null(mailto)) q$mailto <- mailto
+
+resp <- GET(url, query = q, user_agent("R script (OpenAlex lookup)"))
+if (http_error(resp)) {
+stop(sprintf("HTTP %s: %s", status_code(resp), content(resp, as = "text", encoding = "UTF-8")))
+}
+x <- fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
+
+# language
+lang <- x$language %||% NA_character_
+
+# keywords (as in your original)
+kws <- NULL
+if (!is.null(x$keywords)) {
+if (is.character(x$keywords)) {
+kws <- x$keywords
+} else if (is.data.frame(x$keywords)) {
+nm <- names(x$keywords)
+pick <- intersect(c("display_name", "keyword", "name", "value"), nm)
+if (length(pick)) kws <- unique(na.omit(as.character(x$keywords[[pick[1]]])))
+} else if (is.list(x$keywords)) {
+kws <- unique(na.omit(as.character(unlist(lapply(
+x$keywords,
+function(k) k[["display_name"]] %||% k[["keyword"]] %||% k[["name"]] %||% k
+)))))
+}
 }
 
-`%||%` <- function(a, b) if (!is.null(a) && length(a) > 0) a else b
+# Fallback to top-N concepts for keywords if needed
+if ((is.null(kws) || length(kws) == 0) && fallback_to_concepts && !is.null(x$concepts)) {
+cons <- x$concepts
+if (is.data.frame(cons) && "display_name" %in% names(cons)) {
+if ("score" %in% names(cons)) cons <- cons[order(cons$score, decreasing = TRUE), , drop = FALSE]
+kws <- head(unique(as.character(cons$display_name)), n_concepts)
+} else if (is.list(cons)) {
+dn <- unlist(lapply(cons, function(cn) cn[["display_name"]]))
+sc <- unlist(lapply(cons, function(cn) cn[["score"]]))
+ord <- order(ifelse(is.na(sc), 0, sc), decreasing = TRUE)
+kws <- head(unique(as.character(dn[ord])), n_concepts)
+}
+}
+kws <- unique(trimws(kws))
+kws <- kws[nzchar(kws)]
 
+# field: prefer primary_topic$field$display_name, otherwise infer from concepts
+field <- NA_character_
+if (!is.null(x$primary_topic)) {
+pt <- x$primary_topic
+if (!is.null(pt$field) && !is.null(pt$field$display_name)) {
+field <- as.character(pt$field$display_name)
+} else if (!is.null(pt$subfield) && !is.null(pt$subfield$display_name)) {
+field <- as.character(pt$subfield$display_name)
+} else if (!is.null(pt$display_name)) {
+field <- as.character(pt$display_name)
+}
+}
+if ((is.na(field) || !nzchar(field)) && !is.null(x$concepts)) {
+cons <- x$concepts
+# normalize to vectors
+if (is.data.frame(cons)) {
+dn <- as.character(cons$display_name %||% rep(NA_character_, nrow(cons)))
+lv <- suppressWarnings(as.integer(cons$level %||% rep(NA_integer_, nrow(cons))))
+sc <- suppressWarnings(as.numeric(cons$score %||% rep(NA_real_, nrow(cons))))
+} else if (is.list(cons)) {
+dn <- as.character(unlist(lapply(cons, function(cn) cn[["display_name"]] %||% NA_character_)))
+lv <- suppressWarnings(as.integer(unlist(lapply(cons, function(cn) cn[["level"]] %||% NA_integer_))))
+sc <- suppressWarnings(as.numeric(unlist(lapply(cons, function(cn) cn[["score"]] %||% NA_real_))))
+} else {
+dn <- lv <- sc <- NULL
+}
+if (!is.null(dn) && length(dn)) {
+# prefer level 1 (field), then 0 (domain), else best-scoring
+pick_idx <- which(lv == 1)
+if (!length(pick_idx)) pick_idx <- which(lv == 0)
+if (!length(pick_idx)) pick_idx <- seq_along(dn)
+# choose highest scoring among candidates
+sc_sub <- ifelse(is.na(sc[pick_idx]), 0, sc[pick_idx])
+field <- dn[pick_idx[order(sc_sub, decreasing = TRUE)][1]]
+}
+}
 
-dois <- unique(flora$doi_o)
+list(
+keywords = if (length(kws)) kws else character(0),
+field = field %||% NA_character_,
+language = lang %||% NA_character_
+)
+}
+
+# Prepare DOIs
+dois <- unique(fred_mini$doi_o)
 dois <- dois[!is.na(dois) & grepl("^10", dois)]
-dois <- dois[!is.na(dois)]
 
-# dois is vector of DOIs
+# Download from OpenAlex
 kwdat <- data.frame(
-  doi_o = dois,
-  keywords_o = NA_character_, # variable name of keywords is determined here
-  error = NA_character_,
-  stringsAsFactors = FALSE
+doi_o = dois,
+keywords_o = NA_character_,
+field_o = NA_character_,
+language_o = NA_character_,
+error = NA_character_,
+stringsAsFactors = FALSE
 )
 
-# # download from openalex
-# for (idx in seq_along(dois)) {
-#   res <- tryCatch(
-#     {
-#       kw <- get_openalex_keywords(dois[idx], mailto = "lukas.roeseler@uni-muenster.de")
-#       list(kw = kw, err = NA_character_)
-#     },
-#     error = function(e) list(kw = character(0), err = conditionMessage(e))
-#   )
-# 
-#   kwdat$keywords[idx] <- if (length(res$kw) > 0) paste(res$kw, collapse = ", ") else NA_character_
-#   kwdat$error[idx]    <- res$err
-# }
+for (idx in seq_along(dois)) {
+res <- tryCatch(
+{
+out <- get_openalex_meta(dois[idx], mailto = "lukas.roeseler@uni-muenster.de")
+list(out = out, err = NA_character_)
+},
+error = function(e) list(out = NULL, err = conditionMessage(e))
+)
 
-# open already downloaded keywords
-kwdat <- read.csv("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/data%20augmentation/doio_keywords.csv")
-kwdat <- kwdat[ ,-1]
+if (!is.null(res$out)) {
+kwdat$keywords_o[idx] <- if (length(res$out$keywords) > 0) paste(res$out$keywords, collapse = ", ") else NA_character_
+kwdat$field_o[idx] <- res$out$field %||% NA_character_
+kwdat$language_o[idx] <- res$out$language %||% NA_character_
+}
+kwdat$error[idx] <- res$err
+}
 
-flora <- merge(flora, kwdat[, 1:2], by = "doi_o")
+kwdat
+
+fred_mini <- merge(fred_mini, kwdat[, 1:4], by = "doi_o")
 ```
 
 ## Manually coded values
@@ -361,7 +410,7 @@ metapapers <- c(
 
 
 # determine metapaper_r = 1 for metapapers
-flora$metapaper_r <- as.integer(flora$doi_r %in% metapapers)
+fred_mini$metapaper_r <- as.integer(fred_mini$doi_r %in% metapapers)
 
 
 ```
@@ -373,11 +422,11 @@ flora$metapaper_r <- as.integer(flora$doi_r %in% metapapers)
 # TO DO: [check others]
 
 # show meta studies
-metarefs <- unique(flora[flora$metapaper_r == 1, "ref_r"])
+metarefs <- unique(fred_mini[fred_mini$metapaper_r == 1, "ref_r"])
 
 # keep only those metastudies with url_r non missing: Boyce, Soto, XPHI
-keep <- !(flora$metapaper_r == 1 & is.na(flora$url_r))
-flora <- flora[keep, ]
+keep <- !(fred_mini$metapaper_r == 1 & is.na(fred_mini$url_r))
+fred_mini <- fred_mini[keep, ]
 ```
 
 ## Peer Review Status
@@ -394,7 +443,7 @@ preprint_servers <- c(
 )
 
 
-flora <- flora %>%
+fred_mini <- fred_mini %>%
 mutate(
 publicationstatus_r = case_when(
 is.na(journal_r) ~ "Working paper",
@@ -411,7 +460,7 @@ TRUE ~ "Peer-reviewed (published in a journal)"
 
 # nothing is happening here, yet
 
-varnames <- data.frame("old" = names(flora)
+varnames <- data.frame("old" = names(fred_mini)
                             , "new" = NA)
 # varnames$new <- dplyr::case_match(varnames$old, )
 ```
@@ -419,6 +468,6 @@ varnames <- data.frame("old" = names(flora)
 ## Save dataset
 
 ```{r saving}
-write_csv(flora, "libre2.csv")
-openxlsx::write.xlsx(flora, file = "libre2.xlsx")
+write_csv(fred_mini, "libre2.csv")
+openxlsx::write.xlsx(fred_mini, file = "libre2.xlsx")
 ```
