@@ -1,0 +1,444 @@
+---
+title: "Duplicate Detection Report"
+author: "FReD Data Team"
+date: "`r Sys.Date()`"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    self-contained: true
+editor: visual
+---
+
+------------------------------------------------------------------------
+
+# Duplicate Detection Report
+
+This report identifies potential duplicate rows in the FRED dataset based on matching `n_r` (replication sample size) and `es_value_r` (replication effect size) values. It shows whether these potential duplicates also overlap on other identifiers.
+
+------------------------------------------------------------------------
+
+```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+library(FReD)
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(stringr)
+library(tidyverse)
+library(glue)
+library(DT)
+source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
+```
+
+## Data Loading and Cleaning
+
+This section replicates the data processing from cos_report.qmd to ensure consistency.
+
+```{r load-and-clean, include = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+
+# Load raw data from Google Sheets
+ds_fully_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
+
+# Clean data
+cleaned <- clean_fred_data(ds_fully_raw)
+ds_raw <- cleaned$cleaned_data
+
+# Helper function to clean filenames
+replace_na_filename <- function(filename) {
+  filename %>%
+    na_if(".pdf") %>%
+    na_if("na.pdf") %>%
+    na_if("NA - USE URL")
+}
+
+ds_raw <- ds_raw %>%
+  mutate(file_o = replace_na_filename(file_o),
+         file_r = replace_na_filename(file_r))
+
+# Apply main filters
+ds_raw <- ds_raw %>%
+  # filter empty rows
+  filter(!is.na(ref_o) | !is.na(ref_r)) %>%
+  # add ID to distinguish replications from same meta-paper
+  mutate(id_r = coalesce(url_r, tolower(doi_r))) %>%
+  # filter out excluded studies
+  filter(is.na(exclusion)) %>%
+  # filter out non-validated extra rows
+  filter(!(approach == "extra rows" & status != "validated - chosen") |
+         is.na(approach) | is.na(status))
+
+# Filter for validated - chosen entries
+ds <- ds_raw %>% filter(status == "validated - chosen")
+
+# Update references with crossref data
+refs <- try(readxl::read_excel("../crossref_retrieved_references.xlsx"), silent = TRUE)
+
+if (!inherits(refs, "try-error")) {
+  ds <- ds %>%
+    mutate(doi_r = tolower(doi_r),
+           doi_o = tolower(doi_o)) %>%
+    left_join(
+      refs %>% rename(doi_o = doi, ref_o_new = reference)
+    ) %>% left_join(
+      refs %>% rename(doi_r = doi, ref_r_new = reference)
+    ) %>%
+    mutate(ref_o = coalesce(ref_o_new, ref_o),
+           ref_r = coalesce(ref_r_new, ref_r)) %>%
+    select(-ref_o_new, -ref_r_new)
+}
+
+```
+
+## Identifying Potential Duplicates
+
+The following analysis identifies rows that share the same `n_r` (replication sample size) and `es_value_r` (replication effect size) values, as these combinations may indicate duplicate entries.
+
+```{r identify-duplicates, echo = FALSE, warning = FALSE, message = FALSE}
+
+# Find groups with duplicate n_r and es_value_r
+duplicates <- ds %>%
+  group_by(n_r, es_value_r) %>%
+  filter(n() > 1) %>%
+  ungroup() %>%
+  arrange(n_r, es_value_r)
+
+# Check if there are any duplicates
+if (nrow(duplicates) == 0) {
+  cat("✓ **No duplicate combinations of n_r and es_value_r found in the dataset.**\n\n")
+} else {
+  cat(glue("Found {n_distinct(duplicates %>% select(n_r, es_value_r))} unique combinations of (n_r, es_value_r) that appear multiple times.\n\n"))
+
+  # Create a summary table showing overlap information
+  overlap_summary <- duplicates %>%
+    group_by(n_r, es_value_r) %>%
+    summarise(
+      count = n(),
+      unique_entries = n_distinct(entry_id),
+      unique_id_r = n_distinct(id_r),
+      unique_ref_o = n_distinct(ref_o),
+      unique_ref_r = n_distinct(ref_r),
+      unique_fred_id = n_distinct(fred_id),
+      unique_n_o = n_distinct(n_o),
+      unique_es_value_o = n_distinct(es_value_o),
+      .groups = "drop"
+    ) %>%
+    mutate(
+      id_r_overlap = case_when(
+        unique_id_r == 1 ~ "✓ All same",
+        TRUE ~ "✗ Different"
+      ),
+      ref_o_overlap = case_when(
+        unique_ref_o == 1 ~ "✓ All same",
+        TRUE ~ "✗ Different"
+      ),
+      ref_r_overlap = case_when(
+        unique_ref_r == 1 ~ "✓ All same",
+        TRUE ~ "✗ Different"
+      ),
+      fred_id_overlap = case_when(
+        unique_fred_id == 1 ~ "✓ All same",
+        TRUE ~ "✗ Different"
+      ),
+      original_overlap = case_when(
+        unique_n_o == 1 & unique_es_value_o == 1 ~ "✓ Both same",
+        unique_n_o == 1 ~ "✓ n_o same",
+        unique_es_value_o == 1 ~ "✓ es_value_o same",
+        TRUE ~ "✗ Both differ"
+      )
+    ) %>%
+    select(n_r, es_value_r, count, original_overlap, id_r_overlap, ref_o_overlap, ref_r_overlap, fred_id_overlap)
+
+  # Prepare detailed rows for each group (for expansion)
+  detailed_rows <- duplicates %>%
+    select(n_r, es_value_r, entry_id, fred_id, ref_o, id_r, ref_r, study_r, doi_r) %>%
+    arrange(n_r, es_value_r, entry_id)
+
+  # Create child row HTML for each summary row
+  child_rows_html <- list()
+  for (i in 1:nrow(overlap_summary)) {
+    n_val <- overlap_summary$n_r[i]
+    es_val <- overlap_summary$es_value_r[i]
+
+    group_details <- detailed_rows %>%
+      filter(n_r == n_val, es_value_r == es_val) %>%
+      select(entry_id, fred_id, ref_o, id_r, ref_r, study_r, doi_r)
+
+    # Create HTML table for this group
+    html_content <- "<div style='padding: 15px; background-color: #fafafa;'><table style='width: 100%; border-collapse: collapse; border: 1px solid #ddd;'>"
+    html_content <- paste0(html_content,
+      "<tr style='background-color: #e8f5e9;'><th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>entry_id</th>",
+      "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>fred_id</th>",
+      "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>ref_o</th>",
+      "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>id_r</th>",
+      "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>ref_r</th>",
+      "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>study_r</th>",
+      "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>doi_r</th></tr>")
+
+    for (j in 1:nrow(group_details)) {
+      row <- group_details[j, ]
+      html_content <- paste0(html_content,
+        "<tr style='border-bottom: 1px solid #ddd;'>",
+        "<td style='border: 1px solid #ddd; padding: 8px;'>", row$entry_id, "</td>",
+        "<td style='border: 1px solid #ddd; padding: 8px;'><strong>", row$fred_id, "</strong></td>",
+        "<td style='border: 1px solid #ddd; padding: 8px;'>", row$ref_o, "</td>",
+        "<td style='border: 1px solid #ddd; padding: 8px;'><strong>", row$id_r, "</strong></td>",
+        "<td style='border: 1px solid #ddd; padding: 8px;'>", row$ref_r, "</td>",
+        "<td style='border: 1px solid #ddd; padding: 8px;'>", row$study_r, "</td>",
+        "<td style='border: 1px solid #ddd; padding: 8px;'>", row$doi_r, "</td>",
+        "</tr>")
+    }
+    html_content <- paste0(html_content, "</table></div>")
+    child_rows_html[[i]] <- html_content
+  }
+
+  # Add expand column to overlap_summary (in first position)
+  overlap_summary_display <- overlap_summary %>%
+    mutate(expand = "▶ Click to expand") %>%
+    select(expand, everything())
+
+  # Color code the table with expandable rows
+  datatable(
+    overlap_summary_display,
+    colnames = c(
+      "Expand",
+      "Sample Size (n_r)",
+      "Effect Size (es_value_r)",
+      "# Rows",
+      "Original (n_o, es_value_o)",
+      "id_r",
+      "ref_o",
+      "ref_r",
+      "fred_id"
+    ),
+    escape = FALSE,
+    options = list(
+      pageLength = 50,
+      dom = 'lftp',
+      scrollX = TRUE,
+      ordering = FALSE,
+      columnDefs = list(
+        list(
+          targets = 0,
+          render = JS("function(data, type, row) {
+            return '<span style=\"cursor: pointer; color: #0066cc; font-weight: bold; user-select: none;\">' + data + '</span>';
+          }")
+        )
+      )
+    ),
+    callback = JS(
+      paste0("
+      var colors = {'✓ All same': '#d4edda', '✓ Both same': '#c8e6c9', '✓ n_o same': '#e0f2f1', '✓ es_value_o same': '#e0f2f1', '✗ Different': '#f8d7da', '✗ Both differ': '#ffcdd2'};
+      var childData = ", jsonlite::toJSON(child_rows_html), ";
+
+      // Color the overlap columns (now 5-8 instead of 4-7)
+      for (var i = 5; i <= 8; i++) {
+        for (var row = 0; row < table.rows().count(); row++) {
+          var cell = $('td:eq(' + i + ')', table.row(row).node());
+          var text = cell.text();
+          if (colors[text]) {
+            cell.css('background-color', colors[text]);
+            cell.css('font-weight', 'bold');
+          }
+        }
+      }
+
+      // Handle expand/collapse
+      $('#' + table.table().node().id + ' tbody').on('click', 'tr', function() {
+        var tr = $(this);
+        var row = table.row(this);
+        var rowIdx = table.rows({order:'current'}).indexes().indexOf(table.row(this).index());
+
+        if (row.child.isShown()) {
+          row.child.hide();
+          tr.removeClass('shown');
+          tr.find('span:first').text('▶ Click to expand');
+        } else {
+          row.child(childData[rowIdx]).show();
+          tr.addClass('shown');
+          tr.find('span:first').text('▼ Click to collapse');
+        }
+      });
+      ")
+    )
+  )
+}
+
+```
+
+
+## Summary Statistics
+
+```{r summary, echo = FALSE, warning = FALSE, message = FALSE}
+
+if (nrow(duplicates) > 0) {
+
+  summary_stats <- tibble(
+    Metric = c(
+      "Total rows in dataset",
+      "Rows involved in potential duplicates",
+      "Unique (n_r, es_value_r) combinations with duplicates",
+      "Percentage of rows in duplicates"
+    ),
+    Value = c(
+      nrow(ds),
+      nrow(duplicates),
+      n_distinct(duplicates %>% select(n_r, es_value_r)),
+      paste0(round(100 * nrow(duplicates) / nrow(ds), 2), "%")
+    )
+  )
+
+  datatable(summary_stats, options = list(dom = 't', paging = FALSE))
+
+} else {
+  cat("No duplicates found. Summary: All {nrow(ds)} rows have unique combinations of (n_r, es_value_r).\n")
+}
+
+```
+
+## Groups with Matching Original Study Values
+
+The following groups have both `n_o` and `es_value_o` matching across all rows (indicating potential true duplicates from the same original study):
+
+```{r original-matches, echo = FALSE, warning = FALSE, message = FALSE}
+
+if (nrow(duplicates) > 0) {
+  original_matches <- overlap_summary %>%
+    filter(original_overlap == "✓ Both same") %>%
+    select(n_r, es_value_r, count, original_overlap, id_r_overlap, ref_o_overlap, fred_id_overlap)
+
+  if (nrow(original_matches) > 0) {
+    cat(glue("**Found {nrow(original_matches)} group(s) with matching original study values:**\n\n"))
+
+    # Create child rows for original matches
+    original_child_rows <- list()
+    for (i in 1:nrow(original_matches)) {
+      n_val <- original_matches$n_r[i]
+      es_val <- original_matches$es_value_r[i]
+
+      group_details <- detailed_rows %>%
+        filter(n_r == n_val, es_value_r == es_val) %>%
+        select(entry_id, fred_id, ref_o, id_r, ref_r, study_r, doi_r)
+
+      # Create HTML table for this group
+      html_content <- "<div style='padding: 15px; background-color: #fafafa;'><table style='width: 100%; border-collapse: collapse; border: 1px solid #ddd;'>"
+      html_content <- paste0(html_content,
+        "<tr style='background-color: #e8f5e9;'><th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>entry_id</th>",
+        "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>fred_id</th>",
+        "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>ref_o</th>",
+        "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>id_r</th>",
+        "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>ref_r</th>",
+        "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>study_r</th>",
+        "<th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>doi_r</th></tr>")
+
+      for (j in 1:nrow(group_details)) {
+        row <- group_details[j, ]
+        html_content <- paste0(html_content,
+          "<tr style='border-bottom: 1px solid #ddd;'>",
+          "<td style='border: 1px solid #ddd; padding: 8px;'>", row$entry_id, "</td>",
+          "<td style='border: 1px solid #ddd; padding: 8px;'><strong>", row$fred_id, "</strong></td>",
+          "<td style='border: 1px solid #ddd; padding: 8px;'>", row$ref_o, "</td>",
+          "<td style='border: 1px solid #ddd; padding: 8px;'><strong>", row$id_r, "</strong></td>",
+          "<td style='border: 1px solid #ddd; padding: 8px;'>", row$ref_r, "</td>",
+          "<td style='border: 1px solid #ddd; padding: 8px;'>", row$study_r, "</td>",
+          "<td style='border: 1px solid #ddd; padding: 8px;'>", row$doi_r, "</td>",
+          "</tr>")
+      }
+      html_content <- paste0(html_content, "</table></div>")
+      original_child_rows[[i]] <- html_content
+    }
+
+    # Add expand column
+    original_matches_display <- original_matches %>%
+      mutate(expand = "▶ Click to expand") %>%
+      select(expand, everything())
+
+    datatable(
+      original_matches_display,
+      colnames = c(
+        "Expand",
+        "Sample Size (n_r)",
+        "Effect Size (es_value_r)",
+        "# Rows",
+        "Original Values",
+        "id_r",
+        "ref_o",
+        "fred_id"
+      ),
+      escape = FALSE,
+      options = list(
+        pageLength = 50,
+        dom = 'lftp',
+        scrollX = TRUE,
+        ordering = FALSE,
+        columnDefs = list(
+          list(
+            targets = 0,
+            render = JS("function(data, type, row) {
+              return '<span style=\"cursor: pointer; color: #0066cc; font-weight: bold; user-select: none;\">' + data + '</span>';
+            }")
+          )
+        )
+      ),
+      callback = JS(
+        paste0("
+        var colors = {'✓ All same': '#d4edda', '✗ Different': '#f8d7da'};
+        var childData = ", jsonlite::toJSON(original_child_rows), ";
+
+        // Color the overlap columns
+        for (var i = 5; i <= 7; i++) {
+          for (var row = 0; row < table.rows().count(); row++) {
+            var cell = $('td:eq(' + i + ')', table.row(row).node());
+            var text = cell.text();
+            if (colors[text]) {
+              cell.css('background-color', colors[text]);
+              cell.css('font-weight', 'bold');
+            }
+          }
+        }
+
+        // Handle expand/collapse
+        $('#' + table.table().node().id + ' tbody').on('click', 'tr', function() {
+          var tr = $(this);
+          var row = table.row(this);
+          var rowIdx = table.rows({order:'current'}).indexes().indexOf(table.row(this).index());
+
+          if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+            tr.find('span:first').text('▶ Click to expand');
+          } else {
+            row.child(childData[rowIdx]).show();
+            tr.addClass('shown');
+            tr.find('span:first').text('▼ Click to collapse');
+          }
+        });
+        ")
+      )
+    )
+  } else {
+    cat("**No groups with matching original study values found.** Rows within duplicate groups differ on either `n_o` or `es_value_o` (or both).\n")
+  }
+} else {
+  cat("No duplicate groups to analyze.\n")
+}
+
+```
+
+## Legend
+
+### Status Colors:
+- **✓ All same** (light green): All rows in this duplicate group share the same value for this field
+- **✓ Both same** (medium green): Both `n_o` and `es_value_o` match across all rows
+- **✓ n_o same** / **✓ es_value_o same** (light teal): Only one of the original values matches
+- **✗ Different** (light red): Rows in this duplicate group differ on this field
+- **✗ Both differ** (darker red): Both `n_o` and `es_value_o` differ across rows
+
+### Fields Checked:
+- **n_r**: Replication sample size
+- **es_value_r**: Replication effect size value
+- **n_o**: Original study sample size
+- **es_value_o**: Original study effect size value
+- **id_r**: Replication identifier (URL or DOI)
+- **ref_o**: Original study reference
+- **ref_r**: Replication study reference
+- **fred_id**: FRED database identifier

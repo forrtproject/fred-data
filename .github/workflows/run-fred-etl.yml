@@ -1,0 +1,56 @@
+name: Run FReD ETL
+
+on:
+  workflow_dispatch:   # manual trigger from GitHub UI
+   inputs:
+    target_tables:
+      description: 'Which database to load data into (test or original)'
+      required: true
+      default: 'test'
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install ETL dependencies
+        working-directory: fred_dynamodb_loader
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Select target table(s)
+        run: |
+          if [ "${{ github.event.inputs.target_tables }}" = "original" ]; then
+            echo "Using ORIGINAL tables"
+            echo "TABLE=${{ secrets.TABLE }}" >> $GITHUB_ENV
+            echo "ORIGINAL_TABLE=${{ secrets.ORIGINAL_TABLE }}" >> $GITHUB_ENV
+          else
+            echo "Using Test tables"
+            echo "TABLE=${{ secrets.Test_TABLE }}" >> $GITHUB_ENV
+            echo "ORIGINAL_TABLE=${{ secrets.Test_ORIGINAL_TABLE}}" >> $GITHUB_ENV
+          fi
+
+      - name: Confirm selected table
+        run: |
+          echo "TABLE = $TABLE"
+          echo "ORIGINAL_TABLE = $ORIGINAL_TABLE"    
+
+
+
+      - name: Run ETL using generated CSV
+        working-directory: fred_dynamodb_loader
+        run: python load_fred_to_dynamodb.py ../flora.csv

@@ -6,11 +6,15 @@ Query the database of replications either via **privacy-preserving 3-character D
 > This API powers the **Zotero Replication Checker** plugin, connecting Zotero items to replication data from the FReD database.
 
 **Base URL**
+We have two separate APIs with two different URLs, one serves a Primary, and the URL is(Dev1) : 
 
 ```
 https://rep-api.forrt.org/v1
 ```
-
+The test API URL is(Dev0) :
+```
+https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com
+```
 ---
 
 ## Table of Contents
@@ -41,17 +45,30 @@ https://rep-api.forrt.org/v1
 ## Quick Start
 
 **Check a hash prefix (GET)**
-
+---
+The "198" is a real hash prefix, and the "30e" does not exist in the database so that we could monitor the API's behaviour.  
+The Primary API:
 ```bash
 curl "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e"
 ```
+The test API:
+```bash
+curl " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup?prefixes=198,30e"
+```
+---
 
 **Lookup by full DOI (GET)**
 
-```bash
-curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004"
-```
+The "10.1037/a0027598" is a real DOI, and the "10.1016/j.jesp.2015.04.004" does not exist in the database so that we could monitor the API's behaviour.
 
+The Primary API:
+```bash
+curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
+```
+The test API:
+```bash
+curl "https://iaq17d1dw6.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
+```
 ---
 
 ## Endpoints
@@ -60,30 +77,49 @@ curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.00
 
 Checks whether any **3-character hashed DOI prefixes** match replication families—without exposing full DOIs.
 
-**URLs**
+**URLs of Primary API**
 
 | Method | URL                                                                |
 | :----- | :----------------------------------------------------------------- |
 | `POST` | `https://rep-api.forrt.org/v1/prefix-lookup`                       |
 | `GET`  | `https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e`      |
 
+**URLs of Test API**
+
+| Method | URL                                                                |
+| :----- | :----------------------------------------------------------------- |
+| `POST` | ` https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup`                       |
+| `GET`  | `https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup?prefixes=198,30e`      |
+
 #### Example Requests
 
-**POST**
+**POST of Primary API**
 
 ```bash
 curl -X POST "https://rep-api.forrt.org/v1/prefix-lookup" \
   -H "Content-Type: application/json" \
   -d '{"prefixes":["198","30e"]}'
 ```
+**POST  of Test API**
 
-**GET**
+```bash
+curl -X POST " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup" \
+  -H "Content-Type: application/json" \
+  -d '{"prefixes":["198","30e"]}'
+```
+
+**GET  of Primary API**
 
 ```bash
 curl "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e"
 ```
+**GET  of Test API**
 
+```bash
+curl " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup?prefixes=198,30e"
+```
 #### Example Response — `200 OK`
+
 
 ```json
 {
@@ -122,29 +158,49 @@ curl "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e"
 
 Fetch replication studies directly linked to a **full DOI** of an original publication.
 
-**URLs**
+**URLs of Primary API**
 
 | Method | URL                                                                                         |
 | :----- | :------------------------------------------------------------------------------------------ |
 | `POST` | `https://rep-api.forrt.org/v1/original-lookup`                                              |
 | `GET`  | `https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004`              |
 
+**URLs of Test API**
+
+| Method | URL                                                                |
+| :----- | :----------------------------------------------------------------- |
+| `POST` | ` https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup`                       |
+| `GET`  | `https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598`      |
+
+
 #### Example Requests
 
-**POST**
+**POST of Primary API**
 
 ```bash
 curl -X POST "https://rep-api.forrt.org/v1/original-lookup" \
   -H "Content-Type: application/json" \
-  -d '{"dois": ["10.1016/j.jesp.2015.04.004"]}'
+  -d '{"dois": ["doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"]}'
 ```
-
-**GET**
+**POST of Test API**
 
 ```bash
-curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004"
+curl -X POST " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup" \
+  -H "Content-Type: application/json" \
+  -d '{"dois": ["doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"]}'
 ```
 
+
+**GET of Primary API**
+
+```bash
+curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
+```
+**GET of Test API**
+
+```bash
+curl "[https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
+```
 #### Example Response — `200 OK`
 
 ```json
