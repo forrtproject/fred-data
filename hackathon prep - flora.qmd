@@ -7,7 +7,9 @@ format: html
 
 For the Zotero plugin and preprint bot, we need a list of originals and replications, with outcomes and full bibliographic information.
 
+# --- Load replication data and keep only rows with valid DOIs ----------------
 ```{r setup}
+# --- Load required packages for data + string handling ------------------------
 library(dplyr)
 library(readr)
 library(rcrossref)
@@ -17,106 +19,141 @@ library(glue)
 library(stringr)
 library(rlang)
 
+# --- Load replication data and keep only rows with valid DOIs ----------------
+
 reported_success <- read_csv(
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv",
-  skip = 1,
-  show_col_types = FALSE
+  skip = 1,              # ignore first header row in the sheet
+  show_col_types = FALSE # suppress column type messages
 ) %>%
-  # ✅ validate DOI prefix: starts with 10., has 4–9 digits, and then a slash
+  # keep rows where the original DOI looks like a proper DOI
   filter(str_detect(doi_o, regex("^10\\.[0-9]{4,9}/", ignore_case = TRUE))) %>%
+  # and where the replication DOI also looks like a proper DOI
   filter(str_detect(doi_r, regex("^10\\.[0-9]{4,9}/", ignore_case = TRUE)))
 
 ```
 
-Select relevant fields and deduplicate (we do not report study level)
 
+
+# --- Select relevant fields and deduplicate O–R pairs ------------------------
 ```{r}
-flora <- reported_success %>% select(doi_o, doi_r, ref_o, ref_r, url_r, outcome) %>%
+
+flora <- reported_success %>%
+  # keep only the columns we care about for the FLoRA table
+  select(doi_o, doi_r, ref_o, ref_r, url_r, outcome) %>%
+  # group rows that refer to the same original–replication combination
   group_by(doi_o, doi_r, ref_o, ref_r, url_r) %>%
   summarise(
-  outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
-  .groups = "drop"
-  ) %>% 
-  distinct(doi_o,doi_r,.keep_all = TRUE)
+    # if there’s only one outcome in the group, keep it;
+    # if there are multiple different outcomes, label as "mixed"
+    outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
+    .groups = "drop"
+  ) %>%
+  # ensure only one row per (doi_o, doi_r) pair in the final data
+  distinct(doi_o, doi_r, .keep_all = TRUE)
+
 ```
 
-Augment with bibliometric details
 
+
+
+# --- Helpers for fetching and formatting CrossRef metadata --------------------
 ```{r}
 get_doi_data <- function(doi) {
-  #100 at a time to avoid URL too long CR error
+  # Clean and de-duplicate DOIs before querying CrossRef
   doi <- str_replace_all(doi, "https?://doi.org/", "")
   doi <- str_subset(doi, "^10\\.\\d+/\\S+$")
   doi <- unique(doi)
-  
+
   message(glue("Fetching data for {length(doi)} DOIs from CrossRef..."))
-  
+
+  # If nothing left after cleaning, return an empty tibble
   if (length(doi) == 0) return(tibble())
-  
+
+  # Query CrossRef in batches of up to 100 DOIs to avoid URL length errors
   for (i in seq(1, length(doi), by = 100)) {
-    doisub <- doi[i:min(i+99, length(doi))]
+    doisub <- doi[i:min(i + 99, length(doi))]
     names(doisub) <- rep("doi", length(doisub))
     res <- cr_works(filter = doisub, limit = 100)
     message(glue("  Retrieved {nrow(res$data)} records (of {length(doisub)} requested)"))
-    if(i == 1) out <- res$data else out <- bind_rows(out, res$data)
+    if (i == 1) out <- res$data else out <- bind_rows(out, res$data)
   }
+
   message(glue("Done. Retrieved {nrow(out)} records in total."))
-  
+
   return(out)
 }
 
 
-jsonify_authors <- function(author_list) {
-  
-  if (all(c("family", "given") %in% names(author_list))) {
-    out <-   tibble(
-    given = author_list[["given"]] %||% NA_character_,
-    family = author_list[["family"]] %||% NA_character_,
-    sequence = author_list[["sequence"]] %||% NA_character_,
-    ORCID = author_list[["ORCID"]] %||% NA_character_
-  )
-  } else if ("name" %in% names(author_list)) {
-      out <-   tibble(
-    given = author_list[["given"]] %||% NA_character_,
-    family = author_list[["name"]] %||% NA_character_,
-    sequence = author_list[["sequence"]] %||% NA_character_,
-    ORCID = author_list[["ORCID"]] %||% NA_character_
-  )
+# --- Convert CrossRef author lists into a JSON-encoded tibble -----------------
 
-} else {
-  message("Unknown author format - field names: ", paste(names(author_list), collapse = ", "), ". Returning NULL entry.")
-        out <-   tibble(
-    given = author_list[["given"]] %||% NA_character_,
-    family = author_list[["name"]] %||% NA_character_,
-    sequence = author_list[["sequence"]] %||% NA_character_,
-    ORCID = author_list[["ORCID"]] %||% NA_character_
-  )
-}
-  
- out |>
+jsonify_authors <- function(author_list) {
+
+  if (all(c("family", "given") %in% names(author_list))) {
+    # Standard case: separate given + family fields
+    out <- tibble(
+      given    = author_list[["given"]]    %||% NA_character_,
+      family   = author_list[["family"]]   %||% NA_character_,
+      sequence = author_list[["sequence"]] %||% NA_character_,
+      ORCID    = author_list[["ORCID"]]    %||% NA_character_
+    )
+
+  } else if ("name" %in% names(author_list)) {
+    # Some records use a single "name" field instead of "family"
+    out <- tibble(
+      given    = author_list[["given"]] %||% NA_character_,
+      family   = author_list[["name"]]  %||% NA_character_,
+      sequence = author_list[["sequence"]] %||% NA_character_,
+      ORCID    = author_list[["ORCID"]]    %||% NA_character_
+    )
+
+  } else {
+    # Fallback for unknown formats
+    message("Unknown author format - field names: ",
+            paste(names(author_list), collapse = ", "),
+            ". Returning NULL entry.")
+    out <- tibble(
+      given    = author_list[["given"]] %||% NA_character_,
+      family   = author_list[["name"]]  %||% NA_character_,
+      sequence = author_list[["sequence"]] %||% NA_character_,
+      ORCID    = author_list[["ORCID"]]    %||% NA_character_
+    )
+  }
+
+  # Encode the author tibble as compact JSON string
+  out |>
     toJSON(pretty = FALSE, na = "null")
 }
 
 
+# --- Extract a publication year from CrossRef date fields ---------------------
+
 safe_year <- function(df) {
+  # Candidate date columns in CrossRef records
   pub_cols <- c("published.print", "published.online", "published")
   existing <- pub_cols[pub_cols %in% names(df)]
 
+  # If there are no date fields, return NA
   if (length(existing) == 0) {
     return(NA_integer_)
   }
 
+  # Take the first non-missing date and keep the first 4 chars as the year
   year_str <- dplyr::coalesce(!!!df[existing])
   as.integer(stringr::str_sub(as.character(year_str), 1, 4))
 }
+
+
+# --- Build a markdown-formatted APA-style reference (manual fallback) ---------
 
 apa_reference_md <- function(doi, title, author_json, journal, year, volume, issue, pages) {
   n <- length(doi)
 
   map_chr(seq_len(n), function(i) {
-    # --- parse authors safely ---
+    # Parse JSON authors back into a data frame
     authors <- tryCatch(fromJSON(author_json[i]), error = function(e) NULL)
 
+    # Format a single author as "Family, G. G."
     fmt_author <- function(given, family) {
       initials <- if (!is.na(given) && nzchar(given)) {
         parts <- strsplit(given, "\\s+")[[1]]
@@ -125,6 +162,7 @@ apa_reference_md <- function(doi, title, author_json, journal, year, volume, iss
       paste0(family, ", ", initials, ".")
     }
 
+    # Build the full author string depending on number of authors
     if (is.null(authors) || nrow(authors) == 0) {
       author_str <- "(n.a.)"
     } else {
@@ -137,20 +175,24 @@ apa_reference_md <- function(doi, title, author_json, journal, year, volume, iss
         else paste0(paste(author_strs[-n_auth], collapse = ", "), ", & ", author_strs[n_auth])
     }
 
-    # --- APA-style markdown (title not bold) ---
+    # Final APA-like reference with journal info and clickable DOI
     glue(
       "{author_str} ({year[i]}). {title[i]}. *{journal[i]}*, *{volume[i]}*({issue[i]}), {pages[i]}. [https://doi.org/{doi[i]}](https://doi.org/{doi[i]})"
     )
   })
 }
 
+
+# --- Build a BibTeX @article entry from metadata (manual fallback) ------------
+
 bibtex_reference <- function(doi, title, author_json, journal, year, volume, issue, pages) {
   n <- length(doi)
 
   map_chr(seq_len(n), function(i) {
-    # --- parse authors safely ---
+    # Parse JSON authors back into a data frame
     authors <- tryCatch(fromJSON(author_json[i]), error = function(e) NULL)
 
+    # Format a single author as "Family, Given"
     fmt_author_bib <- function(given, family) {
       if (!is.na(given) && nzchar(given)) {
         paste0(family, ", ", given)
@@ -159,6 +201,7 @@ bibtex_reference <- function(doi, title, author_json, journal, year, volume, iss
       }
     }
 
+    # Build the BibTeX author list as "Name and Name and Name"
     if (is.null(authors) || nrow(authors) == 0) {
       author_str <- "Unknown"
     } else {
@@ -167,8 +210,10 @@ bibtex_reference <- function(doi, title, author_json, journal, year, volume, iss
       author_str <- paste(author_strs, collapse = " and ")
     }
 
+    # Create a simple key like "smith2020"
     key <- str_remove_all(paste0(str_to_lower(word(author_strs[1], 1)), year[i]), "[^a-z0-9]")
 
+    # Full BibTeX @article entry
     glue(
 "@article{{{key},
   author = {{{author_str}}},
@@ -183,53 +228,297 @@ bibtex_reference <- function(doi, title, author_json, journal, year, volume, iss
     )
   })
 }
+```
 
+
+# --- Fetch and parse CrossRef metadata for originals and replications ---------
+```{r}
+# Get raw CrossRef records for ORIGINAL DOIs
 doi_data_o <- get_doi_data(flora$doi_o)
 
+# Keep and rename only the fields we care about for originals
 doi_data_o_parsed <- doi_data_o %>% 
   transmute(
-    doi = tolower(doi),
-    title_o = title,
-    author_o = map_chr(author, jsonify_authors),
-    journal_o = container.title,
- year_o = safe_year(pick(everything())),
-    volume_o = volume,
-    issue_o = issue,
-    pages_o = page,
- apa_ref_o = apa_reference_md(doi, title, author_o, journal_o, year_o, volume_o, issue_o, pages_o),
- bibtex_ref_o = bibtex_reference(doi, title, author_o, journal_o, year_o, volume_o, issue_o, pages_o)
+    doi       = tolower(doi),                  # normalize DOI to lowercase
+    title_o   = title,                         # article title
+    author_o  = map_chr(author, jsonify_authors),  # authors as JSON string
+    journal_o = container.title,               # journal / container title
+    year_o    = safe_year(pick(everything())), # extract publication year
+    volume_o  = volume,
+    issue_o   = issue,
+    pages_o   = page,
+    type_o    = type                           # CrossRef type (e.g., "journal-article")
   )
 
+# Get raw CrossRef records for REPLICATION DOIs
 doi_data_r <- get_doi_data(flora$doi_r)
 
+# Same parsing for replications, with "_r" suffix
 doi_data_r_parsed <- doi_data_r %>% 
   transmute(
-    doi = tolower(doi),
-    title_r = title,
-    author_r = map_chr(author, jsonify_authors),
+    doi       = tolower(doi),
+    title_r   = title,
+    author_r  = map_chr(author, jsonify_authors),
     journal_r = container.title,
-    year_r = safe_year(pick(everything())),
-    volume_r = volume,
-    issue_r = issue,
-    pages_r = page,
-    apa_ref_r = apa_reference_md(doi, title, author_r, journal_r, year_r, volume_r, issue_r, pages_r),
-    bibtex_ref_r = bibtex_reference(doi, title, author_r, journal_r, year_r, volume_r, issue_r, pages_r)
+    year_r    = safe_year(pick(everything())),
+    volume_r  = volume,
+    issue_r   = issue,
+    pages_r   = page,
+    type_r    = type
+  )
+```
+
+# --- Normalise metadata for originals and replications -----------------------
+```{r}
+
+# Build a unified metadata table for ORIGINAL articles
+# (common column names so later functions can treat O and R the same)
+meta_o <- doi_data_o_parsed %>%
+  transmute(
+    doi,
+    title       = title_o,
+    author_json = author_o,
+    journal     = journal_o,
+    year        = year_o,
+    volume      = volume_o,
+    issue       = issue_o,
+    pages       = pages_o,
+    type        = type_o
   )
 
-flora %>% 
-  rowwise() %>% 
-  mutate(doi_o = tolower(doi_o),
-         doi_r = tolower(doi_r),
-         doi_o_hash = str_sub(digest::digest(doi_o, "md5", serialize = FALSE), 1, 3),
-         doi_r_hash = str_sub(digest::digest(doi_r, "md5", serialize = FALSE), 1, 3)
-         ) %>%
-  ungroup() %>% 
-  left_join(doi_data_o_parsed, by = c("doi_o" = "doi")) %>%
-  left_join(doi_data_r_parsed, by = c("doi_r" = "doi")) %>%
-  select(doi_o, doi_o_hash, title_o, author_o, journal_o, year_o, volume_o, issue_o, pages_o, apa_ref_o, bibtex_ref_o,
-         doi_r, doi_r_hash, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r, apa_ref_r, bibtex_ref_r,
-         ref_o, ref_r, url_r, outcome) %>%
-  filter(!is.na(title_o), !is.na(title_r)) %>% 
-  write_csv("flora.csv")
+# Build a unified metadata table for REPLICATION articles
+meta_r <- doi_data_r_parsed %>%
+  transmute(
+    doi,
+    title       = title_r,
+    author_json = author_r,
+    journal     = journal_r,
+    year        = year_r,
+    volume      = volume_r,
+    issue       = issue_r,
+    pages       = pages_r,
+    type        = type_r
+  )
+
 ```
+
+# --- CrossRef citation cache + helper for APA / BibTeX lookups ----------------
+```{r}
+# File on disk where we cache citation strings from CrossRef
+CIT_CACHE_FILE <- "crossref_citation_cache.rds"
+
+# Load cached APA/BibTeX results if the cache file exists;
+# otherwise start with an empty list structure
+load_citation_cache <- function() {
+  if (file.exists(CIT_CACHE_FILE)) {
+    readRDS(CIT_CACHE_FILE)
+  } else {
+    list(apa = list(), bibtex = list())
+  }
+}
+
+# Save the updated cache back to disk as an RDS file
+save_citation_cache <- function(cache) {
+  saveRDS(cache, CIT_CACHE_FILE)
+}
+
+# Fetch a citation for a DOI from CrossRef, either in BibTeX or APA style
+get_crossref_citation <- function(doi, type = c("bibtex", "apa")) {
+  type <- match.arg(type)
+
+  if (type == "bibtex") {
+    fmt   <- "bibtex"  # CrossRef content-negotiation format for BibTeX
+    style <- NULL      # no citation style needed for BibTeX
+  } else if (type == "apa") {
+    fmt   <- "text"    # plain text output
+    style <- "apa"     # APA citation style
+  }
+
+  # Try the CrossRef call; if it fails, return NA instead of throwing an error
+  tryCatch(
+    rcrossref::cr_cn(dois = doi, format = fmt, style = style),
+    error = function(e) NA_character_
+  )
+}
+
+
+```
+
+# --- Resolve APA/BibTeX via CrossRef first, with manual fallback + source flag --
+```{r}
+override_with_crossref <- function(doi_vec, meta_df) {
+  # Load (or initialize) the on-disk cache of APA / BibTeX strings
+  cache <- load_citation_cache()
+
+  # Normalise all DOIs to lowercase for consistent matching & caching
+  doi_vec <- tolower(doi_vec)
+
+  # Prepare output vectors for final citations and where they came from
+  apa_final     <- vector("character", length(doi_vec))
+  bibtex_final  <- vector("character", length(doi_vec))
+  apa_source    <- vector("character", length(doi_vec))
+  bibtex_source <- vector("character", length(doi_vec))
+
+  # Loop over each DOI and resolve APA + BibTeX
+  for (i in seq_along(doi_vec)) {
+    d <- doi_vec[i]
+
+    # Look up this DOI in the metadata table (title, authors, journal, etc.)
+    meta_row <- meta_df[match(d, meta_df$doi), ]
+
+    # --- APA ------------------------------------------------------------------
+    # Try to get APA from cache first; if missing, ask CrossRef (cr_cn with style = "apa")
+    apa_cr <- cache$apa[[d]] %||% get_crossref_citation(d, "apa")
+    cache$apa[[d]] <- apa_cr
+
+    if (is.na(apa_cr) || !nzchar(apa_cr)) {
+      # CrossRef APA is missing or empty → build our own APA-style reference
+
+      if (nrow(meta_row) == 1 && !is.na(meta_row$type) && meta_row$type == "journal-article") {
+        # For journal articles: use full APA markdown format (old helper)
+        apa_fallback <- apa_reference_md(
+          doi         = meta_row$doi,
+          title       = meta_row$title,
+          author_json = meta_row$author_json,
+          journal     = meta_row$journal,
+          year        = meta_row$year,
+          volume      = meta_row$volume,
+          issue       = meta_row$issue,
+          pages       = meta_row$pages
+        )[1]
+      } else if (nrow(meta_row) == 1 && !is.na(meta_row$title)) {
+        # For non-article types: simpler "Title. https://doi.org/..." style
+        apa_fallback <- glue("{meta_row$title}. https://doi.org/{meta_row$doi}")
+      } else {
+        # If we don't even have a title, just fall back to the DOI URL
+        apa_fallback <- glue("https://doi.org/{d}")
+      }
+
+      apa_final[i]  <- apa_fallback
+      apa_source[i] <- "manual"
+    } else {
+      # CrossRef APA worked → use it
+      apa_final[i]  <- apa_cr
+      apa_source[i] <- "crossref"
+    }
+
+    # --- BibTeX ---------------------------------------------------------------
+    # Same idea: use cached BibTeX, otherwise query CrossRef for BibTeX
+    bib_cr <- cache$bibtex[[d]] %||% get_crossref_citation(d, "bibtex")
+    cache$bibtex[[d]] <- bib_cr
+
+    if (is.na(bib_cr) || !nzchar(bib_cr)) {
+      # CrossRef BibTeX missing → build a manual BibTeX record
+
+      if (nrow(meta_row) == 1) {
+        # If we have metadata, build a full @article using our helper
+        bibtex_fallback <- bibtex_reference(
+          doi         = meta_row$doi,
+          title       = meta_row$title,
+          author_json = meta_row$author_json,
+          journal     = meta_row$journal,
+          year        = meta_row$year,
+          volume      = meta_row$volume,
+          issue       = meta_row$issue,
+          pages       = meta_row$pages
+        )[1]
+      } else {
+        # Minimal @misc fallback if we have almost no metadata
+        bibtex_fallback <- glue("@misc{{{d}, doi = {{{d}}}}}")
+      }
+
+      bibtex_final[i]   <- bibtex_fallback
+      bibtex_source[i]  <- "manual"
+    } else {
+      # CrossRef BibTeX worked → use it
+      bibtex_final[i]   <- bib_cr
+      bibtex_source[i]  <- "crossref"
+    }
+  }
+
+  # Save updated APA/BibTeX cache to disk for future runs
+  save_citation_cache(cache)
+
+  # Return a tibble with final references and where they came from
+  tibble(
+    doi           = doi_vec,
+    apa_ref       = apa_final,
+    bibtex_ref    = bibtex_final,
+    apa_source    = apa_source,
+    bibtex_source = bibtex_source
+  )
+}
+
+```
+
+
+
+
+
+# --- Build APA/BibTeX references for originals and replications --------------
+```{r}
+# Resolve APA + BibTeX for all ORIGINAL DOIs (using CrossRef-first logic)
+refs_o <- override_with_crossref(
+  doi_vec = meta_o$doi,
+  meta_df = meta_o
+)
+
+# Resolve APA + BibTeX for all REPLICATION DOIs
+refs_r <- override_with_crossref(
+  doi_vec = meta_r$doi,
+  meta_df = meta_r
+)
+
+```
+
+
+
+# --- Combine metadata + references and write final FLoRA CSV ------------------
+
+```{r}
+flora %>%
+  rowwise() %>%
+  mutate(
+    # normalise DOIs and create short hashes for compact IDs
+    doi_o     = tolower(doi_o),
+    doi_r     = tolower(doi_r),
+    doi_o_hash = str_sub(digest::digest(doi_o, "md5", serialize = FALSE), 1, 3),
+    doi_r_hash = str_sub(digest::digest(doi_r, "md5", serialize = FALSE), 1, 3)
+  ) %>%
+  ungroup() %>%
+  # attach original article metadata (title_o, journal_o, etc.)
+  left_join(doi_data_o_parsed, by = c("doi_o" = "doi")) %>%
+  # attach replication article metadata
+  left_join(doi_data_r_parsed, by = c("doi_r" = "doi")) %>%
+  # attach original APA/BibTeX references + source flags
+  left_join(refs_o, by = c("doi_o" = "doi")) %>%
+  rename(
+    apa_ref_o       = apa_ref,
+    bibtex_ref_o    = bibtex_ref,
+    apa_source_o    = apa_source,
+    bibtex_source_o = bibtex_source
+  ) %>%
+  # attach replication APA/BibTeX references + source flags
+  left_join(refs_r, by = c("doi_r" = "doi")) %>%
+  rename(
+    apa_ref_r       = apa_ref,
+    bibtex_ref_r    = bibtex_ref,
+    apa_source_r    = apa_source,
+    bibtex_source_r = bibtex_source
+  ) %>%
+  # choose the final set of columns to export
+  select(
+    doi_o, doi_o_hash, title_o, author_o, journal_o, year_o, volume_o, issue_o, pages_o,
+    apa_ref_o, bibtex_ref_o,
+    doi_r, doi_r_hash, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r,
+    apa_ref_r, bibtex_ref_r,
+    ref_o, ref_r, url_r, outcome
+  ) %>%
+  # keep only rows where we successfully have both original and replication titles
+  filter(!is.na(title_o), !is.na(title_r)) %>%
+  # write everything to the final CSV file used by tools/bots
+  write_csv("flora.csv")
+
+```
+
 
