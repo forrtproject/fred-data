@@ -1,0 +1,274 @@
+---
+title: "Author retrieval and overlap detection"
+format: html
+---
+
+## Retrieving author data from CrossRef
+
+This code retrieves author information from CrossRef for original and replication studies, then checks for author overlap between them.
+
+**Note:** This script should be run periodically (similar to `crossref_ref_retrieval.qmd`) to update the author data for new entries. The results are stored in `crossref_retrieved_authors.xlsx` and `crossref_author_overlap.xlsx`, which are then loaded by the COS report to add the `author_overlap` variable to the dataset.
+
+```{r}
+library(tidyverse)
+library(rcrossref)
+
+fred_validated_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
+
+source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
+
+# No filter for validated so that we get as many authors as possible
+clean_res <- clean_fred_data(fred_validated_raw)$cleaned_data
+
+# Get unique combinations of original and replication DOIs
+study_pairs <- clean_res %>%
+  filter(!is.na(doi_o) & !is.na(doi_r)) %>%
+  distinct(doi_o, doi_r) %>%
+  mutate(doi_o = tolower(doi_o),
+         doi_r = tolower(doi_r))
+
+# Collect all unique DOIs
+all_dois <- c(study_pairs$doi_o, study_pairs$doi_r) %>%
+  unique() %>%
+  str_subset("^10\\.")
+
+```
+
+## Retrieve author data from CrossRef
+
+```{r}
+# Check if we have an existing author file
+authors_df <- if (file.exists("crossref_retrieved_authors.xlsx")) {
+  df <- readxl::read_excel("crossref_retrieved_authors.xlsx")
+  # Ensure columns are character type (even if file is empty)
+  df %>%
+    mutate(across(everything(), as.character)) %>%
+    filter(!is.na(doi) | !is.na(authors))
+} else {
+  tibble(doi = character(), authors = character())
+}
+
+# Find missing DOIs
+missing_dois <- setdiff(tolower(all_dois), tolower(authors_df$doi))
+
+if (length(missing_dois) > 0) {
+  message(sprintf("Retrieving author data for %d DOIs", length(missing_dois)))
+  
+  # Retrieve data from CrossRef in batches
+  authors_new <- tibble()
+  
+  for (i in seq(1, length(missing_dois), by = 100)) {
+    dois_batch <- missing_dois[i:min(i+99, length(missing_dois))]
+    names(dois_batch) <- rep("doi", length(dois_batch))
+    
+    message(sprintf("  Batch %d: %d DOIs", ceiling(i/100), length(dois_batch)))
+    
+    res <- cr_works(filter = dois_batch, limit = 100)
+    
+    if (!is.null(res$data) && nrow(res$data) > 0) {
+      batch_authors <- res$data %>%
+        select(doi, author) %>%
+        mutate(doi = tolower(doi)) %>%
+        filter(!is.na(author))
+      
+      authors_new <- bind_rows(authors_new, batch_authors)
+    }
+  }
+  
+  if(nrow(authors_new) == 0) {
+    message("No author data retrieved for missing DOIs.")
+  } else {
+  
+  # Convert author lists to JSON strings for storage
+  authors_new <- authors_new %>%
+    mutate(
+      authors = sapply(author, function(x) {
+        tryCatch(
+          jsonlite::toJSON(x, auto_unbox = TRUE),
+          error = function(e) NA_character_
+        )
+      }, USE.NAMES = FALSE)
+    ) %>%
+    select(doi, authors) %>%
+    mutate(across(everything(), as.character))
+
+  # Combine with existing data
+  authors_df <- authors_df %>%
+    mutate(across(everything(), as.character)) %>%
+    bind_rows(authors_new) %>%
+    distinct(doi, .keep_all = TRUE)
+  
+  message(sprintf("Retrieved author data for %d new DOIs", nrow(authors_new)))
+  }
+} else {
+  message("No new DOIs to retrieve")
+}
+
+```
+
+## Compute author overlap
+
+```{r}
+# Function to normalize names to ASCII (remove diacritics)
+normalize_to_ascii <- function(text) {
+  # Convert to NFD (decomposed form), remove combining marks, convert back to ASCII
+  normalized <- iconv(text, from = "UTF-8", to = "ASCII//TRANSLIT")
+  # Handle cases where transliteration results in special characters
+  normalized <- gsub("[^a-zA-Z0-9\\s]", "", normalized)
+  return(normalized)
+}
+
+# Function to extract author identifiers from JSON
+# Returns a dataframe with family name, first initial (and full given name for debugging)
+# Handles character encoding inconsistencies and requires both family name and first initial for matching
+extract_author_identifiers <- function(author_json) {
+  # Extract author identifiers from CrossRef author JSON data
+  # CrossRef consistently returns dataframes with "family", "given", "sequence" columns
+  if (is.na(author_json) || author_json == "" || is.null(author_json)) {
+    return(data.frame(family = character(), first_initial = character(), stringsAsFactors = FALSE))
+  }
+
+  tryCatch({
+    authors <- jsonlite::fromJSON(author_json)
+
+    # Handle empty author lists (e.g., from OSF preprints)
+    if (is.null(authors) || nrow(authors) == 0) {
+      return(data.frame(family = character(), first_initial = character(), stringsAsFactors = FALSE))
+    }
+
+    # Extract family names and given names
+    if ("family" %in% names(authors)) {
+      author_identifiers <- data.frame(
+        family = authors$family %>% as.character() %>% trimws(),
+        given = if ("given" %in% names(authors)) {
+          authors$given %>% as.character() %>% trimws()
+        } else {
+          rep("", length(authors$family))
+        },
+        stringsAsFactors = FALSE
+      )
+
+      # Normalize family names to ASCII and lowercase
+      author_identifiers <- author_identifiers %>%
+        mutate(
+          family_normalized = tolower(normalize_to_ascii(family)),
+          # Extract first initial from given name (before space or first char)
+          first_initial = ifelse(
+            nzchar(given),
+            tolower(substr(given, 1, 1)),
+            ""
+          ),
+          # Create combined identifier: family_given_initial
+          author_id = paste0(family_normalized, "_", first_initial)
+        ) %>%
+        filter(nzchar(family_normalized) & nzchar(first_initial)) %>%
+        distinct(author_id, .keep_all = TRUE) %>%
+        select(family_normalized, first_initial, author_id)
+
+      return(author_identifiers)
+    }
+
+    return(data.frame(family = character(), first_initial = character(), stringsAsFactors = FALSE))
+
+  }, error = function(e) {
+    return(data.frame(family = character(), first_initial = character(), stringsAsFactors = FALSE))
+  })
+}
+
+# Compute author overlap for each study pair
+# Now requires matching on both family name AND first initial
+author_overlap <- study_pairs %>%
+  left_join(authors_df %>% rename(doi_o = doi, authors_o = authors), by = "doi_o") %>%
+  left_join(authors_df %>% rename(doi_r = doi, authors_r = authors), by = "doi_r") %>%
+  rowwise() %>%
+  mutate(
+    authors_o_ids = list(extract_author_identifiers(authors_o)),
+    authors_r_ids = list(extract_author_identifiers(authors_r)),
+    # Flag extraction status for quality tracking
+    o_extracted = nrow(authors_o_ids) > 0,
+    r_extracted = nrow(authors_r_ids) > 0,
+    both_extracted = o_extracted & r_extracted,
+    # Check for overlap: must match on both family name AND first initial
+    author_overlap = if (both_extracted) {
+      length(intersect(authors_o_ids$author_id, authors_r_ids$author_id)) > 0
+    } else {
+      NA
+    }
+  ) %>%
+  ungroup()
+
+# Generate quality report
+extraction_quality <- author_overlap %>%
+  summarise(
+    total_pairs = n(),
+    both_have_data = sum(!is.na(authors_o) & !is.na(authors_r)),
+    both_extracted = sum(both_extracted, na.rm = TRUE),
+    extraction_rate = if (sum(!is.na(authors_o) & !is.na(authors_r)) > 0) {
+      100 * sum(both_extracted, na.rm = TRUE) / sum(!is.na(authors_o) & !is.na(authors_r))
+    } else {
+      0
+    }
+  )
+
+message(sprintf("\n=== AUTHOR EXTRACTION QUALITY ==="))
+message(sprintf("Study pairs with both studies having data: %d",
+                extraction_quality$both_have_data[1]))
+message(sprintf("Pairs where names could be extracted from both: %d (%.1f%% of pairs with data)",
+                extraction_quality$both_extracted[1],
+                extraction_quality$extraction_rate[1]))
+
+# Keep only the essential columns for final output
+author_overlap <- author_overlap %>%
+  select(doi_o, doi_r, author_overlap)
+
+# Handle cases where author data is missing
+author_overlap <- author_overlap %>%
+  mutate(author_overlap = if_else(is.na(author_overlap), NA, author_overlap))
+
+```
+
+## Save results
+
+```{r}
+# Save author data
+writexl::write_xlsx(authors_df, "crossref_retrieved_authors.xlsx")
+
+# Save author overlap results
+writexl::write_xlsx(author_overlap, "crossref_author_overlap.xlsx")
+
+message(sprintf("Saved author data for %d DOIs", nrow(authors_df)))
+message(sprintf("Computed author overlap for %d study pairs", nrow(author_overlap)))
+message(sprintf("Study pairs with author overlap: %d (%.1f%%)", 
+                sum(author_overlap$author_overlap, na.rm = TRUE),
+                100 * mean(author_overlap$author_overlap, na.rm = TRUE)))
+```
+
+## Summary statistics
+
+```{r}
+# Show summary
+overlap_summary <- author_overlap %>%
+  summarise(
+    total_pairs = n(),
+    overlap_true = sum(author_overlap, na.rm = TRUE),
+    overlap_false = sum(!author_overlap, na.rm = TRUE),
+    overlap_na = sum(is.na(author_overlap)),
+    overlap_pct = 100 * mean(author_overlap, na.rm = TRUE)
+  )
+
+print(overlap_summary)
+
+# Show some examples of overlapping authors
+examples <- study_pairs %>%
+  left_join(authors_df %>% rename(doi_o = doi, authors_o = authors), by = "doi_o") %>%
+  left_join(authors_df %>% rename(doi_r = doi, authors_r = authors), by = "doi_r") %>%
+  left_join(author_overlap, by = c("doi_o", "doi_r")) %>%
+  filter(author_overlap == TRUE) %>%
+  select(doi_o, doi_r) %>%
+  head(10)
+
+if (nrow(examples) > 0) {
+  message("\nExamples of study pairs with author overlap:")
+  print(examples)
+}
+```

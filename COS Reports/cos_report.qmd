@@ -153,6 +153,11 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Added section with warnings and caveats for dataset users
 -   Normalized all doi to lowercase, as they are inconsistently reported but not case sensitive
 
+**Version 2.0 (2025-11-12)**
+
+-   Removed \~10 duplicate effects
+-   Added `author_overlap` between originals and replications (auto-coded based on Crossref)
+
 ### Terminology
 
 The relation between an article reporting a replication study and the corresponding original study can be complex. The following terms allow for almost every combination of original and replication studies to be documented in the dataset.
@@ -209,12 +214,14 @@ ds_raw$id_r <- coalesce(ds_raw$url_r, tolower(ds_raw$doi_r))
 # filter out excluded studies
 ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
 
-# Number of coded but not validated entries
-ds_awaitingvalidation <- ds_raw[ds_raw$status %in% c("awaiting validation", "validated - chosen (external)"), ]
-
 # filter for validated - chosen entries
 # changed this as base-R subsetting struggles with NAs
 ds <- ds_raw %>% filter(status == "validated - chosen")
+
+# coded but not validated entries
+ds_awaitingvalidation <- ds_raw %>%
+  filter(is.na(status) |
+         (!str_detect(status, "validated") & status != "study-pair excluded"))
 
 # save descriptives
 rows_total <- nrow(ds_raw)
@@ -263,6 +270,22 @@ ds <- ds %>%
   mutate(ref_o = coalesce(ref_o_new, ref_o),
          ref_r = coalesce(ref_r_new, ref_r)) %>% 
   select(-ref_o_new, -ref_r_new)
+
+```
+
+```{r add-author-overlap, include = FALSE, echo = FALSE}
+
+author_overlap <- readxl::read_excel("../crossref_author_overlap.xlsx")
+
+ds <- ds %>% 
+  mutate(doi_r = tolower(doi_r),
+         doi_o = tolower(doi_o)) %>% 
+  left_join(
+    author_overlap %>% 
+      mutate(doi_o = tolower(doi_o),
+             doi_r = tolower(doi_r)),
+    by = c("doi_o", "doi_r")
+  )
 
 ```
 
@@ -601,6 +624,8 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by rep
 -   **Eta-squared**: Our [conversion function](https://forrt.org/FReD/reference/convert_effect_sizes.html) converts eta-squared but not partial eta-squared. It is possible that authors misreported one as the other.
 
 -   **`entry_id` and `effect_id` variables are *not* stable across versions of the dataset**. They should thus not be used to identify entries over time. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
+
+-   **Selection of rows:** A statistical result in a replication can be assigned to two different original results from the same paper (e.g., when the original only reported separate effects for sub-samples but replication focused on total sample), and an original result can be combined with multiple replication results. Also, matched effects are not comprehensive but selected by the coders for being linked to the relevant claim. Therefore, rows should not be treated as independent.
 
 ## Internal Process
 
