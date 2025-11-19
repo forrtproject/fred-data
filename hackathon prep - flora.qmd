@@ -304,43 +304,14 @@ meta_r <- doi_data_r_parsed %>%
 
 # --- CrossRef citation cache + helper for APA / BibTeX lookups ----------------
 ```{r}
-# File on disk where we cache citation strings from CrossRef
-CIT_CACHE_FILE <- "crossref_citation_cache.rds"
+# Load shared citation caching functions
+source("crossref_citation_cache.R")
 
-# Load cached APA/BibTeX results if the cache file exists;
-# otherwise start with an empty list structure
-load_citation_cache <- function() {
-  if (file.exists(CIT_CACHE_FILE)) {
-    readRDS(CIT_CACHE_FILE)
-  } else {
-    list(apa = list(), bibtex = list())
-  }
-}
-
-# Save the updated cache back to disk as an RDS file
-save_citation_cache <- function(cache) {
-  saveRDS(cache, CIT_CACHE_FILE)
-}
-
-# Fetch a citation for a DOI from CrossRef, either in BibTeX or APA style
-get_crossref_citation <- function(doi, type = c("bibtex", "apa")) {
-  type <- match.arg(type)
-
-  if (type == "bibtex") {
-    fmt   <- "bibtex"  # CrossRef content-negotiation format for BibTeX
-    style <- NULL      # no citation style needed for BibTeX
-  } else if (type == "apa") {
-    fmt   <- "text"    # plain text output
-    style <- "apa"     # APA citation style
-  }
-
-  # Try the CrossRef call; if it fails, return NA instead of throwing an error
-  tryCatch(
-    rcrossref::cr_cn(dois = doi, format = fmt, style = style),
-    error = function(e) NA_character_
-  )
-}
-
+# Note: The shared cache file provides:
+# - CIT_CACHE_FILE: path to cache file
+# - load_citation_cache(): load cache from disk
+# - save_citation_cache(cache): save cache to disk
+# - get_crossref_citation(doi, type): fetch citation from CrossRef
 
 ```
 

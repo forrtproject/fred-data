@@ -252,21 +252,33 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 
 ```{r add-clean-refs, include = FALSE, echo = FALSE}
 
-# refs <- readxl::read_excel("FReD-data/crossref_retrieved_references.xlsx")
+# Load shared citation caching functions
+source("../crossref_citation_cache.R")
 
-url <- "https://raw.githubusercontent.com/forrtproject/FReD-data/main/crossref_retrieved_references.xlsx"
-tf <- tempfile(fileext = ".xlsx")
-download.file(url, tf, mode = "wb")
-refs <- readxl::read_excel(tf)
+# Get unique DOIs from both original and replication studies
+dois_o <- ds %>% 
+  filter(!is.na(doi_o)) %>% 
+  distinct(doi_o) %>% 
+  pull(doi_o)
 
+dois_r <- ds %>% 
+  filter(!is.na(doi_r)) %>% 
+  distinct(doi_r) %>% 
+  pull(doi_r)
+
+# Fetch references using shared cache
+refs_o <- get_apa_references(dois_o)
+refs_r <- get_apa_references(dois_r)
+
+# Join references to dataset
 ds <- ds %>% 
   mutate(doi_r = tolower(doi_r),
          doi_o = tolower(doi_o)) %>% 
   left_join(
-  refs %>% rename(doi_o = doi, ref_o_new = reference)
-) %>% left_join(
-  refs %>% rename(doi_r = doi, ref_r_new = reference)
-) %>% 
+    refs_o %>% rename(doi_o = doi, ref_o_new = reference)
+  ) %>% left_join(
+    refs_r %>% rename(doi_r = doi, ref_r_new = reference)
+  ) %>% 
   mutate(ref_o = coalesce(ref_o_new, ref_o),
          ref_r = coalesce(ref_r_new, ref_r)) %>% 
   select(-ref_o_new, -ref_r_new)
