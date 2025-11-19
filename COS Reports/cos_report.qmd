@@ -246,7 +246,12 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 ```{r add-clean-refs, include = FALSE, echo = FALSE}
 
 # Load shared citation caching functions
-source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/crossref_citation_cache.R")
+# Use local file if it exists, otherwise load from GitHub main branch
+if (file.exists("../crossref_citation_cache.R")) {
+  source("../crossref_citation_cache.R")
+} else {
+  source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/crossref_citation_cache.R")
+}
 
 # Get unique DOIs from both original and replication studies
 dois_o <- ds %>% 
