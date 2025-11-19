@@ -1,0 +1,598 @@
+---
+title: "FLoRA: FORRT Library of Replications and Reproductions"
+format: html
+---
+
+# FLoRA - FORRT Library of Replications and Reproductions
+
+This document generates the **FLoRA** (FORRT Library of Replications and Reproductions) dataset, which consolidates replication and reproduction data from the FORRT Replication Database.
+
+The dataset includes:
+- Bibliometric details from CrossRef and OpenAlex
+- Outcome information with quotes and sources
+- Metapaper coding
+- Publication status classification
+- Citation caching for efficiency
+
+## Setup
+
+```{r setup}
+library(dplyr)
+library(readr)
+library(rcrossref)
+library(purrr)
+library(jsonlite)
+library(glue)
+library(stringr)
+library(rlang)
+library(httr)
+
+# Load replication data and keep only rows with valid DOIs
+reported_success <- read_csv(
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv",
+  skip = 1,
+  show_col_types = FALSE
+) %>%
+  # ✅ validate DOI prefix: starts with 10., has 4–9 digits, and then a slash
+  filter(str_detect(doi_o, regex("^10\\.[0-9]{4,9}/", ignore_case = TRUE))) %>%
+  filter(str_detect(doi_r, regex("^10\\.[0-9]{4,9}/", ignore_case = TRUE)))
+
+```
+
+## Select relevant fields and deduplicate
+
+We keep only validated entries and deduplicate at the original-replication pair level.
+
+```{r deduplication}
+flora <- reported_success %>% 
+  filter(validation == "validated - chosen")  %>% 
+  select(doi_o, doi_r, ref_o, ref_r, url_r, outcome, outcome_quote, out_quote_source) %>%
+  group_by(doi_o, doi_r, ref_o, ref_r, url_r) %>%
+  summarise(
+    outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
+    outcome_quote = if (length(unique(outcome_quote)) == 1) unique(outcome_quote) else paste(outcome_quote, collapse = "; "),
+    out_quote_source = paste(out_quote_source, collapse = "; "),
+    .groups = "drop"
+  ) %>% 
+  distinct(doi_o, doi_r, .keep_all = TRUE)
+```
+
+## Helpers for CrossRef metadata
+
+```{r crossref_helpers}
+'%||%' <- function(a, b) if (!is.null(a) && length(a) > 0) a else b
+
+get_doi_data <- function(doi) {
+  # Clean and de-duplicate DOIs before querying CrossRef
+  doi <- str_replace_all(doi, "https?://doi.org/", "")
+  doi <- str_subset(doi, "^10\\.\\d+/\\S+$")
+  doi <- unique(doi)
+  
+  message(glue("Fetching data for {length(doi)} DOIs from CrossRef..."))
+  
+  if (length(doi) == 0) return(tibble())
+  
+  # Query CrossRef in batches of up to 100 DOIs to avoid URL length errors
+  for (i in seq(1, length(doi), by = 100)) {
+    doisub <- doi[i:min(i+99, length(doi))]
+    names(doisub) <- rep("doi", length(doisub))
+    res <- cr_works(filter = doisub, limit = 100)
+    message(glue("  Retrieved {nrow(res$data)} records (of {length(doisub)} requested)"))
+    if(i == 1) out <- res$data else out <- bind_rows(out, res$data)
+  }
+  message(glue("Done. Retrieved {nrow(out)} records in total."))
+  
+  return(out)
+}
+
+
+jsonify_authors <- function(author_list) {
+  
+  if (all(c("family", "given") %in% names(author_list))) {
+    out <- tibble(
+      given = author_list[["given"]] %||% NA_character_,
+      family = author_list[["family"]] %||% NA_character_,
+      sequence = author_list[["sequence"]] %||% NA_character_,
+      ORCID = author_list[["ORCID"]] %||% NA_character_
+    )
+  } else if ("name" %in% names(author_list)) {
+    out <- tibble(
+      given = author_list[["given"]] %||% NA_character_,
+      family = author_list[["name"]] %||% NA_character_,
+      sequence = author_list[["sequence"]] %||% NA_character_,
+      ORCID = author_list[["ORCID"]] %||% NA_character_
+    )
+  } else {
+    message("Unknown author format - field names: ", paste(names(author_list), collapse = ", "), ". Returning NULL entry.")
+    out <- tibble(
+      given = author_list[["given"]] %||% NA_character_,
+      family = author_list[["name"]] %||% NA_character_,
+      sequence = author_list[["sequence"]] %||% NA_character_,
+      ORCID = author_list[["ORCID"]] %||% NA_character_
+    )
+  }
+  
+  out |>
+    toJSON(pretty = FALSE, na = "null")
+}
+
+
+safe_year <- function(df) {
+  pub_cols <- c("published.print", "published.online", "published")
+  existing <- pub_cols[pub_cols %in% names(df)]
+
+  if (length(existing) == 0) {
+    return(NA_integer_)
+  }
+
+  year_str <- dplyr::coalesce(!!!df[existing])
+  as.integer(stringr::str_sub(as.character(year_str), 1, 4))
+}
+
+apa_reference_md <- function(doi, title, author_json, journal, year, volume, issue, pages) {
+  n <- length(doi)
+
+  map_chr(seq_len(n), function(i) {
+    # --- parse authors safely ---
+    authors <- tryCatch(fromJSON(author_json[i]), error = function(e) NULL)
+
+    fmt_author <- function(given, family) {
+      initials <- if (!is.na(given) && nzchar(given)) {
+        parts <- strsplit(given, "\\s+")[[1]]
+        paste0(substr(parts, 1, 1), collapse = ". ")
+      } else ""
+      paste0(family, ", ", initials, ".")
+    }
+
+    if (is.null(authors) || nrow(authors) == 0) {
+      author_str <- "(n.a.)"
+    } else {
+      author_strs <- pmap_chr(authors, \(given, family, sequence, ORCID)
+        fmt_author(given, family))
+      n_auth <- length(author_strs)
+      author_str <-
+        if (n_auth == 1) author_strs
+        else if (n_auth == 2) paste(author_strs, collapse = " & ")
+        else paste0(paste(author_strs[-n_auth], collapse = ", "), ", & ", author_strs[n_auth])
+    }
+
+    # --- APA-style markdown (title not bold) ---
+    glue(
+      "{author_str} ({year[i]}). {title[i]}. *{journal[i]}*, *{volume[i]}*({issue[i]}), {pages[i]}. [https://doi.org/{doi[i]}](https://doi.org/{doi[i]})"
+    )
+  })
+}
+
+bibtex_reference <- function(doi, title, author_json, journal, year, volume, issue, pages) {
+  n <- length(doi)
+
+  map_chr(seq_len(n), function(i) {
+    # --- parse authors safely ---
+    authors <- tryCatch(fromJSON(author_json[i]), error = function(e) NULL)
+
+    fmt_author_bib <- function(given, family) {
+      if (!is.na(given) && nzchar(given)) {
+        paste0(family, ", ", given)
+      } else {
+        family
+      }
+    }
+
+    if (is.null(authors) || nrow(authors) == 0) {
+      author_str <- "Unknown"
+    } else {
+      author_strs <- pmap_chr(authors, \(given, family, sequence, ORCID)
+        fmt_author_bib(given, family))
+      author_str <- paste(author_strs, collapse = " and ")
+    }
+
+    key <- str_remove_all(paste0(str_to_lower(word(author_strs[1], 1)), year[i]), "[^a-z0-9]")
+
+    glue(
+"@article{{{key},
+  author = {{{author_str}}},
+  title = {{{title[i]}}},
+  journal = {{{journal[i]}}},
+  year = {{{year[i]}}},
+  volume = {{{volume[i]}}},
+  number = {{{issue[i]}}},
+  pages = {{{pages[i]}}},
+  doi = {{{doi[i]}}}
+}}"
+    )
+  })
+}
+```
+
+## Citation cache for CrossRef lookups
+
+```{r citation_cache}
+# File on disk where we cache citation strings from CrossRef
+CIT_CACHE_FILE <- "crossref_citation_cache.rds"
+
+load_citation_cache <- function() {
+  if (file.exists(CIT_CACHE_FILE)) {
+    readRDS(CIT_CACHE_FILE)
+  } else {
+    list(apa = list(), bibtex = list())
+  }
+}
+
+save_citation_cache <- function(cache) {
+  saveRDS(cache, CIT_CACHE_FILE)
+}
+
+get_crossref_citation <- function(doi, type = c("bibtex", "apa")) {
+  type <- match.arg(type)
+
+  if (type == "bibtex") {
+    fmt   <- "bibtex"
+    style <- NULL
+  } else if (type == "apa") {
+    fmt   <- "text"
+    style <- "apa"
+  }
+
+  tryCatch(
+    rcrossref::cr_cn(dois = doi, format = fmt, style = style),
+    error = function(e) NA_character_
+  )
+}
+```
+
+## Fetch and parse CrossRef metadata
+
+```{r fetch_crossref}
+doi_data_o <- get_doi_data(flora$doi_o)
+
+doi_data_o_parsed <- doi_data_o %>% 
+  transmute(
+    doi = tolower(doi),
+    title_o = title,
+    author_o = map_chr(author, jsonify_authors),
+    journal_o = container.title,
+    year_o = safe_year(pick(everything())),
+    volume_o = volume,
+    issue_o = issue,
+    pages_o = page,
+    type_o = type
+  )
+
+doi_data_r <- get_doi_data(flora$doi_r)
+
+doi_data_r_parsed <- doi_data_r %>% 
+  transmute(
+    doi = tolower(doi),
+    title_r = title,
+    author_r = map_chr(author, jsonify_authors),
+    journal_r = container.title,
+    year_r = safe_year(pick(everything())),
+    volume_r = volume,
+    issue_r = issue,
+    pages_r = page,
+    type_r = type
+  )
+```
+
+## Build APA/BibTeX references with CrossRef caching
+
+```{r build_references}
+# Build unified metadata tables for use in citation generation
+meta_o <- doi_data_o_parsed %>%
+  transmute(
+    doi,
+    title = title_o,
+    author_json = author_o,
+    journal = journal_o,
+    year = year_o,
+    volume = volume_o,
+    issue = issue_o,
+    pages = pages_o,
+    type = type_o
+  )
+
+meta_r <- doi_data_r_parsed %>%
+  transmute(
+    doi,
+    title = title_r,
+    author_json = author_r,
+    journal = journal_r,
+    year = year_r,
+    volume = volume_r,
+    issue = issue_r,
+    pages = pages_r,
+    type = type_r
+  )
+
+# Function to resolve APA/BibTeX via CrossRef first, with manual fallback
+override_with_crossref <- function(doi_vec, meta_df) {
+  cache <- load_citation_cache()
+  doi_vec <- tolower(doi_vec)
+
+  apa_final <- vector("character", length(doi_vec))
+  bibtex_final <- vector("character", length(doi_vec))
+
+  for (i in seq_along(doi_vec)) {
+    d <- doi_vec[i]
+    meta_row <- meta_df[match(d, meta_df$doi), ]
+
+    # --- APA ---
+    apa_cr <- cache$apa[[d]] %||% get_crossref_citation(d, "apa")
+    cache$apa[[d]] <- apa_cr
+
+    if (is.na(apa_cr) || !nzchar(apa_cr)) {
+      if (nrow(meta_row) == 1 && !is.na(meta_row$type) && meta_row$type == "journal-article") {
+        apa_fallback <- apa_reference_md(
+          doi = meta_row$doi,
+          title = meta_row$title,
+          author_json = meta_row$author_json,
+          journal = meta_row$journal,
+          year = meta_row$year,
+          volume = meta_row$volume,
+          issue = meta_row$issue,
+          pages = meta_row$pages
+        )[1]
+      } else if (nrow(meta_row) == 1 && !is.na(meta_row$title)) {
+        apa_fallback <- glue("{meta_row$title}. https://doi.org/{meta_row$doi}")
+      } else {
+        apa_fallback <- glue("https://doi.org/{d}")
+      }
+      apa_final[i] <- apa_fallback
+    } else {
+      apa_final[i] <- apa_cr
+    }
+
+    # --- BibTeX ---
+    bib_cr <- cache$bibtex[[d]] %||% get_crossref_citation(d, "bibtex")
+    cache$bibtex[[d]] <- bib_cr
+
+    if (is.na(bib_cr) || !nzchar(bib_cr)) {
+      if (nrow(meta_row) == 1) {
+        bibtex_fallback <- bibtex_reference(
+          doi = meta_row$doi,
+          title = meta_row$title,
+          author_json = meta_row$author_json,
+          journal = meta_row$journal,
+          year = meta_row$year,
+          volume = meta_row$volume,
+          issue = meta_row$issue,
+          pages = meta_row$pages
+        )[1]
+      } else {
+        bibtex_fallback <- glue("@misc{{{d}, doi = {{{d}}}}}")
+      }
+      bibtex_final[i] <- bibtex_fallback
+    } else {
+      bibtex_final[i] <- bib_cr
+    }
+  }
+
+  save_citation_cache(cache)
+
+  tibble(
+    doi = doi_vec,
+    apa_ref = apa_final,
+    bibtex_ref = bibtex_final
+  )
+}
+
+# Generate references for originals and replications
+refs_o <- override_with_crossref(doi_vec = meta_o$doi, meta_df = meta_o)
+refs_r <- override_with_crossref(doi_vec = meta_r$doi, meta_df = meta_r)
+```
+
+## OpenAlex metadata (keywords, field, language)
+
+```{r openalex}
+get_openalex_meta <- function(doi, mailto = NULL, fallback_to_concepts = TRUE, n_concepts = 10) {
+  base_url <- "https://api.openalex.org/works/"
+  encoded_doi <- URLencode(doi, reserved = TRUE)
+  url <- paste0(base_url, "doi:", encoded_doi)
+  
+  q <- list(select = "id,doi,display_name,language,keywords,concepts,primary_topic")
+  if (!is.null(mailto)) q$mailto <- mailto
+  
+  resp <- GET(url, query = q, user_agent("R script (OpenAlex lookup)"))
+  if (http_error(resp)) {
+    stop(sprintf("HTTP %s: %s", status_code(resp), content(resp, as = "text", encoding = "UTF-8")))
+  }
+  x <- fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
+  
+  # language
+  lang <- x$language %||% NA_character_
+  
+  # keywords
+  kws <- NULL
+  if (!is.null(x$keywords)) {
+    if (is.character(x$keywords)) {
+      kws <- x$keywords
+    } else if (is.data.frame(x$keywords)) {
+      nm <- names(x$keywords)
+      pick <- intersect(c("display_name", "keyword", "name", "value"), nm)
+      if (length(pick)) kws <- unique(na.omit(as.character(x$keywords[[pick[1]]])))
+    } else if (is.list(x$keywords)) {
+      kws <- unique(na.omit(as.character(unlist(lapply(
+        x$keywords,
+        function(k) k[["display_name"]] %||% k[["keyword"]] %||% k[["name"]] %||% k
+      )))))
+    }
+  }
+  
+  # Fallback to top-N concepts for keywords if needed
+  if ((is.null(kws) || length(kws) == 0) && fallback_to_concepts && !is.null(x$concepts)) {
+    cons <- x$concepts
+    if (is.data.frame(cons) && "display_name" %in% names(cons)) {
+      if ("score" %in% names(cons)) cons <- cons[order(cons$score, decreasing = TRUE), , drop = FALSE]
+      kws <- head(unique(as.character(cons$display_name)), n_concepts)
+    } else if (is.list(cons)) {
+      dn <- unlist(lapply(cons, function(cn) cn[["display_name"]]))
+      sc <- unlist(lapply(cons, function(cn) cn[["score"]]))
+      ord <- order(ifelse(is.na(sc), 0, sc), decreasing = TRUE)
+      kws <- head(unique(as.character(dn[ord])), n_concepts)
+    }
+  }
+  kws <- unique(trimws(kws))
+  kws <- kws[nzchar(kws)]
+  
+  # field: prefer primary_topic$field$display_name, otherwise infer from concepts
+  field <- NA_character_
+  if (!is.null(x$primary_topic)) {
+    pt <- x$primary_topic
+    if (!is.null(pt$field) && !is.null(pt$field$display_name)) {
+      field <- as.character(pt$field$display_name)
+    } else if (!is.null(pt$subfield) && !is.null(pt$subfield$display_name)) {
+      field <- as.character(pt$subfield$display_name)
+    } else if (!is.null(pt$display_name)) {
+      field <- as.character(pt$display_name)
+    }
+  }
+  if ((is.na(field) || !nzchar(field)) && !is.null(x$concepts)) {
+    cons <- x$concepts
+    # normalize to vectors
+    if (is.data.frame(cons)) {
+      dn <- as.character(cons$display_name %||% rep(NA_character_, nrow(cons)))
+      lv <- suppressWarnings(as.integer(cons$level %||% rep(NA_integer_, nrow(cons))))
+      sc <- suppressWarnings(as.numeric(cons$score %||% rep(NA_real_, nrow(cons))))
+    } else if (is.list(cons)) {
+      dn <- as.character(unlist(lapply(cons, function(cn) cn[["display_name"]] %||% NA_character_)))
+      lv <- suppressWarnings(as.integer(unlist(lapply(cons, function(cn) cn[["level"]] %||% NA_integer_))))
+      sc <- suppressWarnings(as.numeric(unlist(lapply(cons, function(cn) cn[["score"]] %||% NA_real_))))
+    } else {
+      dn <- lv <- sc <- NULL
+    }
+    if (!is.null(dn) && length(dn)) {
+      # prefer level 1 (field), then 0 (domain), else best-scoring
+      pick_idx <- which(lv == 1)
+      if (!length(pick_idx)) pick_idx <- which(lv == 0)
+      if (!length(pick_idx)) pick_idx <- seq_along(dn)
+      # choose highest scoring among candidates
+      sc_sub <- ifelse(is.na(sc[pick_idx]), 0, sc[pick_idx])
+      field <- dn[pick_idx[order(sc_sub, decreasing = TRUE)][1]]
+    }
+  }
+  
+  list(
+    keywords = if (length(kws)) kws else character(0),
+    field = field %||% NA_character_,
+    language = lang %||% NA_character_
+  )
+}
+
+# Prepare DOIs
+dois <- unique(flora$doi_o)
+dois <- dois[!is.na(dois) & grepl("^10", dois)]
+
+# Download from OpenAlex
+kwdat <- data.frame(
+  doi_o = dois,
+  keywords_o = NA_character_,
+  field_o = NA_character_,
+  language_o = NA_character_,
+  error = NA_character_,
+  stringsAsFactors = FALSE
+)
+
+for (idx in seq_along(dois)) {
+  res <- tryCatch(
+    {
+      out <- get_openalex_meta(dois[idx], mailto = "lukas.roeseler@uni-muenster.de")
+      list(out = out, err = NA_character_)
+    },
+    error = function(e) list(out = NULL, err = conditionMessage(e))
+  )
+  
+  if (!is.null(res$out)) {
+    kwdat$keywords_o[idx] <- if (length(res$out$keywords) > 0) paste(res$out$keywords, collapse = ", ") else NA_character_
+    kwdat$field_o[idx] <- res$out$field %||% NA_character_
+    kwdat$language_o[idx] <- res$out$language %||% NA_character_
+  }
+  kwdat$error[idx] <- res$err
+}
+
+kwdat <- kwdat[, 1:4]  # drop error column
+```
+
+## Metapaper coding
+
+```{r metapaper_coding}
+# code any of these entries as meta papers
+metapapers <- c(
+  "10.1038--s41562-024-02062-9",
+  "10.3389/fcomm.2022.1048896", # 10 cases of sensory research
+  "10.1073/pnas.2103313118", # scarcity effects
+  "10.1177/0956797619831612", # Soto
+  "10.1007/s13164-018-0400-9", # X-PHI
+  "10.1038/s41562-018-0399-z", # Camerer 2018
+  "10.1098/rsos.231240", # Boyce
+  "10.1027/1864-9335/a000178", # ML1
+  "10.1177/2515245918810225", # ML2
+  "10.1016/j.jesp.2015.10.012", # ML3
+  "10.1126/science.aac4716", # RP:P
+  "10.1038/s41562-024-02062-9", # Holzmeister et al. 2024
+  "10.1177/08902070221094216", # SVO development
+  "10.1126/science.aaf0918" # Camerer 2016
+)
+```
+
+## Publication status
+
+```{r publication_status}
+preprint_servers <- c(
+  "SSRN Electronic Journal",
+  "Open Research Europe"
+)
+```
+
+## Combine and finalize FLoRA dataset
+
+```{r combine_finalize}
+flora <- flora %>% 
+  rowwise() %>% 
+  mutate(
+    doi_o = tolower(doi_o),
+    doi_r = tolower(doi_r),
+    doi_o_hash = str_sub(digest::digest(doi_o, "md5", serialize = FALSE), 1, 3),
+    doi_r_hash = str_sub(digest::digest(doi_r, "md5", serialize = FALSE), 1, 3)
+  ) %>%
+  ungroup() %>% 
+  left_join(doi_data_o_parsed, by = c("doi_o" = "doi")) %>%
+  left_join(doi_data_r_parsed, by = c("doi_r" = "doi")) %>%
+  left_join(refs_o, by = c("doi_o" = "doi")) %>%
+  rename(apa_ref_o = apa_ref, bibtex_ref_o = bibtex_ref) %>%
+  left_join(refs_r, by = c("doi_r" = "doi")) %>%
+  rename(apa_ref_r = apa_ref, bibtex_ref_r = bibtex_ref) %>%
+  left_join(kwdat, by = "doi_o") %>%
+  # Add metapaper coding
+  mutate(metapaper_r = as.integer(doi_r %in% metapapers)) %>%
+  # Add publication status
+  mutate(
+    publicationstatus_r = case_when(
+      is.na(journal_r) ~ "Working paper",
+      journal_r %in% preprint_servers ~ "Not peer-reviewed (e.g., preprint)",
+      TRUE ~ "Peer-reviewed (published in a journal)"
+    )
+  ) %>%
+  # Select final columns
+  select(
+    doi_o, doi_o_hash, title_o, author_o, journal_o, year_o, volume_o, issue_o, pages_o,
+    apa_ref_o, bibtex_ref_o,
+    doi_r, doi_r_hash, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r,
+    apa_ref_r, bibtex_ref_r,
+    ref_o, ref_r, url_r, outcome, outcome_quote, out_quote_source,
+    keywords_o, field_o, language_o,
+    metapaper_r, publicationstatus_r
+  ) %>%
+  # Filter out rows without both titles
+  filter(!is.na(title_o), !is.na(title_r))
+
+# Apply exclusions: keep only those metastudies with url_r non-missing
+flora <- flora %>%
+  filter(!(metapaper_r == 1 & is.na(url_r)))
+```
+
+## Save FLoRA dataset
+
+```{r save}
+write_csv(flora, "FLoRA.csv")
+openxlsx::write.xlsx(flora, file = "FLoRA.xlsx")
+```
