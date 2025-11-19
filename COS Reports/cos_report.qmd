@@ -1,10 +1,10 @@
 ---
 title: "SMART Competition Data Report"
 author:
-  - name: Lukas Röseler
-    orcid: 0000-0002-6446-1901
   - name: Lukas Wallrich
     orcid: 0000-0003-2121-5177
+  - name: Lukas Röseler
+    orcid: 0000-0002-6446-1901
   - name: Flavio Azevedo
     orcid: 0000-0001-9000-8513
   - name: Sarah Ashcroft-Jones
@@ -153,6 +153,11 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Added section with warnings and caveats for dataset users
 -   Normalized all doi to lowercase, as they are inconsistently reported but not case sensitive
 
+**Version 2.0 (2025-11-12)**
+
+-   Removed \~10 duplicate effects
+-   Added `author_overlap` between originals and replications (auto-coded based on Crossref)
+
 ### Terminology
 
 The relation between an article reporting a replication study and the corresponding original study can be complex. The following terms allow for almost every combination of original and replication studies to be documented in the dataset.
@@ -217,7 +222,7 @@ ds <- ds_raw %>% filter(status == "validated - chosen")
 # coded but not validated entries
 ds_awaitingvalidation <- ds_raw %>%
   filter(is.na(status) |
-         (!str_detect(status, "validated") & status != "study-pair excluded")) %>% 
+         (!str_detect(status, "validated") & status != "study-pair excluded"))
 
 
 # save descriptives
@@ -616,6 +621,8 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by rep
 -   **Eta-squared**: Our [conversion function](https://forrt.org/FReD/reference/convert_effect_sizes.html) converts eta-squared but not partial eta-squared. It is possible that authors misreported one as the other.
 
 -   **`entry_id` and `effect_id` variables are *not* stable across versions of the dataset**. They should thus not be used to identify entries over time. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
+
+-   **Selection of rows:** A statistical result in a replication can be assigned to two different original results from the same paper (e.g., when the original only reported separate effects for sub-samples but replication focused on total sample), and an original result can be combined with multiple replication results. Also, matched effects are not comprehensive but selected by the coders for being linked to the relevant claim. Therefore, rows should not be treated as independent.
 
 ## Internal Process
 
