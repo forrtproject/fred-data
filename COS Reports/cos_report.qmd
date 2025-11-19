@@ -1,6 +1,6 @@
 ---
 title: "SMART Competition Data Report"
-author:
+author: 
   - name: Lukas Wallrich
     orcid: 0000-0003-2121-5177
   - name: Lukas Röseler
@@ -193,6 +193,7 @@ cleaned <- clean_fred_data(ds_fully_raw)
 
 ds_raw <- cleaned$cleaned_data
 
+
 replace_na_filename <- function(filename) {
   filename %>% 
     na_if(".pdf") %>% 
@@ -204,16 +205,14 @@ ds_raw <- ds_raw %>%
   mutate(file_o = replace_na_filename(file_o),
          file_r = replace_na_filename(file_r))
 
-ds_raw <- ds_raw %>%
-  # filter empty rows
-  filter(!is.na(ref_o) | !is.na(ref_r)) %>%
-  # add ID to distinguish replications from same meta-paper
-  mutate(id_r = coalesce(url_r, tolower(doi_r))) %>%
-  # filter out excluded studies
-  filter(is.na(exclusion)) %>%
-  # filter out non-validated extra rows
-  filter(!(approach == "extra rows" & status != "validated - chosen") |
-         is.na(approach) | is.na(status))
+# filter empty rows
+ds_raw <- ds_raw %>% filter(!is.na(ref_o), !is.na(ref_r))
+
+# ID to distinguish replications where multiple are in same paper
+ds_raw$id_r <- coalesce(ds_raw$url_r, tolower(ds_raw$doi_r))
+
+# filter out excluded studies
+ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
 
 # filter for validated - chosen entries
 # changed this as base-R subsetting struggles with NAs
@@ -224,7 +223,6 @@ ds_awaitingvalidation <- ds_raw %>%
   filter(is.na(status) |
          (!str_detect(status, "validated") & status != "study-pair excluded"))
 
-
 # save descriptives
 rows_total <- nrow(ds_raw)
 rows <- nrow(ds)
@@ -234,7 +232,7 @@ awaiting_validation <- nrow(
     ds_awaitingvalidation[, c("doi_o", "id_r")] %>% 
       distinct() %>% 
       anti_join(
-        ds %>% select("doi_o", "id_r")
+        ds[, c("doi_o", "id_r")]
       ))
   
 entries <- sum(!duplicated(ds[, c("doi_o", "study_o", "id_r", "study_r")]))
@@ -254,7 +252,12 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 
 ```{r add-clean-refs, include = FALSE, echo = FALSE}
 
-refs <- readxl::read_excel("../crossref_retrieved_references.xlsx")
+# refs <- readxl::read_excel("FReD-data/crossref_retrieved_references.xlsx")
+
+url <- "https://raw.githubusercontent.com/forrtproject/FReD-data/main/crossref_retrieved_references.xlsx"
+tf <- tempfile(fileext = ".xlsx")
+download.file(url, tf, mode = "wb")
+refs <- readxl::read_excel(tf)
 
 ds <- ds %>% 
   mutate(doi_r = tolower(doi_r),
@@ -467,7 +470,7 @@ p_data <- ds %>%
         theme_classic() +
         theme(legend.position = "none") +
       scale_x_continuous(
-    name = "Frequency",
+   name = "Frequency",
     sec.axis = sec_axis(~ . / sum(p_data$n) * 100, name = "Percent")
       )
 

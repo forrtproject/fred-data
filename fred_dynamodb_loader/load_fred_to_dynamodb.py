@@ -38,7 +38,7 @@ PREFIX_LEN     = int(os.getenv("PREFIX_LEN", "3"))
 ORIGINAL_TABLE = os.getenv("ORIGINAL_TABLE")
 
 REQUIRED_COLS = {PREFIX_COL, "doi_o"}     # need hash + original DOI
-DROP_COLS = { "ref_o"}
+DROP_COLS = { "ref_o","ref_r"}
 
 if not TABLE:
     print("ERROR: set TABLE env var", file=sys.stderr); sys.exit(1)
