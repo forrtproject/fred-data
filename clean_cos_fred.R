@@ -82,7 +82,8 @@ clean_fred_data <- function(data) {
   cleaned_data <- cleaned_data %>%
     mutate(across(where(is.character), ~ na_if(., "NA"))) %>%
     mutate(across(where(is.character), ~ na_if(., "N/A"))) %>%
-    mutate(across(where(is.character), ~ na_if(., "#N/A")))
+    mutate(across(where(is.character), ~ na_if(., "#N/A"))) %>%
+    mutate(across(where(is.character), ~ na_if(., "NA (not reported)")))
 
   na_changes_after <- sum(sapply(cleaned_data, function(x) sum(is.na(x))))
   na_rows_affected <- na_changes_after - na_changes_before
