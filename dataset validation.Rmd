@@ -18,6 +18,20 @@ fred_validated_full <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-
 # filter for validated - chosen entries
 fred_validated_raw <- fred_validated_full[fred_validated_full$status == "validated - chosen", ]
 
+# drop excluded rows (exclusion not NA) before cleaning/validation
+if ("exclusion" %in% names(fred_validated_raw)) {
+  fred_validated_raw <- fred_validated_raw %>% filter(is.na(exclusion))
+}
+
+# default incremental mode can be overridden via options(incremental_report = FALSE)
+if (is.null(getOption("incremental_report"))) options(incremental_report = TRUE)
+incremental_report <- isTRUE(getOption("incremental_report"))
+
+prev_report <- if (file.exists("validation_report_backup.rds")) read_rds("validation_report_backup.rds") else NULL
+prev_failures <- if (!is.null(prev_report) && !is.null(prev_report$df)) prev_report$df else NULL
+
+options(incremental_report = FALSE)
+
 ```
 
 ```{r}
@@ -32,7 +46,7 @@ fred_validated <- cleaned$cleaned_data
 #' @param tests_to_run A numeric vector specifying which tests to run.
 #'   If NULL (default), all tests are run.
 #' @return A character string containing the Markdown-formatted report.
-validate_fred_data <- function(data, tests_to_run = NULL) {
+validate_fred_data <- function(data, tests_to_run = NULL, incremental_report = getOption("incremental_report", TRUE), prev_failures = NULL) {
 
   # --- Configuration ---
   VALID_ES_TYPES <- c(
@@ -51,9 +65,10 @@ validate_fred_data <- function(data, tests_to_run = NULL) {
 #
 # 1. For F, t, or X2 (Chi-squared) statistics:
 #    - `F|t|X2`: Matches the statistic type.
-#    - `\\(`...`\\)`: Encloses degrees of freedom.
+#    - `\\(`...`\\)`: Encloses degrees of freedom (the only bare `F` without dfs allowed is the literal inequality `F < 1`).
 #    - `\\d+(\\.\\d+)?`: Matches one or more digits, optionally followed by a decimal and more digits,
 #      allowing for continuous degrees of freedom.
+#    - For X2, requires a sample size inside the parentheses: `, N = {number}`.
 #    - ` ?`: Allows for optional spaces (e.g., after comma in F(df1, df2)).
 #    - ` ?= ?`: Matches the equals sign with optional spaces around it.
 #    - `[\\-–\\+]?`: Matches an optional plus, minus, or en-dash sign for the value.
@@ -67,7 +82,7 @@ validate_fred_data <- function(data, tests_to_run = NULL) {
 #    - `, ?N ?= ?`: Requires a comma, optional spaces, "N", optional spaces, "=", optional spaces.
 #    - `\\d+(\\.\\d+)?`: Matches the 'N' value (sample size), allowing for both integers and decimals.
 #      The 'N' value is mandatory for Z-statistics in this format.
-TEST_STAT_REGEX <- "^((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)?\\)|X2\\(\\d+(\\.\\d+)?\\)) ?[=<>≤] ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)|Z ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?) ?, ?N ?= ?\\d+(\\.\\d+)?)$"
+TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)?\\)|X2\\(\\d+(\\.\\d+)?, ?N ?= ?\\d+(\\.\\d+)?\\)) ?[=<>≤] ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)|F ?< ?1(?:\\.0+)?|Z ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?) ?, ?[Nn] ?= ?\\d+(\\.\\d+)?))$"
 
   NUMERIC_REGEX <- "^-?\\d*\\.?\\d+([eE][-+]?\\d+)?$"
   ID_THRESHOLD <- 5
@@ -113,7 +128,15 @@ TEST_STAT_REGEX <- "^((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)?
     return(issue_list)
   }
   
-  add_main_report_item <- function(issue_df, message_template, check_name) {
+  # Filter out issues already present in a previous validation run (for incremental reports)
+  filter_new_issues <- function(issue_df, check_name) {
+    issue_df <- distinct(issue_df) %>% mutate(id = as.character(id))
+    if (!incremental_report || is.null(prev_failures)) return(issue_df)
+    prev_for_check <- prev_failures %>% distinct(test_failure, fred_id) %>% filter(test_failure == check_name) %>% mutate(fred_id = as.character(fred_id))
+    issue_df %>% anti_join(prev_for_check, by = c("id" = "fred_id"))
+  }
+  
+  add_main_report_item <- function(issue_df, message_template, check_name, had_prior = FALSE) {
       if(nrow(issue_df) > 0) {
           ids <- unique(issue_df$id)
           all_checks[[check_name]] <<- list(status = "fail", msg = glue(message_template, id_list = format_id_list(ids)))
@@ -127,42 +150,47 @@ TEST_STAT_REGEX <- "^((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)?
           failures_df <<- bind_rows(failures_df, new_failures)
 
       } else {
-          all_checks[[check_name]] <<- list(status = "pass", msg = check_name)
+          msg <- if (had_prior) glue("{check_name} (no new issues; previously flagged)") else check_name
+          all_checks[[check_name]] <<- list(status = "pass", msg = msg)
       }
   }
 
   # --- Validation Checks ---
   
   if(should_run(1)){
-    string_na_issues <- data %>%
+    raw_string_na_issues <- data %>%
       select(id, where(is.character)) %>%
       pivot_longer(cols = -id, names_to = "column", values_to = "value", values_drop_na = TRUE) %>%
       filter(value %in% c("NA", "N/A"))
-    add_main_report_item(string_na_issues, "Contains string literals 'NA' or 'N/A'. Check id(s): {id_list}", "No 'NA'/'N/A' strings")
+    string_na_issues <- filter_new_issues(raw_string_na_issues, "No 'NA'/'N/A' strings")
+    add_main_report_item(string_na_issues, "Contains string literals 'NA' or 'N/A'. Check id(s): {id_list}", "No 'NA'/'N/A' strings", had_prior = incremental_report && nrow(raw_string_na_issues) > 0 && nrow(string_na_issues) == 0)
     if(nrow(string_na_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, string_na_issues, "Column `{column}` contains a forbidden string: '{value}'.", column="column", value="value")
     }
   }
   
   if(should_run(2)){
-    doi_in_ref_issues <- data %>% filter(str_detect(ref_o, "doi:|10\\.") | str_detect(ref_r, "doi:|10\\."))
-    add_main_report_item(doi_in_ref_issues, "DOI found in `ref_o` or `ref_r`. Check id(s): {id_list}", "No DOIs in reference columns")
+    raw_doi_in_ref_issues <- data %>% filter(str_detect(ref_o, "doi:|10\\.") | str_detect(ref_r, "doi:|10\\."))
+    doi_in_ref_issues <- filter_new_issues(raw_doi_in_ref_issues, "No DOIs in reference columns")
+    add_main_report_item(doi_in_ref_issues, "DOI found in `ref_o` or `ref_r`. Check id(s): {id_list}", "No DOIs in reference columns", had_prior = incremental_report && nrow(raw_doi_in_ref_issues) > 0 && nrow(doi_in_ref_issues) == 0)
     if(nrow(doi_in_ref_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, doi_in_ref_issues, "DOI found in `ref_o` or `ref_r`.")
     }
   }
 
   if(should_run(3)){
-    doi_format_issues <- data %>% filter((!is.na(doi_o) & !str_starts(doi_o, "10."))  | (!is.na(doi_r) & !str_starts(doi_r, "10.")))
-    add_main_report_item(doi_format_issues, "`doi_o` or `doi_r` has incorrect format. Check id(s): {id_list}", "DOI columns start with '10.'")
+    raw_doi_format_issues <- data %>% filter((!is.na(doi_o) & !str_starts(doi_o, "10."))  | (!is.na(doi_r) & !str_starts(doi_r, "10.")))
+    doi_format_issues <- filter_new_issues(raw_doi_format_issues, "DOI columns start with '10.'")
+    add_main_report_item(doi_format_issues, "`doi_o` or `doi_r` has incorrect format. Check id(s): {id_list}", "DOI columns start with '10.'", had_prior = incremental_report && nrow(raw_doi_format_issues) > 0 && nrow(doi_format_issues) == 0)
     if(nrow(doi_format_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, doi_format_issues, "`doi_o` or `doi_r` has incorrect format (must start with '10.').")
     }
   }
   
   if(should_run(4)){
-    url_issues <- data %>% select(id, all_of(URL_COLS)) %>% pivot_longer(-id, names_to="column", values_to="value", values_drop_na=TRUE) %>% filter(!str_starts(value, "http"))
-    add_main_report_item(url_issues, "URL columns contain values that are not full URLs. Check id(s): {id_list}", "All links are valid URLs")
+    raw_url_issues <- data %>% select(id, all_of(URL_COLS)) %>% pivot_longer(-id, names_to="column", values_to="value", values_drop_na=TRUE) %>% filter(!str_starts(value, "http"))
+    url_issues <- filter_new_issues(raw_url_issues, "All links are valid URLs")
+    add_main_report_item(url_issues, "URL columns contain values that are not full URLs. Check id(s): {id_list}", "All links are valid URLs", had_prior = incremental_report && nrow(raw_url_issues) > 0 && nrow(url_issues) == 0)
     if(nrow(url_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, url_issues, "Column `{column}` contains a value that is not a full URL: '{value}'.", column="column", value="value")
     }
@@ -170,22 +198,24 @@ TEST_STAT_REGEX <- "^((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)?
   
   if(should_run(5)){
     numeric_cols_check <- c("n_o", "n_r", "pval_value_o", "pval_value_r")
-    non_numeric_issues <- data %>%
+    raw_non_numeric_issues <- data %>%
       select(id, all_of(numeric_cols_check)) %>%
       mutate(across(everything(), as.character)) %>%
       pivot_longer(cols = -id, names_to = "column", values_to = "value", values_drop_na = TRUE) %>%
       filter(!str_detect(value, NUMERIC_REGEX))
-    add_main_report_item(non_numeric_issues, "Non-numeric text found in numeric columns. Check id(s): {id_list}", "All values in numeric columns are numeric")
+    non_numeric_issues <- filter_new_issues(raw_non_numeric_issues, "All values in numeric columns are numeric")
+    add_main_report_item(non_numeric_issues, "Non-numeric text found in numeric columns. Check id(s): {id_list}", "All values in numeric columns are numeric", had_prior = incremental_report && nrow(raw_non_numeric_issues) > 0 && nrow(non_numeric_issues) == 0)
     if(nrow(non_numeric_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, non_numeric_issues, "Column `{column}` contains a non-numeric value: '{value}'.", column="column", value="value")
     }
   }
 
   if(should_run(6)){
-    es_non_numeric <- data %>% mutate(across(c(es_value_o, es_value_r), as.character)) %>%
+    raw_es_non_numeric <- data %>% mutate(across(c(es_value_o, es_value_r), as.character)) %>%
       filter((es_type_o != "test statistic" & !is.na(es_value_o) & !str_detect(es_value_o, NUMERIC_REGEX)) |
                (es_type_r != "test statistic" & !is.na(es_value_r) & !str_detect(es_value_r, NUMERIC_REGEX)))
-    add_main_report_item(es_non_numeric, "`es_value` is not numeric for a standard effect size type. Check id(s): {id_list}", "Effect size values are numeric")
+    es_non_numeric <- filter_new_issues(raw_es_non_numeric, "Effect size values are numeric")
+    add_main_report_item(es_non_numeric, "`es_value` is not numeric for a standard effect size type. Check id(s): {id_list}", "Effect size values are numeric", had_prior = incremental_report && nrow(raw_es_non_numeric) > 0 && nrow(es_non_numeric) == 0)
     if(nrow(es_non_numeric) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, es_non_numeric, "`es_value` is not numeric for its standard `es_type`.")
     }
@@ -193,78 +223,91 @@ TEST_STAT_REGEX <- "^((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)?
   
   if(should_run(7)){
     # Check original value
-    test_stat_issues_o <- data %>% filter((es_type_o == "test statistic" & !is.na(es_value_o) & !str_detect(es_value_o, TEST_STAT_REGEX)))
-    add_main_report_item(test_stat_issues_o, "`es_value_o` for 'test statistic' has incorrect format. Check id(s): {id_list}", "Original test statistic format is valid")
+    raw_test_stat_issues_o <- data %>% filter((es_type_o == "test statistic" & !is.na(es_value_o) & !str_detect(es_value_o, TEST_STAT_REGEX)))
+    test_stat_issues_o <- filter_new_issues(raw_test_stat_issues_o, "Original test statistic format is valid")
+    add_main_report_item(test_stat_issues_o, "`es_value_o` for 'test statistic' has incorrect format. Check id(s): {id_list}", "Original test statistic format is valid", had_prior = incremental_report && nrow(raw_test_stat_issues_o) > 0 && nrow(test_stat_issues_o) == 0)
     if(nrow(test_stat_issues_o) > 0) {
        issues_by_id <- add_to_id_report(issues_by_id, test_stat_issues_o, "`es_value_o` ('{es_value_o}') for 'test statistic' has incorrect format.", es_value_o = "es_value_o")
     }
     
     # Check replication value
-    test_stat_issues_r <- data %>% filter((es_type_r == "test statistic" & !is.na(es_value_r) & !str_detect(es_value_r, TEST_STAT_REGEX)))
-    add_main_report_item(test_stat_issues_r, "`es_value_r` for 'test statistic' has incorrect format. Check id(s): {id_list}", "Replication test statistic format is valid")
+    raw_test_stat_issues_r <- data %>% filter((es_type_r == "test statistic" & !is.na(es_value_r) & !str_detect(es_value_r, TEST_STAT_REGEX)))
+    test_stat_issues_r <- filter_new_issues(raw_test_stat_issues_r, "Replication test statistic format is valid")
+    add_main_report_item(test_stat_issues_r, "`es_value_r` for 'test statistic' has incorrect format. Check id(s): {id_list}", "Replication test statistic format is valid", had_prior = incremental_report && nrow(raw_test_stat_issues_r) > 0 && nrow(test_stat_issues_r) == 0)
     if(nrow(test_stat_issues_r) > 0) {
        issues_by_id <- add_to_id_report(issues_by_id, test_stat_issues_r, "`es_value_r` ('{es_value_r}') for 'test statistic' has incorrect format.", es_value_r = "es_value_r")
     }
   }
   
   if(should_run(8)){
-    es_type_blank_issues <- data %>% filter((is.na(es_type_o) & !is.na(es_value_o)) | (is.na(es_type_r) & !is.na(es_value_r)))
-    add_main_report_item(es_type_blank_issues, "`es_type` is blank but `es_value` is not. Check id(s): {id_list}", "No blank `es_type` with existing `es_value`")
+    raw_es_type_blank_issues <- data %>% filter((is.na(es_type_o) & !is.na(es_value_o)) | (is.na(es_type_r) & !is.na(es_value_r)))
+    es_type_blank_issues <- filter_new_issues(raw_es_type_blank_issues, "No blank `es_type` with existing `es_value`")
+    add_main_report_item(es_type_blank_issues, "`es_type` is blank but `es_value` is not. Check id(s): {id_list}", "No blank `es_type` with existing `es_value`", had_prior = incremental_report && nrow(raw_es_type_blank_issues) > 0 && nrow(es_type_blank_issues) == 0)
     if(nrow(es_type_blank_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, es_type_blank_issues, "`es_type` is blank but `es_value` is not.")
 
-    es_type_invalid_issues <- data %>% filter(!es_type_o %in% VALID_ES_TYPES | !es_type_r %in% VALID_ES_TYPES)
-    add_main_report_item(es_type_invalid_issues, "`es_type` contains a value not in the approved list. Check id(s): {id_list}", "`es_type` values are valid")
+    raw_es_type_invalid_issues <- data %>% filter(!es_type_o %in% VALID_ES_TYPES | !es_type_r %in% VALID_ES_TYPES)
+    es_type_invalid_issues <- filter_new_issues(raw_es_type_invalid_issues, "`es_type` values are valid")
+    add_main_report_item(es_type_invalid_issues, "`es_type` contains a value not in the approved list. Check id(s): {id_list}", "`es_type` values are valid", had_prior = incremental_report && nrow(raw_es_type_invalid_issues) > 0 && nrow(es_type_invalid_issues) == 0)
     if(nrow(es_type_invalid_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, es_type_invalid_issues, "`es_type` is not in the list of valid types.")
   }
 
   if(should_run(9)){
-    pval_range_issues <- data %>% 
+    raw_pval_range_issues <- data %>% 
       mutate(across(c(pval_value_o, pval_value_r), ~suppressWarnings(as.numeric(.)))) %>%
       filter((!is.na(pval_value_o) & (pval_value_o < 0 | pval_value_o > 1)) | (!is.na(pval_value_r) & (pval_value_r < 0 | pval_value_r > 1)))
-    add_main_report_item(pval_range_issues, "`pval_value` is outside the valid 0-1 range. Check id(s): {id_list}", "`pval_value` is within 0-1 range")
+    pval_range_issues <- filter_new_issues(raw_pval_range_issues, "`pval_value` is within 0-1 range")
+    add_main_report_item(pval_range_issues, "`pval_value` is outside the valid 0-1 range. Check id(s): {id_list}", "`pval_value` is within 0-1 range", had_prior = incremental_report && nrow(raw_pval_range_issues) > 0 && nrow(pval_range_issues) == 0)
     if(nrow(pval_range_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, pval_range_issues, "`pval_value` is outside the valid 0-1 range.")
   }
   
   if(should_run(10)){
-    pval_type_issues <- data %>% filter(!pval_type_o %in% VALID_PVAL_TYPES | !pval_type_r %in% VALID_PVAL_TYPES)
-    add_main_report_item(pval_type_issues, "`pval_type` contains invalid values. Check id(s): {id_list}", "`pval_type` values are valid")
+    raw_pval_type_issues <- data %>% filter(!pval_type_o %in% VALID_PVAL_TYPES | !pval_type_r %in% VALID_PVAL_TYPES)
+    pval_type_issues <- filter_new_issues(raw_pval_type_issues, "`pval_type` values are valid")
+    add_main_report_item(pval_type_issues, "`pval_type` contains invalid values. Check id(s): {id_list}", "`pval_type` values are valid", had_prior = incremental_report && nrow(raw_pval_type_issues) > 0 && nrow(pval_type_issues) == 0)
     
-    pval_tails_issues <- data %>% mutate(across(c(pval_tails_o, pval_tails_r), as.numeric)) %>% filter(!pval_tails_o %in% c(1,2,NA) | !pval_tails_r %in% c(1,2,NA))
-    add_main_report_item(pval_tails_issues, "`pval_tails` values are invalid. Check id(s): {id_list}", "`pval_tails` values are valid")
+    raw_pval_tails_issues <- data %>% mutate(across(c(pval_tails_o, pval_tails_r), as.numeric)) %>% filter(!pval_tails_o %in% c(1,2,NA) | !pval_tails_r %in% c(1,2,NA))
+    pval_tails_issues <- filter_new_issues(raw_pval_tails_issues, "`pval_tails` values are valid")
+    add_main_report_item(pval_tails_issues, "`pval_tails` values are invalid. Check id(s): {id_list}", "`pval_tails` values are valid", had_prior = incremental_report && nrow(raw_pval_tails_issues) > 0 && nrow(pval_tails_issues) == 0)
 
-    nested_issues <- data %>% filter(!nested_o %in% VALID_NESTED | !nested_r %in% VALID_NESTED)
-    add_main_report_item(nested_issues, "`nested` column contains invalid values. Check id(s): {id_list}", "`nested` values are valid")
+    raw_nested_issues <- data %>% filter(!nested_o %in% VALID_NESTED | !nested_r %in% VALID_NESTED)
+    nested_issues <- filter_new_issues(raw_nested_issues, "`nested` values are valid")
+    add_main_report_item(nested_issues, "`nested` column contains invalid values. Check id(s): {id_list}", "`nested` values are valid", had_prior = incremental_report && nrow(raw_nested_issues) > 0 && nrow(nested_issues) == 0)
   }
   
   if(should_run(11)){
     data_numeric_es <- data %>% mutate(across(c(es_value_o, es_value_r), ~suppressWarnings(as.numeric(as.character(.)))))
-    corr_issues <- data_numeric_es %>% filter(es_type_o %in% c("r", "partial r", "phi") & abs(es_value_o) > 1)
-    add_main_report_item(corr_issues, "Correlation `es_value_o` outside -1 to 1 range. Check id(s): {id_list}", "Correlation values are within range")
+    raw_corr_issues <- data_numeric_es %>% filter(es_type_o %in% c("r", "partial r", "phi") & abs(es_value_o) > 1)
+    corr_issues <- filter_new_issues(raw_corr_issues, "Correlation values are within range")
+    add_main_report_item(corr_issues, "Correlation `es_value_o` outside -1 to 1 range. Check id(s): {id_list}", "Correlation values are within range", had_prior = incremental_report && nrow(raw_corr_issues) > 0 && nrow(corr_issues) == 0)
     if(nrow(corr_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, corr_issues, "Correlation `es_value_o` ('{es_value_o}') is outside the -1 to 1 range.", es_value_o="es_value_o")
 
-    rsq_issues <- data_numeric_es %>% filter(es_type_o == "r-squared" & (es_value_o < 0 | es_value_o > 1))
-    add_main_report_item(rsq_issues, "r-squared `es_value_o` outside 0 to 1 range. Check id(s): {id_list}", "r-squared values are within range")
+    raw_rsq_issues <- data_numeric_es %>% filter(es_type_o == "r-squared" & (es_value_o < 0 | es_value_o > 1))
+    rsq_issues <- filter_new_issues(raw_rsq_issues, "r-squared values are within range")
+    add_main_report_item(rsq_issues, "r-squared `es_value_o` outside 0 to 1 range. Check id(s): {id_list}", "r-squared values are within range", had_prior = incremental_report && nrow(raw_rsq_issues) > 0 && nrow(rsq_issues) == 0)
     if(nrow(rsq_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, rsq_issues, "r-squared `es_value_o` ('{es_value_o}') is outside the 0 to 1 range.", es_value_o="es_value_o")
     
-    or_issues <- data_numeric_es %>% filter(es_type_o == "OR" & es_value_o < 0)
-    add_main_report_item(or_issues, "Odds Ratio `es_value_o` is negative. Check id(s): {id_list}", "Odds Ratio values are not negative")
+    raw_or_issues <- data_numeric_es %>% filter(es_type_o == "OR" & es_value_o < 0)
+    or_issues <- filter_new_issues(raw_or_issues, "Odds Ratio values are not negative")
+    add_main_report_item(or_issues, "Odds Ratio `es_value_o` is negative. Check id(s): {id_list}", "Odds Ratio values are not negative", had_prior = incremental_report && nrow(raw_or_issues) > 0 && nrow(or_issues) == 0)
     if(nrow(or_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, or_issues, "Odds Ratio `es_value_o` ('{es_value_o}') is negative.", es_value_o="es_value_o")
   }
 
   if(should_run(12)){
-    prereg_issues <- data %>% filter(str_detect(prereg_o, "osf\\.io") & !str_detect(prereg_o, "/registrations/"))
-    add_main_report_item(prereg_issues, "OSF preregistration link may point to a project. Check id(s): {id_list}", "OSF preregistration links seem valid")
+    raw_prereg_issues <- data %>% filter(str_detect(prereg_o, "osf\\.io") & !str_detect(prereg_o, "/registrations/"))
+    prereg_issues <- filter_new_issues(raw_prereg_issues, "OSF preregistration links seem valid")
+    add_main_report_item(prereg_issues, "OSF preregistration link may point to a project. Check id(s): {id_list}", "OSF preregistration links seem valid", had_prior = incremental_report && nrow(raw_prereg_issues) > 0 && nrow(prereg_issues) == 0)
     if(nrow(prereg_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, prereg_issues, "OSF preregistration link ('{prereg_o}') may point to a project, not a registration.", prereg_o="prereg_o")
   }
   
   if(should_run(13)){
-    ref_inc_issues <- data %>%
+    raw_ref_inc_issues <- data %>%
       filter(!is.na(ref_o) & str_ends(ref_o, "\\d")) %>%
       mutate(ref_base = str_remove(ref_o, "\\d+$")) %>%
       group_by(ref_base) %>%
       filter(n_distinct(ref_o) > 1) %>%
       ungroup()
-    add_main_report_item(ref_inc_issues, "Reference string may be a spreadsheet error (e.g. Refa1, Refa2). Check id(s): {id_list}", "No likely reference incrementing errors")
+    ref_inc_issues <- filter_new_issues(raw_ref_inc_issues, "No likely reference incrementing errors")
+    add_main_report_item(ref_inc_issues, "Reference string may be a spreadsheet error (e.g. Refa1, Refa2). Check id(s): {id_list}", "No likely reference incrementing errors", had_prior = incremental_report && nrow(raw_ref_inc_issues) > 0 && nrow(ref_inc_issues) == 0)
     if(nrow(ref_inc_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, ref_inc_issues, "Reference string ('{ref_o}') is part of a set that only differs by the final number.", ref_o="ref_o")
     }
@@ -272,30 +315,135 @@ TEST_STAT_REGEX <- "^((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)?
   
   if(should_run(14)){
     data_numeric_es <- data %>% mutate(across(c(es_value_o, es_value_r), ~suppressWarnings(as.numeric(as.character(.)))))
-    large_d_issues <- data_numeric_es %>% filter(es_type_o == 'd' & abs(es_value_o) > 3)
-    add_main_report_item(large_d_issues, "Cohen's d (`es_value_o`) is unusually large (>3). Check id(s): {id_list}", "No unusually large Cohen's d values")
+    raw_large_d_issues <- data_numeric_es %>% filter(es_type_o == 'd' & abs(es_value_o) > 3)
+    large_d_issues <- filter_new_issues(raw_large_d_issues, "No unusually large Cohen's d values")
+    add_main_report_item(large_d_issues, "Cohen's d (`es_value_o`) is unusually large (>3). Check id(s): {id_list}", "No unusually large Cohen's d values", had_prior = incremental_report && nrow(raw_large_d_issues) > 0 && nrow(large_d_issues) == 0)
     if(nrow(large_d_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, large_d_issues, "Cohen's d `es_value_o` ('{es_value_o}') is unusually large (>3).", es_value_o="es_value_o")
     
-    large_or_issues <- data_numeric_es %>% filter(es_type_o == 'OR' & (es_value_o > 20 | es_value_o < 0.05))
-    add_main_report_item(large_or_issues, "Odds Ratio (`es_value_o`) is unusually large/small. Check id(s): {id_list}", "No unusually large/small Odds Ratio values")
+    raw_large_or_issues <- data_numeric_es %>% filter(es_type_o == 'OR' & (es_value_o > 20 | es_value_o < 0.05))
+    large_or_issues <- filter_new_issues(raw_large_or_issues, "No unusually large/small Odds Ratio values")
+    add_main_report_item(large_or_issues, "Odds Ratio (`es_value_o`) is unusually large/small. Check id(s): {id_list}", "No unusually large/small Odds Ratio values", had_prior = incremental_report && nrow(raw_large_or_issues) > 0 && nrow(large_or_issues) == 0)
     if(nrow(large_or_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, large_or_issues, "Odds Ratio `es_value_o` ('{es_value_o}') is unusually large (>20) or small (<0.05).", es_value_o="es_value_o")
   }
   
   if(should_run(15)){
     data_numeric_es <- data %>% mutate(across(c(es_value_o, es_value_r), ~suppressWarnings(as.numeric(as.character(.)))))
-    reversal_issues <- data_numeric_es %>%
+    raw_reversal_issues <- data_numeric_es %>%
       filter( pval_value_r < 0.05,
         (es_type_r %in% c("r", "d") & sign(es_value_o) != sign(es_value_r) & !is.na(es_value_o) & !is.na(es_value_r)) |
         (es_type_r == "OR" & ((es_value_o > 1 & es_value_r < 1) | (es_value_o < 1 & es_value_r > 1)) & !is.na(es_value_o) & !is.na(es_value_r))
       )
-    add_main_report_item(reversal_issues, "Potential significant reversal of effect direction detected. Check id(s): {id_list}", "No significant reversals of effect direction")
+    reversal_issues <- filter_new_issues(raw_reversal_issues, "No significant reversals of effect direction")
+    add_main_report_item(reversal_issues, "Potential significant reversal of effect direction detected. Check id(s): {id_list}", "No significant reversals of effect direction", had_prior = incremental_report && nrow(raw_reversal_issues) > 0 && nrow(reversal_issues) == 0)
     if(nrow(reversal_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, reversal_issues, "Potential significant reversal of effect direction detected (O: {es_value_o}, R: {es_value_r}).", es_value_o="es_value_o", es_value_r="es_value_r")
+  }
+
+  if(should_run(16)){
+    # Helper to normalise references: remove DOI snippets and study suffixes that Excel might have pulled down
+    clean_ref_text <- function(x) {
+      x %>%
+        str_to_lower() %>%
+        str_replace_all("\\bdoi:\\s*10[./]\\S+", "") %>%
+        str_replace_all("https?://(dx\\.)?doi\\.org/10[./]\\S+", "") %>%
+        str_replace_all("study\\s*\\d+[a-zA-Z]?\\b", "") %>%
+        str_squish()
+    }
+
+    # Compute minimum normalised edit distance between all reference pairs for a given DOI
+    min_norm_distance <- function(refs) {
+      refs <- unique(refs[!is.na(refs)])
+      if(length(refs) <= 1) return(0)
+      combos <- combn(seq_along(refs), 2)
+      dists <- apply(combos, 2, function(idx) {
+        r1 <- refs[idx[1]]
+        r2 <- refs[idx[2]]
+        denom <- max(nchar(r1), nchar(r2), 1)
+        as.numeric(adist(r1, r2)) / denom
+      })
+      min(dists)
+    }
+
+    # Flag DOIs whose references differ more than a small tolerance
+    check_doi_ref_conflicts <- function(doi_col, ref_col, label) {
+      df <- data %>%
+        select(id,
+               doi = {{doi_col}},
+               ref = {{ref_col}}) %>%
+        filter(!is.na(doi), !is.na(ref)) %>%
+        mutate(ref_clean = clean_ref_text(ref))
+
+      if(nrow(df) == 0) return(tibble())
+
+      flagged_dois <- df %>%
+        group_by(doi) %>%
+        filter(n() > 1) %>%
+        summarise(min_dist = min_norm_distance(ref_clean), .groups = "drop") %>%
+        filter(min_dist > 0.2) %>%
+        pull(doi)
+
+      df %>%
+        filter(doi %in% flagged_dois) %>%
+        mutate(source = label)
+    }
+
+    raw_doi_ref_conflicts <- bind_rows(
+      check_doi_ref_conflicts(doi_o, ref_o, "doi_o/ref_o"),
+      check_doi_ref_conflicts(doi_r, ref_r, "doi_r/ref_r")
+    )
+
+    doi_ref_conflicts <- filter_new_issues(raw_doi_ref_conflicts, "DOI mapped to conflicting references")
+
+    add_main_report_item(doi_ref_conflicts, "Same DOI linked to divergent reference text(s). Check id(s): {id_list}", "DOI mapped to conflicting references", had_prior = incremental_report && nrow(raw_doi_ref_conflicts) > 0 && nrow(doi_ref_conflicts) == 0)
+
+    if(nrow(doi_ref_conflicts) > 0) {
+      issues_by_id <- add_to_id_report(
+        issues_by_id,
+        doi_ref_conflicts,
+        "DOI `{doi}` appears with different references (source: {source}). Example ref: '{ref}'.",
+        doi = "doi",
+        source = "source",
+        ref = "ref"
+      )
+    }
+  }
+
+  if(should_run(17)){
+    find_mixed_study_presence <- function(study_col, label) {
+      data %>%
+        select(id, ref_o, id_r, study = {{study_col}}) %>%
+        group_by(ref_o, id_r) %>%
+        mutate(has_na = any(is.na(study)), has_val = any(!is.na(study))) %>%
+        ungroup() %>%
+        filter(has_na & has_val) %>%
+        mutate(source = label)
+    }
+
+    raw_mixed_study_o <- find_mixed_study_presence(study_o, "study_o")
+    raw_mixed_study_r <- find_mixed_study_presence(study_r, "study_r")
+    mixed_study <- bind_rows(raw_mixed_study_o, raw_mixed_study_r)
+    mixed_study <- filter_new_issues(mixed_study, "Study identifiers consistently present/absent per ref/id_r")
+
+    add_main_report_item(mixed_study, "`study_o`/`study_r` presence is inconsistent within the same `ref_o` and `id_r`. Check id(s): {id_list}", "Study identifiers consistently present/absent per ref/id_r", had_prior = incremental_report && (nrow(raw_mixed_study_o) + nrow(raw_mixed_study_r)) > 0 && nrow(mixed_study) == 0)
+
+    if(nrow(mixed_study) > 0) {
+      issues_by_id <- add_to_id_report(
+        issues_by_id,
+        mixed_study,
+        "`{source}` is coded for some rows but missing for others within ref_o='{ref_o}' and id_r='{id_r}'.",
+        source = "source",
+        ref_o = "ref_o",
+        id_r = "id_r"
+      )
+    }
   }
 
   # --- Build Report String ---
   report_parts <- c()
   report_parts <- c(report_parts, "## FReD Data Validation Report\n")
   report_parts <- c(report_parts, glue("Report generated on: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')}\n"))
+  if (incremental_report && !is.null(prev_failures)) {
+    report_parts <- c(report_parts, "_Incremental mode: showing only issues not present in previous validation._", "")
+  }
   
   error_items <- all_checks[sapply(all_checks, function(x) x$status == "fail")]
   pass_items <- all_checks[sapply(all_checks, function(x) x$status == "pass")]
@@ -337,7 +485,14 @@ TEST_STAT_REGEX <- "^((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)?
 
 
 # --- Run the validation ---
-validation_report <- validate_fred_data(cleaned$cleaned_data, tests_to_run = c(5, 7, 9, 10))
-validation_report$report %>% clipr::write_clip()
+validation_report <- validate_fred_data(
+  cleaned$cleaned_data,
+  tests_to_run = c(5, 7, 9, 10),
+  incremental_report = incremental_report,
+  prev_failures = prev_failures
+)
+if (interactive()) validation_report$report %>% clipr::write_clip() else validation_report$report
+
+validation_report %>% write_rds("validation_report_backup.rds")
 
 ```
