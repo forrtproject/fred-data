@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Preparing rows for coding author-reported sucess"
 author: "Lukas Wallrich"
 date: "2025-06-11"
 output: html_document
@@ -32,7 +32,6 @@ fred_validated <- fred_validated %>%
   mutate(fred_id = str_remove(id, "_[a-z]{1,2}[0-9]{0,1}$"))
 
 ```
-
 ```{r}
 fred_validated %>%
   mutate(tt_o = ifelse(es_type_o == "test statistic", str_sub(str_trim(es_value_o), 1, 2), NA), 
@@ -139,35 +138,70 @@ coding <- missing_p %>% full_join(convert_es) %>%
 ## Prep subj sucess
 
 ```{r}
-subj <- fred_validated %>%
-  select(fred_id, ref_o, doi_o, ref_r, doi_r,  url_r,  link_r, study_r) %>% 
-  distinct(doi_o, doi_r, study_r, .keep_all = TRUE)
-
-unique_dois <- na.omit(unique(subj$doi_r))
-
-plan(multisession, workers = 4)
-
-abstracts_r <- unique_dois %>% 
-  future_map(function(x) {
-    if (is.na(x)) {
-      return(NA_character_)
-    }
-    possibly(rcrossref::cr_abstract, otherwise = NA_character_)(x) %>% unlist()
-  }, .progress = TRUE)
-
-abstracts_r_tbl <- tibble(doi_r = unique_dois,
-                          abstract_r = unlist(abstracts_r))
-
-subj <- subj %>% 
-  left_join(abstracts_r_tbl)
-
-subj %>% 
-  left_join(abstracts_r_tbl) %>% 
-  group_by(doi_r) %>% 
-  mutate(entries_per_rep = n_distinct(fred_id)) %>% 
+reported_success <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv", skip = 1) %>% 
+  mutate(
+    doi_o_join = tolower(doi_o),
+    id_r = coalesce(url_r, tolower(doi_r))
+  ) %>%
+  filter(!is.na(outcome), validation != "validated - discarded") %>% 
+  group_by(doi_o_join, id_r, study_o, study_r) %>%
+  arrange(desc(validation == "validated - chosen")) %>% 
+  slice_head(n = 1) %>% 
   ungroup() %>% 
-  mutate(outcome = "", outcome_quote = "", out_quote_source = "abstract", other_task = fred_id %in% coding$fred_id) %>% 
-  write_csv("subj_coding_Roksana.csv")
+  select(
+    doi_o_join, id_r, study_o, study_r,
+    reported_success = outcome,
+    reported_success_quote = outcome_quote,
+    reported_success_quote_source = out_quote_source
+  )
+
+subj <- fred_validated %>%
+  mutate(
+    doi_o_join = tolower(doi_o),
+    doi_r_join = tolower(doi_r),
+    id_r = coalesce(url_r, doi_r_join)
+  ) %>%
+  select(fred_id, ref_o, doi_o, doi_o_join, study_o, ref_r, doi_r, doi_r_join, id_r, url_r, link_r, study_r) %>% 
+  distinct(doi_o_join, id_r, study_o, study_r, .keep_all = TRUE) %>%
+  left_join(reported_success, by = c("doi_o_join", "id_r", "study_o", "study_r")) %>%
+  filter(is.na(reported_success)) %>%
+  select(-doi_o_join, -doi_r_join, -reported_success, -reported_success_quote, -reported_success_quote_source)
+
+if (nrow(subj) == 0) {
+  message("All entries already have subjective coding in the COS source.")
+} else {
+  unique_dois <- na.omit(unique(subj$doi_r))
+  
+  plan(multisession, workers = 4)
+  
+  abstracts_r <- unique_dois %>% 
+    future_map(function(x) {
+      if (is.na(x)) {
+        return(NA_character_)
+      }
+      possibly(rcrossref::cr_abstract, otherwise = NA_character_)(x) %>% unlist()
+    }, .progress = TRUE)
+  
+  abstracts_r_tbl <- tibble(
+    doi_r = unique_dois,
+    abstract_r = unlist(abstracts_r)
+  )
+  
+  subj <- subj %>% 
+    left_join(abstracts_r_tbl, by = "doi_r")
+  
+  subj %>% 
+    group_by(doi_r) %>% 
+    mutate(entries_per_rep = n_distinct(fred_id)) %>% 
+    ungroup() %>% 
+    mutate(
+      outcome = "",
+      outcome_quote = "",
+      out_quote_source = "abstract",
+      other_task = fred_id %in% coding$fred_id
+    ) %>% 
+    write_csv("subj_coding_Roksana.csv")
+}
 ```
 
 
@@ -204,28 +238,40 @@ code_abstract <- function(x) {
   )
 }
 
-extra_abstracts <- readxl::read_excel("extra_ai.xlsx")
+if (file.exists("extra_ai.xlsx")) {
+  extra_abstracts <- readxl::read_excel("extra_ai.xlsx")
+  
+  extra_coded <- extra_abstracts$abstract_r %>% 
+    unique() %>% 
+    map(code_abstract, .progress = TRUE)
+  
+  extra_res <- tibble(
+    abstract_r = unique(extra_abstracts$abstract_r)
+  ) %>% 
+    bind_cols(bind_rows(extra_coded))
+  
+  extra_res %>% 
+    left_join(extra_abstracts, by = c("abstract_r" = "abstract")) %>% 
+    distinct(fred_id, .keep_all = TRUE) %>% 
+    left_join(subj %>% select(-any_of(c("abstract_r", "success_rating", "success_quote"))), by = "fred_id") %>%
+    transmute(fred_id, ref_o, doi_o, ref_r, doi_r, url_r, link_r, study_r, abstract_r, number = "", success_rating, success_quote) %>%
+    writexl::write_xlsx("AI_coded_extra.xlsx")
+}
 
-coded_abstracts <- extra_abstracts$abstract_r %>% 
-  unique() %>% 
-  map(code_abstract, .progress = TRUE)
-
-res <- tibble(abstract_r = unique(extra_abstracts$abstract_r),  bind_rows(coded_abstracts))
-
-res2 %>% left_join(extra_abstracts, by = c("abstract_r" = "abstract")) %>% 
-  distinct(fred_id, .keep_all = TRUE) %>% 
-  left_join(subj %>% select(-abstract_r, -success_rating, -success_quote), by = "fred_id") %>%
-  transmute(fred_id, ref_o, doi_o, ref_r, doi_r, url_r, link_r, study_r, abstract_r, number = "", success_rating, success_quote) %>%
-  writexl::write_xlsx("AI_coded_extra.xlsx")
-
-
-coded_abstracts <- subj$abstract_r %>% 
-  unique() %>% 
-  map(code_abstract, .progress = TRUE)
-
-res <- tibble(abstract_r = unique(extra_abstracts$abstract_r),  bind_rows(coded_abstracts))
-
-subj <- subj %>% left_join(res)
+if (nrow(subj) > 0) {
+  coded_abstracts <- subj$abstract_r %>% 
+    unique() %>% 
+    map(code_abstract, .progress = TRUE)
+  
+  subj_res <- tibble(
+    abstract_r = subj$abstract_r %>% unique()
+  ) %>% 
+    bind_cols(bind_rows(coded_abstracts))
+  
+  subj <- subj %>% left_join(subj_res, by = "abstract_r")
+} else {
+  subj <- subj %>% mutate(success_rating = NA_character_, success_quote = NA_character_)
+}
 
 library(stringdist)
 
@@ -280,48 +326,56 @@ check_quote <- function(abstract, quote, remove = "[MULTIPLE?]") {
 
 subj <- subj %>% mutate(success_quote = str_remove_all(success_quote, '"'))
 
-subj2 <- subj %>%
-  distinct(abstract_r, .keep_all = TRUE) %>% 
-  rowwise() %>% 
-  mutate(check_quote(abstract_r, success_quote)) %>% 
-  ungroup() %>% 
-  mutate()
-
-# Check for quote mismatch - usually due to encoding
-subj2 %>% filter(!quote_detect) %>% writexl::write_xlsx("quote mismatch.xlsx")
-
-subj <- subj %>%
-  mutate(coded = !is.na(success_rating) & success_rating != "NA")
-
-subj %>% 
-  filter(coded) %>% 
-  mutate(entries_per_rep = "") %>%
-  select(everything(), entries_per_rep,  success_rating, success_quote) %>%
-  writexl::write_xlsx("AI_coded.xlsx")
+if (nrow(subj) > 0) {
+  subj2 <- subj %>%
+    distinct(abstract_r, .keep_all = TRUE) %>% 
+    rowwise() %>% 
+    mutate(check_quote(abstract_r, success_quote)) %>% 
+    ungroup()
   
-
-# Filter for those NOT coded by both AI and Roksana
-roksana_output <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vST04XoYdlL-IJSE_wP_nXp5T_lAZeKzVDtAOk2gGOw2ngc391WJqjze3zy2ICcpxjsrPL1VOKa0pEA/pub?gid=984458430&single=true&output=csv", skip = 1)
-
-coded_twice <- roksana_output %>% 
-  filter(!is.na(outcome)) %>% 
-  distinct(fred_id, .keep_all = TRUE) %>%
-  left_join(subj %>% distinct(fred_id, .keep_all = TRUE), by = c("fred_id" = "fred_id")) %>% 
-  filter(!is.na(success_rating) & success_rating != "NA")
-
-subj %>% anti_join(coded_twice, by = "fred_id") %>% 
-  group_by(ref_r) %>% 
-  mutate(entries_per_rep = n_distinct(fred_id)) %>%
-  ungroup() %>% 
-  select(fred_id, ref_o, doi_o, ref_r, doi_r, url_r, link_r, study_r, abstract_r, entries_per_rep, success_rating, success_quote) %>% 
-  write_csv("subj_coding__unfinished.csv")
+  # Check for quote mismatch - usually due to encoding
+  subj2 %>% filter(!quote_detect) %>% writexl::write_xlsx("quote mismatch.xlsx")
+  
+  subj <- subj %>%
+    mutate(coded = !is.na(success_rating) & success_rating != "NA")
+  
+  coded_ai <- subj %>% filter(coded)
+  
+  if (nrow(coded_ai) > 0) {
+    coded_ai %>% 
+      mutate(entries_per_rep = "") %>%
+      select(everything(), entries_per_rep,  success_rating, success_quote) %>%
+      writexl::write_xlsx("AI_coded.xlsx")
+  }
+  
+  # Filter for those NOT coded by both AI and Roksana
+  roksana_output <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vST04XoYdlL-IJSE_wP_nXp5T_lAZeKzVDtAOk2gGOw2ngc391WJqjze3zy2ICcpxjsrPL1VOKa0pEA/pub?gid=984458430&single=true&output=csv", skip = 1)
+  
+  coded_twice <- roksana_output %>% 
+    filter(!is.na(outcome)) %>% 
+    distinct(fred_id, .keep_all = TRUE) %>%
+    left_join(subj %>% distinct(fred_id, .keep_all = TRUE), by = c("fred_id" = "fred_id")) %>% 
+    filter(!is.na(success_rating) & success_rating != "NA")
+  
+  subj %>% anti_join(coded_twice, by = "fred_id") %>% 
+    group_by(ref_r) %>% 
+    mutate(entries_per_rep = n_distinct(fred_id)) %>%
+    ungroup() %>% 
+    select(fred_id, ref_o, doi_o, ref_r, doi_r, url_r, link_r, study_r, abstract_r, entries_per_rep, success_rating, success_quote) %>% 
+    write_csv("subj_coding__unfinished.csv")
+} else {
+  subj <- subj %>% mutate(coded = FALSE)
+}
 
 ```
 
-# Check matches and missing
+## Defunct: Double-check and augmentation
 
-```{r}
+The sections below capture legacy double-check and augmentation logic. They are retained for reference only and are no longer executed.
 
+### Legacy: Check matches and missing
+
+```{r legacy-double-check, eval = FALSE}
 coded_results <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?output=csv", skip = 1) %>% 
    mutate(doi_url_r = coalesce(url_r %>% na_if("NA"), doi_r),
           match_id = paste(doi_o, doi_url_r, na_if(study_o, "NA"), na_if(study_r, "NA"), sep = "_"))
@@ -401,26 +455,18 @@ coded_results %>%
   arrange(fred_id) %>% 
   View()
 
-
-```
-
-
-```{r}
 for (m in missing) {
-coded_results %>% filter(match_id == m, validation == "validated - discarded") %>% pull(doi_o) -> c_d
-cat("HAVE:")
-    coded_results %>% filter(doi_o == c_d, validation != "validated - discarded") %>% pull(match_id) %>% print()
-    cat("NEED:")
-need_coding %>% filter(doi_o == c_d) %>% pull(match_id) %>% print()
+  coded_results %>% filter(match_id == m, validation == "validated - discarded") %>% pull(doi_o) -> c_d
+  cat("HAVE:")
+  coded_results %>% filter(doi_o == c_d, validation != "validated - discarded") %>% pull(match_id) %>% print()
+  cat("NEED:")
+  need_coding %>% filter(doi_o == c_d) %>% pull(match_id) %>% print()
 }
 ```
 
+### Legacy: Check tangential claims
 
-## Check tangential claims
-
-
-```{r}
-
+```{r legacy-claims, eval = FALSE}
 subj$abstract_o <- subj$doi_o %>% 
   map_chr(function(x) {
     if (is.na(x)) {
@@ -453,8 +499,4 @@ identify_key_claim <- function(abstract, claims) {
 subj <- subj %>% group_by(entry) %>% mutate(n_claims = n()) %>% ungroup()
 
 summary(subj$n_claims)
-
-
-
 ```
-
