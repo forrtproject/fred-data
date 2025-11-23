@@ -11,7 +11,7 @@ library(tidyverse)
 library(FReD)
 library(glue)
 
-source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
+source("clean_cos_fred.R")
 
 fred_validated_full <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
 
@@ -51,7 +51,7 @@ validate_fred_data <- function(data, tests_to_run = NULL, incremental_report = g
   # --- Configuration ---
   VALID_ES_TYPES <- c(
     #Standard
-    c("b (unstd)", "beta (std)", "cohen's", "h", "cramer's", "V", "d", "etasq", "cohen's", "f", "hedges'", "g", "OR", "r", "r-squared", "test", "statistic", "kendall's", "w", "etasq (partial)"),
+    c("b (unstd)", "beta (std)", "cohen's h", "cramer's V", "d", "etasq", "cohen's f", "hedges' g", "OR", "r", "r-squared", "test statistic", "kendall's w", "etasq (partial)"),
     #Tolerated
     c("partial r", "phi")
   )
@@ -101,11 +101,11 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
   # --- Helper Functions ---
   format_id_list <- function(ids){
     if(length(ids) == 0) return("")
+    list_items <- paste(glue("<li>{ids}</li>"), collapse = "")
     if(length(ids) > ID_THRESHOLD){
-      return(glue("<details><summary>{length(ids)} issues found</summary>`{paste(ids, collapse=', ')}`</details>"))
-    } else {
-      return(glue("`{paste(ids, collapse=', ')}`"))
+      return(glue("<details><summary>{length(ids)} issues found</summary><ul>{list_items}</ul></details>"))
     }
+    glue("<ul>{list_items}</ul>")
   }
 
   add_to_id_report <- function(issue_list, issue_df, message_template, ...){
@@ -151,7 +151,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
     if(!is.null(detail_template)) {
       details <- glue_data(issue_df, detail_template)
       details <- truncate_for_label(details)
-      return(unique(glue("{issue_df$id} ({details})")))
+      return(unique(glue("{issue_df$id}: {details}")))
     }
     
     if(!is.null(detail_cols)) {
@@ -171,7 +171,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         val <- truncate_for_label(vals[[idx[1]]])
         glue("{col_name}={val}")
       }, character(1))
-      return(unique(glue("{issue_df$id} ({details})")))
+      return(unique(glue("{issue_df$id}: {details}")))
     }
     
     unique(issue_df$id)
@@ -207,7 +207,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         ),
         problem = ifelse(is.na(problem) | problem == "", "see details", truncate_for_label(problem, width))
       ) %>%
-      {unique(glue("{.$id} ({.$problem})"))}
+      {unique(glue("{.$id}: {.$problem}"))}
   }
 
   build_es_non_numeric_labels <- function(df, width = 80) {
@@ -221,7 +221,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         ),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_es_type_blank_labels <- function(df, width = 80) {
@@ -235,7 +235,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         ),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_es_type_invalid_labels <- function(df, width = 80) {
@@ -249,7 +249,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         ),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_pval_range_labels <- function(df, width = 80) {
@@ -263,7 +263,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         ),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_pval_type_labels <- function(df, width = 80) {
@@ -277,7 +277,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         ),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_pval_tails_labels <- function(df, width = 80) {
@@ -291,7 +291,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         ),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_nested_labels <- function(df, width = 80) {
@@ -305,7 +305,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         ),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_reversal_labels <- function(df, width = 80) {
@@ -315,7 +315,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         detail = glue("O={es_value_o}; R={es_value_r}"),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_doi_ref_conflict_labels <- function(df, width = 80) {
@@ -326,7 +326,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         detail = glue("{doi} ({source}); ref='{ref_short}'"),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   build_mixed_study_labels <- function(df, width = 80) {
@@ -337,7 +337,18 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
         detail = glue("{source} mixed for ref_o='{ref_short}', id_r='{id_r}'"),
         detail = truncate_for_label(detail, width)
       ) %>%
-      {unique(glue("{.$id} ({.$detail})"))}
+      {unique(glue("{.$id}: {.$detail}"))}
+  }
+
+  build_doi_pair_labels <- function(df, width = 80) {
+    df %>%
+      mutate(
+        id = as.character(id),
+        doi_o_val = ifelse(is.na(doi_o) | doi_o == "", "NA", truncate_for_label(doi_o, width)),
+        doi_r_val = ifelse(is.na(doi_r) | doi_r == "", "NA", truncate_for_label(doi_r, width)),
+        detail = glue("doi_o={doi_o_val}; doi_r={doi_r_val}")
+      ) %>%
+      {unique(glue("{.$id}: {.$detail}"))}
   }
 
   # --- Validation Checks ---
@@ -364,9 +375,14 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
   }
 
   if(should_run(3)){
-    raw_doi_format_issues <- data %>% filter((!is.na(doi_o) & !str_starts(doi_o, "10."))  | (!is.na(doi_r) & !str_starts(doi_r, "10.")))
+    raw_doi_format_issues <- data %>%
+      mutate(
+        doi_o_trim = str_trim(doi_o),
+        doi_r_trim = str_trim(doi_r)
+      ) %>%
+      filter((!is.na(doi_o_trim) & !str_starts(doi_o_trim, "10."))  | (!is.na(doi_r_trim) & !str_starts(doi_r_trim, "10.")))
     doi_format_issues <- filter_new_issues(raw_doi_format_issues, "DOI columns start with '10.'")
-    add_main_report_item(doi_format_issues, "`doi_o` or `doi_r` has incorrect format. Check id(s): {id_list}", "DOI columns start with '10.'", had_prior = incremental_report && nrow(raw_doi_format_issues) > 0 && nrow(doi_format_issues) == 0, detail_cols = c("doi_o", "doi_r"))
+    add_main_report_item(doi_format_issues, "`doi_o` or `doi_r` has incorrect format. Check id(s): {id_list}", "DOI columns start with '10.'", had_prior = incremental_report && nrow(raw_doi_format_issues) > 0 && nrow(doi_format_issues) == 0, detail_fn = build_doi_pair_labels)
     if(nrow(doi_format_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, doi_format_issues, "`doi_o` or `doi_r` has incorrect format (must start with '10.').")
     }
@@ -477,23 +493,27 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
     if(nrow(or_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, or_issues, "Odds Ratio `es_value_o` ('{es_value_o}') is negative.", es_value_o="es_value_o")
   }
 
-  if(should_run(12)){
-    raw_prereg_issues <- data %>% filter(str_detect(prereg_o, "osf\\.io") & !str_detect(prereg_o, "/registrations/"))
-    prereg_issues <- filter_new_issues(raw_prereg_issues, "OSF preregistration links seem valid")
-    add_main_report_item(prereg_issues, "OSF preregistration link may point to a project. Check id(s): {id_list}", "OSF preregistration links seem valid", had_prior = incremental_report && nrow(raw_prereg_issues) > 0 && nrow(prereg_issues) == 0, detail_cols = c("prereg_o"))
-    if(nrow(prereg_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, prereg_issues, "OSF preregistration link ('{prereg_o}') may point to a project, not a registration.", prereg_o="prereg_o")
-  }
+  # if(should_run(12)){
+  #   raw_prereg_issues <- data %>% filter(str_detect(prereg_o, "osf\\.io") & !str_detect(prereg_o, "/registrations/"))
+  #   prereg_issues <- filter_new_issues(raw_prereg_issues, "OSF preregistration links seem valid")
+  #   add_main_report_item(prereg_issues, "OSF preregistration link may point to a project. Check id(s): {id_list}", "OSF preregistration links seem valid", had_prior = incremental_report && nrow(raw_prereg_issues) > 0 && nrow(prereg_issues) == 0, detail_cols = c("prereg_o"))
+  #   if(nrow(prereg_issues) > 0) issues_by_id <- add_to_id_report(issues_by_id, prereg_issues, "OSF preregistration link ('{prereg_o}') may point to a project, not a registration.", prereg_o="prereg_o")
+  # }
   
-  if(should_run(13)){
+   if(should_run(13)){
     raw_doi_inc_issues <- data %>%
-      filter(!is.na(doi_o) & str_ends(doi_o, "\\d")) %>%
-      mutate(doi_base = str_remove(doi_o, "\\d+$")) %>%
+      mutate(doi_o_trim = str_trim(doi_o)) %>%
+      filter(!is.na(doi_o_trim) & str_detect(doi_o_trim, "\\d$")) %>%
+      mutate(
+        doi_base = str_replace(doi_o_trim, "\\d$", ""),
+        doi_suffix = str_extract(doi_o_trim, "\\d$")
+      ) %>%
       group_by(doi_base) %>%
-      filter(n_distinct(doi_o) > 1) %>%
+      filter(n_distinct(doi_o_trim) > 1, n_distinct(doi_suffix) > 1) %>%
       ungroup()
     
     doi_inc_issues <- filter_new_issues(raw_doi_inc_issues, "No likely DOI_o incrementing errors")
-    add_main_report_item(doi_inc_issues, "DOIs_o may be a spreadsheet error (e.g. 10.xxx1, 10.xxx2). Check id(s): {id_list}", "No likely DOI_o incrementing errors", had_prior = incremental_report && nrow(raw_doi_inc_issues) > 0 && nrow(doi_inc_issues) == 0, detail_cols = c("doi_o"))
+    add_main_report_item(doi_inc_issues, "DOIs_o may be a spreadsheet error (e.g. 10.xxx1, 10.xxx2). Check id(s): {id_list}", "No likely DOI_o incrementing errors", had_prior = incremental_report && nrow(raw_doi_inc_issues) > 0 && nrow(doi_inc_issues) == 0, detail_fn = build_doi_pair_labels)
     if(nrow(doi_inc_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, doi_inc_issues, "DOI_o string ('{doi_o}') is part of a set that only differs by the final number.", doi_o="doi_o")
     }
@@ -501,14 +521,18 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
   
    if(should_run(14)){
     raw_doi_inc_issues <- data %>%
-      filter(!is.na(doi_r) & str_ends(doi_r, "\\d")) %>%
-      mutate(doi_base = str_remove(doi_r, "\\d+$")) %>%
+      mutate(doi_r_trim = str_trim(doi_r)) %>%
+      filter(!is.na(doi_r_trim) & str_detect(doi_r_trim, "\\d$")) %>%
+      mutate(
+        doi_base = str_replace(doi_r_trim, "\\d$", ""),
+        doi_suffix = str_extract(doi_r_trim, "\\d$")
+      ) %>%
       group_by(doi_base) %>%
-      filter(n_distinct(doi_r) > 1) %>%
+      filter(n_distinct(doi_r_trim) > 1, n_distinct(doi_suffix) > 1) %>%
       ungroup()
     
     doi_inc_issues <- filter_new_issues(raw_doi_inc_issues, "No likely DOI_r incrementing errors")
-    add_main_report_item(doi_inc_issues, "DOIs_r may be a spreadsheet error (e.g. 10.xxx1, 10.xxx2). Check id(s): {id_list}", "No likely DOI_r incrementing errors", had_prior = incremental_report && nrow(raw_doi_inc_issues) > 0 && nrow(doi_inc_issues) == 0, detail_cols = c("doi_r"))
+    add_main_report_item(doi_inc_issues, "DOIs_r may be a spreadsheet error (e.g. 10.xxx1, 10.xxx2). Check id(s): {id_list}", "No likely DOI_r incrementing errors", had_prior = incremental_report && nrow(raw_doi_inc_issues) > 0 && nrow(doi_inc_issues) == 0, detail_fn = build_doi_pair_labels)
     if(nrow(doi_inc_issues) > 0) {
         issues_by_id <- add_to_id_report(issues_by_id, doi_inc_issues, "DOI_r string ('{doi_r}') is part of a set that only differs by the final number.", doi_r="doi_r")
     }
@@ -688,7 +712,7 @@ TEST_STAT_REGEX <- "^(((F\\(\\d+(\\.\\d+)?, ?\\d+(\\.\\d+)?\\)|t\\(\\d+(\\.\\d+)
 # --- Run the validation ---
 validation_report <- validate_fred_data(
   fred_validated,
-  #tests_to_run = c(5, 7, 9, 10),
+  #tests_to_run = c(8),
   incremental_report = incremental_report,
   prev_failures = prev_failures
 )

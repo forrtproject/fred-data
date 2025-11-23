@@ -139,9 +139,11 @@ clean_fred_data <- function(data) {
   cleaned_data <- cleaned_data %>%
     mutate(across(where(is.character), ~ na_if(., "NA"))) %>%
     mutate(across(where(is.character), ~ na_if(., "N/A"))) %>%
-    mutate(across(where(is.character), ~ na_if(., "#N/A")))   %>% 
+    mutate(across(where(is.character), ~ na_if(., "#N/A")))   %>%
     mutate(across(where(is.character), ~ na_if(., "not reported"))) %>%
-    mutate(across(where(is.character), ~ na_if(., "NOT REPORTED")))
+    mutate(across(where(is.character), ~ na_if(., "NOT REPORTED"))) %>%
+    mutate(across(where(is.character), ~ na_if(., "NA (not reported)")))
+
 
   na_changes_after <- sum(sapply(cleaned_data, function(x) sum(is.na(x))))
   na_rows_affected <- na_changes_after - na_changes_before
@@ -168,20 +170,20 @@ clean_fred_data <- function(data) {
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
-  # --- 5. Clean DOI Columns (remove URL prefix) ---
+  # --- 5. Clean DOI Columns (remove URL/prefix variants and standardize case/spacing) ---
   doi_cols <- c("doi_o", "doi_r")
-  url_prefix <- "https://doi.org/"
+  doi_prefix_regex <- regex("^(https?://(dx\\.)?doi\\.org/|doi:\\s*|doi\\.org/)", ignore_case = TRUE)
 
   doi_prefix_changes <- cleaned_data %>%
-    summarise(across(all_of(doi_cols), ~ sum(str_starts(., url_prefix), na.rm = TRUE))) %>%
+    summarise(across(all_of(doi_cols), ~ sum(str_detect(., doi_prefix_regex), na.rm = TRUE))) %>%
     pivot_longer(everything()) %>%
     filter(value > 0)
 
   if (nrow(doi_prefix_changes) > 0) {
     cleaned_data <- cleaned_data %>%
-      mutate(across(all_of(doi_cols), ~ str_remove(., fixed(url_prefix))))
+      mutate(across(all_of(doi_cols), ~ str_remove(., doi_prefix_regex)))
     total_doi_prefix_changes <- sum(doi_prefix_changes$value)
-    report_message <- glue::glue("Removed '{url_prefix}' prefix from {total_doi_prefix_changes} cell(s) in `doi_o`/`doi_r` columns.")
+    report_message <- glue::glue("Removed DOI prefixes/URLs from {total_doi_prefix_changes} cell(s) in `doi_o`/`doi_r` columns (e.g., 'doi:', 'doi.org/', 'https://doi.org/').")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -220,7 +222,24 @@ clean_fred_data <- function(data) {
   cleaned_data <- cleaned_data %>%
     mutate(across(all_of(doi_cols), ~ str_remove_all(., " ")))
 
-  # --- 8. Fix ids ---
+  # --- 8. Normalize OSF links missing scheme ---
+  osf_cols <- intersect(c("url_r", "link_o", "link_r", "prereg_o", "prereg_r"), names(cleaned_data))
+  if (length(osf_cols) > 0) {
+    osf_prefix_changes <- cleaned_data %>%
+      summarise(across(all_of(osf_cols), ~ sum(str_starts(., "osf.io/"), na.rm = TRUE))) %>%
+      pivot_longer(everything()) %>%
+      filter(value > 0)
+
+    if (nrow(osf_prefix_changes) > 0) {
+      cleaned_data <- cleaned_data %>%
+        mutate(across(all_of(osf_cols), ~ str_replace(., regex("^osf\\.io/", ignore_case = TRUE), "https://osf.io/")))
+      total_osf_prefix_changes <- sum(osf_prefix_changes$value)
+      report_message <- glue::glue("Prefixed 'https://' to {total_osf_prefix_changes} OSF link(s) missing the scheme in columns: `{paste(osf_prefix_changes$name, collapse = ', ')}`.")
+      cleaning_report <- add_report_item(cleaning_report, report_message)
+    }
+  }
+
+  # --- 9. Fix ids ---
   cleaned_data <- cleaned_data %>%
     arrange(as.numeric(rowid)) %>%
     mutate(fred_id = str_remove(id, "_[a-z]{1,2}$"),
