@@ -17,6 +17,63 @@ clean_fred_data <- function(data) {
     return(report_list)
   }
 
+  # --- Helper to standardize test statistics and append sample sizes where available ---
+  standardize_es_stat <- function(val, n_val) {
+    if (length(val) == 0 || is.na(val)) return(val)
+
+    clean_n <- NULL
+    if (!is.na(n_val) && nchar(trimws(as.character(n_val))) > 0) {
+      clean_n <- format(n_val, scientific = FALSE, trim = TRUE)
+    }
+
+    val <- str_replace_all(val, regex("[χx]2|χ²", ignore_case = TRUE), "X2")
+    val <- str_replace_all(val, "(^t|^F)\\s+", "\\1")
+    val <- str_replace_all(val, "^z", "Z")
+    val <- str_replace_all(val, "X2\\s+\\(", "X2(")
+    val <- str_replace_all(val, "F\\( ", "F(")
+    val <- stringr::str_replace_all(val, "\\s*<\\s*", " < ")
+    val <- stringr::str_replace_all(val, "\\s*≤\\s*", " ≤ ")
+    val <- str_replace_all(val, "\\s*=\\s*", " = ")
+    val <- str_replace_all(val, "\\s*,\\s*", ", ")
+    val <- str_replace_all(val, "-\\s+", "-")
+    val <- str_replace_all(val, "[-–—−]", "-")
+    val <- str_replace_all(val, "\\[", "(")
+    val <- str_replace_all(val, "\\]", ")")
+    val <- str_squish(val)
+
+    # Add/standardize N for chi-squared stats
+    x2_pattern <- regex("^X2\\s*\\(\\s*(\\d+(?:\\.\\d+)?)\\s*(?:,\\s*N\\s*=\\s*(\\d+(?:\\.\\d+)?))?\\s*\\)(.*)$", ignore_case = TRUE)
+    x2_match <- str_match(val, x2_pattern)
+    if (!is.na(x2_match[1, 1])) {
+      df <- x2_match[1, 2]
+      n_existing <- x2_match[1, 3]
+      rest <- x2_match[1, 4]
+      n_to_use <- if (!is.na(n_existing) && n_existing != "") n_existing else if (!is.null(clean_n)) clean_n else NA
+      rest_clean <- str_trim(rest)
+      rest_clean <- ifelse(rest_clean == "", "", paste0(" ", rest_clean))
+      val <- if (!is.na(n_to_use)) glue("X2({df}, N = {n_to_use}){rest_clean}") else glue("X2({df}){rest_clean}")
+    }
+
+    # Add/standardize N for Z stats
+    z_pattern <- regex("^Z\\s*=\\s*([\\-\\+]?\\d*\\.?\\d+(?:[eE][\\-\\+]?\\d+)?)(?:\\s*,\\s*N\\s*=\\s*(\\d+(?:\\.\\d+)?))?(.*)$", ignore_case = TRUE)
+    z_match <- str_match(val, z_pattern)
+    if (!is.na(z_match[1, 1])) {
+      z_val <- z_match[1, 2]
+      n_existing <- z_match[1, 3]
+      rest <- z_match[1, 4]
+      n_to_use <- if (!is.na(n_existing) && n_existing != "") n_existing else if (!is.null(clean_n)) clean_n else NA
+      rest_clean <- str_trim(rest)
+      rest_clean <- ifelse(rest_clean == "", "", paste0(" ", rest_clean))
+      if (!is.na(n_to_use)) {
+        val <- glue("Z = {z_val}, N = {n_to_use}{rest_clean}")
+      } else {
+        val <- glue("Z = {z_val}{rest_clean}")
+      }
+    }
+
+    str_squish(val)
+  }
+
   # --- 1. Trim and squish Whitespace from all character columns ---
   char_cols <- names(cleaned_data)[sapply(cleaned_data, is.character)]
   trimmed_changes <- cleaned_data %>%
@@ -82,8 +139,9 @@ clean_fred_data <- function(data) {
   cleaned_data <- cleaned_data %>%
     mutate(across(where(is.character), ~ na_if(., "NA"))) %>%
     mutate(across(where(is.character), ~ na_if(., "N/A"))) %>%
-    mutate(across(where(is.character), ~ na_if(., "#N/A"))) %>%
-    mutate(across(where(is.character), ~ na_if(., "NA (not reported)")))
+    mutate(across(where(is.character), ~ na_if(., "#N/A")))   %>% 
+    mutate(across(where(is.character), ~ na_if(., "not reported"))) %>%
+    mutate(across(where(is.character), ~ na_if(., "NOT REPORTED")))
 
   na_changes_after <- sum(sapply(cleaned_data, function(x) sum(is.na(x))))
   na_rows_affected <- na_changes_after - na_changes_before
@@ -145,23 +203,10 @@ clean_fred_data <- function(data) {
   data_before_es_clean <- cleaned_data
 
   cleaned_data <- cleaned_data %>%
-    mutate(across(all_of(es_cols), ~ {
-      val <- .
-      val <- str_replace_all(val, regex("[χx]2|χ²", ignore_case = TRUE), "X2")
-      val <- str_replace_all(val, "(^t|^F)\\s+", "\\1")
-      val <- str_replace_all(val, "F\\( ", "F\\(")
-      val <- stringr::str_replace_all(val, "\\s*<\\s*", " < ")
-      val <- stringr::str_replace_all(val, "\\s*≤\\s*", " ≤ ")
-      val <- str_replace_all(val, "\\s*=\\s*", " = ")
-      val <- str_replace_all(val, "-\\s+", "-")
-      val <- str_replace_all(val, "^z", "Z")
-      val <- str_replace_all(val, "[-–—−]", "-")
-      val <- str_replace_all(val, "\\[", "(")
-      val <- str_replace_all(val, "\\]", ")")
-      val <- str_replace_all(val, "X2\\((\\d+),\\s*N\\s*=\\s*\\d+\\)", "X2(\\1)")
-      val <- str_trim(str_squish(val))
-      val
-    }, .names = "{.col}"))
+    mutate(
+      es_value_o = mapply(standardize_es_stat, es_value_o, n_o, USE.NAMES = FALSE),
+      es_value_r = mapply(standardize_es_stat, es_value_r, n_r, USE.NAMES = FALSE)
+    )
 
   es_changes <- sum(cleaned_data$es_value_o != data_before_es_clean$es_value_o, na.rm = TRUE) +
     sum(cleaned_data$es_value_r != data_before_es_clean$es_value_r, na.rm = TRUE)
