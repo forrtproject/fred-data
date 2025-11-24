@@ -58,7 +58,7 @@ curl " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-looku
 ---
 
 **Lookup by full DOI (GET)**
-
+---
 The "10.1037/a0027598" is a real DOI, and the "10.1016/j.jesp.2015.04.004" does not exist in the database so that we could monitor the API's behaviour.
 
 The Primary API:
