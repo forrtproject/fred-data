@@ -44,7 +44,7 @@ https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com
 
 ## Quick Start
 
-**Check a hash prefix (GET)**
+**Lookup by hash prefix (GET)**
 ---
 The "198" is a real hash prefix, and the "30e" does not exist in the database so that we could monitor the API's behaviour.  
 The Primary API:
