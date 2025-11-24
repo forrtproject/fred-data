@@ -163,7 +163,7 @@ Fetch replication studies directly linked to a **full DOI** of an original publi
 | Method | URL                                                                                         |
 | :----- | :------------------------------------------------------------------------------------------ |
 | `POST` | `https://rep-api.forrt.org/v1/original-lookup`                                              |
-| `GET`  | `https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004`              |
+| `GET`  | `https://rep-api.forrt.org/v1/original-lookup?10.1037/a0027598`              |
 
 **URLs of Test API**
 
