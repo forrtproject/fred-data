@@ -1,0 +1,145 @@
+---
+title: "Prepare COS Phase 1 Test Set"
+format: html
+---
+
+Prepare the COS phase 1 test set for import into the master FReD dataset.
+
+- Loads the current master column structure from Google Sheets.  
+- Reads `cos_test_set_phase1csv.csv`.  
+- Renames IDs, recodes p-values and overlapping `es_type` values to the master labels, sets status/coder defaults, fills missing master columns with `"NA"`, and orders columns.  
+- Writes `cos_test_set_phase1_prepared.xlsx` for upload.  
+
+Usage (from repo root):
+
+```
+Rscript cos_test1_addition/prepare_cos_phase1.Rmd
+```
+
+```{r}
+library(readr)
+library(dplyr)
+library(writexl)
+
+master_url <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv"
+cos_source <- "cos_test_set_phase1.csv"
+output_path <- "cos_test_set_phase1_prepared.xlsx"
+
+# Pull only column names from the master (skip header row used for notes)
+master_cols <- names(
+  read_csv(master_url, skip = 1, n_max = 0, show_col_types = FALSE)
+)
+
+cos_raw <- read_csv(cos_source, show_col_types = FALSE)
+
+# Recode p-value encodings to the standard labels used in FReD
+recode_pval_type <- function(x) {
+  recode(
+    x,
+    "exact" = "e (=)",
+    "less-than" = "l (<)",
+    "greater-than" = "g (>)",
+    "threshold" = "le (<=)",
+    .default = x
+  )
+}
+
+recode_pval_tails <- function(x) {
+  recode(
+    x,
+    "one-tailed" = "1",
+    "two-tailed" = "2",
+    .default = x
+  ) %>% as.numeric()
+}
+
+recode_es_type_o <- function(x) {
+  recode(
+    x,
+    "cohen_d" = "Cohen's d",
+    "cohen_dz" = "Cohen's dz",
+    "cohen_f_squared" = "Cohen's f^2",
+    "cramer_v" = "cramer's V",
+    "eta_squared" = "etasq",
+    "hazard_ratio" = "hazard ratio",
+    "odds_ratio" = "OR",
+    "partial_eta_squared" = "etasq (partial)",
+    "pearson_r" = "r",
+    "phi" = "phi",
+    "regression_coefficient" = "b (unstd)",
+    "ser_method_t" = "t-statistic",
+    "ser_method" = "test statistic",
+    .default = x
+  )
+}
+
+recode_es_type_r <- function(x) {
+  recode(
+    x,
+    "cohen_f_squared" = "Cohen's f^2",
+    "cohen_d" = "Cohen's d",
+    "cohen_dz" = "Cohen's dz",
+    "cramer_v" = "cramer's V",
+    "eta_squared" = "etasq",
+    "hazard_ratio" = "hazard ratio",
+    "odds_ratio" = "OR",
+    "partial_eta_squared" = "etasq (partial)",
+    "pearson_r" = "r",
+    "phi" = "phi",
+    "regression_coefficient" = "b (unstd)",
+    "d_sample (dep)" = "dz",
+    "d_sample (indep)" = "d",
+    "d_sample (one)" = "d",
+    "part_cor" = "partial r",
+    "point-bis_cor" = "phi",
+    "ser_method_t" = "t-statistic",
+    "ser_method" = "test statistic",
+    .default = x
+  )
+}
+
+# Align COS column names to the master schema and set defaults
+cos_aligned <- cos_raw %>%
+  rename(
+    id = claim_id,
+    entry = entry_id,
+    effect = effect_id
+  ) %>%
+  mutate(
+    pval_type_o = recode_pval_type(pval_type_o),
+    pval_type_r = recode_pval_type(pval_type_r),
+    pval_tails_o = recode_pval_tails(pval_tails_o),
+    pval_tails_r = recode_pval_tails(pval_tails_r),
+    es_type_o = recode_es_type_o(es_type_o),
+    es_type_r = recode_es_type_r(es_type_r),
+    status = "COS contributed",
+    coder_1 = "COS"
+  )
+
+# Any master columns missing in the COS data get added and filled with NA
+missing_cols <- setdiff(master_cols, names(cos_aligned))
+cos_with_all <- if (length(missing_cols) > 0) {
+  cos_aligned %>%
+    mutate(!!!setNames(rep(list(NA_character_), length(missing_cols)), missing_cols))
+} else {
+  cos_aligned
+}
+
+# Order to match the master and fill remaining gaps with the string "NA"
+cos_prepared <- cos_with_all %>%
+  mutate(across(everything(), ~ if_else(is.na(.), "NA", as.character(.))))
+
+write_xlsx(cos_prepared, output_path)
+
+extra_cols <- setdiff(names(cos_raw), c("claim_id", "entry_id", "effect_id", master_cols))
+
+message("Wrote ", nrow(cos_prepared), " rows to ", output_path)
+if (length(missing_cols) > 0) {
+  message("Master columns not supplied in source and filled with \"NA\": ", paste(missing_cols, collapse = ", "))
+} else {
+  message("All master columns were present in the source file.")
+}
+if (length(extra_cols) > 0) {
+  message("Source columns not used in the master schema: ", paste(extra_cols, collapse = ", "))
+}
+```
