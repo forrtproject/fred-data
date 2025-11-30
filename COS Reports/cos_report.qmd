@@ -54,7 +54,7 @@ author:
     orcid: 0009-0006-3739-7795
 date: "`r Sys.Date()`"
 params:
-  verbose: true
+  verbose: false
 format:
   html:
     embed-resources: true
@@ -164,7 +164,7 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 
 -   Removed \~10 duplicate effects
 -   Added `author_overlap` between originals and replications (auto-coded based on Crossref)
--   Added ~90 entries from COS Phase 1 test data
+-   Added \~90 entries from COS Phase 1 test data
 
 ### Terminology
 
@@ -232,7 +232,22 @@ if (file.exists(cos_phase1_path)) {
       status = coalesce(status, "COS contributed")
     ) %>% 
     rename(r_o_cos = r_o, r_r_cos = r_r, statistical_success_cos = statistical_success)
-  
+
+  # Reverse sign of rpq_single-trace (inconsistent with reported success)
+  cos_phase1 <- cos_phase1 %>%
+     mutate(
+      es_value_r = if_else(
+        id == "rpq_single-trace",
+        as.character(-1 * as.numeric(es_value_r)),
+        es_value_r
+      ),
+      r_r_cos = if_else(
+        id == "rpq_single-trace",
+        as.character(-1 * as.numeric(r_r_cos)),
+        r_r_cos
+      )
+     )
+
   missing_cols <- setdiff(names(ds_raw), names(cos_phase1))
 
   cos_phase1 <- cos_phase1 %>%
@@ -302,10 +317,10 @@ ds_raw_cos <- ds_raw %>% filter(cos_phase1)
 ds_raw_cos_pre <- ds_raw_pre_exclusion %>% filter(cos_phase1)
 
 overview <- bind_rows(
-  summarize_overview(ds_raw_forrt, ds_raw_forrt_pre, entries_last_report = entries_in_last_report) %>% 
+  summarize_overview(ds_raw_forrt, ds_raw_forrt_pre, entries_last_report = entries_in_last_report, remove_zero = TRUE) %>%
     mutate(`Data source` = "FORRT Coding"),
   summarize_overview(ds_raw_cos, ds_raw_cos_pre, remove_zero = TRUE) %>% 
-    mutate(`Data source` = "COS Phase 1 Test Data (SCORE)"),
+    mutate(`Data source` = "COS Phase 1 Test Data (SCORE)")  %>% filter(!str_detect(Type, "Coded rows")),
   summarize_overview(ds_raw, ds_raw_pre_exclusion, remove_zero = TRUE) %>% 
     mutate(`Data source` = "Total dataset") %>% filter(Type == "Validated entries")
 ) %>% 
@@ -323,7 +338,7 @@ DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength =
 #| label: add-clean-refs
 #| include: false
 #| echo: false
-#| message: false
+
 # Load shared citation caching functions
 source("../crossref_citation_cache.R")
 
@@ -338,12 +353,16 @@ dois_r <- ds %>%
   distinct(doi_r) %>% 
   pull(doi_r)
 
-# Fetch references using shared cache
+# Fetch references using shared cache and manual reference overrides
 message("Dealing with original citations")
-refs_o <- get_apa_references(dois_o, cache = "../crossref_citation_cache.rds", 
+refs_o <- get_apa_references(dois_o,
+                             cache = "../crossref_citation_cache.rds",
+                             manual_refs = "../manual_references.xlsx",
                              progress = TRUE)
 message("Dealing with replication citations")
-refs_r <- get_apa_references(dois_r, cache = "../crossref_citation_cache.rds",
+refs_r <- get_apa_references(dois_r,
+                             cache = "../crossref_citation_cache.rds",
+                             manual_refs = "../manual_references.xlsx",
                              progress = TRUE)
 
 # Join references to dataset
@@ -474,17 +493,17 @@ ds %>%
 
 Original studies and replications report effect sizes in a wide range of metrics. Where meaningful, we provide the reported values alongside a conversion to *r* (Pearson's correlation coefficient), using the [function in the FReD R package](https://forrt.org/FReD/reference/convert_effect_sizes.html). However, this is not always possible or meaningful, particularly where effect sizes do not express an unconditional bivariate relationship (e.g., interaction effects or partial correlations), and where they do not encode the direction of an effect (e.g., R² or F-statistics). In these cases, the quantitative replication results will not show whether the pattern matches (e.g., two F test could be significant due to opposite interaction patterns). The table below shows how we have proceeded in this dataset. (NB: For the rows contributed by COS, we retained their effect size conversion that standardized a wider range of original effects on a case-by-case basis.)
 
-+---------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Action                                                                                                                          | Effect Size Types                                                                                                                                          |
-+=================================================================================================================================+============================================================================================================================================================+
-| Used as correlation                                                                                                             | r, Phi                                                                                                                                                     |
-+---------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Converted to correlation                                                                                                        | Odds Ratio, Cohen's d, Hedges's g, test statistics (t test), Z values                                                                                      |
-+---------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Did not convert, but provide [function](https://forrt.org/FReD/reference/convert_effect_sizes.html) if analysts wish to convert | R², Eta squared, test statistics (F with df1 = 1 and χ² with df = 1), Cohen's f, Cohen's f², partial Eta squared                                           |
-+---------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| No conversion                                                                                                                   | Partial correlation, Cohen's dz, Cramer's V, Omega, regression coefficients, other test statistics (e.g., F with df1 \> 1, proportion test, binomial test) |
-+---------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
++---------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Action                                                                                                                          | Effect Size Types                                                                                                                                                                                                                                |
++=================================================================================================================================+==================================================================================================================================================================================================================================================+
+| Used as correlation                                                                                                             | r, Phi                                                                                                                                                                                                                                           |
++---------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Converted to correlation                                                                                                        | Odds Ratio, Cohen's d, Hedges's g, directional test statistics: t test Z test                                                                                                                                                                    |
++---------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Did not convert, but provide [function](https://forrt.org/FReD/reference/convert_effect_sizes.html) if analysts wish to convert | R², Eta squared, Cohen's f, Cohen's f², non-directional test statistics: F with df1 = 1 and χ² with df = 1                                                                                                                                       |
++---------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| No conversion                                                                                                                   | Partial correlation, Cohen's dz, Cramer's V, Omega, regression coefficients, partial Eta squared, unstandardised mean/median differences, other test statistics (e.g., F with df1 \> 1, proportion test, binomial test), and other special cases |
++---------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ```{r}
 #| label: effectsize conversion
@@ -503,7 +522,6 @@ ds$r_r <- convert_effect_sizes(es_values = ds$es_value_r, es_types = ds$es_type_
 
 Replication success can be defined in different ways. Here, we provide two variables - one that is based on the authors' subjective interpretation of the replication results *at the study/entry level* and one that is based on a statistical criterion at the level of *individual claims*.
 
-
 ### Statistical success variable
 
 There are many different statistical indicators of replication success (many of which can be calculated with the [FReD package](https://forrt.org/FReD/articles/success_criteria.html)). However, for this project COS defines success as a significant result *in the same direction* as the original finding.
@@ -514,7 +532,7 @@ This is not trivial to derive from the data where effect sizes are not direction
 
 -   `FALSE` when the replication is not significant, or the reported effect size is directional and in the opposite direction as the original.
 
--   `NA` when the replication effect size is not directional (e.g, Eta squared, F-tests, R²) or when the original study was not significant (or did not report an effect size, so that the direction cannot be obtained programmatically).
+-   `NA` when original and/or replication effect sizes are not directional (e.g, Eta squared, F-tests, R²), when the original study was not significant, or when the statistical significance of original or replication effect is unclear.
 
 NB: Given that the SCORE data always contains directional correlation coefficients, statistical_success is defined for all SCORE rows, even where the originally reported effect sizes were non-directional.
 
@@ -543,6 +561,10 @@ ds <- ds %>%
   mutate(es_type_o = str_trim(es_type_o),
          es_type_r = str_trim(es_type_r))
 
+# Prepare to fix SCORE odds-ratio conversion issue
+r_o_backup <- ds$r_o
+r_r_backup <- ds$r_r
+
 ds <- ds %>% mutate(
   p_val_temp_r = coalesce(as.numeric(pval_value_r), FReD:::p_from_r(r_r, as.numeric(n_r))),
    p_val_temp_o = coalesce(as.numeric(pval_value_o), FReD:::p_from_r(r_o, as.numeric(n_o))),
@@ -558,11 +580,18 @@ ds <- ds %>% mutate(
     sign(if_else(!is.na(r_r), r_r, as.numeric(es_value_r))) == 
     sign(if_else(!is.na(r_o), r_o, as.numeric(es_value_o))) ~ TRUE,
     .default = FALSE
-  ) %>% coalesce(as.logical(statistical_success_cos)),
-  r_o = if_else(convertible_o, r_o, NA_real_) %>% coalesce(as.numeric(r_o_cos)),
-  r_r = if_else(convertible_r, r_r, NA_real_) %>% coalesce(as.numeric(r_r_cos))) %>% 
+    # Give priority to COS-provided data regarding success and effect size conversions
+  ) %>% coalesce(as.logical(statistical_success_cos), .),
+  r_o = if_else(convertible_o, r_o, NA_real_) %>% coalesce(as.numeric(r_o_cos), .),
+  r_r = if_else(convertible_r, r_r, NA_real_) %>% coalesce(as.numeric(r_r_cos), .)) %>% 
   select(-convertible, -p_val_temp_r, -p_val_temp_o)
 
+# Replace broken SCORE OR conversions with FReD recalculations
+ds <- ds %>%
+  mutate(
+    r_o = if_else(cos_phase1 & es_type_o == "OR", r_o_backup, r_o, missing = r_o),
+    r_r = if_else(cos_phase1 & es_type_r == "OR", r_r_backup, r_r, missing = r_r)
+  )
 ```
 
 Out of `r nrow(ds)` rows, `statistical_success` could be calculated for `r sum(!is.na(ds$statistical_success))` rows. Among these, `r round(mean(ds$statistical_success, na.rm = TRUE)*100, 1)`% were statistically successful (significant in the same direction) and `r round(mean(!ds$statistical_success, na.rm = TRUE)*100, 1)`% could be considered failures.
@@ -572,18 +601,17 @@ Out of `r nrow(ds)` rows, `statistical_success` could be calculated for `r sum(!
 #| echo: false
 df_temp <- ds
 df_temp$statistical_success <- as.character(df_temp$statistical_success)
-df_temp$statistical_success[is.na(df_temp$statistical_success)] <- "uncertain"
-df_temp$statistical_success[df_temp$statistical_success == "TRUE"] <- "yes"
-df_temp$statistical_success[df_temp$statistical_success == "FALSE"] <- "no"
+# df_temp$statistical_success[is.na(df_temp$statistical_success)] <- "uncertain"
+# df_temp$statistical_success[df_temp$statistical_success == "TRUE"] <- "yes"
+# df_temp$statistical_success[df_temp$statistical_success == "FALSE"] <- "no"
 
 scatterplot <-
-  ggplot(df_temp, aes(x = r_o, y = r_r, text = description)) +
+  ggplot(df_temp, aes(x = r_o, y = r_r, text = coalesce(description, ref_r))) +
     geom_point(aes(color = statistical_success)) +
     scale_color_manual(
       name = "Replication Success",
-      values = c("yes" = "#2ECC40", "no" = "#FF4136", "uncertain" = "grey50"),
-      breaks = c("yes", "no", "uncertain"),
-      labels = c("yes" = "Yes", "no" = "No", "uncertain" = "Uncertain")
+      values = c("TRUE" = "#2ECC40", "FALSE" = "#FF4136"),
+      breaks = c("TRUE", "FALSE")
     ) +
     geom_hline(aes(yintercept = 0), linetype = 2) +
     geom_abline(intercept = 0, slope = 1, color = "Grey60") +
@@ -597,7 +625,6 @@ scatterplot <-
       plotly::config(displayModeBar = FALSE) %>%
       plotly::layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
 ```
-
 
 ### Author's reported success variable
 
@@ -782,7 +809,6 @@ report_concern(missing_reported_success,
 #                "Missing sample sizes or effect sizes.")
 ```
 
-
 ## Codebook
 
 The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data format is planned for fall 2025.
@@ -847,7 +873,7 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_o, list_of_studies$
 
 -   **Selection of rows:** A statistical result in a replication can be assigned to two different original results from the same paper (e.g., when the original only reported separate effects for sub-samples but replication focused on total sample), and an original result can be combined with multiple replication results. Also, matched effects are not comprehensive but selected by the coders for being linked to the relevant claim. Therefore, rows should not be treated as independent.
 
--  **Two data sources:** The dataset combines two data sources (FORRT Replication Database and SCORE data, used by COS as test data in Phase 1 of the competition). The SCORE data includes effect size conversions that were done by COS on a case-by-case basis, which may differ from the general approach taken in the FORRT Replication Database. Conversely, it only contains results on *key* claims in papers, while the FORRT claims were selected more broadly. Nevertheless, the entries should be comparable across the two data sources.
+-   **Two data sources:** The dataset combines two data sources (FORRT Replication Database and SCORE data, used by COS as test data in Phase 1 of the competition). The SCORE data includes effect size conversions that were done by COS on a case-by-case basis, which may differ from the general approach taken in the FORRT Replication Database. Specifically, their conversion from Cohen's *d* to *r* took relative group sizes into account, which diverges slightly from the more general formula used in the FORRT data. SCORE also only considered *key* claims in papers, while the FORRT claims were selected more broadly. Nevertheless, the entries should be comparable across the two data sources.
 
 ## Internal Process
 
