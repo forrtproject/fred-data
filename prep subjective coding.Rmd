@@ -32,108 +32,8 @@ fred_validated <- fred_validated %>%
   mutate(fred_id = str_remove(id, "_[a-z]{1,2}[0-9]{0,1}$"))
 
 ```
-```{r}
-fred_validated %>%
-  mutate(tt_o = ifelse(es_type_o == "test statistic", str_sub(str_trim(es_value_o), 1, 2), NA), 
-         tt_r = ifelse(es_type_r == "test statistic", str_sub(str_trim(es_value_r), 1, 2), NA)) %>%
-  select(tt_o, tt_r) %>%
-  unlist() %>%
-  na.omit() %>% 
-  tibble(tt = .) %>%
-  count(tt, sort = T)
-```
-
 
 ## List of studies for subjective coding
-
-```{r}
-# convert original effect sizes
-fred_validated$r_o <- convert_effect_sizes(es_values = fred_validated$es_value_o, es_types = fred_validated$es_type_o)  
-
-# convert replication effect sizes
-fred_validated$r_r <- convert_effect_sizes(es_values = fred_validated$es_value_r, es_types = fred_validated$es_type_r)
-
-# directional effects
-dir_types <- c("d", "r", "OR", "phi", "b (unstd)", "beta (std)", "beta", 
-               "Mean difference", "percentage difference", "hedges' g",
-               "median difference", "partial r", "Cohen's dz")
-
-fred_validated <- fred_validated %>% 
-  mutate(es_type_o = str_trim(es_type_o),
-         es_type_r = str_trim(es_type_r))
-
-fred_validated <- fred_validated %>% mutate(
-  p_val_temp_r = coalesce(as.numeric(pval_value_r), FReD:::p_from_r(r_r, as.numeric(n_r))),
-   p_val_temp_o = coalesce(as.numeric(pval_value_o), FReD:::p_from_r(r_o, as.numeric(n_o))),
-  convertible = 
-    (es_type_o %in% dir_types | str_detect(es_value_o, "^t|^Z|^z")) & 
-       (es_type_r %in% dir_types | str_detect(es_value_r, "^t|^Z|^z")),
-  replication_success = case_when(
-    !convertible |  p_val_temp_o > .05 | 
-      (p_val_temp_o == .05 & pval_type_o == "g (>)") | is.na(es_value_o) |
-      is.na(es_value_r) | is.na(p_val_temp_r) | is.na(p_val_temp_o) ~ NA,
-    (p_val_temp_r < .05 | (p_val_temp_r == .05 & pval_type_r == "l (<)")) & 
-    sign(if_else(!is.na(r_r), r_r, as.numeric(es_value_r))) == 
-    sign(if_else(!is.na(r_o), r_o, as.numeric(es_value_o))) ~ TRUE,
-    .default = FALSE
-  )) %>% 
-  select(-convertible, p_val_temp_r, p_val_temp_o)
-```
-
-
-```{r cars}
-missing_p <- fred_validated %>% 
-  filter(is.na(as.numeric(pval_value_r)) | is.na(as.numeric(pval_value_o))) %>% 
-  mutate(check_p_o = is.na(as.numeric(pval_value_o)), 
-         check_p_r = is.na(as.numeric(pval_value_r))) %>% 
-  select(rowid, check_p_o, check_p_r)
-
-TEST_STAT_DIR_REGEX <- "^((t\\(\\d+(\\.\\d+)?\\)) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)|[Zz] ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?) ?, ?N ?= ?\\d+(\\.\\d+)?)$"
-
-convert_es <- fred_validated %>%
-  mutate(
-    convertible_o = es_type_o %in% dir_types | str_detect(es_value_o, TEST_STAT_DIR_REGEX),
-    convertible_r = es_type_r %in% dir_types | str_detect(es_value_r, TEST_STAT_DIR_REGEX),
-    # Extract df1 from VALID F test
-    df1_o = str_extract(
-      es_value_o,
-      "^F\\((\\d+(\\.\\d+)?), ?\\d+(\\.\\d+)?\\) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)$",
-      group = 1
-    ) %>% as.numeric() %>% coalesce(0),
-    df1_r = str_extract(
-      es_value_r,
-      "^F\\((\\d+(\\.\\d+)?), ?\\d+(\\.\\d+)?\\) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)$",
-      group = 1
-    ) %>% as.numeric() %>% coalesce(0),
-    # Extract df1 from VALID X2 test
-    df1_o = str_extract(
-      es_value_o,
-      "^X2\\((\\d+(\\.\\d+)?)\\) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)$",
-      group = 1
-    ) %>% as.numeric() %>% coalesce(df1_o),
-    df1_r = str_extract(
-      es_value_r,
-      "^X2\\((\\d+(\\.\\d+)?)\\) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)$",
-      group = 1
-    ) %>% as.numeric() %>% coalesce(df1_r)
-  ) %>%
-  filter((!convertible_o & df1_o < 2) | (!convertible_r & df1_r < 2)) %>%
-  transmute(rowid, code_es_o = !convertible_o &  df1_o < 2, code_es_r = !convertible_r & df1_r < 2)
-
-
-coding <- missing_p %>% full_join(convert_es) %>% 
-  group_by(rowid) %>% 
-  summarise(across(everything(), ~ c(coalesce(first(na.omit(.x)), FALSE))), 
-            .groups = "drop") %>% arrange(as.numeric(rowid)) %>% 
-  left_join(fred_validated) %>% 
-  select(rowid, fred_id, claim_text_o, doi_o, link_o, doi_r, link_r, code_es_o, 
-         code_es_r, check_p_o, check_p_r, es_value_o, es_type_o, es_repr_o, 
-         pval_value_o, pval_type_o, pval_tails_o, es_value_r, es_type_r, es_repr_r, 
-         pval_value_r, pval_type_r, pval_tails_r) 
-
-#write_csv(coding, "es_p_coding_Roksana.csv")
-
-```
 
 ## Prep subj sucess
 
@@ -188,19 +88,20 @@ if (nrow(subj) == 0) {
   )
   
   subj <- subj %>% 
-    left_join(abstracts_r_tbl, by = "doi_r")
+    left_join(abstracts_r_tbl, by = "doi_r") %>% 
+    group_by(doi_r) %>% 
+    select(-id_r) %>% 
+    mutate(entries_per_rep = n_distinct(fred_id)) %>% 
+    ungroup()
   
   subj %>% 
-    group_by(doi_r) %>% 
-    mutate(entries_per_rep = n_distinct(fred_id)) %>% 
-    ungroup() %>% 
     mutate(
       outcome = "",
       outcome_quote = "",
-      out_quote_source = "abstract",
-      other_task = fred_id %in% coding$fred_id
+      out_quote_source = "abstract"
+      #other_task = fred_id %in% coding$fred_id
     ) %>% 
-    write_csv("subj_coding_Roksana.csv")
+    write_csv("additional_subjective_coding.csv")
 }
 ```
 
@@ -219,7 +120,7 @@ code_abstract <- function(x) {
     return(list(success_rating = NA_character_, success_quote = NA_character_))
   }
   
-  chat <- chat_openai(model = "gpt-5", params = params(service_tier = "flex"), api_args = list(reasoning_effort = "low"))
+  chat <- chat_openai(model = "gpt-5.1", params = params(service_tier = "flex"), api_args = list(reasoning_effort = "medium"))
   
   chat$chat_structured(
     paste0("The following abstract reports the result of a replication study, or multiple replication studies. If it appears to concern the replication of ONE original paper, identify whether it reports the replication as 
@@ -238,25 +139,28 @@ code_abstract <- function(x) {
   )
 }
 
-if (file.exists("extra_ai.xlsx")) {
-  extra_abstracts <- readxl::read_excel("extra_ai.xlsx")
-  
-  extra_coded <- extra_abstracts$abstract_r %>% 
-    unique() %>% 
-    map(code_abstract, .progress = TRUE)
-  
-  extra_res <- tibble(
-    abstract_r = unique(extra_abstracts$abstract_r)
-  ) %>% 
-    bind_cols(bind_rows(extra_coded))
-  
-  extra_res %>% 
-    left_join(extra_abstracts, by = c("abstract_r" = "abstract")) %>% 
-    distinct(fred_id, .keep_all = TRUE) %>% 
-    left_join(subj %>% select(-any_of(c("abstract_r", "success_rating", "success_quote"))), by = "fred_id") %>%
-    transmute(fred_id, ref_o, doi_o, ref_r, doi_r, url_r, link_r, study_r, abstract_r, number = "", success_rating, success_quote) %>%
-    writexl::write_xlsx("AI_coded_extra.xlsx")
-}
+
+
+
+# if (file.exists("extra_ai.xlsx")) {
+#   extra_abstracts <- readxl::read_excel("extra_ai.xlsx")
+#   
+#   extra_coded <- extra_abstracts$abstract_r %>% 
+#     unique() %>% 
+#     map(code_abstract, .progress = TRUE)
+#   
+#   extra_res <- tibble(
+#     abstract_r = unique(extra_abstracts$abstract_r)
+#   ) %>% 
+#     bind_cols(bind_rows(extra_coded))
+#   
+#   extra_res %>% 
+#     left_join(extra_abstracts, by = c("abstract_r" = "abstract")) %>% 
+#     distinct(fred_id, .keep_all = TRUE) %>% 
+#     left_join(subj %>% select(-any_of(c("abstract_r", "success_rating", "success_quote"))), by = "fred_id") %>%
+#     transmute(fred_id, ref_o, doi_o, ref_r, doi_r, url_r, link_r, study_r, abstract_r, number = "", success_rating, success_quote) %>%
+#     writexl::write_xlsx("AI_coded_extra.xlsx")
+# }
 
 if (nrow(subj) > 0) {
   coded_abstracts <- subj$abstract_r %>% 
@@ -272,6 +176,9 @@ if (nrow(subj) > 0) {
 } else {
   subj <- subj %>% mutate(success_rating = NA_character_, success_quote = NA_character_)
 }
+
+subj %>%
+    write_csv("additional_subjective_coding_with_ai.csv")
 
 library(stringdist)
 
@@ -372,6 +279,110 @@ if (nrow(subj) > 0) {
 ## Defunct: Double-check and augmentation
 
 The sections below capture legacy double-check and augmentation logic. They are retained for reference only and are no longer executed.
+
+
+```{r}
+fred_validated %>%
+  mutate(tt_o = ifelse(es_type_o == "test statistic", str_sub(str_trim(es_value_o), 1, 2), NA), 
+         tt_r = ifelse(es_type_r == "test statistic", str_sub(str_trim(es_value_r), 1, 2), NA)) %>%
+  select(tt_o, tt_r) %>%
+  unlist() %>%
+  na.omit() %>% 
+  tibble(tt = .) %>%
+  count(tt, sort = T)
+```
+
+
+
+```{r}
+# convert original effect sizes
+fred_validated$r_o <- convert_effect_sizes(es_values = fred_validated$es_value_o, es_types = fred_validated$es_type_o)  
+
+# convert replication effect sizes
+fred_validated$r_r <- convert_effect_sizes(es_values = fred_validated$es_value_r, es_types = fred_validated$es_type_r)
+
+# directional effects
+dir_types <- c("d", "r", "OR", "phi", "b (unstd)", "beta (std)", "beta", 
+               "Mean difference", "percentage difference", "hedges' g",
+               "median difference", "partial r", "Cohen's dz")
+
+fred_validated <- fred_validated %>% 
+  mutate(es_type_o = str_trim(es_type_o),
+         es_type_r = str_trim(es_type_r))
+
+fred_validated <- fred_validated %>% mutate(
+  p_val_temp_r = coalesce(as.numeric(pval_value_r), FReD:::p_from_r(r_r, as.numeric(n_r))),
+   p_val_temp_o = coalesce(as.numeric(pval_value_o), FReD:::p_from_r(r_o, as.numeric(n_o))),
+  convertible = 
+    (es_type_o %in% dir_types | str_detect(es_value_o, "^t|^Z|^z")) & 
+       (es_type_r %in% dir_types | str_detect(es_value_r, "^t|^Z|^z")),
+  replication_success = case_when(
+    !convertible |  p_val_temp_o > .05 | 
+      (p_val_temp_o == .05 & pval_type_o == "g (>)") | is.na(es_value_o) |
+      is.na(es_value_r) | is.na(p_val_temp_r) | is.na(p_val_temp_o) ~ NA,
+    (p_val_temp_r < .05 | (p_val_temp_r == .05 & pval_type_r == "l (<)")) & 
+    sign(if_else(!is.na(r_r), r_r, as.numeric(es_value_r))) == 
+    sign(if_else(!is.na(r_o), r_o, as.numeric(es_value_o))) ~ TRUE,
+    .default = FALSE
+  )) %>% 
+  select(-convertible, p_val_temp_r, p_val_temp_o)
+```
+
+
+```{r cars}
+missing_p <- fred_validated %>% 
+  filter(is.na(as.numeric(pval_value_r)) | is.na(as.numeric(pval_value_o))) %>% 
+  mutate(check_p_o = is.na(as.numeric(pval_value_o)), 
+         check_p_r = is.na(as.numeric(pval_value_r))) %>% 
+  select(rowid, check_p_o, check_p_r)
+
+TEST_STAT_DIR_REGEX <- "^((t\\(\\d+(\\.\\d+)?\\)) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)|[Zz] ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?) ?, ?N ?= ?\\d+(\\.\\d+)?)$"
+
+convert_es <- fred_validated %>%
+  mutate(
+    convertible_o = es_type_o %in% dir_types | str_detect(es_value_o, TEST_STAT_DIR_REGEX),
+    convertible_r = es_type_r %in% dir_types | str_detect(es_value_r, TEST_STAT_DIR_REGEX),
+    # Extract df1 from VALID F test
+    df1_o = str_extract(
+      es_value_o,
+      "^F\\((\\d+(\\.\\d+)?), ?\\d+(\\.\\d+)?\\) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)$",
+      group = 1
+    ) %>% as.numeric() %>% coalesce(0),
+    df1_r = str_extract(
+      es_value_r,
+      "^F\\((\\d+(\\.\\d+)?), ?\\d+(\\.\\d+)?\\) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)$",
+      group = 1
+    ) %>% as.numeric() %>% coalesce(0),
+    # Extract df1 from VALID X2 test
+    df1_o = str_extract(
+      es_value_o,
+      "^X2\\((\\d+(\\.\\d+)?)\\) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)$",
+      group = 1
+    ) %>% as.numeric() %>% coalesce(df1_o),
+    df1_r = str_extract(
+      es_value_r,
+      "^X2\\((\\d+(\\.\\d+)?)\\) ?= ?[\\-–\\+]?(\\d*\\.?\\d+|\\d+([eE][\\-–\\+]?\\d+)?)$",
+      group = 1
+    ) %>% as.numeric() %>% coalesce(df1_r)
+  ) %>%
+  filter((!convertible_o & df1_o < 2) | (!convertible_r & df1_r < 2)) %>%
+  transmute(rowid, code_es_o = !convertible_o &  df1_o < 2, code_es_r = !convertible_r & df1_r < 2)
+
+
+coding <- missing_p %>% full_join(convert_es) %>% 
+  group_by(rowid) %>% 
+  summarise(across(everything(), ~ c(coalesce(first(na.omit(.x)), FALSE))), 
+            .groups = "drop") %>% arrange(as.numeric(rowid)) %>% 
+  left_join(fred_validated) %>% 
+  select(rowid, fred_id, claim_text_o, doi_o, link_o, doi_r, link_r, code_es_o, 
+         code_es_r, check_p_o, check_p_r, es_value_o, es_type_o, es_repr_o, 
+         pval_value_o, pval_type_o, pval_tails_o, es_value_r, es_type_r, es_repr_r, 
+         pval_value_r, pval_type_r, pval_tails_r) 
+
+#write_csv(coding, "es_p_coding_Roksana.csv")
+
+```
+
 
 ### Legacy: Check matches and missing
 
