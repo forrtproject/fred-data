@@ -18,71 +18,65 @@ cleaned <- clean_fred_data(ds_fully_raw)
 
 ds_raw <- cleaned$cleaned_data
 
-# filter empty rows
-ds_raw <- ds_raw %>% filter(!is.na(ref_o), !is.na(ref_r))
-
-# ID to distinguish replications where multiple are in same paper
-ds_raw$id_r <- coalesce(ds_raw$url_r, ds_raw$doi_r)
-
-# filter out excluded studies
-ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
-
-
-# Number of coded but not validated entries
-ds_awaitingvalidation <- ds_raw[ds_raw$status %in% c("awaiting validation", "validated - chosen (external)"), ]
-
 # filter for validated - chosen entries
 # changed this as base-R subsetting struggles with NAs
 ds <- ds_raw %>% filter(status == "validated - chosen")
 
-
-
-# Deauthenticate (useful for public folders)
-drive_deauth()
-
-# Replace with your actual folder ID
-folder_id <- "1VMbkD0_rORNE9MH_0aO_yywfZ-y5_ir1"
-
-# List files in the folder
-files <- drive_ls(as_id(folder_id))
-print(files)
-
-
-files_found <- union(intersect(ds$file_o, files$name),
-                     intersect(ds$file_r, files$name))
-
-files_missing <- union(setdiff(ds$file_o, files$name),
-                     setdiff(ds$file_r, files$name))
-
-files_case_issue <- setdiff(files_missing,
-                            union(setdiff(tolower(ds$file_o), tolower(files$name)),
-                                  setdiff(tolower(ds$file_r), tolower(files$name))))
-                              
-files_missing <- setdiff(files_missing, files_case_issue)
+canon <- function(x) tolower(trimws(x))
+expected_keys <- unique(canon(c(ds$file_o, ds$file_r)))
 
 drive_auth() 
 
-# Copy relevant files into shareable folder
+source_folder <- "1VMbkD0_rORNE9MH_0aO_yywfZ-y5_ir1"
+dest_folder <- "10GSKukVmMe9SmzcDvATxTjm_VqMyDqc5"
 
-dest_id <- as_id("10GSKukVmMe9SmzcDvATxTjm_VqMyDqc5")
+src_files  <- drive_ls(as_id(source_folder)) %>% mutate(key = canon(name))
+dest_files <- drive_ls(as_id(dest_folder))   %>% mutate(key = canon(name))
 
-relevant_files <- files %>% filter(name %in% files_found)
+relevant_src <- src_files %>%
+  semi_join(tibble(key = expected_keys), by = "key") %>%
+  distinct(key, .keep_all = TRUE) 
 
-copied <- map(relevant_files$id, ~ drive_cp(as_id(.x), path = dest_id), .progress = TRUE)
+unexpected <- dest_files %>%
+  filter(!(key %in% expected_keys))
 
-map2(
-  copied,
-  relevant_files$name,
-  ~ drive_rename(.x, .y)
+if (nrow(unexpected) > 0) {
+  walk(unexpected$id, drive_rm)
+}
+
+# refresh dest_files after deletion
+dest_files <- drive_ls(dest_id) %>% mutate(key = canon(name))
+
+# compute which relevant files are missing
+to_copy <- relevant_src %>%
+  anti_join(dest_files, by = "key")
+
+to_copy <- to_copy[2:nrow(to_copy), ]  # skip first row due to automated malware concern
+
+# copy missing files
+copied <- map2(
+  to_copy$id,
+  to_copy$name, 
+  ~ drive_cp(as_id(.x), path = dest_id, name = .y),
+  .progress = TRUE
 )
 
-intersect(list.files("/Users/lukaswallrich/Downloads/pdf_downloads"), files_missing)
+dest_files <- drive_ls(dest_id) %>% mutate(key = canon(name))
+missing_expected <- setdiff(expected_keys, dest_files$key)
+missing_expected
+```
+
+
+```{r}
+intersect(list.files("/Users/lukaswallrich/Downloads"), files_missing)
+
+file.copy(from = file.path("/Users/lukaswallrich/Downloads/pdf_downloads/", intersect(list.files("/Users/lukaswallrich/Downloads/pdf_downloads/"), files_missing)),
+          to = file.path("/Users/lukaswallrich/Downloads/pdf_downloads/upload",
+                         intersect(list.files("/Users/lukaswallrich/Downloads/pdf_downloads/"), files_missing)))
 
 file.rename(list.files("/Users/lukaswallrich/Downloads/pdf_downloads", full.names = TRUE),
             file.path("/Users/lukaswallrich/Downloads/pdf_downloads",
                       tolower(basename(list.files("/Users/lukaswallrich/Downloads/pdf_downloads")))))
-
-
 
 replace_na_filename <- function(filename) {
   filename %>% 
