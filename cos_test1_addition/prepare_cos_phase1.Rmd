@@ -53,7 +53,7 @@ recode_pval_tails <- function(x) {
   ) %>% as.numeric()
 }
 
-recode_es_type_o <- function(x) {
+recode_es_type <- function(x) {
   recode(
     x,
     "cohen_d" = "Cohen's d",
@@ -65,35 +65,11 @@ recode_es_type_o <- function(x) {
     "odds_ratio" = "OR",
     "partial_eta_squared" = "etasq (partial)",
     "pearson_r" = "r",
-    "phi" = "phi",
     "regression_coefficient" = "b (unstd)",
-    "ser_method_t" = "t-statistic",
-    "ser_method" = "test statistic",
-    .default = x
-  )
-}
-
-recode_es_type_r <- function(x) {
-  recode(
-    x,
-    "cohen_f_squared" = "Cohen's f^2",
-    "cohen_d" = "Cohen's d",
-    "cohen_dz" = "Cohen's dz",
-    "cramer_v" = "cramer's V",
-    "eta_squared" = "etasq",
-    "hazard_ratio" = "hazard ratio",
-    "odds_ratio" = "OR",
-    "partial_eta_squared" = "etasq (partial)",
-    "pearson_r" = "r",
-    "phi" = "phi",
-    "regression_coefficient" = "b (unstd)",
-    "d_sample (dep)" = "dz",
+    "point-bis_cor" = "phi",
     "d_sample (indep)" = "d",
     "d_sample (one)" = "d",
     "part_cor" = "partial r",
-    "point-bis_cor" = "phi",
-    "ser_method_t" = "t-statistic",
-    "ser_method" = "test statistic",
     .default = x
   )
 }
@@ -110,8 +86,8 @@ cos_aligned <- cos_raw %>%
     pval_type_r = recode_pval_type(pval_type_r),
     pval_tails_o = recode_pval_tails(pval_tails_o),
     pval_tails_r = recode_pval_tails(pval_tails_r),
-    es_type_o = recode_es_type_o(es_type_o),
-    es_type_r = recode_es_type_r(es_type_r),
+    es_type_o = recode_es_type(es_type_o),
+    es_type_r = recode_es_type(es_type_r),
     status = "COS contributed",
     coder_1 = "COS"
   )
