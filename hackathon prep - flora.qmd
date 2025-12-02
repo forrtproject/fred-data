@@ -9,7 +9,15 @@ For the Zotero plugin and preprint bot, we need a list of originals and replicat
 
 # --- Load replication data and keep only rows with valid DOIs ----------------
 ```{r setup}
-# --- Load required packages for data + string handling ------------------------
+# --- Load required packages ---------------------------------------------------
+# dplyr/readr: data wrangling + csv IO
+# rcrossref: Crossref API client
+# purrr: mapping helpers (map_chr, compact)
+# jsonlite: JSON encode/decode for authors
+# glue/stringr: string handling and readable messages
+# rlang: provides %||% (null-coalescing) via rlang
+# httr: DataCite API calls (fallback)
+# digest: short DOI hashes for stable IDs
 library(dplyr)
 library(readr)
 library(rcrossref)
@@ -18,22 +26,20 @@ library(jsonlite)
 library(glue)
 library(stringr)
 library(rlang)
+library(httr)
+library(digest)
 
-# --- Load replication data and keep only rows with valid DOIs ----------------
-
+# --- Load replication data ---------------------------------------------------
+# Pull the public Google Sheet as CSV.
+# skip = 1 removes the first "header row" in the sheet.
 reported_success <- read_csv(
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv",
-  skip = 1,              # ignore first header row in the sheet
-  show_col_types = FALSE # suppress column type messages
+  skip = 1, show_col_types = FALSE
 ) %>%
-  # keep rows where the original DOI looks like a proper DOI
-  filter(str_detect(doi_o, regex("^10\\.[0-9]{4,9}/", ignore_case = TRUE))) %>%
-  # and where the replication DOI also looks like a proper DOI
-  filter(str_detect(doi_r, regex("^10\\.[0-9]{4,9}/", ignore_case = TRUE)))
-
+  # Keep only rows where original DOI and replication DOI look like a DOI prefix.
+  filter(str_detect(doi_o, "^10\\.[0-9]{4,9}/")) %>%
+  filter(str_detect(doi_r, "^10\\.[0-9]{4,9}/"))
 ```
-
-
 
 # --- Select relevant fields and deduplicate O–R pairs ------------------------
 ```{r}
@@ -54,218 +60,347 @@ flora <- reported_success %>%
 
 ```
 
-
-
-
-# --- Helpers for fetching and formatting CrossRef metadata --------------------
 ```{r}
-get_doi_data <- function(doi) {
-  # Clean and de-duplicate DOIs before querying CrossRef
-  doi <- str_replace_all(doi, "https?://doi.org/", "")
-  doi <- str_subset(doi, "^10\\.\\d+/\\S+$")
-  doi <- unique(doi)
-
-  message(glue("Fetching data for {length(doi)} DOIs from CrossRef..."))
-
-  # If nothing left after cleaning, return an empty tibble
-  if (length(doi) == 0) return(tibble())
-
-  # Query CrossRef in batches of up to 100 DOIs to avoid URL length errors
-  for (i in seq(1, length(doi), by = 100)) {
-    doisub <- doi[i:min(i + 99, length(doi))]
-    names(doisub) <- rep("doi", length(doisub))
-    res <- cr_works(filter = doisub, limit = 100)
-    message(glue("  Retrieved {nrow(res$data)} records (of {length(doisub)} requested)"))
-    if (i == 1) out <- res$data else out <- bind_rows(out, res$data)
+# --- Convert CrossRef / DataCite author lists into a JSON-encoded tibble ------
+jsonify_authors <- function(author_list) {
+  # Handle completely missing or empty author data
+  if (is.null(author_list) || length(author_list) == 0) {
+    return(jsonlite::toJSON(tibble(
+      given = NA_character_,
+      family = NA_character_,
+      sequence = NA_character_,
+      ORCID = NA_character_
+    ), auto_unbox = TRUE, pretty = FALSE, na = "null"))
   }
 
-  message(glue("Done. Retrieved {nrow(out)} records in total."))
-
-  return(out)
-}
-
-
-# --- Convert CrossRef author lists into a JSON-encoded tibble -----------------
-
-jsonify_authors <- function(author_list) {
-
-  if (all(c("family", "given") %in% names(author_list))) {
-    # Standard case: separate given + family fields
+  # Crossref often returns a data.frame; DataCite may return a list
+  if (is.data.frame(author_list)) {
     out <- tibble(
       given    = author_list[["given"]]    %||% NA_character_,
-      family   = author_list[["family"]]   %||% NA_character_,
+      family   = author_list[["family"]]   %||% author_list[["name"]] %||% NA_character_,
       sequence = author_list[["sequence"]] %||% NA_character_,
       ORCID    = author_list[["ORCID"]]    %||% NA_character_
     )
-
-  } else if ("name" %in% names(author_list)) {
-    # Some records use a single "name" field instead of "family"
-    out <- tibble(
-      given    = author_list[["given"]] %||% NA_character_,
-      family   = author_list[["name"]]  %||% NA_character_,
-      sequence = author_list[["sequence"]] %||% NA_character_,
-      ORCID    = author_list[["ORCID"]]    %||% NA_character_
-    )
-
-  } else {
-    # Fallback for unknown formats
-    message("Unknown author format - field names: ",
-            paste(names(author_list), collapse = ", "),
-            ". Returning NULL entry.")
-    out <- tibble(
-      given    = author_list[["given"]] %||% NA_character_,
-      family   = author_list[["name"]]  %||% NA_character_,
-      sequence = author_list[["sequence"]] %||% NA_character_,
-      ORCID    = author_list[["ORCID"]]    %||% NA_character_
-    )
+    return(jsonlite::toJSON(out, auto_unbox = TRUE, pretty = FALSE, na = "null"))
   }
 
-  # Encode the author tibble as compact JSON string
-  out |>
-    toJSON(pretty = FALSE, na = "null")
-}
-
-
-# --- Extract a publication year from CrossRef date fields ---------------------
-
-safe_year <- function(df) {
-  # Candidate date columns in CrossRef records
-  pub_cols <- c("published.print", "published.online", "published")
-  existing <- pub_cols[pub_cols %in% names(df)]
-
-  # If there are no date fields, return NA
-  if (length(existing) == 0) {
-    return(NA_integer_)
+  # Single-author list (like list(name="World Bank"))
+  if (is.list(author_list) && (("given" %in% names(author_list)) || ("name" %in% names(author_list)))) {
+    out <- tibble(
+      given    = author_list[["given"]]    %||% NA_character_,
+      family   = author_list[["family"]]   %||% author_list[["name"]] %||% NA_character_,
+      sequence = author_list[["sequence"]] %||% NA_character_,
+      ORCID    = author_list[["ORCID"]]    %||% NA_character_
+    )
+    return(jsonlite::toJSON(out, auto_unbox = TRUE, pretty = FALSE, na = "null"))
   }
 
-  # Take the first non-missing date and keep the first 4 chars as the year
-  year_str <- dplyr::coalesce(!!!df[existing])
-  as.integer(stringr::str_sub(as.character(year_str), 1, 4))
-}
-
-
-# --- Build a markdown-formatted APA-style reference (manual fallback) ---------
-
-apa_reference_md <- function(doi, title, author_json, journal, year, volume, issue, pages) {
-  n <- length(doi)
-
-  map_chr(seq_len(n), function(i) {
-    # Parse JSON authors back into a data frame
-    authors <- tryCatch(fromJSON(author_json[i]), error = function(e) NULL)
-
-    # Format a single author as "Family, G. G."
-    fmt_author <- function(given, family) {
-      initials <- if (!is.na(given) && nzchar(given)) {
-        parts <- strsplit(given, "\\s+")[[1]]
-        paste0(substr(parts, 1, 1), collapse = ". ")
-      } else ""
-      paste0(family, ", ", initials, ".")
-    }
-
-    # Build the full author string depending on number of authors
-    if (is.null(authors) || nrow(authors) == 0) {
-      author_str <- "(n.a.)"
-    } else {
-      author_strs <- pmap_chr(authors, \(given, family, sequence, ORCID)
-        fmt_author(given, family))
-      n_auth <- length(author_strs)
-      author_str <-
-        if (n_auth == 1) author_strs
-        else if (n_auth == 2) paste(author_strs, collapse = " & ")
-        else paste0(paste(author_strs[-n_auth], collapse = ", "), ", & ", author_strs[n_auth])
-    }
-
-    # Final APA-like reference with journal info and clickable DOI
-    glue(
-      "{author_str} ({year[i]}). {title[i]}. *{journal[i]}*, *{volume[i]}*({issue[i]}), {pages[i]}. [https://doi.org/{doi[i]}](https://doi.org/{doi[i]})"
-    )
-  })
-}
-
-
-# --- Build a BibTeX @article entry from metadata (manual fallback) ------------
-
-bibtex_reference <- function(doi, title, author_json, journal, year, volume, issue, pages) {
-  n <- length(doi)
-
-  map_chr(seq_len(n), function(i) {
-    # Parse JSON authors back into a data frame
-    authors <- tryCatch(fromJSON(author_json[i]), error = function(e) NULL)
-
-    # Format a single author as "Family, Given"
-    fmt_author_bib <- function(given, family) {
-      if (!is.na(given) && nzchar(given)) {
-        paste0(family, ", ", given)
-      } else {
-        family
-      }
-    }
-
-    # Build the BibTeX author list as "Name and Name and Name"
-    if (is.null(authors) || nrow(authors) == 0) {
-      author_str <- "Unknown"
-    } else {
-      author_strs <- pmap_chr(authors, \(given, family, sequence, ORCID)
-        fmt_author_bib(given, family))
-      author_str <- paste(author_strs, collapse = " and ")
-    }
-
-    # Create a simple key like "smith2020"
-    key <- str_remove_all(paste0(str_to_lower(word(author_strs[1], 1)), year[i]), "[^a-z0-9]")
-
-    # Full BibTeX @article entry
-    glue(
-"@article{{{key},
-  author = {{{author_str}}},
-  title = {{{title[i]}}},
-  journal = {{{journal[i]}}},
-  year = {{{year[i]}}},
-  volume = {{{volume[i]}}},
-  number = {{{issue[i]}}},
-  pages = {{{pages[i]}}},
-  doi = {{{doi[i]}}}
-}}"
-    )
-  })
+  # If we get something completely unexpected, return a neutral row instead of crashing
+  message("Unknown author format - field names: ",
+          paste(names(author_list), collapse = ", "),
+          ". Returning empty entry.")
+  out <- tibble(
+    given = NA_character_,
+    family = NA_character_,
+    sequence = NA_character_,
+    ORCID = NA_character_
+  )
+  jsonlite::toJSON(out, auto_unbox = TRUE, pretty = FALSE, na = "null")
 }
 ```
 
+```
 
-# --- Fetch and parse CrossRef metadata for originals and replications ---------
+# --- Helpers for RDS-based DOI cache -----------------------------------------
 ```{r}
-# Get raw CrossRef records for ORIGINAL DOIs
-doi_data_o <- get_doi_data(flora$doi_o)
+load_doi_cache <- function(cache_file) {
+  if (file.exists(cache_file)) {
+    # Load the cached tibble/data.frame from RDS
+    readRDS(cache_file)
+  } else {
+    # Empty tibble with the expected columns
+    tibble::tibble(
+      doi = character(), title = character(), author = character(),
+      container.title = character(), published = character(),
+      volume = character(), issue = character(), page = character(),
+      type = character(), source = character()
+    )
+  }
+}
 
-# Keep and rename only the fields we care about for originals
-doi_data_o_parsed <- doi_data_o %>% 
+save_doi_cache <- function(cache_df, cache_file) {
+  saveRDS(cache_df, cache_file)
+}
+
+
+
+
+# --- DOI metadata fetcher (Crossref-first + DataCite fallback + cache) -------
+```{r}
+get_doi_data_unified_cached <- function(
+  dois,
+  cache_file = "flora_doi_cache.rds",
+  save_every = 100,
+  force_refresh = FALSE
+) {
+  # --- 1) Clean DOIs ---------------------------------------------------------
+  clean_doi <- function(x) {
+    x <- gsub("https?://(dx\\.)?doi\\.org/", "", x, ignore.case = TRUE)
+    x <- URLdecode(x)
+    x <- gsub("/%?2[fF]", "/", x, perl = TRUE)  # fix 2F artifacts
+    x <- gsub("//+", "/", x)                    # collapse double slashes
+    trimws(tolower(x))
+  }
+
+  dois <- unique(clean_doi(dois))
+  dois <- stringr::str_subset(dois, "^10\\.\\d+/\\S+$")
+  if (length(dois) == 0) return(tibble::tibble())
+
+  # --- 2) Load cache from RDS ------------------------------------------------
+  cache <- load_doi_cache(cache_file)
+  cache[] <- lapply(cache, as.character)  # keep everything as character
+  cached_dois <- unique(cache$doi)
+
+  # Refetch if cached 'published' is missing/blank
+  needs_refresh <- cache %>%
+    dplyr::filter(
+      doi %in% dois,
+      is.na(published) | published %in% c("", "NA", "null")
+    ) %>%
+    dplyr::pull(doi) %>%
+    unique()
+
+  new_dois <- if (force_refresh) {
+    dois
+  } else {
+    unique(c(setdiff(dois, cached_dois), needs_refresh))
+  }
+
+  message(glue::glue(
+    "Total DOIs: {length(dois)} | Cached: {length(cached_dois)} | To fetch: {length(new_dois)}"
+  ))
+
+  # --- 3) Year extractor -----------------------------------------------------
+  get_year_safe <- function(d) {
+    extract_year <- function(x) {
+      if (is.null(x)) return(NA_integer_)
+      if (is.list(x) && length(x) == 1 && is.list(x[[1]]) && !is.null(names(x[[1]]))) {
+        x <- x[[1]]
+      }
+      if (is.list(x) && "date-parts" %in% names(x)) {
+        dp <- x[["date-parts"]]
+        if (is.list(dp) && length(dp) >= 1 && length(dp[[1]]) >= 1) {
+          return(as.integer(dp[[1]][1]))
+        }
+      }
+      suppressWarnings(as.integer(stringr::str_sub(as.character(x), 1, 4)))
+    }
+
+    candidates <- c(
+      "issued", "published.print", "published.online", "published",
+      "created", "deposited", "indexed"
+    )
+
+    for (nm in candidates) {
+      if (nm %in% names(d)) {
+        val <- tryCatch(d[[nm]][[1]], error = function(e) d[[nm]][1])
+        yr  <- tryCatch(extract_year(val), error = function(e) NA_integer_)
+        if (!is.na(yr)) return(yr)
+      }
+    }
+    NA_integer_
+  }
+
+  # --- 4) Crossref fetch -----------------------------------------------------
+  try_crossref <- function(doi) {
+    res <- tryCatch(rcrossref::cr_works(dois = doi), error = function(e) NULL)
+    if (is.null(res) || nrow(res$data) == 0) return(NULL)
+
+    d  <- res$data
+    yr <- get_year_safe(d)
+
+    out <- tibble::tibble(
+      doi = tolower(doi),
+      title = as.character(d$title[1]),
+      author = jsonlite::toJSON(d$author[[1]] %||% list(), auto_unbox = TRUE),
+      container.title = as.character(d$container.title[1] %||% NA_character_),
+      published = as.character(yr),
+      volume = as.character(d$volume[1] %||% NA_character_),
+      issue = as.character(d$issue[1] %||% NA_character_),
+      page = as.character(d$page[1] %||% NA_character_),
+      type = as.character(d$type[1] %||% NA_character_),
+      source = "crossref"
+    )
+    out[] <- lapply(out, as.character)
+    out
+  }
+
+  # --- 5) DataCite fetch (fallback) ------------------------------------------
+  try_datacite <- function(doi) {
+    tryCatch({
+      url <- glue::glue("https://api.datacite.org/dois/{URLencode(doi)}")
+      res <- httr::GET(url)
+      if (res$status_code != 200) return(NULL)
+
+      j <- jsonlite::fromJSON(httr::content(res, "text", encoding = "UTF-8"))
+      attr <- j$data$attributes
+
+      out <- tibble::tibble(
+        doi = tolower(doi),
+        title = as.character(attr$title[1] %||% NA_character_),
+        author = jsonlite::toJSON(attr$creators %||% list(), auto_unbox = TRUE),
+        container.title = as.character(attr$publisher %||% NA_character_),
+        published = as.character(attr$publicationYear %||% NA_character_),
+        volume = NA_character_,
+        issue = NA_character_,
+        page = NA_character_,
+        type = as.character(attr$type[1] %||% NA_character_),
+        source = "datacite"
+      )
+      out[] <- lapply(out, as.character)
+      out
+    }, error = function(e) NULL)
+  }
+
+  # --- 6) Fetch single DOI ---------------------------------------------------
+  fetch_one_doi <- function(doi) {
+    if (!force_refresh && doi %in% cached_dois && !doi %in% needs_refresh) {
+      return(NULL)
+    }
+    out <- try_crossref(doi)
+    if (is.null(out) || nrow(out) == 0) out <- try_datacite(doi)
+    if (is.null(out) || nrow(out) == 0) {
+      message(glue::glue("⚠️ No metadata found for {doi}"))
+      return(NULL)
+    }
+    out[] <- lapply(out, as.character)
+    out
+  }
+
+  # --- 7) Fetch loop + periodic saves ----------------------------------------
+  new_records <- vector("list", length(new_dois))
+
+  if (length(new_dois) > 0) {
+    for (i in seq_along(new_dois)) {
+      d <- new_dois[i]
+      new_records[[i]] <- fetch_one_doi(d)
+
+      if (i %% save_every == 0) {
+        temp <- dplyr::bind_rows(cache, dplyr::bind_rows(purrr::compact(new_records)))
+        save_doi_cache(temp, cache_file)
+        message(glue::glue("💾 Saved intermediate cache after {i} fetched DOIs"))
+      }
+    }
+  }
+
+  valid_new <- purrr::compact(new_records)
+  new_tbl <- if (length(valid_new) > 0) dplyr::bind_rows(valid_new) else tibble::tibble()
+
+  # --- 8) Combine + dedupe + save cache --------------------------------------
+  all_data <- dplyr::bind_rows(cache, new_tbl) %>%
+    dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
+    dplyr::distinct(doi, .keep_all = TRUE)
+
+  save_doi_cache(all_data, cache_file)
+  message(glue::glue("✅ Total {nrow(all_data)} records (cached + new)"))
+
+  all_data
+}
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# --- Fetch + parse DOI metadata for originals and replications (from cache) --
+```{r}
+# --- Fetch metadata for originals and replications (CrossRef + DataCite + cache) ----
+doi_data_o <- get_doi_data_unified_cached(flora$doi_o, cache_file = "flora_doi_cache.rds")
+doi_data_r <- get_doi_data_unified_cached(flora$doi_r, cache_file = "flora_doi_cache.rds")
+
+
+# --- Parse and rename the fields for consistency ------------------------------------
+doi_data_o_parsed <- doi_data_o %>%
+  mutate(
+    # If author looks like JSON text, keep as-is; otherwise jsonify
+    author = ifelse(
+      str_detect(author, "^\\s*\\[\\s*\\{"),
+      author,
+      map_chr(author, jsonify_authors)
+    )
+  ) %>%
   transmute(
-    doi       = tolower(doi),                  # normalize DOI to lowercase
-    title_o   = title,                         # article title
-    author_o  = map_chr(author, jsonify_authors),  # authors as JSON string
-    journal_o = container.title,               # journal / container title
-    year_o    = safe_year(pick(everything())), # extract publication year
+    doi       = tolower(doi),
+    title_o   = title,
+    author_o  = author,     # already JSON-safe now
+    journal_o = container.title,
+    year_o = readr::parse_integer(published, na = c("", "NA", "null")),
     volume_o  = volume,
     issue_o   = issue,
     pages_o   = page,
-    type_o    = type                           # CrossRef type (e.g., "journal-article")
+    type_o    = type,
+    source_o  = source
   )
 
-# Get raw CrossRef records for REPLICATION DOIs
-doi_data_r <- get_doi_data(flora$doi_r)
-
-# Same parsing for replications, with "_r" suffix
-doi_data_r_parsed <- doi_data_r %>% 
+doi_data_r_parsed <- doi_data_r %>%
+  mutate(
+    author = ifelse(
+      str_detect(author, "^\\s*\\[\\s*\\{"),
+      author,
+      map_chr(author, jsonify_authors)
+    )
+  ) %>%
   transmute(
     doi       = tolower(doi),
     title_r   = title,
-    author_r  = map_chr(author, jsonify_authors),
+    author_r  = author,
     journal_r = container.title,
-    year_r    = safe_year(pick(everything())),
+    year_r = readr::parse_integer(published, na = c("", "NA", "null")),
     volume_r  = volume,
     issue_r   = issue,
     pages_r   = page,
-    type_r    = type
+    type_r    = type,
+    source_r  = source
   )
+
+
 ```
 
 # --- Normalise metadata for originals and replications -----------------------
@@ -279,7 +414,7 @@ meta_o <- doi_data_o_parsed %>%
     title       = title_o,
     author_json = author_o,
     journal     = journal_o,
-    year        = year_o,
+    year        =  year_o,
     volume      = volume_o,
     issue       = issue_o,
     pages       = pages_o,
@@ -293,7 +428,7 @@ meta_r <- doi_data_r_parsed %>%
     title       = title_r,
     author_json = author_r,
     journal     = journal_r,
-    year        = year_r,
+    year        =year_r,
     volume      = volume_r,
     issue       = issue_r,
     pages       = pages_r,
@@ -304,14 +439,43 @@ meta_r <- doi_data_r_parsed %>%
 
 # --- CrossRef citation cache + helper for APA / BibTeX lookups ----------------
 ```{r}
-# Load shared citation caching functions
-source("crossref_citation_cache.R")
+# File on disk where we cache citation strings from CrossRef
+CIT_CACHE_FILE <- "crossref_citation_cache.rds"
 
-# Note: The shared cache file provides:
-# - CIT_CACHE_FILE: path to cache file
-# - load_citation_cache(): load cache from disk
-# - save_citation_cache(cache): save cache to disk
-# - get_crossref_citation(doi, type): fetch citation from CrossRef
+# Load cached APA/BibTeX results if the cache file exists;
+# otherwise start with an empty list structure
+load_citation_cache <- function() {
+  if (file.exists(CIT_CACHE_FILE)) {
+    readRDS(CIT_CACHE_FILE)
+  } else {
+    list(apa = list(), bibtex = list())
+  }
+}
+
+# Save the updated cache back to disk as an RDS file
+save_citation_cache <- function(cache) {
+  saveRDS(cache, CIT_CACHE_FILE)
+}
+
+# Fetch a citation for a DOI from CrossRef, either in BibTeX or APA style
+get_crossref_citation <- function(doi, type = c("bibtex", "apa")) {
+  type <- match.arg(type)
+
+  if (type == "bibtex") {
+    fmt   <- "bibtex"  # CrossRef content-negotiation format for BibTeX
+    style <- NULL      # no citation style needed for BibTeX
+  } else if (type == "apa") {
+    fmt   <- "text"    # plain text output
+    style <- "apa"     # APA citation style
+  }
+
+  # Try the CrossRef call; if it fails, return NA instead of throwing an error
+  tryCatch(
+    rcrossref::cr_cn(dois = doi, format = fmt, style = style),
+    error = function(e) NA_character_
+  )
+}
+
 
 ```
 
@@ -342,7 +506,7 @@ override_with_crossref <- function(doi_vec, meta_df) {
     apa_cr <- cache$apa[[d]] %||% get_crossref_citation(d, "apa")
     cache$apa[[d]] <- apa_cr
 
-    if (is.na(apa_cr) || !nzchar(apa_cr)) {
+   if (is.null(apa_cr) || is.na(apa_cr) || !nzchar(apa_cr)) {
       # CrossRef APA is missing or empty → build our own APA-style reference
 
       if (nrow(meta_row) == 1 && !is.na(meta_row$type) && meta_row$type == "journal-article") {
@@ -378,7 +542,7 @@ override_with_crossref <- function(doi_vec, meta_df) {
     bib_cr <- cache$bibtex[[d]] %||% get_crossref_citation(d, "bibtex")
     cache$bibtex[[d]] <- bib_cr
 
-    if (is.na(bib_cr) || !nzchar(bib_cr)) {
+    if (is.null(bib_cr) || is.na(bib_cr) || !nzchar(bib_cr)) {
       # CrossRef BibTeX missing → build a manual BibTeX record
 
       if (nrow(meta_row) == 1) {
