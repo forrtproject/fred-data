@@ -11,6 +11,8 @@ author:
     orcid: 0000-0002-8614-9310
   - name: Sriraj Aiyer
     orcid: 0000-0002-1755-948X
+  - name: Leonardo Bergmann
+    orcid: 0000-0001-9570-8973
   - name: Ognjen Bobičić
     orcid: 0009-0007-7743-480X
   - name: Kathryn Bottitta
@@ -24,6 +26,8 @@ author:
     orcid: 0009-0001-9449-7569
   - name: Marta Kołczyńska
     orcid: 0000-0003-4981-0437
+  - name: Sebastian Kurten
+    orcid: 0000-0001-7620-4462
   - name: Radoslaw P. Lach
     orcid: 0009-0008-5585-0324
   - name: Diego Manriquez-Robles
@@ -40,6 +44,8 @@ author:
     orcid: 0000-0002-2051-985X
   - name: Hakile Resulbegoviq
     orcid: 0009-0006-2864-4424
+  - name: Jessica Röseler
+    orcid: 0009-0007-7544-393X
   - name: Julia Fabienne Sandkühler
     orcid: 0000-0002-4184-2963
   - name: Alejandro Sandoval-Lentisco
@@ -70,7 +76,11 @@ The Center for Open Science and the Framework for Open and Reproducible Research
 
 ------------------------------------------------------------------------
 
-```{r setup, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
+#| label: setup
+#| echo: false
+#| warning: false
+#| message: false
 #devtools::install_github("forrtproject/FReD") 
 library(FReD)
 library(lubridate)
@@ -78,6 +88,7 @@ library(ggplot2)
 library(dplyr)
 library(stringr)
 library(tidyverse)
+library(readxl)
 library(glue)
 source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main/clean_cos_fred.R")
 ```
@@ -90,7 +101,7 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 
 -   \~400 additional entries until September 2025
 
--   Final dataset delivery by the end of October 2025
+-   Final dataset delivery by the end of November 2025
 
 ### Changelog
 
@@ -155,6 +166,12 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Added section with warnings and caveats for dataset users
 -   Normalized all doi to lowercase, as they are inconsistently reported but not case sensitive
 
+**Version 2.0 (2025-11-12)**
+
+-   Removed \~10 duplicate effects
+-   Added `author_overlap` between originals and replications (auto-coded based on Crossref)
+-   Added \~90 entries from COS Phase 1 test data
+
 ### Terminology
 
 The relation between an article reporting a replication study and the corresponding original study can be complex. The following terms allow for almost every combination of original and replication studies to be documented in the dataset.
@@ -175,13 +192,17 @@ The relation between an article reporting a replication study and the correspond
 
 ### Current Status
 
-```{r status, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
+#| label: status
+#| echo: false
+#| warning: false
+#| message: false
 #print("Date of report:", Sys.Date())
 
-entries_in_last_report <- 301 # february 7, 2025
-entries_in_last_report <- 357 # March 27, 2025
-entries_in_last_report <- 490 # May, 2025
-entries_in_last_report <- 543 # June 30, 2025
+# entries_in_last_report <- 301 # february 7, 2025
+# entries_in_last_report <- 357 # March 27, 2025
+# entries_in_last_report <- 490 # May, 2025
+# entries_in_last_report <- 543 # June 30, 2025
 entries_in_last_report <- 689 # end of September
 
 ds_fully_raw <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv", skip = 1)
@@ -190,6 +211,8 @@ cleaned <- clean_fred_data(ds_fully_raw)
 
 ds_raw <- cleaned$cleaned_data
 
+ds_raw <- ds_raw %>% 
+  select(-c(validator:`...66`))
 
 replace_na_filename <- function(filename) {
   filename %>% 
@@ -202,51 +225,111 @@ ds_raw <- ds_raw %>%
   mutate(file_o = replace_na_filename(file_o),
          file_r = replace_na_filename(file_r))
 
+# Merge COS phase 1 prepared file (local) for transparent reporting
+cos_phase1_path <- "../cos_test1_addition/cos_test_set_phase1_prepared.xlsx"
+
+if (file.exists(cos_phase1_path)) {
+  cos_phase1 <- read_xlsx(cos_phase1_path) %>%
+    mutate(across(everything(), ~ na_if(., "NA"))) %>%
+    mutate(
+      cos_phase1 = TRUE,
+      id_r = coalesce(url_r, doi_r),
+      ref_r = paste0("SCORE replication of '", ref_o, "'"),
+      status = coalesce(status, "COS contributed")
+    ) %>% 
+    rename(r_o_cos = r_o, r_r_cos = r_r, statistical_success_cos = statistical_success)
+  
+  missing_cols <- setdiff(names(ds_raw), names(cos_phase1))
+
+  cos_phase1 <- cos_phase1 %>%
+    mutate(!!!setNames(rep(list(NA), length(missing_cols)), missing_cols))
+  
+  ds_raw <- ds_raw %>%
+    mutate(cos_phase1 = FALSE) %>%
+    bind_rows(cos_phase1)
+
+} else {
+  ds_raw <- ds_raw %>% mutate(cos_phase1 = FALSE)
+  cat("COS phase 1 file not found at", cos_phase1_path, "- proceeding without merge.\n\n")
+}
+
+# discard non-validated "extra rows"
+ds_raw <- ds_raw %>% 
+  mutate(status = if_else(
+    !is.na(approach) & approach == "extra rows" & status != "validated - chosen",
+    "validated - discarded",
+    status
+  ))
+
 # filter empty rows
 ds_raw <- ds_raw %>% filter(!is.na(ref_o), !is.na(ref_r))
 
 # ID to distinguish replications where multiple are in same paper
 ds_raw$id_r <- coalesce(ds_raw$url_r, tolower(ds_raw$doi_r))
 
-# filter out excluded studies
-ds_raw <- ds_raw[is.na(ds_raw$exclusion), ]
+ds_raw_pre_exclusion <- ds_raw
 
-# Number of coded but not validated entries
-ds_awaitingvalidation <- ds_raw[ds_raw$status %in% c("awaiting validation", "validated - chosen (external)"), ]
+# filter out excluded studies
+ds_raw <- ds_raw[is.na(ds_raw$exclusion) & ds_raw$status != "study-pair excluded", ]
+
+summarize_overview <- function(data_filtered, data_pre_exclusion, entries_last_report = NA, remove_zero = FALSE) {
+  awaiting_validation <- data_filtered %>%
+    filter(is.na(status) |
+           (!str_detect(status, "validated") &
+              status != "COS contributed"))
+
+  validated <- data_filtered %>% filter(status %in% c("validated - chosen", "COS contributed"))
+
+  awaiting_validation <- nrow(
+    awaiting_validation[, c("doi_o", "id_r")] %>% 
+      distinct() %>% 
+      anti_join(validated[, c("doi_o", "id_r")])
+  )
+
+  entries <- sum(!duplicated(validated[, c("doi_o", "study_o", "id_r", "study_r")]))
+  new_entries <- if (!is.na(entries_last_report)) entries - entries_last_report else NA
+
+  overview <- tibble::tibble(
+    Type = c("Coded rows (including discarded and non-validated)", "Validated rows", "Entries awaiting validation", "Validated entries", "New validated entries since last report", "Original reports", "Replication reports"),
+    Quantity = c(nrow(data_pre_exclusion), nrow(validated), awaiting_validation, entries, new_entries, length(unique(data_filtered$doi_o)), length(unique(data_filtered$id_r)))
+  )
+
+  if (remove_zero) {
+    overview <- overview %>% filter(!is.na(Quantity) & Quantity != 0)
+  }
+
+  overview
+}
+
+ds_raw_forrt <- ds_raw %>% filter(!cos_phase1)
+ds_raw_forrt_pre <- ds_raw_pre_exclusion %>% filter(!cos_phase1)
+
+ds_raw_cos <- ds_raw %>% filter(cos_phase1)
+ds_raw_cos_pre <- ds_raw_pre_exclusion %>% filter(cos_phase1)
+
+overview <- bind_rows(
+  summarize_overview(ds_raw_forrt, ds_raw_forrt_pre, entries_last_report = entries_in_last_report) %>% 
+    mutate(`Data source` = "FORRT Coding"),
+  summarize_overview(ds_raw_cos, ds_raw_cos_pre, remove_zero = TRUE) %>% 
+    mutate(`Data source` = "COS Phase 1 Test Data (SCORE)"),
+  summarize_overview(ds_raw, ds_raw_pre_exclusion, remove_zero = TRUE) %>% 
+    mutate(`Data source` = "Total dataset") %>% filter(Type == "Validated entries")
+) %>% 
+  select(`Data source`, Type, Quantity)
 
 # filter for validated - chosen entries
 # changed this as base-R subsetting struggles with NAs
-ds <- ds_raw %>% filter(status == "validated - chosen")
+ds <- ds_raw %>% filter(status %in% c("validated - chosen", "COS contributed"))
 
-# save descriptives
-rows_total <- nrow(ds_raw)
-rows <- nrow(ds)
-# entries <- length(unique(ds$entry))
+DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength = 300, dom = 't', scrollX = FALSE, scrollCollapse = TRUE, ordering = FALSE), rownames = FALSE)
 
-awaiting_validation <- nrow(
-    ds_awaitingvalidation[, c("doi_o", "id_r")] %>% 
-      distinct() %>% 
-      anti_join(
-        ds[, c("doi_o", "id_r")]
-      ))
-  
-entries <- sum(!duplicated(ds[, c("doi_o", "study_o", "id_r", "study_r")]))
-new_entries <- entries - entries_in_last_report
-
-studies_o <- length(unique(ds$doi_o))
-studies_r <- length(unique(ds$id_r))
-
-overview <- data.frame(
-  "Type" = c("Coded rows (including discarded and non-validated)", "Validated rows", "Entries awaiting validation", "Validated entries", "New validated entries since last report", "Original reports", "Replication reports")
-  , "Quantity" = c(rows_total, rows, awaiting_validation, entries, new_entries, studies_o, studies_r))
-
-DT::datatable(overview, extensions = 'FixedColumns', options = list(pageLength = 300, dom = 't', scrollX = FALSE, scrollCollapse = TRUE), rownames = FALSE)
-
-# paste("Currently,", entries, "Entries are validated and ready for delivery.")
 ```
 
-```{r add-clean-refs, include = FALSE, echo = FALSE}
-
+```{r}
+#| label: add-clean-refs
+#| include: false
+#| echo: false
+#| message: false
 # Load shared citation caching functions
 source("../crossref_citation_cache.R")
 
@@ -262,8 +345,12 @@ dois_r <- ds %>%
   pull(doi_r)
 
 # Fetch references using shared cache
-refs_o <- get_apa_references(dois_o)
-refs_r <- get_apa_references(dois_r)
+message("Dealing with original citations")
+refs_o <- get_apa_references(dois_o, cache = "../crossref_citation_cache.rds", 
+                             progress = TRUE)
+message("Dealing with replication citations")
+refs_r <- get_apa_references(dois_r, cache = "../crossref_citation_cache.rds",
+                             progress = TRUE)
 
 # Join references to dataset
 ds <- ds %>% 
@@ -282,9 +369,33 @@ ds <- ds %>%
 
 ```
 
+```{r}
+#| label: add-author-overlap
+#| include: false
+#| echo: false
+
+author_overlap <- readxl::read_excel("../crossref_author_overlap.xlsx")
+
+ds <- ds %>% 
+  mutate(doi_r = tolower(doi_r),
+         doi_o = tolower(doi_o)) %>% 
+  left_join(
+    author_overlap %>% 
+      mutate(doi_o = tolower(doi_o),
+             doi_r = tolower(doi_r)),
+    by = c("doi_o", "doi_r")
+  )
+
+```
+
 The following plot displays the progress (black dots and line) and the targets (red dots) that were agreed on. Note that these numbers were corrected in June 2025; earlier reports had included some double-counting.
 
-```{r progress, include = TRUE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
+#| label: progress
+#| include: true
+#| echo: false
+#| warning: false
+#| message: false
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE) 
 
 progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27-03-2025"
@@ -298,8 +409,8 @@ progress <- data.frame("date" = lubridate::dmy(c("01-11-2024", "07-02-2025", "27
                        , "entries" = c(0, 308, 357, 403 # end of April number of entries
                                        , 507 # end of May number of entries
                                        , 543 # June 30th number of entries
-                                       , 689
-                                       , entries # July number of entries
+                                       , 689 # end of September number of entries
+                                       ,  sum(!duplicated(ds[, c("doi_o", "study_o", "id_r", "study_r")])) # current
                                        )
 )
 
@@ -320,7 +431,13 @@ plotly::ggplotly(progress_plot, tooltip = "text") %>%
       plotly::layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
 ```
 
-```{r disciplines, include = FALSE, eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+```{r}
+#| label: disciplines
+#| include: false
+#| eval: false
+#| echo: false
+#| warning: false
+#| message: false
 
 # Fixed capitalisation issues for now - but recheck in future
 disciplines <- ds$discipline %>% unique() 
@@ -361,7 +478,7 @@ ds %>%
 
 ### Computation of Standardized Effect Sizes
 
-Original studies and replications report effect sizes in a wide range of metrics. Where meaningful, we provide the reported values alongside a conversion to *r* (Pearson's correlation coefficient), using the [function in the FReD R package](https://forrt.org/FReD/reference/convert_effect_sizes.html). However, this is not always possible or meaningful, particularly where effect sizes do not express an unconditional bivariate relationship (e.g., interaction effects or partial correlations), and where they do not encode the direction of an effect (e.g., R² or F-statistics). In these cases, the quantitative replication results will not show whether the pattern matches (e.g., two F test could be significant due to opposite interaction patterns). The table below shows how we have proceeded in this dataset.
+Original studies and replications report effect sizes in a wide range of metrics. Where meaningful, we provide the reported values alongside a conversion to *r* (Pearson's correlation coefficient), using the [function in the FReD R package](https://forrt.org/FReD/reference/convert_effect_sizes.html). However, this is not always possible or meaningful, particularly where effect sizes do not express an unconditional bivariate relationship (e.g., interaction effects or partial correlations), and where they do not encode the direction of an effect (e.g., R² or F-statistics). In these cases, the quantitative replication results will not show whether the pattern matches (e.g., two F test could be significant due to opposite interaction patterns). The table below shows how we have proceeded in this dataset. (NB: For the rows contributed by COS, we retained their effect size conversion that standardized a wider range of original effects on a case-by-case basis.)
 
 +---------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Action                                                                                                                          | Effect Size Types                                                                                                                                          |
@@ -375,11 +492,14 @@ Original studies and replications report effect sizes in a wide range of metrics
 | No conversion                                                                                                                   | Partial correlation, Cohen's dz, Cramer's V, Omega, regression coefficients, other test statistics (e.g., F with df1 \> 1, proportion test, binomial test) |
 +---------------------------------------------------------------------------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-```{r effectsize conversion, include = FALSE, echo = FALSE}
+```{r}
+#| label: effectsize conversion
+#| include: false
+#| echo: false
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 
 # convert original effect sizes
-ds$r_o <- convert_effect_sizes(es_values = ds$es_value_o, es_types = ds$es_type_o)  
+ds$r_o <- convert_effect_sizes(es_values = ds$es_value_o, es_types = ds$es_type_o)
 
 # convert replication effect sizes
 ds$r_r <- convert_effect_sizes(es_values = ds$es_value_r, es_types = ds$es_type_r)
@@ -388,152 +508,6 @@ ds$r_r <- convert_effect_sizes(es_values = ds$es_value_r, es_types = ds$es_type_
 ## Replication success
 
 Replication success can be defined in different ways. Here, we provide two variables - one that is based on the authors' subjective interpretation of the replication results *at the study/entry level* and one that is based on a statistical criterion at the level of *individual claims*.
-
-### Author's reported success variable
-
-We reviewed the reports to identify how authors interpreted their results. This is coded based on the abstract where possible, and the conclusion/discussion/results section otherwise. The variable `reported_success` is coded as follows:
-
--   `success` when the authors interpret their replication as successful (e.g., "we successfully replicated...")
--   `failure` when the authors interpret their replication as unsuccessful (e.g., "we failed to replicate...")
--   `mixed` when the authors describe their results as mixed or as a partial replication
-
-There are a few more specific categories that are used less frequently:
-
--   `uninformative` when the authors explicitly describe their results as uninformative, e.g. due to a small sample size
--   `statistically successful but flawed` when the authors replicate the original finding but *primarily* do so to show that the method is flawed, and that an alternative analysis yields different results
--   `descriptive only` when authors describe patterns but do not draw comparative conclusions.
-
-The variables `reported_success_quote` and `reported_success_quote_source` provide the quote (or decision rule) that was used to code the variable and the section of the report where it was found.
-
-```{r add-subjective-success, include = TRUE, echo = FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE)
-
-reported_success <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv", skip = 1)
-
-reported_success <- reported_success %>% 
-  mutate(doi_o = tolower(doi_o),
-         id_r = coalesce(url_r, tolower(doi_r))) %>%
-  filter(!is.na(outcome), validation != "validated - discarded") %>% 
-  group_by(doi_o, id_r, study_o, study_r) %>%
-  arrange(desc(validation == "validated - chosen")) %>% 
-  slice_head(n = 1) %>% 
-  ungroup()
-
-reported_success <- reported_success %>% 
-  select(doi_o, id_r, study_o, study_r, 
-                              reported_success = outcome,
-                              reported_success_quote = outcome_quote,
-                              reported_success_quote_source = out_quote_source) 
-# Check for missing entries
-# setdiff(paste(ds$doi_o, ds$id_r, ds$study_o, ds$study_r),
-#        paste(reported_success$doi_o, reported_success$id_r, reported_success$study_o, reported_success$study_r)) %>% sort() %>% clipr::write_clip()
-
-ds <- ds %>% left_join(reported_success, by = c("doi_o", "id_r", "study_o", "study_r"))
-
-p_data <- ds %>% 
-  select(doi_o, id_r, study_o, study_r, reported_success) %>%
-  distinct() %>% 
-  mutate(reported_success = factor(
-    reported_success, 
-    levels = rev(c("successful", "mixed", "failed", "uninformative", 
-                   "statistically successful but flawed", "descriptive only"))
-  )) %>%
-  count(reported_success) %>%
-  mutate(pct = 100 * n / sum(n),
-         frequency = paste0(round(pct, 1), " % (", n, ")"))
-
- #p_data %>% mutate(label = paste0(reported_success, ": ", label)) %>% pull(label) %>% clipr::write_clip()
-
-  ggplot(p_data, aes(y = reported_success, x = n, 
-                          fill = reported_success, label = frequency)) +
-    geom_col() + 
-    geom_text(hjust = -0.1) +
-    labs(title = "Subjective success distribution", 
-         x = "", y = "", 
-         caption = "NB: Coded at the entry/study level.") +
-    scale_fill_manual(values = c(
-      "successful" = "#2ECC40", 
-      "mixed" = "#FF851B", 
-      "failed" = "#FF4136", 
-      "uninformative" = "grey50", 
-      "statistically successful but flawed" = "purple", 
-      "descriptive only" = "lightblue"
-    )) +
-    expand_limits(x = max(p_data$n) * 1.5)  + # ensure space for labels
-        theme_classic() +
-        theme(legend.position = "none") +
-      scale_x_continuous(
-   name = "Frequency",
-    sec.axis = sec_axis(~ . / sum(p_data$n) * 100, name = "Percent")
-      )
-
-  # Missing success
-  # ds %>%
-  # select(fred_id, ref_o, doi_o, study_o, ref_r, doi_r, url_r, study_r, link_r, reported_success) %>%
-  # distinct(ref_o, doi_o, study_o, ref_r, doi_r, url_r, study_r, link_r, reported_success, .keep_all = TRUE) %>%
-  #   filter(is.na(reported_success)) %>% clipr::write_clip()
-  
-  
-```
-
-```{r data-concerns, echo = FALSE, results = "asis"}
-if (isTRUE(params$verbose)) {
-  cat("### Data Concerns (verbose)\n\n")
-  cat("The tables below flag rows that merit manual review before submission.\n\n")
-
-  crossref_missing <- ds %>%
-    filter((!is.na(doi_o) & !ref_o_updated) | (!is.na(doi_r) & !ref_r_updated)) %>%
-    select(fred_id, doi_o, study_o, ref_o, ref_o_updated, doi_r, id_r, study_r, ref_r, ref_r_updated) %>%
-    distinct()
-
-  if (nrow(crossref_missing) > 0) {
-    cat("**References not updated via Crossref** (DOIs present but cached reference missing):\n\n")
-    print(DT::datatable(crossref_missing, extensions = 'FixedColumns', options = list(pageLength = 50, dom = 't', scrollX = TRUE, scrollCollapse = TRUE), rownames = FALSE))
-    cat("\n")
-  } else {
-    cat("No missing Crossref reference updates detected.\n\n")
-  }
-
-  missing_reported_success <- ds %>%
-    select(fred_id, doi_o, study_o, ref_o, doi_r, id_r, study_r, ref_r, reported_success, reported_success_quote_source) %>%
-    distinct() %>%
-    filter(is.na(reported_success))
-
-  if (nrow(missing_reported_success) > 0) {
-    cat("**Missing `reported_success` (author-reported interpretation):**\n\n")
-    print(DT::datatable(missing_reported_success, extensions = 'FixedColumns', options = list(pageLength = 50, dom = 't', scrollX = TRUE, scrollCollapse = TRUE), rownames = FALSE))
-    cat("\n")
-  } else {
-    cat("No missing reported_success values detected.\n\n")
-  }
-
-  missing_identifiers <- ds %>%
-    select(fred_id, doi_o, study_o, ref_o, doi_r, url_r, study_r, ref_r) %>%
-    distinct() %>%
-    filter(is.na(doi_o) | (is.na(doi_r) & is.na(url_r)))
-
-  if (nrow(missing_identifiers) > 0) {
-    cat("**Entries lacking identifiers for lookup (missing DOI and/or replication URL):**\n\n")
-    print(DT::datatable(missing_identifiers, extensions = 'FixedColumns', options = list(pageLength = 50, dom = 't', scrollX = TRUE, scrollCollapse = TRUE), rownames = FALSE))
-    cat("\n")
-  } else {
-    cat("All entries include at least one identifier for both original and replication studies.\n\n")
-  }
-
-  missing_numbers <- ds %>%
-    filter(is.na(n_o) | is.na(n_r) | is.na(es_value_o) | is.na(es_value_r)) %>%
-    select(fred_id, doi_o, study_o, doi_r, study_r, n_o, n_r, es_value_o, es_type_o, es_value_r, es_type_r, pval_value_o, pval_value_r, description) %>%
-    distinct()
-
-  if (nrow(missing_numbers) > 0) {
-    cat("**Rows with missing core numeric values (sample sizes or effect sizes):**\n\n")
-    print(DT::datatable(missing_numbers, extensions = 'FixedColumns', options = list(pageLength = 50, dom = 't', scrollX = TRUE, scrollCollapse = TRUE), rownames = FALSE))
-    cat("\n")
-  } else {
-    cat("No missing core numeric values detected.\n\n")
-  }
-}
-```
 
 ### Statistical success variable
 
@@ -547,6 +521,8 @@ This is not trivial to derive from the data where effect sizes are not direction
 
 -   `NA` when the replication effect size is not directional (e.g, Eta squared, F-tests, R²) or when the original study was not significant (or did not report an effect size, so that the direction cannot be obtained programmatically).
 
+NB: Given that the SCORE data always contains directional correlation coefficients, statistical_success is defined for all SCORE rows, even where the originally reported effect sizes were non-directional.
+
 <details>
 
 <summary>Click here for a list of directional and non-directional effect size types</summary>
@@ -557,7 +533,10 @@ This is not trivial to derive from the data where effect sizes are not direction
 
 </details>
 
-```{r success, include = TRUE, echo = FALSE}
+```{r}
+#| label: success
+#| include: true
+#| echo: false
 knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE)
 
 # directional effects
@@ -584,15 +563,18 @@ ds <- ds %>% mutate(
     sign(if_else(!is.na(r_r), r_r, as.numeric(es_value_r))) == 
     sign(if_else(!is.na(r_o), r_o, as.numeric(es_value_o))) ~ TRUE,
     .default = FALSE
-  ),
-  r_o = if_else(convertible_o, r_o, NA_real_),
-  r_r = if_else(convertible_r, r_r, NA_real_)) %>% 
-  select(-convertible, p_val_temp_r, p_val_temp_o)
+  ) %>% coalesce(as.logical(statistical_success_cos)),
+  r_o = if_else(convertible_o, r_o, NA_real_) %>% coalesce(as.numeric(r_o_cos)),
+  r_r = if_else(convertible_r, r_r, NA_real_) %>% coalesce(as.numeric(r_r_cos))) %>% 
+  select(-convertible, -p_val_temp_r, -p_val_temp_o)
+
 ```
 
 Out of `r nrow(ds)` rows, `statistical_success` could be calculated for `r sum(!is.na(ds$statistical_success))` rows. Among these, `r round(mean(ds$statistical_success, na.rm = TRUE)*100, 1)`% were statistically successful (significant in the same direction) and `r round(mean(!ds$statistical_success, na.rm = TRUE)*100, 1)`% could be considered failures.
 
-```{r scatterplot, echo = FALSE}
+```{r}
+#| label: scatterplot
+#| echo: false
 df_temp <- ds
 df_temp$statistical_success <- as.character(df_temp$statistical_success)
 df_temp$statistical_success[is.na(df_temp$statistical_success)] <- "uncertain"
@@ -621,13 +603,198 @@ scatterplot <-
       plotly::layout(xaxis = list(fixedrange = TRUE), yaxis = list(fixedrange = TRUE))
 ```
 
+### Author's reported success variable
+
+We reviewed the reports to identify how authors interpreted their results. This is coded based on the abstract where possible, and the conclusion/discussion/results section otherwise. The variable `reported_success` is coded as follows:
+
+-   `successful` when the authors interpret their replication as successful (e.g., "we successfully replicated...")
+-   `failed` when the authors interpret their replication as unsuccessful (e.g., "we failed to replicate...")
+-   `mixed` when the authors describe their results as mixed or as a partial replication
+
+There are a few more specific categories that are used less frequently:
+
+-   `uninformative` when the authors explicitly describe their results as uninformative, e.g. due to a small sample size
+-   `statistically successful but flawed` when the authors replicate the original finding but *primarily* do so to show that the method is flawed, and that an alternative analysis yields different results
+-   `descriptive only` when authors describe patterns but do not draw comparative conclusions.
+
+The variables `reported_success_quote` and `reported_success_quote_source` provide the quote (or decision rule) that was used to code the variable and the section of the report where it was found. NB: For SCORE, the decision rule was to base conclusions on the significance of the focal test, so that reported_success corresponds to statistical_success in these cases, and quotes are not provided.
+
+```{r}
+#| label: add-subjective-success
+#| include: true
+#| echo: false
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, fig.show = TRUE)
+
+reported_success <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv", skip = 1)
+
+reported_success <- reported_success %>% 
+  mutate(doi_o = tolower(doi_o),
+         id_r = coalesce(url_r, tolower(doi_r))) %>%
+  filter(!is.na(outcome), validation != "validated - discarded") %>% 
+  group_by(doi_o, id_r, study_o, study_r) %>%
+  arrange(desc(validation == "validated - chosen")) %>% 
+  slice_head(n = 1) %>% 
+  ungroup()
+
+reported_success <- reported_success %>% 
+  select(doi_o, id_r, study_o, study_r, 
+                              reported_success = outcome,
+                              reported_success_quote = outcome_quote,
+                              reported_success_quote_source = out_quote_source) 
+# Check for missing entries
+# setdiff(paste(ds$doi_o, ds$id_r, ds$study_o, ds$study_r),
+#        paste(reported_success$doi_o, reported_success$id_r, reported_success$study_o, reported_success$study_r)) %>% sort() %>% clipr::write_clip()
+
+ds <- ds %>% 
+  left_join(reported_success, by = c("doi_o", "id_r", "study_o", "study_r")) %>% 
+  mutate(reported_success = case_when(
+    # Code SCORE results as per their statistical success
+    cos_phase1 & statistical_success ~ "successful",
+    cos_phase1 & !statistical_success ~ "failed",
+    TRUE ~ reported_success
+  ))
+
+p_data <- ds %>% 
+  select(doi_o, id_r, study_o, study_r, reported_success) %>%
+  distinct() %>% 
+  mutate(reported_success = factor(
+    reported_success, 
+    levels = rev(c("successful", "mixed", "failed", "uninformative", 
+                   "statistically successful but flawed", "descriptive only"))
+  )) %>%
+  count(reported_success) %>%
+  mutate(pct = 100 * n / sum(n),
+         frequency = paste0(round(pct, 1), " % (", n, ")"))
+
+ #p_data %>% mutate(label = paste0(reported_success, ": ", label)) %>% pull(label) %>% clipr::write_clip()
+
+  ggplot(p_data, aes(y = reported_success, x = n, 
+                          fill = reported_success, label = frequency)) +
+    geom_col() + 
+    geom_text(hjust = -0.1) +
+    labs(title = "Subjective success distribution", 
+         x = "", y = "", 
+         caption = "NB: Coded at the entry/study level.\nFor entries from COS test set, statistical success is used here") +
+    scale_fill_manual(values = c(
+      "successful" = "#2ECC40", 
+      "mixed" = "#FF851B", 
+      "failed" = "#FF4136", 
+      "uninformative" = "grey50", 
+      "statistically successful but flawed" = "purple", 
+      "descriptive only" = "lightblue"
+    )) +
+    expand_limits(x = max(p_data$n) * 1.5)  + # ensure space for labels
+        theme_classic() +
+        theme(legend.position = "none") +
+      scale_x_continuous(
+   name = "Frequency",
+    sec.axis = sec_axis(~ . / sum(p_data$n) * 100, name = "Percent")
+      )
+
+  # Missing success
+  # ds %>%
+  # select(fred_id, ref_o, doi_o, study_o, ref_r, doi_r, url_r, study_r, link_r, reported_success) %>%
+  # distinct(ref_o, doi_o, study_o, ref_r, doi_r, url_r, study_r, link_r, reported_success, .keep_all = TRUE) %>%
+  #   filter(is.na(reported_success)) %>% clipr::write_clip()
+  
+  
+```
+
+```{r}
+#| label: data-concerns
+#| echo: false
+#| results: asis
+#| eval: !expr params$verbose
+
+library(htmltools)
+library(DT)
+
+# --- 1. Define Helper Function ---
+# This handles the ugly printing logic so you don't have to repeat it.
+report_concern <- function(data, title, description) {
+  if (nrow(data) > 0) {
+    # Print the Header (Markdown)
+    # \n\n is CRITICAL before and after headers to prevent rendering issues
+    cat("\n\n### ", title, "\n\n")
+    
+    # Print the Description
+    cat(description, "\n\n")
+    
+    # Print the Table (HTML Widget)
+    # tagList is required for widgets to render inside a loop/function
+    dt <- datatable(data, 
+                    rownames = FALSE, 
+                    extensions = 'FixedColumns',
+                    options = list(pageLength = 50, 
+                                   dom = 't', 
+                                   scrollX = TRUE, 
+                                   scrollCollapse = TRUE))
+    print(tagList(dt))
+    
+    cat("\n") # Spacer
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
+# --- 2. Run Data Checks ---
+
+cat("### Data Concerns (verbose)\n\n")
+cat("The tables below flag rows that merit manual review before submission.\n")
+
+# Check 1: Crossref
+crossref_missing <- ds %>%
+  filter((!is.na(doi_o) & !ref_o_updated) | (!is.na(doi_r) & !ref_r_updated)) %>%
+  select(entry, doi_o, study_o, ref_o, ref_o_updated, doi_r, id_r, study_r, ref_r, ref_r_updated) %>%
+  distinct()
+
+report_concern(crossref_missing, 
+               "References not updated via Crossref", 
+               "DOIs present but cached reference missing.")
+
+
+# Check 2: Missing Success
+missing_reported_success <- ds %>%
+  select(entry, doi_o, study_o, ref_o, doi_r, id_r, study_r, ref_r, reported_success) %>%
+  distinct() %>%
+  filter(is.na(reported_success))
+
+report_concern(missing_reported_success, 
+               "Missing `reported_success`", 
+               "Author-reported interpretation is missing.")
+
+
+# Check 3: Missing Identifiers
+# missing_identifiers <- ds %>%
+#   select(entry, doi_o, study_o, ref_o, doi_r, url_r, study_r, ref_r) %>%
+#   distinct() %>%
+#   filter(is.na(doi_o) | (is.na(doi_r) & is.na(url_r)))
+# 
+# report_concern(missing_identifiers, 
+#                "Entries lacking identifiers", 
+#                "Missing DOI and/or replication URL for lookup.")
+
+
+# Check 4: Missing Numbers
+# missing_numbers <- ds %>%
+#   filter(is.na(n_o) | is.na(n_r) | is.na(es_value_o) | is.na(es_value_r)) %>%
+#   select(entry, doi_o, study_o, doi_r, study_r, n_o, n_r, es_value_o, es_type_o, es_value_r, es_type_r) %>%
+#   distinct()
+# 
+# report_concern(missing_numbers, 
+#                "Rows with missing core numeric values", 
+#                "Missing sample sizes or effect sizes.")
+```
+
 ## Codebook
 
 The finalized dataset includes the variables that COS and FORRT agreed on as well as further variables that FORRT found necessary to understand the entered value. More detailed datasets are available upon request. A synthesis of the current version of the FORRT Replication Database with the new data format is planned for fall 2025.
 
 NB: Beware that the `entry_id` and `effect_id` variables are *not* stable across versions of the dataset. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
 
-```{r codebook, echo = FALSE}
+```{r}
+#| label: codebook
+#| echo: false
 
 codebook <- openxlsx::read.xlsx("cos_codebook.xlsx")
 
@@ -637,25 +804,29 @@ DT::datatable(codebook, extensions = 'FixedColumns', options = list(pageLength =
 
 ## Validated Dataset
 
-```{r final dataset, echo = FALSE}
+```{r}
+#| label: final dataset
+#| echo: false
 
 # number entries and effects
 
 ds <- ds %>% 
-  mutate(entry = paste(doi_o, study_o, id_r, study_r),
+  mutate(fred_id = entry,
+         entry = paste(doi_o, study_o, id_r, study_r),
          entry_id = match(entry, unique(entry))) %>%
   group_by(entry) %>%
   mutate(effect_id = row_number()) %>% 
   ungroup()
 
-ds_final <- ds %>% select(all_of(codebook$Variable))
+ds_final <- ds %>% 
+  mutate(cos_phase1 = if_else(is.na(cos_phase1), FALSE, cos_phase1)) %>% 
+  select(all_of(codebook$Variable), cos_phase1)
 
 openxlsx::write.xlsx(ds_final, file = paste(Sys.Date(), "_COSdata_validated.xlsx", sep = ""))
 
 list_of_studies <- ds_final[, c("ref_o", "ref_r", "discipline")]
 list_of_studies <- list_of_studies[!duplicated(list_of_studies), ]
-list_of_studies <- list_of_studies[order(list_of_studies$ref_o), ] # sort by original study
-list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by replication study
+list_of_studies <- list_of_studies[order(list_of_studies$ref_o, list_of_studies$ref_r), ]
 
 ```
 
@@ -669,13 +840,17 @@ list_of_studies <- list_of_studies[order(list_of_studies$ref_r), ] # sort by rep
 
 ## Some warnings and caveats
 
--   **Study numbers**: Please note that for large scale replication projects, there are no consistently reported study numbers. In this dataset, we use study numbers to consistently identify them but not necessarily to reflect the study order in the replication article or the associated dataset.
+-   **Study numbers**: Please note that for large scale replication projects, there are no consistently reported study numbers. In this dataset, we use study numbers to consistently identify them but they do not necessarily to reflect the study order in the replication article or the associated dataset.
 
 -   **Pre-Prints**: It is possible that some replication studies that are coded as preprints have been published in a journal in the meantime.
 
 -   **Eta-squared**: Our [conversion function](https://forrt.org/FReD/reference/convert_effect_sizes.html) converts eta-squared but not partial eta-squared. It is possible that authors misreported one as the other.
 
 -   **`entry_id` and `effect_id` variables are *not* stable across versions of the dataset**. They should thus not be used to identify entries over time. They are re-generated for each version of the dataset to ensure that entries and effects are numbered consecutively. If you want to identify entries uniquely across versions of the data, it is better to rely on a combination of `doi_o`, `study_o`, `doi_r` (and `url_r`), and `study_r`.
+
+-   **Selection of rows:** A statistical result in a replication can be assigned to two different original results from the same paper (e.g., when the original only reported separate effects for sub-samples but replication focused on total sample), and an original result can be combined with multiple replication results. Also, matched effects are not comprehensive but selected by the coders for being linked to the relevant claim. Therefore, rows should not be treated as independent.
+
+-   **Two data sources:** The dataset combines two data sources (FORRT Replication Database and SCORE data, used by COS as test data in Phase 1 of the competition). The SCORE data includes effect size conversions that were done by COS on a case-by-case basis, which may differ from the general approach taken in the FORRT Replication Database. Conversely, it only contains results on *key* claims in papers, while the FORRT claims were selected more broadly. Nevertheless, the entries should be comparable across the two data sources.
 
 ## Internal Process
 
