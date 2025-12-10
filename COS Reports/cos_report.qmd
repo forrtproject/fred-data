@@ -166,11 +166,11 @@ source("https://raw.githubusercontent.com/forrtproject/FReD-data/refs/heads/main
 -   Added section with warnings and caveats for dataset users
 -   Normalized all doi to lowercase, as they are inconsistently reported but not case sensitive
 
-**Version 2.0 (2025-11-12)**
+**Version 2.0 (2025-11-30)**
 
 -   Removed \~10 duplicate effects
 -   Added `author_overlap` between originals and replications (auto-coded based on Crossref)
--   Added \~90 entries from COS Phase 1 test data
+-   Added 92 entries from COS Phase 1 test data, alongside 220 additional FORRT-coded entries
 
 ### Terminology
 
@@ -836,11 +836,11 @@ DT::datatable(codebook, extensions = 'FixedColumns', options = list(pageLength =
 ```{r}
 #| label: final dataset
 #| echo: false
-
 # number entries and effects
 
 ds <- ds %>% 
-  mutate(fred_id = entry,
+  mutate(fred_id = coalesce(entry, 
+            sub("_[a-z]$", "_1", fred_id_old)),
          entry = paste(doi_o, study_o, id_r, study_r),
          entry_id = match(entry, unique(entry))) %>%
   group_by(entry) %>%
@@ -851,7 +851,7 @@ ds_final <- ds %>%
   mutate(cos_phase1 = if_else(is.na(cos_phase1), FALSE, cos_phase1)) %>% 
   select(all_of(codebook$Variable), cos_phase1)
 
-openxlsx::write.xlsx(ds_final, file = paste(Sys.Date(), "_COSdata_validated.xlsx", sep = ""))
+writexl::write_xlsx(ds_final, paste(Sys.Date(), "_COSdata_validated.xlsx", sep = ""))
 
 list_of_studies <- ds_final[, c("ref_o", "ref_r", "discipline")]
 list_of_studies <- list_of_studies[!duplicated(list_of_studies), ]
