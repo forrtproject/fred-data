@@ -1,0 +1,39 @@
+---
+title: "Dataset release"
+author: "Lukas Wallrich"
+date: "2024-02-02"
+output: html_document
+---
+
+## Instructions
+
+This set of functions can be used to automatically release and track FReD and FLoRA dataset updates.
+
+For this, the user needs to create an OSF Personal Access Token [here](https://osf.io/settings/tokens) and (ideally) save it to an environment variable.
+
+```{r}
+source("release_dataset.R")
+Sys.setenv("OSF_TOKEN" = "YOUR OSF TOKEN")
+```
+
+## Releasing new versions
+
+Only a single function call is needed to:
+- Bump the dataset version and log changes
+- Archive the previous dataset
+- Download the current dataset and release it on OSF
+
+To distinguish magnitude of changes, version numbers can be split into major, minor and patch releases. All that needs to be specified are release notes and the magnitude of the bump.
+
+To note:
+- Currently, this works on a dummy repository - for production, the IDs of project and version log need to be changed in release_dataset.R
+- It cannot update nested folders - so to use this, the Data folder would need to be at the top level. (See [osfr issue](https://github.com/ropensci/osfr/issues/130))
+
+```{r}
+release_notes <- glue::glue("- First automated release")
+
+release_new_version(release_notes, type = "FReD", version = "patch") #Or major/minor
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
