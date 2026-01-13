@@ -4,7 +4,7 @@ library(glue)
 library(osfr)
 
 # --------------------
-# Parameters (edit these for your run)
+# Parameters
 # - `dataset`: which dataset to release, either "fred" or "flora"
 # - `github_raw_urls`: named list of raw GitHub URLs for each dataset
 # - `filenames`: target filenames as they appear on OSF for each dataset
@@ -12,9 +12,8 @@ library(osfr)
 # - `osf_project` and `osf_token`: OSF project id and token
 # --------------------
 params <- list(
-  dataset = "fred", # "fred" or "flora"
   github_raw_urls = list(
-    fred = "https://raw.githubusercontent.com/<user>/<fred-repo>/<branch>/path/to/FReD.xlsx",
+Test text    fred = "https://raw.githubusercontent.com/<user>/<fred-repo>/<branch>/path/to/FReD.xlsx",
     flora = "https://raw.githubusercontent.com/<user>/<flora-repo>/<branch>/path/to/flora.csv"
   ),
   filenames = list(

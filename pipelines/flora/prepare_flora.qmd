@@ -1,0 +1,475 @@
+---
+title: "FLoRA Preparation Pipeline"
+subtitle: "Download, deduplicate, and prepare paper-level dataset (Replications + Reproductions)"
+author: "FORRT Team"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    theme: cosmo
+    code-fold: true
+    code-summary: "Show code"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = TRUE,
+  warning = TRUE,
+  error = FALSE,
+  cache = FALSE
+)
+
+library(tidyverse)
+library(jsonlite)
+library(glue)
+library(httr)
+
+# Use project-root paths via here
+if (!file.exists(here::here("R", "cache_config.R"))) {
+  stop("Cannot find cache config. Ensure you're in the project or run from repo root.")
+}
+
+# Source Helper Functions
+source(here::here("R", "cache_config.R"))
+source(here::here("R", "augmentation.R"))
+source(here::here("R", "crossref_cache.R"))
+source(here::here("R", "openalex_cache.R"))
+
+```
+
+## Configuration
+
+```{r data-sources}
+FReD_FOUNDATION_SUCCESS_CODING <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv"
+REPLICATION_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=863031634&single=true&output=csv"
+REPRODUCTION_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=984458430&single=true&output=csv"
+FLORA_OUTPUT <- here::here("output", "flora.csv")
+```
+
+## Download FLoRA Data (Replications + Reproductions)
+
+```{r download-data}
+# Download replications
+replications <- tryCatch({
+  read_csv(REPLICATION_GSHEET_URL, show_col_types = FALSE)
+}, error = function(e) {
+  stop("Failed to download replications data. Check URL and network connection.\n",
+       "Error: ", e$message)
+})
+
+cat(sprintf("    ✓ Downloaded %d replication rows × %d columns\n", nrow(replications), ncol(replications)))
+
+# Download reproductions
+reproductions <- tryCatch({
+  read_csv(REPRODUCTION_GSHEET_URL, show_col_types = FALSE)
+}, error = function(e) {
+  stop("Failed to download reproductions data. Check URL and network connection.\n",
+       "Error: ", e$message)
+})
+
+cat(sprintf("    ✓ Downloaded %d reproduction rows × %d columns\n", nrow(reproductions), ncol(reproductions)))
+
+# Combine both datasets 
+flora_raw <- bind_rows(
+  replications %>% mutate(type = "replication"),
+  reproductions %>% mutate(type = "reproduction")
+)
+```
+
+### Add COS source data
+
+```{r}
+replications_cos <- read_csv(FReD_FOUNDATION_SUCCESS_CODING, show_col_types = FALSE, skip = 1)
+
+replications_cos <- replications_cos %>%
+  mutate(repl_id = coalesce(url_r, doi_r)) %>% 
+  group_by(doi_o, repl_id) %>%
+  summarise(
+    ref_o = first(ref_o),
+    ref_r = first(ref_r),
+    url_r = first(url_r),
+    doi_r = first(doi_r),
+    study_o = paste(unique(na.omit(study_o)), collapse = "; "),
+    abstract_r = first(abstract_r),
+    outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
+    outcome_quote = paste(unique(na.omit(outcome_quote)), collapse = " || "),
+    outcome_quote_source = paste(unique(na.omit(out_quote_source)), collapse = " || "),
+    type = "replication",
+    .groups = "drop"
+  )
+
+cat(sprintf("    ✓ Processed %d COS replication rows × %d columns\n", nrow(replications_cos), ncol(replications_cos)))
+
+flora_raw <- bind_rows(
+  flora_raw,
+  replications_cos
+)
+
+```
+## Data Preparation
+
+```{r prepare}
+# Select relevant fields for FLoRA
+flora_cols <- c("doi_o", "ref_o", "study_o", "doi_r", "ref_r",  "url_r", 
+                "abstract_r", "outcome", "outcome_quote", "outcome_quote_source", "type")
+
+flora_data <- flora_raw %>%
+  select(all_of(flora_cols))
+```
+
+## Deduplication
+
+Currently minimal - might want to also check blank vs filled in study_o
+
+```{r deduplicate}
+
+pre_dedup <- nrow(flora_data)
+
+flora_data <- flora_data %>%
+  distinct(doi_o, study_o, coalesce(url_r, doi_r), .keep_all = TRUE)
+
+post_dedup <- nrow(flora_data)
+
+cat(sprintf("✓ Removed %d duplicate rows\n", post_dedup - pre_dedup))
+```
+
+## Step 5: DOI Validation
+
+Validate whether DOIs are in correct format and can be resolved
+
+```{r validate-dois}
+# Check DOI format (should start with "10.")
+flora_data <- flora_data %>%
+  mutate(
+    doi_o_valid = is.na(doi_o) | str_starts(tolower(doi_o), "10."),
+    doi_r_valid = is.na(doi_r) | str_starts(tolower(doi_r), "10.")
+  )
+
+
+invalid_indices <- !flora_data$doi_o_valid
+invalid_o <- sum(invalid_indices)
+
+if (invalid_o > 0) {
+  # Logic: Show all if < 10, otherwise show 5
+  show_all <- invalid_o < 10
+  n_to_show <- if (show_all) invalid_o else 5
+  
+  # Select values
+  vals <- head(flora_data$doi_o[invalid_indices], n_to_show)
+  
+  # Determine label based on whether we are showing the full set or a subset
+  label <- if (show_all) "Invalid doi_o values:" else "Example invalid doi_o values:"
+  
+  cat(sprintf("⚠ Found %d invalid doi_o values\n", invalid_o),
+      paste(label, paste(vals, collapse = ", ")), "\n")
+}
+
+invalid_indices <- !flora_data$doi_r_valid
+invalid_r <- sum(invalid_indices)
+
+if (invalid_r > 0) {
+  # Logic: Show all if < 10, otherwise show 5
+  show_all <- invalid_o < 10
+  n_to_show <- if (show_all) invalid_r else 5
+  
+  # Select values
+  vals <- head(flora_data$doi_r[invalid_indices], n_to_show)
+  
+  # Determine label based on whether we are showing the full set or a subset
+  label <- if (show_all) "Invalid doi_r values:" else "Example invalid doi_r values:"
+  
+  cat(sprintf("⚠ Found %d invalid doi_r values\n", invalid_o),
+      paste(label, paste(vals, collapse = ", ")), "\n")
+}
+
+flora_data <- flora_data %>% select(-doi_o_valid, -doi_r_valid)
+
+#TK add DOI resolution check when available in metacheck
+    
+```
+
+## Step 6: Fetch References (APA + BibTeX)
+
+```{r fetch-references}
+# Get unique DOIs
+unique_dois <- unique(tolower(c(flora_data$doi_o, flora_data$doi_r)))
+unique_dois <- unique_dois[!is.na(unique_dois)]
+
+# Fetch both APA and BibTeX references with CrossRef + DataCite fallback
+refs <- get_references(unique_dois)
+```
+
+## Step 7: Add clean References and Individual Fields
+
+```{r clean-refs}
+
+flora_augmented <- flora_data %>%
+  # Add original references and fields
+  left_join(
+    refs %>% rename(
+      doi_o = doi,
+      ref_o_clean = reference_apa,
+      bibtex_o = reference_bibtex,
+      title_o = title,
+      author_o = author,
+      journal_o = journal,
+      year_o = year,
+      volume_o = volume,
+      issue_o = issue,
+      pages_o = pages
+    ),
+    by = "doi_o"
+  ) %>%
+  # Add replication references and fields
+  left_join(
+    refs %>% rename(
+      doi_r = doi,
+      ref_r_clean = reference_apa,
+      bibtex_r = reference_bibtex,
+      title_r = title,
+      author_r = author,
+      journal_r = journal,
+      year_r = year,
+      volume_r = volume,
+      issue_r = issue,
+      pages_r = pages
+    ),
+    by = "doi_r"
+  ) %>%
+  mutate(
+    ref_o = coalesce(ref_o_clean, ref_o),
+    ref_r = coalesce(ref_r_clean, ref_r)
+  )
+
+cat(sprintf("✓ Added clean references (APA + BibTeX) and individual fields\n"))
+cat(sprintf("  Missing APA references: %d original, %d replication\n",
+            sum(is.na(flora_augmented$ref_o_clean)),
+            sum(is.na(flora_augmented$ref_r_clean))))
+cat(sprintf("  Missing BibTeX references: %d original, %d replication\n",
+            sum(is.na(flora_augmented$bibtex_o)),
+            sum(is.na(flora_augmented$bibtex_r))))
+cat(sprintf("  Missing titles: %d original, %d replication\n",
+            sum(is.na(flora_augmented$title_o)),
+            sum(is.na(flora_augmented$title_r))))
+cat("  Consider adding missing refs to manual_references.xlsx\n")
+
+```
+
+## Step 8: Add Privacy-Preserving IDs
+
+```{r add-ids}
+# Create 3-character hash hash for privacy-preserving API lookup
+flora_augmented <- flora_augmented %>%
+  mutate(
+    doi_o_hash = as.character(substr(openssl::md5(doi_o), 1, 3)),
+    doi_r_hash = as.character(substr(openssl::md5(doi_r), 1, 3))
+  )
+cat(sprintf(
+  "  Unique original hashes: %d\n",
+  n_distinct(flora_augmented$doi_o_hash, na.rm = TRUE)
+))
+cat(sprintf(
+  "  Unique original hashes: %d\n",
+  n_distinct(flora_augmented$doi_o_hash, na.rm = TRUE)
+))
+cat(sprintf(
+  "  Unique replication hashes: %d\n",
+  n_distinct(flora_augmented$doi_r_hash, na.rm = TRUE)
+))
+
+```
+
+## Step 9: Add Language from OpenAlex
+
+```{r add-metadata}
+cat("\n### Step 9: Adding language from OpenAlex\n")
+
+# OpenAlex metadata functions are provided by R/openalex_cache.R (get_openalex_language)
+
+# Get OpenAlex mailto from environment or use default
+openalex_mailto <- Sys.getenv("OPENALEX_MAILTO", NA_character_)
+
+# add language columns if not already present
+if (!"language_o" %in% names(flora_augmented)) {
+  flora_augmented <- flora_augmented %>%
+    mutate(language_o = NA_character_)
+}
+if (!"language_r" %in% names(flora_augmented)) {
+  flora_augmented <- flora_augmented %>%
+    mutate(language_r = NA_character_)
+}
+
+# Add metadata only where fields are currently empty
+dois_to_fetch_o <- flora_augmented %>%
+  filter(!is.na(doi_o), is.na(language_o)) %>%
+  pull(doi_o) %>%
+  unique()
+
+dois_to_fetch_r <- flora_augmented %>%
+  filter(!is.na(doi_r), is.na(language_r)) %>%
+  pull(doi_r) %>%
+  unique()
+
+cat(sprintf(
+  "Fetching language for %d unique original DOIs and %d unique replication DOIs...\n",
+  length(dois_to_fetch_o), length(dois_to_fetch_r)
+))
+
+# Fetch language for original DOIs (vectorised, cache-backed)
+if (length(dois_to_fetch_o) > 0) {
+  meta_o <- get_openalex_language(dois_to_fetch_o, mailto = openalex_mailto)
+  meta_o <- meta_o[!is.na(meta_o$doi), ]
+
+  flora_augmented <- flora_augmented %>%
+    left_join(
+      meta_o %>% rename(doi_o = doi, language_o_new = language),
+      by = "doi_o"
+    ) %>%
+    mutate(
+      language_o = coalesce(language_o, language_o_new)
+    ) %>%
+    select(-language_o_new)
+}
+
+# Fetch language for replication DOIs (vectorised, cache-backed)
+if (length(dois_to_fetch_r) > 0) {
+  meta_r <- get_openalex_language(dois_to_fetch_r, mailto = openalex_mailto)
+  meta_r <- meta_r[!is.na(meta_r$doi), ]
+
+  flora_augmented <- flora_augmented %>%
+    left_join(
+      meta_r %>% rename(doi_r = doi, language_r_new = language),
+      by = "doi_r"
+    ) %>%
+    mutate(
+      language_r = coalesce(language_r, language_r_new)
+    ) %>%
+    select(-language_r_new)
+}
+
+
+cat(sprintf(
+  "  Original papers with language: %d\n",
+  sum(!is.na(flora_augmented$language_o), na.rm = TRUE)
+))
+cat(sprintf(
+  "  Replication papers with language: %d\n",
+  sum(!is.na(flora_augmented$language_r), na.rm = TRUE)
+))
+```
+
+## Step 10: Format for Output and Remove NAs
+
+```{r format-output}
+cat("\n### Step 11: Formatting for output\n")
+
+# Select and reorder columns for output
+output_cols <- c(
+"doi_o", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "language_o", "study_o",
+"doi_r", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
+"outcome", "outcome_quote", "outcome_quote_source", "type"
+)
+
+flora_renames <- c(
+  c(apa_ref_o = "ref_o_clean", apa_ref_r = "ref_r_clean", bibtex_ref_o = "bibtex_o",
+    bibtex_ref_r = "bibtex_r")
+)
+
+flora_augmented <- flora_augmented %>%
+  rename(!!!flora_renames)
+
+
+available_output <- intersect(output_cols, names(flora_augmented))
+setdiff(available_output, output_cols)
+
+flora_final <- flora_augmented %>% select(all_of(available_output))  %>% 
+  filter(!is.na(title_o), !is.na(title_r))
+
+cat(sprintf("✓ Formatted for output\n"))
+cat(sprintf("  Final columns: %d\n", ncol(flora_final)))
+cat(sprintf("  Final rows: %d\n", nrow(flora_final)))
+```
+
+## Step 11: Save Output
+
+```{r save}
+cat("\n### Step 12: Saving output\n")
+
+# Create output directory if needed
+if (!dir.exists(here::here("output"))) {
+  dir.create(here::here("output"))
+}
+
+# Save as CSV
+write_csv(flora_final, FLORA_OUTPUT)
+
+cat(sprintf("✓ Saved to: %s\n", FLORA_OUTPUT))
+cat(sprintf("  Format: CSV (UTF-8)\n"))
+cat(sprintf("  Rows: %d (Replications + Reproductions)\n", nrow(flora_final)))
+cat(sprintf("  Columns: %d\n", ncol(flora_final)))
+
+# Summary statistics
+cat("\n### Summary Statistics\n")
+cat(sprintf("Total paper pairs: %d\n", nrow(flora_final)))
+cat(sprintf("Papers with outcome codes: %d\n",
+            sum(!is.na(flora_final$outcome))))
+
+if ("ref_o_clean" %in% names(flora_final)) {
+  cat(sprintf("Original papers with clean references: %d\n",
+              sum(!is.na(flora_final$ref_o_clean))))
+}
+
+if ("ref_r_clean" %in% names(flora_final)) {
+  cat(sprintf("Replication papers with clean references: %d\n",
+              sum(!is.na(flora_final$ref_r_clean))))
+}
+
+if ("bibtex_o" %in% names(flora_final)) {
+  cat(sprintf("Original papers with BibTeX: %d\n",
+              sum(!is.na(flora_final$bibtex_o))))
+}
+
+if ("bibtex_r" %in% names(flora_final)) {
+  cat(sprintf("Replication papers with BibTeX: %d\n",
+              sum(!is.na(flora_final$bibtex_r))))
+}
+
+if ("keywords_o" %in% names(flora_final)) {
+  cat(sprintf("Original papers with keywords: %d\n",
+              sum(!is.na(flora_final$keywords_o))))
+}
+
+if ("keywords_r" %in% names(flora_final)) {
+  cat(sprintf("Replication/reproduction papers with keywords: %d\n",
+              sum(!is.na(flora_final$keywords_r))))
+}
+
+if ("language_o" %in% names(flora_final)) {
+  cat(sprintf("Original papers with language metadata: %d\n",
+              sum(!is.na(flora_final$language_o))))
+}
+
+if ("language_r" %in% names(flora_final)) {
+  cat(sprintf("Replication/reproduction papers with language metadata: %d\n",
+              sum(!is.na(flora_final$language_r))))
+}
+
+cat(sprintf("Papers with original DOI: %d\n",
+            sum(!is.na(flora_final$doi_o))))
+cat(sprintf("Papers with replication/reproduction DOI: %d\n",
+            sum(!is.na(flora_final$doi_r))))
+```
+
+## Pipeline Complete
+
+```{r complete}
+cat("\n=== FLoRA Preparation Pipeline Complete ===\n")
+cat("(Includes both Replications and Reproductions)\n")
+cat(sprintf("Completion time: %s\n", format(Sys.time(), "%Y-%m-%d %H:%M:%S")))
+cat(sprintf("Output file: %s\n", FLORA_OUTPUT))
+cat("\nNext steps:\n")
+cat("1. Review the generated flora.csv file\n")
+cat("2. Optionally: pipelines/flora/release_flora.qmd to release to OSF\n")
+```

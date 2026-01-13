@@ -1,321 +1,431 @@
-# 🔍 FORRT Replication Database — Lightweight API
+# FORRT Replication Database (FReD) — Data Processing & API
 
-The backend for the **FORRT Replication Database (lightweight version)** is live and ready for testing.  
-Query the database of replications either via **privacy-preserving 3-character DOI hash prefixes** or by **full original DOIs**.
+This repository contains the complete data processing pipeline for the **FORRT Replication Database (FReD)** and **FLoRA** datasets, plus the backend API for the Zotero Replication Checker plugin.
 
-> This API powers the **Zotero Replication Checker** plugin, connecting Zotero items to replication data from the FReD database.
-
-**Base URL**
-We have two separate APIs with two different URLs, one serves a Primary, and the URL is(Dev1) : 
-
-```
-https://rep-api.forrt.org/v1
-```
-The test API URL is(Dev0) :
-```
-https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com
-```
----
-
-## Table of Contents
+## 📋 Table of Contents
 
 - [Overview](#overview)
+- [Repository Structure](#repository-structure)
 - [Quick Start](#quick-start)
-- [Endpoints](#endpoints)
-  - [1) Prefix Lookup (privacy-preserving)](#1-prefix-lookup-privacy-preserving)
-  - [2) Original DOI Lookup (direct)](#2-original-doi-lookup-direct)
-- [Headers](#headers)
-- [Error Responses](#error-responses)
-- [Data Model](#data-model)
-- [Testing Snippets](#testing-snippets)
-- [Functions & Source](#functions--source)
-- [Notes](#notes)
+- [Data Processing Pipelines](#data-processing-pipelines)
+  - [FReD Pipeline (Effect-level)](#fred-pipeline-effect-level)
+  - [FLoRA Pipeline (Paper-level)](#flora-pipeline-paper-level)
+- [COS Integration](#cos-integration)
+- [API Documentation](#api-documentation)
+- [Contributing](#contributing)
 
 ---
 
 ## Overview
 
-- **Two lookup modes**
-  1. **Prefix Lookup** — search by 3-character hash prefixes of DOIs (privacy-first).
-  2. **Original DOI Lookup** — search by the full original DOI.
-- **CORS enabled** and **cacheable** responses.
+This repository manages two independent datasets:
+
+1. **FReD** (FORRT Replication Effects Database)
+   - Effect-level data: individual effect sizes from replications
+   - Created by merging individual effects with paper-level success coding
+   - Output: `output/FReD.xlsx`
+
+2. **FLoRA** (FORRT Literature on Replications and Reproductions Archive)
+   - Paper-level data: metadata about replication and reproduction studies
+   - Combines both replications and reproductions from two separate Google Sheets
+   - Deduplicated by original-replication/reproduction DOI pairs
+   - Enriched with keywords and language metadata from OpenAlex
+   - Output: `output/flora.csv`
+
+Both datasets are augmented with:
+- CrossRef metadata (titles, authors, years)
+- APA-formatted references with manual override support
+- Author overlap detection
+- OpenAlex keywords
+
+The datasets power the **Zotero Replication Checker** API backend via privacy-preserving DOI hash lookups.
+
+---
+
+## Repository Structure
+
+```
+fred_data/
+├── R/                              # Shared helper functions
+│   ├── cache_config.R              # Cache paths by data type
+│   ├── data_cleaning.R             # FReD data cleaning
+│   ├── crossref_cache.R            # Citation & author caching
+│   ├── augmentation.R              # Augmentation functions
+│   └── release_helpers.R           # OSF release automation
+│
+├── pipelines/                      # Independent data pipelines
+│   ├── fred/
+│   │   ├── prepare_fred.qmd        # Download → clean → augment → save
+│   │   └── release_fred.qmd        # Release to OSF (optional)
+│   │
+│   └── flora/
+│       ├── prepare_flora.qmd       # Download → deduplicate → augment → save
+│       └── release_flora.qmd       # Release to OSF (optional)
+│
+├── cache/                          # Cache files (gitignored)
+│   ├── crossref_doi_cache.rds      # DOI metadata
+│   ├── crossref_citations.rds      # APA/BibTeX references
+│   ├── crossref_authors.xlsx       # Author lists
+│   ├── author_overlap.xlsx         # Overlap calculations
+│   ├── manual_references.xlsx      # Manual reference overrides
+│   └── openalex_keywords.csv       # Keywords cache
+│
+├── output/                         # Generated datasets (gitignored)
+│   ├── FReD.xlsx                   # Effect-level dataset
+│   └── flora.csv                   # Paper-level dataset
+│
+├── cos_integration/                # COS test data (optional)
+│   ├── cos_test_set_phase1.csv
+│   ├── cos_test_set_phase1_prepared.xlsx
+│   ├── prepare_cos_data.R
+│   └── README.md                   # COS toggle instructions
+│
+├── fred_dynamodb_loader/           # API backend loader
+├── release/                        # Release automation scripts
+├── COS Reports/                    # COS competition reports
+├── archive/                        # Historical files
+│   └── old_scripts/                # Previous pipeline versions
+│
+└── [Documentation files]
+    ├── README.md                   # This file
+    ├── .env.example                # Environment variables template
+    ├── REORGANIZATION_PROGRESS.md
+    ├── PHASE2_SUMMARY.md
+    ├── PHASE3-4_SUMMARY.md
+    └── IMPLEMENTATION_STATUS.md
+```
 
 ---
 
 ## Quick Start
 
-**Lookup by hash prefix (GET)**
----
-The "198" is a real hash prefix, and the "30e" does not exist in the database so that we could monitor the API's behaviour.  
-The Primary API:
-```bash
-curl "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e"
-```
-The test API:
-```bash
-curl " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup?prefixes=198,30e"
-```
----
-
-**Lookup by full DOI (GET)**
----
-The "10.1037/a0027598" is a real DOI, and the "10.1016/j.jesp.2015.04.004" does not exist in the database so that we could monitor the API's behaviour.
-
-The Primary API:
-```bash
-curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
-```
-The test API:
-```bash
-curl "https://iaq17d1dw6.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
-```
----
-
-## Endpoints
-
-### 1) Prefix Lookup (privacy-preserving)
-
-Checks whether any **3-character hashed DOI prefixes** match replication families—without exposing full DOIs.
-
-**URLs of Primary API**
-
-| Method | URL                                                                |
-| :----- | :----------------------------------------------------------------- |
-| `POST` | `https://rep-api.forrt.org/v1/prefix-lookup`                       |
-| `GET`  | `https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e`      |
-
-**URLs of Test API**
-
-| Method | URL                                                                |
-| :----- | :----------------------------------------------------------------- |
-| `POST` | ` https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup`                       |
-| `GET`  | `https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup?prefixes=198,30e`      |
-
-#### Example Requests
-
-**POST of Primary API**
+### Installation
 
 ```bash
-curl -X POST "https://rep-api.forrt.org/v1/prefix-lookup" \
-  -H "Content-Type: application/json" \
-  -d '{"prefixes":["198","30e"]}'
+# Clone repository
+git clone https://github.com/forrtproject/FReD-data.git
+cd fred_data
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add:
+# - OSF_TOKEN (for releases)
+# - ENABLE_COS_MERGE (TRUE/FALSE)
+# - OPENALEX_MAILTO (your email for API)
+
+# Install R dependencies (one-time setup)
+Rscript -e "install.packages(c('tidyverse', 'readxl', 'openxlsx', 'rcrossref', 'osfr', 'quarto'))"
 ```
-**POST  of Test API**
+
+### Running Pipelines
 
 ```bash
-curl -X POST " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup" \
-  -H "Content-Type: application/json" \
-  -d '{"prefixes":["198","30e"]}'
-```
+# Prepare FReD (effect-level dataset)
+quarto render pipelines/fred/prepare_fred.qmd
 
-**GET  of Primary API**
+# Prepare FLoRA (paper-level dataset)
+quarto render pipelines/flora/prepare_flora.qmd
 
-```bash
-curl "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198,30e"
-```
-**GET  of Test API**
-
-```bash
-curl " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/prefix-lookup?prefixes=198,30e"
-```
-#### Example Response — `200 OK`
-
-
-```json
-{
-  "results": {
-    "198": [
-      {
-        "hash_prefix": "198",
-        "meta": {
-          "original_doi": "10.1016/j.jesp.2015.04.004",
-          "replications": [
-            {
-              "doi_r": "10.31234/osf.io/abcd1",
-              "title_r": "Replication of Priming Effects",
-              "author_r": [
-                { "given": "Anna", "family": "Smith" },
-                { "given": "Brian", "family": "Lopez" }
-              ],
-              "year_r": 2022,
-              "outcome": "failure",
-              "url_r": "https://osf.io/abcd1/"
-            }
-          ]
-        }
-      }
-    ],
-    "30e": []
-  }
-}
-```
-
-> **Tip:** Each top-level key under `results` (e.g., `"198"`, `"30e"`) corresponds to one requested prefix.
-
----
-
-### 2) Original DOI Lookup (direct)
-
-Fetch replication studies directly linked to a **full DOI** of an original publication.
-
-**URLs of Primary API**
-
-| Method | URL                                                                                         |
-| :----- | :------------------------------------------------------------------------------------------ |
-| `POST` | `https://rep-api.forrt.org/v1/original-lookup`                                              |
-| `GET`  | `https://rep-api.forrt.org/v1/original-lookup?10.1037/a0027598`              |
-
-**URLs of Test API**
-
-| Method | URL                                                                |
-| :----- | :----------------------------------------------------------------- |
-| `POST` | ` https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup`                       |
-| `GET`  | `https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598`      |
-
-
-#### Example Requests
-
-**POST of Primary API**
-
-```bash
-curl -X POST "https://rep-api.forrt.org/v1/original-lookup" \
-  -H "Content-Type: application/json" \
-  -d '{"dois": ["doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"]}'
-```
-**POST of Test API**
-
-```bash
-curl -X POST " https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup" \
-  -H "Content-Type: application/json" \
-  -d '{"dois": ["doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"]}'
-```
-
-
-**GET of Primary API**
-
-```bash
-curl "https://rep-api.forrt.org/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
-```
-**GET of Test API**
-
-```bash
-curl "[https://80zw14hxjc.execute-api.eu-central-1.amazonaws.com/v1/original-lookup?doi=10.1016/j.jesp.2015.04.004,10.1037/a0027598"
-```
-#### Example Response — `200 OK`
-
-```json
-{
-  "results": {
-    "10.1016/j.jesp.2015.04.004": {
-      "prefix": "198",
-      "candidate": {
-        "hash_prefix": "198",
-        "meta": {
-          "original_doi": "10.1016/j.jesp.2015.04.004",
-          "replications": [
-            {
-              "doi_r": "10.31234/osf.io/abcd1",
-              "title_r": "Replication of Priming Effects",
-              "author_r": [
-                { "given": "Anna", "family": "Smith" }
-              ],
-              "year_r": 2022,
-              "outcome": "failure",
-              "url_r": "https://osf.io/abcd1/"
-            }
-          ]
-        }
-      }
-    }
-  }
-}
+# Output files created:
+# - output/FReD.xlsx (effect-level data with augmentation)
+# - output/flora.csv (paper-level data with augmentation)
 ```
 
 ---
 
-## Headers
+## Data Processing Pipelines
 
-| Header                        | Value                  | Notes                          |
-| :---------------------------- | :--------------------- | :----------------------------- |
-| `Content-Type`                | `application/json`     | JSON in/out                    |
-| `Access-Control-Allow-Origin` | `*`                    | CORS enabled                   |
-| `Cache-Control`               | `public, max-age=3600` | Responses cacheable for 1 hour |
-| `X-Schema-Version`            | `2`                    | Response schema version        |
+### FReD Pipeline (Effect-level)
 
----
+**File**: `pipelines/fred/prepare_fred.qmd`
 
-## Error Responses
+**8-step process**:
 
-**Prefix Lookup**
+1. **Load helpers** - Source R functions for cleaning and augmentation
+2. **Download** - Fetch validated FReD data from Google Sheets
+3. **COS Integration** (optional) - Merge COS Phase 1 test data if enabled
+4. **Clean** - Standardize formatting, remove duplicates, fix DOIs
+5. **Validate** - Check data quality (ready when validation module complete)
+6. **Generate IDs** - Create fred_id, entry_id, effect_id
+7. **Augment**:
+   - Author overlap detection (% shared authors)
+   - Clean references (APA-formatted with manual overrides)
+   - Keywords from OpenAlex (optional)
+8. **Save** - Output to `output/FReD.xlsx`
 
-| Status | Description                    | Example                                   |
-| :----- | :----------------------------- | :---------------------------------------- |
-| `400`  | Missing or invalid prefix list | `{"error": "No prefixes provided"}`       |
-| `500`  | DynamoDB / server error        | `{"error": "Internal Server Error"}`      |
+**Run**:
+```bash
+# Without COS data (default)
+quarto render pipelines/fred/prepare_fred.qmd
 
-**Original DOI Lookup**
+# With COS data merged
+export ENABLE_COS_MERGE=TRUE
+quarto render pipelines/fred/prepare_fred.qmd
 
-| Status | Description         | Example                                                     |
-| :----- | :------------------ | :---------------------------------------------------------- |
-| `400`  | Missing DOI         | `{"error":"No DOIs provided"}`                              |
-| `404`  | DOI not found       | `{"results":{"10.1016/j.abc.2020.1":[]}}`                   |
-| `500`  | Internal error      | `{"error":"Internal Server Error"}`                         |
-
----
-
-## Data Model
-
-| Field                     | Type          | Description                                  |
-| :------------------------ | :------------ | :------------------------------------------- |
-| `hash_prefix`             | `string`      | 3-character hash of the original DOI         |
-| `meta.original_doi`       | `string`      | Full DOI of the original study               |
-| `meta.replications`       | `array`       | List of replication entries                  |
-| `replications[].doi_r`    | `string`      | DOI of the replication                       |
-| `replications[].title_r`  | `string`      | Title of the replication                     |
-| `replications[].author_r` | `list/object` | Nested author data                           |
-| `replications[].year_r`   | `number`      | Year of the replication                      |
-| `replications[].outcome`  | `string`      | Replication result (e.g., `success/failure`) |
-| `replications[].url_r`    | `string`      | Link to the replication resource             |
-
----
-
-## Testing Snippets
-
-**Windows (PowerShell)**
-
-```powershell
-Invoke-RestMethod "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198" | ConvertTo-Json -Depth 8
+# Output: output/FReD.xlsx
+# HTML report: pipelines/fred/prepare_fred.html
 ```
 
-**macOS/Linux**
+### FLoRA Pipeline (Paper-level: Replications + Reproductions)
+
+**File**: `pipelines/flora/prepare_flora.qmd`
+
+**12-step process**:
+
+1. **Load helpers** - Source R functions for augmentation
+2. **Download & Combine** - Fetch both replications and reproductions from Google Sheets, combine on common columns
+3. **Prepare** - Select relevant columns
+4. **Deduplicate** - Remove duplicate (doi_o, doi_r) pairs
+5. **Validate DOIs** - Ensure format starts with "10."
+6. **Fetch metadata** - CrossRef/DataCite lookup (framework ready)
+7. **Augment with references** - Clean references (APA-formatted with manual overrides)
+8. **Add IDs** - Privacy-preserving 3-char DOI hash prefixes
+9. **Add language & keywords** - Fetch from OpenAlex API (only fills empty fields)
+10. **Format** - Reorder columns for output (includes keywords and language)
+11. **Save** - Output to `output/flora.csv`
+12. **Summary** - Report statistics on papers, coverage, and augmentation success
+
+**Run**:
+```bash
+quarto render pipelines/flora/prepare_flora.qmd
+
+# Output: output/flora.csv
+# HTML report: pipelines/flora/prepare_flora.html
+```
+
+---
+
+## Helper Functions
+
+All helper functions are in `R/` and ready to use:
+
+### Data Cleaning (`R/data_cleaning.R`)
+- `clean_fred_data(data)` - Standardize formatting, fix DOIs, remove non-printable characters
+
+### CrossRef Caching (`R/crossref_cache.R`)
+- `get_apa_references(dois)` - Get APA references (manual → cache → API lookup)
+- `get_crossref_authors(dois)` - Fetch author lists from CrossRef
+- `compute_author_overlap(data)` - Calculate author overlap
+
+### Augmentation (`R/augmentation.R`)
+- `augment_with_author_overlap(data)` - Add author overlap columns
+- `augment_with_clean_references(data)` - Add APA reference columns
+- `augment_with_keywords(data)` - Add OpenAlex keywords
+
+### Release (`R/release_helpers.R`)
+- `release_to_osf(dataset_path, ...)` - Release dataset to OSF with versioning
+
+**Usage**:
+```r
+source("R/augmentation.R")
+
+# Augment data
+data <- augment_with_author_overlap(data)
+data <- augment_with_clean_references(data)
+data <- augment_with_keywords(data)
+```
+
+---
+
+## COS Integration
+
+COS (Collaborative Open Science) Phase 1 test data can be optionally merged with FReD.
+
+### Enabling COS Integration
 
 ```bash
-curl -s "https://rep-api.forrt.org/v1/prefix-lookup?prefixes=198" | jq .
+# Method 1: Environment variable
+export ENABLE_COS_MERGE=TRUE
+quarto render pipelines/fred/prepare_fred.qmd
+
+# Method 2: .env file
+# Edit .env and set: ENABLE_COS_MERGE=TRUE
+quarto render pipelines/fred/prepare_fred.qmd
+
+# Disable (default)
+export ENABLE_COS_MERGE=FALSE
+quarto render pipelines/fred/prepare_fred.qmd
 ```
 
-**JavaScript (Node)**
+### How It Works
 
-```javascript
-const res = await fetch("https://rep-api.forrt.org/v1/original-lookup", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ dois: ["10.1016/j.jesp.2015.04.004"] }),
-});
-console.log(await res.json());
-```
+When `ENABLE_COS_MERGE=TRUE`:
+1. FReD pipeline downloads main dataset
+2. Merges with COS data on common columns
+3. Both processed identically (cleaning, validation, augmentation)
+4. Single output: `FReD.xlsx` with both datasets
+
+**See**: `cos_integration/README.md` for detailed instructions
 
 ---
 
-## Functions & Source
+## Caching Strategy
 
-| Function         | Source            | Purpose                                           | DynamoDB Table                        |
-| :--------------- | :---------------- | :------------------------------------------------ | :------------------------------------ |
-| `prefixLookup`   | `src/handler.ts`  | Looks up replication families via prefix hashes   | `zotero-replication-backend-prefix`   |
-| `originalLookup` | `src/original.ts` | Looks up replication families via original DOIs   | `zotero-replication-backend-original` |
+All caches are organized by **data type** (not purpose) for maximum efficiency:
+
+| Cache File | Type | Purpose |
+|-----------|------|---------|
+| `crossref_doi_cache.rds` | DOI Metadata | CrossRef/DataCite results |
+| `crossref_citations.rds` | References | APA/BibTeX formatted citations |
+| `crossref_authors.xlsx` | Authors | Author lists by DOI |
+| `author_overlap.xlsx` | Overlap Data | Computed author overlaps |
+| `manual_references.xlsx` | Overrides | Manual reference corrections |
+| `openalex_keywords.csv` | Keywords | OpenAlex keywords by DOI |
+
+**Three-tier lookup for references** (fastest to slowest):
+1. Manual reference overrides (`manual_references.xlsx`)
+2. Cached references (RDS cache files)
+3. Live CrossRef API call
 
 ---
 
-## Notes
+## API Documentation
 
-- Each response for prefix lookups groups results by the **requested prefix** key.
-- The `replications` array includes **all replication studies** for that family as loaded from the FReD CSV (all preserved columns except internal references).
+See original README content for Zotero Replication Checker API endpoints:
+- Prefix Lookup (privacy-preserving 3-char hash lookups)
+- Original DOI Lookup (direct DOI searches)
+
+The API is powered by FLoRA dataset (`output/flora.csv`) loaded into DynamoDB.
+
+**API Backend**: `fred_dynamodb_loader/load_fred_to_dynamodb.py`
+
+---
+
+## Breaking Changes from Previous Version
+
+This reorganization introduces breaking changes:
+
+- Old scripts moved to `archive/old_scripts/`
+- All helper functions now in `R/`
+- Pipelines now in `pipelines/fred/` and `pipelines/flora/` (not at root)
+- Output files now in `output/` (use pipelines to generate)
+- No symlinks created at root
+
+**Migration path**:
+1. Run new pipelines: `quarto render pipelines/fred/prepare_fred.qmd`
+2. Use `output/FReD.xlsx` and `output/flora.csv` as outputs
+3. All helper functions available via `source("R/...")` in your scripts
+
+---
+
+## Configuration
+
+### Environment Variables
+
+Set in `.env` file (or shell environment):
+
+```bash
+# OSF Release Authentication
+OSF_TOKEN=your_osf_token_here
+
+# COS Integration Toggle
+ENABLE_COS_MERGE=FALSE  # Set to TRUE to merge COS test data
+
+# OpenAlex API Contact
+OPENALEX_MAILTO=your_email@example.com
+```
+
+### Cache Configuration
+
+All cache paths defined in `R/cache_config.R`:
+
+```r
+CACHE_DIR <- "cache"
+CROSSREF_DOI_CACHE <- "cache/crossref_doi_cache.rds"
+CROSSREF_CITATIONS_CACHE <- "cache/crossref_citations.rds"
+# ... etc
+```
+
+To change cache locations, edit `R/cache_config.R` and update the paths.
+
+---
+
+## Troubleshooting
+
+### Pipeline fails to download data
+- Check internet connection
+- Verify Google Sheets URLs are still active
+- Check that CSV format is still used for export
+
+### Missing cache files
+- Caches are auto-generated on first run
+- Ensure `cache/` directory exists
+- Check file permissions
+
+### COS data not merging
+- Ensure `ENABLE_COS_MERGE=TRUE`
+- Verify `cos_integration/cos_test_set_phase1_prepared.xlsx` exists
+- Run `Rscript cos_integration/prepare_cos_data.R` to prepare COS data
+
+### Reference lookup fails
+- Check internet connection for CrossRef API
+- Verify manual_references.xlsx exists if using overrides
+- Check OSF_TOKEN if OpenAlex requires authentication
+
+---
+
+## Contributing
+
+### Running with Debug Output
+
+```bash
+# Enable verbose logging
+quarto render pipelines/fred/prepare_fred.qmd --quiet false
+```
+
+### Testing Individual Functions
+
+```r
+# Test cleaning
+source("R/data_cleaning.R")
+result <- clean_fred_data(sample_data)
+
+# Test augmentation
+source("R/augmentation.R")
+data <- augment_with_author_overlap(sample_data)
+
+# Test caching
+source("R/crossref_cache.R")
+refs <- get_apa_references(c("10.1234/example"))
+```
+
+### Adding New Augmentations
+
+1. Create function in `R/augmentation.R`
+2. Follow pattern: `augment_with_[feature](data)`
+3. Add cache management as needed
+4. Call from appropriate pipeline file
+5. Document in pipeline comments
+
+---
+
+## Related Resources
+
+- **FORRT Project**: https://forrt.org
+- **FReD Dataset**: https://osf.io/9r62x (OSF project)
+- **Zotero Plugin**: Replication Checker plugin in Zotero marketplace
+- **API Backend**: `fred_dynamodb_loader/` (AWS Lambda + DynamoDB)
+
+---
+
+## License
+
+[See LICENSE file in repository]
+
+---
+
+## Contact
+
+For questions about the data processing pipeline:
+- Open an issue on GitHub
+- Contact FORRT team
+
+For API issues:
+- See API documentation in this README
+- Check `fred_dynamodb_loader/` for backend code
+
+---
+
+**Last Updated**: 2025-12-17
+**Version**: 2.0 (Reorganized with independent pipelines)
+**Status**: Production-ready
