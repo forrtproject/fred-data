@@ -3,7 +3,7 @@ title: "FLoRA"
 format: html
 ---
 
-## FLoRA for hackathon/tools
+## Prepration of FLoRA for hackathon/tools
 
 For the Zotero plugin and preprint bot, we need a list of originals and replications, with outcomes and full bibliographic information.
 
@@ -18,6 +18,7 @@ For the Zotero plugin and preprint bot, we need a list of originals and replicat
 # rlang: provides %||% (null-coalescing) via rlang
 # httr: DataCite API calls (fallback)
 # digest: short DOI hashes for stable IDs
+
 library(dplyr)
 library(readr)
 library(rcrossref)
@@ -28,6 +29,7 @@ library(stringr)
 library(rlang)
 library(httr)
 library(digest)
+library(tidyr)
 
 # --- Load replication data ---------------------------------------------------
 # Pull the public Google Sheet as CSV.
@@ -47,8 +49,11 @@ reported_success <- read_csv(
 flora <- reported_success %>%
   # keep only the columns we care about for the FLoRA table
   select(doi_o, doi_r, ref_o, ref_r, url_r, outcome) %>%
+  mutate(
+    rep_type = "Replication"   # Sheet A always has DOI replications because you filtered for it
+  ) %>%
   # group rows that refer to the same original–replication combination
-  group_by(doi_o, doi_r, ref_o, ref_r, url_r) %>%
+  group_by(doi_o, doi_r, ref_o, ref_r, url_r,rep_type) %>%
   summarise(
     # if there’s only one outcome in the group, keep it;
     # if there are multiple different outcomes, label as "mixed"
@@ -60,8 +65,9 @@ flora <- reported_success %>%
 
 ```
 
-```{r}
 # --- Convert CrossRef / DataCite author lists into a JSON-encoded tibble ------
+```{r}
+
 jsonify_authors <- function(author_list) {
   # Handle completely missing or empty author data
   if (is.null(author_list) || length(author_list) == 0) {
@@ -109,8 +115,6 @@ jsonify_authors <- function(author_list) {
 }
 ```
 
-```
-
 # --- Helpers for RDS-based DOI cache -----------------------------------------
 ```{r}
 load_doi_cache <- function(cache_file) {
@@ -132,7 +136,7 @@ save_doi_cache <- function(cache_df, cache_file) {
   saveRDS(cache_df, cache_file)
 }
 
-
+```
 
 
 # --- DOI metadata fetcher (Crossref-first + DataCite fallback + cache) -------
@@ -311,44 +315,6 @@ get_doi_data_unified_cached <- function(
 
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # --- Fetch + parse DOI metadata for originals and replications (from cache) --
 ```{r}
 # --- Fetch metadata for originals and replications (CrossRef + DataCite + cache) ----
@@ -402,6 +368,7 @@ doi_data_r_parsed <- doi_data_r %>%
 
 
 ```
+
 
 # --- Normalise metadata for originals and replications -----------------------
 ```{r}
@@ -586,10 +553,6 @@ override_with_crossref <- function(doi_vec, meta_df) {
 
 ```
 
-
-
-
-
 # --- Build APA/BibTeX references for originals and replications --------------
 ```{r}
 # Resolve APA + BibTeX for all ORIGINAL DOIs (using CrossRef-first logic)
@@ -608,8 +571,9 @@ refs_r <- override_with_crossref(
 
 
 
-# --- Combine metadata + references and write final FLoRA CSV ------------------
 
+
+# --- Combine metadata + references and write final FLoRA CSV ------------------
 ```{r}
 flora %>%
   rowwise() %>%
@@ -645,15 +609,954 @@ flora %>%
   select(
     doi_o, doi_o_hash, title_o, author_o, journal_o, year_o, volume_o, issue_o, pages_o,
     apa_ref_o, bibtex_ref_o,
-    doi_r, doi_r_hash, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r,
+    doi_r, doi_r_hash, rep_type, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r,
     apa_ref_r, bibtex_ref_r,
     ref_o, ref_r, url_r, outcome
   ) %>%
   # keep only rows where we successfully have both original and replication titles
   filter(!is.na(title_o), !is.na(title_r)) %>%
   # write everything to the final CSV file used by tools/bots
-  write_csv("flora.csv")
+  identity() -> flora_a_out
 
 ```
 
 
+# Sheet B Part 1 : (Helpers: convert JSON author metadata into APA/BibTeX strings + build manualAPA/BibTeX references (used when Crossref citations are missing) )
+```{r}
+# ---- Safely parse JSON without crashing -------------------------------------
+safe_from_json <- function(x) {
+  # Try to parse JSON text `x` into an R object (list/data.frame).
+  # If parsing fails, return NULL instead of throwing an error.
+  tryCatch(jsonlite::fromJSON(x), error = function(e) NULL)
+}
+
+# ---- Turn a given-name string into initials (APA style) ----------------------
+given_to_initials <- function(given) {
+  # If the given name is missing/empty, return empty string.
+  if (is.null(given) || is.na(given) || !nzchar(trimws(given))) return("")
+
+  # Split given name by whitespace into parts: "John Ronald" -> c("John","Ronald")
+  parts <- unlist(strsplit(trimws(given), "\\s+"))
+
+  # Take first letter of each part and add "." then collapse with spaces: "J. R."
+  paste0(substr(parts, 1, 1), ".", collapse = " ")
+}
+
+# ---- Convert author JSON -> APA author list string --------------------------
+# Expected author_json format (Crossref-style): JSON array of objects with `given` and `family`
+# Output example: "Lacko, D., & Prošek, T."
+authors_to_apa <- function(author_json) {
+  # If missing/empty, return NA
+  if (is.null(author_json) || is.na(author_json) || !nzchar(trimws(author_json))) return(NA_character_)
+
+  # Parse JSON text to R object; if it isn't JSON, treat it as already-human-readable text
+  a <- safe_from_json(author_json)
+  if (is.null(a)) return(trimws(author_json))
+
+  # If JSON parsed as a list (not data.frame), try converting to data.frame
+  if (is.list(a) && !is.data.frame(a)) {
+    a <- tryCatch(as.data.frame(a, stringsAsFactors = FALSE), error = function(e) NULL)
+  }
+
+  # If still unusable (NULL or no rows), return NA
+  if (is.null(a) || nrow(a) == 0) return(NA_character_)
+
+  # Ensure required columns exist (some sources might omit them)
+  if (!("family" %in% names(a))) a$family <- NA_character_
+  if (!("given"  %in% names(a))) a$given  <- NA_character_
+
+  # Number of authors in the parsed list
+  n <- nrow(a)
+
+  # APA rule: if >20 authors, show first 19, ellipsis, last author.
+  idx <- if (n <= 20) seq_len(n) else c(1:19, n)
+
+  # Build each author string as "Family, I." (initials from given names)
+  parts <- purrr::map_chr(idx, function(i) {
+    # Extract family and given names safely, coercing to character and trimming whitespace
+    fam <- trimws(as.character(a$family[i] %||% ""))
+    giv <- trimws(as.character(a$given[i]  %||% ""))
+
+    # Convert given name to initials: "David Paul" -> "D. P."
+    ini <- trimws(given_to_initials(giv))
+
+    # Prefer "Family, Initials"; else fall back to whichever part exists
+    if (nzchar(fam) && nzchar(ini)) glue::glue("{fam}, {ini}")
+    else if (nzchar(fam)) fam
+    else if (nzchar(giv)) giv
+    else NA_character_
+  })
+
+  # Drop empty/NA author entries
+  parts <- parts[!is.na(parts) & nzchar(parts)]
+  if (length(parts) == 0) return(NA_character_)
+
+  # If there were >20 authors, insert "..." before the last author name
+  if (n > 20) parts <- c(parts[1:19], "...", parts[length(parts)])
+
+  # If only one author, return it directly
+  if (length(parts) == 1) return(parts)
+
+  # Join multiple authors with commas and an "&" before the last one (APA)
+  paste0(
+    paste(parts[1:(length(parts) - 1)], collapse = ", "),
+    ", & ",
+    parts[length(parts)]
+  )
+}
+
+# ---- Convert author JSON -> BibTeX author field string -----------------------
+# Output example: "Lacko, David and Prošek, Tomas"
+authors_to_bibtex <- function(author_json) {
+  # If missing/empty, return NA
+  if (is.null(author_json) || is.na(author_json) || !nzchar(trimws(author_json))) return(NA_character_)
+
+  # Parse JSON; if not JSON, return raw text
+  a <- safe_from_json(author_json)
+  if (is.null(a)) return(trimws(author_json))
+
+  # Convert list to data.frame if needed
+  if (is.list(a) && !is.data.frame(a)) {
+    a <- tryCatch(as.data.frame(a, stringsAsFactors = FALSE), error = function(e) NULL)
+  }
+
+  # If unusable, return NA
+  if (is.null(a) || nrow(a) == 0) return(NA_character_)
+
+  # Ensure columns exist
+  if (!("family" %in% names(a))) a$family <- NA_character_
+  if (!("given"  %in% names(a))) a$given  <- NA_character_
+
+  # Build each author as "Family, Given" (BibTeX accepts this well)
+  parts <- purrr::map_chr(seq_len(nrow(a)), function(i) {
+    fam <- trimws(as.character(a$family[i] %||% ""))
+    giv <- trimws(as.character(a$given[i]  %||% ""))
+
+    if (nzchar(fam) && nzchar(giv)) glue::glue("{fam}, {giv}")
+    else if (nzchar(fam)) fam
+    else if (nzchar(giv)) giv
+    else NA_character_
+  })
+
+  # Drop empty entries; if none, return NA
+  parts <- parts[!is.na(parts) & nzchar(parts)]
+  if (length(parts) == 0) return(NA_character_)
+
+  # BibTeX expects authors separated by " and "
+  paste(parts, collapse = " and ")
+}
+
+# ---- Minimal "escaping"/cleanup for BibTeX fields ----------------------------
+bibtex_escape <- function(x) {
+  # If missing, return NA
+  if (is.null(x) || is.na(x)) return(NA_character_)
+
+  # Ensure character
+  x <- as.character(x)
+
+  # Replace newlines with spaces
+  x <- gsub("[\r\n]+", " ", x)
+
+  # Collapse repeated whitespace
+  x <- gsub("\\s+", " ", x)
+
+  # Trim leading/trailing whitespace
+  trimws(x)
+}
+
+# ---- Create a stable BibTeX key --------------------------------------------
+make_bibtex_key <- function(doi = NA_character_, title = NA_character_, year = NA_character_) {
+  # Use DOI as the stable base if available; otherwise fall back to "title|year"
+  base <- if (!is.na(doi) && nzchar(doi)) doi else paste0(title %||% "", "|", year %||% "")
+
+  # Hash the base so keys are short but stable across runs
+  h <- digest::digest(base, algo = "md5", serialize = FALSE)
+
+  # Prefix + first 8 chars of md5 hash
+  paste0("flora_", substr(h, 1, 8))
+}
+
+# ---- Build a manual APA-style reference (Markdown-friendly) -----------------
+# Output example:
+#   "Lacko, D., & Prošek, T. (2025). Title. *Journal*, *132*(4), 12-34. https://doi.org/..."
+apa_reference_md <- function(doi, title, author_json, journal, year, volume, issue, pages) {
+  # Convert authors JSON -> APA author string
+  auth <- authors_to_apa(author_json)
+
+  # Parse year to integer (if possible), suppress warnings if non-numeric
+  yr   <- suppressWarnings(as.integer(year))
+
+  # Normalize fields: replace NULL with NA (so later checks are consistent)
+  title_txt   <- title %||% NA_character_
+  journal_txt <- journal %||% NA_character_
+  vol_txt     <- volume %||% NA_character_
+  iss_txt     <- issue %||% NA_character_
+  pages_txt   <- pages %||% NA_character_
+
+  # Build DOI URL if DOI is present
+  doi_url <- if (!is.null(doi) && !is.na(doi) && nzchar(doi)) glue::glue("https://doi.org/{doi}") else NA_character_
+
+  # Start building reference parts into a vector
+  out <- c()
+
+  # Add authors
+  if (!is.na(auth) && nzchar(auth)) {
+    out <- c(out, auth)
+  }
+
+  # Add year in parentheses
+  if (!is.na(yr)) {
+    out <- c(out, glue::glue("({yr})."))
+  }
+
+  # Add title
+  if (!is.na(title_txt) && nzchar(title_txt)) {
+    out <- c(out, glue::glue("{title_txt}."))
+  }
+
+  # Build the journal/volume/issue/pages segment
+  jpart <- ""
+
+  # Journal in italics (Markdown)
+  if (!is.na(journal_txt) && nzchar(journal_txt)) jpart <- glue::glue("*{journal_txt}*")
+
+  # Volume in italics, appended after journal (APA style)
+  if (!is.na(vol_txt) && nzchar(vol_txt)) {
+    jpart <- if (nzchar(jpart)) glue::glue("{jpart}, *{vol_txt}*") else glue::glue("*{vol_txt}*")
+  }
+
+  # Issue in parentheses
+  if (!is.na(iss_txt) && nzchar(iss_txt)) jpart <- glue::glue("{jpart}({iss_txt})")
+
+  # Pages after comma
+  if (!is.na(pages_txt) && nzchar(pages_txt)) jpart <- glue::glue("{jpart}, {pages_txt}")
+
+  # Add journal block and DOI URL
+  if (nzchar(jpart)) out <- c(out, glue::glue("{jpart}."))
+  if (!is.na(doi_url) && nzchar(doi_url)) out <- c(out, doi_url)
+
+  # Join non-empty pieces with spaces
+  out <- paste(out[!is.na(out) & nzchar(out)], collapse = " ")
+
+  # If everything else is empty but DOI exists, at least return DOI URL
+  if (!nzchar(out) && !is.na(doi_url)) out <- doi_url
+
+  out
+}
+
+# ---- Build a manual BibTeX entry (article if possible, else misc) ------------
+bibtex_reference <- function(doi, title, author_json, journal, year, volume, issue, pages, key = NULL) {
+  # Parse year to integer, suppress warnings on bad inputs
+  yr <- suppressWarnings(as.integer(year))
+
+  # Use provided key, or generate one based on DOI/title/year
+  key <- key %||% make_bibtex_key(doi = doi, title = title, year = as.character(yr))
+
+  # Convert authors JSON -> BibTeX author string ("Family, Given and ...")
+  a <- authors_to_bibtex(author_json)
+
+  # Clean fields for BibTeX output (mostly whitespace normalization)
+  title_e   <- bibtex_escape(title)
+  journal_e <- bibtex_escape(journal)
+  pages_e   <- bibtex_escape(pages)
+  volume_e  <- bibtex_escape(volume)
+  issue_e   <- bibtex_escape(issue)
+  doi_e     <- bibtex_escape(doi)
+
+  # Decide whether we have enough info to call it an @article
+  # (needs title, journal, and year)
+  is_article <- !is.na(title_e) && nzchar(title_e) &&
+    !is.na(journal_e) && nzchar(journal_e) &&
+    !is.na(yr)
+
+  # ---- Build @article if we have enough fields ------------------------------
+  if (is_article) {
+    # Build BibTeX fields; each field is included only if its value exists
+    fields <- c(
+      if (!is.na(a) && nzchar(a)) glue::glue("  author = {{{a}}}"),
+      if (!is.na(title_e) && nzchar(title_e)) glue::glue("  title = {{{title_e}}}"),
+      if (!is.na(journal_e) && nzchar(journal_e)) glue::glue("  journal = {{{journal_e}}}"),
+      if (!is.na(yr)) glue::glue("  year = {{{yr}}}"),
+      if (!is.na(volume_e) && nzchar(volume_e)) glue::glue("  volume = {{{volume_e}}}"),
+      if (!is.na(issue_e) && nzchar(issue_e)) glue::glue("  number = {{{issue_e}}}"),
+      if (!is.na(pages_e) && nzchar(pages_e)) glue::glue("  pages = {{{pages_e}}}"),
+      if (!is.na(doi_e) && nzchar(doi_e)) glue::glue("  doi = {{{doi_e}}}"),
+      if (!is.na(doi_e) && nzchar(doi_e)) glue::glue("  url = https://doi.org/{doi_e}")
+    )
+
+    # Drop any NULL/empty field lines
+    fields <- fields[!is.na(fields) & nzchar(fields)]
+
+    # Assemble the final BibTeX string for @article
+    return(paste0(
+      "@article{", key, ",\n",
+      paste(fields, collapse = ",\n"),
+      "\n}\n"
+    ))
+  }
+
+  # ---- Otherwise build @misc fallback ---------------------------------------
+  fields <- c(
+    if (!is.na(a) && nzchar(a)) glue::glue("  author = {{{a}}}"),
+    if (!is.na(title_e) && nzchar(title_e)) glue::glue("  title = {{{title_e}}}"),
+    if (!is.na(yr)) glue::glue("  year = {{{yr}}}"),
+    if (!is.na(doi_e) && nzchar(doi_e)) glue::glue("  doi = {{{doi_e}}}"),
+    if (!is.na(doi_e) && nzchar(doi_e)) glue::glue("  url = https://doi.org/{doi_e}")
+  )
+
+  # Drop empty field lines
+  fields <- fields[!is.na(fields) & nzchar(fields)]
+
+  # Assemble the final BibTeX string for @misc
+  paste0(
+    "@misc{", key, ",\n",
+    paste(fields, collapse = ",\n"),
+    "\n}\n"
+  )
+}
+
+```
+
+# SHEET B PIPELINE PART 2 :append reproduction-list (Sheet B) to Sheet A output
+```{r}
+# workflow:
+# 1) Assumes Sheet A pipeline already ran and produced an in-memory data frame called `flora_a_out`.
+# 2) Loads Sheet B (reproduction list) from Google Sheets.
+# 3) Normalizes DOIs, deduplicates, sets rep_type = "Reproduction".
+# 4) Fetches metadata via Crossref/DataCite .
+# 5) If Crossref metadata missing, fills from ref_o/ref_r by parsing citations.
+# 6) Builds APA + BibTeX using your crossref-first override_with_crossref(),with a manual fallback (per-row) when DOI is missing or Crossref citation fails.
+# 7) Aligns column types to avoid bind_rows() type conflicts.
+# 8) Binds A + B and writes ONE file: flora.csv
+
+# ---- 1) Helpers -------------------------------------------------------------
+
+# Normalize DOI strings (strip doi.org prefix, decode, lowercase, validate)
+normalize_doi <- function(x) {
+  if (is.null(x)) return(NA_character_)
+  x <- as.character(x)
+  x <- gsub("https?://(dx\\.)?doi\\.org/", "", x, ignore.case = TRUE)
+  x <- URLdecode(x)
+  x <- gsub("/%?2[fF]", "/", x, perl = TRUE)
+  x <- gsub("//+", "/", x)
+  x <- trimws(tolower(x))
+  ifelse(stringr::str_detect(x, "^10\\.[0-9]{4,9}/\\S+$"), x, NA_character_)
+}
+
+# Protect periods inside abbreviations so "first sentence" title extraction works
+protect_abbrev_periods <- function(x) {
+  if (is.na(x) || !nzchar(x)) return(x)
+  x <- as.character(x)
+  x <- gsub("\\bet\\s+al\\.", "et al§", x, ignore.case = TRUE)
+  x <- gsub("\\be\\.g\\.", "e§g§", x, ignore.case = TRUE)
+  x <- gsub("\\bi\\.e\\.", "i§e§", x, ignore.case = TRUE)
+  x <- gsub("\\bU\\.S\\.", "U§S§", x)
+  x
+}
+
+# Undo abbreviation protection
+unprotect_abbrev_periods <- function(x) {
+  if (is.na(x) || !nzchar(x)) return(x)
+  x <- as.character(x)
+  gsub("§", ".", x)
+}
+
+# Parse a reference string into best-effort components:
+# author_raw, year, title, journal, volume, issue, pages
+parse_ref_general <- function(ref) {
+  ref <- as.character(ref)
+
+  # Empty ref -> return NA fields
+  if (is.na(ref) || !nzchar(trimws(ref))) {
+    return(tibble::tibble(
+      author_raw = NA_character_,
+      year = NA_integer_,
+      title = NA_character_,
+      journal = NA_character_,
+      volume = NA_character_,
+      issue = NA_character_,
+      pages = NA_character_
+    ))
+  }
+
+  # --- APA-ish pattern: "... (2024). Title. Journal, 106(3), 638-654."
+  if (stringr::str_detect(ref, "\\((19|20)\\d{2}\\)\\.")) {
+
+    # Extract year "(2024)" then turn into integer 2024
+    year_chr <- stringr::str_match(ref, "\\((19|20)\\d{2}\\)")[1]
+    year_int <- suppressWarnings(as.integer(stringr::str_remove_all(year_chr, "[\\(\\)]")))
+
+    # Split into two parts at the end of "(YYYY). "
+    # parts[1] = authors (maybe includes year), parts[2] = rest (title + journal etc.)
+    parts <- stringr::str_split_fixed(ref, "\\)\\.\\s+", 2)
+
+    authors_raw <- trimws(parts[1])
+
+    # Remove trailing "(YYYY)" if it stuck to authors_raw
+    authors_raw <- stringr::str_remove(authors_raw, "\\s*\\((19|20)\\d{2}\\)\\s*$")
+
+    rest <- parts[2]
+
+    # Protect abbreviation periods so we don't cut title too early
+    rest_p <- protect_abbrev_periods(rest)
+
+    # Title = first sentence in rest
+    title_p <- stringr::str_trim(stringr::str_extract(rest_p, "^[^.]+"))
+    title   <- unprotect_abbrev_periods(title_p)
+
+    # After-title portion = remainder after "Title. "
+    after_title_p <- stringr::str_trim(stringr::str_remove(rest_p, "^[^.]+\\.\\s*"))
+    after_title   <- unprotect_abbrev_periods(after_title_p)
+
+    # Journal = text before first comma
+    journal <- stringr::str_trim(stringr::str_extract(after_title, "^[^,]+"))
+
+    # Volume = digits before "(" in ", 106(3)"
+    volume  <- stringr::str_match(after_title, ",\\s*([0-9]+)\\s*\\(")[,2]
+
+    # Issue = inside "(3)"
+    issue   <- stringr::str_match(after_title, "\\(([0-9A-Za-z]+)\\)")[,2]
+
+    # Pages = "638-654" or "638–654"
+    pages   <- stringr::str_match(after_title, "([0-9]+\\s*[-–]\\s*[0-9]+)")[,2]
+
+    return(tibble::tibble(
+      author_raw = authors_raw,
+      year = ifelse(is.finite(year_int), year_int, NA_integer_),
+      title = title %||% NA_character_,
+      journal = journal %||% NA_character_,
+      volume = volume %||% NA_character_,
+      issue = issue %||% NA_character_,
+      pages = pages %||% NA_character_
+    ))
+  }
+
+  # --- Listing style:
+  # "Eliza Forsythe, Title, The Economic Journal, Volume 132, Issue 645, July 2022, Pages 1765–1789."
+  author_raw  <- stringr::str_trim(stringr::str_extract(ref, "^[^,]+"))
+  title_raw   <- stringr::str_trim(stringr::str_match(ref, "^[^,]+,\\s*([^,]+),")[,2])
+  journal_raw <- stringr::str_trim(stringr::str_match(ref, "^[^,]+,\\s*[^,]+,\\s*([^,]+),")[,2])
+
+  volume <- stringr::str_trim(stringr::str_match(ref, "Volume\\s+([^,]+)")[,2])
+  issue  <- stringr::str_trim(stringr::str_match(ref, "Issue\\s+([^,]+)")[,2])
+
+  year_int <- suppressWarnings(as.integer(stringr::str_match(ref, "(19|20)\\d{2}")[,1]))
+  if (!is.finite(year_int)) year_int <- NA_integer_
+
+  pages <- stringr::str_trim(stringr::str_match(ref, "Pages\\s+([0-9]+\\s*[-–]\\s*[0-9]+)")[,2])
+
+  tibble::tibble(
+    author_raw = author_raw %||% NA_character_,
+    year = year_int,
+    title = title_raw %||% NA_character_,
+    journal = journal_raw %||% NA_character_,
+    volume = volume %||% NA_character_,
+    issue = issue %||% NA_character_,
+    pages = pages %||% NA_character_
+  )
+}
+
+# Convert author_raw (APA-ish) into JSON list of authors
+# Expected input often like: "Lacko, D., & Prošek, T."
+# Strategy:
+# - Normalize "&" into commas
+# - Split on commas
+# - Interpret as pairs: family, given, family, given, ...
+author_raw_to_json <- function(author_raw) {
+  author_raw <- as.character(author_raw)
+
+  if (is.na(author_raw) || !nzchar(trimws(author_raw))) {
+    return(jsonlite::toJSON(tibble::tibble(
+      given = NA_character_, family = NA_character_, name = NA_character_,
+      sequence = NA_character_, ORCID = NA_character_, etal = NA
+    ), auto_unbox = TRUE, pretty = FALSE, na = "null"))
+  }
+
+  x <- trimws(author_raw)
+
+  # Fix common mojibake (broken encoding)
+  if (grepl("Ã", x, fixed = TRUE)) {
+    x <- iconv(x, from = "latin1", to = "UTF-8")
+  }
+
+  # Remove leftover "(YYYY...)" if present
+  x <- sub("\\s*\\((19|20)\\d{2}.*$", "", x)
+
+  # Detect "et al." and strip it but keep flag
+  has_etal <- grepl("\\bet\\s+al\\b", x, ignore.case = TRUE)
+  x <- gsub("\\s*,?\\s*et\\s+al\\.?\\s*$", "", x, ignore.case = TRUE)
+
+  # Turn "&" into comma separator
+  x <- gsub("\\s*&\\s*", ", ", x)
+
+  toks <- trimws(unlist(strsplit(x, "\\s*,\\s*")))
+  toks <- toks[nzchar(toks)]
+
+  # If we cannot pair family,given -> treat as corporate/unknown name
+  if (length(toks) < 2) {
+    return(jsonlite::toJSON(tibble::tibble(
+      given = NA_character_, family = NA_character_, name = x,
+      sequence = NA_character_, ORCID = NA_character_, etal = has_etal
+    ), auto_unbox = TRUE, pretty = FALSE, na = "null"))
+  }
+
+  authors <- list()
+  i <- 1
+  while (i <= length(toks) - 1) {
+    fam <- toks[i]
+    giv <- toks[i + 1]
+
+    authors[[length(authors) + 1]] <- tibble::tibble(
+      given = ifelse(nzchar(giv), giv, NA_character_),
+      family = ifelse(nzchar(fam), fam, NA_character_),
+      name = NA_character_,
+      sequence = NA_character_,
+      ORCID = NA_character_,
+      etal = has_etal
+    )
+    i <- i + 2
+  }
+
+  if (length(authors) == 0) {
+    return(jsonlite::toJSON(tibble::tibble(
+      given = NA_character_, family = NA_character_, name = x,
+      sequence = NA_character_, ORCID = NA_character_, etal = has_etal
+    ), auto_unbox = TRUE, pretty = FALSE, na = "null"))
+  }
+
+  jsonlite::toJSON(dplyr::bind_rows(authors), auto_unbox = TRUE, pretty = FALSE, na = "null")
+}
+
+# Fill metadata fields from ref_o or ref_r when missing
+fill_from_ref_if_missing <- function(df, side = c("o", "r")) {
+  side <- match.arg(side)
+
+  ref_col     <- paste0("ref_", side)
+  title_col   <- paste0("title_", side)
+  author_col  <- paste0("author_", side)
+  journal_col <- paste0("journal_", side)
+  year_col    <- paste0("year_", side)
+  volume_col  <- paste0("volume_", side)
+  issue_col   <- paste0("issue_", side)
+  pages_col   <- paste0("pages_", side)
+
+  # Parse each ref string
+  parsed <- purrr::map(df[[ref_col]], parse_ref_general)
+
+  # Pull parsed fields into vectors
+  p_author_raw <- purrr::map_chr(parsed, ~ (.x$author_raw %||% NA_character_)[1])
+  p_year       <- purrr::map_int(parsed, ~ as.integer((.x$year %||% NA_integer_)[1]))
+  p_title      <- purrr::map_chr(parsed, ~ (.x$title %||% NA_character_)[1])
+  p_journal    <- purrr::map_chr(parsed, ~ (.x$journal %||% NA_character_)[1])
+  p_volume     <- purrr::map_chr(parsed, ~ (.x$volume %||% NA_character_)[1])
+  p_issue      <- purrr::map_chr(parsed, ~ (.x$issue %||% NA_character_)[1])
+  p_pages      <- purrr::map_chr(parsed, ~ (.x$pages %||% NA_character_)[1])
+
+  # Convert parsed author_raw -> JSON
+  p_author_json <- purrr::map_chr(p_author_raw, author_raw_to_json)
+
+  # Fill missing values only
+  df %>%
+    dplyr::mutate(
+      "{title_col}"   := dplyr::coalesce(.data[[title_col]],   p_title),
+      "{author_col}"  := dplyr::coalesce(.data[[author_col]],  p_author_json),
+      "{journal_col}" := dplyr::coalesce(.data[[journal_col]], p_journal),
+      "{year_col}"    := dplyr::coalesce(.data[[year_col]],    p_year),
+      "{volume_col}"  := dplyr::coalesce(.data[[volume_col]],  p_volume),
+      "{issue_col}"   := dplyr::coalesce(.data[[issue_col]],   p_issue),
+      "{pages_col}"   := dplyr::coalesce(.data[[pages_col]],   p_pages)
+    )
+}
+
+# Parse DOI metadata table from get_doi_data_unified_cached()
+# into standardized columns title_o/author_o/... or title_r/author_r/...
+parse_doi_tbl <- function(doi_tbl, side = c("o", "r")) {
+  side <- match.arg(side)
+
+  # If empty input -> return empty tibble with expected schema
+  if (is.null(doi_tbl) || nrow(doi_tbl) == 0) {
+    return(tibble::tibble(
+      doi = character(),
+      !!paste0("title_", side)   := character(),
+      !!paste0("author_", side)  := character(),
+      !!paste0("journal_", side) := character(),
+      !!paste0("year_", side)    := integer(),
+      !!paste0("volume_", side)  := character(),
+      !!paste0("issue_", side)   := character(),
+      !!paste0("pages_", side)   := character(),
+      !!paste0("type_", side)    := character()
+    ))
+  }
+
+  # Ensure required columns exist
+  needed <- c("doi", "title", "author", "container.title", "published", "volume", "issue", "page", "type")
+  for (nm in needed) if (!(nm %in% names(doi_tbl))) doi_tbl[[nm]] <- NA_character_
+
+  doi_tbl %>%
+    dplyr::mutate(
+      # Ensure `author` is JSON text; if not, convert to JSON with jsonify_authors()
+      author = ifelse(
+        stringr::str_detect(author, "^\\s*\\[\\s*\\{"),
+        author,
+        purrr::map_chr(author, jsonify_authors)   # <- from Sheet A chunk
+      )
+    ) %>%
+    dplyr::transmute(
+      doi = tolower(doi),
+      !!paste0("title_", side)   := as.character(title),
+      !!paste0("author_", side)  := as.character(author),
+      !!paste0("journal_", side) := as.character(`container.title`),
+      !!paste0("year_", side)    := readr::parse_integer(as.character(published), na = c("", "NA", "null")),
+      !!paste0("volume_", side)  := as.character(volume),
+      !!paste0("issue_", side)   := as.character(issue),
+      !!paste0("pages_", side)   := as.character(page),
+      !!paste0("type_", side)    := as.character(type)
+    )
+}
+
+# ---- 2) Load Sheet B (reproduction list) ------------------------------------
+
+sheet_b <- readr::read_csv(
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=984458430&single=true&output=csv",
+  show_col_types = FALSE
+)
+
+# Clean column names: lowercase + underscores
+clean_names_simple <- function(nms) {
+  nms %>%
+    tolower() %>%
+    trimws() %>%
+    gsub("[^a-z0-9]+", "_", .) %>%
+    gsub("^_+|_+$", "", .)
+}
+names(sheet_b) <- clean_names_simple(names(sheet_b))
+message("Sheet B cleaned columns: ", paste(names(sheet_b), collapse = " | "))
+
+# ---- 3) Build base Sheet B table + dedupe -----------------------------------
+
+# Sheet B has these columns (as you stated):
+# ref_o, doi_o, ref_r, doi_r, url_r, abstract_r, outcome, outcome_quote
+
+flora_b <- sheet_b %>%
+  dplyr::transmute(
+    doi_o = normalize_doi(.data[["doi_o"]]),
+    doi_r = normalize_doi(.data[["doi_r"]]),
+    ref_o = .data[["ref_o"]],
+    ref_r = .data[["ref_r"]],
+    url_r = .data[["url_r"]],
+    abstract_r = .data[["abstract_r"]],
+    outcome = .data[["outcome"]],
+    outcome_quote = .data[["outcome_quote"]]
+  ) %>%
+  dplyr::filter(!is.na(doi_o)) %>%                 # keep only rows with original DOI
+  dplyr::mutate(rep_type = "Reproduction") %>%     # identity column for source B
+  dplyr::group_by(doi_o, doi_r, ref_o, ref_r, url_r, abstract_r, rep_type) %>%
+  dplyr::summarise(
+    outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
+    outcome_quote = paste(unique(na.omit(outcome_quote)), collapse = " | "),
+    .groups = "drop"
+  )
+
+# ---- 4) Fetch DOI metadata (Crossref/DataCite/cache) ------------------------
+
+# Fetch metadata for original DOIs from Sheet B
+doi_data_o_b <- get_doi_data_unified_cached(flora_b$doi_o, cache_file = "flora_doi_cache.rds")
+
+# Fetch metadata for replication DOIs only where doi_r exists
+rep_dois_b <- flora_b %>%
+  dplyr::filter(!is.na(doi_r)) %>%
+  dplyr::pull(doi_r) %>%
+  unique()
+
+doi_data_r_b <- get_doi_data_unified_cached(rep_dois_b, cache_file = "flora_doi_cache.rds")
+
+# Parse DOI metadata tables into standardized columns (title_o, author_o, ...)
+doi_data_o_b_parsed <- parse_doi_tbl(doi_data_o_b, "o")
+doi_data_r_b_parsed <- parse_doi_tbl(doi_data_r_b, "r")
+
+# ---- 5) Join metadata + compute hashes + fill missing from ref strings ------
+
+flora_b_enriched <- flora_b %>%
+  dplyr::mutate(
+    doi_o = tolower(doi_o),
+    doi_r = tolower(doi_r),
+
+    # Always hash doi_o
+    doi_o_hash = stringr::str_sub(digest::digest(doi_o, "md5", serialize = FALSE), 1, 3),
+
+    # Hash doi_r only if present; otherwise NA
+    doi_r_hash = ifelse(
+      is.na(doi_r), NA_character_,
+      stringr::str_sub(digest::digest(doi_r, "md5", serialize = FALSE), 1, 3)
+    )
+  ) %>%
+  # Join DOI-derived metadata
+  dplyr::left_join(doi_data_o_b_parsed, by = c("doi_o" = "doi")) %>%
+  dplyr::left_join(doi_data_r_b_parsed, by = c("doi_r" = "doi")) %>%
+  # Fill missing fields using ref_o/ref_r parsing
+  fill_from_ref_if_missing("o") %>%
+  fill_from_ref_if_missing("r")
+
+# ---- 6) Build citations (Crossref first; manual fallback second) ------------
+
+# Build meta table for originals, using enriched fields
+meta_o_b <- flora_b_enriched %>%
+  dplyr::distinct(doi_o, title_o, author_o, journal_o, year_o, volume_o, issue_o, pages_o, type_o) %>%
+  dplyr::transmute(
+    doi         = doi_o,
+    title       = title_o,
+    author_json = author_o,
+    journal     = journal_o,
+    year        = year_o,
+    volume      = volume_o,
+    issue       = issue_o,
+    pages       = pages_o,
+    type        = type_o
+  )
+
+# Crossref-first citations for originals
+refs_o_b <- override_with_crossref(doi_vec = meta_o_b$doi, meta_df = meta_o_b)
+
+# Build meta table for replications only where doi_r exists
+meta_r_b <- flora_b_enriched %>%
+  dplyr::filter(!is.na(doi_r)) %>%
+  dplyr::distinct(doi_r, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r, type_r) %>%
+  dplyr::transmute(
+    doi         = doi_r,
+    title       = title_r,
+    author_json = author_r,
+    journal     = journal_r,
+    year        = year_r,
+    volume      = volume_r,
+    issue       = issue_r,
+    pages       = pages_r,
+    type        = type_r
+  )
+
+# Crossref-first citations for replications (if any DOI-r exist)
+refs_r_b <- if (nrow(meta_r_b) > 0) {
+  override_with_crossref(doi_vec = meta_r_b$doi, meta_df = meta_r_b)
+} else {
+  tibble::tibble(
+    doi = character(),
+    apa_ref = character(),
+    bibtex_ref = character(),
+    apa_source = character(),
+    bibtex_source = character()
+  )
+}
+
+# ---- 7) Assemble Sheet B output rows (match Sheet A schema) -----------------
+# IMPORTANT: rowwise() ensures manual fallback runs per-row, not on whole vectors.
+
+flora_b_out <- flora_b_enriched %>%
+  # Join original citations
+  dplyr::left_join(refs_o_b, by = c("doi_o" = "doi")) %>%
+  dplyr::rename(
+    apa_ref_o = apa_ref,
+    bibtex_ref_o = bibtex_ref
+  ) %>%
+  # Join replication citations (for DOI-r rows)
+  dplyr::left_join(refs_r_b, by = c("doi_r" = "doi")) %>%
+  dplyr::rename(
+    apa_ref_r_doi = apa_ref,
+    bibtex_ref_r_doi = bibtex_ref
+  ) %>%
+  dplyr::rowwise() %>%
+  dplyr::mutate(
+    # Replication APA:
+    # - If DOI-r exists and crossref-first produced something, use it
+    # - Else build manually from parsed/ref-filled fields
+    apa_ref_r = if (!is.na(doi_r) && !is.na(apa_ref_r_doi) && nzchar(apa_ref_r_doi)) {
+      apa_ref_r_doi
+    } else {
+      apa_reference_md(
+        doi         = if (!is.na(doi_r) && nzchar(doi_r)) doi_r else NA_character_,
+        title       = title_r,
+        author_json = author_r,
+        journal     = journal_r,
+        year        = year_r,
+        volume      = volume_r,
+        issue       = issue_r,
+        pages       = pages_r
+      )
+    },
+
+    # Replication BibTeX:
+    # - If DOI-r exists and crossref-first produced something, use it
+    # - Else build manually
+    bibtex_ref_r = if (!is.na(doi_r) && !is.na(bibtex_ref_r_doi) && nzchar(bibtex_ref_r_doi)) {
+      bibtex_ref_r_doi
+    } else {
+      bibtex_reference(
+        doi         = if (!is.na(doi_r) && nzchar(doi_r)) doi_r else NA_character_,
+        title       = title_r,
+        author_json = author_r,
+        journal     = journal_r,
+        year        = year_r,
+        volume      = volume_r,
+        issue       = issue_r,
+        pages       = pages_r
+      )
+    }
+  ) %>%
+  dplyr::ungroup() %>%
+  # Final column order (aligned with your Sheet A export + Sheet B extras)
+  dplyr::select(
+    doi_o, doi_o_hash, title_o, author_o, journal_o, year_o, volume_o, issue_o, pages_o,
+    apa_ref_o, bibtex_ref_o,
+
+    doi_r, doi_r_hash, rep_type, title_r, author_r, journal_r, year_r, volume_r, issue_r, pages_r,
+    apa_ref_r, bibtex_ref_r,
+
+    ref_o, ref_r, url_r, abstract_r, outcome, outcome_quote
+  )
+
+# ---- 8) Bind A + B, fix type conflicts  -------------------
+
+# Columns that commonly cause bind_rows() conflicts (numeric vs character)
+# Force them to character in BOTH datasets before binding.
+char_cols <- c(
+  "doi_o", "doi_r", "doi_o_hash", "doi_r_hash",
+  "volume_o", "issue_o", "pages_o",
+  "volume_r", "issue_r", "pages_r",
+  "year_o", "year_r"
+)
+
+make_char_if_exists <- function(df, cols) {
+  cols <- intersect(cols, names(df))
+  df %>% dplyr::mutate(dplyr::across(dplyr::all_of(cols), as.character))
+}
+
+if (!("rep_type" %in% names(flora_a_out))) {
+  flora_a_out <- flora_a_out %>% dplyr::mutate(rep_type = "doi")
+}
+
+# IMPORTANT: create `flora` (final dataframe) but do NOT write the CSV yet
+flora <- dplyr::bind_rows(
+  make_char_if_exists(flora_a_out, char_cols),
+  make_char_if_exists(flora_b_out, char_cols)
+)
+
+
+```
+# MANUAL OVERRIDES : Reads manual_references.xlsx and replaces APA/BibTeX in `flora`
+```{r}
+if (!requireNamespace("readxl", quietly = TRUE)) {
+  stop("Package 'readxl' is required. Please run: install.packages('readxl')")
+}
+library(readxl)
+
+# Robust: folder where the .qmd/.Rmd lives when rendering; otherwise fall back to getwd()
+here_dir <- tryCatch(knitr::current_input(dir = TRUE), error = function(e) NULL)
+if (is.null(here_dir) || length(here_dir) == 0 || is.na(here_dir) || !nzchar(as.character(here_dir))) {
+  here_dir <- getwd()
+}
+here_dir <- as.character(here_dir)[1]
+
+manual_path <- file.path(here_dir, "manual_references.xlsx")
+
+
+
+manual_refs <- readxl::read_excel(manual_path) %>%
+  dplyr::rename(
+    manual_key    = key,
+    manual_apa    = reference_apa,
+    manual_bibtex = reference_bibtex
+  ) %>%
+  dplyr::mutate(
+    manual_key = as.character(manual_key),
+    manual_key = trimws(manual_key),
+
+    # Normalize DOI-looking keys (strip doi.org etc, lowercase).
+    manual_key_norm = dplyr::if_else(
+      stringr::str_detect(manual_key, "^\\s*(https?://(dx\\.)?doi\\.org/)?10\\.[0-9]{4,9}/"),
+      {
+        k <- gsub("^\\s*https?://(dx\\.)?doi\\.org/", "", manual_key, ignore.case = TRUE)
+        k <- URLdecode(k)
+        k <- trimws(tolower(k))
+        k
+      },
+      trimws(manual_key)  # URL keys: keep as-is (trimmed)
+    ),
+
+    # Treat blanks as NA
+    manual_apa    = dplyr::na_if(trimws(as.character(manual_apa)), ""),
+    manual_bibtex = dplyr::na_if(trimws(as.character(manual_bibtex)), "")
+  ) %>%
+  dplyr::select(manual_key_norm, manual_apa, manual_bibtex) %>%
+  dplyr::distinct(manual_key_norm, .keep_all = TRUE)
+
+# ---- Prepare match keys in flora --------------------------------------------
+flora_overridden <- flora %>%
+  dplyr::mutate(
+    doi_o = as.character(doi_o),
+    doi_r = as.character(doi_r),
+
+    # url_o may or may not exist (we handle both safely)
+    url_o = if ("url_o" %in% names(.)) as.character(url_o) else NA_character_,
+    url_r = if ("url_r" %in% names(.)) as.character(url_r) else NA_character_,
+
+    doi_o_norm = ifelse(is.na(doi_o) | !nzchar(trimws(doi_o)), NA_character_, trimws(tolower(doi_o))),
+    doi_r_norm = ifelse(is.na(doi_r) | !nzchar(trimws(doi_r)), NA_character_, trimws(tolower(doi_r))),
+    url_o_norm = ifelse(is.na(url_o) | !nzchar(trimws(url_o)), NA_character_, trimws(url_o)),
+    url_r_norm = ifelse(is.na(url_r) | !nzchar(trimws(url_r)), NA_character_, trimws(url_r))
+  )
+
+# ---- Override ORIGINAL refs by matching manual_key_norm == doi_o ------------
+flora_overridden <- flora_overridden %>%
+  dplyr::left_join(
+    manual_refs,
+    by = c("doi_o_norm" = "manual_key_norm")
+  ) %>%
+  dplyr::mutate(
+    apa_ref_o    = dplyr::coalesce(manual_apa, apa_ref_o),
+    bibtex_ref_o = dplyr::coalesce(manual_bibtex, bibtex_ref_o)
+  ) %>%
+  dplyr::select(-manual_apa, -manual_bibtex)
+
+# ---- Override ORIGINAL refs by matching manual_key_norm == url_o (ADDED) ----
+flora_overridden <- flora_overridden %>%
+  dplyr::left_join(
+    manual_refs,
+    by = c("url_o_norm" = "manual_key_norm")
+  ) %>%
+  dplyr::mutate(
+    apa_ref_o    = dplyr::coalesce(manual_apa, apa_ref_o),
+    bibtex_ref_o = dplyr::coalesce(manual_bibtex, bibtex_ref_o)
+  ) %>%
+  dplyr::select(-manual_apa, -manual_bibtex)
+
+# ---- Override REPLICATION refs by matching manual_key_norm == doi_r ----------
+flora_overridden <- flora_overridden %>%
+  dplyr::left_join(
+    manual_refs,
+    by = c("doi_r_norm" = "manual_key_norm")
+  ) %>%
+  dplyr::mutate(
+    apa_ref_r    = dplyr::coalesce(manual_apa, apa_ref_r),
+    bibtex_ref_r = dplyr::coalesce(manual_bibtex, bibtex_ref_r)
+  ) %>%
+  dplyr::select(-manual_apa, -manual_bibtex)
+
+# ---- Override REPLICATION refs by matching manual_key_norm == url_r ----------
+flora_overridden <- flora_overridden %>%
+  dplyr::left_join(
+    manual_refs,
+    by = c("url_r_norm" = "manual_key_norm")
+  ) %>%
+  dplyr::mutate(
+    apa_ref_r    = dplyr::coalesce(manual_apa, apa_ref_r),
+    bibtex_ref_r = dplyr::coalesce(manual_bibtex, bibtex_ref_r)
+  ) %>%
+  dplyr::select(-manual_apa, -manual_bibtex)
+
+# ---- Clean helper columns + write final CSV ---------------------------------
+flora_final <- flora_overridden %>%
+  dplyr::select(-doi_o_norm, -doi_r_norm, -url_o_norm, -url_r_norm)
+
+sum(flora$apa_ref_o != flora_final$apa_ref_o, na.rm = TRUE)
+sum(flora$apa_ref_r != flora_final$apa_ref_r, na.rm = TRUE)
+
+readr::write_csv(flora_final, "flora.csv")
+```
