@@ -221,22 +221,7 @@ clean_fred_data <- function(data) {
   # --- 7. Clean DOIs (remove spaces) ---
   cleaned_data <- cleaned_data %>%
     mutate(across(all_of(doi_cols), ~ str_remove_all(., " ")))
-  # --- 7b. Validate DOI format (set invalid DOIs to NA) -------------------------
-# This prevents non-DOI strings (e.g., osf.io/xxxx) from living in doi_o/doi_r.
-doi_valid_pattern <- "^10\\.[0-9]{4,9}/\\S+$"
-
-cleaned_data <- cleaned_data %>%
-  mutate(
-    across(
-      all_of(doi_cols),
-      ~ ifelse(
-        is.na(.) | !nzchar(trimws(.)),
-        NA_character_,
-        ifelse(str_detect(., doi_valid_pattern), ., NA_character_)
-      )
-    )
-  )
-
+    
 
   # --- 8. Normalize OSF links missing scheme ---
   osf_cols <- intersect(c("url_r", "link_o", "link_r", "prereg_o", "prereg_r"), names(cleaned_data))
