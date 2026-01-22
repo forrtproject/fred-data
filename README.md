@@ -281,7 +281,8 @@ All caches are organized by **data type** (not purpose) for maximum efficiency:
 
 ## API Documentation
 
-See original README content for Zotero Replication Checker API endpoints:
+See original [Zotero Replication Checker API](API%20Integration%20Guide/Zotero%20Replication%20Checker%20API.md) Readme file API endpoints:
+
 - Prefix Lookup (privacy-preserving 3-char hash lookups)
 - Original DOI Lookup (direct DOI searches)
 

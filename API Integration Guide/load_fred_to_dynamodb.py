@@ -1,0 +1,514 @@
+#!/usr/bin/env python3
+"""
+FReD CSV → DynamoDB (2 tables, DOI-centric record + reproduction support) — FINAL (no _id stored)
+
+Tables written:
+  1) PREFIX_TABLE: prefix (3-char) -> dois (List[str])
+     - Indexes BOTH sides when available:
+         * doi_o indexed by doi_o_hash[:PREFIX_LEN]
+         * doi_r indexed by doi_r_hash[:PREFIX_LEN]
+     - Keeps your SAME endpoint working:
+         /v1/prefix-lookup?prefixes=198,30e,694
+
+  2) DOI_TABLE: doi (str) -> record (JSON string stored in DynamoDB attr "record")
+     - One record per DOI (whether it appears as doi_o or doi_r or both)
+
+DOI_TABLE stored JSON schema (one per DOI):
+  {
+    "doi": "10.xxxx/yyy",
+    "doi_hash": "...",
+    "title": "...",
+    "authors": [...],
+    "journal": "...",
+    "year": 2020,
+    "volume": "...",          # ALWAYS string or null
+    "issue": "...",           # ALWAYS string or null
+    "pages": "...",           # ALWAYS string or null
+    "apa_ref": "...",
+    "bibtex_ref": "...",
+    "url": "...",             # optional (usually replication side)
+    "record": {
+      "stats": {
+        "n_replications": 0,
+        "n_unique_replication_dois": 0,
+        "n_originals": 0,
+        "n_unique_original_dois": 0,
+        "n_reproductions": 0,
+        "n_reproduction_only": 0
+      },
+      "replications": [ { replication citation fields + outcome/url + rep_type + optional text fields } ],
+      "originals":    [ { original citation fields } ],
+      "reproductions":[ { reproduction-only objects (when doi_r missing) } ]
+    }
+  }
+
+Reproduction rules:
+- If rep_type indicates reproduction AND doi_r is missing:
+    store under doi_o.record.reproductions[] (reproduction-only, one-way because no doi_r exists)
+- If doi_r exists:
+    store like a normal (two-way) link, but keep rep_type on the replication entry
+- Stats include both reproduction kinds.
+
+IMPORTANT CHANGE (requested):
+- We still DEDUPE reproduction-only rows, but we DO NOT store/return any "_id" field.
+  Dedupe uses an in-memory fingerprint set per doi_o.
+
+Env:
+  PREFIX_TABLE   required
+  DOI_TABLE      required
+  AWS_REGION     default eu-central-1
+  PREFIX_LEN     default 3
+  CLEAR_TABLES   default "1" (clears both tables before writing; set "0" for prod)
+
+Usage:
+  python etl/build_two_tables_doi_records.py <csv_file>
+"""
+
+import os, sys, json, html, hashlib
+from collections import defaultdict
+
+import boto3
+import pandas as pd
+from ftfy import fix_text
+
+AWS_REGION   = os.getenv("AWS_REGION", "eu-central-1")
+PREFIX_TABLE = os.getenv("PREFIX_TABLE")
+DOI_TABLE    = os.getenv("DOI_TABLE")
+PREFIX_LEN   = int(os.getenv("PREFIX_LEN", "3"))
+CLEAR_TABLES = os.getenv("CLEAR_TABLES", "1").strip() not in ("0", "false", "False", "no", "NO")
+
+if not PREFIX_TABLE or not DOI_TABLE:
+  print("ERROR: set PREFIX_TABLE and DOI_TABLE env vars", file=sys.stderr)
+  sys.exit(1)
+
+
+# -----------------------------
+# Core helpers
+# -----------------------------
+
+def has_col(df_or_row, col: str) -> bool:
+  try:
+    return col in df_or_row.index
+  except Exception:
+    return False
+
+def normalize_doi(raw) -> str:
+  """Normalize DOI to canonical string for keys + dedupe."""
+  if raw is None or (isinstance(raw, float) and pd.isna(raw)):
+    return ""
+  s = str(raw).strip().lower()
+  for p in ("https://doi.org/","http://doi.org/","https://dx.doi.org/","http://dx.doi.org/","doi:"):
+    s = s.replace(p, "")
+  return s.strip()
+
+def to_jsonable(v):
+  """
+  Parse JSON-looking cells; decode HTML entities; fix mojibake.
+  If a string starts with '{' or '[' we try json.loads to preserve nested JSON.
+  """
+  if v is None:
+    return None
+  if isinstance(v, float) and pd.isna(v):
+    return None
+  if isinstance(v, str):
+    s = fix_text(html.unescape(v.strip()))
+    if not s:
+      return None
+    if s.startswith("{") or s.startswith("["):
+      try:
+        return json.loads(s)
+      except Exception:
+        return s
+    return s
+  return v
+
+def to_str_or_none(v):
+  """Force to string or None (used for volume/issue/pages which can be numeric)."""
+  if v is None or (isinstance(v, float) and pd.isna(v)):
+    return None
+  s = str(v).strip()
+  return s if s else None
+
+def norm_rep_type(v) -> str:
+  """Normalized rep_type string."""
+  if v is None or (isinstance(v, float) and pd.isna(v)):
+    return ""
+  return str(v).strip().lower()
+
+def is_reproduction_type(rep_type: str) -> bool:
+  """
+  More forgiving check than == "reproduction".
+  Accepts:
+    "reproduction", "computational reproduction", "Reproduction", etc.
+  """
+  rt = (rep_type or "").strip().lower()
+  return rt.startswith("reproduction")
+
+def stable_id_from_fields(*parts: str) -> str:
+  """
+  Short stable hash used ONLY for dedupe in-memory (NOT stored in output).
+  """
+  blob = "||".join([(p or "").strip().lower() for p in parts])
+  return hashlib.sha1(blob.encode("utf-8")).hexdigest()[:16]
+
+def set_if_missing(obj: dict, key: str, val):
+  """Only set if currently missing/empty."""
+  if val is None or val == "" or val == [] or val == {}:
+    return
+  cur = obj.get(key)
+  if cur is None or cur == "" or cur == [] or cur == {}:
+    obj[key] = val
+
+
+# -----------------------------
+# Record construction
+# -----------------------------
+
+def get_or_create(store: dict, doi: str):
+  """Create the top-level DOI metadata + record container."""
+  if doi not in store:
+    store[doi] = {
+      "doi": doi,
+
+      # DOI metadata (top-level)
+      "doi_hash": None,
+      "title": None,
+      "authors": None,
+      "journal": None,
+      "year": None,
+      "volume": None,
+      "issue": None,
+      "pages": None,
+      "apa_ref": None,
+      "bibtex_ref": None,
+      "url": None,
+
+      # Relationships + stats
+      "record": {
+        "stats": {
+          "n_replications": 0,
+          "n_unique_replication_dois": 0,
+          "n_originals": 0,
+          "n_unique_original_dois": 0,
+          "n_reproductions": 0,
+          "n_reproduction_only": 0,
+        },
+        "replications": [],
+        "originals": [],
+        "reproductions": [],
+      },
+    }
+  return store[doi]
+
+def build_original_entry(row: pd.Series) -> dict:
+  """Original citation object stored inside record.originals[]."""
+  out = {}
+  mapping = {
+    "doi": "doi_o",
+    "doi_hash": "doi_o_hash",
+    "title": "title_o",
+    "authors": "author_o",
+    "journal": "journal_o",
+    "year": "year_o",
+    "volume": "volume_o",
+    "issue": "issue_o",
+    "pages": "pages_o",
+    "apa_ref": "apa_ref_o",
+    "bibtex_ref": "bibtex_ref_o",
+  }
+  for k, col in mapping.items():
+    if has_col(row, col):
+      out[k] = to_jsonable(row.get(col))
+
+  if out.get("doi"):
+    out["doi"] = normalize_doi(out["doi"])
+  if out.get("doi_hash") is not None:
+    out["doi_hash"] = str(out["doi_hash"]).strip().lower()
+
+  for k in ("volume", "issue", "pages"):
+    if k in out:
+      out[k] = to_str_or_none(out[k])
+
+  return out
+
+def build_replication_entry(row: pd.Series) -> dict:
+  """Replication citation object stored inside record.replications[]."""
+  out = {}
+  mapping = {
+    "doi": "doi_r",
+    "doi_hash": "doi_r_hash",
+    "rep_type": "rep_type",
+    "title": "title_r",
+    "authors": "author_r",
+    "journal": "journal_r",
+    "year": "year_r",
+    "volume": "volume_r",
+    "issue": "issue_r",
+    "pages": "pages_r",
+    "apa_ref": "apa_ref_r",
+    "bibtex_ref": "bibtex_ref_r",
+    "url": "url_r",
+    "outcome": "outcome",
+    "abstract": "abstract_r",
+    "outcome_quote": "outcome_quote",
+  }
+
+  for k, col in mapping.items():
+    if has_col(row, col):
+      out[k] = to_jsonable(row.get(col))
+
+  if out.get("doi"):
+    out["doi"] = normalize_doi(out["doi"])
+  if out.get("doi_hash") is not None:
+    out["doi_hash"] = str(out["doi_hash"]).strip().lower()
+
+  for k in ("volume", "issue", "pages"):
+    if k in out:
+      out[k] = to_str_or_none(out[k])
+
+  if out.get("rep_type") is not None:
+    out["rep_type"] = norm_rep_type(out["rep_type"])
+
+  return out
+
+def build_reproduction_only_entry(row: pd.Series) -> dict:
+  """
+  For reproduction rows where doi_r is missing:
+  store a compact reproduction object under doi_o.record.reproductions[].
+
+  NOTE: No "_id" is stored. Dedupe happens in-memory using a fingerprint.
+  """
+  out = {}
+  mapping = {
+    "rep_type": "rep_type",
+    "title": "title_r",
+    "authors": "author_r",
+    "journal": "journal_r",
+    "year": "year_r",
+    "volume": "volume_r",
+    "issue": "issue_r",
+    "pages": "pages_r",
+    "apa_ref": "apa_ref_r",
+    "bibtex_ref": "bibtex_ref_r",
+    "url": "url_r",
+    "outcome": "outcome",
+    "abstract": "abstract_r",
+    "outcome_quote": "outcome_quote",
+  }
+
+  for k, col in mapping.items():
+    if has_col(row, col):
+      out[k] = to_jsonable(row.get(col))
+
+  for k in ("volume", "issue", "pages"):
+    if k in out:
+      out[k] = to_str_or_none(out[k])
+
+  out["rep_type"] = norm_rep_type(out.get("rep_type"))
+  return out
+
+def merge_doi_meta_from_entry(doi_obj: dict, entry: dict):
+  """Merge DOI-level metadata from an entry WITHOUT overwriting existing."""
+  set_if_missing(doi_obj, "doi_hash", entry.get("doi_hash"))
+  set_if_missing(doi_obj, "title", entry.get("title"))
+  set_if_missing(doi_obj, "authors", entry.get("authors"))
+  set_if_missing(doi_obj, "journal", entry.get("journal"))
+  set_if_missing(doi_obj, "year", entry.get("year"))
+
+  set_if_missing(doi_obj, "volume", to_str_or_none(entry.get("volume")))
+  set_if_missing(doi_obj, "issue",  to_str_or_none(entry.get("issue")))
+  set_if_missing(doi_obj, "pages",  to_str_or_none(entry.get("pages")))
+
+  set_if_missing(doi_obj, "apa_ref", entry.get("apa_ref"))
+  set_if_missing(doi_obj, "bibtex_ref", entry.get("bibtex_ref"))
+  set_if_missing(doi_obj, "url", entry.get("url"))
+
+def dedupe_append_by_doi(arr: list, item: dict):
+  """Append if no existing item has same doi."""
+  doi = item.get("doi")
+  if not doi:
+    return
+  if not any(x.get("doi") == doi for x in arr):
+    arr.append(item)
+
+
+# -----------------------------
+# DynamoDB utilities
+# -----------------------------
+
+def clear_table(table_name: str):
+  """Clears a DynamoDB table by scanning and deleting keys (dev only)."""
+  ddb = boto3.resource("dynamodb", region_name=AWS_REGION)
+  tbl = ddb.Table(table_name)
+  keys = [k["AttributeName"] for k in tbl.key_schema]
+  start_key = None
+  deleted = 0
+  while True:
+    kwargs = {}
+    if start_key:
+      kwargs["ExclusiveStartKey"] = start_key
+    resp = tbl.scan(**kwargs)
+    items = resp.get("Items", [])
+    if not items:
+      break
+    with tbl.batch_writer() as batch:
+      for it in items:
+        batch.delete_item(Key={k: it[k] for k in keys})
+        deleted += 1
+    start_key = resp.get("LastEvaluatedKey")
+    if not start_key:
+      break
+  print(f"Cleared {deleted} items from {table_name}")
+
+
+# -----------------------------
+# Main
+# -----------------------------
+
+def main():
+  if len(sys.argv) < 2:
+    print("Usage: python etl/build_two_tables_doi_records.py <csv_file>", file=sys.stderr)
+    sys.exit(2)
+
+  csv_path = sys.argv[1]
+  df = pd.read_csv(csv_path, encoding="utf-8", engine="python", on_bad_lines="warn")
+
+  # minimum required: doi_o + doi_o_hash + rep_type
+  # doi_r can be missing for reproduction-only rows
+  required = {"doi_o", "doi_o_hash", "rep_type"}
+  missing = [c for c in required if c not in set(map(str, df.columns))]
+  if missing:
+    print("ERROR missing required columns:", missing, file=sys.stderr)
+    print("Found:", list(df.columns), file=sys.stderr)
+    sys.exit(3)
+
+  prefix_index: dict[str, set[str]] = defaultdict(set)
+  doi_records: dict[str, dict] = {}
+
+  # in-memory dedupe set for reproduction-only rows (per doi_o)
+  reproduction_seen: dict[str, set[str]] = defaultdict(set)
+
+  for _, row in df.iterrows():
+    doi_o = normalize_doi(row.get("doi_o"))
+    doi_r = normalize_doi(row.get("doi_r")) if has_col(row, "doi_r") else ""
+    rep_type = norm_rep_type(row.get("rep_type"))
+
+    # --------------------------
+    # Prefix indexing (both sides)
+    # --------------------------
+
+    raw_o_hash = row.get("doi_o_hash")
+    if pd.notna(raw_o_hash) and doi_o:
+      pfx_o = str(raw_o_hash).strip().lower()[:PREFIX_LEN]
+      if pfx_o:
+        prefix_index[pfx_o].add(doi_o)
+
+    if has_col(row, "doi_r_hash"):
+      raw_r_hash = row.get("doi_r_hash")
+      if pd.notna(raw_r_hash) and doi_r:
+        pfx_r = str(raw_r_hash).strip().lower()[:PREFIX_LEN]
+        if pfx_r:
+          prefix_index[pfx_r].add(doi_r)
+
+    # If we don't even have doi_o, nothing useful to store
+    if not doi_o:
+      continue
+
+    # Always build/merge original metadata onto doi_o record
+    orig_entry = build_original_entry(row)
+
+    # Case 1: two-way link exists (doi_o + doi_r)
+    if doi_r:
+      rep_entry = build_replication_entry(row)
+
+      # A) doi_o: add replication entry
+      rec_o = get_or_create(doi_records, doi_o)
+      merge_doi_meta_from_entry(rec_o, orig_entry)
+      dedupe_append_by_doi(rec_o["record"]["replications"], rep_entry)
+
+      # B) doi_r: add original entry
+      rec_r = get_or_create(doi_records, doi_r)
+      merge_doi_meta_from_entry(rec_r, rep_entry)
+      dedupe_append_by_doi(rec_r["record"]["originals"], orig_entry)
+
+    # Case 2: reproduction-only row (doi_r missing)
+    else:
+      # Only store these if the row is a reproduction
+      if is_reproduction_type(rep_type):
+        rec_o = get_or_create(doi_records, doi_o)
+        merge_doi_meta_from_entry(rec_o, orig_entry)
+
+        repro_entry = build_reproduction_only_entry(row)
+
+        # fingerprint ONLY for dedupe (NOT stored)
+        fp = stable_id_from_fields(
+          str(repro_entry.get("title") or ""),
+          str(repro_entry.get("year") or ""),
+          str(repro_entry.get("journal") or ""),
+          str(repro_entry.get("apa_ref") or ""),
+          str(repro_entry.get("url") or ""),
+          str(repro_entry.get("bibtex_ref") or ""),
+          str(repro_entry.get("outcome") or ""),
+        )
+
+        if fp not in reproduction_seen[doi_o]:
+          rec_o["record"]["reproductions"].append(repro_entry)
+          reproduction_seen[doi_o].add(fp)
+
+      # else: some other row type missing doi_r — ignore to avoid junk
+
+  # --------------------------
+  # Compute stats (including reproductions)
+  # --------------------------
+  for _, record in doi_records.items():
+    reps = record["record"]["replications"]
+    origs = record["record"]["originals"]
+    repro_only = record["record"]["reproductions"]
+
+    uniq_rep = {x.get("doi") for x in reps if x.get("doi")}
+    uniq_ori = {x.get("doi") for x in origs if x.get("doi")}
+
+    # reproductions with doi_r are stored inside replications[] where rep_type is reproduction*
+    repro_with_doi = sum(1 for x in reps if is_reproduction_type(norm_rep_type(x.get("rep_type"))))
+
+    record["record"]["stats"] = {
+      "n_replications": len(reps),
+      "n_unique_replication_dois": len(uniq_rep),
+      "n_originals": len(origs),
+      "n_unique_original_dois": len(uniq_ori),
+      "n_reproductions": repro_with_doi + len(repro_only),
+      "n_reproduction_only": len(repro_only),
+    }
+
+  print(f"Prepared {len(prefix_index)} prefixes and {len(doi_records)} doi records")
+
+  ddb = boto3.resource("dynamodb", region_name=AWS_REGION)
+  prefix_tbl = ddb.Table(PREFIX_TABLE)
+  doi_tbl = ddb.Table(DOI_TABLE)
+
+  if CLEAR_TABLES:
+    clear_table(PREFIX_TABLE)
+    clear_table(DOI_TABLE)
+  else:
+    print("CLEAR_TABLES=0 → not clearing tables")
+
+  # Write PREFIX table: prefix -> List[str] dois
+  with prefix_tbl.batch_writer(overwrite_by_pkeys=["prefix"]) as batch:
+    for prefix, dois in prefix_index.items():
+      batch.put_item(Item={
+        "prefix": prefix,
+        "dois": sorted(list(dois)),
+      })
+
+  # Write DOI table: doi -> record JSON (stored in attribute "record")
+  with doi_tbl.batch_writer(overwrite_by_pkeys=["doi"]) as batch:
+    for doi, record in doi_records.items():
+      batch.put_item(Item={
+        "doi": doi,
+        "record": json.dumps(record, ensure_ascii=False),
+      })
+
+  print("Done.")
+
+if __name__ == "__main__":
+  main()
