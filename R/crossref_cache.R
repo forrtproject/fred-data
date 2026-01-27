@@ -62,6 +62,22 @@ load_manual_references <- function(manual_ref_file = MANUAL_REFERENCES) {
         df[[col]] <- if (col == "year") NA_integer_ else NA_character_
       }
     }
+    if (exists("URLR_DOIR_MAP_CACHE") && file.exists(URLR_DOIR_MAP_CACHE)) {
+      map_df <- tryCatch(readRDS(URLR_DOIR_MAP_CACHE), error = function(e) NULL)
+      if (!is.null(map_df) && all(c("url_r", "doi_r") %in% names(map_df))) {
+        map_df <- map_df %>%
+          dplyr::transmute(
+            url_r = tolower(trimws(url_r)),
+            doi_r = tolower(trimws(doi_r))
+          ) %>%
+          dplyr::filter(!is.na(url_r), !is.na(doi_r)) %>%
+          dplyr::distinct(url_r, .keep_all = TRUE)
+
+        key_norm <- tolower(trimws(df$key))
+        hit <- match(key_norm, map_df$url_r)
+        df$key <- ifelse(!is.na(hit), map_df$doi_r[hit], df$key)
+      }
+    }
     df
   }, error = function(e) {
     warning(sprintf("Could not read manual references file %s", manual_ref_file))
@@ -126,15 +142,131 @@ parse_bibtex_fields <- function(bibtex) {
 
   if (is.na(bibtex) || !nzchar(bibtex)) return(result)
 
-  # Helper to extract field value
-  extract_field <- function(bib, field) {
-    # Match field = {value} or field = "value" or field = value
-    pattern <- paste0("(?i)", field, "\\s*=\\s*[{\"']?([^}\"']+)[}\"']?")
-    m <- regmatches(bib, regexpr(pattern, bib, perl = TRUE))
-    if (length(m) == 0 || m == "") return(NA_character_)
-    # Extract the captured group
-    sub(paste0("(?i)", field, "\\s*=\\s*[{\"']?([^}\"']+)[}\"']?"), "\\1", m, perl = TRUE)
+  # Robust BibTeX field extractor
+  # Supports:
+  #   field = { ... }   (handles nested braces)
+  #   field = " ... "   (handles escaped quotes)
+  #   field = ' ... '   (handles escaped quotes)
+  #   field = bareValue (until comma or newline)
+ extract_field <- function(bib, field) {
+  if (is.na(bib) || !nzchar(bib)) return(NA_character_)
+
+  bib <- as.character(bib)
+
+  # Find "field =" (case-insensitive)
+  m <- regexpr(paste0("(?i)\\b", field, "\\b\\s*=\\s*"), bib, perl = TRUE)
+  if (m[1] == -1) return(NA_character_)
+
+  i <- m[1] + attr(m, "match.length") # index right after "field = "
+  n <- nchar(bib)
+
+  # Skip whitespace
+  while (i <= n && grepl("\\s", substr(bib, i, i))) i <- i + 1
+  if (i > n) return(NA_character_)
+
+  start_char <- substr(bib, i, i)
+
+  # -------- braced value { ... } with nested brace support --------
+  if (start_char == "{") {
+    depth <- 1
+    j <- i + 1
+    while (j <= n && depth > 0) {
+      ch <- substr(bib, j, j)
+      if (ch == "{") depth <- depth + 1
+      if (ch == "}") depth <- depth - 1
+      j <- j + 1
+    }
+    if (depth != 0) return(NA_character_)
+
+    val <- substr(bib, i + 1, j - 2) # inside outer braces
+    return(stringr::str_squish(val))
   }
+
+  # -------- double-quoted value " ... " (supports escaped quotes) --------
+  if (start_char == "\"") {
+    j <- i + 1
+    escaped <- FALSE
+    while (j <= n) {
+      ch <- substr(bib, j, j)
+      if (!escaped && ch == "\"") break
+      if (!escaped && ch == "\\") escaped <- TRUE else escaped <- FALSE
+      j <- j + 1
+    }
+    if (j > n) return(NA_character_)
+
+    val <- substr(bib, i + 1, j - 1)
+    return(stringr::str_squish(val))
+  }
+
+  # -------- single-quoted value ' ... ' (supports escaped quotes) --------
+  if (start_char == "'") {
+    j <- i + 1
+    escaped <- FALSE
+    while (j <= n) {
+      ch <- substr(bib, j, j)
+      if (!escaped && ch == "'") break
+      if (!escaped && ch == "\\") escaped <- TRUE else escaped <- FALSE
+      j <- j + 1
+    }
+    if (j > n) return(NA_character_)
+
+    val <- substr(bib, i + 1, j - 1)
+    return(stringr::str_squish(val))
+  }
+
+  # -------- bare value (until comma or newline) --------
+  j <- i
+  while (j <= n) {
+    ch <- substr(bib, j, j)
+    if (ch == "," || ch == "\n" || ch == "\r") break
+    j <- j + 1
+  }
+  val <- substr(bib, i, j - 1)
+  val <- gsub("\\s+$", "", val)
+  val <- gsub("^\\s+", "", val)
+  val <- gsub("[{}\"]", "", val) # light cleanup for bare tokens
+  val <- stringr::str_squish(val)
+
+  if (!nzchar(val)) NA_character_ else val
+}
+
+
+# Drop-in replacement for parse_bibtex_fields() using the robust extractor
+parse_bibtex_fields <- function(bibtex) {
+  result <- list(
+    title = NA_character_,
+    author = NA_character_,
+    journal = NA_character_,
+    year = NA_integer_,
+    volume = NA_character_,
+    issue = NA_character_,
+    pages = NA_character_
+  )
+
+  if (is.na(bibtex) || !nzchar(bibtex)) return(result)
+
+  result$title <- extract_bibtex_field(bibtex, "title")
+
+  # author -> JSON via your existing helper
+  author_str <- extract_bibtex_field(bibtex, "author")
+  result$author <- parse_bibtex_authors_to_json(author_str)
+
+  result$journal <- extract_bibtex_field(bibtex, "journal") %||%
+    extract_bibtex_field(bibtex, "booktitle") %||%
+    extract_bibtex_field(bibtex, "school") %||%
+    extract_bibtex_field(bibtex, "institution") %||%
+    extract_bibtex_field(bibtex, "publisher")
+
+  year_str <- extract_bibtex_field(bibtex, "year")
+  result$year <- if (!is.na(year_str)) suppressWarnings(as.integer(year_str)) else NA_integer_
+
+  result$volume <- extract_bibtex_field(bibtex, "volume")
+  result$issue  <- extract_bibtex_field(bibtex, "number")
+  result$pages  <- extract_bibtex_field(bibtex, "pages")
+
+  result
+}
+
 
   result$title <- extract_field(bibtex, "title")
 
@@ -184,6 +316,137 @@ get_crossref_citation <- function(doi, type = c("bibtex", "apa")) {
   }, error = function(e) {
     NA_character_
   })
+}
+# ------------------------------------------------------------------------------
+# URL-only manual overrides for the replication/reproduction side (R)
+# Works on Step-7 column names: ref_r_clean, bibtex_r, title_r, ...
+# Does NOT create apa_ref_r / bibtex_ref_r (so later rename() won't break).
+# ------------------------------------------------------------------------------
+
+augment_with_manual_url_refs_r <- function(data,
+                                          manual_ref_file = MANUAL_REFERENCES,
+                                          url_col = "url_r",
+                                          recover_title_from_bibtex = TRUE,
+                                          verbose = TRUE) {
+  stopifnot(is.data.frame(data))
+
+  if (!file.exists(manual_ref_file)) {
+    if (verbose) message("Manual refs file not found: ", manual_ref_file, " (skipping)")
+    return(data)
+  }
+  if (!url_col %in% names(data)) {
+    if (verbose) message("Column ", url_col, " not found (skipping manual URL merge)")
+    return(data)
+  }
+
+  # Normalize URLs so https://osf.io/abcd/ matches osf.io/abcd
+  norm_url <- function(x) {
+    x <- tolower(trimws(as.character(x)))
+    x <- gsub("^https?://", "", x)
+    x <- gsub("^www\\.", "", x)
+    x <- gsub("/+$", "", x)
+    dplyr::na_if(x, "")
+  }
+
+  has_text_vec <- function(x) {
+    x <- trimws(as.character(x))
+    !is.na(x) & nzchar(x)
+  }
+
+  # Ensure Step-7 columns exist (safe)
+  for (nm in c("ref_r_clean","bibtex_r","title_r","author_r","journal_r","volume_r","issue_r","pages_r")) {
+    if (!nm %in% names(data)) data[[nm]] <- NA_character_
+  }
+  if (!"year_r" %in% names(data)) data$year_r <- NA_integer_
+
+  manual_df <- readxl::read_excel(manual_ref_file)
+
+  # Ensure expected manual columns exist
+  expected <- c("key","reference_apa","reference_bibtex","title","author","journal","year","volume","issue","pages")
+  for (col in expected) if (!col %in% names(manual_df)) manual_df[[col]] <- NA
+
+  manual_url <- manual_df %>%
+    dplyr::mutate(
+      url_key = norm_url(key),
+      reference_apa    = dplyr::na_if(trimws(as.character(reference_apa)), ""),
+      reference_bibtex = dplyr::na_if(trimws(as.character(reference_bibtex)), ""),
+      title   = dplyr::na_if(trimws(as.character(title)), ""),
+      author  = dplyr::na_if(trimws(as.character(author)), ""),
+      journal = dplyr::na_if(trimws(as.character(journal)), ""),
+      volume  = dplyr::na_if(trimws(as.character(volume)), ""),
+      issue   = dplyr::na_if(trimws(as.character(issue)), ""),
+      pages   = dplyr::na_if(trimws(as.character(pages)), "")
+    ) %>%
+    dplyr::filter(!is.na(url_key)) %>%
+    dplyr::distinct(url_key, .keep_all = TRUE) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+      .parsed = list(if (has_text_vec(reference_bibtex)) parse_bibtex_fields(reference_bibtex) else
+        list(title=NA_character_, author=NA_character_, journal=NA_character_,
+             year=NA_integer_, volume=NA_character_, issue=NA_character_, pages=NA_character_)),
+      # Fill missing manual columns from parsed BibTeX
+      title  = if (has_text_vec(title)) title else .parsed$title,
+      author = if (has_text_vec(author)) author else .parsed$author,   # JSON
+      journal= if (has_text_vec(journal)) journal else .parsed$journal,
+      year   = if (!is.na(year)) as.integer(year) else .parsed$year,
+      volume = if (has_text_vec(volume)) volume else .parsed$volume,
+      issue  = if (has_text_vec(issue)) issue else .parsed$issue,
+      pages  = if (has_text_vec(pages)) pages else .parsed$pages
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::transmute(
+      url_key,
+      ref_r_clean_manual = reference_apa,
+      bibtex_r_manual    = reference_bibtex,
+      title_r_manual     = title,
+      author_r_manual    = author,
+      journal_r_manual   = journal,
+      year_r_manual      = year,
+      volume_r_manual    = volume,
+      issue_r_manual     = issue,
+      pages_r_manual     = pages
+    )
+
+  before_missing_title <- sum(!has_text_vec(data$title_r))
+
+  out <- data %>%
+    dplyr::mutate(.url_key_tmp = norm_url(.data[[url_col]])) %>%
+    dplyr::left_join(manual_url, by = c(".url_key_tmp" = "url_key")) %>%
+    dplyr::mutate(
+      # Fill only when missing
+      ref_r_clean = dplyr::coalesce(ref_r_clean, ref_r_clean_manual),
+      bibtex_r    = dplyr::coalesce(bibtex_r, bibtex_r_manual),
+      title_r     = dplyr::coalesce(title_r, title_r_manual),
+      author_r    = dplyr::coalesce(author_r, author_r_manual),
+      journal_r   = dplyr::coalesce(journal_r, journal_r_manual),
+      year_r      = dplyr::coalesce(year_r, year_r_manual),
+      volume_r    = dplyr::coalesce(volume_r, volume_r_manual),
+      issue_r     = dplyr::coalesce(issue_r, issue_r_manual),
+      pages_r     = dplyr::coalesce(pages_r, pages_r_manual)
+    ) %>%
+    dplyr::select(-.url_key_tmp, -dplyr::ends_with("_manual"))
+
+  # Optional: recover missing title_r from bibtex_r
+  if (recover_title_from_bibtex) {
+    need_idx <- which(!has_text_vec(out$title_r) & has_text_vec(out$bibtex_r))
+    if (length(need_idx) > 0) {
+      recovered <- vapply(out$bibtex_r[need_idx], function(b) parse_bibtex_fields(b)$title, character(1))
+      out$title_r[need_idx] <- dplyr::coalesce(out$title_r[need_idx], recovered)
+    }
+  }
+
+  after_missing_title <- sum(!has_text_vec(out$title_r))
+
+  if (verbose) {
+    n_matches <- sum(norm_url(out[[url_col]]) %in% manual_url$url_key, na.rm = TRUE)
+    message("=== Manual URL overrides (R side) ===")
+    message("URL matches found: ", n_matches)
+    message("Missing title_r before: ", before_missing_title)
+    message("Missing title_r after : ", after_missing_title)
+    message("Titles recovered     : ", before_missing_title - after_missing_title)
+  }
+
+  out
 }
 
 #' Fetch APA citation from DataCite (fallback for CrossRef)
@@ -392,8 +655,10 @@ get_crossref_reference_fields <- function(dois,
   # Load manual references (highest priority)
   manual_refs_df <- load_manual_references(manual_refs)
 
+
   # Process manual overrides - extract fields from BibTeX if not provided
   manual_fields <- NULL
+
   if (nrow(manual_refs_df) > 0) {
     # Filter to only keys that are in the requested DOIs
     manual_subset <- manual_refs_df %>%
@@ -500,6 +765,21 @@ get_crossref_reference_fields <- function(dois,
 
   # Override with manual fields where available
  if (!is.null(manual_fields) && nrow(manual_fields) > 0) {
+  # rows_update() requires unique keys in y (manual_fields$doi)
+  manual_fields <- manual_fields %>%
+    dplyr::mutate(doi = tolower(trimws(doi))) %>%
+    dplyr::group_by(doi) %>%
+    dplyr::summarise(
+      title = dplyr::first(na.omit(title)),
+      authors_json = dplyr::first(na.omit(authors_json)),
+      journal = dplyr::first(na.omit(journal)),
+      year = dplyr::first(na.omit(year)),
+      volume = dplyr::first(na.omit(volume)),
+      issue = dplyr::first(na.omit(issue)),
+      pages = dplyr::first(na.omit(pages)),
+      source = "manual",
+      .groups = "drop"
+    )
     result <- result %>%
       dplyr::rows_update(manual_fields, by = "doi", unmatched = "ignore")
   }

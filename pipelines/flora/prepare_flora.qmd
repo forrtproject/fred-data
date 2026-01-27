@@ -245,17 +245,78 @@ flora_augmented <- flora_data %>%
     ref_r = coalesce(ref_r_clean, ref_r)
   )
 
+# ---- Step 7 stats helpers ----
+has_text <- function(x) !is.na(x) & nzchar(trimws(as.character(x)))
+
+count_missing <- function(x) sum(!has_text(x))
+count_present <- function(x) sum(has_text(x))
+
 cat(sprintf("✓ Added clean references (APA + BibTeX) and individual fields\n"))
-cat(sprintf("  Missing APA references: %d original, %d replication\n",
-            sum(is.na(flora_augmented$ref_o_clean)),
-            sum(is.na(flora_augmented$ref_r_clean))))
-cat(sprintf("  Missing BibTeX references: %d original, %d replication\n",
-            sum(is.na(flora_augmented$bibtex_o)),
-            sum(is.na(flora_augmented$bibtex_r))))
-cat(sprintf("  Missing titles: %d original, %d replication\n",
-            sum(is.na(flora_augmented$title_o)),
-            sum(is.na(flora_augmented$title_r))))
+
+# ---- BEFORE patch stats ----
+cat("\n--- Step 7 stats (BEFORE manual/BibTeX recovery) ---\n")
+cat(sprintf("Rows: %d\n", nrow(flora_augmented)))
+
+cat(sprintf("APA present:    %d original, %d replication\n",
+            count_present(flora_augmented$ref_o_clean),
+            count_present(flora_augmented$ref_r_clean)))
+cat(sprintf("APA missing:    %d original, %d replication\n",
+            count_missing(flora_augmented$ref_o_clean),
+            count_missing(flora_augmented$ref_r_clean)))
+
+cat(sprintf("BibTeX present: %d original, %d replication\n",
+            count_present(flora_augmented$bibtex_o),
+            count_present(flora_augmented$bibtex_r)))
+cat(sprintf("BibTeX missing: %d original, %d replication\n",
+            count_missing(flora_augmented$bibtex_o),
+            count_missing(flora_augmented$bibtex_r)))
+
+cat(sprintf("Title present:  %d original, %d replication\n",
+            count_present(flora_augmented$title_o),
+            count_present(flora_augmented$title_r)))
+cat(sprintf("Title missing:  %d original, %d replication\n",
+            count_missing(flora_augmented$title_o),
+            count_missing(flora_augmented$title_r)))
+
 cat("  Consider adding missing refs to manual_references.xlsx\n")
+
+# ---- Run patch ----
+cat("\n### Step 7b: Manual URL overrides + BibTeX title recovery (R)\n")
+before_title_r_missing <- count_missing(flora_augmented$title_r)
+before_ref_r_missing   <- count_missing(flora_augmented$ref_r_clean)
+before_bib_r_missing   <- count_missing(flora_augmented$bibtex_r)
+
+flora_augmented <- augment_with_manual_url_refs_r(flora_augmented, verbose = TRUE)
+
+# ---- AFTER patch stats ----
+cat("\n--- Step 7 stats (AFTER manual/BibTeX recovery) ---\n")
+cat(sprintf("Rows: %d\n", nrow(flora_augmented)))
+
+cat(sprintf("APA present:    %d original, %d replication\n",
+            count_present(flora_augmented$ref_o_clean),
+            count_present(flora_augmented$ref_r_clean)))
+cat(sprintf("APA missing:    %d original, %d replication\n",
+            count_missing(flora_augmented$ref_o_clean),
+            count_missing(flora_augmented$ref_r_clean)))
+
+cat(sprintf("BibTeX present: %d original, %d replication\n",
+            count_present(flora_augmented$bibtex_o),
+            count_present(flora_augmented$bibtex_r)))
+cat(sprintf("BibTeX missing: %d original, %d replication\n",
+            count_missing(flora_augmented$bibtex_o),
+            count_missing(flora_augmented$bibtex_r)))
+
+cat(sprintf("Title present:  %d original, %d replication\n",
+            count_present(flora_augmented$title_o),
+            count_present(flora_augmented$title_r)))
+cat(sprintf("Title missing:  %d original, %d replication\n",
+            count_missing(flora_augmented$title_o),
+            count_missing(flora_augmented$title_r)))
+
+cat("\nRecovered on R side (replication/reproduction):\n")
+cat(sprintf("  title_r recovered:  %d\n", before_title_r_missing - count_missing(flora_augmented$title_r)))
+cat(sprintf("  apa ref recovered:  %d\n", before_ref_r_missing   - count_missing(flora_augmented$ref_r_clean)))
+cat(sprintf("  bibtex recovered:   %d\n", before_bib_r_missing   - count_missing(flora_augmented$bibtex_r)))
 
 ```
 
@@ -382,7 +443,6 @@ flora_renames <- c(
 flora_augmented <- flora_augmented %>%
   rename(!!!flora_renames)
 
-
 available_output <- intersect(output_cols, names(flora_augmented))
 setdiff(available_output, output_cols)
 
@@ -412,56 +472,63 @@ cat(sprintf("  Format: CSV (UTF-8)\n"))
 cat(sprintf("  Rows: %d (Replications + Reproductions)\n", nrow(flora_final)))
 cat(sprintf("  Columns: %d\n", ncol(flora_final)))
 
-# Summary statistics
+# Summary statistics (flora_final has renamed columns!)
+has_text <- function(x) !is.na(x) & nzchar(trimws(as.character(x)))
+
 cat("\n### Summary Statistics\n")
 cat(sprintf("Total paper pairs: %d\n", nrow(flora_final)))
-cat(sprintf("Papers with outcome codes: %d\n",
-            sum(!is.na(flora_final$outcome))))
 
-if ("ref_o_clean" %in% names(flora_final)) {
-  cat(sprintf("Original papers with clean references: %d\n",
-              sum(!is.na(flora_final$ref_o_clean))))
+# by type
+if ("type" %in% names(flora_final)) {
+  cat("\nRows by type:\n")
+  print(table(flora_final$type, useNA = "ifany"))
 }
 
-if ("ref_r_clean" %in% names(flora_final)) {
-  cat(sprintf("Replication papers with clean references: %d\n",
-              sum(!is.na(flora_final$ref_r_clean))))
+# outcomes
+if ("outcome" %in% names(flora_final)) {
+  cat(sprintf("Rows with outcome codes: %d\n",
+              sum(has_text(flora_final$outcome))))
 }
 
-if ("bibtex_o" %in% names(flora_final)) {
+# APA refs (final names)
+if ("apa_ref_o" %in% names(flora_final)) {
+  cat(sprintf("Original papers with APA reference: %d\n",
+              sum(has_text(flora_final$apa_ref_o))))
+}
+if ("apa_ref_r" %in% names(flora_final)) {
+  cat(sprintf("Replication/reproduction papers with APA reference: %d\n",
+              sum(has_text(flora_final$apa_ref_r))))
+}
+
+# BibTeX refs (final names)
+if ("bibtex_ref_o" %in% names(flora_final)) {
   cat(sprintf("Original papers with BibTeX: %d\n",
-              sum(!is.na(flora_final$bibtex_o))))
+              sum(has_text(flora_final$bibtex_ref_o))))
+}
+if ("bibtex_ref_r" %in% names(flora_final)) {
+  cat(sprintf("Replication/reproduction papers with BibTeX: %d\n",
+              sum(has_text(flora_final$bibtex_ref_r))))
 }
 
-if ("bibtex_r" %in% names(flora_final)) {
-  cat(sprintf("Replication papers with BibTeX: %d\n",
-              sum(!is.na(flora_final$bibtex_r))))
-}
-
-if ("keywords_o" %in% names(flora_final)) {
-  cat(sprintf("Original papers with keywords: %d\n",
-              sum(!is.na(flora_final$keywords_o))))
-}
-
-if ("keywords_r" %in% names(flora_final)) {
-  cat(sprintf("Replication/reproduction papers with keywords: %d\n",
-              sum(!is.na(flora_final$keywords_r))))
-}
-
+# Language
 if ("language_o" %in% names(flora_final)) {
   cat(sprintf("Original papers with language metadata: %d\n",
-              sum(!is.na(flora_final$language_o))))
+              sum(has_text(flora_final$language_o))))
 }
-
 if ("language_r" %in% names(flora_final)) {
   cat(sprintf("Replication/reproduction papers with language metadata: %d\n",
-              sum(!is.na(flora_final$language_r))))
+              sum(has_text(flora_final$language_r))))
 }
 
-cat(sprintf("Papers with original DOI: %d\n",
-            sum(!is.na(flora_final$doi_o))))
-cat(sprintf("Papers with replication/reproduction DOI: %d\n",
-            sum(!is.na(flora_final$doi_r))))
+# DOIs
+if ("doi_o" %in% names(flora_final)) {
+  cat(sprintf("Rows with original DOI: %d\n",
+              sum(has_text(flora_final$doi_o))))
+}
+if ("doi_r" %in% names(flora_final)) {
+  cat(sprintf("Rows with replication/reproduction DOI: %d\n",
+              sum(has_text(flora_final$doi_r))))
+}
 ```
 
 ## Pipeline Complete

@@ -21,6 +21,12 @@ AUTHOR_OVERLAP_CACHE <- file.path(CACHE_DIR, "author_overlap.xlsx")
 # Manual reference overrides (highest priority in 3-tier lookup)
 MANUAL_REFERENCES <- file.path(CACHE_DIR, "manual_references.xlsx")
 
+# Swapped manual references (keys normalized via URLR->DOIR map)
+MANUAL_REFERENCES_SWAPPED_CACHE <- file.path(CACHE_DIR, "manual_references_swapped.rds")
+
+# URL-R to DOI-R mapping cache (from FLoRA pipeline)
+URLR_DOIR_MAP_CACHE <- file.path(CACHE_DIR, "urlr_doir_map.rds")
+
 # OpenAlex keywords cache
 OPENALEX_CACHE <- file.path(CACHE_DIR, "openalex_keywords_language.csv")
 
