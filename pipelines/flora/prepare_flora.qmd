@@ -10,6 +10,8 @@ format:
     theme: cosmo
     code-fold: true
     code-summary: "Show code"
+params:
+  include_score: false
 ---
 
 ```{r setup, include=FALSE}
@@ -22,6 +24,7 @@ knitr::opts_chunk$set(
 )
 
 library(tidyverse)
+library(readxl)
 library(jsonlite)
 library(glue)
 library(httr)
@@ -45,7 +48,15 @@ source(here::here("R", "openalex_cache.R"))
 FReD_FOUNDATION_SUCCESS_CODING <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv"
 REPLICATION_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=863031634&single=true&output=csv"
 REPRODUCTION_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=984458430&single=true&output=csv"
+EXCLUSIONS_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=1098183075&single=true&output=csv"
 FLORA_OUTPUT <- here::here("output", "flora.csv")
+
+# SCORE Integration (optional)
+SCORE_INTEGRATION_ENABLED <- params$include_score
+SCORE_DATA_PATH <- here::here("cos_score_integration", "cos_test_set_phase1_prepared.xlsx")
+
+cat("\n=== FLoRA Preparation Pipeline ===\n")
+cat(sprintf("  SCORE Integration: %s\n", if (SCORE_INTEGRATION_ENABLED) "ENABLED" else "DISABLED"))
 ```
 
 ## Download FLoRA Data (Replications + Reproductions)
@@ -61,6 +72,11 @@ replications <- tryCatch({
 
 cat(sprintf("    ✓ Downloaded %d replication rows × %d columns\n", nrow(replications), ncol(replications)))
 
+# Filter for validated entries only
+replications <- replications %>%
+  filter(validation_status == "validated - chosen")
+cat(sprintf("    ✓ Filtered to %d validated replications\n", nrow(replications)))
+
 # Download reproductions
 reproductions <- tryCatch({
   read_csv(REPRODUCTION_GSHEET_URL, show_col_types = FALSE)
@@ -71,11 +87,23 @@ reproductions <- tryCatch({
 
 cat(sprintf("    ✓ Downloaded %d reproduction rows × %d columns\n", nrow(reproductions), ncol(reproductions)))
 
-# Combine both datasets 
-flora_raw <- bind_rows(
-  replications %>% mutate(type = "replication"),
-  reproductions %>% mutate(type = "reproduction")
-)
+# Filter for validated entries only
+reproductions <- reproductions %>%
+  filter(validation == "validated - chosen")
+cat(sprintf("    ✓ Filtered to %d validated reproductions\n", nrow(reproductions)))
+
+# Combine both datasets (handle case where one might be empty)
+# Add source variable to track data origin
+if (nrow(reproductions) == 0) {
+  flora_raw <- replications %>% mutate(type = "replication", source = "replications")
+} else if (nrow(replications) == 0) {
+  flora_raw <- reproductions %>% mutate(type = "reproduction", source = "reproductions")
+} else {
+  flora_raw <- bind_rows(
+    replications %>% mutate(type = "replication", source = "replications"),
+    reproductions %>% mutate(type = "reproduction", source = "reproductions")
+  )
+}
 ```
 
 ### Add COS source data
@@ -83,8 +111,15 @@ flora_raw <- bind_rows(
 ```{r}
 replications_cos <- read_csv(FReD_FOUNDATION_SUCCESS_CODING, show_col_types = FALSE, skip = 1)
 
+cat(sprintf("    ✓ Downloaded %d COS rows\n", nrow(replications_cos)))
+
+# Filter for validated entries only
 replications_cos <- replications_cos %>%
-  mutate(repl_id = coalesce(url_r, doi_r)) %>% 
+  filter(validation == "validated - chosen")
+cat(sprintf("    ✓ Filtered to %d validated COS entries\n", nrow(replications_cos)))
+
+replications_cos <- replications_cos %>%
+  mutate(repl_id = coalesce(url_r, doi_r)) %>%
   group_by(doi_o, repl_id) %>%
   summarise(
     ref_o = first(ref_o),
@@ -97,6 +132,7 @@ replications_cos <- replications_cos %>%
     outcome_quote = paste(unique(na.omit(outcome_quote)), collapse = " || "),
     outcome_quote_source = paste(unique(na.omit(out_quote_source)), collapse = " || "),
     type = "replication",
+    source = "COS",
     .groups = "drop"
   )
 
@@ -108,17 +144,92 @@ flora_raw <- bind_rows(
 )
 
 ```
+
+### Add SCORE data (Optional)
+
+```{r score-integration}
+cat("\n### SCORE Integration\n")
+
+if (SCORE_INTEGRATION_ENABLED) {
+  cat("Status: ENABLED\n")
+
+  if (file.exists(SCORE_DATA_PATH)) {
+    score_data <- readxl::read_excel(SCORE_DATA_PATH)
+    cat(sprintf("✓ Loaded SCORE data: %d rows\n", nrow(score_data)))
+
+    # Prepare SCORE data to match FLoRA format
+    # Select and rename columns to match flora_raw structure
+    score_prepared <- score_data %>%
+      mutate(
+        type = "replication",
+        source = "SCORE"
+      )
+
+    # Merge using common columns
+    common_cols <- intersect(names(flora_raw), names(score_prepared))
+    cat(sprintf("  Common columns: %d\n", length(common_cols)))
+
+    flora_raw <- bind_rows(
+      flora_raw,
+      score_prepared %>% select(all_of(common_cols))
+    )
+
+    cat(sprintf("✓ Merged with FLoRA data\n"))
+    cat(sprintf("  Total rows after SCORE merge: %d\n", nrow(flora_raw)))
+  } else {
+    warning(sprintf("SCORE Integration enabled but file not found: %s\n", SCORE_DATA_PATH))
+  }
+} else {
+  cat("Status: DISABLED (use params: include_score: true to enable)\n")
+}
+```
+
+### Apply Exclusions
+
+```{r exclusions}
+# Download exclusions list
+exclusions <- tryCatch({
+  read_csv(EXCLUSIONS_GSHEET_URL, show_col_types = FALSE)
+}, error = function(e) {
+  warning("Failed to download exclusions. Proceeding without exclusions.\n", e$message)
+  tibble(doi_r = character(), url_r = character(), reason = character())
+})
+
+cat(sprintf("    ✓ Downloaded %d exclusions\n", nrow(exclusions)))
+
+# Apply exclusions based on doi_r or url_r
+pre_exclusion <- nrow(flora_raw)
+
+flora_raw <- flora_raw %>%
+  filter(
+    !(doi_r %in% exclusions$doi_r[!is.na(exclusions$doi_r)]) &
+    !(url_r %in% exclusions$url_r[!is.na(exclusions$url_r)])
+  )
+
+post_exclusion <- nrow(flora_raw)
+cat(sprintf("    ✓ Excluded %d rows based on exclusion list\n", pre_exclusion - post_exclusion))
+```
+
 ## Data Preparation
 
 ```{r prepare}
 # Select relevant fields for FLoRA
-flora_cols <- c("doi_o", "ref_o", "study_o", "doi_r", "ref_r",  "url_r", 
-                "abstract_r", "outcome", "outcome_quote", "outcome_quote_source", "type")
+flora_cols <- c("doi_o", "ref_o", "study_o", "doi_r", "ref_r",  "url_r",
+                "abstract_r", "outcome", "outcome_quote", "outcome_quote_source", "type", "source")
 
 flora_data <- flora_raw %>%
-  select(all_of(flora_cols)) %>% 
-  #lowercase DOIs
-  mutate(doi_o = tolower(doi_o), doi_r = tolower(doi_r))
+  select(all_of(flora_cols)) %>%
+  # Normalize DOIs: lowercase and strip common prefixes
+
+  mutate(
+    doi_o = tolower(doi_o),
+    doi_r = tolower(doi_r),
+    # Strip "doi:" prefix and URL prefixes
+    doi_o = gsub("^(https?://)?(dx\\.)?doi\\.org/", "", doi_o),
+    doi_r = gsub("^(https?://)?(dx\\.)?doi\\.org/", "", doi_r),
+    doi_o = gsub("^doi:", "", doi_o),
+    doi_r = gsub("^doi:", "", doi_r)
+  )
 ```
 
 ## Deduplication
@@ -192,7 +303,7 @@ flora_data <- flora_data %>% select(-doi_o_valid, -doi_r_valid)
     
 ```
 
-## Step 6: Fetch References (APA + BibTeX)
+## Step 6a: Fetch DOI References (APA + BibTeX)
 
 ```{r fetch-references}
 # Get unique DOIs
@@ -202,6 +313,12 @@ unique_dois <- unique_dois[!is.na(unique_dois)]
 # Fetch both APA and BibTeX references with CrossRef + DataCite fallback
 refs <- get_references(unique_dois)
 ```
+
+<!-- Step 6b: Fetch url_r References - TODO: implement if needed
+```{r fetch-url-refs, eval=FALSE}
+# Placeholder for URL-keyed reference fetching
+```
+-->
 
 ## Step 7: Add clean References and Individual Fields
 
@@ -432,7 +549,7 @@ cat("\n### Step 11: Formatting for output\n")
 output_cols <- c(
 "doi_o", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "language_o", "study_o",
 "doi_r", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
-"outcome", "outcome_quote", "outcome_quote_source", "type"
+"outcome", "outcome_quote", "outcome_quote_source", "type", "source"
 )
 
 flora_renames <- c(
@@ -446,8 +563,32 @@ flora_augmented <- flora_augmented %>%
 available_output <- intersect(output_cols, names(flora_augmented))
 setdiff(available_output, output_cols)
 
-flora_final <- flora_augmented %>% select(all_of(available_output))  %>% 
-  filter(!is.na(title_o), !is.na(title_r))
+flora_all <- flora_augmented %>% select(all_of(available_output))
+
+# Log rows that will be excluded due to missing titles
+excluded_rows <- flora_all %>%
+  filter(is.na(title_o) | title_o == "" | is.na(title_r) | title_r == "") %>%
+  mutate(
+    reason = case_when(
+      (is.na(title_o) | title_o == "") & (is.na(title_r) | title_r == "") ~ "missing both title_o and title_r",
+      is.na(title_o) | title_o == "" ~ "missing title_o",
+      is.na(title_r) | title_r == "" ~ "missing title_r"
+    )
+  ) %>%
+  select(reason, source, doi_o, apa_ref_o, doi_r, url_r, apa_ref_r)
+
+if (nrow(excluded_rows) > 0) {
+  export_log_path <- here::here("output", "flora_export_log.csv")
+  write_excel_csv(excluded_rows, export_log_path)
+  cat(sprintf("⚠ %d rows excluded due to missing reference details\n", nrow(excluded_rows)))
+  cat(sprintf("  Export log saved to: %s\n", export_log_path))
+} else {
+  cat("✓ No rows excluded due to missing reference details\n")
+}
+
+# Apply title filter
+flora_final <- flora_all %>%
+  filter(!is.na(title_o), title_o != "", !is.na(title_r), title_r != "")
 
 cat(sprintf("✓ Formatted for output\n"))
 cat(sprintf("  Final columns: %d\n", ncol(flora_final)))
@@ -465,7 +606,7 @@ if (!dir.exists(here::here("output"))) {
 }
 
 # Save as CSV
-write_csv(flora_final, FLORA_OUTPUT)
+write_excel_csv(flora_final, FLORA_OUTPUT)
 
 cat(sprintf("✓ Saved to: %s\n", FLORA_OUTPUT))
 cat(sprintf("  Format: CSV (UTF-8)\n"))

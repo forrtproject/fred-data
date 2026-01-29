@@ -33,7 +33,7 @@ save_openalex_cache <- function(df, cache_file = OPENALEX_CACHE) {
   if (nrow(df) > 0) {
     df <- df[!duplicated(df$doi), , drop = FALSE]
   }
-  readr::write_csv(df, cache_file)
+  readr::write_excel_csv(df, cache_file)
 }
 
 # Internal single-DOI fetcher (returns list with doi, keywords, language)

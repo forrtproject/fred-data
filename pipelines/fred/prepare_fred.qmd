@@ -10,6 +10,8 @@ format:
     theme: cosmo
     code-fold: true
     code-summary: "Show code"
+params:
+  include_score: false
 ---
 
 ```{r setup, include=FALSE}
@@ -36,14 +38,14 @@ if (!file.exists(here::here("R", "cache_config.R"))) {
 ```{r config}
 # FReD-specific configuration (dataset-independent)
 FRED_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vR_62H8liC0P3-WQ1xx4UalDnvqzPfObWBFwQAgVH6JhF3dPBFXd7AgFK_OljxFWQkNtUYdnUbuFTpe/pub?output=csv"
-COS_INTEGRATION_ENABLED <- Sys.getenv("ENABLE_COS_MERGE", "FALSE") == "TRUE"
-COS_DATA_PATH <- here::here("cos_integration", "cos_test_set_phase1_prepared.xlsx")
+SCORE_INTEGRATION_ENABLED <- params$include_score
+SCORE_DATA_PATH <- here::here("cos_score_integration", "cos_test_set_phase1_prepared.xlsx")
 FRED_OUTPUT <- here::here("output", "FReD.xlsx")
 
 cat("\n=== FReD Preparation Pipeline ===\n")
 cat("Dataset-specific configuration:\n")
 cat(sprintf("  Google Sheets URL: %s\n", substr(FRED_GSHEET_URL, 1, 80)))
-cat(sprintf("  COS Integration: %s\n", if (COS_INTEGRATION_ENABLED) "ENABLED" else "DISABLED"))
+cat(sprintf("  SCORE Integration: %s\n", if (SCORE_INTEGRATION_ENABLED) "ENABLED" else "DISABLED"))
 cat(sprintf("  Output: %s\n", FRED_OUTPUT))
 ```
 
@@ -56,11 +58,13 @@ source(here::here("R", "cache_config.R"))
 source(here::here("R", "data_cleaning.R"))
 source(here::here("R", "crossref_cache.R"))
 source(here::here("R", "augmentation.R"))
+source(here::here("R", "openalex_cache.R"))
 
 cat("✓ Helper functions loaded\n")
 cat("  - Data cleaning\n")
 cat("  - CrossRef/DataCite caching\n")
 cat("  - Data augmentation\n")
+cat("  - OpenAlex metadata\n")
 ```
 
 ## Step 2: Download FReD Data
@@ -83,7 +87,7 @@ cat(sprintf("✓ Downloaded %d rows × %d columns\n", nrow(fred_raw), ncol(fred_
 # Filter for validated - chosen status
 if ("status" %in% names(fred_raw)) {
   fred_filtered <- fred_raw %>% filter(status == "validated - chosen")
-  cat(sprintf("✓ Filtered for 'validated - chosen' status: %d rows\n", nrow(fred_filtered))
+  cat(sprintf("✓ Filtered for 'validated - chosen' status: %d rows\n", nrow(fred_filtered)))
 } else {
   fred_filtered <- fred_raw
   warning("No 'status' column found, using all data")
@@ -92,38 +96,38 @@ if ("status" %in% names(fred_raw)) {
 # Remove exclusions
 if ("exclusion" %in% names(fred_filtered)) {
   fred_filtered <- fred_filtered %>% filter(is.na(exclusion))
-  cat(sprintf("✓ Removed excluded entries: %d rows remaining\n", nrow(fred_filtered))
+  cat(sprintf("✓ Removed excluded entries: %d rows remaining\n", nrow(fred_filtered)))
 }
 
 fred_raw <- fred_filtered
 ```
 
-## Step 3: COS Integration (Optional)
+## Step 3: SCORE Integration (Optional)
 
-```{r cos-integration}
-cat("\n### Step 3: COS Integration\n")
+```{r score-integration}
+cat("\n### Step 3: SCORE Integration\n")
 
-if (COS_INTEGRATION_ENABLED) {
+if (SCORE_INTEGRATION_ENABLED) {
   cat("Status: ENABLED\n")
 
-  if (file.exists(COS_DATA_PATH)) {
-    cos_data <- readxl::read_excel(COS_DATA_PATH)
-    cat(sprintf("✓ Loaded COS data: %d rows\n", nrow(cos_data))
+  if (file.exists(SCORE_DATA_PATH)) {
+    score_data <- readxl::read_excel(SCORE_DATA_PATH)
+    cat(sprintf("✓ Loaded SCORE data: %d rows\n", nrow(score_data)))
 
     # Ensure column compatibility
-    common_cols <- intersect(names(fred_raw), names(cos_data))
+    common_cols <- intersect(names(fred_raw), names(score_data))
     fred_raw <- bind_rows(
       fred_raw %>% select(all_of(common_cols)),
-      cos_data %>% select(all_of(common_cols))
+      score_data %>% select(all_of(common_cols))
     )
 
-    cat(sprintf("✓ Merged with FReD data\n")
-    cat(sprintf("  Total rows after COS merge: %d\n", nrow(fred_raw))
+    cat(sprintf("✓ Merged with FReD data\n"))
+    cat(sprintf("  Total rows after SCORE merge: %d\n", nrow(fred_raw)))
   } else {
-    warning(sprintf("COS Integration enabled but file not found: %s\n", COS_DATA_PATH))
+    warning(sprintf("SCORE Integration enabled but file not found: %s\n", SCORE_DATA_PATH))
   }
 } else {
-  cat("Status: DISABLED (set ENABLE_COS_MERGE=TRUE to enable)\n")
+  cat("Status: DISABLED (use params: include_score: true to enable)\n")
 }
 ```
 
@@ -139,7 +143,51 @@ cleaning_report <- cleaning_result$report
 # Display cleaning report
 cat(cleaning_report)
 cat("\n✓ Data cleaning complete\n")
-cat(sprintf("  Rows: %d\n", nrow(fred_cleaned))
+cat(sprintf("  Rows: %d\n", nrow(fred_cleaned)))
+```
+
+## Step 4b: DOI Validation
+
+```{r doi-validation}
+cat("\n### Step 4b: DOI Validation\n")
+
+# Check DOI format (should start with "10.")
+fred_cleaned <- fred_cleaned %>%
+  mutate(
+    doi_o_valid = is.na(doi_o) | str_starts(tolower(doi_o), "10."),
+    doi_r_valid = is.na(doi_r) | str_starts(tolower(doi_r), "10.")
+  )
+
+invalid_indices_o <- !fred_cleaned$doi_o_valid
+invalid_o <- sum(invalid_indices_o)
+
+if (invalid_o > 0) {
+  show_all <- invalid_o < 10
+  n_to_show <- if (show_all) invalid_o else 5
+  vals <- head(fred_cleaned$doi_o[invalid_indices_o], n_to_show)
+  label <- if (show_all) "Invalid doi_o values:" else "Example invalid doi_o values:"
+  cat(sprintf("⚠ Found %d invalid doi_o values\n", invalid_o),
+      paste(label, paste(vals, collapse = ", ")), "\n")
+}
+
+invalid_indices_r <- !fred_cleaned$doi_r_valid
+invalid_r <- sum(invalid_indices_r)
+
+if (invalid_r > 0) {
+  show_all <- invalid_r < 10
+  n_to_show <- if (show_all) invalid_r else 5
+  vals <- head(fred_cleaned$doi_r[invalid_indices_r], n_to_show)
+  label <- if (show_all) "Invalid doi_r values:" else "Example invalid doi_r values:"
+  cat(sprintf("⚠ Found %d invalid doi_r values\n", invalid_r),
+      paste(label, paste(vals, collapse = ", ")), "\n")
+}
+
+# Remove validation columns (keep data for now)
+fred_cleaned <- fred_cleaned %>% select(-doi_o_valid, -doi_r_valid)
+
+if (invalid_o == 0 && invalid_r == 0) {
+  cat("✓ All DOIs have valid format\n")
+}
 ```
 
 ## Step 5: Data Validation
@@ -172,9 +220,9 @@ fred_with_ids <- fred_cleaned %>%
   mutate(entry_id = first(row_number())) %>%
   ungroup()
 
-cat(sprintf("✓ Generated identifiers\n")
-cat(sprintf("  Unique fred_ids: %d\n", n_distinct(fred_with_ids$fred_id))
-cat(sprintf("  Unique entry_ids: %d\n", n_distinct(fred_with_ids$entry_id))
+cat(sprintf("✓ Generated identifiers\n"))
+cat(sprintf("  Unique fred_ids: %d\n", n_distinct(fred_with_ids$fred_id)))
+cat(sprintf("  Unique entry_ids: %d\n", n_distinct(fred_with_ids$entry_id)))
 ```
 
 ## Step 7: Data Augmentation
@@ -195,25 +243,47 @@ if ("doi_o" %in% names(fred_augmented) && "doi_r" %in% names(fred_augmented)) {
   })
 }
 
-# Clean references (APA + BibTeX) with CrossRef + DataCite fallback
+# Clean references (APA + BibTeX) and individual fields with CrossRef + DataCite fallback
 if (any(c("doi_o", "doi_r") %in% names(fred_augmented))) {
-  cat("\nAugmenting with clean references (APA + BibTeX)...\n")
+  cat("\nAugmenting with clean references (APA + BibTeX) and individual fields...\n")
   fred_augmented <- tryCatch({
     # Get unique DOIs
     unique_dois <- unique(c(fred_augmented$doi_o, fred_augmented$doi_r))
     unique_dois <- unique_dois[!is.na(unique_dois)]
 
-    # Fetch both APA and BibTeX references
+    # Fetch both APA and BibTeX references with individual fields (include_fields = TRUE by default)
     refs <- get_references(unique_dois)
 
-    # Join references to data
+    # Join references and individual fields to data
     fred_augmented %>%
       left_join(
-        refs %>% rename(doi_o = doi, ref_o_clean = reference_apa, bibtex_o = reference_bibtex),
+        refs %>% rename(
+          doi_o = doi,
+          ref_o_clean = reference_apa,
+          bibtex_o = reference_bibtex,
+          title_o = title,
+          author_o = author,
+          journal_o = journal,
+          year_o = year,
+          volume_o = volume,
+          issue_o = issue,
+          pages_o = pages
+        ),
         by = "doi_o"
       ) %>%
       left_join(
-        refs %>% rename(doi_r = doi, ref_r_clean = reference_apa, bibtex_r = reference_bibtex),
+        refs %>% rename(
+          doi_r = doi,
+          ref_r_clean = reference_apa,
+          bibtex_r = reference_bibtex,
+          title_r = title,
+          author_r = author,
+          journal_r = journal,
+          year_r = year,
+          volume_r = volume,
+          issue_r = issue,
+          pages_r = pages
+        ),
         by = "doi_r"
       )
   }, error = function(e) {
@@ -231,6 +301,70 @@ if ("doi_o" %in% names(fred_augmented)) {
     warning("Keyword augmentation failed: ", e$message)
     fred_augmented
   })
+}
+
+# Language metadata from OpenAlex
+if (any(c("doi_o", "doi_r") %in% names(fred_augmented))) {
+  cat("\nAugmenting with language metadata from OpenAlex...\n")
+
+  openalex_mailto <- Sys.getenv("OPENALEX_MAILTO", NA_character_)
+
+  # Initialize language columns if not present
+  if (!"language_o" %in% names(fred_augmented)) {
+    fred_augmented <- fred_augmented %>% mutate(language_o = NA_character_)
+  }
+  if (!"language_r" %in% names(fred_augmented)) {
+    fred_augmented <- fred_augmented %>% mutate(language_r = NA_character_)
+  }
+
+  # Fetch for DOIs where language is missing
+  dois_to_fetch_o <- fred_augmented %>%
+    filter(!is.na(doi_o), is.na(language_o)) %>%
+    pull(doi_o) %>% unique()
+
+  dois_to_fetch_r <- fred_augmented %>%
+    filter(!is.na(doi_r), is.na(language_r)) %>%
+    pull(doi_r) %>% unique()
+
+  cat(sprintf("  Fetching language for %d unique original DOIs and %d unique replication DOIs...\n",
+              length(dois_to_fetch_o), length(dois_to_fetch_r)))
+
+  # Fetch and join language for original DOIs
+  if (length(dois_to_fetch_o) > 0) {
+    fred_augmented <- tryCatch({
+      meta_o <- get_openalex_language(dois_to_fetch_o, mailto = openalex_mailto)
+      meta_o <- meta_o[!is.na(meta_o$doi), ]
+
+      fred_augmented %>%
+        left_join(meta_o %>% rename(doi_o = doi, language_o_new = language), by = "doi_o") %>%
+        mutate(language_o = coalesce(language_o, language_o_new)) %>%
+        select(-language_o_new)
+    }, error = function(e) {
+      warning("Original DOI language lookup failed: ", e$message)
+      fred_augmented
+    })
+  }
+
+  # Fetch and join language for replication DOIs
+  if (length(dois_to_fetch_r) > 0) {
+    fred_augmented <- tryCatch({
+      meta_r <- get_openalex_language(dois_to_fetch_r, mailto = openalex_mailto)
+      meta_r <- meta_r[!is.na(meta_r$doi), ]
+
+      fred_augmented %>%
+        left_join(meta_r %>% rename(doi_r = doi, language_r_new = language), by = "doi_r") %>%
+        mutate(language_r = coalesce(language_r, language_r_new)) %>%
+        select(-language_r_new)
+    }, error = function(e) {
+      warning("Replication DOI language lookup failed: ", e$message)
+      fred_augmented
+    })
+  }
+
+  cat(sprintf("  Original papers with language: %d\n",
+              sum(!is.na(fred_augmented$language_o))))
+  cat(sprintf("  Replication papers with language: %d\n",
+              sum(!is.na(fred_augmented$language_r))))
 }
 
 cat("✓ Augmentation complete\n")
@@ -255,20 +389,20 @@ openxlsx::write.xlsx(
 )
 
 cat(sprintf("✓ Saved to: %s\n", FRED_OUTPUT))
-cat(sprintf("  Rows: %d\n", nrow(fred_augmented))
-cat(sprintf("  Columns: %d\n", ncol(fred_augmented))
+cat(sprintf("  Rows: %d\n", nrow(fred_augmented)))
+cat(sprintf("  Columns: %d\n", ncol(fred_augmented)))
 
 # Summary statistics
 cat("\n### Summary Statistics\n")
-cat(sprintf("Effect-level entries: %d\n", nrow(fred_augmented))
+cat(sprintf("Effect-level entries: %d\n", nrow(fred_augmented)))
 cat(sprintf("Unique original studies: %d\n",
-            n_distinct(fred_augmented$doi_o, na.rm = TRUE))
+            n_distinct(fred_augmented$doi_o, na.rm = TRUE)))
 cat(sprintf("Unique replications: %d\n",
-            n_distinct(fred_augmented$doi_r, na.rm = TRUE))
+            n_distinct(fred_augmented$doi_r, na.rm = TRUE)))
 
 if ("author_overlap" %in% names(fred_augmented)) {
   cat(sprintf("Papers with author overlap data: %d\n",
-              sum(!is.na(fred_augmented$author_overlap)))
+              sum(!is.na(fred_augmented$author_overlap))))
 }
 
 if ("ref_o_clean" %in% names(fred_augmented)) {
@@ -284,14 +418,28 @@ if ("bibtex_o" %in% names(fred_augmented)) {
   cat(sprintf("Replication papers with BibTeX: %d\n",
               sum(!is.na(fred_augmented$bibtex_r))))
 }
+
+if ("title_o" %in% names(fred_augmented)) {
+  cat(sprintf("Original papers with title: %d\n",
+              sum(!is.na(fred_augmented$title_o))))
+  cat(sprintf("Replication papers with title: %d\n",
+              sum(!is.na(fred_augmented$title_r))))
+}
+
+if ("language_o" %in% names(fred_augmented)) {
+  cat(sprintf("Original papers with language metadata: %d\n",
+              sum(!is.na(fred_augmented$language_o))))
+  cat(sprintf("Replication papers with language metadata: %d\n",
+              sum(!is.na(fred_augmented$language_r))))
+}
 ```
 
 ## Pipeline Complete
 
 ```{r complete}
 cat("\n=== FReD Preparation Pipeline Complete ===\n")
-cat(sprintf("Completion time: %s\n", format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
-cat(sprintf("Output file: %s\n", FRED_OUTPUT)
+cat(sprintf("Completion time: %s\n", format(Sys.time(), "%Y-%m-%d %H:%M:%S")))
+cat(sprintf("Output file: %s\n", FRED_OUTPUT))
 cat("\nNext steps:\n")
 cat("1. Review the generated FReD.xlsx file\n")
 cat("2. Run: pipelines/flora/prepare_flora.qmd for FLoRA dataset\n")
