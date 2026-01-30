@@ -13,10 +13,15 @@ Key behavior requested:
    - Reproduction-only rows (no doi_r) are deduped using an in-memory fingerprint set per doi_o.
    - No "_id" (or any dedupe id) is stored/returned in the JSON.
 
+ADDED (per request):
+- Replication-only rows (no doi_r) are ALSO stored (in record.replications[]) and deduped
+  using an in-memory fingerprint set per doi_o. No stored id.
+
 Also verified:
 - Deduplication happens for BOTH:
   - Replications (and reproductions that have doi_r) via dedupe by DOI
   - Reproduction-only rows (no doi_r) via fingerprint set (no stored id)
+  - Replication-only rows (no doi_r) via fingerprint set (no stored id)
 
 Tables written:
   1) PREFIX_TABLE: prefix (3-char) -> dois (List[str])
@@ -156,12 +161,17 @@ def get_or_create(store: dict, doi: str):
       # Relationships + stats
       "record": {
         "stats": {
-          "n_replications": 0,
-          "n_unique_replication_dois": 0,
-          "n_originals": 0,
-          "n_unique_original_dois": 0,
-          "n_reproductions": 0,
-          "n_reproduction_only": 0,
+           "n_replications_total": 0,
+           "n_replications_with_doi": 0,
+           "n_replications_only": 0,
+           "n_unique_replication_dois": 0,
+           
+           "n_reproductions_total": 0,
+           "n_reproductions_with_doi": 0,
+           "n_reproductions_only": 0,
+           
+           "n_originals_total": 0,
+           "n_unique_original_dois": 0,
         },
         "replications": [],
         "originals": [],
@@ -275,6 +285,38 @@ def build_reproduction_only_entry(row: pd.Series) -> dict:
   out["type"] = norm_rep_type(out.get("type"))
   return out
 
+def build_replication_only_entry(row: pd.Series) -> dict:
+  """Replication row where doi_r is missing → stored in record.replications[] (no doi)."""
+  out = {}
+  mapping = {
+    "type": "type",
+    "title": "title_r",
+    "authors": "author_r",
+    "journal": "journal_r",
+    "year": "year_r",
+    "volume": "volume_r",
+    "issue": "issue_r",
+    "pages": "pages_r",
+    "apa_ref": "apa_ref_r",
+    "bibtex_ref": "bibtex_ref_r",
+    "url": "url_r",
+    "outcome": "outcome",
+    "abstract": "abstract_r",
+    "outcome_quote": "outcome_quote",
+    "outcome_quote_source": "outcome_quote_source",
+  }
+
+  for k, col in mapping.items():
+    if has_col(row, col):
+      out[k] = to_jsonable(row.get(col))
+
+  for k in ("volume", "issue", "pages"):
+    if k in out:
+      out[k] = to_str_or_none(out[k])
+
+  out["type"] = norm_rep_type(out.get("type"))
+  return out
+
 def merge_doi_meta_from_entry(doi_obj: dict, entry: dict):
   """Merge DOI-level metadata from an entry WITHOUT overwriting existing."""
   set_if_missing(doi_obj, "doi_hash", entry.get("doi_hash"))
@@ -354,6 +396,8 @@ def main():
 
   # In-memory dedupe set for reproduction-only rows (per doi_o)
   reproduction_seen: dict[str, set[str]] = defaultdict(set)
+  # In-memory dedupe set for replication-only rows (per doi_o)
+  replication_seen: dict[str, set[str]] = defaultdict(set)
 
   for _, row in df.iterrows():
     doi_o = normalize_doi(row.get("doi_o"))
@@ -391,12 +435,12 @@ def main():
       merge_doi_meta_from_entry(rec_r, rep_entry)
       dedupe_append_by_doi(rec_r["record"]["originals"], orig_entry)
 
-    # Case 2: reproduction-only row (doi_r missing)
+    # Case 2: doi_r missing → either reproduction-only OR replication-only (both fingerprint-deduped)
     else:
-      if is_reproduction_type(rep_type):
-        rec_o = get_or_create(doi_records, doi_o)
-        merge_doi_meta_from_entry(rec_o, orig_entry)
+      rec_o = get_or_create(doi_records, doi_o)
+      merge_doi_meta_from_entry(rec_o, orig_entry)
 
+      if is_reproduction_type(rep_type):
         repro_entry = build_reproduction_only_entry(row)
 
         fp = stable_id_from_fields(
@@ -414,25 +458,76 @@ def main():
           rec_o["record"]["reproductions"].append(repro_entry)
           reproduction_seen[doi_o].add(fp)
 
-  # Compute stats (including reproductions)
-  for _, record in doi_records.items():
-    reps = record["record"]["replications"]
-    origs = record["record"]["originals"]
-    repro_only = record["record"]["reproductions"]
+      else:
+        # Treat as replication-only (no doi_r)
+        rep_only_entry = build_replication_only_entry(row)
 
-    uniq_rep = {x.get("doi") for x in reps if x.get("doi")}
+        fp = stable_id_from_fields(
+          str(rep_only_entry.get("type") or ""),
+          str(rep_only_entry.get("title") or ""),
+          str(rep_only_entry.get("year") or ""),
+          str(rep_only_entry.get("journal") or ""),
+          str(rep_only_entry.get("apa_ref") or ""),
+          str(rep_only_entry.get("url") or ""),
+          str(rep_only_entry.get("bibtex_ref") or ""),
+          str(rep_only_entry.get("outcome") or ""),
+          str(rep_only_entry.get("outcome_quote") or ""),
+        )
+
+        if fp not in replication_seen[doi_o]:
+          rec_o["record"]["replications"].append(rep_only_entry)
+          replication_seen[doi_o].add(fp)
+
+   # Compute coherent stats (mutually exclusive buckets)
+  for _, record in doi_records.items():
+    reps = record["record"]["replications"]      # contains both replications and reproductions-with-doi
+    origs = record["record"]["originals"]
+    repro_only = record["record"]["reproductions"]  # reproduction-only (no doi_r)
+
+    # Originals
     uniq_ori = {x.get("doi") for x in origs if x.get("doi")}
 
-    repro_with_doi = sum(1 for x in reps if is_reproduction_type(norm_rep_type(x.get("type"))))
+    # Split replications[] into two mutually exclusive groups based on type
+    rep_with_doi = 0
+    rep_only = 0
+    repro_with_doi = 0
+
+    uniq_rep_dois = set()  # unique dois among NON-reproduction replications with doi
+
+    for x in reps:
+      x_type = norm_rep_type(x.get("type"))
+      is_repro = is_reproduction_type(x_type)
+      has_doi = bool(x.get("doi"))
+
+      if is_repro:
+        # reproduction with doi lives in replications[]
+        if has_doi:
+          repro_with_doi += 1
+      else:
+        # normal replication
+        if has_doi:
+          rep_with_doi += 1
+          uniq_rep_dois.add(x.get("doi"))
+        else:
+          rep_only += 1
 
     record["record"]["stats"] = {
-      "n_replications": len(reps),
-      "n_unique_replication_dois": len(uniq_rep),
-      "n_originals": len(origs),
+      # Replications (non-reproduction only)
+      "n_replications_total": rep_with_doi + rep_only,
+      "n_replications_with_doi": rep_with_doi,
+      "n_replications_only": rep_only,
+      "n_unique_replication_dois": len(uniq_rep_dois),
+
+      # Reproductions
+      "n_reproductions_total": repro_with_doi + len(repro_only),
+      "n_reproductions_with_doi": repro_with_doi,
+      "n_reproductions_only": len(repro_only),
+
+      # Originals
+      "n_originals_total": len(origs),
       "n_unique_original_dois": len(uniq_ori),
-      "n_reproductions": repro_with_doi + len(repro_only),
-      "n_reproduction_only": len(repro_only),
     }
+
 
   print(f"Prepared {len(prefix_index)} prefixes and {len(doi_records)} doi records")
 
