@@ -67,3 +67,70 @@ augment_with_author_overlap <- function(data, add_pct_column = TRUE) {
   result
 }
 
+#' Compute author overlap from existing author_o and author_r JSON columns
+#' This fills in author_overlap for rows where it's missing but author data exists
+#'
+#' @param data Tibble with author_o and author_r columns (JSON format)
+#' @return Data with author_overlap filled in where possible
+fill_author_overlap_from_columns <- function(data) {
+
+  if (!all(c("author_o", "author_r") %in% names(data))) {
+    message("Missing author_o or author_r columns, skipping fill")
+    return(data)
+  }
+
+  # Initialize columns if not present
+
+if (!"author_overlap" %in% names(data)) {
+    data$author_overlap <- NA_integer_
+  }
+  if (!"author_overlap_pct" %in% names(data)) {
+    data$author_overlap_pct <- NA_real_
+  }
+
+  # Find rows that need filling (missing overlap but have both author columns)
+  needs_fill <- which(
+    is.na(data$author_overlap) &
+    !is.na(data$author_o) & nzchar(data$author_o) &
+    !is.na(data$author_r) & nzchar(data$author_r)
+  )
+
+  if (length(needs_fill) == 0) {
+    message("No rows need author overlap filling")
+    return(data)
+  }
+
+  message(sprintf("Filling author overlap for %d rows from existing author columns...", length(needs_fill)))
+
+  # Helper to extract family names from JSON
+  extract_family_names <- function(json_str) {
+    tryCatch({
+      if (is.na(json_str) || !nzchar(json_str) || json_str == "[]") {
+        return(character(0))
+      }
+      authors <- jsonlite::fromJSON(json_str)
+      if (is.data.frame(authors) && "family" %in% names(authors)) {
+        return(tolower(trimws(authors$family)))
+      }
+      character(0)
+    }, error = function(e) character(0))
+  }
+
+  # Compute overlap for each row
+  for (i in needs_fill) {
+    authors_o <- extract_family_names(data$author_o[i])
+    authors_r <- extract_family_names(data$author_r[i])
+
+    if (length(authors_o) > 0 && length(authors_r) > 0) {
+      overlap <- length(intersect(authors_o, authors_r))
+      data$author_overlap[i] <- overlap
+      data$author_overlap_pct[i] <- round(100 * overlap / length(authors_o), 1)
+    }
+  }
+
+  filled <- sum(!is.na(data$author_overlap[needs_fill]))
+  message(sprintf("✓ Filled author overlap for %d rows", filled))
+
+  data
+}
+

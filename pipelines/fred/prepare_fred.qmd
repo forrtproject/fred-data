@@ -26,6 +26,8 @@ knitr::opts_chunk$set(
 library(tidyverse)
 library(readxl)
 library(glue)
+library(jsonlite)
+library(httr)
 
 # Set up working directory (use project-root paths)
 if (!file.exists(here::here("R", "cache_config.R"))) {
@@ -76,7 +78,8 @@ cat("\n### Step 2: Downloading FReD data from Google Sheets\n")
 message("Downloading from: ", substr(FRED_GSHEET_URL, 1, 100), "...")
 
 fred_raw <- tryCatch({
-  read_csv(FRED_GSHEET_URL, show_col_types = FALSE)
+  # Skip first row (contains column descriptions, not data headers)
+  read_csv(FRED_GSHEET_URL, show_col_types = FALSE, skip = 1)
 }, error = function(e) {
   stop("Failed to download FReD data. Check URL and network connection.\n",
        "Error: ", e$message)
@@ -114,20 +117,34 @@ if (SCORE_INTEGRATION_ENABLED) {
     score_data <- readxl::read_excel(SCORE_DATA_PATH)
     cat(sprintf("✓ Loaded SCORE data: %d rows\n", nrow(score_data)))
 
-    # Ensure column compatibility
+    # Ensure column compatibility - convert all common columns to character to avoid type mismatches
+    # Also include statistical_success for deriving reported_success later
     common_cols <- intersect(names(fred_raw), names(score_data))
+    if ("statistical_success" %in% names(score_data)) {
+      common_cols <- unique(c(common_cols, "statistical_success"))
+    }
+    cat(sprintf("  Common columns: %d\n", length(common_cols)))
+
     fred_raw <- bind_rows(
-      fred_raw %>% select(all_of(common_cols)),
-      score_data %>% select(all_of(common_cols))
+      fred_raw %>%
+        select(any_of(common_cols)) %>%
+        mutate(across(everything(), as.character)) %>%
+        mutate(score_entry = FALSE),
+      score_data %>%
+        select(any_of(common_cols)) %>%
+        mutate(across(everything(), as.character)) %>%
+        mutate(score_entry = TRUE)
     )
 
     cat(sprintf("✓ Merged with FReD data\n"))
     cat(sprintf("  Total rows after SCORE merge: %d\n", nrow(fred_raw)))
+    cat(sprintf("  SCORE entries flagged: %d\n", sum(fred_raw$score_entry)))
   } else {
     warning(sprintf("SCORE Integration enabled but file not found: %s\n", SCORE_DATA_PATH))
   }
 } else {
   cat("Status: DISABLED (use params: include_score: true to enable)\n")
+  fred_raw <- fred_raw %>% mutate(score_entry = FALSE)
 }
 ```
 
@@ -146,16 +163,36 @@ cat("\n✓ Data cleaning complete\n")
 cat(sprintf("  Rows: %d\n", nrow(fred_cleaned)))
 ```
 
-## Step 4b: DOI Validation
+## Step 4b: DOI Normalization
+
+```{r doi-normalization}
+cat("\n### Step 4b: DOI Normalization\n")
+
+# Normalize DOIs: lowercase and strip common prefixes
+fred_cleaned <- fred_cleaned %>%
+  mutate(
+    doi_o = tolower(doi_o),
+    doi_r = tolower(doi_r),
+    # Strip "doi:" prefix and URL prefixes
+    doi_o = gsub("^(https?://)?(dx\\.)?doi\\.org/", "", doi_o),
+    doi_r = gsub("^(https?://)?(dx\\.)?doi\\.org/", "", doi_r),
+    doi_o = gsub("^doi:", "", doi_o),
+    doi_r = gsub("^doi:", "", doi_r)
+  )
+
+cat("✓ DOIs normalized (lowercase, URL prefixes stripped)\n")
+```
+
+## Step 4c: DOI Validation
 
 ```{r doi-validation}
-cat("\n### Step 4b: DOI Validation\n")
+cat("\n### Step 4c: DOI Validation\n")
 
 # Check DOI format (should start with "10.")
 fred_cleaned <- fred_cleaned %>%
   mutate(
-    doi_o_valid = is.na(doi_o) | str_starts(tolower(doi_o), "10."),
-    doi_r_valid = is.na(doi_r) | str_starts(tolower(doi_r), "10.")
+    doi_o_valid = is.na(doi_o) | str_starts(doi_o, "10."),
+    doi_r_valid = is.na(doi_r) | str_starts(doi_r, "10.")
   )
 
 invalid_indices_o <- !fred_cleaned$doi_o_valid
@@ -243,6 +280,11 @@ if ("doi_o" %in% names(fred_augmented) && "doi_r" %in% names(fred_augmented)) {
   })
 }
 
+# Helper function for checking non-empty text
+has_text <- function(x) !is.na(x) & nzchar(trimws(as.character(x)))
+count_missing <- function(x) sum(!has_text(x))
+count_present <- function(x) sum(has_text(x))
+
 # Clean references (APA + BibTeX) and individual fields with CrossRef + DataCite fallback
 if (any(c("doi_o", "doi_r") %in% names(fred_augmented))) {
   cat("\nAugmenting with clean references (APA + BibTeX) and individual fields...\n")
@@ -290,6 +332,113 @@ if (any(c("doi_o", "doi_r") %in% names(fred_augmented))) {
     warning("Reference augmentation failed: ", e$message)
     fred_augmented
   })
+
+  # Stats BEFORE manual recovery
+  cat("\n--- Reference stats (BEFORE manual recovery) ---\n")
+  cat(sprintf("Rows: %d\n", nrow(fred_augmented)))
+  cat(sprintf("APA present:    %d original, %d replication\n",
+              count_present(fred_augmented$ref_o_clean),
+              count_present(fred_augmented$ref_r_clean)))
+  cat(sprintf("APA missing:    %d original, %d replication\n",
+              count_missing(fred_augmented$ref_o_clean),
+              count_missing(fred_augmented$ref_r_clean)))
+  cat(sprintf("BibTeX present: %d original, %d replication\n",
+              count_present(fred_augmented$bibtex_o),
+              count_present(fred_augmented$bibtex_r)))
+  cat(sprintf("BibTeX missing: %d original, %d replication\n",
+              count_missing(fred_augmented$bibtex_o),
+              count_missing(fred_augmented$bibtex_r)))
+  cat(sprintf("Title present:  %d original, %d replication\n",
+              count_present(fred_augmented$title_o),
+              count_present(fred_augmented$title_r)))
+  cat(sprintf("Title missing:  %d original, %d replication\n",
+              count_missing(fred_augmented$title_o),
+              count_missing(fred_augmented$title_r)))
+  cat("  Consider adding missing refs to manual_references.xlsx\n")
+}
+
+# Manual URL reference recovery (for replication papers without DOI)
+if ("url_r" %in% names(fred_augmented)) {
+  cat("\n### Manual URL overrides + BibTeX title recovery (R)\n")
+  before_title_r_missing <- count_missing(fred_augmented$title_r)
+  before_ref_r_missing   <- count_missing(fred_augmented$ref_r_clean)
+  before_bib_r_missing   <- count_missing(fred_augmented$bibtex_r)
+
+  fred_augmented <- augment_with_manual_url_refs_r(fred_augmented, verbose = TRUE)
+
+  # Stats AFTER manual recovery
+  cat("\n--- Reference stats (AFTER manual recovery) ---\n")
+  cat(sprintf("Rows: %d\n", nrow(fred_augmented)))
+  cat(sprintf("APA present:    %d original, %d replication\n",
+              count_present(fred_augmented$ref_o_clean),
+              count_present(fred_augmented$ref_r_clean)))
+  cat(sprintf("APA missing:    %d original, %d replication\n",
+              count_missing(fred_augmented$ref_o_clean),
+              count_missing(fred_augmented$ref_r_clean)))
+  cat(sprintf("BibTeX present: %d original, %d replication\n",
+              count_present(fred_augmented$bibtex_o),
+              count_present(fred_augmented$bibtex_r)))
+  cat(sprintf("BibTeX missing: %d original, %d replication\n",
+              count_missing(fred_augmented$bibtex_o),
+              count_missing(fred_augmented$bibtex_r)))
+  cat(sprintf("Title present:  %d original, %d replication\n",
+              count_present(fred_augmented$title_o),
+              count_present(fred_augmented$title_r)))
+  cat(sprintf("Title missing:  %d original, %d replication\n",
+              count_missing(fred_augmented$title_o),
+              count_missing(fred_augmented$title_r)))
+
+  cat("\nRecovered on R side (replication):\n")
+  cat(sprintf("  title_r recovered:  %d\n", before_title_r_missing - count_missing(fred_augmented$title_r)))
+  cat(sprintf("  apa ref recovered:  %d\n", before_ref_r_missing   - count_missing(fred_augmented$ref_r_clean)))
+  cat(sprintf("  bibtex recovered:   %d\n", before_bib_r_missing   - count_missing(fred_augmented$bibtex_r)))
+}
+
+# Fill missing author_r from bibtex_r (for DataCite/OSF entries where API didn't return authors)
+if (all(c("author_r", "bibtex_r") %in% names(fred_augmented))) {
+  needs_author <- which(
+    (is.na(fred_augmented$author_r) | fred_augmented$author_r == "") &
+    !is.na(fred_augmented$bibtex_r) & fred_augmented$bibtex_r != ""
+  )
+  if (length(needs_author) > 0) {
+    cat(sprintf("\nExtracting author_r from bibtex_r for %d entries...\n", length(needs_author)))
+    for (i in needs_author) {
+      parsed <- parse_bibtex_fields(fred_augmented$bibtex_r[i])
+      if (!is.na(parsed$author) && nzchar(parsed$author)) {
+        fred_augmented$author_r[i] <- parsed$author
+      }
+    }
+    filled <- sum(!is.na(fred_augmented$author_r[needs_author]) & fred_augmented$author_r[needs_author] != "")
+    cat(sprintf("  Extracted author_r for %d entries\n", filled))
+  }
+}
+
+# Same for author_o from bibtex_o
+if (all(c("author_o", "bibtex_o") %in% names(fred_augmented))) {
+  needs_author <- which(
+    (is.na(fred_augmented$author_o) | fred_augmented$author_o == "") &
+    !is.na(fred_augmented$bibtex_o) & fred_augmented$bibtex_o != ""
+  )
+  if (length(needs_author) > 0) {
+    cat(sprintf("\nExtracting author_o from bibtex_o for %d entries...\n", length(needs_author)))
+    for (i in needs_author) {
+      parsed <- parse_bibtex_fields(fred_augmented$bibtex_o[i])
+      if (!is.na(parsed$author) && nzchar(parsed$author)) {
+        fred_augmented$author_o[i] <- parsed$author
+      }
+    }
+    filled <- sum(!is.na(fred_augmented$author_o[needs_author]) & fred_augmented$author_o[needs_author] != "")
+    cat(sprintf("  Extracted author_o for %d entries\n", filled))
+  }
+}
+
+# Fill in author overlap for rows that have author data but no DOI-based overlap
+if (all(c("author_o", "author_r") %in% names(fred_augmented))) {
+  cat("\nFilling author overlap from existing author columns...\n")
+  before_overlap <- sum(!is.na(fred_augmented$author_overlap))
+  fred_augmented <- fill_author_overlap_from_columns(fred_augmented)
+  after_overlap <- sum(!is.na(fred_augmented$author_overlap))
+  cat(sprintf("  Author overlap: %d -> %d (filled %d)\n", before_overlap, after_overlap, after_overlap - before_overlap))
 }
 
 # Keywords (optional)
@@ -370,67 +519,216 @@ if (any(c("doi_o", "doi_r") %in% names(fred_augmented))) {
 cat("✓ Augmentation complete\n")
 ```
 
-## Step 8: Save Output
+## Step 8: Fetch Reported Success
+
+```{r reported-success}
+cat("\n### Step 8: Fetching reported success from success coding sheet\n")
+
+# URL for success coding (same as FLoRA uses)
+SUCCESS_CODING_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv"
+
+reported_success <- tryCatch({
+  read_csv(SUCCESS_CODING_URL, show_col_types = FALSE, skip = 1) %>%
+    mutate(
+      # Apply same DOI cleaning as main data: lowercase + remove all whitespace
+      doi_o = tolower(gsub("\\s", "", doi_o)),
+      doi_r_clean = tolower(gsub("\\s", "", doi_r)),
+      id_r = coalesce(url_r, doi_r_clean)
+    ) %>%
+    filter(!is.na(outcome), validation != "validated - discarded") %>%
+    group_by(doi_o, id_r, study_o, study_r) %>%
+    arrange(desc(validation == "validated - chosen")) %>%
+    slice_head(n = 1) %>%
+    ungroup() %>%
+    select(
+      doi_o, id_r, study_o, study_r,
+      reported_success = outcome,
+      reported_success_quote = outcome_quote,
+      reported_success_quote_source = out_quote_source
+    )
+}, error = function(e) {
+  warning("Failed to fetch reported success data: ", e$message)
+  tibble(doi_o = character(), id_r = character(), study_o = character(),
+         study_r = character(), reported_success = character(),
+         reported_success_quote = character(), reported_success_quote_source = character())
+})
+
+cat(sprintf("✓ Fetched %d reported success entries\n", nrow(reported_success)))
+
+# Create id_r for joining (apply same cleaning as success coding sheet)
+fred_augmented <- fred_augmented %>%
+  mutate(id_r = coalesce(url_r, tolower(gsub("\\s", "", doi_r))))
+
+# Join reported success to data
+fred_augmented <- fred_augmented %>%
+  left_join(reported_success, by = c("doi_o", "id_r", "study_o", "study_r"))
+
+# Fill in from existing outcome column where reported_success is missing
+if ("outcome" %in% names(fred_augmented)) {
+  fred_augmented <- fred_augmented %>%
+    mutate(
+      reported_success = coalesce(reported_success, outcome),
+      reported_success_quote = coalesce(reported_success_quote, outcome_quote),
+      reported_success_quote_source = coalesce(reported_success_quote_source, out_quote_source)
+    )
+}
+
+# For SCORE entries, derive reported_success from statistical_success (like COS report does)
+if ("score_entry" %in% names(fred_augmented) && "statistical_success" %in% names(fred_augmented)) {
+  score_filled <- sum(fred_augmented$score_entry & is.na(fred_augmented$reported_success), na.rm = TRUE)
+  fred_augmented <- fred_augmented %>%
+    mutate(
+      reported_success = case_when(
+        score_entry & is.na(reported_success) & statistical_success == "TRUE" ~ "successful",
+        score_entry & is.na(reported_success) & statistical_success == "FALSE" ~ "failed",
+        TRUE ~ reported_success
+      ),
+      reported_success_quote = case_when(
+        score_entry & is.na(reported_success_quote) ~
+          "NB: SCORE relied on statistical significance and direction as the leading success criterion - so reported_success coded based on that",
+        TRUE ~ reported_success_quote
+      ),
+      reported_success_quote_source = case_when(
+        score_entry & is.na(reported_success_quote_source) ~ "coding rule",
+        TRUE ~ reported_success_quote_source
+      )
+    )
+  cat(sprintf("  Derived reported_success from statistical_success for %d SCORE entries\n", score_filled))
+}
+
+cat(sprintf("  Rows with reported_success: %d (%.1f%%)\n",
+            sum(!is.na(fred_augmented$reported_success)),
+            100 * sum(!is.na(fred_augmented$reported_success)) / nrow(fred_augmented)))
+```
+
+## Step 9: Final Column Selection and Cleanup
+
+```{r column-cleanup}
+cat("\n### Step 9: Column selection and cleanup\n")
+
+# Coalesce clean references into main ref columns
+fred_augmented <- fred_augmented %>%
+  mutate(
+    ref_o = coalesce(ref_o_clean, ref_o),
+    ref_r = coalesce(ref_r_clean, ref_r)
+  )
+
+# Define final columns (aligned with COS codebook + new augmentation columns)
+final_cols <- c(
+  # IDs
+  "entry_id", "effect_id", "fred_id",
+  # Original study
+  "ref_o", "doi_o", "study_o",
+  # Replication study
+  "ref_r", "doi_r", "url_r", "study_r",
+  # Metadata
+  "author_overlap", "author_overlap_pct",
+  "discipline", "tags", "description",
+  # Original effect
+  "claim_text_o", "claim_page_o", "n_o",
+  "es_value_o", "es_type_o", "es_repr_o",
+  "pval_value_o", "pval_type_o", "pval_tails_o",
+  "nested_o", "prereg_o",
+  # Replication effect
+  "n_r", "es_value_r", "es_type_r", "es_repr_r",
+  "pval_value_r", "pval_type_r", "pval_tails_r",
+  "nested_r", "prereg_r",
+  # Outcomes
+  "reported_success", "reported_success_quote", "reported_success_quote_source",
+  # Augmented reference fields
+  "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o",
+  "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r",
+  "bibtex_o", "bibtex_r",
+  # Language
+  "language_o", "language_r"
+)
+
+# Select only columns that exist
+available_cols <- intersect(final_cols, names(fred_augmented))
+missing_cols <- setdiff(final_cols, names(fred_augmented))
+
+if (length(missing_cols) > 0) {
+  cat(sprintf("  Note: %d expected columns not in data: %s\n",
+              length(missing_cols), paste(missing_cols, collapse = ", ")))
+}
+
+fred_final <- fred_augmented %>%
+  select(all_of(available_cols))
+
+cat(sprintf("✓ Selected %d columns for final output\n", ncol(fred_final)))
+cat(sprintf("  Dropped %d internal/working columns\n", ncol(fred_augmented) - ncol(fred_final)))
+```
+
+## Step 10: Save Output
 
 ```{r save}
-cat("\n### Step 8: Saving output\n")
+cat("\n### Step 10: Saving output\n")
 
 # Create output directory if needed
-if (!dir.exists("output")) {
-  dir.create("output")
+if (!dir.exists(here::here("output"))) {
+  dir.create(here::here("output"))
 }
 
 # Save as Excel with formatting
 openxlsx::write.xlsx(
-  fred_augmented,
+  fred_final,
   FRED_OUTPUT,
   overwrite = TRUE,
   asTable = TRUE
 )
 
 cat(sprintf("✓ Saved to: %s\n", FRED_OUTPUT))
-cat(sprintf("  Rows: %d\n", nrow(fred_augmented)))
-cat(sprintf("  Columns: %d\n", ncol(fred_augmented)))
+cat(sprintf("  Rows: %d\n", nrow(fred_final)))
+cat(sprintf("  Columns: %d\n", ncol(fred_final)))
 
-# Summary statistics
+# Summary statistics (using has_text helper for consistency)
+has_text <- function(x) !is.na(x) & nzchar(trimws(as.character(x)))
+
 cat("\n### Summary Statistics\n")
-cat(sprintf("Effect-level entries: %d\n", nrow(fred_augmented)))
+cat(sprintf("Effect-level entries: %d\n", nrow(fred_final)))
 cat(sprintf("Unique original studies: %d\n",
-            n_distinct(fred_augmented$doi_o, na.rm = TRUE)))
+            n_distinct(fred_final$doi_o, na.rm = TRUE)))
 cat(sprintf("Unique replications: %d\n",
-            n_distinct(fred_augmented$doi_r, na.rm = TRUE)))
+            n_distinct(fred_final$doi_r, na.rm = TRUE)))
 
-if ("author_overlap" %in% names(fred_augmented)) {
-  cat(sprintf("Papers with author overlap data: %d\n",
-              sum(!is.na(fred_augmented$author_overlap))))
+if ("author_overlap" %in% names(fred_final)) {
+  cat(sprintf("Papers with author overlap data: %d (%.1f%%)\n",
+              sum(!is.na(fred_final$author_overlap)),
+              100 * sum(!is.na(fred_final$author_overlap)) / nrow(fred_final)))
 }
 
-if ("ref_o_clean" %in% names(fred_augmented)) {
-  cat(sprintf("Original papers with clean APA references: %d\n",
-              sum(!is.na(fred_augmented$ref_o_clean))))
-  cat(sprintf("Replication papers with clean APA references: %d\n",
-              sum(!is.na(fred_augmented$ref_r_clean))))
+if ("ref_o" %in% names(fred_final)) {
+  cat(sprintf("Original papers with APA reference: %d\n",
+              sum(has_text(fred_final$ref_o))))
+  cat(sprintf("Replication papers with APA reference: %d\n",
+              sum(has_text(fred_final$ref_r))))
 }
 
-if ("bibtex_o" %in% names(fred_augmented)) {
+if ("bibtex_o" %in% names(fred_final)) {
   cat(sprintf("Original papers with BibTeX: %d\n",
-              sum(!is.na(fred_augmented$bibtex_o))))
+              sum(has_text(fred_final$bibtex_o))))
   cat(sprintf("Replication papers with BibTeX: %d\n",
-              sum(!is.na(fred_augmented$bibtex_r))))
+              sum(has_text(fred_final$bibtex_r))))
 }
 
-if ("title_o" %in% names(fred_augmented)) {
+if ("title_o" %in% names(fred_final)) {
   cat(sprintf("Original papers with title: %d\n",
-              sum(!is.na(fred_augmented$title_o))))
+              sum(has_text(fred_final$title_o))))
   cat(sprintf("Replication papers with title: %d\n",
-              sum(!is.na(fred_augmented$title_r))))
+              sum(has_text(fred_final$title_r))))
 }
 
-if ("language_o" %in% names(fred_augmented)) {
+if ("reported_success" %in% names(fred_final)) {
+  cat(sprintf("Rows with reported_success: %d (%.1f%%)\n",
+              sum(has_text(fred_final$reported_success)),
+              100 * sum(has_text(fred_final$reported_success)) / nrow(fred_final)))
+}
+
+if ("language_o" %in% names(fred_final)) {
   cat(sprintf("Original papers with language metadata: %d\n",
-              sum(!is.na(fred_augmented$language_o))))
+              sum(has_text(fred_final$language_o))))
   cat(sprintf("Replication papers with language metadata: %d\n",
-              sum(!is.na(fred_augmented$language_r))))
+              sum(has_text(fred_final$language_r))))
 }
 ```
 
@@ -440,6 +738,7 @@ if ("language_o" %in% names(fred_augmented)) {
 cat("\n=== FReD Preparation Pipeline Complete ===\n")
 cat(sprintf("Completion time: %s\n", format(Sys.time(), "%Y-%m-%d %H:%M:%S")))
 cat(sprintf("Output file: %s\n", FRED_OUTPUT))
+cat(sprintf("Final dataset: %d rows × %d columns\n", nrow(fred_final), ncol(fred_final)))
 cat("\nNext steps:\n")
 cat("1. Review the generated FReD.xlsx file\n")
 cat("2. Run: pipelines/flora/prepare_flora.qmd for FLoRA dataset\n")
