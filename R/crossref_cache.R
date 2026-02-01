@@ -1363,8 +1363,9 @@ compute_author_overlap <- function(data,
       authors_o = list(extract_author_names(authors_json_o)),
       authors_r = list(extract_author_names(authors_json_r)),
       author_overlap = length(intersect(authors_o, authors_r)),
-      author_overlap_pct = if (length(authors_o) > 0) {
-        round(100 * author_overlap / length(authors_o), 1)
+      # Percentage based on replication authors (measures independence of replication team)
+      author_overlap_pct = if (length(authors_r) > 0) {
+        round(100 * author_overlap / length(authors_r), 1)
       } else {
         NA_real_
       }

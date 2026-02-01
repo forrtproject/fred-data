@@ -124,7 +124,8 @@ if (!"author_overlap" %in% names(data)) {
     if (length(authors_o) > 0 && length(authors_r) > 0) {
       overlap <- length(intersect(authors_o, authors_r))
       data$author_overlap[i] <- overlap
-      data$author_overlap_pct[i] <- round(100 * overlap / length(authors_o), 1)
+      # Percentage based on replication authors (measures independence of replication team)
+      data$author_overlap_pct[i] <- round(100 * overlap / length(authors_r), 1)
     }
   }
 
