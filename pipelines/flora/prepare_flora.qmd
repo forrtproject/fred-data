@@ -667,6 +667,14 @@ if (nrow(excluded_rows) > 0) {
 flora_final <- flora_all %>%
   filter(!is.na(title_o), title_o != "", !is.na(title_r), title_r != "")
 
+# Remove non-self-identified replications
+n_non_repl <- sum(flora_final$self_identified_replication == FALSE, na.rm = TRUE)
+if (n_non_repl > 0) {
+  cat(sprintf("⚠ %d rows removed: not self-identified as replications\n", n_non_repl))
+}
+flora_final <- flora_final %>%
+  filter(self_identified_replication == TRUE | is.na(self_identified_replication))
+
 cat(sprintf("✓ Formatted for output\n"))
 cat(sprintf("  Final columns: %d\n", ncol(flora_final)))
 cat(sprintf("  Final rows: %d\n", nrow(flora_final)))
