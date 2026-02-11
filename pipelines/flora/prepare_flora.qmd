@@ -718,21 +718,26 @@ meta_paper_dois <- tolower(c(
   "10.1126/science.aaf0918"     # Camerer 2016
 ))
 
-# Also detect additional meta-papers: doi_r with >=5 distinct url_r values
-auto_meta <- flora_augmented %>%
+# Warn about potential meta-papers not yet in the list (doi_r with >=5 distinct url_r)
+candidate_meta <- flora_augmented %>%
   filter(!is.na(doi_r), !is.na(url_r), nzchar(url_r)) %>%
   group_by(doi_r) %>%
   summarise(n_urls = n_distinct(url_r), .groups = "drop") %>%
-  filter(n_urls >= 5) %>%
-  pull(doi_r)
+  filter(n_urls >= 5, !tolower(doi_r) %in% meta_paper_dois)
 
-all_meta_dois <- unique(c(meta_paper_dois, tolower(auto_meta)))
+if (nrow(candidate_meta) > 0) {
+  cat(sprintf("⚠ WARNING: %d DOIs have >=5 distinct url_r but are not in meta_paper_dois list.\n",
+              nrow(candidate_meta)))
+  cat("  Review and add to meta_paper_dois if appropriate:\n")
+  for (i in seq_len(nrow(candidate_meta))) {
+    cat(sprintf("    %s (%d distinct urls)\n", candidate_meta$doi_r[i], candidate_meta$n_urls[i]))
+  }
+}
+
 cat(sprintf("  Known meta-papers: %d\n", length(meta_paper_dois)))
-cat(sprintf("  Auto-detected meta-papers (>=5 distinct url_r): %d\n", length(auto_meta)))
-cat(sprintf("  Total unique meta-paper DOIs: %d\n", length(all_meta_dois)))
 
-# For meta-paper entries with url_r, append individual report URL to ref_r
-is_meta <- tolower(flora_augmented$doi_r) %in% all_meta_dois
+# For meta-paper entries with url_r, append individual report URL to ref_r and ref_r_clean
+is_meta <- tolower(flora_augmented$doi_r) %in% meta_paper_dois
 has_url <- !is.na(flora_augmented$url_r) & nzchar(flora_augmented$url_r)
 to_annotate <- is_meta & has_url
 
@@ -742,6 +747,11 @@ flora_augmented <- flora_augmented %>%
       to_annotate & !grepl("Individual report available at", ref_r, fixed = TRUE),
       paste0(ref_r, " Individual report available at ", url_r),
       ref_r
+    ),
+    ref_r_clean = if_else(
+      to_annotate & !is.na(ref_r_clean) & !grepl("Individual report available at", ref_r_clean, fixed = TRUE),
+      paste0(ref_r_clean, " Individual report available at ", url_r),
+      ref_r_clean
     )
   )
 
