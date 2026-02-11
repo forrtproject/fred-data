@@ -40,6 +40,7 @@ source(here::here("R", "augmentation.R"))
 source(here::here("R", "crossref_cache.R"))
 source(here::here("R", "openalex_cache.R"))
 source(here::here("R", "llm_classification.R"))
+source(here::here("R", "unpaywall_cache.R"))
 
 ```
 
@@ -252,12 +253,61 @@ Currently minimal - might want to also check blank vs filled in study_o
 
 pre_dedup <- nrow(flora_data)
 
+# Normalize URLs before dedup so that e.g. https://osf.io/abc/ and osf.io/abc match
+norm_url <- function(x) {
+  x <- tolower(trimws(as.character(x)))
+  x <- gsub("^https?://", "", x)
+  x <- gsub("^www\\.", "", x)
+  x <- gsub("/+$", "", x)
+  dplyr::na_if(x, "")
+}
+
 flora_data <- flora_data %>%
-  distinct(doi_o, study_o, coalesce(url_r, doi_r), .keep_all = TRUE)
+  mutate(url_r_norm = norm_url(url_r)) %>%
+  distinct(doi_o, study_o, coalesce(url_r_norm, doi_r), .keep_all = TRUE) %>%
+  select(-url_r_norm)
 
 post_dedup <- nrow(flora_data)
 
 cat(sprintf("✓ Removed %d duplicate rows\n", post_dedup - pre_dedup))
+
+# Check for suspicious near-duplicates that survived dedup
+# Case 1: Same doi_o with same ref_r text but different identifiers (fake DOI case)
+dup_check <- flora_data %>%
+  filter(!is.na(ref_r), ref_r != "") %>%
+  group_by(doi_o, tolower(trimws(ref_r))) %>%
+  filter(n() > 1) %>%
+  ungroup()
+
+if (nrow(dup_check) > 0) {
+  cat(sprintf("⚠ WARNING: %d rows have same doi_o + ref_r text but different identifiers:\n",
+              nrow(dup_check)))
+  dup_check %>%
+    select(doi_o, doi_r, url_r, ref_r) %>%
+    print(n = 20)
+}
+
+# Case 2: Same doi_o where one has doi_r and another has url_r pointing to same resource
+dup_check2 <- flora_data %>%
+  filter(!is.na(doi_r), !is.na(url_r)) %>%
+  mutate(url_r_norm = norm_url(url_r),
+         doi_as_url = norm_url(paste0("doi.org/", doi_r))) %>%
+  inner_join(
+    flora_data %>%
+      filter(!is.na(url_r), is.na(doi_r)) %>%
+      mutate(url_r_norm = norm_url(url_r)) %>%
+      select(doi_o, url_r_norm_other = url_r_norm, url_r_other = url_r),
+    by = "doi_o"
+  ) %>%
+  filter(url_r_norm == url_r_norm_other | doi_as_url == url_r_norm_other)
+
+if (nrow(dup_check2) > 0) {
+  cat(sprintf("⚠ WARNING: %d rows may be duplicates (doi_r and url_r point to same resource):\n",
+              nrow(dup_check2)))
+  dup_check2 %>%
+    select(doi_o, doi_r, url_r, url_r_other) %>%
+    print(n = 20)
+}
 ```
 
 ## Step 5: DOI Validation
@@ -616,6 +666,88 @@ cat(sprintf("  Confidence breakdown: high=%d, medium=%d, low=%d\n",
             sum(flora_augmented$replication_intent_confidence == "low", na.rm = TRUE)))
 ```
 
+## Step 9c: Add Open Access URLs from Unpaywall
+
+```{r add-oa-urls}
+cat("\n### Step 9c: Adding Open Access URLs from Unpaywall\n")
+
+# Collect all unique DOIs
+all_dois <- unique(c(flora_augmented$doi_o, flora_augmented$doi_r))
+all_dois <- all_dois[!is.na(all_dois) & nzchar(all_dois)]
+
+cat(sprintf("Looking up %d unique DOIs in Unpaywall...\n", length(all_dois)))
+
+unpaywall_email <- Sys.getenv("OPENALEX_MAILTO", "lukas.wallrich@gmail.com")
+oa_results <- get_unpaywall_oa(all_dois, email = unpaywall_email)
+
+# Join OA URLs for original papers
+flora_augmented <- flora_augmented %>%
+  left_join(
+    oa_results %>% rename(doi_o = doi, oa_url_o = oa_url),
+    by = "doi_o"
+  ) %>%
+  left_join(
+    oa_results %>% rename(doi_r = doi, oa_url_r = oa_url),
+    by = "doi_r"
+  )
+
+cat(sprintf("  Original papers with OA URL: %d\n",
+            sum(!is.na(flora_augmented$oa_url_o) & nzchar(flora_augmented$oa_url_o))))
+cat(sprintf("  Replication papers with OA URL: %d\n",
+            sum(!is.na(flora_augmented$oa_url_r) & nzchar(flora_augmented$oa_url_r))))
+```
+
+## Step 9d: Annotate meta-paper references
+
+```{r annotate-meta-papers}
+cat("\n### Step 9d: Annotating meta-paper references\n")
+
+# Known meta-paper DOIs (replication papers that aggregate multiple studies)
+meta_paper_dois <- tolower(c(
+  "10.1038/s41562-024-02062-9",   # Holzmeister et al. 2024
+  "10.3389/fcomm.2022.1048896",   # 10 cases of sensory research
+  "10.1073/pnas.2103313118",      # scarcity effects
+  "10.1007/s13164-018-0400-9",    # X-PHI
+  "10.1038/s41562-018-0399-z",    # Camerer 2018
+  "10.1098/rsos.231240",          # Boyce
+  "10.1027/1864-9335/a000178",    # ML1
+  "10.1177/2515245918810225",     # ML2
+  "10.1016/j.jesp.2015.10.012",  # ML3
+  "10.1126/science.aac4716",     # RP:P
+  "10.1177/08902070221094216",   # SVO development
+  "10.1126/science.aaf0918"     # Camerer 2016
+))
+
+# Also detect additional meta-papers: doi_r with >=5 distinct url_r values
+auto_meta <- flora_augmented %>%
+  filter(!is.na(doi_r), !is.na(url_r), nzchar(url_r)) %>%
+  group_by(doi_r) %>%
+  summarise(n_urls = n_distinct(url_r), .groups = "drop") %>%
+  filter(n_urls >= 5) %>%
+  pull(doi_r)
+
+all_meta_dois <- unique(c(meta_paper_dois, tolower(auto_meta)))
+cat(sprintf("  Known meta-papers: %d\n", length(meta_paper_dois)))
+cat(sprintf("  Auto-detected meta-papers (>=5 distinct url_r): %d\n", length(auto_meta)))
+cat(sprintf("  Total unique meta-paper DOIs: %d\n", length(all_meta_dois)))
+
+# For meta-paper entries with url_r, append individual report URL to ref_r
+is_meta <- tolower(flora_augmented$doi_r) %in% all_meta_dois
+has_url <- !is.na(flora_augmented$url_r) & nzchar(flora_augmented$url_r)
+to_annotate <- is_meta & has_url
+
+flora_augmented <- flora_augmented %>%
+  mutate(
+    ref_r = if_else(
+      to_annotate & !grepl("Individual report available at", ref_r, fixed = TRUE),
+      paste0(ref_r, " Individual report available at ", url_r),
+      ref_r
+    )
+  )
+
+cat(sprintf("  Rows annotated with individual report URL: %d\n", sum(to_annotate)))
+```
+
 ## Step 10: Format for Output and Remove NAs
 
 ```{r format-output}
@@ -625,6 +757,7 @@ cat("\n### Step 11: Formatting for output\n")
 output_cols <- c(
 "doi_o", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "language_o", "study_o",
 "doi_r", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
+"oa_url_o", "oa_url_r",
 "outcome", "outcome_quote", "outcome_quote_source", "type", "source",
 "self_identified_replication", "replication_intent_confidence"
 )
