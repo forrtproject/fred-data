@@ -36,5 +36,8 @@ OPENALEX_ABSTRACTS_CACHE <- file.path(CACHE_DIR, "openalex_abstracts.csv")
 # LLM replication intent classification cache
 LLM_REPLICATION_INTENT_CACHE <- file.path(CACHE_DIR, "llm_replication_intent.rds")
 
+# Unpaywall open access URL cache
+UNPAYWALL_CACHE <- file.path(CACHE_DIR, "unpaywall_oa.csv")
+
 # Validation report from last run (for incremental reporting)
 VALIDATION_REPORT_CACHE <- here::here("output", "validation_report.rds")
