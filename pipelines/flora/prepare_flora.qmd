@@ -39,6 +39,7 @@ source(here::here("R", "cache_config.R"))
 source(here::here("R", "augmentation.R"))
 source(here::here("R", "crossref_cache.R"))
 source(here::here("R", "openalex_cache.R"))
+source(here::here("R", "llm_classification.R"))
 
 ```
 
@@ -208,6 +209,17 @@ flora_raw <- flora_raw %>%
 
 post_exclusion <- nrow(flora_raw)
 cat(sprintf("    ✓ Excluded %d rows based on exclusion list\n", pre_exclusion - post_exclusion))
+
+# Manual exclusions
+manual_exclusion_dois <- c(
+  "10.31234/osf.io/jfmsz",      # Withdrawn paper
+  "10.1177/0956797619831612"     # Replicates correlations, not claims (Soto 2019)
+)
+pre_manual <- nrow(flora_raw)
+flora_raw <- flora_raw %>%
+  filter(!tolower(doi_r) %in% tolower(manual_exclusion_dois))
+cat(sprintf("    ✓ Excluded %d rows based on manual exclusion list (withdrawn/retracted)\n",
+            pre_manual - nrow(flora_raw)))
 ```
 
 ## Data Preparation
@@ -540,6 +552,70 @@ cat(sprintf(
 ))
 ```
 
+## Step 9b: Classify Replication Intent
+
+```{r classify-replication-intent}
+cat("\n### Step 9b: Classifying replication intent via LLM\n")
+cat("  (Only applied to COS data; FLORA and SCORE entries are pre-screened)\n")
+
+# Split: only COS rows need LLM classification
+cos_rows <- flora_augmented %>% filter(source == "COS")
+non_cos_rows <- flora_augmented %>% filter(source != "COS")
+
+cat(sprintf("  COS rows to classify: %d\n", nrow(cos_rows)))
+cat(sprintf("  Pre-screened rows (FLORA/SCORE): %d\n", nrow(non_cos_rows)))
+
+# Fetch abstracts from OpenAlex for COS replication DOIs where abstract_r is missing
+dois_needing_abstract <- cos_rows %>%
+  filter(!is.na(doi_r), is.na(abstract_r) | abstract_r == "") %>%
+  pull(doi_r) %>%
+  unique()
+
+if (length(dois_needing_abstract) > 0) {
+  cat(sprintf("Fetching abstracts for %d replication DOIs from OpenAlex...\n",
+              length(dois_needing_abstract)))
+  openalex_abstracts <- get_openalex_abstracts(dois_needing_abstract, mailto = openalex_mailto)
+  openalex_abstracts <- openalex_abstracts[!is.na(openalex_abstracts$doi), ]
+
+  cos_rows <- cos_rows %>%
+    left_join(
+      openalex_abstracts %>% rename(doi_r = doi, abstract_r_oa = abstract),
+      by = "doi_r"
+    ) %>%
+    mutate(abstract_r = coalesce(abstract_r, abstract_r_oa)) %>%
+    select(-abstract_r_oa)
+
+  cat(sprintf("  Abstracts now available for %d / %d COS rows\n",
+              sum(!is.na(cos_rows$abstract_r) & cos_rows$abstract_r != ""),
+              nrow(cos_rows)))
+}
+
+# Run LLM classification on COS rows only
+cos_rows <- classify_replication_intent(cos_rows)
+
+# Non-COS rows are pre-screened: mark as self-identified replications
+non_cos_rows <- non_cos_rows %>%
+  mutate(
+    self_identified_replication = TRUE,
+    replication_intent_confidence = "high",
+    replication_intent_reasoning = "Pre-screened source"
+  )
+
+# Recombine
+flora_augmented <- bind_rows(cos_rows, non_cos_rows)
+
+cat(sprintf("  Self-identified replications: %d\n",
+            sum(flora_augmented$self_identified_replication == TRUE, na.rm = TRUE)))
+cat(sprintf("  Not self-identified: %d\n",
+            sum(flora_augmented$self_identified_replication == FALSE, na.rm = TRUE)))
+cat(sprintf("  Unclassified: %d\n",
+            sum(is.na(flora_augmented$self_identified_replication))))
+cat(sprintf("  Confidence breakdown: high=%d, medium=%d, low=%d\n",
+            sum(flora_augmented$replication_intent_confidence == "high", na.rm = TRUE),
+            sum(flora_augmented$replication_intent_confidence == "medium", na.rm = TRUE),
+            sum(flora_augmented$replication_intent_confidence == "low", na.rm = TRUE)))
+```
+
 ## Step 10: Format for Output and Remove NAs
 
 ```{r format-output}
@@ -549,7 +625,8 @@ cat("\n### Step 11: Formatting for output\n")
 output_cols <- c(
 "doi_o", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "language_o", "study_o",
 "doi_r", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
-"outcome", "outcome_quote", "outcome_quote_source", "type", "source"
+"outcome", "outcome_quote", "outcome_quote_source", "type", "source",
+"self_identified_replication", "replication_intent_confidence"
 )
 
 flora_renames <- c(

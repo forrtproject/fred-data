@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="FORRT Team">
-<meta name="dcterms.date" content="2026-01-29">
+<meta name="dcterms.date" content="2026-02-11">
 
 <title>FLoRA Preparation Pipeline</title>
 <style>
@@ -92,6 +92,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#step-7-add-clean-references-and-individual-fields" id="toc-step-7-add-clean-references-and-individual-fields" class="nav-link" data-scroll-target="#step-7-add-clean-references-and-individual-fields">Step 7: Add clean References and Individual Fields</a></li>
   <li><a href="#step-8-add-privacy-preserving-ids" id="toc-step-8-add-privacy-preserving-ids" class="nav-link" data-scroll-target="#step-8-add-privacy-preserving-ids">Step 8: Add Privacy-Preserving IDs</a></li>
   <li><a href="#step-9-add-language-from-openalex" id="toc-step-9-add-language-from-openalex" class="nav-link" data-scroll-target="#step-9-add-language-from-openalex">Step 9: Add Language from OpenAlex</a></li>
+  <li><a href="#step-9b-classify-replication-intent" id="toc-step-9b-classify-replication-intent" class="nav-link" data-scroll-target="#step-9b-classify-replication-intent">Step 9b: Classify Replication Intent</a></li>
   <li><a href="#step-10-format-for-output-and-remove-nas" id="toc-step-10-format-for-output-and-remove-nas" class="nav-link" data-scroll-target="#step-10-format-for-output-and-remove-nas">Step 10: Format for Output and Remove NAs</a></li>
   <li><a href="#step-11-save-output" id="toc-step-11-save-output" class="nav-link" data-scroll-target="#step-11-save-output">Step 11: Save Output</a></li>
   <li><a href="#pipeline-complete" id="toc-pipeline-complete" class="nav-link" data-scroll-target="#pipeline-complete">Pipeline Complete</a></li>
@@ -120,7 +121,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 29, 2026</p>
+      <p class="date">February 11, 2026</p>
     </div>
   </div>
   
@@ -158,7 +159,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  SCORE Integration: %s</span><span class="sc">\n</span><span class="st">"</span>, <span class="cf">if</span> (SCORE_INTEGRATION_ENABLED) <span class="st">"ENABLED"</span> <span class="cf">else</span> <span class="st">"DISABLED"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  SCORE Integration: ENABLED</code></pre>
+<pre><code>  SCORE Integration: DISABLED</code></pre>
 </div>
 </div>
 </section>
@@ -184,7 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Downloaded %d replication rows × %d columns</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(replications), <span class="fu">ncol</span>(replications)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>    ✓ Downloaded 217 replication rows × 17 columns</code></pre>
+<pre><code>    ✓ Downloaded 525 replication rows × 17 columns</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -194,7 +195,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Filtered to %d validated replications</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(replications)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>    ✓ Filtered to 49 validated replications</code></pre>
+<pre><code>    ✓ Filtered to 153 validated replications</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -216,7 +217,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Downloaded %d reproduction rows × %d columns</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(reproductions), <span class="fu">ncol</span>(reproductions)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>    ✓ Downloaded 5 reproduction rows × 17 columns</code></pre>
+<pre><code>    ✓ Downloaded 61 reproduction rows × 17 columns</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -226,7 +227,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Filtered to %d validated reproductions</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(reproductions)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>    ✓ Filtered to 5 validated reproductions</code></pre>
+<pre><code>    ✓ Filtered to 6 validated reproductions</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -302,7 +303,7 @@ e.g.:
 <span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Processed %d COS replication rows × %d columns</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(replications_cos), <span class="fu">ncol</span>(replications_cos)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>    ✓ Processed 798 COS replication rows × 13 columns</code></pre>
+<pre><code>    ✓ Processed 796 COS replication rows × 13 columns</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -365,24 +366,7 @@ e.g.:
 <span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Status: ENABLED</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>New names:
-• `...58` -&gt; `...61`
-• `...59` -&gt; `...62`
-• `needing_validation...61` -&gt; `needing_validation...64`
-• `needing_validation...62` -&gt; `needing_validation...65`
-• `...63` -&gt; `...66`
-• `...64` -&gt; `...67`
-• `...65` -&gt; `...68`
-• `...66` -&gt; `...69`</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>✓ Loaded SCORE data: 132 rows
-  Common columns: 12
-✓ Merged with FLoRA data
-  Total rows after SCORE merge: 984</code></pre>
+<pre><code>Status: DISABLED (use params: include_score: true to enable)</code></pre>
 </div>
 </div>
 </section>
@@ -391,35 +375,51 @@ e.g.:
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download exclusions list</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>exclusions <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(EXCLUSIONS_GSHEET_URL, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>}, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">warning</span>(<span class="st">"Failed to download exclusions. Proceeding without exclusions.</span><span class="sc">\n</span><span class="st">"</span>, e<span class="sc">$</span>message)</span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">doi_r =</span> <span class="fu">character</span>(), <span class="at">url_r =</span> <span class="fu">character</span>(), <span class="at">reason =</span> <span class="fu">character</span>())</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Downloaded %d exclusions</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(exclusions)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download exclusions list</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>exclusions <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(EXCLUSIONS_GSHEET_URL, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>}, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">warning</span>(<span class="st">"Failed to download exclusions. Proceeding without exclusions.</span><span class="sc">\n</span><span class="st">"</span>, e<span class="sc">$</span>message)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">doi_r =</span> <span class="fu">character</span>(), <span class="at">url_r =</span> <span class="fu">character</span>(), <span class="at">reason =</span> <span class="fu">character</span>())</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Downloaded %d exclusions</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(exclusions)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>    ✓ Downloaded 3 exclusions</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply exclusions based on doi_r or url_r</span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>pre_exclusion <span class="ot">&lt;-</span> <span class="fu">nrow</span>(flora_raw)</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>flora_raw <span class="ot">&lt;-</span> flora_raw <span class="sc">%&gt;%</span></span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span>(doi_r <span class="sc">%in%</span> exclusions<span class="sc">$</span>doi_r[<span class="sc">!</span><span class="fu">is.na</span>(exclusions<span class="sc">$</span>doi_r)]) <span class="sc">&amp;</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span>(url_r <span class="sc">%in%</span> exclusions<span class="sc">$</span>url_r[<span class="sc">!</span><span class="fu">is.na</span>(exclusions<span class="sc">$</span>url_r)])</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>post_exclusion <span class="ot">&lt;-</span> <span class="fu">nrow</span>(flora_raw)</span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Excluded %d rows based on exclusion list</span><span class="sc">\n</span><span class="st">"</span>, pre_exclusion <span class="sc">-</span> post_exclusion))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply exclusions based on doi_r or url_r</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>pre_exclusion <span class="ot">&lt;-</span> <span class="fu">nrow</span>(flora_raw)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>flora_raw <span class="ot">&lt;-</span> flora_raw <span class="sc">%&gt;%</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span>(doi_r <span class="sc">%in%</span> exclusions<span class="sc">$</span>doi_r[<span class="sc">!</span><span class="fu">is.na</span>(exclusions<span class="sc">$</span>doi_r)]) <span class="sc">&amp;</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span>(url_r <span class="sc">%in%</span> exclusions<span class="sc">$</span>url_r[<span class="sc">!</span><span class="fu">is.na</span>(exclusions<span class="sc">$</span>url_r)])</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>post_exclusion <span class="ot">&lt;-</span> <span class="fu">nrow</span>(flora_raw)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Excluded %d rows based on exclusion list</span><span class="sc">\n</span><span class="st">"</span>, pre_exclusion <span class="sc">-</span> post_exclusion))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>    ✓ Excluded 31 rows based on exclusion list</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Manual exclusions</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>manual_exclusion_dois <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"10.31234/osf.io/jfmsz"</span>,      <span class="co"># Withdrawn paper</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"10.1177/0956797619831612"</span>     <span class="co"># Replicates correlations, not claims (Soto 2019)</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>pre_manual <span class="ot">&lt;-</span> <span class="fu">nrow</span>(flora_raw)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>flora_raw <span class="ot">&lt;-</span> flora_raw <span class="sc">%&gt;%</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">tolower</span>(doi_r) <span class="sc">%in%</span> <span class="fu">tolower</span>(manual_exclusion_dois))</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"    ✓ Excluded %d rows based on manual exclusion list (withdrawn/retracted)</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>            pre_manual <span class="sc">-</span> <span class="fu">nrow</span>(flora_raw)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>    ✓ Excluded 1 rows based on manual exclusion list (withdrawn/retracted)</code></pre>
 </div>
 </div>
 </section>
@@ -465,7 +465,7 @@ e.g.:
 <span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"✓ Removed %d duplicate rows</span><span class="sc">\n</span><span class="st">"</span>, post_dedup <span class="sc">-</span> pre_dedup))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>✓ Removed -38 duplicate rows</code></pre>
+<pre><code>✓ Removed -1 duplicate rows</code></pre>
 </div>
 </div>
 </section>
@@ -527,7 +527,7 @@ e.g.:
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>⚠ Found 6 invalid doi_r values
- Invalid doi_r values: bischoff_ma_bms, osf.io/y2emk, pashler_2011, murtagh_2004, korbmacher_2022, ferrell_2013, kontkanen_jaakko_thesis_2024, lee_2013, fayard_2009, vonpruski_2024, digitalcommons.memphis.edu--etd--3538, thekeep.eiu.edu/theses/5025, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na, na </code></pre>
+ Invalid doi_r values: bischoff_ma_bms, osf.io/y2emk, murtagh_2004, korbmacher_2022, ferrell_2013, kontkanen_jaakko_thesis_2024, vonpruski_2024, digitalcommons.memphis.edu--etd--3538, thekeep.eiu.edu/theses/5025 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -566,6 +566,8 @@ e.g.:
   |==                                                                    |   2%
   |                                                                            
   |==                                                                    |   3%
+  |                                                                            
+  |==                                                                    |   4%
   |                                                                            
   |===                                                                   |   4%
   |                                                                            
@@ -711,6 +713,8 @@ e.g.:
   |                                                                            
   |================================                                      |  46%
   |                                                                            
+  |=================================                                     |  46%
+  |                                                                            
   |=================================                                     |  47%
   |                                                                            
   |=================================                                     |  48%
@@ -732,6 +736,8 @@ e.g.:
   |=====================================                                 |  52%
   |                                                                            
   |=====================================                                 |  53%
+  |                                                                            
+  |=====================================                                 |  54%
   |                                                                            
   |======================================                                |  54%
   |                                                                            
@@ -877,6 +883,8 @@ e.g.:
   |                                                                            
   |===================================================================   |  96%
   |                                                                            
+  |====================================================================  |  96%
+  |                                                                            
   |====================================================================  |  97%
   |                                                                            
   |====================================================================  |  98%
@@ -972,7 +980,7 @@ e.g.:
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Rows: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(flora_augmented)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 915</code></pre>
+<pre><code>Rows: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -981,7 +989,7 @@ e.g.:
 <span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_present</span>(flora_augmented<span class="sc">$</span>ref_r_clean)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>APA present:    915 original, 795 replication</code></pre>
+<pre><code>APA present:    922 original, 895 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -990,7 +998,7 @@ e.g.:
 <span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>ref_r_clean)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>APA missing:    0 original, 120 replication</code></pre>
+<pre><code>APA missing:    0 original, 27 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -999,7 +1007,7 @@ e.g.:
 <span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_present</span>(flora_augmented<span class="sc">$</span>bibtex_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>BibTeX present: 915 original, 795 replication</code></pre>
+<pre><code>BibTeX present: 922 original, 895 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1008,7 +1016,7 @@ e.g.:
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>bibtex_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>BibTeX missing: 0 original, 120 replication</code></pre>
+<pre><code>BibTeX missing: 0 original, 27 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1017,7 +1025,7 @@ e.g.:
 <span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_present</span>(flora_augmented<span class="sc">$</span>title_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Title present:  915 original, 765 replication</code></pre>
+<pre><code>Title present:  922 original, 864 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1026,7 +1034,7 @@ e.g.:
 <span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>title_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Title missing:  0 original, 150 replication</code></pre>
+<pre><code>Title missing:  0 original, 58 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1056,16 +1064,16 @@ e.g.:
 <pre><code>=== Manual URL overrides (R side) ===</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>URL matches found: 122</code></pre>
+<pre><code>URL matches found: 34</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Missing title_r before: 150</code></pre>
+<pre><code>Missing title_r before: 58</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Missing title_r after : 8</code></pre>
+<pre><code>Missing title_r after : 0</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Titles recovered     : 142</code></pre>
+<pre><code>Titles recovered     : 58</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1081,7 +1089,7 @@ e.g.:
 <div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Rows: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(flora_augmented)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows: 915</code></pre>
+<pre><code>Rows: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1090,7 +1098,7 @@ e.g.:
 <span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_present</span>(flora_augmented<span class="sc">$</span>ref_r_clean)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>APA present:    915 original, 908 replication</code></pre>
+<pre><code>APA present:    922 original, 922 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1099,7 +1107,7 @@ e.g.:
 <span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>ref_r_clean)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>APA missing:    0 original, 7 replication</code></pre>
+<pre><code>APA missing:    0 original, 0 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1108,7 +1116,7 @@ e.g.:
 <span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_present</span>(flora_augmented<span class="sc">$</span>bibtex_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>BibTeX present: 915 original, 907 replication</code></pre>
+<pre><code>BibTeX present: 922 original, 922 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1117,7 +1125,7 @@ e.g.:
 <span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>bibtex_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>BibTeX missing: 0 original, 8 replication</code></pre>
+<pre><code>BibTeX missing: 0 original, 0 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1126,7 +1134,7 @@ e.g.:
 <span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_present</span>(flora_augmented<span class="sc">$</span>title_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Title present:  915 original, 907 replication</code></pre>
+<pre><code>Title present:  922 original, 922 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1135,7 +1143,7 @@ e.g.:
 <span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>title_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Title missing:  0 original, 8 replication</code></pre>
+<pre><code>Title missing:  0 original, 0 replication</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1150,21 +1158,21 @@ Recovered on R side (replication/reproduction):</code></pre>
 <div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  title_r recovered:  %d</span><span class="sc">\n</span><span class="st">"</span>, before_title_r_missing <span class="sc">-</span> <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>title_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  title_r recovered:  142</code></pre>
+<pre><code>  title_r recovered:  58</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  apa ref recovered:  %d</span><span class="sc">\n</span><span class="st">"</span>, before_ref_r_missing   <span class="sc">-</span> <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>ref_r_clean)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  apa ref recovered:  113</code></pre>
+<pre><code>  apa ref recovered:  27</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  bibtex recovered:   %d</span><span class="sc">\n</span><span class="st">"</span>, before_bib_r_missing   <span class="sc">-</span> <span class="fu">count_missing</span>(flora_augmented<span class="sc">$</span>bibtex_r)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  bibtex recovered:   112</code></pre>
+<pre><code>  bibtex recovered:   27</code></pre>
 </div>
 </div>
 </section>
@@ -1185,7 +1193,7 @@ Recovered on R side (replication/reproduction):</code></pre>
 <span id="cb103-10"><a href="#cb103-10" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Unique original hashes: 739</code></pre>
+<pre><code>  Unique original hashes: 747</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1195,7 +1203,7 @@ Recovered on R side (replication/reproduction):</code></pre>
 <span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Unique original hashes: 739</code></pre>
+<pre><code>  Unique original hashes: 747</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1205,7 +1213,7 @@ Recovered on R side (replication/reproduction):</code></pre>
 <span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Unique replication hashes: 348</code></pre>
+<pre><code>  Unique replication hashes: 435</code></pre>
 </div>
 </div>
 </section>
@@ -1254,7 +1262,7 @@ Recovered on R side (replication/reproduction):</code></pre>
 <span id="cb111-30"><a href="#cb111-30" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Fetching language for 818 unique original DOIs and 359 unique replication DOIs...</code></pre>
+<pre><code>Fetching language for 825 unique original DOIs and 450 unique replication DOIs...</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1297,7 +1305,7 @@ Recovered on R side (replication/reproduction):</code></pre>
 <span id="cb113-37"><a href="#cb113-37" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Original papers with language: 908</code></pre>
+<pre><code>  Original papers with language: 915</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -1307,7 +1315,130 @@ Recovered on R side (replication/reproduction):</code></pre>
 <span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Replication papers with language: 779</code></pre>
+<pre><code>  Replication papers with language: 878</code></pre>
+</div>
+</div>
+</section>
+<section id="step-9b-classify-replication-intent" class="level2">
+<h2 class="anchored" data-anchor-id="step-9b-classify-replication-intent">Step 9b: Classify Replication Intent</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">### Step 9b: Classifying replication intent via LLM</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+### Step 9b: Classifying replication intent via LLM</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"  (Only applied to COS data; FLORA and SCORE entries are pre-screened)</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  (Only applied to COS data; FLORA and SCORE entries are pre-screened)</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split: only COS rows need LLM classification</span></span>
+<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a>cos_rows <span class="ot">&lt;-</span> flora_augmented <span class="sc">%&gt;%</span> <span class="fu">filter</span>(source <span class="sc">==</span> <span class="st">"COS"</span>)</span>
+<span id="cb121-3"><a href="#cb121-3" aria-hidden="true" tabindex="-1"></a>non_cos_rows <span class="ot">&lt;-</span> flora_augmented <span class="sc">%&gt;%</span> <span class="fu">filter</span>(source <span class="sc">!=</span> <span class="st">"COS"</span>)</span>
+<span id="cb121-4"><a href="#cb121-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb121-5"><a href="#cb121-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  COS rows to classify: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(cos_rows)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  COS rows to classify: 763</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Pre-screened rows (FLORA/SCORE): %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(non_cos_rows)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Pre-screened rows (FLORA/SCORE): 159</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch abstracts from OpenAlex for COS replication DOIs where abstract_r is missing</span></span>
+<span id="cb125-2"><a href="#cb125-2" aria-hidden="true" tabindex="-1"></a>dois_needing_abstract <span class="ot">&lt;-</span> cos_rows <span class="sc">%&gt;%</span></span>
+<span id="cb125-3"><a href="#cb125-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(doi_r), <span class="fu">is.na</span>(abstract_r) <span class="sc">|</span> abstract_r <span class="sc">==</span> <span class="st">""</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb125-4"><a href="#cb125-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(doi_r) <span class="sc">%&gt;%</span></span>
+<span id="cb125-5"><a href="#cb125-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
+<span id="cb125-6"><a href="#cb125-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-7"><a href="#cb125-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(dois_needing_abstract) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb125-8"><a href="#cb125-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Fetching abstracts for %d replication DOIs from OpenAlex...</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb125-9"><a href="#cb125-9" aria-hidden="true" tabindex="-1"></a>              <span class="fu">length</span>(dois_needing_abstract)))</span>
+<span id="cb125-10"><a href="#cb125-10" aria-hidden="true" tabindex="-1"></a>  openalex_abstracts <span class="ot">&lt;-</span> <span class="fu">get_openalex_abstracts</span>(dois_needing_abstract, <span class="at">mailto =</span> openalex_mailto)</span>
+<span id="cb125-11"><a href="#cb125-11" aria-hidden="true" tabindex="-1"></a>  openalex_abstracts <span class="ot">&lt;-</span> openalex_abstracts[<span class="sc">!</span><span class="fu">is.na</span>(openalex_abstracts<span class="sc">$</span>doi), ]</span>
+<span id="cb125-12"><a href="#cb125-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-13"><a href="#cb125-13" aria-hidden="true" tabindex="-1"></a>  cos_rows <span class="ot">&lt;-</span> cos_rows <span class="sc">%&gt;%</span></span>
+<span id="cb125-14"><a href="#cb125-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(</span>
+<span id="cb125-15"><a href="#cb125-15" aria-hidden="true" tabindex="-1"></a>      openalex_abstracts <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">doi_r =</span> doi, <span class="at">abstract_r_oa =</span> abstract),</span>
+<span id="cb125-16"><a href="#cb125-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">by =</span> <span class="st">"doi_r"</span></span>
+<span id="cb125-17"><a href="#cb125-17" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb125-18"><a href="#cb125-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">abstract_r =</span> <span class="fu">coalesce</span>(abstract_r, abstract_r_oa)) <span class="sc">%&gt;%</span></span>
+<span id="cb125-19"><a href="#cb125-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>abstract_r_oa)</span>
+<span id="cb125-20"><a href="#cb125-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb125-21"><a href="#cb125-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Abstracts now available for %d / %d COS rows</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb125-22"><a href="#cb125-22" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(cos_rows<span class="sc">$</span>abstract_r) <span class="sc">&amp;</span> cos_rows<span class="sc">$</span>abstract_r <span class="sc">!=</span> <span class="st">""</span>),</span>
+<span id="cb125-23"><a href="#cb125-23" aria-hidden="true" tabindex="-1"></a>              <span class="fu">nrow</span>(cos_rows)))</span>
+<span id="cb125-24"><a href="#cb125-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fetching abstracts for 57 replication DOIs from OpenAlex...
+  Abstracts now available for 651 / 763 COS rows</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run LLM classification on COS rows only</span></span>
+<span id="cb127-2"><a href="#cb127-2" aria-hidden="true" tabindex="-1"></a>cos_rows <span class="ot">&lt;-</span> <span class="fu">classify_replication_intent</span>(cos_rows)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Replication intent: 763 cached, 0 to classify
+  Overridden 104 rows (142 DOI-based, 4 URL-based)</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Non-COS rows are pre-screened: mark as self-identified replications</span></span>
+<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a>non_cos_rows <span class="ot">&lt;-</span> non_cos_rows <span class="sc">%&gt;%</span></span>
+<span id="cb129-3"><a href="#cb129-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb129-4"><a href="#cb129-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">self_identified_replication =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb129-5"><a href="#cb129-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">replication_intent_confidence =</span> <span class="st">"high"</span>,</span>
+<span id="cb129-6"><a href="#cb129-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">replication_intent_reasoning =</span> <span class="st">"Pre-screened source"</span></span>
+<span id="cb129-7"><a href="#cb129-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb129-8"><a href="#cb129-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-9"><a href="#cb129-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Recombine</span></span>
+<span id="cb129-10"><a href="#cb129-10" aria-hidden="true" tabindex="-1"></a>flora_augmented <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(cos_rows, non_cos_rows)</span>
+<span id="cb129-11"><a href="#cb129-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-12"><a href="#cb129-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Self-identified replications: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb129-13"><a href="#cb129-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">sum</span>(flora_augmented<span class="sc">$</span>self_identified_replication <span class="sc">==</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Self-identified replications: 903</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Not self-identified: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">sum</span>(flora_augmented<span class="sc">$</span>self_identified_replication <span class="sc">==</span> <span class="cn">FALSE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Not self-identified: 19</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Unclassified: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">sum</span>(<span class="fu">is.na</span>(flora_augmented<span class="sc">$</span>self_identified_replication))))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Unclassified: 0</code></pre>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Confidence breakdown: high=%d, medium=%d, low=%d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a>            <span class="fu">sum</span>(flora_augmented<span class="sc">$</span>replication_intent_confidence <span class="sc">==</span> <span class="st">"high"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb135-3"><a href="#cb135-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">sum</span>(flora_augmented<span class="sc">$</span>replication_intent_confidence <span class="sc">==</span> <span class="st">"medium"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb135-4"><a href="#cb135-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">sum</span>(flora_augmented<span class="sc">$</span>replication_intent_confidence <span class="sc">==</span> <span class="st">"low"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Confidence breakdown: high=913, medium=9, low=0</code></pre>
 </div>
 </div>
 </section>
@@ -1316,7 +1447,7 @@ Recovered on R side (replication/reproduction):</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">### Step 11: Formatting for output</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">### Step 11: Formatting for output</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1324,80 +1455,80 @@ Recovered on R side (replication/reproduction):</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select and reorder columns for output</span></span>
-<span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a>output_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb119-3"><a href="#cb119-3" aria-hidden="true" tabindex="-1"></a><span class="st">"doi_o"</span>, <span class="st">"doi_o_hash"</span>, <span class="st">"title_o"</span>, <span class="st">"author_o"</span>, <span class="st">"journal_o"</span>, <span class="st">"year_o"</span>, <span class="st">"volume_o"</span>, <span class="st">"issue_o"</span>, <span class="st">"pages_o"</span>, <span class="st">"apa_ref_o"</span>, <span class="st">"bibtex_ref_o"</span>, <span class="st">"language_o"</span>, <span class="st">"study_o"</span>,</span>
-<span id="cb119-4"><a href="#cb119-4" aria-hidden="true" tabindex="-1"></a><span class="st">"doi_r"</span>, <span class="st">"doi_r_hash"</span>, <span class="st">"title_r"</span>, <span class="st">"author_r"</span>, <span class="st">"journal_r"</span>, <span class="st">"year_r"</span>, <span class="st">"volume_r"</span>, <span class="st">"issue_r"</span>, <span class="st">"pages_r"</span>, <span class="st">"apa_ref_r"</span>, <span class="st">"bibtex_ref_r"</span>, <span class="st">"url_r"</span>, <span class="st">"language_r"</span>,</span>
-<span id="cb119-5"><a href="#cb119-5" aria-hidden="true" tabindex="-1"></a><span class="st">"outcome"</span>, <span class="st">"outcome_quote"</span>, <span class="st">"outcome_quote_source"</span>, <span class="st">"type"</span>, <span class="st">"source"</span></span>
-<span id="cb119-6"><a href="#cb119-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb119-7"><a href="#cb119-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-8"><a href="#cb119-8" aria-hidden="true" tabindex="-1"></a>flora_renames <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb119-9"><a href="#cb119-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">apa_ref_o =</span> <span class="st">"ref_o_clean"</span>, <span class="at">apa_ref_r =</span> <span class="st">"ref_r_clean"</span>, <span class="at">bibtex_ref_o =</span> <span class="st">"bibtex_o"</span>,</span>
-<span id="cb119-10"><a href="#cb119-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">bibtex_ref_r =</span> <span class="st">"bibtex_r"</span>)</span>
-<span id="cb119-11"><a href="#cb119-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb119-12"><a href="#cb119-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-13"><a href="#cb119-13" aria-hidden="true" tabindex="-1"></a>flora_augmented <span class="ot">&lt;-</span> flora_augmented <span class="sc">%&gt;%</span></span>
-<span id="cb119-14"><a href="#cb119-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="sc">!!!</span>flora_renames)</span>
-<span id="cb119-15"><a href="#cb119-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb119-16"><a href="#cb119-16" aria-hidden="true" tabindex="-1"></a>available_output <span class="ot">&lt;-</span> <span class="fu">intersect</span>(output_cols, <span class="fu">names</span>(flora_augmented))</span>
-<span id="cb119-17"><a href="#cb119-17" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(available_output, output_cols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select and reorder columns for output</span></span>
+<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>output_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a><span class="st">"doi_o"</span>, <span class="st">"doi_o_hash"</span>, <span class="st">"title_o"</span>, <span class="st">"author_o"</span>, <span class="st">"journal_o"</span>, <span class="st">"year_o"</span>, <span class="st">"volume_o"</span>, <span class="st">"issue_o"</span>, <span class="st">"pages_o"</span>, <span class="st">"apa_ref_o"</span>, <span class="st">"bibtex_ref_o"</span>, <span class="st">"language_o"</span>, <span class="st">"study_o"</span>,</span>
+<span id="cb139-4"><a href="#cb139-4" aria-hidden="true" tabindex="-1"></a><span class="st">"doi_r"</span>, <span class="st">"doi_r_hash"</span>, <span class="st">"title_r"</span>, <span class="st">"author_r"</span>, <span class="st">"journal_r"</span>, <span class="st">"year_r"</span>, <span class="st">"volume_r"</span>, <span class="st">"issue_r"</span>, <span class="st">"pages_r"</span>, <span class="st">"apa_ref_r"</span>, <span class="st">"bibtex_ref_r"</span>, <span class="st">"url_r"</span>, <span class="st">"language_r"</span>,</span>
+<span id="cb139-5"><a href="#cb139-5" aria-hidden="true" tabindex="-1"></a><span class="st">"outcome"</span>, <span class="st">"outcome_quote"</span>, <span class="st">"outcome_quote_source"</span>, <span class="st">"type"</span>, <span class="st">"source"</span>,</span>
+<span id="cb139-6"><a href="#cb139-6" aria-hidden="true" tabindex="-1"></a><span class="st">"self_identified_replication"</span>, <span class="st">"replication_intent_confidence"</span></span>
+<span id="cb139-7"><a href="#cb139-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb139-8"><a href="#cb139-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb139-9"><a href="#cb139-9" aria-hidden="true" tabindex="-1"></a>flora_renames <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb139-10"><a href="#cb139-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">apa_ref_o =</span> <span class="st">"ref_o_clean"</span>, <span class="at">apa_ref_r =</span> <span class="st">"ref_r_clean"</span>, <span class="at">bibtex_ref_o =</span> <span class="st">"bibtex_o"</span>,</span>
+<span id="cb139-11"><a href="#cb139-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">bibtex_ref_r =</span> <span class="st">"bibtex_r"</span>)</span>
+<span id="cb139-12"><a href="#cb139-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb139-13"><a href="#cb139-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb139-14"><a href="#cb139-14" aria-hidden="true" tabindex="-1"></a>flora_augmented <span class="ot">&lt;-</span> flora_augmented <span class="sc">%&gt;%</span></span>
+<span id="cb139-15"><a href="#cb139-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="sc">!!!</span>flora_renames)</span>
+<span id="cb139-16"><a href="#cb139-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb139-17"><a href="#cb139-17" aria-hidden="true" tabindex="-1"></a>available_output <span class="ot">&lt;-</span> <span class="fu">intersect</span>(output_cols, <span class="fu">names</span>(flora_augmented))</span>
+<span id="cb139-18"><a href="#cb139-18" aria-hidden="true" tabindex="-1"></a><span class="fu">setdiff</span>(available_output, output_cols)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>character(0)</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb121"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" aria-hidden="true" tabindex="-1"></a>flora_all <span class="ot">&lt;-</span> flora_augmented <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">all_of</span>(available_output))</span>
-<span id="cb121-2"><a href="#cb121-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-3"><a href="#cb121-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Log rows that will be excluded due to missing titles</span></span>
-<span id="cb121-4"><a href="#cb121-4" aria-hidden="true" tabindex="-1"></a>excluded_rows <span class="ot">&lt;-</span> flora_all <span class="sc">%&gt;%</span></span>
-<span id="cb121-5"><a href="#cb121-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(title_o) <span class="sc">|</span> title_o <span class="sc">==</span> <span class="st">""</span> <span class="sc">|</span> <span class="fu">is.na</span>(title_r) <span class="sc">|</span> title_r <span class="sc">==</span> <span class="st">""</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb121-6"><a href="#cb121-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb121-7"><a href="#cb121-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">reason =</span> <span class="fu">case_when</span>(</span>
-<span id="cb121-8"><a href="#cb121-8" aria-hidden="true" tabindex="-1"></a>      (<span class="fu">is.na</span>(title_o) <span class="sc">|</span> title_o <span class="sc">==</span> <span class="st">""</span>) <span class="sc">&amp;</span> (<span class="fu">is.na</span>(title_r) <span class="sc">|</span> title_r <span class="sc">==</span> <span class="st">""</span>) <span class="sc">~</span> <span class="st">"missing both title_o and title_r"</span>,</span>
-<span id="cb121-9"><a href="#cb121-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(title_o) <span class="sc">|</span> title_o <span class="sc">==</span> <span class="st">""</span> <span class="sc">~</span> <span class="st">"missing title_o"</span>,</span>
-<span id="cb121-10"><a href="#cb121-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(title_r) <span class="sc">|</span> title_r <span class="sc">==</span> <span class="st">""</span> <span class="sc">~</span> <span class="st">"missing title_r"</span></span>
-<span id="cb121-11"><a href="#cb121-11" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb121-12"><a href="#cb121-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb121-13"><a href="#cb121-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(reason, source, doi_o, apa_ref_o, doi_r, url_r, apa_ref_r)</span>
-<span id="cb121-14"><a href="#cb121-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb121-15"><a href="#cb121-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(excluded_rows) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb121-16"><a href="#cb121-16" aria-hidden="true" tabindex="-1"></a>  export_log_path <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output"</span>, <span class="st">"flora_export_log.csv"</span>)</span>
-<span id="cb121-17"><a href="#cb121-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_excel_csv</span>(excluded_rows, export_log_path)</span>
-<span id="cb121-18"><a href="#cb121-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"⚠ %d rows excluded due to missing reference details</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(excluded_rows)))</span>
-<span id="cb121-19"><a href="#cb121-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Export log saved to: %s</span><span class="sc">\n</span><span class="st">"</span>, export_log_path))</span>
-<span id="cb121-20"><a href="#cb121-20" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb121-21"><a href="#cb121-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✓ No rows excluded due to missing reference details</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb121-22"><a href="#cb121-22" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a>flora_all <span class="ot">&lt;-</span> flora_augmented <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">all_of</span>(available_output))</span>
+<span id="cb141-2"><a href="#cb141-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-3"><a href="#cb141-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Log rows that will be excluded due to missing titles</span></span>
+<span id="cb141-4"><a href="#cb141-4" aria-hidden="true" tabindex="-1"></a>excluded_rows <span class="ot">&lt;-</span> flora_all <span class="sc">%&gt;%</span></span>
+<span id="cb141-5"><a href="#cb141-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">is.na</span>(title_o) <span class="sc">|</span> title_o <span class="sc">==</span> <span class="st">""</span> <span class="sc">|</span> <span class="fu">is.na</span>(title_r) <span class="sc">|</span> title_r <span class="sc">==</span> <span class="st">""</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb141-6"><a href="#cb141-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb141-7"><a href="#cb141-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">reason =</span> <span class="fu">case_when</span>(</span>
+<span id="cb141-8"><a href="#cb141-8" aria-hidden="true" tabindex="-1"></a>      (<span class="fu">is.na</span>(title_o) <span class="sc">|</span> title_o <span class="sc">==</span> <span class="st">""</span>) <span class="sc">&amp;</span> (<span class="fu">is.na</span>(title_r) <span class="sc">|</span> title_r <span class="sc">==</span> <span class="st">""</span>) <span class="sc">~</span> <span class="st">"missing both title_o and title_r"</span>,</span>
+<span id="cb141-9"><a href="#cb141-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(title_o) <span class="sc">|</span> title_o <span class="sc">==</span> <span class="st">""</span> <span class="sc">~</span> <span class="st">"missing title_o"</span>,</span>
+<span id="cb141-10"><a href="#cb141-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">is.na</span>(title_r) <span class="sc">|</span> title_r <span class="sc">==</span> <span class="st">""</span> <span class="sc">~</span> <span class="st">"missing title_r"</span></span>
+<span id="cb141-11"><a href="#cb141-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb141-12"><a href="#cb141-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb141-13"><a href="#cb141-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(reason, source, doi_o, apa_ref_o, doi_r, url_r, apa_ref_r)</span>
+<span id="cb141-14"><a href="#cb141-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb141-15"><a href="#cb141-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(excluded_rows) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb141-16"><a href="#cb141-16" aria-hidden="true" tabindex="-1"></a>  export_log_path <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output"</span>, <span class="st">"flora_export_log.csv"</span>)</span>
+<span id="cb141-17"><a href="#cb141-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_excel_csv</span>(excluded_rows, export_log_path)</span>
+<span id="cb141-18"><a href="#cb141-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"⚠ %d rows excluded due to missing reference details</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(excluded_rows)))</span>
+<span id="cb141-19"><a href="#cb141-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Export log saved to: %s</span><span class="sc">\n</span><span class="st">"</span>, export_log_path))</span>
+<span id="cb141-20"><a href="#cb141-20" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb141-21"><a href="#cb141-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"✓ No rows excluded due to missing reference details</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb141-22"><a href="#cb141-22" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>⚠ 8 rows excluded due to missing reference details
-  Export log saved to: /Users/lukaswallrich/Documents/Coding/fred_data/output/flora_export_log.csv</code></pre>
+<pre><code>✓ No rows excluded due to missing reference details</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb123"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb123-1"><a href="#cb123-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply title filter</span></span>
-<span id="cb123-2"><a href="#cb123-2" aria-hidden="true" tabindex="-1"></a>flora_final <span class="ot">&lt;-</span> flora_all <span class="sc">%&gt;%</span></span>
-<span id="cb123-3"><a href="#cb123-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(title_o), title_o <span class="sc">!=</span> <span class="st">""</span>, <span class="sc">!</span><span class="fu">is.na</span>(title_r), title_r <span class="sc">!=</span> <span class="st">""</span>)</span>
-<span id="cb123-4"><a href="#cb123-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb123-5"><a href="#cb123-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"✓ Formatted for output</span><span class="sc">\n</span><span class="st">"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply title filter</span></span>
+<span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a>flora_final <span class="ot">&lt;-</span> flora_all <span class="sc">%&gt;%</span></span>
+<span id="cb143-3"><a href="#cb143-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(title_o), title_o <span class="sc">!=</span> <span class="st">""</span>, <span class="sc">!</span><span class="fu">is.na</span>(title_r), title_r <span class="sc">!=</span> <span class="st">""</span>)</span>
+<span id="cb143-4"><a href="#cb143-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb143-5"><a href="#cb143-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"✓ Formatted for output</span><span class="sc">\n</span><span class="st">"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>✓ Formatted for output</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb125"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb125-1"><a href="#cb125-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Final columns: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">ncol</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Final columns: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">ncol</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Final columns: 31</code></pre>
+<pre><code>  Final columns: 33</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Final rows: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb147"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Final rows: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Final rows: 907</code></pre>
+<pre><code>  Final rows: 922</code></pre>
 </div>
 </div>
 </section>
@@ -1406,7 +1537,7 @@ Recovered on R side (replication/reproduction):</code></pre>
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">### Step 12: Saving output</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb149"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">### Step 12: Saving output</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1414,46 +1545,46 @@ Recovered on R side (replication/reproduction):</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create output directory if needed</span></span>
-<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output"</span>))) {</span>
-<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output"</span>))</span>
-<span id="cb131-4"><a href="#cb131-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb131-5"><a href="#cb131-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb131-6"><a href="#cb131-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Save as CSV</span></span>
-<span id="cb131-7"><a href="#cb131-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_excel_csv</span>(flora_final, FLORA_OUTPUT)</span>
-<span id="cb131-8"><a href="#cb131-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb131-9"><a href="#cb131-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"✓ Saved to: %s</span><span class="sc">\n</span><span class="st">"</span>, FLORA_OUTPUT))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb151"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb151-1"><a href="#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create output directory if needed</span></span>
+<span id="cb151-2"><a href="#cb151-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output"</span>))) {</span>
+<span id="cb151-3"><a href="#cb151-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"output"</span>))</span>
+<span id="cb151-4"><a href="#cb151-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb151-5"><a href="#cb151-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-6"><a href="#cb151-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Save as CSV</span></span>
+<span id="cb151-7"><a href="#cb151-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_excel_csv</span>(flora_final, FLORA_OUTPUT)</span>
+<span id="cb151-8"><a href="#cb151-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb151-9"><a href="#cb151-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"✓ Saved to: %s</span><span class="sc">\n</span><span class="st">"</span>, FLORA_OUTPUT))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>✓ Saved to: /Users/lukaswallrich/Documents/Coding/fred_data/output/flora.csv</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Format: CSV (UTF-8)</span><span class="sc">\n</span><span class="st">"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb153"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb153-1"><a href="#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Format: CSV (UTF-8)</span><span class="sc">\n</span><span class="st">"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>  Format: CSV (UTF-8)</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Rows: %d (Replications + Reproductions)</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb155"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Rows: %d (Replications + Reproductions)</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Rows: 907 (Replications + Reproductions)</code></pre>
+<pre><code>  Rows: 922 (Replications + Reproductions)</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb137"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb137-1"><a href="#cb137-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Columns: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">ncol</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb157"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"  Columns: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">ncol</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Columns: 31</code></pre>
+<pre><code>  Columns: 33</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb139"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb139-1"><a href="#cb139-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics (flora_final has renamed columns!)</span></span>
-<span id="cb139-2"><a href="#cb139-2" aria-hidden="true" tabindex="-1"></a>has_text <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="sc">!</span><span class="fu">is.na</span>(x) <span class="sc">&amp;</span> <span class="fu">nzchar</span>(<span class="fu">trimws</span>(<span class="fu">as.character</span>(x)))</span>
-<span id="cb139-3"><a href="#cb139-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb139-4"><a href="#cb139-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">### Summary Statistics</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb159"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb159-1"><a href="#cb159-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary statistics (flora_final has renamed columns!)</span></span>
+<span id="cb159-2"><a href="#cb159-2" aria-hidden="true" tabindex="-1"></a>has_text <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="sc">!</span><span class="fu">is.na</span>(x) <span class="sc">&amp;</span> <span class="fu">nzchar</span>(<span class="fu">trimws</span>(<span class="fu">as.character</span>(x)))</span>
+<span id="cb159-3"><a href="#cb159-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb159-4"><a href="#cb159-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">### Summary Statistics</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1461,120 +1592,120 @@ Recovered on R side (replication/reproduction):</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb141"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb141-1"><a href="#cb141-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Total paper pairs: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb161"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb161-1"><a href="#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Total paper pairs: %d</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">nrow</span>(flora_final)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Total paper pairs: 907</code></pre>
+<pre><code>Total paper pairs: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb143"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb143-1"><a href="#cb143-1" aria-hidden="true" tabindex="-1"></a><span class="co"># by type</span></span>
-<span id="cb143-2"><a href="#cb143-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"type"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb143-3"><a href="#cb143-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Rows by type:</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb143-4"><a href="#cb143-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">table</span>(flora_final<span class="sc">$</span>type, <span class="at">useNA =</span> <span class="st">"ifany"</span>))</span>
-<span id="cb143-5"><a href="#cb143-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb163"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb163-1"><a href="#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="co"># by type</span></span>
+<span id="cb163-2"><a href="#cb163-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"type"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb163-3"><a href="#cb163-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Rows by type:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb163-4"><a href="#cb163-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">table</span>(flora_final<span class="sc">$</span>type, <span class="at">useNA =</span> <span class="st">"ifany"</span>))</span>
+<span id="cb163-5"><a href="#cb163-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Rows by type:
 
  replication reproduction 
-         902            5 </code></pre>
+         916            6 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb145"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb145-1"><a href="#cb145-1" aria-hidden="true" tabindex="-1"></a><span class="co"># outcomes</span></span>
-<span id="cb145-2"><a href="#cb145-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"outcome"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb145-3"><a href="#cb145-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Rows with outcome codes: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb145-4"><a href="#cb145-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>outcome))))</span>
-<span id="cb145-5"><a href="#cb145-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb165"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb165-1"><a href="#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="co"># outcomes</span></span>
+<span id="cb165-2"><a href="#cb165-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"outcome"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb165-3"><a href="#cb165-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Rows with outcome codes: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb165-4"><a href="#cb165-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>outcome))))</span>
+<span id="cb165-5"><a href="#cb165-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows with outcome codes: 907</code></pre>
+<pre><code>Rows with outcome codes: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb147"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb147-1"><a href="#cb147-1" aria-hidden="true" tabindex="-1"></a><span class="co"># APA refs (final names)</span></span>
-<span id="cb147-2"><a href="#cb147-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"apa_ref_o"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb147-3"><a href="#cb147-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Original papers with APA reference: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb147-4"><a href="#cb147-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>apa_ref_o))))</span>
-<span id="cb147-5"><a href="#cb147-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb167"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb167-1"><a href="#cb167-1" aria-hidden="true" tabindex="-1"></a><span class="co"># APA refs (final names)</span></span>
+<span id="cb167-2"><a href="#cb167-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"apa_ref_o"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb167-3"><a href="#cb167-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Original papers with APA reference: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb167-4"><a href="#cb167-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>apa_ref_o))))</span>
+<span id="cb167-5"><a href="#cb167-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Original papers with APA reference: 907</code></pre>
+<pre><code>Original papers with APA reference: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb149"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb149-1"><a href="#cb149-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"apa_ref_r"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb149-2"><a href="#cb149-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Replication/reproduction papers with APA reference: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb149-3"><a href="#cb149-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>apa_ref_r))))</span>
-<span id="cb149-4"><a href="#cb149-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb169"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb169-1"><a href="#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"apa_ref_r"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb169-2"><a href="#cb169-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Replication/reproduction papers with APA reference: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb169-3"><a href="#cb169-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>apa_ref_r))))</span>
+<span id="cb169-4"><a href="#cb169-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Replication/reproduction papers with APA reference: 907</code></pre>
+<pre><code>Replication/reproduction papers with APA reference: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb151"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb151-1"><a href="#cb151-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BibTeX refs (final names)</span></span>
-<span id="cb151-2"><a href="#cb151-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"bibtex_ref_o"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb151-3"><a href="#cb151-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Original papers with BibTeX: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb151-4"><a href="#cb151-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>bibtex_ref_o))))</span>
-<span id="cb151-5"><a href="#cb151-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb171"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb171-1"><a href="#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BibTeX refs (final names)</span></span>
+<span id="cb171-2"><a href="#cb171-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"bibtex_ref_o"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb171-3"><a href="#cb171-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Original papers with BibTeX: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb171-4"><a href="#cb171-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>bibtex_ref_o))))</span>
+<span id="cb171-5"><a href="#cb171-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Original papers with BibTeX: 907</code></pre>
+<pre><code>Original papers with BibTeX: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb153"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb153-1"><a href="#cb153-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"bibtex_ref_r"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb153-2"><a href="#cb153-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Replication/reproduction papers with BibTeX: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb153-3"><a href="#cb153-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>bibtex_ref_r))))</span>
-<span id="cb153-4"><a href="#cb153-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb173"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb173-1"><a href="#cb173-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"bibtex_ref_r"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb173-2"><a href="#cb173-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Replication/reproduction papers with BibTeX: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb173-3"><a href="#cb173-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>bibtex_ref_r))))</span>
+<span id="cb173-4"><a href="#cb173-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Replication/reproduction papers with BibTeX: 907</code></pre>
+<pre><code>Replication/reproduction papers with BibTeX: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb155"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb155-1"><a href="#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Language</span></span>
-<span id="cb155-2"><a href="#cb155-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"language_o"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb155-3"><a href="#cb155-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Original papers with language metadata: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb155-4"><a href="#cb155-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>language_o))))</span>
-<span id="cb155-5"><a href="#cb155-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb175"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb175-1"><a href="#cb175-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Language</span></span>
+<span id="cb175-2"><a href="#cb175-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"language_o"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb175-3"><a href="#cb175-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Original papers with language metadata: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb175-4"><a href="#cb175-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>language_o))))</span>
+<span id="cb175-5"><a href="#cb175-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Original papers with language metadata: 900</code></pre>
+<pre><code>Original papers with language metadata: 915</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb157"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb157-1"><a href="#cb157-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"language_r"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb157-2"><a href="#cb157-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Replication/reproduction papers with language metadata: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb157-3"><a href="#cb157-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>language_r))))</span>
-<span id="cb157-4"><a href="#cb157-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb177"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb177-1"><a href="#cb177-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"language_r"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb177-2"><a href="#cb177-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Replication/reproduction papers with language metadata: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb177-3"><a href="#cb177-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>language_r))))</span>
+<span id="cb177-4"><a href="#cb177-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Replication/reproduction papers with language metadata: 779</code></pre>
+<pre><code>Replication/reproduction papers with language metadata: 878</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb159"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb159-1"><a href="#cb159-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DOIs</span></span>
-<span id="cb159-2"><a href="#cb159-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"doi_o"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb159-3"><a href="#cb159-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Rows with original DOI: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb159-4"><a href="#cb159-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>doi_o))))</span>
-<span id="cb159-5"><a href="#cb159-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb179"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb179-1"><a href="#cb179-1" aria-hidden="true" tabindex="-1"></a><span class="co"># DOIs</span></span>
+<span id="cb179-2"><a href="#cb179-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"doi_o"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb179-3"><a href="#cb179-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Rows with original DOI: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb179-4"><a href="#cb179-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>doi_o))))</span>
+<span id="cb179-5"><a href="#cb179-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows with original DOI: 907</code></pre>
+<pre><code>Rows with original DOI: 922</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb161"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb161-1"><a href="#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"doi_r"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
-<span id="cb161-2"><a href="#cb161-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Rows with replication/reproduction DOI: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb161-3"><a href="#cb161-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>doi_r))))</span>
-<span id="cb161-4"><a href="#cb161-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb181"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb181-1"><a href="#cb181-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="st">"doi_r"</span> <span class="sc">%in%</span> <span class="fu">names</span>(flora_final)) {</span>
+<span id="cb181-2"><a href="#cb181-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Rows with replication/reproduction DOI: %d</span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb181-3"><a href="#cb181-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">sum</span>(<span class="fu">has_text</span>(flora_final<span class="sc">$</span>doi_r))))</span>
+<span id="cb181-4"><a href="#cb181-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Rows with replication/reproduction DOI: 882</code></pre>
+<pre><code>Rows with replication/reproduction DOI: 895</code></pre>
 </div>
 </div>
 </section>
@@ -1583,7 +1714,7 @@ Rows by type:
 <div class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb163"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb163-1"><a href="#cb163-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=== FLoRA Preparation Pipeline Complete ===</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb183"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb183-1"><a href="#cb183-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">=== FLoRA Preparation Pipeline Complete ===</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1591,28 +1722,28 @@ Rows by type:
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb165"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb165-1"><a href="#cb165-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"(Includes both Replications and Reproductions)</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb185"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb185-1"><a href="#cb185-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"(Includes both Replications and Reproductions)</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>(Includes both Replications and Reproductions)</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb167"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb167-1"><a href="#cb167-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Completion time: %s</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">format</span>(<span class="fu">Sys.time</span>(), <span class="st">"%Y-%m-%d %H:%M:%S"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb187"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb187-1"><a href="#cb187-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Completion time: %s</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">format</span>(<span class="fu">Sys.time</span>(), <span class="st">"%Y-%m-%d %H:%M:%S"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Completion time: 2026-01-29 22:47:36</code></pre>
+<pre><code>Completion time: 2026-02-11 15:50:58</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb169"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb169-1"><a href="#cb169-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Output file: %s</span><span class="sc">\n</span><span class="st">"</span>, FLORA_OUTPUT))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb189"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb189-1"><a href="#cb189-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(<span class="st">"Output file: %s</span><span class="sc">\n</span><span class="st">"</span>, FLORA_OUTPUT))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Output file: /Users/lukaswallrich/Documents/Coding/fred_data/output/flora.csv</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb171"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb171-1"><a href="#cb171-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Next steps:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb191"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb191-1"><a href="#cb191-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Next steps:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1620,14 +1751,14 @@ Next steps:</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb173"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb173-1"><a href="#cb173-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"1. Review the generated flora.csv file</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb193"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb193-1"><a href="#cb193-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"1. Review the generated flora.csv file</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>1. Review the generated flora.csv file</code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb175"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb175-1"><a href="#cb175-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"2. Optionally: pipelines/flora/release_flora.qmd to release to OSF</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb195"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb195-1"><a href="#cb195-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"2. Optionally: pipelines/flora/release_flora.qmd to release to OSF</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>2. Optionally: pipelines/flora/release_flora.qmd to release to OSF</code></pre>
