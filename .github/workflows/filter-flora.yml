@@ -1,0 +1,32 @@
+name: Filter flora.csv
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'output/flora.csv'
+  workflow_dispatch:
+
+jobs:
+  filter-flora:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install R dependencies
+        run: |
+          Rscript -e 'install.packages(c("readr", "dplyr", "stringr", "httr", "jsonlite", "here"), repos = "https://cloud.r-project.org")'
+
+      - name: Run filter script
+        run: Rscript R/filter_flora.R
+
+      - name: Auto-commit filtered output
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update filtered flora.csv [automated]"
+          file_pattern: "output/flora_filtered.csv output/flora_filter_log.csv"
