@@ -214,11 +214,18 @@ cat(sprintf("    ✓ Excluded %d rows based on exclusion list\n", pre_exclusion 
 # Manual exclusions
 manual_exclusion_dois <- c(
   "10.31234/osf.io/jfmsz",      # Withdrawn paper
-  "10.1177/0956797619831612"     # Replicates correlations, not claims (Soto 2019)
+  "10.1177/0956797619831612",    # Replicates correlations, not claims (Soto 2019)
+  "korbmacher_2022"              # Readded with proper identifier
+)
+manual_exclusion_urls <- c(
+  "https://replications.clearerthinking.org/replication-2022psci33-8"  # Readded with proper identifier
 )
 pre_manual <- nrow(flora_raw)
 flora_raw <- flora_raw %>%
-  filter(!tolower(doi_r) %in% tolower(manual_exclusion_dois))
+  filter(
+    !tolower(doi_r) %in% tolower(manual_exclusion_dois) &
+    !tolower(url_r) %in% tolower(manual_exclusion_urls)
+  )
 cat(sprintf("    ✓ Excluded %d rows based on manual exclusion list (withdrawn/retracted)\n",
             pre_manual - nrow(flora_raw)))
 ```
