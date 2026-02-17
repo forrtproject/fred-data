@@ -76,7 +76,7 @@ cat(sprintf("    ✓ Downloaded %d replication rows × %d columns\n", nrow(repli
 
 # Filter for validated entries only
 replications <- replications %>%
-  filter(validation_status == "validated - chosen")
+  filter(validation_status %in% c("validated - chosen", "validated - changed", "validated - unchanged"))
 cat(sprintf("    ✓ Filtered to %d validated replications\n", nrow(replications)))
 
 # Download reproductions
@@ -91,7 +91,7 @@ cat(sprintf("    ✓ Downloaded %d reproduction rows × %d columns\n", nrow(repr
 
 # Filter for validated entries only
 reproductions <- reproductions %>%
-  filter(validation == "validated - chosen")
+  filter(validation %in% c("validated - chosen", "validated - changed", "validated - unchanged"))
 cat(sprintf("    ✓ Filtered to %d validated reproductions\n", nrow(reproductions)))
 
 # Combine both datasets (handle case where one might be empty)
@@ -117,7 +117,7 @@ cat(sprintf("    ✓ Downloaded %d COS rows\n", nrow(replications_cos)))
 
 # Filter for validated entries only
 replications_cos <- replications_cos %>%
-  filter(validation == "validated - chosen")
+  filter(validation %in% c("validated - chosen", "validated - changed", "validated - unchanged"))
 cat(sprintf("    ✓ Filtered to %d validated COS entries\n", nrow(replications_cos)))
 
 replications_cos <- replications_cos %>%
