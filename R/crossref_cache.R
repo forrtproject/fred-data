@@ -2,7 +2,7 @@
 # Consolidates citation, DOI metadata, and author caching by data type
 # Sources: crossref_citation_cache.R, hackathon prep - flora.qmd, crossref_author_retrieval.qmd
 
-library(tidyverse)
+library(stringr)
 library(rcrossref)
 library(httr)
 library(glue)

@@ -2,7 +2,7 @@
 # Modular functions for augmenting FReD/FLoRA datasets
 # Includes: author overlap, reference cleaning, keyword fetching
 
-library(tidyverse)
+library(dplyr)
 library(rcrossref)
 
 
