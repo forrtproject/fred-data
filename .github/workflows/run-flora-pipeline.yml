@@ -1,0 +1,49 @@
+name: Run FLoRA Pipeline
+
+on:
+  schedule:
+    - cron: '0 3 * * *'   # daily at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run-flora-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+
+      - name: Cache R packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-flora-${{ hashFiles('pipelines/flora/prepare_flora.qmd') }}
+          restore-keys: ${{ runner.os }}-r-flora-
+
+      - name: Install R dependencies
+        run: |
+          Rscript -e 'install.packages(c("tidyverse", "readxl", "jsonlite", "glue", "httr", "here"), repos = "https://cloud.r-project.org")'
+
+      - name: Render FLoRA pipeline
+        run: |
+          quarto render pipelines/flora/prepare_flora.qmd --to html
+
+      - name: Auto-commit flora output
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update flora.csv [automated]"
+          file_pattern: "output/flora.csv"
