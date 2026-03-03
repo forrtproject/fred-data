@@ -2,7 +2,9 @@
 # Uses ellmer package with Google Gemini to classify whether replication authors
 # set out to replicate a finding vs. results happening to replicate.
 
+library(dplyr)
 library(ellmer)
+library(purrr)
 
 REPLICATION_INTENT_SYSTEM_PROMPT <- "
 You are classifying whether a scientific paper was *designed* as a replication study.
@@ -97,7 +99,7 @@ classify_replication_intent <- function(df,
 
   # Create cache key from doi pair; use url_r when doi_r is NA to avoid collisions
   df <- df %>%
-    dplyr::mutate(.cache_key = paste(doi_o, dplyr::coalesce(doi_r, url_r, title_r), sep = " | "))
+    mutate(.cache_key = paste(doi_o, coalesce(doi_r, url_r, title_r), sep = " | "))
 
   # Load cache
   cache <- if (file.exists(cache_file)) readRDS(cache_file) else list()
@@ -111,7 +113,7 @@ classify_replication_intent <- function(df,
 
   if (nrow(to_classify) > 0) {
     # Build prompts (must be a list for parallel_chat_structured)
-    prompts <- purrr::pmap(
+    prompts <- pmap(
       list(to_classify$title_o, to_classify$title_r, to_classify$abstract_r),
       function(t_o, t_r, a_r) build_replication_intent_prompt(t_o, t_r, a_r)
     )

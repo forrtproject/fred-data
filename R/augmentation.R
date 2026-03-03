@@ -3,6 +3,7 @@
 # Includes: author overlap, reference cleaning, keyword fetching
 
 library(dplyr)
+library(jsonlite)
 library(rcrossref)
 
 
@@ -108,7 +109,7 @@ if (!"author_overlap" %in% names(data)) {
       if (is.na(json_str) || !nzchar(json_str) || json_str == "[]") {
         return(character(0))
       }
-      authors <- jsonlite::fromJSON(json_str)
+      authors <- fromJSON(json_str)
       if (is.data.frame(authors) && "family" %in% names(authors)) {
         return(tolower(trimws(authors$family)))
       }

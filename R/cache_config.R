@@ -1,8 +1,10 @@
 # Cache file paths (by data type, not purpose)
 # Sourced by helper scripts to ensure consistent cache locations
 
+library(here)
+
 # Base cache directory (project-relative)
-CACHE_DIR <- here::here("cache")
+CACHE_DIR <- here("cache")
 
 # CrossRef/DataCite DOI metadata cache
 CROSSREF_DOI_CACHE <- file.path(CACHE_DIR, "crossref_doi_cache.rds")
@@ -40,4 +42,4 @@ LLM_REPLICATION_INTENT_CACHE <- file.path(CACHE_DIR, "llm_replication_intent.rds
 UNPAYWALL_CACHE <- file.path(CACHE_DIR, "unpaywall_oa.csv")
 
 # Validation report from last run (for incremental reporting)
-VALIDATION_REPORT_CACHE <- here::here("output", "validation_report.rds")
+VALIDATION_REPORT_CACHE <- here("output", "validation_report.rds")

@@ -1,3 +1,8 @@
+library(dplyr)
+library(glue)
+library(stringr)
+library(tidyr)
+
 #' Cleans a FReD dataframe with safe, automated actions.
 #'
 #' @param data A raw FReD dataframe.
@@ -31,8 +36,8 @@ clean_fred_data <- function(data) {
     val <- str_replace_all(val, "^z", "Z")
     val <- str_replace_all(val, "X2\\s+\\(", "X2(")
     val <- str_replace_all(val, "F\\( ", "F(")
-    val <- stringr::str_replace_all(val, "\\s*<\\s*", " < ")
-    val <- stringr::str_replace_all(val, "\\s*≤\\s*", " ≤ ")
+    val <- str_replace_all(val, "\\s*<\\s*", " < ")
+    val <- str_replace_all(val, "\\s*≤\\s*", " ≤ ")
     val <- str_replace_all(val, "\\s*=\\s*", " = ")
     val <- str_replace_all(val, "\\s*,\\s*", ", ")
     val <- str_replace_all(val, "-\\s+", "-")
@@ -89,7 +94,7 @@ clean_fred_data <- function(data) {
     cleaned_data <- cleaned_data %>%
       mutate(across(all_of(char_cols), ~ str_squish(.))) %>%
       mutate(across(all_of(char_cols), ~ str_trim(.)))
-    report_message <- glue::glue("Trimmed leading/trailing/repeated whitespace from {sum(trimmed_changes$value)} cell(s) in columns: `{paste(trimmed_changes$name, collapse=', ')}`.")
+    report_message <- glue("Trimmed leading/trailing/repeated whitespace from {sum(trimmed_changes$value)} cell(s) in columns: `{paste(trimmed_changes$name, collapse=', ')}`.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -125,7 +130,7 @@ clean_fred_data <- function(data) {
     char_descriptions <- sapply(unique_bad_chars, describe_char, USE.NAMES = FALSE)
 
     # Generate the report message
-    report_message <- glue::glue("Removed non-printable characters from {nrow(affected_cells)} cell(s). Characters found: `{paste(char_descriptions, collapse=', ')}`.")
+    report_message <- glue("Removed non-printable characters from {nrow(affected_cells)} cell(s). Characters found: `{paste(char_descriptions, collapse=', ')}`.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
 
     # Apply the cleaning action
@@ -149,7 +154,7 @@ clean_fred_data <- function(data) {
   na_rows_affected <- na_changes_after - na_changes_before
 
   if (na_rows_affected > 0) {
-    report_message <- glue::glue("Converted {na_rows_affected} string(s) ('NA' or 'N/A') to proper `NA` values.")
+    report_message <- glue("Converted {na_rows_affected} string(s) ('NA' or 'N/A') to proper `NA` values.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -166,7 +171,7 @@ clean_fred_data <- function(data) {
     cleaned_data <- cleaned_data %>%
       mutate(across(all_of(ref_cols), ~ str_remove_all(., regex(doi_pattern, ignore_case = TRUE))))
     total_ref_changes <- sum(ref_changes$value)
-    report_message <- glue::glue("Removed DOI strings (both URL and prefix format) from {total_ref_changes} cell(s) in `ref_o`/`ref_r` columns.")
+    report_message <- glue("Removed DOI strings (both URL and prefix format) from {total_ref_changes} cell(s) in `ref_o`/`ref_r` columns.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -183,7 +188,7 @@ clean_fred_data <- function(data) {
     cleaned_data <- cleaned_data %>%
       mutate(across(all_of(doi_cols), ~ str_remove(., doi_prefix_regex)))
     total_doi_prefix_changes <- sum(doi_prefix_changes$value)
-    report_message <- glue::glue("Removed DOI prefixes/URLs from {total_doi_prefix_changes} cell(s) in `doi_o`/`doi_r` columns (e.g., 'doi:', 'doi.org/', 'https://doi.org/').")
+    report_message <- glue("Removed DOI prefixes/URLs from {total_doi_prefix_changes} cell(s) in `doi_o`/`doi_r` columns (e.g., 'doi:', 'doi.org/', 'https://doi.org/').")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -196,7 +201,7 @@ clean_fred_data <- function(data) {
     cleaned_data <- cleaned_data %>%
       mutate(across(all_of(doi_cols), ~ tolower(.)))
     total_doi_lowercase_changes <- sum(doi_lowercase_changes$value)
-    report_message <- glue::glue("Converted {total_doi_lowercase_changes} cell(s) in `doi_o`/`doi_r` columns to lowercase.")
+    report_message <- glue("Converted {total_doi_lowercase_changes} cell(s) in `doi_o`/`doi_r` columns to lowercase.")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -214,7 +219,7 @@ clean_fred_data <- function(data) {
     sum(cleaned_data$es_value_r != data_before_es_clean$es_value_r, na.rm = TRUE)
 
   if (es_changes > 0) {
-    report_message <- glue::glue("Standardized formatting for {es_changes} cell(s) in `es_value_o`/`es_value_r` (e.g., 'X2', spacing around '=', brackets).")
+    report_message <- glue("Standardized formatting for {es_changes} cell(s) in `es_value_o`/`es_value_r` (e.g., 'X2', spacing around '=', brackets).")
     cleaning_report <- add_report_item(cleaning_report, report_message)
   }
 
@@ -235,7 +240,7 @@ clean_fred_data <- function(data) {
       cleaned_data <- cleaned_data %>%
         mutate(across(all_of(osf_cols), ~ str_replace(., regex("^osf\\.io/", ignore_case = TRUE), "https://osf.io/")))
       total_osf_prefix_changes <- sum(osf_prefix_changes$value)
-      report_message <- glue::glue("Prefixed 'https://' to {total_osf_prefix_changes} OSF link(s) missing the scheme in columns: `{paste(osf_prefix_changes$name, collapse = ', ')}`.")
+      report_message <- glue("Prefixed 'https://' to {total_osf_prefix_changes} OSF link(s) missing the scheme in columns: `{paste(osf_prefix_changes$name, collapse = ', ')}`.")
       cleaning_report <- add_report_item(cleaning_report, report_message)
     }
   }

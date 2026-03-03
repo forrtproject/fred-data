@@ -3,8 +3,10 @@
 #
 # Uses `httr`, `jsonlite`, and `readr` plus base R only.
 
+library(dplyr)
 library(httr)
 library(jsonlite)
+library(purrr)
 library(readr)
 
 # Helper: normalize DOI for cache keys
@@ -19,10 +21,10 @@ load_openalex_cache <- function(cache_file = OPENALEX_CACHE) {
   if (!file.exists(cache_file)) {
     data.frame(doi = character(0), keywords = character(0), language = character(0), stringsAsFactors = FALSE)
   } else {
-    readr::read_csv(cache_file, show_col_types = FALSE, col_types = readr::cols(
-      doi = readr::col_character(),
-      keywords = readr::col_character(),
-      language = readr::col_character()
+    read_csv(cache_file, show_col_types = FALSE, col_types = cols(
+      doi = col_character(),
+      keywords = col_character(),
+      language = col_character()
     ))
   }
 }
@@ -33,7 +35,7 @@ save_openalex_cache <- function(df, cache_file = OPENALEX_CACHE) {
   if (nrow(df) > 0) {
     df <- df[!duplicated(df$doi), , drop = FALSE]
   }
-  readr::write_excel_csv(df, cache_file)
+  write_excel_csv(df, cache_file)
 }
 
 # Internal single-DOI fetcher (returns list with doi, keywords, language)
@@ -49,9 +51,9 @@ fetch_openalex_single <- function(doi, mailto = NULL, fallback_to_concepts = TRU
   if (!is.null(mailto)) q$mailto <- mailto
 
   res <- tryCatch({
-    resp <- httr::GET(url, query = q, httr::user_agent("R (OpenAlex lookup)"), httr::timeout(10))
-    if (httr::http_error(resp)) return(NULL)
-    jsonlite::fromJSON(httr::content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
+    resp <- GET(url, query = q, user_agent("R (OpenAlex lookup)"), timeout(10))
+    if (http_error(resp)) return(NULL)
+    fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
   }, error = function(e) NULL)
 
   if (is.null(res)) {
@@ -93,9 +95,9 @@ load_openalex_abstracts_cache <- function(cache_file = OPENALEX_ABSTRACTS_CACHE)
   if (!file.exists(cache_file)) {
     data.frame(doi = character(0), abstract = character(0), stringsAsFactors = FALSE)
   } else {
-    readr::read_csv(cache_file, show_col_types = FALSE, col_types = readr::cols(
-      doi = readr::col_character(),
-      abstract = readr::col_character()
+    read_csv(cache_file, show_col_types = FALSE, col_types = cols(
+      doi = col_character(),
+      abstract = col_character()
     ))
   }
 }
@@ -105,7 +107,7 @@ save_openalex_abstracts_cache <- function(df, cache_file = OPENALEX_ABSTRACTS_CA
   if (nrow(df) > 0) {
     df <- df[!duplicated(df$doi), , drop = FALSE]
   }
-  readr::write_excel_csv(df, cache_file)
+  write_excel_csv(df, cache_file)
 }
 
 #' Reconstruct abstract from OpenAlex inverted index
@@ -151,9 +153,9 @@ fetch_openalex_abstract_single <- function(doi, mailto = NULL) {
   if (!is.null(mailto)) q$mailto <- mailto
 
   res <- tryCatch({
-    resp <- httr::GET(url, query = q, httr::user_agent("R (OpenAlex lookup)"), httr::timeout(10))
-    if (httr::http_error(resp)) return(list(doi = doi_norm, abstract = NA_character_))
-    jsonlite::fromJSON(httr::content(resp, as = "text", encoding = "UTF-8"), simplifyVector = FALSE)
+    resp <- GET(url, query = q, user_agent("R (OpenAlex lookup)"), timeout(10))
+    if (http_error(resp)) return(list(doi = doi_norm, abstract = NA_character_))
+    fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = FALSE)
   }, error = function(e) NULL)
 
   if (is.null(res)) {
@@ -189,7 +191,7 @@ get_openalex_abstracts <- function(dois,
 
   if (length(to_fetch) > 0) {
     cat(sprintf("Fetching %d abstracts from OpenAlex...\n", length(to_fetch)))
-    new_rows <- purrr::map(
+    new_rows <- map(
       to_fetch,
       ~{
         res <- fetch_openalex_abstract_single(.x, mailto = mailto)
@@ -197,9 +199,9 @@ get_openalex_abstracts <- function(dois,
       },
       .progress = TRUE
     ) %>%
-      dplyr::bind_rows()
+      bind_rows()
 
-    cache_df <- dplyr::bind_rows(cache_df, new_rows)
+    cache_df <- bind_rows(cache_df, new_rows)
     save_openalex_abstracts_cache(cache_df, cache_file)
   }
 

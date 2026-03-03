@@ -3,8 +3,10 @@
 #
 # Uses `httr`, `jsonlite`, and `readr`.
 
+library(dplyr)
 library(httr)
 library(jsonlite)
+library(purrr)
 library(readr)
 
 # Reuse normalize_doi from openalex_cache.R (already sourced in pipeline)
@@ -14,10 +16,10 @@ load_unpaywall_cache <- function(cache_file = UNPAYWALL_CACHE) {
     data.frame(doi = character(0), is_oa = logical(0), oa_url = character(0),
                stringsAsFactors = FALSE)
   } else {
-    readr::read_csv(cache_file, show_col_types = FALSE, col_types = readr::cols(
-      doi = readr::col_character(),
-      is_oa = readr::col_logical(),
-      oa_url = readr::col_character()
+    read_csv(cache_file, show_col_types = FALSE, col_types = cols(
+      doi = col_character(),
+      is_oa = col_logical(),
+      oa_url = col_character()
     ))
   }
 }
@@ -27,7 +29,7 @@ save_unpaywall_cache <- function(df, cache_file = UNPAYWALL_CACHE) {
   if (nrow(df) > 0) {
     df <- df[!duplicated(df$doi), , drop = FALSE]
   }
-  readr::write_excel_csv(df, cache_file)
+  write_excel_csv(df, cache_file)
 }
 
 #' Fetch OA info for a single DOI from Unpaywall
@@ -42,11 +44,11 @@ fetch_unpaywall_single <- function(doi, email) {
   url <- paste0("https://api.unpaywall.org/v2/", URLencode(doi_norm, reserved = TRUE))
 
   res <- tryCatch({
-    resp <- httr::GET(url, query = list(email = email),
-                      httr::user_agent("R (Unpaywall lookup)"),
-                      httr::timeout(10))
-    if (httr::http_error(resp)) return(list(doi = doi_norm, is_oa = FALSE, oa_url = NA_character_))
-    jsonlite::fromJSON(httr::content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
+    resp <- GET(url, query = list(email = email),
+                      user_agent("R (Unpaywall lookup)"),
+                      timeout(10))
+    if (http_error(resp)) return(list(doi = doi_norm, is_oa = FALSE, oa_url = NA_character_))
+    fromJSON(content(resp, as = "text", encoding = "UTF-8"), simplifyVector = TRUE)
   }, error = function(e) NULL)
 
   if (is.null(res)) {
@@ -91,7 +93,7 @@ get_unpaywall_oa <- function(dois,
 
   if (length(to_fetch) > 0) {
     cat(sprintf("Fetching %d OA URLs from Unpaywall...\n", length(to_fetch)))
-    new_rows <- purrr::map(
+    new_rows <- map(
       to_fetch,
       ~{
         res <- fetch_unpaywall_single(.x, email = email)
@@ -100,9 +102,9 @@ get_unpaywall_oa <- function(dois,
       },
       .progress = TRUE
     ) %>%
-      dplyr::bind_rows()
+      bind_rows()
 
-    cache_df <- dplyr::bind_rows(cache_df, new_rows)
+    cache_df <- bind_rows(cache_df, new_rows)
     save_unpaywall_cache(cache_df, cache_file)
   }
 

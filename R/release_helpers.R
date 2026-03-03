@@ -1,10 +1,11 @@
 # OSF Release Helper Functions
 # Refactored from release/release_dataset.R to be more modular and pipeline-friendly
 
-library(stringr)
 library(dplyr)
 library(glue)
+library(openxlsx)
 library(osfr)
+library(stringr)
 
 # ============================================================================
 # Version Management
@@ -144,7 +145,7 @@ process_file <- function(data_folder,
 
   # Find and download current file from OSF for archiving
   data_file <- osfr::osf_ls_files(data_folder) %>%
-    dplyr::filter(name == filename)
+    filter(name == filename)
 
   if (nrow(data_file) > 0) {
     osfr::osf_download(data_file, temp_dir, conflicts = "overwrite")
@@ -155,7 +156,7 @@ process_file <- function(data_folder,
 
     # Upload archive
     archive_folder <- osfr::osf_ls_files(data_folder, type = "folder") %>%
-      dplyr::filter(name == "Archive")
+      filter(name == "Archive")
 
     if (nrow(archive_folder) > 0) {
       osfr::osf_upload(archive_folder, file.path(temp_dir, archived_name), conflicts = "overwrite")
@@ -178,16 +179,16 @@ process_file <- function(data_folder,
   # For Excel files, optionally remove unused sheets
   if (endsWith(filename, ".xlsx")) {
     tryCatch({
-      wb <- openxlsx::loadWorkbook(dest)
-      all_sheets <- openxlsx::getSheetNames(dest)
+      wb <- loadWorkbook(dest)
+      all_sheets <- getSheetNames(dest)
       sheets_to_remove <- setdiff(all_sheets, keep_sheets)
 
       if (length(sheets_to_remove) > 0) {
         for(sheet_name in sheets_to_remove) {
-          openxlsx::removeWorksheet(wb, sheet_name)
+          removeWorksheet(wb, sheet_name)
           message("Removed sheet: ", sheet_name)
         }
-        openxlsx::saveWorkbook(wb, dest, overwrite = TRUE)
+        saveWorkbook(wb, dest, overwrite = TRUE)
       }
     }, error = function(e) {
       message("Note: Could not process Excel sheets. File will be uploaded as-is.")
@@ -253,7 +254,7 @@ release_to_osf <- function(dataset_path,
 
   for (seg in folder_segments) {
     children <- osfr::osf_ls_files(current_node, type = "folder")
-    matched <- children %>% dplyr::filter(name == seg)
+    matched <- children %>% filter(name == seg)
 
     if (nrow(matched) == 0) {
       stop("OSF folder not found: ", seg)

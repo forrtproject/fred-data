@@ -8,18 +8,21 @@
 ##' @examples
 ##' generate_osf_citation('https://osf.io/cwmb5', format = 'apa')
 
+library(jsonlite)
+library(tibble)
+
 generate_osf_citation <- function(url, format = c("apa", "bibtex", "both_tibble")) {
   format <- match.arg(format)
   res <- tryCatch({
     id <- basename(url)
-    out <- suppressWarnings(try(jsonlite::fromJSON(paste0("https://api.osf.io/v2/nodes/", id, "/citation/apa/")), silent = TRUE))
+    out <- suppressWarnings(try(fromJSON(paste0("https://api.osf.io/v2/nodes/", id, "/citation/apa/")), silent = TRUE))
     if (inherits(out, "try-error")) {
-      id <- jsonlite::fromJSON(paste0("https://api.osf.io/v2/files/", id, "/"))$data$relationships$target$data$id
-      out <- jsonlite::fromJSON(paste0("https://api.osf.io/v2/nodes/", id, "/citation/apa/"))
+      id <- fromJSON(paste0("https://api.osf.io/v2/files/", id, "/"))$data$relationships$target$data$id
+      out <- fromJSON(paste0("https://api.osf.io/v2/nodes/", id, "/citation/apa/"))
     }
-    bib <- if (format != "apa") jsonlite::fromJSON(paste0("https://api.osf.io/v2/nodes/", id, "/citation/bibtex/"))$data$attributes$citation else NA_character_
+    bib <- if (format != "apa") fromJSON(paste0("https://api.osf.io/v2/nodes/", id, "/citation/bibtex/"))$data$attributes$citation else NA_character_
     list(apa = out$data$attributes$citation, bib = bib)
   }, error = function(e) list(apa = NA_character_, bib = NA_character_))
-  if (format == "both_tibble") return(tibble::tibble(url = url, apa = res$apa, bibtex = res$bib))
+  if (format == "both_tibble") return(tibble(url = url, apa = res$apa, bibtex = res$bib))
   if (format == "apa") res$apa else res$bib
 }

@@ -2,10 +2,15 @@
 # Consolidates citation, DOI metadata, and author caching by data type
 # Sources: crossref_citation_cache.R, hackathon prep - flora.qmd, crossref_author_retrieval.qmd
 
-library(stringr)
-library(rcrossref)
-library(httr)
+library(dplyr)
 library(glue)
+library(httr)
+library(jsonlite)
+library(openxlsx)
+library(rcrossref)
+library(readxl)
+library(stringr)
+library(tibble)
 
 `%||%` <- function(x, y) if (is.null(x) || length(x) == 0 || all(is.na(x))) y else x
 is_doi <- function(x) grepl("^10\\.[0-9]{4,}/\\S+$", x)
@@ -37,7 +42,7 @@ save_citation_cache <- function(cache, cache_file = CROSSREF_CITATIONS_CACHE) {
 #'   and optional field columns: title, author, journal, year, volume, issue, pages
 #' @return Tibble with manual references
 load_manual_references <- function(manual_ref_file = MANUAL_REFERENCES) {
-  empty_df <- tibble::tibble(
+  empty_df <- tibble(
     key = character(),
     reference_apa = character(),
     reference_bibtex = character(),
@@ -55,7 +60,7 @@ load_manual_references <- function(manual_ref_file = MANUAL_REFERENCES) {
   }
 
   tryCatch({
-    df <- readxl::read_excel(manual_ref_file)
+    df <- read_excel(manual_ref_file)
     # Ensure all expected columns exist
     for (col in names(empty_df)) {
       if (!col %in% names(df)) {
@@ -66,12 +71,12 @@ load_manual_references <- function(manual_ref_file = MANUAL_REFERENCES) {
       map_df <- tryCatch(readRDS(URLR_DOIR_MAP_CACHE), error = function(e) NULL)
       if (!is.null(map_df) && all(c("url_r", "doi_r") %in% names(map_df))) {
         map_df <- map_df %>%
-          dplyr::transmute(
+          transmute(
             url_r = tolower(trimws(url_r)),
             doi_r = tolower(trimws(doi_r))
           ) %>%
-          dplyr::filter(!is.na(url_r), !is.na(doi_r)) %>%
-          dplyr::distinct(url_r, .keep_all = TRUE)
+          filter(!is.na(url_r), !is.na(doi_r)) %>%
+          distinct(url_r, .keep_all = TRUE)
 
         key_norm <- tolower(trimws(df$key))
         hit <- match(key_norm, map_df$url_r)
@@ -123,7 +128,7 @@ parse_bibtex_authors_to_json <- function(author_str) {
     )
   })
 
-  as.character(jsonlite::toJSON(author_list, auto_unbox = TRUE, null = "null"))
+  as.character(toJSON(author_list, auto_unbox = TRUE, null = "null"))
 }
 
 #' Parse BibTeX string to extract individual fields
@@ -179,7 +184,7 @@ parse_bibtex_fields <- function(bibtex) {
     if (depth != 0) return(NA_character_)
 
     val <- substr(bib, i + 1, j - 2) # inside outer braces
-    return(stringr::str_squish(val))
+    return(str_squish(val))
   }
 
   # -------- double-quoted value " ... " (supports escaped quotes) --------
@@ -195,7 +200,7 @@ parse_bibtex_fields <- function(bibtex) {
     if (j > n) return(NA_character_)
 
     val <- substr(bib, i + 1, j - 1)
-    return(stringr::str_squish(val))
+    return(str_squish(val))
   }
 
   # -------- single-quoted value ' ... ' (supports escaped quotes) --------
@@ -211,7 +216,7 @@ parse_bibtex_fields <- function(bibtex) {
     if (j > n) return(NA_character_)
 
     val <- substr(bib, i + 1, j - 1)
-    return(stringr::str_squish(val))
+    return(str_squish(val))
   }
 
   # -------- bare value (until comma or newline) --------
@@ -225,7 +230,7 @@ parse_bibtex_fields <- function(bibtex) {
   val <- gsub("\\s+$", "", val)
   val <- gsub("^\\s+", "", val)
   val <- gsub("[{}\"]", "", val) # light cleanup for bare tokens
-  val <- stringr::str_squish(val)
+  val <- str_squish(val)
 
   if (!nzchar(val)) NA_character_ else val
 }
@@ -312,7 +317,7 @@ get_crossref_citation <- function(doi, type = c("bibtex", "apa")) {
 
   # Fetch from CrossRef with error handling
   tryCatch({
-    rcrossref::cr_cn(dois = doi, format = fmt, style = style)
+    cr_cn(dois = doi, format = fmt, style = style)
   }, error = function(e) {
     NA_character_
   })
@@ -345,7 +350,7 @@ augment_with_manual_url_refs_r <- function(data,
     x <- gsub("^https?://", "", x)
     x <- gsub("^www\\.", "", x)
     x <- gsub("/+$", "", x)
-    dplyr::na_if(x, "")
+    na_if(x, "")
   }
 
   has_text_vec <- function(x) {
@@ -359,28 +364,28 @@ augment_with_manual_url_refs_r <- function(data,
   }
   if (!"year_r" %in% names(data)) data$year_r <- NA_integer_
 
-  manual_df <- readxl::read_excel(manual_ref_file)
+  manual_df <- read_excel(manual_ref_file)
 
   # Ensure expected manual columns exist
   expected <- c("key","reference_apa","reference_bibtex","title","author","journal","year","volume","issue","pages")
   for (col in expected) if (!col %in% names(manual_df)) manual_df[[col]] <- NA
 
   manual_url <- manual_df %>%
-    dplyr::mutate(
+    mutate(
       url_key = norm_url(key),
-      reference_apa    = dplyr::na_if(trimws(as.character(reference_apa)), ""),
-      reference_bibtex = dplyr::na_if(trimws(as.character(reference_bibtex)), ""),
-      title   = dplyr::na_if(trimws(as.character(title)), ""),
-      author  = dplyr::na_if(trimws(as.character(author)), ""),
-      journal = dplyr::na_if(trimws(as.character(journal)), ""),
-      volume  = dplyr::na_if(trimws(as.character(volume)), ""),
-      issue   = dplyr::na_if(trimws(as.character(issue)), ""),
-      pages   = dplyr::na_if(trimws(as.character(pages)), "")
+      reference_apa    = na_if(trimws(as.character(reference_apa)), ""),
+      reference_bibtex = na_if(trimws(as.character(reference_bibtex)), ""),
+      title   = na_if(trimws(as.character(title)), ""),
+      author  = na_if(trimws(as.character(author)), ""),
+      journal = na_if(trimws(as.character(journal)), ""),
+      volume  = na_if(trimws(as.character(volume)), ""),
+      issue   = na_if(trimws(as.character(issue)), ""),
+      pages   = na_if(trimws(as.character(pages)), "")
     ) %>%
-    dplyr::filter(!is.na(url_key)) %>%
-    dplyr::distinct(url_key, .keep_all = TRUE) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(
+    filter(!is.na(url_key)) %>%
+    distinct(url_key, .keep_all = TRUE) %>%
+    rowwise() %>%
+    mutate(
       .parsed = list(if (has_text_vec(reference_bibtex)) parse_bibtex_fields(reference_bibtex) else
         list(title=NA_character_, author=NA_character_, journal=NA_character_,
              year=NA_integer_, volume=NA_character_, issue=NA_character_, pages=NA_character_)),
@@ -393,8 +398,8 @@ augment_with_manual_url_refs_r <- function(data,
       issue  = if (has_text_vec(issue)) issue else .parsed$issue,
       pages  = if (has_text_vec(pages)) pages else .parsed$pages
     ) %>%
-    dplyr::ungroup() %>%
-    dplyr::transmute(
+    ungroup() %>%
+    transmute(
       url_key,
       ref_r_clean_manual = reference_apa,
       bibtex_r_manual    = reference_bibtex,
@@ -410,28 +415,28 @@ augment_with_manual_url_refs_r <- function(data,
   before_missing_title <- sum(!has_text_vec(data$title_r))
 
   out <- data %>%
-    dplyr::mutate(.url_key_tmp = norm_url(.data[[url_col]])) %>%
-    dplyr::left_join(manual_url, by = c(".url_key_tmp" = "url_key")) %>%
-    dplyr::mutate(
+    mutate(.url_key_tmp = norm_url(.data[[url_col]])) %>%
+    left_join(manual_url, by = c(".url_key_tmp" = "url_key")) %>%
+    mutate(
       # Fill only when missing
-      ref_r_clean = dplyr::coalesce(ref_r_clean, ref_r_clean_manual),
-      bibtex_r    = dplyr::coalesce(bibtex_r, bibtex_r_manual),
-      title_r     = dplyr::coalesce(title_r, title_r_manual),
-      author_r    = dplyr::coalesce(author_r, author_r_manual),
-      journal_r   = dplyr::coalesce(journal_r, journal_r_manual),
-      year_r      = dplyr::coalesce(year_r, year_r_manual),
-      volume_r    = dplyr::coalesce(volume_r, volume_r_manual),
-      issue_r     = dplyr::coalesce(issue_r, issue_r_manual),
-      pages_r     = dplyr::coalesce(pages_r, pages_r_manual)
+      ref_r_clean = coalesce(ref_r_clean, ref_r_clean_manual),
+      bibtex_r    = coalesce(bibtex_r, bibtex_r_manual),
+      title_r     = coalesce(title_r, title_r_manual),
+      author_r    = coalesce(author_r, author_r_manual),
+      journal_r   = coalesce(journal_r, journal_r_manual),
+      year_r      = coalesce(year_r, year_r_manual),
+      volume_r    = coalesce(volume_r, volume_r_manual),
+      issue_r     = coalesce(issue_r, issue_r_manual),
+      pages_r     = coalesce(pages_r, pages_r_manual)
     ) %>%
-    dplyr::select(-.url_key_tmp, -dplyr::ends_with("_manual"))
+    select(-.url_key_tmp, -ends_with("_manual"))
 
   # Optional: recover missing title_r from bibtex_r
   if (recover_title_from_bibtex) {
     need_idx <- which(!has_text_vec(out$title_r) & has_text_vec(out$bibtex_r))
     if (length(need_idx) > 0) {
       recovered <- vapply(out$bibtex_r[need_idx], function(b) parse_bibtex_fields(b)$title, character(1))
-      out$title_r[need_idx] <- dplyr::coalesce(out$title_r[need_idx], recovered)
+      out$title_r[need_idx] <- coalesce(out$title_r[need_idx], recovered)
     }
   }
 
@@ -458,10 +463,10 @@ get_datacite_apa <- function(doi) {
 
   tryCatch({
     url <- glue("https://api.datacite.org/dois/{URLencode(doi, reserved = TRUE)}")
-    res <- httr::GET(url, httr::timeout(10))
-    if (httr::status_code(res) != 200) return(NA_character_)
+    res <- GET(url, timeout(10))
+    if (status_code(res) != 200) return(NA_character_)
 
-    j <- jsonlite::fromJSON(httr::content(res, "text", encoding = "UTF-8"))
+    j <- fromJSON(content(res, "text", encoding = "UTF-8"))
     attr <- j$data$attributes
 
     # Extract components
@@ -498,10 +503,10 @@ get_datacite_bibtex <- function(doi) {
 
   tryCatch({
     url <- glue("https://api.datacite.org/dois/{URLencode(doi, reserved = TRUE)}")
-    res <- httr::GET(url, httr::timeout(10))
-    if (httr::status_code(res) != 200) return(NA_character_)
+    res <- GET(url, timeout(10))
+    if (status_code(res) != 200) return(NA_character_)
 
-    j <- jsonlite::fromJSON(httr::content(res, "text", encoding = "UTF-8"))
+    j <- fromJSON(content(res, "text", encoding = "UTF-8"))
     attr <- j$data$attributes
 
     # Extract components
@@ -544,17 +549,17 @@ authors_to_crossref_json <- function(author) {
 
   if (!is.data.frame(author) || nrow(author) == 0) return(NA_character_)
 
-  df <- tibble::as_tibble(author)
+  df <- as_tibble(author)
   keep <- intersect(c("given", "family", "sequence", "ORCID", "affiliation"), names(df))
   if (length(keep) == 0) return(NA_character_)
   df <- df[, keep, drop = FALSE]
-  as.character(jsonlite::toJSON(df, auto_unbox = TRUE, null = "null"))
+  as.character(toJSON(df, auto_unbox = TRUE, null = "null"))
 }
 
 # ---- cache I/O ----
 load_ref_fields_cache <- function(cache_file = CROSSREF_REF_FIELDS_CACHE) {
   if (!file.exists(cache_file)) {
-    return(tibble::tibble(
+    return(tibble(
       doi = character(),
       title = character(),
       authors_json = character(),
@@ -574,7 +579,7 @@ save_ref_fields_cache <- function(cache_df, cache_file = CROSSREF_REF_FIELDS_CAC
 }
 
 # ---- CrossRef parsing (for rcrossref tibble format) ----
-# rcrossref::cr_works()$data returns a tibble with dot-separated column names
+# cr_works()$data returns a tibble with dot-separated column names
 # and dates as character strings like "2023-08-16"
 
 extract_year_crossref <- function(x) {
@@ -633,7 +638,7 @@ extract_volume_issue_crossref <- function(x) {
 
 parse_crossref_work_to_fields <- function(work) {
   vi <- extract_volume_issue_crossref(work)
-  tibble::tibble(
+  tibble(
     title = extract_title_crossref(work),
     authors_json = authors_to_crossref_json(work$author),
     journal = extract_journal_crossref(work),
@@ -650,7 +655,7 @@ get_crossref_reference_fields <- function(dois,
                                           manual_refs = MANUAL_REFERENCES,
                                           progress = TRUE) {
   dois <- tolower(trimws(dois))
-  out <- tibble::tibble(doi = dois)
+  out <- tibble(doi = dois)
 
   # Load manual references (highest priority)
   manual_refs_df <- load_manual_references(manual_refs)
@@ -662,16 +667,16 @@ get_crossref_reference_fields <- function(dois,
   if (nrow(manual_refs_df) > 0) {
     # Filter to only keys that are in the requested DOIs
     manual_subset <- manual_refs_df %>%
-      dplyr::mutate(key = tolower(key)) %>%
-      dplyr::filter(key %in% dois)
+      mutate(key = tolower(key)) %>%
+      filter(key %in% dois)
 
     if (nrow(manual_subset) > 0) {
       # Helper to check if value is non-empty (safe for NA)
       has_value <- function(x) isTRUE(!is.na(x) && nzchar(as.character(x)))
 
       manual_fields <- manual_subset %>%
-        dplyr::rowwise() %>%
-        dplyr::mutate(
+        rowwise() %>%
+        mutate(
           # Parse BibTeX if individual fields not provided
           .parsed = list(if (has_value(reference_bibtex)) {
             parse_bibtex_fields(reference_bibtex)
@@ -689,8 +694,8 @@ get_crossref_reference_fields <- function(dois,
           pages = if (has_value(pages)) pages else .parsed$pages,
           source = "manual"
         ) %>%
-        dplyr::ungroup() %>%
-        dplyr::select(doi = key, title, authors_json, journal, year, volume, issue, pages, source)
+        ungroup() %>%
+        select(doi = key, title, authors_json, journal, year, volume, issue, pages, source)
     }
   }
 
@@ -723,7 +728,7 @@ get_crossref_reference_fields <- function(dois,
       d <- need[[i]]
 
       row <- tryCatch({
-        w <- rcrossref::cr_works(dois = d)$data
+        w <- cr_works(dois = d)$data
         if (!is.data.frame(w) || nrow(w) < 1) stop("No data returned")
         # Convert first row to list for extraction functions
         work <- as.list(w[1, ])
@@ -732,7 +737,7 @@ get_crossref_reference_fields <- function(dois,
           mutate(doi = d, source = "crossref") %>%
           select(doi, title, authors_json, journal, year, volume, issue, pages, source)
       }, error = function(e) {
-        tibble::tibble(
+        tibble(
           doi = d,
           title = NA_character_,
           authors_json = NA_character_,
@@ -749,39 +754,39 @@ get_crossref_reference_fields <- function(dois,
       if (!is.null(pb)) utils::setTxtProgressBar(pb, i)
     }
 
-    new_df <- dplyr::bind_rows(new_rows)
+    new_df <- bind_rows(new_rows)
 
     cache_df <- cache_df %>%
-      dplyr::filter(!doi %in% new_df$doi) %>%
-      dplyr::bind_rows(new_df)
+      filter(!doi %in% new_df$doi) %>%
+      bind_rows(new_df)
 
     save_ref_fields_cache(cache_df, cache_file)
   }
 
   # Combine: manual overrides take priority, then cache
   result <- out %>%
-    dplyr::left_join(cache_df, by = "doi") %>%
-    dplyr::select(doi, title, authors_json, journal, year, volume, issue, pages, source)
+    left_join(cache_df, by = "doi") %>%
+    select(doi, title, authors_json, journal, year, volume, issue, pages, source)
 
   # Override with manual fields where available
  if (!is.null(manual_fields) && nrow(manual_fields) > 0) {
   # rows_update() requires unique keys in y (manual_fields$doi)
   manual_fields <- manual_fields %>%
-    dplyr::mutate(doi = tolower(trimws(doi))) %>%
-    dplyr::group_by(doi) %>%
-    dplyr::summarise(
-      title = dplyr::first(na.omit(title)),
-      authors_json = dplyr::first(na.omit(authors_json)),
-      journal = dplyr::first(na.omit(journal)),
-      year = dplyr::first(na.omit(year)),
-      volume = dplyr::first(na.omit(volume)),
-      issue = dplyr::first(na.omit(issue)),
-      pages = dplyr::first(na.omit(pages)),
+    mutate(doi = tolower(trimws(doi))) %>%
+    group_by(doi) %>%
+    summarise(
+      title = first(na.omit(title)),
+      authors_json = first(na.omit(authors_json)),
+      journal = first(na.omit(journal)),
+      year = first(na.omit(year)),
+      volume = first(na.omit(volume)),
+      issue = first(na.omit(issue)),
+      pages = first(na.omit(pages)),
       source = "manual",
       .groups = "drop"
     )
     result <- result %>%
-      dplyr::rows_update(manual_fields, by = "doi", unmatched = "ignore")
+      rows_update(manual_fields, by = "doi", unmatched = "ignore")
   }
 
   result
@@ -792,13 +797,13 @@ get_datacite_reference_fields <- function(dois,
                                           progress = TRUE) {
 
   dois <- tolower(trimws(dois))
-  out <- tibble::tibble(doi = dois)
+  out <- tibble(doi = dois)
 
   valid <- !is.na(dois) & is_doi(dois)
   unique_dois <- unique(dois[valid])
 
   cache_df <- load_ref_fields_cache(cache_file)
-  cached_subset <- cache_df %>% dplyr::filter(doi %in% unique_dois)
+  cached_subset <- cache_df %>% filter(doi %in% unique_dois)
 
   # fetch only those not in cache OR those previously cached but missing key fields
   need <- setdiff(unique_dois, cached_subset$doi)
@@ -819,11 +824,11 @@ get_datacite_reference_fields <- function(dois,
       d <- need[[i]]
 
       row <- tryCatch({
-        url <- glue::glue("https://api.datacite.org/dois/{URLencode(d, reserved = TRUE)}")
-        res <- httr::GET(url, httr::timeout(10))
-        if (httr::status_code(res) != 200) stop("DataCite status ", httr::status_code(res))
+        url <- glue("https://api.datacite.org/dois/{URLencode(d, reserved = TRUE)}")
+        res <- GET(url, timeout(10))
+        if (status_code(res) != 200) stop("DataCite status ", status_code(res))
 
-        j <- jsonlite::fromJSON(httr::content(res, "text", encoding = "UTF-8"))
+        j <- fromJSON(content(res, "text", encoding = "UTF-8"))
         attr <- j$data$attributes
 
         # title
@@ -833,11 +838,11 @@ get_datacite_reference_fields <- function(dois,
         } else if (is.list(attr$titles) && length(attr$titles) > 0) {
           title <- attr$titles[[1]]$title %||% attr$titles[[1]] %||% NA_character_
         }
-        title <- if (!is.na(title) && nzchar(title)) stringr::str_squish(title) else NA_character_
+        title <- if (!is.na(title) && nzchar(title)) str_squish(title) else NA_character_
 
         # journal-ish container (best-effort; DataCite is heterogeneous)
         journal <- attr$container$title %||% attr$`container-title` %||% attr$publisher %||% NA_character_
-        journal <- if (!is.na(journal) && nzchar(journal)) stringr::str_squish(journal) else NA_character_
+        journal <- if (!is.na(journal) && nzchar(journal)) str_squish(journal) else NA_character_
 
         # year
         year <- suppressWarnings(as.integer(attr$publicationYear %||% NA))
@@ -870,20 +875,20 @@ get_datacite_reference_fields <- function(dois,
           seqv <- rep("additional", nrow(creators))
           if (nrow(creators) >= 1) seqv[1] <- "first"
 
-          df_json <- tibble::tibble(
+          df_json <- tibble(
             given = given2,
             family = family2,
             sequence = seqv
           ) %>%
-            dplyr::mutate(
-              given = dplyr::na_if(given, ""),
-              family = dplyr::na_if(family, "")
+            mutate(
+              given = na_if(given, ""),
+              family = na_if(family, "")
             )
 
-          authors_json <- jsonlite::toJSON(df_json, auto_unbox = TRUE, null = "null")
+          authors_json <- toJSON(df_json, auto_unbox = TRUE, null = "null")
         }
 
-        tibble::tibble(
+        tibble(
           doi = d,
           title = title,
           authors_json = authors_json,
@@ -895,7 +900,7 @@ get_datacite_reference_fields <- function(dois,
           source = "datacite"
         )
       }, error = function(e) {
-        tibble::tibble(
+        tibble(
           doi = d,
           title = NA_character_,
           authors_json = NA_character_,
@@ -912,18 +917,18 @@ get_datacite_reference_fields <- function(dois,
       if (!is.null(pb)) utils::setTxtProgressBar(pb, i)
     }
 
-    new_df <- dplyr::bind_rows(new_rows)
+    new_df <- bind_rows(new_rows)
 
     cache_df <- cache_df %>%
-      dplyr::filter(!doi %in% new_df$doi) %>%
-      dplyr::bind_rows(new_df)
+      filter(!doi %in% new_df$doi) %>%
+      bind_rows(new_df)
 
     save_ref_fields_cache(cache_df, cache_file)
   }
 
   out %>%
-    dplyr::left_join(cache_df, by = "doi") %>%
-    dplyr::select(doi, title, authors_json, journal, year, volume, issue, pages, source)
+    left_join(cache_df, by = "doi") %>%
+    select(doi, title, authors_json, journal, year, volume, issue, pages, source)
 }
 
 #' Get APA and/or BibTeX references for DOIs/keys
@@ -995,9 +1000,9 @@ get_references <- function(doi_vec,
     if (format %in% c("both", "apa")) {
       # 1. Check manual references (works for any key, not just DOIs)
       manual_apa <- manual_refs_df %>%
-        dplyr::filter(tolower(key) == d) %>%
-        dplyr::pull(reference_apa) %>%
-        dplyr::first()
+        filter(tolower(key) == d) %>%
+        pull(reference_apa) %>%
+        first()
 
       if (!is.na(manual_apa) && nzchar(manual_apa)) {
         cache_obj$apa[[d]] <- manual_apa
@@ -1041,9 +1046,9 @@ get_references <- function(doi_vec,
     if (format %in% c("both", "bibtex")) {
       # 1. Check manual references
       manual_bib <- manual_refs_df %>%
-        dplyr::filter(tolower(key) == d) %>%
-        dplyr::pull(reference_bibtex) %>%
-        dplyr::first()
+        filter(tolower(key) == d) %>%
+        pull(reference_bibtex) %>%
+        first()
 
       if (!is.na(manual_bib) && nzchar(manual_bib)) {
         cache_obj$bibtex[[d]] <- manual_bib
@@ -1092,7 +1097,7 @@ get_references <- function(doi_vec,
   }
 
   # Map back to original order and build result tibble
-  result <- tibble::tibble(doi = doi_vec)
+  result <- tibble(doi = doi_vec)
 
   if (format %in% c("both", "apa")) {
     apa_final <- vapply(doi_vec, function(d) {
@@ -1218,7 +1223,7 @@ get_references <- function(doi_vec,
 #' @return Tibble with cached DOI metadata
 load_doi_cache <- function(cache_file = CROSSREF_DOI_CACHE) {
   if (!file.exists(cache_file)) {
-    return(tibble::tibble(
+    return(tibble(
       doi = character(),
       title = character(),
       authors = character(),
@@ -1246,20 +1251,20 @@ save_doi_cache <- function(cache_df, cache_file = CROSSREF_DOI_CACHE) {
 #' @return Tibble with author data
 load_author_cache <- function(cache_file = CROSSREF_AUTHORS_CACHE) {
   if (!file.exists(cache_file)) {
-    return(tibble::tibble(
+    return(tibble(
       doi = character(),
       authors_json = character()
     ))
   }
 
-  readxl::read_excel(cache_file)
+  read_excel(cache_file)
 }
 
 #' Save author cache to Excel
 #' @param cache_df Tibble with author data
 #' @param cache_file Path to save cache
 save_author_cache <- function(cache_df, cache_file = CROSSREF_AUTHORS_CACHE) {
-  openxlsx::write.xlsx(cache_df, cache_file, overwrite = TRUE)
+  write.xlsx(cache_df, cache_file, overwrite = TRUE)
 }
 
 #' Get CrossRef authors for DOIs with caching
@@ -1284,7 +1289,7 @@ get_crossref_authors <- function(dois,
   if (length(uncached_dois) > 0) {
     message("Fetching author data for ", length(uncached_dois), " new DOI(s)...")
 
-    new_results <- tibble::tibble(doi = character(), authors_json = character())
+    new_results <- tibble(doi = character(), authors_json = character())
 
     # Fetch in batches
     for (i in seq(1, length(uncached_dois), by = batch_size)) {
@@ -1294,10 +1299,10 @@ get_crossref_authors <- function(dois,
       for (doi in batch) {
         tryCatch({
           # CrossRef API call
-          cr_result <- rcrossref::cr_cn(doi, format = "json")
-          authors_json <- jsonlite::toJSON(cr_result$author %||% list())
+          cr_result <- cr_cn(doi, format = "json")
+          authors_json <- toJSON(cr_result$author %||% list())
 
-          new_results <- bind_rows(new_results, tibble::tibble(
+          new_results <- bind_rows(new_results, tibble(
             doi = doi,
             authors_json = authors_json
           ))
@@ -1313,7 +1318,7 @@ get_crossref_authors <- function(dois,
   }
 
   # Return all requested DOIs with their cached author data
-  result <- tibble::tibble(doi = dois) %>%
+  result <- tibble(doi = dois) %>%
     left_join(cache_df, by = "doi")
 
   result
@@ -1343,7 +1348,7 @@ compute_author_overlap <- function(data,
       if (is.na(authors_json) || authors_json == "[]") {
         return(character(0))
       }
-      authors_list <- jsonlite::fromJSON(authors_json)
+      authors_list <- fromJSON(authors_json)
       if (is.data.frame(authors_list) && "family" %in% names(authors_list)) {
         tolower(authors_list$family)
       } else {
