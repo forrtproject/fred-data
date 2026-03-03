@@ -112,43 +112,51 @@ classify_replication_intent <- function(df,
               sum(already_cached), nrow(to_classify)))
 
   if (nrow(to_classify) > 0) {
-    # Build prompts (must be a list for parallel_chat_structured)
-    prompts <- pmap(
-      list(to_classify$title_o, to_classify$title_r, to_classify$abstract_r),
-      function(t_o, t_r, a_r) build_replication_intent_prompt(t_o, t_r, a_r)
-    )
-
-    # Create chat object
-    chat <- chat_google_gemini(
-      system_prompt = REPLICATION_INTENT_SYSTEM_PROMPT,
-      model = model
-    )
-
-    # Run parallel structured classification
-    results <- parallel_chat_structured_robust(
-      chat = chat,
-      prompts = prompts,
-      type = REPLICATION_INTENT_TYPE,
-      max_active = max_active,
-      rpm = rpm
-    )
-
-    # results is a data.frame with one row per prompt
-    # Store each row as a list in the cache
-    for (i in seq_len(nrow(to_classify))) {
-      key <- to_classify$.cache_key[i]
-      cache[[key]] <- list(
-        self_identified_replication = results$self_identified_replication[i],
-        confidence = as.character(results$confidence[i]),
-        reasoning = results$reasoning[i]
+    tryCatch({
+      # Build prompts (must be a list for parallel_chat_structured)
+      prompts <- pmap(
+        list(to_classify$title_o, to_classify$title_r, to_classify$abstract_r),
+        function(t_o, t_r, a_r) build_replication_intent_prompt(t_o, t_r, a_r)
       )
-    }
 
-    # Save updated cache
-    dir.create(dirname(cache_file), showWarnings = FALSE, recursive = TRUE)
-    saveRDS(cache, cache_file)
-    cat(sprintf("  Classified %d new pairs, cache now has %d entries\n",
-                nrow(to_classify), length(cache)))
+      # Create chat object
+      chat <- chat_google_gemini(
+        system_prompt = REPLICATION_INTENT_SYSTEM_PROMPT,
+        model = model
+      )
+
+      # Run parallel structured classification
+      results <- parallel_chat_structured_robust(
+        chat = chat,
+        prompts = prompts,
+        type = REPLICATION_INTENT_TYPE,
+        max_active = max_active,
+        rpm = rpm
+      )
+
+      # results is a data.frame with one row per prompt
+      # Store each row as a list in the cache
+      for (i in seq_len(nrow(to_classify))) {
+        key <- to_classify$.cache_key[i]
+        cache[[key]] <- list(
+          self_identified_replication = results$self_identified_replication[i],
+          confidence = as.character(results$confidence[i]),
+          reasoning = results$reasoning[i]
+        )
+      }
+
+      # Save updated cache
+      dir.create(dirname(cache_file), showWarnings = FALSE, recursive = TRUE)
+      saveRDS(cache, cache_file)
+      cat(sprintf("  Classified %d new pairs, cache now has %d entries\n",
+                  nrow(to_classify), length(cache)))
+    }, error = function(e) {
+      warning(sprintf(
+        "LLM classification skipped for %d uncached rows (API unavailable): %s\n",
+        nrow(to_classify), conditionMessage(e)
+      ))
+      cat("  Uncached rows will have NA replication intent — set GEMINI_API_KEY secret to classify them.\n")
+    })
   }
 
   # Map cache results back to all rows
