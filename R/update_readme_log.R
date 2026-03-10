@@ -12,7 +12,14 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 
-old_rows     <- if (length(args) >= 1) as.integer(args[1]) else stop("old_rows argument is required")
+if (length(args) >= 1) {
+  old_rows <- as.integer(args[1])
+  if (is.na(old_rows)) {
+    stop(sprintf("old_rows argument must be an integer; got: %s", args[1]))
+  }
+} else {
+  stop("old_rows argument is required")
+}
 flora_path   <- if (length(args) >= 2) args[2] else file.path("output", "flora.csv")
 readme_path  <- if (length(args) >= 3) args[3] else "README.md"
 
