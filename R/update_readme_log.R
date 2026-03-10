@@ -77,11 +77,26 @@ if (start_line >= end_line) {
   stop("START marker must appear before END marker in README.md")
 }
 
-# Insert new row immediately after the START marker (most-recent-first ordering)
+# Insert new row just after the table header separator (most-recent-first ordering)
+# within the marker-bounded section, so the row remains part of the table even if
+# the markers are moved outside the table header.
+
+# Find the table header separator line (e.g., "| --- | --- |") between the markers.
+header_sep_line <- NA_integer_
+for (i in seq(from = start_line + 1, to = end_line - 1)) {
+  if (grepl("^\\s*\\|\\s*:?-{3,}:?\\s*(\\|\\s*:?-{3,}:?\\s*)*\\|?\\s*$", readme[i])) {
+    header_sep_line <- i
+    break
+  }
+}
+
+# If a header separator was found, insert after it; otherwise fall back to after START_MARKER.
+insert_after_line <- if (!is.na(header_sep_line)) header_sep_line else start_line
+
 readme_updated <- c(
-  readme[1:start_line],
+  readme[1:insert_after_line],
   new_row,
-  readme[(start_line + 1):length(readme)]
+  readme[(insert_after_line + 1):length(readme)]
 )
 
 writeLines(readme_updated, readme_path)
