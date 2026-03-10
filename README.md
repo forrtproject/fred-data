@@ -430,3 +430,14 @@ For API issues:
 **Last Updated**: 2025-12-17
 **Version**: 2.0 (Reorganized with independent pipelines)
 **Status**: Production-ready
+
+---
+
+## 📊 Flora Dataset Update Log
+
+This table is automatically updated after each pipeline run, recording changes to `output/flora.csv`.
+
+| Date (UTC) | Previous Rows | New Rows | Change | By Type |
+|:-----------|:-------------:|:--------:|:------:|:--------|
+<!-- FLORA_UPDATE_LOG_START -->
+<!-- FLORA_UPDATE_LOG_END -->
