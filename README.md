@@ -437,7 +437,7 @@ For API issues:
 
 This table is automatically updated after each pipeline run, recording changes to `output/flora.csv`.
 
+<!-- FLORA_UPDATE_LOG_START -->
 | Date (UTC) | Previous Rows | New Rows | Change | By Type |
 |:-----------|:-------------:|:--------:|:------:|:--------|
-| <!-- FLORA_UPDATE_LOG_START --> | | | | |
-| <!-- FLORA_UPDATE_LOG_END -->   | | | | |
+<!-- FLORA_UPDATE_LOG_END -->
