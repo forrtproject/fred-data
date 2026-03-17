@@ -90,7 +90,7 @@ parse_numeric_list_named <- function(text, line_name) {
 parse_numeric_list_positional <- function(text, position) {
   hits <- regmatches(text, gregexpr('line\\s+\\[([^\\]]*)\\]', text, perl = TRUE))[[1]]
   if (length(hits) < position) return(integer(0))
-  inner <- sub('.*\\[([^\\]]*)\\].*', '\\1', hits[[position]])
+  inner <- sub('.*?\\[([^\\]]*)\\].*', '\\1', hits[[position]], perl = TRUE)
   as.integer(trimws(strsplit(inner, ",")[[1]]))
 }
 
@@ -132,7 +132,11 @@ new_chart <- c(
   sprintf("    line %s", fmt_int_list(existing_total)),
   sprintf("    line %s", fmt_int_list(existing_replic)),
   sprintf("    line %s", fmt_int_list(existing_reprod)),
-  "```"
+  "```",
+  "",
+  sprintf("> **Latest (%s):** Total = %d | Replications = %d | Reproductions = %d",
+          tail(existing_dates, 1), tail(existing_total, 1),
+          tail(existing_replic, 1), tail(existing_reprod, 1))
 )
 
 # ── Write updated README ─────────────────────────────────────────────────────
