@@ -1,27 +1,19 @@
 #!/usr/bin/env Rscript
 # update_readme_log.R
-# Updates the Flora Dataset Update Log table in README.md after each pipeline run.
+# Updates the Flora Dataset chart in README.md after each pipeline run.
+# The chart shows 3 lines over time: total rows, replications, reproductions.
 #
 # Usage:
-#   Rscript R/update_readme_log.R <old_rows> <flora_csv_path> <readme_path>
+#   Rscript R/update_readme_log.R <flora_csv_path> <readme_path>
 #
 # Arguments:
-#   old_rows       - Row count of flora.csv before this pipeline run
 #   flora_csv_path - Path to the new flora.csv (default: output/flora.csv)
 #   readme_path    - Path to README.md (default: README.md)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-if (length(args) >= 1) {
-  old_rows <- as.integer(args[1])
-  if (is.na(old_rows)) {
-    stop(sprintf("old_rows argument must be an integer; got: %s", args[1]))
-  }
-} else {
-  stop("old_rows argument is required")
-}
-flora_path   <- if (length(args) >= 2) args[2] else file.path("output", "flora.csv")
-readme_path  <- if (length(args) >= 3) args[3] else "README.md"
+flora_path  <- if (length(args) >= 1) args[1] else file.path("output", "flora.csv")
+readme_path <- if (length(args) >= 2) args[2] else "README.md"
 
 START_MARKER <- "<!-- FLORA_UPDATE_LOG_START -->"
 END_MARKER   <- "<!-- FLORA_UPDATE_LOG_END -->"
@@ -31,30 +23,23 @@ if (!file.exists(flora_path)) {
   stop(sprintf("flora.csv not found at: %s", flora_path))
 }
 
-flora <- read.csv(flora_path, check.names = FALSE)
+flora    <- read.csv(flora_path, check.names = FALSE)
 new_rows <- nrow(flora)
+date_str <- strftime(Sys.time(), "%Y-%m-%d", tz = "UTC")
 
-# ── Compute stats ───────────────────────────────────────────────────────────
-diff       <- new_rows - old_rows
-change_str <- if (diff > 0) paste0("+", diff) else as.character(diff)
-date_str   <- strftime(Sys.time(), "%Y-%m-%d", tz = "UTC")
-
-# Breakdown by type (replication / reproduction) if column exists
-type_breakdown <- ""
+# Breakdown by type (replication / reproduction)
+replication_count  <- 0L
+reproduction_count <- 0L
 if ("type" %in% names(flora)) {
-  counts <- table(flora$type, useNA = "no")
-  parts  <- paste(names(counts), counts, sep = ": ", collapse = "; ")
-  type_breakdown <- parts
+  counts             <- table(flora$type, useNA = "no")
+  replication_count  <- if ("replication"  %in% names(counts)) as.integer(counts["replication"])  else 0L
+  reproduction_count <- if ("reproduction" %in% names(counts)) as.integer(counts["reproduction"]) else 0L
 }
 
-cat(sprintf("Old rows: %d\n", old_rows))
-cat(sprintf("New rows: %d\n", new_rows))
-cat(sprintf("Change  : %s\n", change_str))
-if (nzchar(type_breakdown)) cat(sprintf("By type : %s\n", type_breakdown))
-
-# ── Build new table row ──────────────────────────────────────────────────────
-type_col <- if (nzchar(type_breakdown)) type_breakdown else "-"
-new_row  <- sprintf("| %s | %d | %d | %s | %s |", date_str, old_rows, new_rows, change_str, type_col)
+cat(sprintf("Date        : %s\n", date_str))
+cat(sprintf("Total       : %d\n", new_rows))
+cat(sprintf("Replications: %d\n", replication_count))
+cat(sprintf("Reproductions: %d\n", reproduction_count))
 
 # ── Read README ──────────────────────────────────────────────────────────────
 if (!file.exists(readme_path)) {
@@ -77,27 +62,72 @@ if (start_line >= end_line) {
   stop("START marker must appear before END marker in README.md")
 }
 
-# Insert new row just after the table header separator (most-recent-first ordering)
-# within the marker-bounded section, so the row remains part of the table even if
-# the markers are moved outside the table header.
+# ── Parse existing chart data between markers ────────────────────────────────
+section      <- readme[(start_line + 1):(end_line - 1)]
+section_text <- paste(section, collapse = "\n")
 
-# Find the table header separator line (e.g., "| --- | --- |") between the markers.
-header_sep_line <- NA_integer_
-for (i in seq(from = start_line + 1, to = end_line - 1)) {
-  if (grepl("^\\s*\\|\\s*:?-{3,}:?\\s*(\\|\\s*:?-{3,}:?\\s*)*\\|?\\s*$", readme[i])) {
-    header_sep_line <- i
-    break
-  }
+# Extract the bracketed content for a named pattern (first capture group).
+extract_bracket_content <- function(text, pattern) {
+  m <- regexec(pattern, text, perl = TRUE)
+  hits <- regmatches(text, m)[[1]]
+  if (length(hits) < 2 || !nzchar(hits[2])) return(character(0))
+  hits[2]
 }
 
-# If a header separator was found, insert after it; otherwise fall back to after START_MARKER.
-insert_after_line <- if (!is.na(header_sep_line)) header_sep_line else start_line
+parse_quoted_list <- function(text) {
+  raw <- extract_bracket_content(text, '(?s)x-axis\\s*\\[([^\\]]*)\\]')
+  if (!length(raw)) return(character(0))
+  gsub('"', "", trimws(strsplit(raw, ",")[[1]]))
+}
 
+parse_numeric_list <- function(text, line_name) {
+  pattern <- sprintf('(?s)line\\s+"%s"\\s*\\[([^\\]]*)\\]', line_name)
+  raw <- extract_bracket_content(text, pattern)
+  if (!length(raw)) return(integer(0))
+  as.integer(trimws(strsplit(raw, ",")[[1]]))
+}
+
+existing_dates  <- parse_quoted_list(section_text)
+existing_total  <- parse_numeric_list(section_text, "Total")
+existing_replic <- parse_numeric_list(section_text, "Replications")
+existing_reprod <- parse_numeric_list(section_text, "Reproductions")
+
+# ── Append or replace today's entry ─────────────────────────────────────────
+# If today's date already appears as the last entry, update it in-place.
+if (length(existing_dates) > 0 && tail(existing_dates, 1) == date_str) {
+  n <- length(existing_dates)
+  existing_total[n]  <- new_rows
+  existing_replic[n] <- replication_count
+  existing_reprod[n] <- reproduction_count
+} else {
+  existing_dates  <- c(existing_dates, date_str)
+  existing_total  <- c(existing_total,  new_rows)
+  existing_replic <- c(existing_replic, replication_count)
+  existing_reprod <- c(existing_reprod, reproduction_count)
+}
+
+# ── Build updated Mermaid chart ──────────────────────────────────────────────
+fmt_str_list <- function(vals) paste0("[", paste(sprintf('"%s"', vals), collapse = ", "), "]")
+fmt_int_list <- function(vals) paste0("[", paste(as.integer(vals), collapse = ", "), "]")
+
+new_chart <- c(
+  "```mermaid",
+  "xychart-beta",
+  '    title "FLoRA Dataset Size Over Time"',
+  sprintf("    x-axis %s", fmt_str_list(existing_dates)),
+  sprintf('    line "Total" %s',         fmt_int_list(existing_total)),
+  sprintf('    line "Replications" %s',  fmt_int_list(existing_replic)),
+  sprintf('    line "Reproductions" %s', fmt_int_list(existing_reprod)),
+  "```"
+)
+
+# ── Write updated README ─────────────────────────────────────────────────────
 readme_updated <- c(
-  readme[1:insert_after_line],
-  new_row,
-  readme[(insert_after_line + 1):length(readme)]
+  readme[seq_len(start_line)],
+  new_chart,
+  readme[end_line:length(readme)]
 )
 
 writeLines(readme_updated, readme_path)
-cat(sprintf("✓ README.md updated with new log row: %s\n", new_row))
+cat(sprintf("✓ README.md chart updated for %s (total=%d, repl=%d, repr=%d)\n",
+            date_str, new_rows, replication_count, reproduction_count))

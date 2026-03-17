@@ -435,11 +435,15 @@ For API issues:
 
 ## 📊 Flora Dataset Update Log
 
-This table is automatically updated after each pipeline run, recording changes to `output/flora.csv`.
+This chart is automatically updated after each pipeline run, showing the size of `output/flora.csv` over time.
 
 <!-- FLORA_UPDATE_LOG_START -->
-| Date (UTC) | Previous Rows | New Rows | Change | By Type |
-|:-----------|:-------------:|:--------:|:------:|:--------|
-| 2026-03-17 | 4443 | 1117 | -3326 | replication: 1109; reproduction: 8 |
-| 2026-03-16 | 4449 | 1126 | -3323 | replication: 1118; reproduction: 8 |
+```mermaid
+xychart-beta
+    title "FLoRA Dataset Size Over Time"
+    x-axis ["2026-03-16", "2026-03-17"]
+    line "Total" [1126, 1117]
+    line "Replications" [1118, 1109]
+    line "Reproductions" [8, 8]
+```
 <!-- FLORA_UPDATE_LOG_END -->
