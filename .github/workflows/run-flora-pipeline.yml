@@ -40,27 +40,15 @@ jobs:
         run: |
           Rscript -e 'install.packages(c("knitr", "rmarkdown", "dplyr", "stringr", "tibble", "readxl", "jsonlite", "glue", "httr", "here", "readr", "rcrossref", "ellmer", "openssl", "openxlsx", "purrr"), repos = "https://cloud.r-project.org")'
 
-      - name: Record previous flora row count
-        id: old-count
-        run: |
-          if [ -f output/flora.csv ]; then
-            OLD_ROWS=$(tail -n +2 output/flora.csv | wc -l | tr -d ' ')
-          else
-            OLD_ROWS=0
-          fi
-          echo "old_rows=$OLD_ROWS" >> "$GITHUB_OUTPUT"
-          echo "Previous flora.csv row count: $OLD_ROWS"
-
       - name: Render FLoRA pipeline
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           quarto render pipelines/flora/prepare_flora.qmd --to html
 
-      - name: Update README with flora row count changes
+      - name: Update README with flora chart data
         run: |
           Rscript R/update_readme_log.R \
-            "${{ steps['old-count'].outputs.old_rows }}" \
             "output/flora.csv" \
             "README.md"
 
