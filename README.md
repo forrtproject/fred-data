@@ -440,10 +440,10 @@ This chart is automatically updated after each pipeline run, showing the size of
 <!-- FLORA_UPDATE_LOG_START -->
 ```mermaid
 xychart-beta
-    title "FLoRA Dataset Size Over Time"
+    title "FLoRA Dataset Size Over Time (Total / Replications / Reproductions)"
     x-axis ["2026-03-16", "2026-03-17"]
-    line "Total" [1126, 1136]
-    line "Replications" [1118, 1128]
-    line "Reproductions" [8, 8]
+    line [1126, 1136]
+    line [1118, 1128]
+    line [8, 8]
 ```
 <!-- FLORA_UPDATE_LOG_END -->
