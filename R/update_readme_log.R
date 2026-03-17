@@ -80,17 +80,38 @@ parse_quoted_list <- function(text) {
   gsub('"', "", trimws(strsplit(raw, ",")[[1]]))
 }
 
-parse_numeric_list <- function(text, line_name) {
+parse_numeric_list_named <- function(text, line_name) {
   pattern <- sprintf('(?s)line\\s+"%s"\\s*\\[([^\\]]*)\\]', line_name)
   raw <- extract_bracket_content(text, pattern)
   if (!length(raw)) return(integer(0))
   as.integer(trimws(strsplit(raw, ",")[[1]]))
 }
 
+# Parse the nth unnamed line entry (position is 1-based) from a positional chart.
+# Uses the full match text to manually extract bracket contents since gregexpr
+# returns full matches rather than capture groups.
+parse_numeric_list_by_position <- function(text, position) {
+  hits <- regmatches(text, gregexpr('(?s)line\\s+\\[[^\\]]*\\]', text, perl = TRUE))[[1]]
+  if (length(hits) < position) return(integer(0))
+  inner <- regmatches(hits[[position]],
+                      regexpr('\\[([^\\]]*)\\]', hits[[position]], perl = TRUE))
+  inner <- gsub('[\\[\\]]', '', inner)
+  as.integer(trimws(strsplit(inner, ",")[[1]]))
+}
+
+# Try the named format first (backward compat), then fall back to positional.
+# line_name: series label used in the old format (e.g. "Total")
+# position:  1-based index of the line in the new unnamed format
+parse_numeric_list <- function(text, line_name, position) {
+  result <- parse_numeric_list_named(text, line_name)
+  if (!length(result)) result <- parse_numeric_list_by_position(text, position)
+  result
+}
+
 existing_dates  <- parse_quoted_list(section_text)
-existing_total  <- parse_numeric_list(section_text, "Total")
-existing_replic <- parse_numeric_list(section_text, "Replications")
-existing_reprod <- parse_numeric_list(section_text, "Reproductions")
+existing_total  <- parse_numeric_list(section_text, "Total", 1)
+existing_replic <- parse_numeric_list(section_text, "Replications", 2)
+existing_reprod <- parse_numeric_list(section_text, "Reproductions", 3)
 
 # ── Append or replace today's entry ─────────────────────────────────────────
 # If today's date already appears as the last entry, update it in-place.
@@ -113,11 +134,11 @@ fmt_int_list <- function(vals) paste0("[", paste(as.integer(vals), collapse = ",
 new_chart <- c(
   "```mermaid",
   "xychart-beta",
-  '    title "FLoRA Dataset Size Over Time"',
+  '    title "FLoRA Dataset Size Over Time (Total / Replications / Reproductions)"',
   sprintf("    x-axis %s", fmt_str_list(existing_dates)),
-  sprintf('    line "Total" %s',         fmt_int_list(existing_total)),
-  sprintf('    line "Replications" %s',  fmt_int_list(existing_replic)),
-  sprintf('    line "Reproductions" %s', fmt_int_list(existing_reprod)),
+  sprintf("    line %s", fmt_int_list(existing_total)),
+  sprintf("    line %s", fmt_int_list(existing_replic)),
+  sprintf("    line %s", fmt_int_list(existing_reprod)),
   "```"
 )
 
