@@ -440,5 +440,6 @@ This table is automatically updated after each pipeline run, recording changes t
 <!-- FLORA_UPDATE_LOG_START -->
 | Date (UTC) | Previous Rows | New Rows | Change | By Type |
 |:-----------|:-------------:|:--------:|:------:|:--------|
+| 2026-03-17 | 4443 | 1117 | -3326 | replication: 1109; reproduction: 8 |
 | 2026-03-16 | 4449 | 1126 | -3323 | replication: 1118; reproduction: 8 |
 <!-- FLORA_UPDATE_LOG_END -->
