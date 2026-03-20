@@ -708,9 +708,10 @@ get_crossref_reference_fields <- function(dois,
   unique_dois <- setdiff(unique_dois, manual_dois)
 
   cache_df <- load_ref_fields_cache(cache_file)
-  cached_dois <- cache_df$doi %||% character(0)
-
-  need <- setdiff(unique_dois, cached_dois)
+  # Retry transient CrossRef failures (rate limit, timeout) but not permanent
+  # ones (not_found) or DOIs already resolved via DataCite
+  cached_ok <- cache_df %>% filter(source != "crossref_error") %>% pull(doi) %||% character(0)
+  need <- setdiff(unique_dois, cached_ok)
 
   if (length(need) > 0) {
     if (progress) message("Fetching CrossRef reference fields for ", length(need), " DOI(s)...")
@@ -729,7 +730,7 @@ get_crossref_reference_fields <- function(dois,
 
       row <- tryCatch({
         w <- cr_works(dois = d)$data
-        if (!is.data.frame(w) || nrow(w) < 1) stop("No data returned")
+        if (!is.data.frame(w) || nrow(w) < 1) stop("Not found in CrossRef")
         # Convert first row to list for extraction functions
         work <- as.list(w[1, ])
 
@@ -737,6 +738,12 @@ get_crossref_reference_fields <- function(dois,
           mutate(doi = d, source = "crossref") %>%
           select(doi, title, authors_json, journal, year, volume, issue, pages, source)
       }, error = function(e) {
+        # Distinguish permanent (not found) from transient (rate limit, timeout) errors
+        src <- if (grepl("Not found in CrossRef", e$message, fixed = TRUE)) {
+          "crossref_not_found"
+        } else {
+          "crossref_error"
+        }
         tibble(
           doi = d,
           title = NA_character_,
@@ -746,7 +753,7 @@ get_crossref_reference_fields <- function(dois,
           volume = NA_character_,
           issue = NA_character_,
           pages = NA_character_,
-          source = "crossref_error"
+          source = src
         )
       })
 
@@ -803,10 +810,13 @@ get_datacite_reference_fields <- function(dois,
   unique_dois <- unique(dois[valid])
 
   cache_df <- load_ref_fields_cache(cache_file)
-  cached_subset <- cache_df %>% filter(doi %in% unique_dois)
+  # Only skip DOIs already tried via DataCite — crossref_error entries should NOT
 
-  # fetch only those not in cache OR those previously cached but missing key fields
-  need <- setdiff(unique_dois, cached_subset$doi)
+  # block DataCite lookups (they share the same cache file)
+  dc_tried <- cache_df %>%
+    filter(doi %in% unique_dois, source %in% c("datacite", "datacite_error")) %>%
+    pull(doi)
+  need <- setdiff(unique_dois, dc_tried)
 
   if (length(need) > 0) {
     if (progress) message("Fetching DataCite reference fields for ", length(need), " DOI(s)...")
@@ -885,7 +895,7 @@ get_datacite_reference_fields <- function(dois,
               family = na_if(family, "")
             )
 
-          authors_json <- toJSON(df_json, auto_unbox = TRUE, null = "null")
+          authors_json <- as.character(toJSON(df_json, auto_unbox = TRUE, null = "null"))
         }
 
         tibble(
