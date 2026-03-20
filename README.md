@@ -441,11 +441,11 @@ This chart is automatically updated after each pipeline run, showing the size of
 ```mermaid
 xychart-beta
     title "FLoRA Dataset Size Over Time (Total / Replications / Reproductions)"
-    x-axis ["2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19"]
-    line [1126, 1436, 1473, 1474]
-    line [1118, 1428, 1465, 1466]
-    line [8, 8, 8, 8]
+    x-axis ["2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20"]
+    line [1126, 1436, 1473, 1474, 1481]
+    line [1118, 1428, 1465, 1466, 1473]
+    line [8, 8, 8, 8, 8]
 ```
 
-> **Latest (2026-03-19):** Total = 1474 | Replications = 1466 | Reproductions = 8
+> **Latest (2026-03-20):** Total = 1481 | Replications = 1473 | Reproductions = 8
 <!-- FLORA_UPDATE_LOG_END -->
