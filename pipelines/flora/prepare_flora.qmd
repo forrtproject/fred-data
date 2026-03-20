@@ -43,13 +43,14 @@ source(here::here("R", "crossref_cache.R"))
 source(here::here("R", "openalex_cache.R"))
 source(here::here("R", "llm_classification.R"))
 source(here::here("R", "unpaywall_cache.R"))
+source(here::here("R", "preprint_dedup.R"))
 
 ```
 
 ## Configuration
 
 ```{r data-sources}
-FReD_FOUNDATION_SUCCESS_CODING <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv"
+FReD_FOUNDATION_SUCCESS_CODING <- "https://docs.google.com/spreadsheets/d/1J9Lp_RF6hqlDlLT3aMW3zvbQ3GYGbmFzZYdFc7XXwhc/export?gid=984458430&format=csv"
 REPLICATION_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=863031634&single=true&output=csv"
 REPRODUCTION_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=984458430&single=true&output=csv"
 EXCLUSIONS_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=1098183075&single=true&output=csv"
@@ -508,6 +509,15 @@ cat(sprintf("  bibtex recovered:   %d\n", before_bib_r_missing   - count_missing
 
 ```
 
+## Step 7c: Preprint-Publication Deduplication
+
+Detect and resolve cases where the same paper appears as both preprint and
+published version (different DOIs). See [issue #105](https://github.com/forrtproject/FReD/issues/105).
+
+```{r preprint-dedup}
+flora_augmented <- run_preprint_dedup(flora_augmented, verbose = TRUE)
+```
+
 ## Step 8: Add Privacy-Preserving IDs
 
 ```{r add-ids}
@@ -774,8 +784,8 @@ cat("\n### Step 11: Formatting for output\n")
 
 # Select and reorder columns for output
 output_cols <- c(
-"doi_o", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "language_o", "study_o",
-"doi_r", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
+"doi_o", "doi_o_alt", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "language_o", "study_o",
+"doi_r", "doi_r_alt", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
 "oa_url_o", "oa_url_r",
 "outcome", "outcome_quote", "outcome_quote_source", "type", "source",
 "self_identified_replication", "replication_intent_confidence"
