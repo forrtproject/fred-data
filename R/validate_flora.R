@@ -94,10 +94,15 @@ validate_flora_data <- function(data, suppressions = NULL) {
     "uninformative", "statistically successful but flawed"
   )
   VALID_REPRODUCTION_OUTCOMES <- c(
-    "computationally successful robust",
-    "computationally successful robustness challenges",
-    "computational issues robust",
-    "computation not checked robustness challenges"
+    "computationally successful, robust",
+    "computationally successful, robustness challenges",
+    "computationally successful, robustness not checked",
+    "computational issues, robust",
+    "computational issues, robustness challenges",
+    "computational issues, robustness not checked",
+    "computation not checked, robust",
+    "computation not checked, robustness challenges",
+    "computation not checked, robustness not checked"
   )
   VALID_TYPES <- c("replication", "reproduction")
   VALID_SOURCES <- c("COS", "replications", "reproductions")
