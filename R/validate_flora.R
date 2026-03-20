@@ -363,7 +363,10 @@ validate_flora_data <- function(data, suppressions = NULL) {
   # =========================================================================
   report_parts <- c(
     "## FLoRA Data Validation Report\n",
-    glue("_Generated: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')} | Dataset: {nrow(data)} rows_\n")
+    glue("_Generated: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')} | Dataset: {nrow(data)} rows_"),
+    "",
+    "Each row is identified as `doi_o | study_o | doi_r (or url_r)`, followed by check-specific details after `:`.",
+    "Check an item to mark it as a false positive; it will be suppressed on the next run.\n"
   )
 
   fail_checks <- all_checks[sapply(all_checks, function(x) x$status == "fail")]
