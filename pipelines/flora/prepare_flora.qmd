@@ -375,10 +375,20 @@ flora_data <- flora_data %>% select(-doi_o_valid, -doi_r_valid)
     
 ```
 
-## Step 6a: Fetch DOI References (APA + BibTeX)
+## Step 6a: Apply confirmed preprint-publication deduplication
+
+Apply previously confirmed DOI replacements *before* fetching references,
+so the reference join uses the canonical DOI and produces consistent metadata.
+(New candidate detection runs later in Step 7c, after titles/authors are available.)
+
+```{r apply-confirmed-dedup}
+flora_data <- apply_confirmed_preprint_dedup(flora_data, verbose = TRUE)
+```
+
+## Step 6b: Fetch DOI References (APA + BibTeX)
 
 ```{r fetch-references}
-# Get unique DOIs
+# Get unique DOIs (after dedup, so we fetch for canonical DOIs)
 unique_dois <- unique(tolower(c(flora_data$doi_o, flora_data$doi_r)))
 unique_dois <- unique_dois[!is.na(unique_dois)]
 
@@ -509,13 +519,33 @@ cat(sprintf("  bibtex recovered:   %d\n", before_bib_r_missing   - count_missing
 
 ```
 
-## Step 7c: Preprint-Publication Deduplication
+## Step 7c: Detect new preprint-publication duplicates
 
-Detect and resolve cases where the same paper appears as both preprint and
-published version (different DOIs). See [issue #105](https://github.com/forrtproject/FReD/issues/105).
+Confirmed dedup was already applied in Step 6a (before reference fetch).
+This step detects *new* candidates now that title/author metadata is available.
+See [issue #105](https://github.com/forrtproject/FReD/issues/105).
 
-```{r preprint-dedup}
-flora_augmented <- run_preprint_dedup(flora_augmented, verbose = TRUE)
+```{r preprint-dedup-detect}
+# Detection only — apply_confirmed already ran in Step 6a
+candidates <- find_preprint_pub_duplicates(flora_augmented, verbose = TRUE)
+
+if (nrow(candidates) > 0) {
+  instructions <- tibble::tibble(
+    side = "INSTRUCTIONS -->", doi_1 = "DOI #1", doi_2 = "DOI #2",
+    title_1 = "(title for doi_1)", title_2 = "(title for doi_2)",
+    title_sim = NA_real_, first_author_1 = NA_character_,
+    first_author_2 = NA_character_, year_1 = NA_character_,
+    year_2 = NA_character_, is_preprint_1 = NA, is_preprint_2 = NA,
+    group_key = NA_character_, doi_o_group = NA_character_,
+    action = "keep_1 = keep doi_1 | keep_2 = keep doi_2 | keep_both = not a duplicate"
+  )
+  out <- dplyr::bind_rows(instructions, candidates %>% mutate(action = NA_character_))
+  readr::write_excel_csv(out, here::here("output", "preprint_dedup_candidates.csv"))
+  cat(sprintf("\n⚠ %d candidate duplicate pairs saved for review\n", nrow(candidates)))
+  cat("  Fill in 'action' column: keep_1, keep_2, or keep_both\n")
+} else {
+  cat("  No new preprint-publication duplicate candidates found.\n")
+}
 ```
 
 ## Step 8: Add Privacy-Preserving IDs
