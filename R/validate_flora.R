@@ -33,6 +33,9 @@ parse_issue_suppressions <- function(issue_body_file) {
   results <- list()
 
   for (line in lines) {
+    # Stop parsing at the "Checks passed" section (those are always [x])
+    if (str_detect(line, "^\\*\\*Checks passed")) break
+
     # Bold section header: **Check name** (N issues):
     if (str_detect(line, "^\\*\\*[^*]+\\*\\*")) {
       current_section <- str_extract(line, "(?<=^\\*\\*)[^*]+(?=\\*\\*)")
