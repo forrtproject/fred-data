@@ -125,14 +125,17 @@ validate_flora_data <- function(data, suppressions = NULL) {
     unique(issue_df$id)
   }
 
-  add_check <- function(issue_df, check_name,
+  add_check <- function(issue_df, check_name, fail_heading = NULL,
                         detail_template = NULL, detail_fn = NULL) {
     issue_df <- distinct(issue_df) %>% mutate(id = as.character(id))
     if (nrow(issue_df) > 0) {
       items <- format_labels(issue_df, detail_template, detail_fn)
-      # Filter out suppressed items
+      # Filter out suppressed items (match by check_name or fail_heading)
+      fh <- fail_heading %||% check_name
       if (!is.null(suppressions) && nrow(suppressions) > 0) {
-        suppressed_ids <- suppressions$item_id[suppressions$check_name == check_name]
+        suppressed_ids <- suppressions$item_id[
+          suppressions$check_name %in% c(check_name, fh)
+        ]
         if (length(suppressed_ids) > 0) {
           keep <- !extract_item_id(items) %in% suppressed_ids
           n_suppressed <<- n_suppressed + sum(!keep)
@@ -140,7 +143,10 @@ validate_flora_data <- function(data, suppressions = NULL) {
         }
       }
       if (length(items) > 0) {
-        all_checks[[check_name]] <<- list(status = "fail", items = items)
+        all_checks[[check_name]] <<- list(
+          status = "fail", items = items,
+          fail_heading = fail_heading %||% check_name
+        )
       } else {
         all_checks[[check_name]] <<- list(status = "pass")
       }
@@ -158,6 +164,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
                         values_drop_na = TRUE) %>%
     filter(value %in% c("NA", "N/A"))
   add_check(issues, "No 'NA'/'N/A' strings",
+            fail_heading = "Literal 'NA'/'N/A' strings found",
             detail_template = "{column}='{value}'")
 
   # =========================================================================
@@ -170,6 +177,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
                         values_drop_na = TRUE) %>%
     filter(!str_starts(value, "http"))
   add_check(issues, "All links are valid URLs",
+            fail_heading = "Invalid URLs (not starting with http)",
             detail_template = "{column}='{value}'")
 
   # =========================================================================
@@ -186,6 +194,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
     filter(n_distinct(doi_o_trim) > 1, n_distinct(doi_suffix) > 1) %>%
     ungroup()
   add_check(issues, "No likely DOI_o incrementing errors",
+            fail_heading = "Likely DOI_o incrementing errors",
             detail_template = "doi_o={doi_o}")
 
   # =========================================================================
@@ -202,6 +211,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
     filter(n_distinct(doi_r_trim) > 1, n_distinct(doi_suffix) > 1) %>%
     ungroup()
   add_check(issues, "No likely DOI_r incrementing errors",
+            fail_heading = "Likely DOI_r incrementing errors",
             detail_template = "doi_r={doi_r}")
 
   # =========================================================================
@@ -309,7 +319,8 @@ validate_flora_data <- function(data, suppressions = NULL) {
     group_by(doi_o, study_o, doi_r) %>%
     filter(n() > 1) %>%
     ungroup()
-  add_check(issues, "No exact duplicates")
+  add_check(issues, "No exact duplicates",
+            fail_heading = "Exact duplicates (by doi_o + study_o + doi_r)")
 
   # =========================================================================
   # Check 13: Required fields present
@@ -317,7 +328,8 @@ validate_flora_data <- function(data, suppressions = NULL) {
   issues <- data %>%
     filter(is.na(title_o) | is.na(title_r) | is.na(doi_o) |
            (is.na(doi_r) & is.na(url_r)))
-  add_check(issues, "Required fields present")
+  add_check(issues, "Required fields present",
+            fail_heading = "Missing required fields (title_o, title_r, doi_o; doi_r or url_r)")
 
   # =========================================================================
   # Check 14: DOI format valid
@@ -343,16 +355,17 @@ validate_flora_data <- function(data, suppressions = NULL) {
 
   if (length(fail_checks) > 0) {
     for (check_name in names(fail_checks)) {
+      heading <- fail_checks[[check_name]]$fail_heading
       items <- fail_checks[[check_name]]$items
       n <- length(items)
       checkbox_lines <- paste0("- [ ] ", items)
       if (n <= DETAILS_THRESHOLD) {
         report_parts <- c(report_parts,
-          glue("**{check_name}** ({n} issue{ifelse(n > 1, 's', '')}):\n"),
+          glue("**{heading}** ({n} issue{ifelse(n > 1, 's', '')}):\n"),
           checkbox_lines, "")
       } else {
         report_parts <- c(report_parts,
-          glue("<details><summary><b>{check_name}</b> ({n} issues)</summary>"),
+          glue("<details><summary><b>{heading}</b> ({n} issues)</summary>"),
           "",  # blank line required for GFM to render markdown inside HTML
           checkbox_lines, "",
           "</details>", "")
