@@ -442,10 +442,10 @@ This chart is automatically updated after each pipeline run, showing the size of
 xychart-beta
     title "FLoRA Dataset Size Over Time (Total / Replications / Reproductions)"
     x-axis ["2026-03-16", "2026-03-17", "2026-03-18", "2026-03-19", "2026-03-20"]
-    line [1126, 1436, 1473, 1474, 1496]
-    line [1118, 1428, 1465, 1466, 1488]
+    line [1126, 1436, 1473, 1474, 1488]
+    line [1118, 1428, 1465, 1466, 1480]
     line [8, 8, 8, 8, 8]
 ```
 
-> **Latest (2026-03-20):** Total = 1496 | Replications = 1488 | Reproductions = 8
+> **Latest (2026-03-20):** Total = 1488 | Replications = 1480 | Reproductions = 8
 <!-- FLORA_UPDATE_LOG_END -->
