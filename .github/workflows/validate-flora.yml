@@ -1,0 +1,84 @@
+name: Validate FLoRA data
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'output/flora.csv'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  validate-flora:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+
+      - name: Cache R packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-validate-${{ hashFiles('**/Rscript') }}
+          restore-keys: ${{ runner.os }}-r-validate-
+
+      - name: Install R dependencies
+        run: |
+          Rscript -e 'install.packages(c("readr", "dplyr", "stringr", "glue", "tidyr", "here"), repos = "https://cloud.r-project.org")'
+
+      - name: Fetch existing issue for suppression tracking
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LABEL="flora-validation"
+          ISSUE_NUMBER=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+          if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "null" ]; then
+            gh issue view "$ISSUE_NUMBER" --json body --jq '.body' > /tmp/flora_issue_body.md
+            echo "FLORA_ISSUE_BODY_FILE=/tmp/flora_issue_body.md" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run structural validation
+        run: Rscript R/validate_flora.R > /tmp/flora_validation_report.md
+
+      - name: Write job summary
+        run: cat /tmp/flora_validation_report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create or update GitHub Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LABEL="flora-validation"
+          TITLE="FLoRA Data Validation Report"
+
+          gh label create "$LABEL" --description "Automated validation reports" --color "d93f0b" --force 2>/dev/null || true
+
+          ISSUE_NUMBER=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          if grep -q "^\- \[ \]" /tmp/flora_validation_report.md; then
+            if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "null" ]; then
+              gh issue edit "$ISSUE_NUMBER" --body-file /tmp/flora_validation_report.md
+            else
+              gh issue create --title "$TITLE" --label "$LABEL" --body-file /tmp/flora_validation_report.md
+            fi
+          else
+            if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "null" ]; then
+              gh issue close "$ISSUE_NUMBER" --comment "All validation checks passed."
+            fi
+          fi
+
+      - name: Auto-commit suppressions file
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update FLoRA validation suppressions [automated]"
+          file_pattern: "output/flora_validation_suppressions.csv"

@@ -43,3 +43,9 @@ UNPAYWALL_CACHE <- file.path(CACHE_DIR, "unpaywall_oa.csv")
 
 # Validation report from last run (for incremental reporting)
 VALIDATION_REPORT_CACHE <- here("output", "validation_report.rds")
+
+# FLoRA validation: DOI resolution cache (successful results cached 30 days)
+VALIDATION_DOI_RESOLUTION_CACHE <- file.path(CACHE_DIR, "validation_doi_resolution.rds")
+
+# FLoRA validation: URL resolution cache (successful results cached 30 days)
+VALIDATION_URL_RESOLUTION_CACHE <- file.path(CACHE_DIR, "validation_url_resolution.rds")

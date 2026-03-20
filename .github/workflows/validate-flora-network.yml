@@ -1,0 +1,82 @@
+name: Validate FLoRA data (network checks)
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Monday 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  validate-flora-network:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+
+      - name: Cache R packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-r-validate-network-${{ hashFiles('**/Rscript') }}
+          restore-keys: ${{ runner.os }}-r-validate-network-
+
+      - name: Install R dependencies
+        run: |
+          Rscript -e 'install.packages(c("readr", "dplyr", "stringr", "httr", "glue", "tidyr", "here"), repos = "https://cloud.r-project.org")'
+
+      - name: Fetch existing issue for suppression tracking
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LABEL="flora-validation-network"
+          ISSUE_NUMBER=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+          if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "null" ]; then
+            gh issue view "$ISSUE_NUMBER" --json body --jq '.body' > /tmp/flora_issue_body.md
+            echo "FLORA_ISSUE_BODY_FILE=/tmp/flora_issue_body.md" >> "$GITHUB_ENV"
+          fi
+
+      - name: Run network validation
+        run: Rscript R/validate_flora_network.R > /tmp/flora_network_report.md
+
+      - name: Write job summary
+        run: cat /tmp/flora_network_report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create or update GitHub Issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          LABEL="flora-validation-network"
+          TITLE="FLoRA Network Validation Report"
+
+          gh label create "$LABEL" --description "Automated network validation" --color "e99695" --force 2>/dev/null || true
+
+          ISSUE_NUMBER=$(gh issue list --label "$LABEL" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          if grep -q "^\- \[ \]" /tmp/flora_network_report.md; then
+            if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "null" ]; then
+              gh issue edit "$ISSUE_NUMBER" --body-file /tmp/flora_network_report.md
+            else
+              gh issue create --title "$TITLE" --label "$LABEL" --body-file /tmp/flora_network_report.md
+            fi
+          else
+            if [ -n "$ISSUE_NUMBER" ] && [ "$ISSUE_NUMBER" != "null" ]; then
+              gh issue close "$ISSUE_NUMBER" --comment "All network validation checks passed."
+            fi
+          fi
+
+      - name: Auto-commit cache and suppressions
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update FLoRA network validation [automated]"
+          file_pattern: "cache/validation_doi_resolution.rds cache/validation_url_resolution.rds output/flora_network_validation.csv output/flora_validation_suppressions.csv"
