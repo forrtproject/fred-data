@@ -126,6 +126,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
   }
 
   add_check <- function(issue_df, check_name, fail_heading = NULL,
+                        description = NULL,
                         detail_template = NULL, detail_fn = NULL) {
     issue_df <- distinct(issue_df) %>% mutate(id = as.character(id))
     if (nrow(issue_df) > 0) {
@@ -145,7 +146,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
       if (length(items) > 0) {
         all_checks[[check_name]] <<- list(
           status = "fail", items = items,
-          fail_heading = fail_heading %||% check_name
+          fail_heading = fh, description = description
         )
       } else {
         all_checks[[check_name]] <<- list(status = "pass")
@@ -165,6 +166,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
     filter(value %in% c("NA", "N/A"))
   add_check(issues, "No 'NA'/'N/A' strings",
             fail_heading = "Literal 'NA'/'N/A' strings found",
+            description = "Text columns contain the literal string 'NA' or 'N/A' instead of a proper missing value.",
             detail_template = "{column}='{value}'")
 
   # =========================================================================
@@ -178,6 +180,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
     filter(!str_starts(value, "http"))
   add_check(issues, "All links are valid URLs",
             fail_heading = "Invalid URLs (not starting with http)",
+            description = "Values in url_r, oa_url_o, or oa_url_r that don't start with 'http'.",
             detail_template = "{column}='{value}'")
 
   # =========================================================================
@@ -195,6 +198,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
     ungroup()
   add_check(issues, "No likely DOI_o incrementing errors",
             fail_heading = "Likely DOI_o incrementing errors",
+            description = "doi_o values that only differ in their last digit, suggesting a spreadsheet auto-fill error.",
             detail_template = "doi_o={doi_o}")
 
   # =========================================================================
@@ -212,6 +216,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
     ungroup()
   add_check(issues, "No likely DOI_r incrementing errors",
             fail_heading = "Likely DOI_r incrementing errors",
+            description = "doi_r values that only differ in their last digit, suggesting a spreadsheet auto-fill error.",
             detail_template = "doi_r={doi_r}")
 
   # =========================================================================
@@ -257,6 +262,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
     check_doi_ref_conflicts(data, "doi_r", "apa_ref_r", "doi_r/apa_ref_r")
   )
   add_check(issues, "DOI mapped to conflicting references",
+    description = "The same DOI appears with substantially different APA reference text across rows (>20% edit distance). May indicate a wrong DOI or inconsistent reference formatting.",
     detail_fn = function(df) {
       df %>%
         mutate(id = as.character(id),
@@ -277,6 +283,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
       is.na(outcome)
     )
   add_check(issues, "Outcome values valid",
+            description = "Outcome values that don't match the allowed set for the row's type (replication or reproduction).",
             detail_template = "type={type}; outcome='{outcome}'")
 
   # =========================================================================
@@ -284,6 +291,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
   # =========================================================================
   issues <- data %>% filter(!type %in% VALID_TYPES)
   add_check(issues, "Type values valid",
+            description = "Type must be 'replication' or 'reproduction'.",
             detail_template = "type='{type}'")
 
   # =========================================================================
@@ -291,6 +299,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
   # =========================================================================
   issues <- data %>% filter(!source %in% VALID_SOURCES)
   add_check(issues, "Source values valid",
+            description = "Source must be 'COS', 'replications', or 'reproductions'.",
             detail_template = "source='{source}'")
 
   # =========================================================================
@@ -302,6 +311,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
       (!is.na(year_r) & (year_r < 1890 | year_r > current_year + 1))
     )
   add_check(issues, "Year ranges reasonable",
+            description = "year_o or year_r is outside 1890\u2013current year + 1.",
             detail_template = "year_o={year_o}; year_r={year_r}")
 
   # =========================================================================
@@ -310,6 +320,8 @@ validate_flora_data <- function(data, suppressions = NULL) {
   issues <- data %>%
     filter(!is.na(year_o), !is.na(year_r), year_r < year_o)
   add_check(issues, "year_r >= year_o",
+            fail_heading = "Replication year before original year",
+            description = "year_r < year_o. Could indicate swapped entries or a data-entry error.",
             detail_template = "year_o={year_o}; year_r={year_r}")
 
   # =========================================================================
@@ -320,7 +332,8 @@ validate_flora_data <- function(data, suppressions = NULL) {
     filter(n() > 1) %>%
     ungroup()
   add_check(issues, "No exact duplicates",
-            fail_heading = "Exact duplicates (by doi_o + study_o + doi_r)")
+            fail_heading = "Exact duplicates (by doi_o + study_o + doi_r)",
+            description = "Rows that share the same doi_o, study_o, and doi_r combination.")
 
   # =========================================================================
   # Check 13: Required fields present
@@ -329,7 +342,8 @@ validate_flora_data <- function(data, suppressions = NULL) {
     filter(is.na(title_o) | is.na(title_r) | is.na(doi_o) |
            (is.na(doi_r) & is.na(url_r)))
   add_check(issues, "Required fields present",
-            fail_heading = "Missing required fields (title_o, title_r, doi_o; doi_r or url_r)")
+            fail_heading = "Missing required fields",
+            description = "title_o, title_r, and doi_o must be non-NA; at least one of doi_r or url_r must be present.")
 
   # =========================================================================
   # Check 14: DOI format valid
@@ -340,6 +354,8 @@ validate_flora_data <- function(data, suppressions = NULL) {
       (!is.na(doi_r) & !is_doi(doi_r))
     )
   add_check(issues, "DOI format valid",
+            fail_heading = "Invalid DOI format",
+            description = "DOI does not match the expected pattern `10.NNNN/...`.",
             detail_template = "doi_o={doi_o}; doi_r={doi_r}")
 
   # =========================================================================
@@ -356,17 +372,21 @@ validate_flora_data <- function(data, suppressions = NULL) {
   if (length(fail_checks) > 0) {
     for (check_name in names(fail_checks)) {
       heading <- fail_checks[[check_name]]$fail_heading
+      desc <- fail_checks[[check_name]]$description
       items <- fail_checks[[check_name]]$items
       n <- length(items)
       checkbox_lines <- paste0("- [ ] ", items)
+      desc_line <- if (!is.null(desc)) glue("_{desc}_\n") else ""
       if (n <= DETAILS_THRESHOLD) {
         report_parts <- c(report_parts,
           glue("**{heading}** ({n} issue{ifelse(n > 1, 's', '')}):\n"),
+          desc_line,
           checkbox_lines, "")
       } else {
         report_parts <- c(report_parts,
           glue("<details><summary><b>{heading}</b> ({n} issues)</summary>"),
           "",  # blank line required for GFM to render markdown inside HTML
+          desc_line,
           checkbox_lines, "",
           "</details>", "")
       }
