@@ -174,9 +174,10 @@ validate_flora_network <- function(data, suppressions = NULL) {
         doi_lines, "")
     } else {
       report_parts <- c(report_parts,
-        glue("<details><summary><b>DOIs that failed to resolve</b> ({n} issues)</summary>\n"),
+        glue("<details><summary><b>DOIs that failed to resolve</b> ({n} issues)</summary>"),
+        "",  # blank line required for GFM to render markdown inside HTML
         doi_lines, "",
-        "</details>\n")
+        "</details>", "")
     }
   } else {
     report_parts <- c(report_parts, "- [x] All DOIs resolved successfully\n")
@@ -216,9 +217,10 @@ validate_flora_network <- function(data, suppressions = NULL) {
         url_lines, "")
     } else {
       report_parts <- c(report_parts,
-        glue("<details><summary><b>URLs that failed to resolve</b> ({n} issues)</summary>\n"),
+        glue("<details><summary><b>URLs that failed to resolve</b> ({n} issues)</summary>"),
+        "",  # blank line required for GFM to render markdown inside HTML
         url_lines, "",
-        "</details>\n")
+        "</details>", "")
     }
   } else {
     report_parts <- c(report_parts, "- [x] All URLs resolved successfully\n")

@@ -158,19 +158,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
             detail_template = "{column}='{value}'")
 
   # =========================================================================
-  # Check 2: DOI columns start with '10.'
-  # =========================================================================
-  issues <- data %>%
-    mutate(doi_o_trim = str_trim(doi_o), doi_r_trim = str_trim(doi_r)) %>%
-    filter(
-      (!is.na(doi_o_trim) & !str_starts(doi_o_trim, "10\\.")) |
-      (!is.na(doi_r_trim) & !str_starts(doi_r_trim, "10\\."))
-    )
-  add_check(issues, "DOI columns start with '10.'",
-            detail_template = "doi_o={doi_o}; doi_r={doi_r}")
-
-  # =========================================================================
-  # Check 3: All links are valid URLs (start with http)
+  # Check 2: All links are valid URLs (start with http)
   # =========================================================================
   url_cols_present <- intersect(URL_COLS, names(data))
   issues <- data %>%
@@ -361,9 +349,10 @@ validate_flora_data <- function(data, suppressions = NULL) {
           checkbox_lines, "")
       } else {
         report_parts <- c(report_parts,
-          glue("<details><summary><b>{check_name}</b> ({n} issues)</summary>\n"),
+          glue("<details><summary><b>{check_name}</b> ({n} issues)</summary>"),
+          "",  # blank line required for GFM to render markdown inside HTML
           checkbox_lines, "",
-          "</details>\n")
+          "</details>", "")
       }
     }
   }
