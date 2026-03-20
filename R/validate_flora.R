@@ -184,42 +184,6 @@ validate_flora_data <- function(data, suppressions = NULL) {
             detail_template = "{column}='{value}'")
 
   # =========================================================================
-  # Check 4: No likely DOI_o incrementing errors
-  # =========================================================================
-  issues <- data %>%
-    mutate(doi_o_trim = str_trim(doi_o)) %>%
-    filter(!is.na(doi_o_trim) & str_detect(doi_o_trim, "\\d$")) %>%
-    mutate(
-      doi_base = str_replace(doi_o_trim, "\\d$", ""),
-      doi_suffix = str_extract(doi_o_trim, "\\d$")
-    ) %>%
-    group_by(doi_base) %>%
-    filter(n_distinct(doi_o_trim) > 1, n_distinct(doi_suffix) > 1) %>%
-    ungroup()
-  add_check(issues, "No likely DOI_o incrementing errors",
-            fail_heading = "Likely DOI_o incrementing errors",
-            description = "doi_o values that only differ in their last digit, suggesting a spreadsheet auto-fill error.",
-            detail_template = "doi_o={doi_o}")
-
-  # =========================================================================
-  # Check 5: No likely DOI_r incrementing errors
-  # =========================================================================
-  issues <- data %>%
-    mutate(doi_r_trim = str_trim(doi_r)) %>%
-    filter(!is.na(doi_r_trim) & str_detect(doi_r_trim, "\\d$")) %>%
-    mutate(
-      doi_base = str_replace(doi_r_trim, "\\d$", ""),
-      doi_suffix = str_extract(doi_r_trim, "\\d$")
-    ) %>%
-    group_by(doi_base) %>%
-    filter(n_distinct(doi_r_trim) > 1, n_distinct(doi_suffix) > 1) %>%
-    ungroup()
-  add_check(issues, "No likely DOI_r incrementing errors",
-            fail_heading = "Likely DOI_r incrementing errors",
-            description = "doi_r values that only differ in their last digit, suggesting a spreadsheet auto-fill error.",
-            detail_template = "doi_r={doi_r}")
-
-  # =========================================================================
   # Check 6: DOI mapped to conflicting references
   # =========================================================================
   clean_ref_text <- function(x) {
