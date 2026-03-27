@@ -243,7 +243,6 @@ flora_cols <- c("doi_o", "ref_o", "study_o", "doi_r", "ref_r",  "url_r",
 flora_data <- flora_raw %>%
   select(all_of(flora_cols)) %>%
   # Normalize DOIs: lowercase and strip common prefixes
-
   mutate(
     doi_o = tolower(doi_o),
     doi_r = tolower(doi_r),
@@ -252,7 +251,12 @@ flora_data <- flora_raw %>%
     doi_r = gsub("^(https?://)?(dx\\.)?doi\\.org/", "", doi_r),
     doi_o = gsub("^doi:", "", doi_o),
     doi_r = gsub("^doi:", "", doi_r)
+  ) %>% # remove redundant DOI urls
+  mutate(
+    url_r = if_else(!is.na(doi_r) & str_detect(tolower(url_r), if_else(is.na(doi_r), fixed("dummy_val"), fixed(doi_r))), 
+                    NA_character_, url_r)
   )
+  
 ```
 
 ## Deduplication
@@ -274,7 +278,7 @@ norm_url <- function(x) {
 
 flora_data <- flora_data %>%
   mutate(url_r_norm = norm_url(url_r)) %>%
-  distinct(doi_o, study_o, coalesce(url_r_norm, doi_r), .keep_all = TRUE) %>%
+  distinct(doi_o, coalesce(url_r_norm, doi_r), .keep_all = TRUE) %>%
   select(-url_r_norm)
 
 post_dedup <- nrow(flora_data)
