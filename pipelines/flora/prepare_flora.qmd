@@ -10,8 +10,7 @@ format:
     theme: cosmo
     code-fold: true
     code-summary: "Show code"
-params:
-  include_score: false
+params: {}
 ---
 
 ```{r setup, include=FALSE}
@@ -56,12 +55,9 @@ REPRODUCTION_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0V
 EXCLUSIONS_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnLyrf9GCYXtN6l1DgaoLlg6H5r-08Op9eJzSripS1QBSHL031Arc27yUDe0YY7cB4TOnYMm2Vh1/pub?gid=1098183075&single=true&output=csv"
 FLORA_OUTPUT <- here::here("output", "flora.csv")
 
-# SCORE Integration (optional)
-SCORE_INTEGRATION_ENABLED <- params$include_score
-SCORE_DATA_PATH <- here::here("cos_score_integration", "cos_test_set_phase1_prepared.xlsx")
+SCORE_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=1421575264&single=true&output=csv"
 
 cat("\n=== FLoRA Preparation Pipeline ===\n")
-cat(sprintf("  SCORE Integration: %s\n", if (SCORE_INTEGRATION_ENABLED) "ENABLED" else "DISABLED"))
 ```
 
 ## Download FLoRA Data (Replications + Reproductions)
@@ -150,43 +146,39 @@ flora_raw <- bind_rows(
 
 ```
 
-### Add SCORE data (Optional)
+### Add SCORE data
 
 ```{r score-integration}
 cat("\n### SCORE Integration\n")
 
-if (SCORE_INTEGRATION_ENABLED) {
-  cat("Status: ENABLED\n")
+score_data <- tryCatch({
+  read_csv(SCORE_URL, show_col_types = FALSE)
+}, error = function(e) {
+  stop("Failed to download SCORE data. Check URL and network connection.\n",
+       "Error: ", e$message)
+})
 
-  if (file.exists(SCORE_DATA_PATH)) {
-    score_data <- readxl::read_excel(SCORE_DATA_PATH)
-    cat(sprintf("✓ Loaded SCORE data: %d rows\n", nrow(score_data)))
+cat(sprintf("✓ Loaded SCORE data: %d rows\n", nrow(score_data)))
 
-    # Prepare SCORE data to match FLoRA format
-    # Select and rename columns to match flora_raw structure
-    score_prepared <- score_data %>%
-      mutate(
-        type = "replication",
-        source = "SCORE"
-      )
+score_prepared <- score_data %>%
+  rename(outcome_quote_source = out_quote_source) %>%
+  mutate(
+    type = "replication",
+    source = "SCORE"
+  ) %>%
+  select(-any_of("link_r"))
 
-    # Merge using common columns
-    common_cols <- intersect(names(flora_raw), names(score_prepared))
-    cat(sprintf("  Common columns: %d\n", length(common_cols)))
+# Merge using common columns
+common_cols <- intersect(names(flora_raw), names(score_prepared))
+cat(sprintf("  Common columns: %d\n", length(common_cols)))
 
-    flora_raw <- bind_rows(
-      flora_raw,
-      score_prepared %>% select(all_of(common_cols))
-    )
+flora_raw <- bind_rows(
+  flora_raw,
+  score_prepared %>% select(all_of(common_cols))
+)
 
-    cat(sprintf("✓ Merged with FLoRA data\n"))
-    cat(sprintf("  Total rows after SCORE merge: %d\n", nrow(flora_raw)))
-  } else {
-    warning(sprintf("SCORE Integration enabled but file not found: %s\n", SCORE_DATA_PATH))
-  }
-} else {
-  cat("Status: DISABLED (use params: include_score: true to enable)\n")
-}
+cat(sprintf("✓ Merged with FLoRA data\n"))
+cat(sprintf("  Total rows after SCORE merge: %d\n", nrow(flora_raw)))
 ```
 
 ### Apply Exclusions
