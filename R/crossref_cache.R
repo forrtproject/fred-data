@@ -1218,6 +1218,24 @@ get_references <- function(doi_vec,
         fields_out %>% select(doi, title, author = authors_json, journal, year, volume, issue, pages),
         by = "doi"
       )
+
+    # Fallback: recover missing author/year from BibTeX strings
+    if ("reference_bibtex" %in% names(result)) {
+      has_bib   <- !is.na(result$reference_bibtex) & nzchar(result$reference_bibtex)
+      miss_auth <- is.na(result$author) | !nzchar(trimws(result$author))
+      miss_year <- is.na(result$year)
+      idx <- which((miss_auth | miss_year) & has_bib)
+      if (length(idx) > 0) {
+        if (progress) message("Recovering missing author/year from BibTeX for ", length(idx), " DOI(s)...")
+        for (i in idx) {
+          parsed <- parse_bibtex_fields(result$reference_bibtex[i])
+          if (miss_auth[i] && !is.na(parsed$author) && nzchar(parsed$author))
+            result$author[i] <- parsed$author
+          if (miss_year[i] && !is.na(parsed$year))
+            result$year[i] <- as.integer(parsed$year)
+        }
+      }
+    }
   }
 
   result
