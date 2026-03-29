@@ -429,7 +429,10 @@ def main():
 
       rec_o = get_or_create(doi_records, doi_o)
       merge_doi_meta_from_entry(rec_o, orig_entry)
-      dedupe_append_by_doi(rec_o["record"]["replications"], rep_entry)
+      if is_reproduction_type(rep_type):
+       dedupe_append_by_doi(rec_o["record"]["reproductions"], rep_entry)
+      else:
+       dedupe_append_by_doi(rec_o["record"]["replications"], rep_entry)
 
       rec_r = get_or_create(doi_records, doi_r)
       merge_doi_meta_from_entry(rec_r, rep_entry)
@@ -480,54 +483,39 @@ def main():
 
    # Compute coherent stats (mutually exclusive buckets)
   for _, record in doi_records.items():
-    reps = record["record"]["replications"]      # contains both replications and reproductions-with-doi
-    origs = record["record"]["originals"]
-    repro_only = record["record"]["reproductions"]  # reproduction-only (no doi_r)
+   reps = record["record"]["replications"]
+   repros = record["record"]["reproductions"]
+   origs = record["record"]["originals"]
 
-    # Originals
-    uniq_ori = {x.get("doi") for x in origs if x.get("doi")}
+   # Originals
+   uniq_ori = {x.get("doi") for x in origs if x.get("doi")}
 
-    # Split replications[] into two mutually exclusive groups based on type
-    rep_with_doi = 0
-    rep_only = 0
-    repro_with_doi = 0
+   # Replications
+   rep_with_doi = sum(1 for x in reps if x.get("doi"))
+   rep_only = sum(1 for x in reps if not x.get("doi"))
+   uniq_rep_dois = {x.get("doi") for x in reps if x.get("doi")}
 
-    uniq_rep_dois = set()  # unique dois among NON-reproduction replications with doi
+   # Reproductions
+   repro_with_doi = sum(1 for x in repros if x.get("doi"))
+   repro_only = sum(1 for x in repros if not x.get("doi"))
 
-    for x in reps:
-      x_type = norm_rep_type(x.get("type"))
-      is_repro = is_reproduction_type(x_type)
-      has_doi = bool(x.get("doi"))
+   record["record"]["stats"] = {
+     # Replications
+     "n_replications_total": len(reps),
+     "n_replications_with_doi": rep_with_doi,
+     "n_replications_only": rep_only,
+     "n_unique_replication_dois": len(uniq_rep_dois),
 
-      if is_repro:
-        # reproduction with doi lives in replications[]
-        if has_doi:
-          repro_with_doi += 1
-      else:
-        # normal replication
-        if has_doi:
-          rep_with_doi += 1
-          uniq_rep_dois.add(x.get("doi"))
-        else:
-          rep_only += 1
+     # Reproductions
+     "n_reproductions_total": len(repros),
+     "n_reproductions_with_doi": repro_with_doi,
+     "n_reproductions_only": repro_only,
 
-    record["record"]["stats"] = {
-      # Replications (non-reproduction only)
-      "n_replications_total": rep_with_doi + rep_only,
-      "n_replications_with_doi": rep_with_doi,
-      "n_replications_only": rep_only,
-      "n_unique_replication_dois": len(uniq_rep_dois),
-
-      # Reproductions
-      "n_reproductions_total": repro_with_doi + len(repro_only),
-      "n_reproductions_with_doi": repro_with_doi,
-      "n_reproductions_only": len(repro_only),
-
-      # Originals
-      "n_originals_total": len(origs),
-      "n_unique_original_dois": len(uniq_ori),
-    }
-
+     # Originals
+     "n_originals_total": len(origs),
+     "n_unique_original_dois": len(uniq_ori),
+  }
+  
 
   print(f"Prepared {len(prefix_index)} prefixes and {len(doi_records)} doi records")
 

@@ -1,12 +1,16 @@
 name: Run FReD ETL
 
 on:
-  workflow_dispatch:   # manual trigger from GitHub UI
-   inputs:
-    target_tables:
-      description: 'Which database to load data into (test or original)'
-      required: true
-      default: 'test'
+  workflow_dispatch:
+    inputs:
+      target_tables:
+        description: "Which database to load data into"
+        required: true
+        default: "test"
+        type: choice
+        options:
+          - test
+          - original
 
 jobs:
   run-etl:
@@ -24,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: "3.11"
 
       - name: Install ETL dependencies
         working-directory: fred_dynamodb_loader
@@ -32,25 +36,27 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Select target table(s)
+      - name: Select target tables
         run: |
-          if [ "${{ github.event.inputs.target_tables }}" = "original" ]; then
+          if [ "${{ inputs.target_tables }}" = "original" ]; then
             echo "Using ORIGINAL tables"
-            echo "TABLE=${{ secrets.TABLE }}" >> $GITHUB_ENV
-            echo "ORIGINAL_TABLE=${{ secrets.ORIGINAL_TABLE }}" >> $GITHUB_ENV
+            echo "PREFIX_TABLE=${{ secrets.PROD_PREFIX_TABLE }}" >> $GITHUB_ENV
+            echo "DOI_TABLE=${{ secrets.PROD_DOI_TABLE }}" >> $GITHUB_ENV
+            echo "CLEAR_TABLES=0" >> $GITHUB_ENV
           else
-            echo "Using Test tables"
-            echo "TABLE=${{ secrets.Test_TABLE }}" >> $GITHUB_ENV
-            echo "ORIGINAL_TABLE=${{ secrets.Test_ORIGINAL_TABLE}}" >> $GITHUB_ENV
+            echo "Using TEST tables"
+            echo "PREFIX_TABLE=${{ secrets.TEST_PREFIX_TABLE }}" >> $GITHUB_ENV
+            echo "DOI_TABLE=${{ secrets.TEST_DOI_TABLE }}" >> $GITHUB_ENV
+            echo "CLEAR_TABLES=1" >> $GITHUB_ENV
           fi
 
-      - name: Confirm selected table
+      - name: Confirm selected tables
         run: |
-          echo "TABLE = $TABLE"
-          echo "ORIGINAL_TABLE = $ORIGINAL_TABLE"    
+          echo "PREFIX_TABLE = $PREFIX_TABLE"
+          echo "DOI_TABLE = $DOI_TABLE"
+          echo "CLEAR_TABLES = $CLEAR_TABLES"
 
-
-
-      - name: Run ETL using generated CSV
+      - name: Run ETL
         working-directory: fred_dynamodb_loader
-        run: python load_fred_to_dynamodb.py ../flora.csv
+        run: |
+          python etl/build_two_tables_doi_records.py ../flora.csv
