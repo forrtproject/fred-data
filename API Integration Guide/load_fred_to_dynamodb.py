@@ -217,7 +217,7 @@ def build_original_entry(row: pd.Series) -> dict:
         "pages": "pages_o",
         "apa_ref": "apa_ref_o",
         "bibtex_ref": "bibtex_ref_o",
-        "replication_outcome": "outcome",
+        "outcome": "outcome",
     }
     for k, col in mapping.items():
         if has_col(row, col):
