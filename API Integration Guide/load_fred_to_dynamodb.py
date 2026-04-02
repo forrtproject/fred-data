@@ -1,49 +1,41 @@
 #!/usr/bin/env python3
 """
-FReD CSV → DynamoDB (2 tables, DOI-centric record + reproduction support) — FINAL
+FReD CSV → DynamoDB (3 tables, DOI-centric record + reproduction support + search index)
+
 Input CSV compatibility:
-- Uses column name:  "type"   (new CSV)  [was "type"]
-- Keeps output key:  "type" inside replications[] / reproductions[] entries
+- Uses column name: "type"
+- Keeps output key: "type" inside replications[] / reproductions[] entries
 
-Key behavior requested:
-1) Change 1 (CSV column rename):
-   - Read replication/reproduction type from CSV column "type"
+Behavior:
+1) Read replication/reproduction type from CSV column "type"
 
-2) Change 3B (no _id stored, dedupe in-memory):
-   - Reproduction-only rows (no doi_r) are deduped using an in-memory fingerprint set per doi_o.
-   - No "_id" (or any dedupe id) is stored/returned in the JSON.
+2) Reproduction-only rows (no doi_r) are deduped using an in-memory
+   fingerprint set per doi_o. No "_id" is stored.
 
-ADDED (per request):
-- Replication-only rows (no doi_r) are ALSO stored (in record.replications[]) and deduped
-  using an in-memory fingerprint set per doi_o. No stored id.
+3) Replication-only rows (no doi_r) are also stored in record.replications[]
+   and deduped using an in-memory fingerprint set per doi_o. No "_id" is stored.
 
-NEW CHANGE:
-- When searching by replication DOI, entries in record.originals[] now also include
-  "replication_outcome" from CSV column "outcome".
+4) When searching by replication DOI, entries in record.originals[] also include
+   "outcome" from CSV column "outcome".
 
-Also verified:
-- Deduplication happens for BOTH:
-  - Replications (and reproductions that have doi_r) via dedupe by DOI
-  - Reproduction-only rows (no doi_r) via fingerprint set (no stored id)
-  - Replication-only rows (no doi_r) via fingerprint set (no stored id)
+5) Builds a precomputed SEARCH_TABLE for fuzzy search:
+   - meta item stores total chunk count
+   - chunk items "0", "1", ... store compact entries:
+       { "_doi", "title", "authors", "year" }
 
 Tables written:
   1) PREFIX_TABLE: prefix (3-char) -> dois (List[str])
-     - Indexes BOTH sides when available:
-         * doi_o indexed by doi_o_hash[:PREFIX_LEN]
-         * doi_r indexed by doi_r_hash[:PREFIX_LEN]
-     - Keeps your SAME endpoint working:
-         /v1/prefix-lookup?prefixes=198,30e,694
-
-  2) DOI_TABLE: doi (str) -> record (JSON string stored in DynamoDB attr "record")
-     - One record per DOI (whether it appears as doi_o or doi_r or both)
+  2) DOI_TABLE: doi (str) -> record (JSON string)
+  3) SEARCH_TABLE: chunk_id (str) -> data (JSON string)
 
 Env:
-  PREFIX_TABLE   required
-  DOI_TABLE      required
-  AWS_REGION     default eu-central-1
-  PREFIX_LEN     default 3
-  CLEAR_TABLES   default "1" (clears both tables before writing; set "0" for prod)
+  PREFIX_TABLE       required
+  DOI_TABLE          required
+  SEARCH_TABLE       required
+  AWS_REGION         default eu-central-1
+  PREFIX_LEN         default 3
+  SEARCH_CHUNK_SIZE  default 1000
+  CLEAR_TABLES       default "1"
 
 Usage:
   python etl/build_two_tables_doi_records.py <csv_file>
@@ -63,11 +55,18 @@ from ftfy import fix_text
 AWS_REGION = os.getenv("AWS_REGION", "eu-central-1")
 PREFIX_TABLE = os.getenv("PREFIX_TABLE")
 DOI_TABLE = os.getenv("DOI_TABLE")
+SEARCH_TABLE = os.getenv("SEARCH_TABLE")
 PREFIX_LEN = int(os.getenv("PREFIX_LEN", "3"))
-CLEAR_TABLES = os.getenv("CLEAR_TABLES", "1").strip() not in ("0", "false", "False", "no", "NO")
+SEARCH_CHUNK_SIZE = int(os.getenv("SEARCH_CHUNK_SIZE", "500"))
+CLEAR_TABLES = os.getenv("CLEAR_TABLES", "1").strip() not in (
+    "0", "false", "False", "no", "NO"
+)
 
-if not PREFIX_TABLE or not DOI_TABLE:
-    print("ERROR: set PREFIX_TABLE and DOI_TABLE env vars", file=sys.stderr)
+if not PREFIX_TABLE or not DOI_TABLE or not SEARCH_TABLE:
+    print(
+        "ERROR: set PREFIX_TABLE, DOI_TABLE, and SEARCH_TABLE env vars",
+        file=sys.stderr,
+    )
     sys.exit(1)
 
 
@@ -252,7 +251,7 @@ def build_replication_entry(row: pd.Series) -> dict:
         "apa_ref": "apa_ref_r",
         "bibtex_ref": "bibtex_ref_r",
         "url": "url_r",
-       "outcome": "outcome",
+        "outcome": "outcome",
         "abstract": "abstract_r",
         "outcome_quote": "outcome_quote",
         "outcome_quote_source": "outcome_quote_source",
@@ -415,7 +414,6 @@ def main():
     csv_path = sys.argv[1]
     df = pd.read_csv(csv_path, encoding="utf-8", engine="python", on_bad_lines="warn")
 
-    # minimum required: doi_o + doi_o_hash + type
     required = {"doi_o", "doi_o_hash", "type"}
     missing = [c for c in required if c not in set(map(str, df.columns))]
     if missing:
@@ -426,9 +424,7 @@ def main():
     prefix_index: dict[str, set[str]] = defaultdict(set)
     doi_records: dict[str, dict] = {}
 
-    # In-memory dedupe set for reproduction-only rows (per doi_o)
     reproduction_seen: dict[str, set[str]] = defaultdict(set)
-    # In-memory dedupe set for replication-only rows (per doi_o)
     replication_seen: dict[str, set[str]] = defaultdict(set)
 
     for _, row in df.iterrows():
@@ -455,7 +451,7 @@ def main():
 
         orig_entry = build_original_entry(row)
 
-        # Case 1: two-way link exists (doi_o + doi_r) -> replication OR reproduction
+        # Case 1: doi_o + doi_r
         if doi_r:
             rep_entry = build_replication_entry(row)
 
@@ -471,7 +467,7 @@ def main():
             merge_doi_meta_from_entry(rec_r, rep_entry)
             dedupe_append_by_doi(rec_r["record"]["originals"], orig_entry)
 
-        # Case 2: doi_r missing -> either reproduction-only OR replication-only
+        # Case 2: no doi_r
         else:
             rec_o = get_or_create(doi_records, doi_o)
             merge_doi_meta_from_entry(rec_o, orig_entry)
@@ -513,18 +509,16 @@ def main():
                     rec_o["record"]["replications"].append(rep_only_entry)
                     replication_seen[doi_o].add(fp)
 
-    # Compute coherent stats
+    # Compute stats
     for _, record in doi_records.items():
         reps = record["record"]["replications"]
         repros = record["record"]["reproductions"]
         origs = record["record"]["originals"]
 
         uniq_ori = {x.get("doi") for x in origs if x.get("doi")}
-
         rep_with_doi = sum(1 for x in reps if x.get("doi"))
         rep_only = sum(1 for x in reps if not x.get("doi"))
         uniq_rep_dois = {x.get("doi") for x in reps if x.get("doi")}
-
         repro_with_doi = sum(1 for x in repros if x.get("doi"))
         repro_only = sum(1 for x in repros if not x.get("doi"))
 
@@ -547,10 +541,12 @@ def main():
     ddb = boto3.resource("dynamodb", region_name=AWS_REGION)
     prefix_tbl = ddb.Table(PREFIX_TABLE)
     doi_tbl = ddb.Table(DOI_TABLE)
+    search_tbl = ddb.Table(SEARCH_TABLE)
 
     if CLEAR_TABLES:
         clear_table(PREFIX_TABLE)
         clear_table(DOI_TABLE)
+        clear_table(SEARCH_TABLE)
     else:
         print("CLEAR_TABLES=0 → not clearing tables")
 
@@ -574,6 +570,39 @@ def main():
                 }
             )
 
+    # Build + write SEARCH INDEX table
+    search_entries = []
+    for doi, record in doi_records.items():
+        search_entries.append({
+            "_doi": doi,
+            "title": str(record.get("title") or ""),
+            "authors": str(record.get("authors") or ""),
+            "year": str(record.get("year") or ""),
+        })
+
+    chunks = [
+        search_entries[i:i + SEARCH_CHUNK_SIZE]
+        for i in range(0, len(search_entries), SEARCH_CHUNK_SIZE)
+    ]
+    total_chunks = len(chunks)
+
+    with search_tbl.batch_writer(overwrite_by_pkeys=["chunk_id"]) as batch:
+        batch.put_item(
+            Item={
+                "chunk_id": "meta",
+                "data": str(total_chunks),
+            }
+        )
+
+        for idx, chunk in enumerate(chunks):
+            batch.put_item(
+                Item={
+                    "chunk_id": str(idx),
+                    "data": json.dumps(chunk, ensure_ascii=False),
+                }
+            )
+
+    print(f"Wrote {total_chunks} search index chunks ({len(search_entries)} entries)")
     print("Done.")
 
 
