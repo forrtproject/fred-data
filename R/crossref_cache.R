@@ -725,40 +725,71 @@ get_crossref_reference_fields <- function(dois,
     new_rows <- vector("list", length(need))
     names(new_rows) <- need
 
+    # Classify rcrossref warnings so HTTP 429 / 5xx / timeouts are treated as
+    # transient (retry next run) rather than permanent not-found. rcrossref
+    # emits warnings of the form "429 (client error): /works/... -" for these
+    # HTTP failures and returns empty data, which the previous code
+    # misclassified as crossref_not_found.
+    classify_http_warning <- function(msg) {
+      if (grepl("^\\s*404\\b", msg)) return("not_found")
+      if (grepl("^\\s*(429|5\\d{2})\\b", msg)) return("transient")
+      if (grepl("timeout|timed out|connection|temporarily|curl|could not resolve",
+                msg, ignore.case = TRUE)) return("transient")
+      "other"
+    }
+
     for (i in seq_along(need)) {
       d <- need[[i]]
 
-      row <- tryCatch({
-        w <- cr_works(dois = d)$data
-        if (!is.data.frame(w) || nrow(w) < 1) stop("Not found in CrossRef")
-        # Convert first row to list for extraction functions
-        work <- as.list(w[1, ])
+      http_status <- "unknown"
+      w <- NULL
+      err_msg <- NA_character_
 
+      tryCatch(
+        withCallingHandlers(
+          {
+            w <- cr_works(dois = d)$data
+          },
+          warning = function(wn) {
+            kind <- classify_http_warning(conditionMessage(wn))
+            if (kind != "other") http_status <<- kind
+            invokeRestart("muffleWarning")
+          }
+        ),
+        error = function(e) {
+          err_msg <<- e$message
+          kind <- classify_http_warning(e$message)
+          http_status <<- if (kind == "other") "error" else kind
+        }
+      )
+
+      row <- if (http_status == "transient") {
+        tibble(
+          doi = d, title = NA_character_, authors_json = NA_character_,
+          journal = NA_character_, year = NA_integer_,
+          volume = NA_character_, issue = NA_character_, pages = NA_character_,
+          source = "crossref_error"
+        )
+      } else if (http_status == "not_found" || !is.data.frame(w) || nrow(w) < 1) {
+        tibble(
+          doi = d, title = NA_character_, authors_json = NA_character_,
+          journal = NA_character_, year = NA_integer_,
+          volume = NA_character_, issue = NA_character_, pages = NA_character_,
+          source = if (http_status == "error") "crossref_error" else "crossref_not_found"
+        )
+      } else {
+        work <- as.list(w[1, ])
         parse_crossref_work_to_fields(work) %>%
           mutate(doi = d, source = "crossref") %>%
           select(doi, title, authors_json, journal, year, volume, issue, pages, source)
-      }, error = function(e) {
-        # Distinguish permanent (not found) from transient (rate limit, timeout) errors
-        src <- if (grepl("Not found in CrossRef", e$message, fixed = TRUE)) {
-          "crossref_not_found"
-        } else {
-          "crossref_error"
-        }
-        tibble(
-          doi = d,
-          title = NA_character_,
-          authors_json = NA_character_,
-          journal = NA_character_,
-          year = NA_integer_,
-          volume = NA_character_,
-          issue = NA_character_,
-          pages = NA_character_,
-          source = src
-        )
-      })
+      }
 
       new_rows[[d]] <- row
       if (!is.null(pb)) utils::setTxtProgressBar(pb, i)
+
+      # Small delay to reduce rate limiting (CrossRef polite pool allows ~50 rps;
+      # a 50 ms pause gives us headroom without materially slowing the pipeline)
+      Sys.sleep(0.05)
     }
 
     new_df <- bind_rows(new_rows)

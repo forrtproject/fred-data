@@ -232,17 +232,26 @@ cat(sprintf("    ✓ Excluded %d rows based on manual exclusion list (withdrawn/
 flora_cols <- c("doi_o", "ref_o", "study_o", "doi_r", "ref_r",  "url_r",
                 "abstract_r", "outcome", "outcome_quote", "outcome_quote_source", "type", "source")
 
+# Clean scraped DOIs: strip prefixes, whitespace, and trailing garbage phrases
+# (e.g. "10.1002/pits.22106digital object identifier (doi)",
+#       "10.1016/j.learninstruc.2018.04.010 get rights and content").
+# DOIs cannot contain whitespace, so we drop anything from the first space on.
+clean_doi <- function(x) {
+  x <- tolower(trimws(as.character(x)))
+  x <- gsub("^(https?://)?(dx\\.)?doi\\.org/", "", x)
+  x <- gsub("^doi:\\s*", "", x)
+  x <- sub("\\s*digital\\s*object\\s*identifier.*$", "", x)
+  x <- sub("\\s*get\\s*rights\\s*and\\s*content.*$", "", x)
+  x <- sub("\\s.*$", "", x)
+  x <- trimws(x)
+  dplyr::na_if(x, "")
+}
+
 flora_data <- flora_raw %>%
   select(all_of(flora_cols)) %>%
-  # Normalize DOIs: lowercase and strip common prefixes
   mutate(
-    doi_o = tolower(doi_o),
-    doi_r = tolower(doi_r),
-    # Strip "doi:" prefix and URL prefixes
-    doi_o = gsub("^(https?://)?(dx\\.)?doi\\.org/", "", doi_o),
-    doi_r = gsub("^(https?://)?(dx\\.)?doi\\.org/", "", doi_r),
-    doi_o = gsub("^doi:", "", doi_o),
-    doi_r = gsub("^doi:", "", doi_r)
+    doi_o = clean_doi(doi_o),
+    doi_r = clean_doi(doi_r)
   ) %>% # remove redundant DOI urls
   mutate(
     url_r = if_else(!is.na(doi_r) & str_detect(tolower(url_r), if_else(is.na(doi_r), fixed("dummy_val"), fixed(doi_r))), 
