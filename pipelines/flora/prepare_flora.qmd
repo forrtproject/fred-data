@@ -229,7 +229,8 @@ cat(sprintf("    ✓ Excluded %d rows based on manual exclusion list (withdrawn/
 
 ```{r prepare}
 # Select relevant fields for FLoRA
-flora_cols <- c("doi_o", "ref_o", "study_o", "doi_r", "ref_r",  "url_r",
+flora_cols <- c("doi_o", "ref_o", "study_o", "url_o",
+                "doi_r", "ref_r",  "url_r",
                 "abstract_r", "outcome", "outcome_quote", "outcome_quote_source", "type", "source")
 
 # Clean scraped DOIs: strip prefixes, whitespace, and trailing garbage phrases
@@ -491,6 +492,16 @@ before_ref_r_missing   <- count_missing(flora_augmented$ref_r_clean)
 before_bib_r_missing   <- count_missing(flora_augmented$bibtex_r)
 
 flora_augmented <- augment_with_manual_url_refs_r(flora_augmented, verbose = TRUE)
+
+# Mirror for the original side: patch title_o/author_o/etc. from manual
+# references when url_o matches (for originals with no DOI — e.g., book
+# chapters with a publisher landing page as the only identifier).
+flora_augmented <- augment_with_manual_url_refs(flora_augmented, side = "o",
+                                                 verbose = TRUE)
+
+# Additional fallback: fetch title/authors/year from OpenAlex when url_r is an
+# OpenAlex URL (these works have no DOI, so CrossRef/DataCite can't help).
+flora_augmented <- augment_with_openalex_url_refs_r(flora_augmented, verbose = TRUE)
 
 # ---- AFTER patch stats ----
 cat("\n--- Step 7 stats (AFTER manual/BibTeX recovery) ---\n")
@@ -819,7 +830,7 @@ cat("\n### Step 11: Formatting for output\n")
 
 # Select and reorder columns for output
 output_cols <- c(
-"doi_o", "doi_o_alt", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "language_o", "study_o",
+"doi_o", "doi_o_alt", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "url_o", "language_o", "study_o",
 "doi_r", "doi_r_alt", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
 "oa_url_o", "oa_url_r",
 "outcome", "outcome_quote", "outcome_quote_source", "type", "source",
@@ -838,6 +849,11 @@ available_output <- intersect(output_cols, names(flora_augmented))
 setdiff(available_output, output_cols)
 
 flora_all <- flora_augmented %>% select(all_of(available_output))
+
+# Strip DUMMY_* placeholder DOIs used to key manual_references entries for
+# papers with no real DOI/URL (e.g., book chapters). Must run after metadata
+# enrichment so the join works, but before output.
+flora_all <- strip_dummy_dois(flora_all, verbose = TRUE)
 
 # Log rows that will be excluded due to missing titles
 excluded_rows <- flora_all %>%

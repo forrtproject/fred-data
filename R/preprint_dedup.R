@@ -433,9 +433,22 @@ apply_confirmed_preprint_dedup <- function(data,
     if (verbose) cat(sprintf("  Replaced %d original-side DOIs (alt DOIs preserved)\n",
                               nrow(orig_resolved)))
 
-    # Re-dedup after DOI replacement (may create exact duplicates)
+    # Re-dedup after DOI replacement (may create exact duplicates).
+    # Include url_r alongside doi_r so that distinct replications of the same
+    # original paper (same doi_o, no doi_r, different url_r — common for SCORE)
+    # are not collapsed together.
+    norm_url_key <- function(x) {
+      x <- tolower(trimws(as.character(x)))
+      x <- gsub("^https?://", "", x)
+      x <- gsub("^www\\.", "", x)
+      x <- gsub("/+$", "", x)
+      dplyr::na_if(x, "")
+    }
     n_before_dedup <- nrow(data)
-    data <- data %>% distinct(doi_o, study_o, doi_r, .keep_all = TRUE)
+    data <- data %>%
+      mutate(.url_r_key = norm_url_key(url_r)) %>%
+      distinct(doi_o, study_o, coalesce(.url_r_key, doi_r), .keep_all = TRUE) %>%
+      select(-.url_r_key)
     if (verbose && nrow(data) < n_before_dedup) {
       cat(sprintf("  Removed %d rows that became duplicates after DOI replacement\n",
                   n_before_dedup - nrow(data)))

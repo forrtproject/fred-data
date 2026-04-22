@@ -323,16 +323,69 @@ get_crossref_citation <- function(doi, type = c("bibtex", "apa")) {
   })
 }
 # ------------------------------------------------------------------------------
-# URL-only manual overrides for the replication/reproduction side (R)
-# Works on Step-7 column names: ref_r_clean, bibtex_r, title_r, ...
-# Does NOT create apa_ref_r / bibtex_ref_r (so later rename() won't break).
+# DUMMY_* DOI stripping
+#
+# Placeholder DOIs of the form "DUMMY_XXX" are used to key rows into
+# manual_references.xlsx when the referenced paper has no real DOI or URL
+# (e.g., book chapters). The prefix bypasses CrossRef/DataCite/content-neg
+# lookups (is_doi() filters them out) while still matching manual_refs by key.
+#
+# Before final output we replace DUMMY_* identifiers with NA so consumers of
+# flora.csv don't see fake DOIs. Applies to doi_o, doi_r, and their _alt/_hash
+# companions when present.
+# ------------------------------------------------------------------------------
+strip_dummy_dois <- function(data, verbose = TRUE) {
+  is_dummy <- function(x) !is.na(x) & grepl("^dummy_", tolower(x))
+  before <- list(
+    doi_o = if ("doi_o" %in% names(data)) sum(is_dummy(data$doi_o)) else 0L,
+    doi_r = if ("doi_r" %in% names(data)) sum(is_dummy(data$doi_r)) else 0L
+  )
+  for (col in c("doi_o", "doi_r", "doi_o_alt", "doi_r_alt")) {
+    if (col %in% names(data)) data[[col]][is_dummy(data[[col]])] <- NA_character_
+  }
+  # Hashes computed from DUMMY_* leak the placeholder via md5; null them too
+  # when the corresponding DOI was stripped.
+  if ("doi_o_hash" %in% names(data) && before$doi_o > 0) {
+    data$doi_o_hash[is.na(data$doi_o)] <- NA_character_
+  }
+  if ("doi_r_hash" %in% names(data) && before$doi_r > 0) {
+    data$doi_r_hash[is.na(data$doi_r)] <- NA_character_
+  }
+  if (verbose && (before$doi_o + before$doi_r) > 0) {
+    cat(sprintf("  Stripped DUMMY_ placeholders: %d doi_o, %d doi_r\n",
+                before$doi_o, before$doi_r))
+  }
+  data
+}
+
+# ------------------------------------------------------------------------------
+# URL-only manual overrides for the original (_o) or replication (_r) side.
+# Works on Step-7 column names: ref_{side}_clean, bibtex_{side}, title_{side}, …
+# Does NOT create apa_ref_{side} / bibtex_ref_{side} (so later rename() won't
+# break). Parametrized by `side` so O-side papers without DOIs can be patched
+# via a url_o key in manual_references.xlsx.
 # ------------------------------------------------------------------------------
 
-augment_with_manual_url_refs_r <- function(data,
-                                          manual_ref_file = MANUAL_REFERENCES,
-                                          url_col = "url_r",
-                                          recover_title_from_bibtex = TRUE,
-                                          verbose = TRUE) {
+augment_with_manual_url_refs <- function(data,
+                                         manual_ref_file = MANUAL_REFERENCES,
+                                         side = c("r", "o"),
+                                         url_col = NULL,
+                                         recover_title_from_bibtex = TRUE,
+                                         verbose = TRUE) {
+  side <- match.arg(side)
+  if (is.null(url_col)) url_col <- paste0("url_", side)
+
+  # Column name helpers based on side
+  col_ref_clean <- paste0("ref_", side, "_clean")
+  col_bibtex    <- paste0("bibtex_", side)
+  col_title     <- paste0("title_", side)
+  col_author    <- paste0("author_", side)
+  col_journal   <- paste0("journal_", side)
+  col_year      <- paste0("year_", side)
+  col_volume    <- paste0("volume_", side)
+  col_issue     <- paste0("issue_", side)
+  col_pages     <- paste0("pages_", side)
+
   stopifnot(is.data.frame(data))
 
   if (!file.exists(manual_ref_file)) {
@@ -344,7 +397,6 @@ augment_with_manual_url_refs_r <- function(data,
     return(data)
   }
 
-  # Normalize URLs so https://osf.io/abcd/ matches osf.io/abcd
   norm_url <- function(x) {
     x <- tolower(trimws(as.character(x)))
     x <- gsub("^https?://", "", x)
@@ -352,21 +404,18 @@ augment_with_manual_url_refs_r <- function(data,
     x <- gsub("/+$", "", x)
     na_if(x, "")
   }
-
   has_text_vec <- function(x) {
     x <- trimws(as.character(x))
     !is.na(x) & nzchar(x)
   }
 
-  # Ensure Step-7 columns exist (safe)
-  for (nm in c("ref_r_clean","bibtex_r","title_r","author_r","journal_r","volume_r","issue_r","pages_r")) {
+  for (nm in c(col_ref_clean, col_bibtex, col_title, col_author,
+               col_journal, col_volume, col_issue, col_pages)) {
     if (!nm %in% names(data)) data[[nm]] <- NA_character_
   }
-  if (!"year_r" %in% names(data)) data$year_r <- NA_integer_
+  if (!col_year %in% names(data)) data[[col_year]] <- NA_integer_
 
   manual_df <- read_excel(manual_ref_file)
-
-  # Ensure expected manual columns exist
   expected <- c("key","reference_apa","reference_bibtex","title","author","journal","year","volume","issue","pages")
   for (col in expected) if (!col %in% names(manual_df)) manual_df[[col]] <- NA
 
@@ -389,9 +438,8 @@ augment_with_manual_url_refs_r <- function(data,
       .parsed = list(if (has_text_vec(reference_bibtex)) parse_bibtex_fields(reference_bibtex) else
         list(title=NA_character_, author=NA_character_, journal=NA_character_,
              year=NA_integer_, volume=NA_character_, issue=NA_character_, pages=NA_character_)),
-      # Fill missing manual columns from parsed BibTeX
       title  = if (has_text_vec(title)) title else .parsed$title,
-      author = if (has_text_vec(author)) author else .parsed$author,   # JSON
+      author = if (has_text_vec(author)) author else .parsed$author,
       journal= if (has_text_vec(journal)) journal else .parsed$journal,
       year   = if (!is.na(year)) as.integer(year) else .parsed$year,
       volume = if (has_text_vec(volume)) volume else .parsed$volume,
@@ -401,58 +449,73 @@ augment_with_manual_url_refs_r <- function(data,
     ungroup() %>%
     transmute(
       url_key,
-      ref_r_clean_manual = reference_apa,
-      bibtex_r_manual    = reference_bibtex,
-      title_r_manual     = title,
-      author_r_manual    = author,
-      journal_r_manual   = journal,
-      year_r_manual      = year,
-      volume_r_manual    = volume,
-      issue_r_manual     = issue,
-      pages_r_manual     = pages
+      manual_ref_clean = reference_apa,
+      manual_bibtex    = reference_bibtex,
+      manual_title     = title,
+      manual_author    = author,
+      manual_journal   = journal,
+      manual_year      = year,
+      manual_volume    = volume,
+      manual_issue     = issue,
+      manual_pages     = pages
     )
 
-  before_missing_title <- sum(!has_text_vec(data$title_r))
+  before_missing_title <- sum(!has_text_vec(data[[col_title]]))
 
   out <- data %>%
     mutate(.url_key_tmp = norm_url(.data[[url_col]])) %>%
-    left_join(manual_url, by = c(".url_key_tmp" = "url_key")) %>%
-    mutate(
-      # Fill only when missing
-      ref_r_clean = coalesce(ref_r_clean, ref_r_clean_manual),
-      bibtex_r    = coalesce(bibtex_r, bibtex_r_manual),
-      title_r     = coalesce(title_r, title_r_manual),
-      author_r    = coalesce(author_r, author_r_manual),
-      journal_r   = coalesce(journal_r, journal_r_manual),
-      year_r      = coalesce(year_r, year_r_manual),
-      volume_r    = coalesce(volume_r, volume_r_manual),
-      issue_r     = coalesce(issue_r, issue_r_manual),
-      pages_r     = coalesce(pages_r, pages_r_manual)
-    ) %>%
-    select(-.url_key_tmp, -ends_with("_manual"))
+    left_join(manual_url, by = c(".url_key_tmp" = "url_key"))
 
-  # Optional: recover missing title_r from bibtex_r
+  out[[col_ref_clean]] <- coalesce(out[[col_ref_clean]], out$manual_ref_clean)
+  out[[col_bibtex]]    <- coalesce(out[[col_bibtex]],    out$manual_bibtex)
+  out[[col_title]]     <- coalesce(out[[col_title]],     out$manual_title)
+  out[[col_author]]    <- coalesce(out[[col_author]],    out$manual_author)
+  out[[col_journal]]   <- coalesce(out[[col_journal]],   out$manual_journal)
+  out[[col_year]]      <- coalesce(out[[col_year]],      out$manual_year)
+  out[[col_volume]]    <- coalesce(out[[col_volume]],    out$manual_volume)
+  out[[col_issue]]     <- coalesce(out[[col_issue]],     out$manual_issue)
+  out[[col_pages]]     <- coalesce(out[[col_pages]],     out$manual_pages)
+
+  out <- out %>% select(-.url_key_tmp, -starts_with("manual_"))
+
   if (recover_title_from_bibtex) {
-    need_idx <- which(!has_text_vec(out$title_r) & has_text_vec(out$bibtex_r))
+    need_idx <- which(!has_text_vec(out[[col_title]]) & has_text_vec(out[[col_bibtex]]))
     if (length(need_idx) > 0) {
-      recovered <- vapply(out$bibtex_r[need_idx], function(b) parse_bibtex_fields(b)$title, character(1))
-      out$title_r[need_idx] <- coalesce(out$title_r[need_idx], recovered)
+      recovered <- vapply(out[[col_bibtex]][need_idx],
+                          function(b) parse_bibtex_fields(b)$title,
+                          character(1))
+      out[[col_title]][need_idx] <- coalesce(out[[col_title]][need_idx], recovered)
     }
   }
 
-  after_missing_title <- sum(!has_text_vec(out$title_r))
+  after_missing_title <- sum(!has_text_vec(out[[col_title]]))
 
   if (verbose) {
     n_matches <- sum(norm_url(out[[url_col]]) %in% manual_url$url_key, na.rm = TRUE)
-    message("=== Manual URL overrides (R side) ===")
+    message("=== Manual URL overrides (", toupper(side), " side) ===")
     message("URL matches found: ", n_matches)
-    message("Missing title_r before: ", before_missing_title)
-    message("Missing title_r after : ", after_missing_title)
+    message("Missing ", col_title, " before: ", before_missing_title)
+    message("Missing ", col_title, " after : ", after_missing_title)
     message("Titles recovered     : ", before_missing_title - after_missing_title)
   }
 
   out
 }
+
+# Backward-compat alias used by flora/fred pipelines
+augment_with_manual_url_refs_r <- function(data,
+                                          manual_ref_file = MANUAL_REFERENCES,
+                                          url_col = "url_r",
+                                          recover_title_from_bibtex = TRUE,
+                                          verbose = TRUE) {
+  augment_with_manual_url_refs(data,
+                                manual_ref_file = manual_ref_file,
+                                side = "r",
+                                url_col = url_col,
+                                recover_title_from_bibtex = recover_title_from_bibtex,
+                                verbose = verbose)
+}
+
 
 #' Fetch APA citation from DataCite (fallback for CrossRef)
 #' @param doi DOI string
@@ -972,6 +1035,125 @@ get_datacite_reference_fields <- function(dois,
     select(doi, title, authors_json, journal, year, volume, issue, pages, source)
 }
 
+# Fetch reference fields via DOI content negotiation (doi.org CSL-JSON).
+# Works for any DOI whose registration agency supports CSL-JSON content
+# negotiation — covering CrossRef, DataCite, Airiti, mEDRA, and others — so
+# this serves as a universal fallback after the CrossRef + DataCite paths.
+get_doi_content_negotiation_fields <- function(dois,
+                                               cache_file = CROSSREF_REF_FIELDS_CACHE,
+                                               progress = TRUE) {
+  dois <- tolower(trimws(dois))
+  out <- tibble(doi = dois)
+
+  valid <- !is.na(dois) & is_doi(dois)
+  unique_dois <- unique(dois[valid])
+
+  cache_df <- load_ref_fields_cache(cache_file)
+
+  # Skip DOIs already attempted via content negotiation (success or permanent
+  # failure). Retryable outcomes use `doi_cn_error` so they get tried again.
+  cn_tried <- cache_df %>%
+    filter(doi %in% unique_dois, source %in% c("doi_cn", "doi_cn_not_found")) %>%
+    pull(doi)
+  need <- setdiff(unique_dois, cn_tried)
+
+  if (length(need) == 0) {
+    return(out %>%
+             left_join(cache_df, by = "doi") %>%
+             select(doi, title, authors_json, journal, year, volume, issue, pages, source))
+  }
+
+  if (progress) message("Fetching DOI content-negotiation fields for ", length(need), " DOI(s)...")
+
+  pb <- NULL
+  if (progress) {
+    pb <- utils::txtProgressBar(min = 0, max = length(need), style = 3)
+    on.exit(if (!is.null(pb)) close(pb), add = TRUE)
+  }
+
+  empty_row <- function(d, src) {
+    tibble(doi = d, title = NA_character_, authors_json = NA_character_,
+           journal = NA_character_, year = NA_integer_,
+           volume = NA_character_, issue = NA_character_, pages = NA_character_,
+           source = src)
+  }
+
+  authors_to_crossref_json <- function(author_list) {
+    if (is.null(author_list) || length(author_list) == 0) return(NA_character_)
+    df <- tibble(
+      given = vapply(author_list,
+                     function(a) a$given %||% NA_character_, character(1)),
+      family = vapply(author_list,
+                      function(a) a$family %||% a$literal %||% NA_character_, character(1)),
+      sequence = c("first", rep("additional", max(0, length(author_list) - 1)))
+    ) %>%
+      mutate(given = na_if(given, ""), family = na_if(family, ""))
+    as.character(toJSON(df, auto_unbox = TRUE, null = "null"))
+  }
+
+  new_rows <- vector("list", length(need))
+  names(new_rows) <- need
+
+  for (i in seq_along(need)) {
+    d <- need[[i]]
+    url <- paste0("https://doi.org/", URLencode(d, reserved = TRUE))
+    row <- tryCatch({
+      res <- GET(url,
+                 add_headers(Accept = "application/vnd.citationstyles.csl+json"),
+                 timeout(12))
+      sc <- status_code(res)
+      body <- content(res, as = "text", encoding = "UTF-8")
+
+      # doi.org returns its "DOI not found" HTML page (200 OK with text/html)
+      # for unregistered DOIs. Detect by content-type or parseability.
+      ct <- tolower(headers(res)[["content-type"]] %||% "")
+      if (sc >= 400 || grepl("html", ct) || !startsWith(trimws(body), "{")) {
+        empty_row(d, "doi_cn_not_found")
+      } else {
+        j <- tryCatch(fromJSON(body, simplifyVector = FALSE),
+                      error = function(e) NULL)
+        if (is.null(j)) {
+          empty_row(d, "doi_cn_not_found")
+        } else {
+          title <- j$title %||% NA_character_
+          if (!is.na(title) && nzchar(title)) title <- str_squish(title)
+          journal <- j$`container-title` %||% j$publisher %||% NA_character_
+          if (!is.na(journal) && nzchar(journal)) journal <- str_squish(journal)
+          year <- suppressWarnings(as.integer(
+            j$issued$`date-parts`[[1]][[1]] %||% NA))
+          volume <- j$volume %||% NA_character_
+          issue <- j$issue %||% NA_character_
+          pages <- j$page %||% j$`page-first` %||% NA_character_
+          authors_json <- authors_to_crossref_json(j$author)
+
+          tibble(doi = d, title = title, authors_json = authors_json,
+                 journal = journal, year = year,
+                 volume = as.character(volume),
+                 issue = as.character(issue),
+                 pages = as.character(pages),
+                 source = "doi_cn")
+        }
+      }
+    }, error = function(e) empty_row(d, "doi_cn_error"))
+
+    new_rows[[d]] <- row
+    if (!is.null(pb)) utils::setTxtProgressBar(pb, i)
+    Sys.sleep(0.1)  # polite pacing
+  }
+
+  new_df <- bind_rows(new_rows)
+
+  cache_df <- cache_df %>%
+    filter(!doi %in% new_df$doi) %>%
+    bind_rows(new_df)
+
+  save_ref_fields_cache(cache_df, cache_file)
+
+  out %>%
+    left_join(cache_df, by = "doi") %>%
+    select(doi, title, authors_json, journal, year, volume, issue, pages, source)
+}
+
 #' Get APA and/or BibTeX references for DOIs/keys
 #' Four-tier lookup: manual overrides → cache → CrossRef → DataCite
 #' Note: API queries (CrossRef/DataCite) only happen for valid DOIs.
@@ -1233,6 +1415,43 @@ get_references <- function(doi_vec,
             issue  = coalesce(issue, issue_dc),
             pages  = coalesce(pages, pages_dc),
             source = coalesce(source, source_dc)
+          )
+
+        save_ref_fields_cache(
+          load_ref_fields_cache(fields_cache) %>%
+            filter(!doi %in% fields_out$doi) %>%
+            bind_rows(fields_out),
+          fields_cache
+        )
+      }
+
+      # Third fallback: DOI content negotiation (covers non-CrossRef/non-DataCite
+      # registries such as Airiti, mEDRA, and other CSL-JSON-supporting agents).
+      miss2 <- fields_out %>%
+        mutate(.miss = is.na(title) | !nzchar(title)) %>%
+        filter(.miss & !is.na(doi) & is_doi(doi)) %>%
+        distinct(doi) %>%
+        pull(doi)
+
+      if (length(miss2) > 0) {
+        fields_cn <- get_doi_content_negotiation_fields(
+          miss2,
+          cache_file = fields_cache,
+          progress = progress
+        )
+
+        fields_out <- fields_out %>%
+          left_join(fields_cn, by = "doi", suffix = c("", "_cn")) %>%
+          transmute(
+            doi,
+            title  = coalesce(title, title_cn),
+            authors_json = coalesce(authors_json, authors_json_cn),
+            journal = coalesce(journal, journal_cn),
+            year   = coalesce(year, year_cn),
+            volume = coalesce(volume, volume_cn),
+            issue  = coalesce(issue, issue_cn),
+            pages  = coalesce(pages, pages_cn),
+            source = coalesce(source, source_cn)
           )
 
         save_ref_fields_cache(

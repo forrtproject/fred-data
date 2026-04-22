@@ -35,6 +35,9 @@ OPENALEX_CACHE <- file.path(CACHE_DIR, "openalex_keywords_language.csv")
 # OpenAlex abstracts cache
 OPENALEX_ABSTRACTS_CACHE <- file.path(CACHE_DIR, "openalex_abstracts.csv")
 
+# OpenAlex work-id → bibliographic fields cache (keyed by work ID, e.g. W123)
+OPENALEX_WORK_FIELDS_CACHE <- file.path(CACHE_DIR, "openalex_work_fields.csv")
+
 # LLM replication intent classification cache
 LLM_REPLICATION_INTENT_CACHE <- file.path(CACHE_DIR, "llm_replication_intent.rds")
 

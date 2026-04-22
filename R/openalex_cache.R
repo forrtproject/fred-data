@@ -316,5 +316,181 @@ get_openalex_language <- function(dois,
   )
 }
 
+# ---- Work-ID-keyed field lookup ----
+#
+# Many replication studies (theses, working papers) have an OpenAlex work ID
+# but no DOI. When the source stores the URL form (https://openalex.org/W...),
+# we fetch title/authors/year/journal by work ID so those rows survive the
+# title filter at the end of the flora pipeline.
 
+load_openalex_work_fields_cache <- function(cache_file = OPENALEX_WORK_FIELDS_CACHE) {
+  if (!file.exists(cache_file)) {
+    tibble::tibble(work_id = character(), title = character(),
+                   authors_json = character(), journal = character(),
+                   year = integer(), source = character())
+  } else {
+    read_csv(cache_file, show_col_types = FALSE,
+             col_types = cols(
+               work_id = col_character(), title = col_character(),
+               authors_json = col_character(), journal = col_character(),
+               year = col_integer(), source = col_character()
+             ))
+  }
+}
+
+save_openalex_work_fields_cache <- function(df,
+                                             cache_file = OPENALEX_WORK_FIELDS_CACHE) {
+  dir.create(dirname(cache_file), showWarnings = FALSE, recursive = TRUE)
+  if (nrow(df) > 0) df <- df[!duplicated(df$work_id), , drop = FALSE]
+  write_excel_csv(df, cache_file)
+}
+
+# Extract the work ID from an OpenAlex URL (or pass through if already bare)
+extract_openalex_work_id <- function(x) {
+  x <- trimws(as.character(x))
+  m <- regmatches(x, regexpr("W\\d{5,}", x, perl = TRUE))
+  ifelse(length(m) == 0 || !nzchar(m), NA_character_, m)
+}
+
+fetch_openalex_work_fields_single <- function(work_id, mailto = NULL) {
+  url <- paste0("https://api.openalex.org/works/", work_id)
+  q <- list(select = "id,doi,display_name,publication_year,authorships,primary_location")
+  if (!is.null(mailto)) q$mailto <- mailto
+
+  res <- tryCatch(
+    GET(url, query = q, user_agent("R (OpenAlex work lookup)"), timeout(12)),
+    error = function(e) NULL
+  )
+  if (is.null(res) || http_error(res)) {
+    return(tibble::tibble(work_id = work_id, title = NA_character_,
+                          authors_json = NA_character_, journal = NA_character_,
+                          year = NA_integer_, source = "openalex_error"))
+  }
+
+  j <- tryCatch(fromJSON(content(res, as = "text", encoding = "UTF-8"),
+                         simplifyVector = FALSE),
+                error = function(e) NULL)
+  if (is.null(j)) {
+    return(tibble::tibble(work_id = work_id, title = NA_character_,
+                          authors_json = NA_character_, journal = NA_character_,
+                          year = NA_integer_, source = "openalex_error"))
+  }
+
+  # Authors → CrossRef-style JSON (given/family/sequence)
+  authors_json <- NA_character_
+  if (!is.null(j$authorships) && length(j$authorships) > 0) {
+    df <- lapply(seq_along(j$authorships), function(i) {
+      auth <- j$authorships[[i]]$author
+      raw  <- j$authorships[[i]]$raw_author_name %||% NULL
+      name <- auth$display_name %||% raw %||% NA_character_
+      if (is.na(name) || !nzchar(name)) return(NULL)
+      parts <- strsplit(name, "\\s+")[[1]]
+      family <- if (length(parts) > 0) parts[[length(parts)]] else NA_character_
+      given  <- if (length(parts) > 1) paste(parts[-length(parts)], collapse = " ") else NA_character_
+      list(given = given, family = family,
+           sequence = if (i == 1) "first" else "additional")
+    })
+    df <- Filter(Negate(is.null), df)
+    if (length(df) > 0) {
+      authors_json <- as.character(toJSON(df, auto_unbox = TRUE, null = "null"))
+    }
+  }
+
+  journal <- j$primary_location$source$display_name %||% NA_character_
+  year <- suppressWarnings(as.integer(j$publication_year %||% NA))
+  title <- j$display_name %||% NA_character_
+
+  tibble::tibble(
+    work_id = work_id,
+    title = if (!is.na(title) && nzchar(title)) title else NA_character_,
+    authors_json = authors_json,
+    journal = if (!is.na(journal) && nzchar(journal)) journal else NA_character_,
+    year = year,
+    source = "openalex"
+  )
+}
+
+#' Fetch OpenAlex bibliographic fields for a vector of work IDs or OpenAlex URLs
+#'
+#' Caches results in `openalex_work_fields.csv`. Returns one row per input,
+#' preserving order; missing work IDs get all-NA rows.
+get_openalex_work_fields <- function(work_ids,
+                                      mailto = "lukas.wallrich@gmail.com",
+                                      cache_file = OPENALEX_WORK_FIELDS_CACHE,
+                                      progress = TRUE) {
+  input <- vapply(work_ids, extract_openalex_work_id, character(1))
+  out <- tibble::tibble(input = input)
+
+  cache_df <- load_openalex_work_fields_cache(cache_file)
+  unique_ids <- unique(input[!is.na(input)])
+  need <- setdiff(unique_ids,
+                  cache_df$work_id[cache_df$source != "openalex_error"])
+
+  if (length(need) > 0) {
+    if (progress) message("Fetching OpenAlex fields for ", length(need), " work ID(s)...")
+    pb <- NULL
+    if (progress) {
+      pb <- utils::txtProgressBar(min = 0, max = length(need), style = 3)
+      on.exit(if (!is.null(pb)) close(pb), add = TRUE)
+    }
+    new_rows <- vector("list", length(need))
+    for (i in seq_along(need)) {
+      new_rows[[i]] <- fetch_openalex_work_fields_single(need[[i]], mailto = mailto)
+      if (!is.null(pb)) utils::setTxtProgressBar(pb, i)
+      Sys.sleep(0.1)
+    }
+    new_df <- bind_rows(new_rows)
+    cache_df <- cache_df %>%
+      filter(!work_id %in% new_df$work_id) %>%
+      bind_rows(new_df)
+    save_openalex_work_fields_cache(cache_df, cache_file)
+  }
+
+  out %>%
+    left_join(cache_df, by = c("input" = "work_id")) %>%
+    select(work_id = input, title, authors_json, journal, year, source)
+}
+
+#' Patch missing replication-side fields from OpenAlex when url_r is an
+#' OpenAlex URL. Must run after Step 7 / 7b so that title_r etc. columns exist.
+augment_with_openalex_url_refs_r <- function(data,
+                                              url_col = "url_r",
+                                              verbose = TRUE) {
+  stopifnot(is.data.frame(data))
+  if (!url_col %in% names(data)) return(data)
+
+  has_text_vec <- function(x) {
+    x <- trimws(as.character(x))
+    !is.na(x) & nzchar(x)
+  }
+  for (nm in c("title_r", "author_r", "journal_r", "year_r")) {
+    if (!nm %in% names(data)) {
+      data[[nm]] <- if (nm == "year_r") NA_integer_ else NA_character_
+    }
+  }
+
+  work_id <- vapply(data[[url_col]], extract_openalex_work_id, character(1))
+  need_idx <- which(!has_text_vec(data$title_r) & !is.na(work_id))
+  if (length(need_idx) == 0) {
+    if (verbose) message("=== OpenAlex URL overrides (R side) ===\nNo rows to patch.")
+    return(data)
+  }
+
+  fields <- get_openalex_work_fields(unique(work_id[need_idx]), progress = verbose)
+
+  idx_match <- match(work_id[need_idx], fields$work_id)
+  patch <- fields[idx_match, ]
+  data$title_r[need_idx]  <- dplyr::coalesce(data$title_r[need_idx],  patch$title)
+  data$author_r[need_idx] <- dplyr::coalesce(data$author_r[need_idx], patch$authors_json)
+  data$journal_r[need_idx]<- dplyr::coalesce(data$journal_r[need_idx],patch$journal)
+  data$year_r[need_idx]   <- dplyr::coalesce(data$year_r[need_idx],   patch$year)
+
+  if (verbose) {
+    recovered <- sum(has_text_vec(patch$title))
+    message("=== OpenAlex URL overrides (R side) ===\n",
+            "URL matches resolved: ", length(need_idx), "\n",
+            "Titles recovered    : ", recovered)
+  }
+  data
+}
 
