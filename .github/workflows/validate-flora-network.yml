@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up R
         id: setup-r
@@ -28,7 +28,7 @@ jobs:
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
 
       - name: Cache R packages
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-R${{ steps.setup-r.outputs.installed-r-version }}-validate-network2-${{ hashFiles('**/Rscript') }}
@@ -84,7 +84,7 @@ jobs:
           fi
 
       - name: Auto-commit cache and suppressions
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Update FLoRA network validation [automated]"
           file_pattern: "cache/validation_doi_resolution.rds cache/validation_url_resolution.rds output/flora_network_validation.csv output/flora_validation_suppressions.csv"

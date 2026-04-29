@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up R
         id: setup-r
@@ -26,7 +26,7 @@ jobs:
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
 
       - name: Cache R packages
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-R${{ steps.setup-r.outputs.installed-r-version }}-filter2-${{ hashFiles('**/Rscript') }}
@@ -45,7 +45,7 @@ jobs:
         run: Rscript R/filter_flora.R
 
       - name: Auto-commit filtered output
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "Update filtered flora.csv [automated]"
           file_pattern: "output/flora_filtered.csv output/flora_filter_log.csv"
