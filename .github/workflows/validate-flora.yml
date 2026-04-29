@@ -38,7 +38,12 @@ jobs:
 
       - name: Install R dependencies
         run: |
-          Rscript -e 'install.packages(c("readr", "dplyr", "stringr", "glue", "tidyr", "here"), repos = "https://cloud.r-project.org")'
+          Rscript -e '
+            pkgs <- c("readr", "dplyr", "stringr", "glue", "tidyr", "here")
+            install.packages(pkgs)
+            missing <- pkgs[!pkgs %in% rownames(installed.packages())]
+            if (length(missing)) stop("Failed to install: ", paste(missing, collapse = ", "))
+          '
 
       - name: Fetch existing issue for suppression tracking
         env:
