@@ -535,7 +535,21 @@ cat(sprintf("  bibtex recovered:   %d\n", before_bib_r_missing   - count_missing
 
 ```
 
-## Step 7c: Detect new preprint-publication duplicates
+## Step 7c: Clean text fields
+
+Strip HTML/JATS markup (`<i>`, `<sup>`, `<scp>`, `<mml:math>`, …) and decode
+common HTML entities (`&amp;`, `&nbsp;`, …) from titles, references, journals,
+abstracts, and outcome quotes. Also collapse stray PDF-copy linebreaks in
+abstracts, outcome quotes, and `study_o` (joining single newlines with a space
+while preserving paragraph breaks). Done before preprint-dedup detection so
+title similarity is computed on clean strings, and before LLM classification
+so abstracts feed in clean.
+
+```{r clean-text-fields}
+flora_augmented <- clean_flora_text_fields(flora_augmented, verbose = TRUE)
+```
+
+## Step 7d: Detect new preprint-publication duplicates
 
 Confirmed dedup was already applied in Step 6a (before reference fetch).
 This step detects *new* candidates now that title/author metadata is available.
@@ -699,6 +713,9 @@ if (length(dois_needing_abstract) > 0) {
     ) %>%
     mutate(abstract_r = coalesce(abstract_r, abstract_r_oa)) %>%
     select(-abstract_r_oa)
+
+  # Re-clean abstracts in case OpenAlex returned JATS markup or stray newlines
+  cos_rows <- clean_flora_text_fields(cos_rows, verbose = FALSE)
 
   cat(sprintf("  Abstracts now available for %d / %d COS rows\n",
               sum(!is.na(cos_rows$abstract_r) & cos_rows$abstract_r != ""),

@@ -136,3 +136,138 @@ if (!"author_overlap" %in% names(data)) {
   data
 }
 
+
+# ============================================================================
+# Text Cleaning (HTML tags, entities, stray linebreaks)
+# ============================================================================
+
+#' Strip HTML/JATS tags and decode common HTML entities.
+#'
+#' Used for fields whose source metadata (CrossRef, OpenAlex, JATS) sometimes
+#' carries inline markup like `<i>`, `<sup>`, `<scp>`, `<mml:math>`, or escaped
+#' entities like `&amp;`. NA inputs are preserved.
+#'
+#' @param x Character vector.
+#' @return Character vector with tags removed, entities decoded, whitespace
+#'   collapsed, and leading/trailing whitespace trimmed.
+clean_html_tags <- function(x) {
+  if (is.null(x)) return(x)
+  x <- as.character(x)
+  y <- gsub("<[^>]+>", "", x, perl = TRUE)
+
+  # Decode common HTML entities. Case-insensitive because CrossRef occasionally
+  # returns capitalized forms (e.g., `&Amp;`, `&Rsquo;`).
+  decode_named <- function(s) {
+    s <- gsub("&amp;",   "&",  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&lt;",    "<",  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&gt;",    ">",  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&quot;",  '"',  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&apos;",  "'",  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&nbsp;",  " ",  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&rsquo;", "'",  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&lsquo;", "'",  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&rdquo;", '"',  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&ldquo;", '"',  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&ndash;", "-",  s, ignore.case = TRUE, perl = TRUE)
+    s <- gsub("&mdash;", "-",  s, ignore.case = TRUE, perl = TRUE)
+    s
+  }
+  # Decode numeric entities (&#NN; and &#xHH;) per element via regmatches.
+  decode_numeric_one <- function(s) {
+    if (is.na(s)) return(s)
+    m <- gregexpr("&#(?:\\d+|x[0-9a-fA-F]+);", s, perl = TRUE)
+    toks <- regmatches(s, m)[[1]]
+    if (length(toks) == 0) return(s)
+    repl <- vapply(toks, function(tok) {
+      hex <- grepl("^&#x", tok, ignore.case = TRUE)
+      body <- sub("^&#x?", "", tok, ignore.case = TRUE)
+      body <- sub(";$", "", body)
+      if (hex) intToUtf8(strtoi(body, base = 16L)) else intToUtf8(as.integer(body))
+    }, character(1), USE.NAMES = FALSE)
+    regmatches(s, m) <- list(repl)
+    s
+  }
+
+  # Two passes collapse double-encoded `&amp;amp;` → `&amp;` → `&`.
+  for (pass in 1:2) {
+    y <- decode_named(y)
+  }
+  y <- vapply(y, decode_numeric_one, character(1), USE.NAMES = FALSE)
+
+  y <- gsub("[ \t]+", " ", y, perl = TRUE)
+  trimws(y)
+}
+
+#' Collapse stray single linebreaks while preserving paragraph breaks.
+#'
+#' Many source abstracts and outcome quotes are pasted out of PDFs and contain
+#' a hard linebreak after every typeset line, which corrupts downstream display
+#' and LLM input. This function joins single linebreaks with a space but keeps
+#' double (blank-line) breaks as paragraph separators.
+#'
+#' @param x Character vector.
+#' @return Character vector with cleaned linebreaks.
+clean_linebreaks <- function(x) {
+  if (is.null(x)) return(x)
+  x <- as.character(x)
+  y <- gsub("\r\n", "\n", x, fixed = TRUE)
+  y <- gsub("\r", "\n", y, fixed = TRUE)
+  # Mark paragraph breaks (>=2 newlines, optionally with spaces between) so
+  # they survive the single-newline collapse below.
+  y <- gsub("\n[ \t]*\n+[ \t]*", "", y, perl = TRUE)
+  y <- gsub("\n+", " ", y, perl = TRUE)
+  y <- gsub("", "\n\n", y, fixed = TRUE)
+  y <- gsub("[ \t]+", " ", y, perl = TRUE)
+  y <- gsub(" *\n\n *", "\n\n", y, perl = TRUE)
+  trimws(y)
+}
+
+#' Apply text-field cleanup to a FLoRA dataframe.
+#'
+#' Strips HTML tags + entities from titles, references, journals, abstracts,
+#' and outcome quotes, and collapses stray single linebreaks in abstracts,
+#' outcome quotes, and study_o. Columns missing from `data` are skipped, so
+#' the function is safe to call at multiple pipeline stages.
+#'
+#' @param data Tibble.
+#' @param verbose If TRUE, print per-column counts of cells changed.
+#' @return Tibble with cleaned text fields.
+clean_flora_text_fields <- function(data, verbose = TRUE) {
+  html_cols <- c("title_o", "title_r",
+                 "journal_o", "journal_r",
+                 "ref_o", "ref_r",
+                 "ref_o_clean", "ref_r_clean",
+                 "abstract_r",
+                 "outcome_quote")
+  lb_cols   <- c("abstract_r", "outcome_quote", "study_o")
+
+  count_changes <- function(old, new) {
+    sum(!is.na(old) & !is.na(new) & old != new) +
+      sum(is.na(old) != is.na(new))
+  }
+
+  for (col in intersect(html_cols, names(data))) {
+    before <- data[[col]]
+    data[[col]] <- clean_html_tags(before)
+    if (verbose) {
+      n_changed <- count_changes(before, data[[col]])
+      if (n_changed > 0) {
+        cat(sprintf("    ✓ clean_html_tags(%s): %d cell(s) changed\n", col, n_changed))
+      }
+    }
+  }
+
+  for (col in intersect(lb_cols, names(data))) {
+    before <- data[[col]]
+    data[[col]] <- clean_linebreaks(before)
+    if (verbose) {
+      n_changed <- count_changes(before, data[[col]])
+      if (n_changed > 0) {
+        cat(sprintf("    ✓ clean_linebreaks(%s): %d cell(s) changed\n", col, n_changed))
+      }
+    }
+  }
+
+  data
+}
+
