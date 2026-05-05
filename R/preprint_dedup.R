@@ -41,6 +41,157 @@ PREPRINT_DOI_PREFIXES <- c(
 CONFIRMED_DEDUP_PATH <- here::here("cache", "confirmed_preprint_duplicates.csv")
 CANDIDATES_PATH      <- here::here("output", "preprint_dedup_candidates.csv")
 
+# ---- (doi_o, doi_r) duplicate merge ----
+
+#' Merge rows that share (doi_o, doi_r) when their url_r values are compatible.
+#'
+#' Within each (doi_o, doi_r) group:
+#'   - if there are <=1 distinct non-NA `url_r` values, all rows are merged
+#'     into a single row.
+#'   - if there are >=2 distinct non-NA `url_r` values, the rows are kept
+#'     separate (they may be different replication reports of the same dataset).
+#'
+#' Merging rules per column:
+#'   - url_r:                first non-NA
+#'   - study_o:              paste unique non-NA values with "; "
+#'   - outcome:              the single non-NA value, or "mixed" when distinct
+#'                            non-NA outcomes disagree (which is logged as a
+#'                            data-entry warning — same paper, same url_r but
+#'                            conflicting outcomes is a source-data mistake).
+#'   - outcome_quote, outcome_quote_source: paste unique non-NA with " || "
+#'   - source:               prefer "COS" if any row has it; else first non-NA
+#'   - everything else:      first non-NA
+#'
+#' Groups with conflicting outcomes are also written to
+#' `output/dup_outcome_conflicts.csv` for follow-up.
+#'
+#' Rows with NA doi_o or NA doi_r are returned untouched.
+merge_doi_pair_dups <- function(data, verbose = TRUE) {
+  if (!all(c("doi_o", "doi_r") %in% names(data))) return(data)
+
+  na_rows <- data %>% filter(is.na(doi_o) | is.na(doi_r))
+  pair_rows <- data %>% filter(!is.na(doi_o), !is.na(doi_r))
+
+  url_r_col <- if ("url_r" %in% names(pair_rows)) "url_r" else NULL
+
+  # Decide which (doi_o, doi_r) groups should be merged
+  group_flags <- pair_rows %>%
+    group_by(doi_o, doi_r) %>%
+    summarise(
+      .group_size = dplyr::n(),
+      .n_distinct_url_r = if (!is.null(url_r_col)) dplyr::n_distinct(url_r, na.rm = TRUE) else 0L,
+      .groups = "drop"
+    ) %>%
+    mutate(.merge = .group_size > 1 & .n_distinct_url_r <= 1)
+
+  pair_rows <- pair_rows %>% left_join(group_flags, by = c("doi_o", "doi_r"))
+  to_merge <- pair_rows %>% filter(.merge)
+  to_keep  <- pair_rows %>% filter(!.merge)
+
+  if (nrow(to_merge) == 0) {
+    return(data)
+  }
+
+  prefer_cos <- function(x) {
+    v <- x[!is.na(x)]
+    if (length(v) == 0) return(NA)
+    if (any(toupper(as.character(v)) == "COS")) return(v[which(toupper(as.character(v)) == "COS")[1]])
+    v[1]
+  }
+  paste_unique <- function(x, sep) {
+    v <- unique(stats::na.omit(x))
+    if (length(v) == 0) return(NA_character_)
+    paste(as.character(v), collapse = sep)
+  }
+  pick_outcome <- function(x) {
+    v <- unique(stats::na.omit(x))
+    if (length(v) == 0) return(NA_character_)
+    if (length(v) == 1) return(as.character(v))
+    if (all(v %in% c("successful", "mixed", "failed"))) return("mixed")
+    paste(as.character(v), collapse = " || ")
+  }
+  first_nona <- function(x) {
+    v <- x[!is.na(x)]
+    if (length(v) == 0) return(x[1])  # preserves type when all NA
+    v[1]
+  }
+
+  cols <- setdiff(names(pair_rows),
+                  c("doi_o", "doi_r", ".group_size", ".n_distinct_url_r", ".merge"))
+
+  # Detect outcome conflicts within groups about to be merged. Same paper +
+  # same url_r but conflicting outcomes is a source-data mistake — log it.
+  outcome_conflicts <- if ("outcome" %in% cols) {
+    to_merge %>%
+      group_by(doi_o, doi_r) %>%
+      summarise(
+        outcomes = paste(sort(unique(stats::na.omit(outcome))), collapse = " | "),
+        n_outcomes = dplyr::n_distinct(outcome, na.rm = TRUE),
+        url_r = paste(unique(stats::na.omit(url_r)), collapse = " | "),
+        sources = paste(sort(unique(stats::na.omit(source))), collapse = " | "),
+        .groups = "drop"
+      ) %>%
+      filter(n_outcomes > 1)
+  } else {
+    tibble::tibble()
+  }
+
+  merged <- to_merge %>%
+    group_by(doi_o, doi_r) %>%
+    summarise(
+      across(all_of(cols), ~ {
+        cn <- dplyr::cur_column()
+        if (cn == "study_o")                                 paste_unique(.x, "; ")
+        else if (cn %in% c("outcome_quote",
+                           "outcome_quote_source"))          paste_unique(.x, " || ")
+        else if (cn == "source")                             prefer_cos(.x)
+        else if (cn == "outcome")                            pick_outcome(.x)
+        else                                                  first_nona(.x)
+      }),
+      .groups = "drop"
+    )
+
+  out <- bind_rows(
+    to_keep %>% select(-.group_size, -.n_distinct_url_r, -.merge),
+    merged,
+    na_rows
+  )
+
+  if (verbose) {
+    n_groups_merged <- nrow(merged)
+    rows_removed <- nrow(data) - nrow(out)
+    cat(sprintf(
+      "  Merged %d (doi_o, doi_r) duplicate group(s); removed %d row(s)\n",
+      n_groups_merged, rows_removed
+    ))
+  }
+
+  if (nrow(outcome_conflicts) > 0) {
+    cat(sprintf(
+      "  ⚠ %d merged group(s) had CONFLICTING outcomes (same paper, same url_r) — collapsed to 'mixed'.\n",
+      nrow(outcome_conflicts)
+    ))
+    cat("    These are likely source-data mistakes. Affected (doi_o, doi_r):\n")
+    for (i in seq_len(nrow(outcome_conflicts))) {
+      cat(sprintf("      - %s + %s  [outcomes: %s; sources: %s]\n",
+                  outcome_conflicts$doi_o[i],
+                  outcome_conflicts$doi_r[i],
+                  outcome_conflicts$outcomes[i],
+                  outcome_conflicts$sources[i]))
+    }
+    out_dir <- here::here("output")
+    if (dir.exists(out_dir)) {
+      readr::write_excel_csv(
+        outcome_conflicts,
+        file.path(out_dir, "dup_outcome_conflicts.csv")
+      )
+      cat(sprintf("    Logged to output/dup_outcome_conflicts.csv\n"))
+    }
+  }
+
+  out
+}
+
 # ---- helpers ----
 
 #' Check whether a DOI belongs to a known preprint server
@@ -441,23 +592,12 @@ apply_confirmed_preprint_dedup <- function(data,
                               nrow(orig_resolved)))
 
     # Re-dedup after DOI replacement (may create exact duplicates).
-    # Include url_r alongside doi_r so that distinct replications of the same
-    # original paper (same doi_o, no doi_r, different url_r — common for SCORE)
-    # are not collapsed together.
-    norm_url_key <- function(x) {
-      x <- tolower(trimws(as.character(x)))
-      x <- gsub("^https?://", "", x)
-      x <- gsub("^www\\.", "", x)
-      x <- gsub("/+$", "", x)
-      dplyr::na_if(x, "")
-    }
+    # Distinct url_r values are kept separate (different replication reports
+    # of the same dataset).
     n_before_dedup <- nrow(data)
-    data <- data %>%
-      mutate(.url_r_key = norm_url_key(url_r)) %>%
-      distinct(doi_o, study_o, coalesce(.url_r_key, doi_r), .keep_all = TRUE) %>%
-      select(-.url_r_key)
+    data <- merge_doi_pair_dups(data, verbose = verbose)
     if (verbose && nrow(data) < n_before_dedup) {
-      cat(sprintf("  Removed %d rows that became duplicates after DOI replacement\n",
+      cat(sprintf("  (After DOI replacement: %d row(s) collapsed by merge_doi_pair_dups)\n",
                   n_before_dedup - nrow(data)))
     }
   }
@@ -621,20 +761,10 @@ resolve_preprint_dedup <- function(data,
         doi_o     = dplyr::if_else(matched, unname(doi_map[tolower(doi_o)]), doi_o)
       )
 
-    norm_url_key <- function(x) {
-      x <- tolower(trimws(as.character(x)))
-      x <- gsub("^https?://", "", x)
-      x <- gsub("^www\\.", "", x)
-      x <- gsub("/+$", "", x)
-      dplyr::na_if(x, "")
-    }
     n_before_dedup <- nrow(data)
-    data <- data %>%
-      mutate(.url_r_key = norm_url_key(url_r)) %>%
-      distinct(doi_o, study_o, coalesce(.url_r_key, doi_r), .keep_all = TRUE) %>%
-      select(-.url_r_key)
+    data <- merge_doi_pair_dups(data, verbose = verbose)
     if (verbose && nrow(data) < n_before_dedup) {
-      cat(sprintf("  Removed %d rows that became duplicates after DOI replacement\n",
+      cat(sprintf("  (After DOI replacement: %d row(s) collapsed by merge_doi_pair_dups)\n",
                   n_before_dedup - nrow(data)))
     }
   }

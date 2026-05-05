@@ -290,6 +290,11 @@ flora_data <- flora_data %>%
   distinct(doi_o, coalesce(url_r_norm, doi_r), .keep_all = TRUE) %>%
   select(-url_r_norm)
 
+# Collapse remaining (doi_o, doi_r) duplicates whose url_r values are
+# compatible (<=1 distinct non-NA url_r). Distinct url_r rows are kept
+# separate as they may be different replication reports of the same dataset.
+flora_data <- merge_doi_pair_dups(flora_data, verbose = TRUE)
+
 post_dedup <- nrow(flora_data)
 
 cat(sprintf("✓ Removed %d duplicate rows\n", post_dedup - pre_dedup))
