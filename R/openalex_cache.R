@@ -324,18 +324,24 @@ get_openalex_language <- function(dois,
 # title filter at the end of the flora pipeline.
 
 load_openalex_work_fields_cache <- function(cache_file = OPENALEX_WORK_FIELDS_CACHE) {
-  if (!file.exists(cache_file)) {
-    tibble::tibble(work_id = character(), title = character(),
-                   authors_json = character(), journal = character(),
-                   year = integer(), source = character())
-  } else {
-    read_csv(cache_file, show_col_types = FALSE,
-             col_types = cols(
-               work_id = col_character(), title = col_character(),
-               authors_json = col_character(), journal = col_character(),
-               year = col_integer(), source = col_character()
-             ))
+  empty <- tibble::tibble(work_id = character(), title = character(),
+                          authors_json = character(), journal = character(),
+                          year = integer(), doi = character(),
+                          volume = character(), issue = character(),
+                          first_page = character(), last_page = character(),
+                          source = character())
+  if (!file.exists(cache_file)) return(empty)
+
+  df <- read_csv(cache_file, show_col_types = FALSE,
+                 col_types = cols(.default = col_character(),
+                                  year = col_integer()))
+  # Backfill any columns added after the cache was first written
+  for (nm in names(empty)) {
+    if (!nm %in% names(df)) {
+      df[[nm]] <- if (nm == "year") NA_integer_ else NA_character_
+    }
   }
+  df[, names(empty)]
 }
 
 save_openalex_work_fields_cache <- function(df,
@@ -353,28 +359,29 @@ extract_openalex_work_id <- function(x) {
 }
 
 fetch_openalex_work_fields_single <- function(work_id, mailto = NULL) {
+  err_row <- function() {
+    tibble::tibble(work_id = work_id, title = NA_character_,
+                   authors_json = NA_character_, journal = NA_character_,
+                   year = NA_integer_, doi = NA_character_,
+                   volume = NA_character_, issue = NA_character_,
+                   first_page = NA_character_, last_page = NA_character_,
+                   source = "openalex_error")
+  }
+
   url <- paste0("https://api.openalex.org/works/", work_id)
-  q <- list(select = "id,doi,display_name,publication_year,authorships,primary_location")
+  q <- list(select = "id,doi,display_name,publication_year,authorships,primary_location,biblio")
   if (!is.null(mailto)) q$mailto <- mailto
 
   res <- tryCatch(
     GET(url, query = q, user_agent("R (OpenAlex work lookup)"), timeout(12)),
     error = function(e) NULL
   )
-  if (is.null(res) || http_error(res)) {
-    return(tibble::tibble(work_id = work_id, title = NA_character_,
-                          authors_json = NA_character_, journal = NA_character_,
-                          year = NA_integer_, source = "openalex_error"))
-  }
+  if (is.null(res) || http_error(res)) return(err_row())
 
   j <- tryCatch(fromJSON(content(res, as = "text", encoding = "UTF-8"),
                          simplifyVector = FALSE),
                 error = function(e) NULL)
-  if (is.null(j)) {
-    return(tibble::tibble(work_id = work_id, title = NA_character_,
-                          authors_json = NA_character_, journal = NA_character_,
-                          year = NA_integer_, source = "openalex_error"))
-  }
+  if (is.null(j)) return(err_row())
 
   # Authors → CrossRef-style JSON (given/family/sequence)
   authors_json <- NA_character_
@@ -396,16 +403,33 @@ fetch_openalex_work_fields_single <- function(work_id, mailto = NULL) {
     }
   }
 
-  journal <- j$primary_location$source$display_name %||% NA_character_
-  year <- suppressWarnings(as.integer(j$publication_year %||% NA))
-  title <- j$display_name %||% NA_character_
+  na_if_blank <- function(x) {
+    if (is.null(x)) return(NA_character_)
+    x <- trimws(as.character(x))
+    if (!nzchar(x)) NA_character_ else x
+  }
+
+  journal    <- na_if_blank(j$primary_location$source$display_name)
+  year       <- suppressWarnings(as.integer(j$publication_year %||% NA))
+  title      <- na_if_blank(j$display_name)
+  doi_raw    <- na_if_blank(j$doi)
+  doi_clean  <- if (!is.na(doi_raw)) sub("^https?://(dx\\.)?doi\\.org/", "", doi_raw) else NA_character_
+  volume     <- na_if_blank(j$biblio$volume)
+  issue      <- na_if_blank(j$biblio$issue)
+  first_page <- na_if_blank(j$biblio$first_page)
+  last_page  <- na_if_blank(j$biblio$last_page)
 
   tibble::tibble(
     work_id = work_id,
-    title = if (!is.na(title) && nzchar(title)) title else NA_character_,
+    title = title,
     authors_json = authors_json,
-    journal = if (!is.na(journal) && nzchar(journal)) journal else NA_character_,
+    journal = journal,
     year = year,
+    doi = doi_clean,
+    volume = volume,
+    issue = issue,
+    first_page = first_page,
+    last_page = last_page,
     source = "openalex"
   )
 }
@@ -448,11 +472,15 @@ get_openalex_work_fields <- function(work_ids,
 
   out %>%
     left_join(cache_df, by = c("input" = "work_id")) %>%
-    select(work_id = input, title, authors_json, journal, year, source)
+    select(work_id = input, title, authors_json, journal, year,
+           doi, volume, issue, first_page, last_page, source)
 }
 
 #' Patch missing replication-side fields from OpenAlex when url_r is an
 #' OpenAlex URL. Must run after Step 7 / 7b so that title_r etc. columns exist.
+#' Also synthesises APA + BibTeX reference strings from the structured fields
+#' for rows where CrossRef/manual_references didn't supply one (typical for
+#' OpenAlex-only entries with no DOI).
 augment_with_openalex_url_refs_r <- function(data,
                                               url_col = "url_r",
                                               verbose = TRUE) {
@@ -463,14 +491,18 @@ augment_with_openalex_url_refs_r <- function(data,
     x <- trimws(as.character(x))
     !is.na(x) & nzchar(x)
   }
-  for (nm in c("title_r", "author_r", "journal_r", "year_r")) {
-    if (!nm %in% names(data)) {
-      data[[nm]] <- if (nm == "year_r") NA_integer_ else NA_character_
-    }
+  for (nm in c("title_r", "author_r", "journal_r", "volume_r", "issue_r",
+               "pages_r", "ref_r_clean", "bibtex_r")) {
+    if (!nm %in% names(data)) data[[nm]] <- NA_character_
   }
+  if (!"year_r" %in% names(data)) data$year_r <- NA_integer_
 
   work_id <- vapply(data[[url_col]], extract_openalex_work_id, character(1))
-  need_idx <- which(!has_text_vec(data$title_r) & !is.na(work_id))
+  # Patch every row that resolves to an OpenAlex work_id; coalesce() keeps any
+  # existing values, so this is safe even when title_r is already populated
+  # (e.g. from manual_references). Lets us still fill in missing volume/issue/
+  # pages and synthesise refs.
+  need_idx <- which(!is.na(work_id))
   if (length(need_idx) == 0) {
     if (verbose) message("=== OpenAlex URL overrides (R side) ===\nNo rows to patch.")
     return(data)
@@ -480,16 +512,81 @@ augment_with_openalex_url_refs_r <- function(data,
 
   idx_match <- match(work_id[need_idx], fields$work_id)
   patch <- fields[idx_match, ]
-  data$title_r[need_idx]  <- dplyr::coalesce(data$title_r[need_idx],  patch$title)
-  data$author_r[need_idx] <- dplyr::coalesce(data$author_r[need_idx], patch$authors_json)
-  data$journal_r[need_idx]<- dplyr::coalesce(data$journal_r[need_idx],patch$journal)
-  data$year_r[need_idx]   <- dplyr::coalesce(data$year_r[need_idx],   patch$year)
+
+  # Combine first_page + last_page → "first-last" (or just one if only one)
+  combine_pages <- function(fp, lp) {
+    out <- character(length(fp))
+    for (i in seq_along(fp)) {
+      f <- fp[[i]]; l <- lp[[i]]
+      if (!is.na(f) && nzchar(f) && !is.na(l) && nzchar(l)) {
+        out[i] <- if (identical(f, l)) f else paste0(f, "-", l)
+      } else if (!is.na(f) && nzchar(f)) {
+        out[i] <- f
+      } else if (!is.na(l) && nzchar(l)) {
+        out[i] <- l
+      } else {
+        out[i] <- NA_character_
+      }
+    }
+    out
+  }
+  patch_pages <- combine_pages(patch$first_page, patch$last_page)
+
+  data$title_r[need_idx]   <- dplyr::coalesce(data$title_r[need_idx],   patch$title)
+  data$author_r[need_idx]  <- dplyr::coalesce(data$author_r[need_idx],  patch$authors_json)
+  data$journal_r[need_idx] <- dplyr::coalesce(data$journal_r[need_idx], patch$journal)
+  data$year_r[need_idx]    <- dplyr::coalesce(data$year_r[need_idx],    patch$year)
+  data$volume_r[need_idx]  <- dplyr::coalesce(data$volume_r[need_idx],  patch$volume)
+  data$issue_r[need_idx]   <- dplyr::coalesce(data$issue_r[need_idx],   patch$issue)
+  data$pages_r[need_idx]   <- dplyr::coalesce(data$pages_r[need_idx],   patch_pages)
+
+  # Synthesise APA + BibTeX from the now-populated fields, only where missing.
+  build_idx <- need_idx[!has_text_vec(data$ref_r_clean[need_idx]) |
+                         !has_text_vec(data$bibtex_r[need_idx])]
+  apa_built  <- 0L
+  bib_built  <- 0L
+  for (i in build_idx) {
+    if (!has_text_vec(data$ref_r_clean[i])) {
+      apa <- format_apa_from_fields(
+        authors_json = data$author_r[i],
+        year         = data$year_r[i],
+        title        = data$title_r[i],
+        journal      = data$journal_r[i],
+        volume       = data$volume_r[i],
+        issue        = data$issue_r[i],
+        pages        = data$pages_r[i],
+        doi          = if ("doi_r" %in% names(data)) data$doi_r[i] else NA_character_
+      )
+      if (!is.na(apa) && nzchar(apa)) {
+        data$ref_r_clean[i] <- apa
+        apa_built <- apa_built + 1L
+      }
+    }
+    if (!has_text_vec(data$bibtex_r[i])) {
+      bib <- format_bibtex_from_fields(
+        authors_json = data$author_r[i],
+        year         = data$year_r[i],
+        title        = data$title_r[i],
+        journal      = data$journal_r[i],
+        volume       = data$volume_r[i],
+        issue        = data$issue_r[i],
+        pages        = data$pages_r[i],
+        doi          = if ("doi_r" %in% names(data)) data$doi_r[i] else NA_character_
+      )
+      if (!is.na(bib) && nzchar(bib)) {
+        data$bibtex_r[i] <- bib
+        bib_built <- bib_built + 1L
+      }
+    }
+  }
 
   if (verbose) {
-    recovered <- sum(has_text_vec(patch$title))
+    titles_recovered <- sum(has_text_vec(patch$title))
     message("=== OpenAlex URL overrides (R side) ===\n",
-            "URL matches resolved: ", length(need_idx), "\n",
-            "Titles recovered    : ", recovered)
+            "Work-ID rows resolved : ", length(need_idx), "\n",
+            "Titles recovered      : ", titles_recovered, "\n",
+            "APA refs synthesised  : ", apa_built, "\n",
+            "BibTeX synthesised    : ", bib_built)
   }
   data
 }

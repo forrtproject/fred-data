@@ -94,15 +94,22 @@ reproductions <- reproductions %>%
 cat(sprintf("    ✓ Filtered to %d validated reproductions\n", nrow(reproductions)))
 
 # Combine both datasets (handle case where one might be empty)
-# Add source variable to track data origin
+# Add source variable to track data origin. Both source sheets use
+# `out_quote_source`; the rest of the pipeline (and downstream COS/SCORE
+# branches) use `outcome_quote_source`, so harmonise here.
+tag_source <- function(df, type_label, source_label) {
+  df %>%
+    rename_with(~ "outcome_quote_source", any_of("out_quote_source")) %>%
+    mutate(type = type_label, source = source_label)
+}
 if (nrow(reproductions) == 0) {
-  flora_raw <- replications %>% mutate(type = "replication", source = "replications")
+  flora_raw <- tag_source(replications, "replication", "replications")
 } else if (nrow(replications) == 0) {
-  flora_raw <- reproductions %>% mutate(type = "reproduction", source = "reproductions")
+  flora_raw <- tag_source(reproductions, "reproduction", "reproductions")
 } else {
   flora_raw <- bind_rows(
-    replications %>% mutate(type = "replication", source = "replications"),
-    reproductions %>% mutate(type = "reproduction", source = "reproductions")
+    tag_source(replications, "replication", "replications"),
+    tag_source(reproductions, "reproduction", "reproductions")
   )
 }
 ```
@@ -502,6 +509,13 @@ flora_augmented <- augment_with_manual_url_refs(flora_augmented, side = "o",
 # Additional fallback: fetch title/authors/year from OpenAlex when url_r is an
 # OpenAlex URL (these works have no DOI, so CrossRef/DataCite can't help).
 flora_augmented <- augment_with_openalex_url_refs_r(flora_augmented, verbose = TRUE)
+
+# Final fallback: synthesise APA/BibTeX strings from structured fields for
+# rows that still lack them (e.g. CrossRef returned BibTeX but no APA).
+flora_augmented <- synthesise_missing_refs_from_fields(flora_augmented, side = "r",
+                                                        verbose = TRUE)
+flora_augmented <- synthesise_missing_refs_from_fields(flora_augmented, side = "o",
+                                                        verbose = TRUE)
 
 # ---- AFTER patch stats ----
 cat("\n--- Step 7 stats (AFTER manual/BibTeX recovery) ---\n")

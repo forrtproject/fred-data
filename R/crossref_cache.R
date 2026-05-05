@@ -601,6 +601,256 @@ get_datacite_bibtex <- function(doi) {
   }, error = function(e) NA_character_)
 }
 
+# ---- Reference formatters from structured fields ----
+# Build APA / BibTeX strings when CrossRef/DataCite can't be queried (e.g. an
+# OpenAlex-only entry with no DOI). The author input is a CrossRef-style JSON
+# array of {given, family, sequence} objects, matching what the rest of the
+# pipeline produces.
+
+# Convert "Mary Anne" -> "M. A." for APA author lists
+.given_to_initials <- function(given) {
+  if (is.null(given) || is.na(given) || !nzchar(given)) return("")
+  parts <- unlist(strsplit(given, "[\\s.\\-]+", perl = TRUE))
+  parts <- parts[nzchar(parts)]
+  if (length(parts) == 0) return("")
+  paste0(toupper(substr(parts, 1, 1)), ".", collapse = " ")
+}
+
+.parse_authors_json <- function(authors_json) {
+  if (is.null(authors_json) || is.na(authors_json) || !nzchar(authors_json)) {
+    return(list())
+  }
+  parsed <- tryCatch(fromJSON(authors_json, simplifyVector = FALSE),
+                     error = function(e) NULL)
+  if (is.null(parsed) || length(parsed) == 0) return(list())
+  parsed
+}
+
+# APA 7-style author list. Handles 1, 2, 3-20, and >=21 authors per spec.
+format_apa_authors <- function(authors_json) {
+  authors <- .parse_authors_json(authors_json)
+  if (length(authors) == 0) return(NA_character_)
+
+  fmt_one <- function(a) {
+    family   <- a$family %||% NA_character_
+    given    <- a$given  %||% NA_character_
+    initials <- .given_to_initials(given)
+    if (is.na(family) || !nzchar(family)) {
+      # Group/organisation author with only a literal name in `given`
+      if (!is.na(given) && nzchar(given)) return(given)
+      return(NA_character_)
+    }
+    if (nzchar(initials)) sprintf("%s, %s", family, initials) else family
+  }
+
+  formatted <- vapply(authors, fmt_one, character(1))
+  formatted <- formatted[!is.na(formatted) & nzchar(formatted)]
+  n <- length(formatted)
+  if (n == 0) return(NA_character_)
+  if (n == 1) return(formatted[[1]])
+  if (n == 2) return(paste(formatted, collapse = ", & "))
+  if (n <= 20) {
+    return(paste0(paste(formatted[-n], collapse = ", "), ", & ", formatted[[n]]))
+  }
+  # 21+ authors: first 19, ellipsis, final author (no ampersand)
+  paste0(paste(formatted[1:19], collapse = ", "), ", … ", formatted[[n]])
+}
+
+# BibTeX-style author list: "Family, Given and Family, Given"
+format_bibtex_authors <- function(authors_json) {
+  authors <- .parse_authors_json(authors_json)
+  if (length(authors) == 0) return(NA_character_)
+
+  fmt_one <- function(a) {
+    family <- a$family %||% NA_character_
+    given  <- a$given  %||% NA_character_
+    if (is.na(family) || !nzchar(family)) {
+      if (!is.na(given) && nzchar(given)) return(given)
+      return(NA_character_)
+    }
+    if (!is.na(given) && nzchar(given)) sprintf("%s, %s", family, given) else family
+  }
+
+  parts <- vapply(authors, fmt_one, character(1))
+  parts <- parts[!is.na(parts) & nzchar(parts)]
+  if (length(parts) == 0) return(NA_character_)
+  paste(parts, collapse = " and ")
+}
+
+# Build APA reference string from structured fields. Returns NA if too little
+# information is available (need at least authors-or-title plus year).
+format_apa_from_fields <- function(authors_json = NA_character_,
+                                   year = NA,
+                                   title = NA_character_,
+                                   journal = NA_character_,
+                                   volume = NA_character_,
+                                   issue = NA_character_,
+                                   pages = NA_character_,
+                                   doi = NA_character_) {
+  has <- function(x) !is.null(x) && length(x) == 1 && !is.na(x) && nzchar(trimws(as.character(x)))
+
+  authors <- format_apa_authors(authors_json)
+  if (!has(authors) && !has(title)) return(NA_character_)
+  if (!has(year)) return(NA_character_)
+
+  author_part <- if (has(authors)) authors else "[No author]"
+  year_part   <- sprintf("(%s).", as.character(year))
+
+  title_part <- if (has(title)) {
+    t <- trimws(title)
+    if (!grepl("[.!?]$", t)) paste0(t, ".") else t
+  } else ""
+
+  journal_part <- ""
+  if (has(journal)) {
+    journal_part <- trimws(journal)
+    if (has(volume)) {
+      journal_part <- paste0(journal_part, ", ", volume)
+      if (has(issue)) journal_part <- paste0(journal_part, "(", issue, ")")
+    }
+    if (has(pages)) journal_part <- paste0(journal_part, ", ", pages)
+    journal_part <- paste0(journal_part, ".")
+  }
+
+  doi_part <- if (has(doi)) {
+    d <- sub("^https?://(dx\\.)?doi\\.org/", "", doi)
+    paste0("https://doi.org/", d)
+  } else ""
+
+  pieces <- c(paste(author_part, year_part), title_part, journal_part, doi_part)
+  pieces <- pieces[nzchar(pieces)]
+  paste(pieces, collapse = " ")
+}
+
+# Build a BibTeX entry from structured fields. Returns NA if neither author nor
+# title is available.
+format_bibtex_from_fields <- function(authors_json = NA_character_,
+                                      year = NA,
+                                      title = NA_character_,
+                                      journal = NA_character_,
+                                      volume = NA_character_,
+                                      issue = NA_character_,
+                                      pages = NA_character_,
+                                      doi = NA_character_,
+                                      key = NULL) {
+  has <- function(x) !is.null(x) && length(x) == 1 && !is.na(x) && nzchar(trimws(as.character(x)))
+
+  authors <- format_bibtex_authors(authors_json)
+  if (!has(authors) && !has(title)) return(NA_character_)
+
+  if (is.null(key) || !has(key)) {
+    # Best-effort key: first author family + year
+    first_family <- NA_character_
+    parsed <- .parse_authors_json(authors_json)
+    if (length(parsed) > 0) first_family <- parsed[[1]]$family %||% NA_character_
+    if (!has(first_family)) first_family <- "anon"
+    yr <- if (has(year)) as.character(year) else "n.d."
+    key <- tolower(paste0(gsub("[^A-Za-z0-9]", "", first_family), yr))
+  }
+
+  fields <- c()
+  add <- function(name, value) {
+    if (has(value)) fields[[length(fields) + 1]] <<-
+      sprintf("  %s = {%s}", name, value)
+  }
+  add("author",  authors)
+  add("title",   title)
+  add("journal", journal)
+  add("year",    if (has(year)) as.character(year) else NA_character_)
+  add("volume",  volume)
+  add("number",  issue)
+  add("pages",   pages)
+  if (has(doi)) {
+    d <- sub("^https?://(dx\\.)?doi\\.org/", "", doi)
+    add("doi", d)
+  }
+
+  entry_type <- if (has(journal)) "article" else "misc"
+  body <- paste(unlist(fields), collapse = ",\n")
+  sprintf("@%s{%s,\n%s\n}", entry_type, key, body)
+}
+
+#' Final-fallback synthesiser for APA + BibTeX strings.
+#'
+#' For rows where `ref_{side}_clean` and/or `bibtex_{side}` are still missing,
+#' but enough structured fields (author/title/year/journal/...) are available,
+#' build the strings with `format_apa_from_fields()` / `format_bibtex_from_fields()`.
+#' Run after all upstream sources (CrossRef, DataCite, manual_references,
+#' OpenAlex) have had their chance to fill the canonical ref columns.
+synthesise_missing_refs_from_fields <- function(data,
+                                                 side = c("r", "o"),
+                                                 verbose = TRUE) {
+  stopifnot(is.data.frame(data))
+  side <- match.arg(side)
+
+  col_apa     <- paste0("ref_", side, "_clean")
+  col_bibtex  <- paste0("bibtex_", side)
+  col_title   <- paste0("title_", side)
+  col_author  <- paste0("author_", side)
+  col_journal <- paste0("journal_", side)
+  col_year    <- paste0("year_", side)
+  col_volume  <- paste0("volume_", side)
+  col_issue   <- paste0("issue_", side)
+  col_pages   <- paste0("pages_", side)
+  col_doi     <- paste0("doi_", side)
+
+  has_text_vec <- function(x) {
+    x <- trimws(as.character(x))
+    !is.na(x) & nzchar(x)
+  }
+  for (nm in c(col_apa, col_bibtex)) {
+    if (!nm %in% names(data)) data[[nm]] <- NA_character_
+  }
+
+  get_col <- function(nm, i) if (nm %in% names(data)) data[[nm]][i] else NA
+
+  need_idx <- which(!has_text_vec(data[[col_apa]]) |
+                     !has_text_vec(data[[col_bibtex]]))
+  apa_built <- 0L
+  bib_built <- 0L
+  for (i in need_idx) {
+    if (!has_text_vec(data[[col_apa]][i])) {
+      apa <- format_apa_from_fields(
+        authors_json = get_col(col_author, i),
+        year         = get_col(col_year, i),
+        title        = get_col(col_title, i),
+        journal      = get_col(col_journal, i),
+        volume       = get_col(col_volume, i),
+        issue        = get_col(col_issue, i),
+        pages        = get_col(col_pages, i),
+        doi          = get_col(col_doi, i)
+      )
+      if (!is.na(apa) && nzchar(apa)) {
+        data[[col_apa]][i] <- apa
+        apa_built <- apa_built + 1L
+      }
+    }
+    if (!has_text_vec(data[[col_bibtex]][i])) {
+      bib <- format_bibtex_from_fields(
+        authors_json = get_col(col_author, i),
+        year         = get_col(col_year, i),
+        title        = get_col(col_title, i),
+        journal      = get_col(col_journal, i),
+        volume       = get_col(col_volume, i),
+        issue        = get_col(col_issue, i),
+        pages        = get_col(col_pages, i),
+        doi          = get_col(col_doi, i)
+      )
+      if (!is.na(bib) && nzchar(bib)) {
+        data[[col_bibtex]][i] <- bib
+        bib_built <- bib_built + 1L
+      }
+    }
+  }
+  if (verbose) {
+    message("=== Field-based ref fallback (", toupper(side), " side) ===\n",
+            "Candidate rows       : ", length(need_idx), "\n",
+            "APA refs synthesised : ", apa_built, "\n",
+            "BibTeX synthesised   : ", bib_built)
+  }
+  data
+}
+
 authors_to_crossref_json <- function(author) {
  # rcrossref returns author as a list containing a tibble (from list-column)
   if (is.null(author) || length(author) == 0) return(NA_character_)
