@@ -9,10 +9,17 @@
 #      DOI-format variants) of the same original paper.
 #
 # Workflow:
-#   - find_preprint_pub_duplicates() identifies candidates
-#   - Candidates are saved to output/preprint_dedup_candidates.csv for review
-#   - Confirmed duplicates go into cache/confirmed_preprint_duplicates.csv
-#   - apply_confirmed_preprint_dedup() resolves them on subsequent runs
+#   - find_preprint_pub_duplicates() identifies candidates.
+#   - resolve_preprint_dedup() detects + applies: by default it drops one DOI
+#     from each pair (preprint loses; for DOI variants the non-canonical loses;
+#     otherwise doi_2 loses). Pairs listed in cache/confirmed_preprint_duplicates.csv
+#     override that default: action=keep_both retains both rows; keep_1/keep_2
+#     pick which survives.
+#   - apply_confirmed_preprint_dedup() applies *only* keep_1/keep_2 entries
+#     from the confirmed file early in the pipeline, so the reference fetch
+#     sees canonical DOIs.
+#   - Detected candidates + the action taken are logged to
+#     output/preprint_dedup_candidates.csv each run.
 
 library(dplyr)
 library(jsonlite)
@@ -459,57 +466,219 @@ apply_confirmed_preprint_dedup <- function(data,
   data
 }
 
+# ---- default resolution rule ----
+
+#' Decide which DOI in a candidate pair to drop when no override is set.
+#'
+#' Rule:
+#'   1. If exactly one DOI is a preprint, drop the preprint.
+#'   2. For "original (DOI variant)" pairs, drop the non-canonical form
+#'      (the one whose normalised DOI differs from itself).
+#'   3. Otherwise, deterministically drop doi_2.
+#'
+#' Returns NULL when either DOI is NA — those pairs cannot be auto-resolved.
+default_resolve_pair <- function(side, doi_1, doi_2,
+                                  is_preprint_1, is_preprint_2) {
+  if (is.na(doi_1) || is.na(doi_2)) return(NULL)
+
+  pp1 <- isTRUE(is_preprint_1)
+  pp2 <- isTRUE(is_preprint_2)
+  if (pp1 && !pp2) return(list(doi_remove = doi_1, doi_keep = doi_2))
+  if (!pp1 && pp2) return(list(doi_remove = doi_2, doi_keep = doi_1))
+
+  if (grepl("DOI variant", side, fixed = TRUE)) {
+    canon1 <- normalize_doi(doi_1) == tolower(trimws(doi_1))
+    canon2 <- normalize_doi(doi_2) == tolower(trimws(doi_2))
+    if (canon1 && !canon2) return(list(doi_remove = doi_2, doi_keep = doi_1))
+    if (!canon1 && canon2) return(list(doi_remove = doi_1, doi_keep = doi_2))
+  }
+
+  list(doi_remove = doi_2, doi_keep = doi_1)
+}
+
 # ---- pipeline integration ----
 
-#' Run the full preprint dedup step: apply confirmed, detect new candidates
+#' Detect preprint/publication duplicate candidates and apply resolutions.
 #'
-#' @param data  Augmented FLoRA data (after Step 7)
-#' @param verbose Print progress
-#' @return Updated data frame with confirmed duplicates resolved
-run_preprint_dedup <- function(data, verbose = TRUE) {
+#' Each detected pair is resolved as follows:
+#'   - If `cache/confirmed_preprint_duplicates.csv` has an entry for the pair
+#'     with action `keep_both`, both rows are preserved.
+#'   - If it has `keep_1` or `keep_2`, that choice is honoured.
+#'   - Otherwise the default rule (see `default_resolve_pair`) drops one DOI.
+#'
+#' Detected pairs and the action taken are logged to
+#' `output/preprint_dedup_candidates.csv`.
+#'
+#' @param data  Augmented FLoRA data (titles/authors must be populated).
+#' @param confirmed_path  CSV with override decisions.
+#' @param candidates_out  Where to write the detection log.
+#' @param title_threshold Title similarity threshold for fuzzy detection.
+#' @param verbose Print progress messages.
+#' @return Updated data frame.
+resolve_preprint_dedup <- function(data,
+                                    confirmed_path = CONFIRMED_DEDUP_PATH,
+                                    candidates_out = CANDIDATES_PATH,
+                                    title_threshold = 0.80,
+                                    verbose = TRUE) {
   if (verbose) cat("\n### Preprint-Publication Deduplication\n")
 
-  # 1. Apply previously confirmed duplicates
-  data <- apply_confirmed_preprint_dedup(data, verbose = verbose)
-
-  # 2. Detect remaining candidates
-  candidates <- find_preprint_pub_duplicates(data, verbose = verbose)
-
-  # 3. Save candidates for review
-  if (nrow(candidates) > 0) {
-    # Add action column with instructions row, then data rows
-    instructions <- tibble(
-      side           = "INSTRUCTIONS -->",
-      doi_1          = "DOI #1",
-      doi_2          = "DOI #2",
-      title_1        = "(title for doi_1)",
-      title_2        = "(title for doi_2)",
-      title_sim      = NA_real_,
-      first_author_1 = NA_character_,
-      first_author_2 = NA_character_,
-      year_1         = NA_character_,
-      year_2         = NA_character_,
-      is_preprint_1  = NA,
-      is_preprint_2  = NA,
-      group_key      = NA_character_,
-      doi_o_group    = NA_character_,
-      action         = "keep_1 = keep doi_1 | keep_2 = keep doi_2 | keep_both = not a duplicate"
-    )
-
-    out <- bind_rows(
-      instructions,
-      candidates %>% mutate(action = NA_character_)
-    )
-
-    readr::write_excel_csv(out, CANDIDATES_PATH)
-    if (verbose) {
-      cat(sprintf("\n⚠ %d candidate duplicate pairs saved to:\n  %s\n",
-                  nrow(candidates), CANDIDATES_PATH))
-      cat("  Fill in the 'action' column: keep_1, keep_2, or keep_both\n")
-      cat("  Then copy to:\n  ", CONFIRMED_DEDUP_PATH, "\n")
-    }
-  } else {
+  candidates <- find_preprint_pub_duplicates(data,
+                                              title_threshold = title_threshold,
+                                              verbose = verbose)
+  if (nrow(candidates) == 0) {
     if (verbose) cat("✓ No preprint-publication duplicates detected\n")
+    return(data)
+  }
+
+  pair_key_for <- function(d1, d2) {
+    a <- tolower(d1); b <- tolower(d2)
+    paste0(pmin(a, b), "||", pmax(a, b))
+  }
+
+  candidates <- candidates %>% mutate(pair_key = pair_key_for(doi_1, doi_2))
+
+  overrides <- if (file.exists(confirmed_path)) {
+    readr::read_csv(confirmed_path, show_col_types = FALSE) %>%
+      filter(!is.na(action), action %in% c("keep_1", "keep_2", "keep_both")) %>%
+      transmute(
+        pair_key        = pair_key_for(doi_1, doi_2),
+        override_action = action,
+        override_doi_1  = doi_1,
+        override_doi_2  = doi_2
+      )
+  } else {
+    tibble(pair_key = character(), override_action = character(),
+           override_doi_1 = character(), override_doi_2 = character())
+  }
+
+  decisions <- candidates %>%
+    left_join(overrides, by = "pair_key") %>%
+    mutate(
+      resolution     = NA_character_,
+      applied_action = NA_character_,
+      doi_remove     = NA_character_,
+      doi_keep       = NA_character_
+    )
+
+  for (i in seq_len(nrow(decisions))) {
+    if (!is.na(decisions$override_action[i])) {
+      act <- decisions$override_action[i]
+      if (act == "keep_both") {
+        decisions$resolution[i]     <- "override: keep_both"
+        decisions$applied_action[i] <- "keep_both"
+        next
+      }
+      rk <- derive_remove_keep(act,
+                                decisions$override_doi_1[i],
+                                decisions$override_doi_2[i])
+      decisions$doi_remove[i]     <- rk$doi_remove
+      decisions$doi_keep[i]       <- rk$doi_keep
+      decisions$resolution[i]     <- sprintf("override: %s", act)
+      decisions$applied_action[i] <- act
+    } else {
+      rr <- default_resolve_pair(decisions$side[i],
+                                  decisions$doi_1[i], decisions$doi_2[i],
+                                  decisions$is_preprint_1[i],
+                                  decisions$is_preprint_2[i])
+      if (is.null(rr)) {
+        decisions$resolution[i]     <- "skipped: NA DOI in pair"
+        decisions$applied_action[i] <- "skipped"
+        next
+      }
+      decisions$doi_remove[i]     <- rr$doi_remove
+      decisions$doi_keep[i]       <- rr$doi_keep
+      which_dropped <- if (identical(rr$doi_remove, decisions$doi_1[i])) "doi_1" else "doi_2"
+      decisions$resolution[i]     <- sprintf("auto: drop %s", which_dropped)
+      decisions$applied_action[i] <- if (which_dropped == "doi_1") "auto_keep_2" else "auto_keep_1"
+    }
+  }
+
+  if (!"doi_o_alt" %in% names(data)) data$doi_o_alt <- NA_character_
+  if (!"doi_r_alt" %in% names(data)) data$doi_r_alt <- NA_character_
+
+  to_apply <- decisions %>% filter(!is.na(doi_remove))
+
+  n_before <- nrow(data)
+
+  repl <- to_apply %>% filter(grepl("^replication", side))
+  for (i in seq_len(nrow(repl))) {
+    doi_rm <- tolower(repl$doi_remove[i])
+    doi_kp <- tolower(repl$doi_keep[i])
+    doi_os_with_kept <- unique(tolower(data$doi_o[tolower(data$doi_r) == doi_kp]))
+    is_target <- tolower(data$doi_r) == doi_rm & tolower(data$doi_o) %in% doi_os_with_kept
+    is_kept   <- tolower(data$doi_r) == doi_kp & tolower(data$doi_o) %in% doi_os_with_kept
+    data$doi_r_alt[is_kept & is.na(data$doi_r_alt)] <- repl$doi_remove[i]
+    data <- data[!is_target, ]
+  }
+
+  orig <- to_apply %>% filter(grepl("^original", side))
+  if (nrow(orig) > 0) {
+    doi_map <- setNames(tolower(orig$doi_keep), tolower(orig$doi_remove))
+    matched <- tolower(data$doi_o) %in% names(doi_map)
+    data <- data %>%
+      mutate(
+        doi_o_alt = dplyr::if_else(matched & is.na(doi_o_alt), doi_o, doi_o_alt),
+        doi_o     = dplyr::if_else(matched, unname(doi_map[tolower(doi_o)]), doi_o)
+      )
+
+    norm_url_key <- function(x) {
+      x <- tolower(trimws(as.character(x)))
+      x <- gsub("^https?://", "", x)
+      x <- gsub("^www\\.", "", x)
+      x <- gsub("/+$", "", x)
+      dplyr::na_if(x, "")
+    }
+    n_before_dedup <- nrow(data)
+    data <- data %>%
+      mutate(.url_r_key = norm_url_key(url_r)) %>%
+      distinct(doi_o, study_o, coalesce(.url_r_key, doi_r), .keep_all = TRUE) %>%
+      select(-.url_r_key)
+    if (verbose && nrow(data) < n_before_dedup) {
+      cat(sprintf("  Removed %d rows that became duplicates after DOI replacement\n",
+                  n_before_dedup - nrow(data)))
+    }
+  }
+
+  log_rows <- decisions %>%
+    select(side, doi_1, doi_2, title_1, title_2, title_sim,
+           first_author_1, first_author_2, year_1, year_2,
+           is_preprint_1, is_preprint_2, group_key, doi_o_group,
+           applied_action, resolution)
+
+  instructions <- tibble(
+    side           = "INSTRUCTIONS -->",
+    doi_1          = "DOI #1",
+    doi_2          = "DOI #2",
+    title_1        = "(title for doi_1)",
+    title_2        = "(title for doi_2)",
+    title_sim      = NA_real_,
+    first_author_1 = NA_character_,
+    first_author_2 = NA_character_,
+    year_1         = NA_character_,
+    year_2         = NA_character_,
+    is_preprint_1  = NA,
+    is_preprint_2  = NA,
+    group_key      = NA_character_,
+    doi_o_group    = NA_character_,
+    applied_action = "auto-default = drop one (preprint loses; else doi_2)",
+    resolution     = "Override: copy row to confirmed_preprint_duplicates.csv with action keep_both / keep_1 / keep_2"
+  )
+  out <- bind_rows(instructions, log_rows)
+  readr::write_excel_csv(out, candidates_out)
+
+  if (verbose) {
+    auto <- sum(grepl("^auto",     decisions$resolution))
+    over <- sum(grepl("^override", decisions$resolution))
+    skip <- sum(grepl("^skipped",  decisions$resolution))
+    cat(sprintf("\n  Detected: %d candidate pairs\n", nrow(decisions)))
+    cat(sprintf("  Auto-dropped: %d  |  Override: %d  |  Skipped (NA DOI): %d\n",
+                auto, over, skip))
+    cat(sprintf("  Net rows removed: %d\n", n_before - nrow(data)))
+    cat(sprintf("  Log: %s\n", candidates_out))
+    if (over > 0 || auto > 0) {
+      cat("  To override an auto-drop, add the row to confirmed_preprint_duplicates.csv\n")
+      cat("  with action = keep_both (retain both) or keep_1/keep_2 (flip survivor)\n")
+    }
   }
 
   data

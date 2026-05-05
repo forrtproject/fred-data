@@ -549,33 +549,19 @@ so abstracts feed in clean.
 flora_augmented <- clean_flora_text_fields(flora_augmented, verbose = TRUE)
 ```
 
-## Step 7d: Detect new preprint-publication duplicates
+## Step 7d: Resolve preprint-publication duplicates
 
-Confirmed dedup was already applied in Step 6a (before reference fetch).
-This step detects *new* candidates now that title/author metadata is available.
-See [issue #105](https://github.com/forrtproject/FReD/issues/105).
+Detect candidates and apply resolutions. Default behaviour is to **drop one
+DOI from each detected pair** (the preprint when exactly one is a preprint;
+the non-canonical form for DOI-variant pairs; otherwise `doi_2`). To preserve
+both rows or flip the chosen survivor, add the pair to
+`cache/confirmed_preprint_duplicates.csv` with `action` = `keep_both` /
+`keep_1` / `keep_2`. Confirmed `keep_1`/`keep_2` entries already applied in
+Step 6a; this step picks up new pairs surfaced by augmentation and honours
+`keep_both` overrides. See [issue #105](https://github.com/forrtproject/FReD/issues/105).
 
-```{r preprint-dedup-detect}
-# Detection only — apply_confirmed already ran in Step 6a
-candidates <- find_preprint_pub_duplicates(flora_augmented, verbose = TRUE)
-
-if (nrow(candidates) > 0) {
-  instructions <- tibble::tibble(
-    side = "INSTRUCTIONS -->", doi_1 = "DOI #1", doi_2 = "DOI #2",
-    title_1 = "(title for doi_1)", title_2 = "(title for doi_2)",
-    title_sim = NA_real_, first_author_1 = NA_character_,
-    first_author_2 = NA_character_, year_1 = NA_character_,
-    year_2 = NA_character_, is_preprint_1 = NA, is_preprint_2 = NA,
-    group_key = NA_character_, doi_o_group = NA_character_,
-    action = "keep_1 = keep doi_1 | keep_2 = keep doi_2 | keep_both = not a duplicate"
-  )
-  out <- dplyr::bind_rows(instructions, candidates %>% mutate(action = NA_character_))
-  readr::write_excel_csv(out, here::here("output", "preprint_dedup_candidates.csv"))
-  cat(sprintf("\n⚠ %d candidate duplicate pairs saved for review\n", nrow(candidates)))
-  cat("  Fill in 'action' column: keep_1, keep_2, or keep_both\n")
-} else {
-  cat("  No new preprint-publication duplicate candidates found.\n")
-}
+```{r preprint-dedup-resolve}
+flora_augmented <- resolve_preprint_dedup(flora_augmented, verbose = TRUE)
 ```
 
 ## Step 8: Add Privacy-Preserving IDs
