@@ -43,6 +43,7 @@ source(here::here("R", "openalex_cache.R"))
 source(here::here("R", "llm_classification.R"))
 source(here::here("R", "unpaywall_cache.R"))
 source(here::here("R", "preprint_dedup.R"))
+source(here::here("R", "cos_quote_rewrite.R"))
 
 ```
 
@@ -125,6 +126,16 @@ cat(sprintf("    ✓ Downloaded %d COS rows\n", nrow(replications_cos)))
 replications_cos <- replications_cos %>%
   filter(validation %in% c("validated - chosen", "validated - changed", "validated - unchanged"))
 cat(sprintf("    ✓ Filtered to %d validated COS entries\n", nrow(replications_cos)))
+
+# Expand shorthand outcome quotes (e.g. "no marked in Replicate column") into
+# self-contained descriptions of the project's coding logic. Must run before
+# the summarise() below, which concatenates per-coding quotes with " || ".
+replications_cos <- replications_cos %>%
+  mutate(outcome_quote = rewrite_cos_quote(outcome_quote))
+cat(sprintf("    ✓ Rewrote %d shorthand outcome quotes\n",
+            sum(str_detect(replications_cos$outcome_quote,
+                           "^Coded as |^Replicated = |^Rep\\. (s1|s2|s1\\+s2) = |^95% CI for the meta-analytic |^Subjective replication success rating |^Classified as mixed:|^Outcome classified as "),
+                na.rm = TRUE)))
 
 replications_cos <- replications_cos %>%
   mutate(repl_id = coalesce(url_r, doi_r)) %>%
