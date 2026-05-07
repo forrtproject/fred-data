@@ -63,7 +63,7 @@ check_url_resolves <- function(url_val, cache) {
 
 validate_flora_network <- function(data, suppressions = NULL) {
   data <- data %>%
-    mutate(id = paste(doi_o, study_o, coalesce(doi_r, url_r), sep = " | "))
+    mutate(id = paste(doi_o, coalesce(doi_r, url_r), sep = " | "))
 
   report_parts <- c(
     "## FLoRA Network Validation Report\n",

@@ -134,7 +134,6 @@ replications_cos <- replications_cos %>%
     ref_r = first(ref_r),
     url_r = first(url_r),
     doi_r = first(doi_r),
-    study_o = paste(unique(na.omit(study_o)), collapse = "; "),
     abstract_r = first(abstract_r),
     outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
     outcome_quote = paste(unique(na.omit(outcome_quote)), collapse = " || "),
@@ -236,7 +235,7 @@ cat(sprintf("    ✓ Excluded %d rows based on manual exclusion list (withdrawn/
 
 ```{r prepare}
 # Select relevant fields for FLoRA
-flora_cols <- c("doi_o", "ref_o", "study_o", "url_o",
+flora_cols <- c("doi_o", "ref_o", "url_o",
                 "doi_r", "ref_r",  "url_r",
                 "abstract_r", "outcome", "outcome_quote", "outcome_quote_source", "type", "source")
 
@@ -270,7 +269,7 @@ flora_data <- flora_raw %>%
 
 ## Deduplication
 
-Currently minimal - might want to also check blank vs filled in study_o
+Currently minimal.
 
 ```{r deduplicate}
 
@@ -559,10 +558,10 @@ cat(sprintf("  bibtex recovered:   %d\n", before_bib_r_missing   - count_missing
 Strip HTML/JATS markup (`<i>`, `<sup>`, `<scp>`, `<mml:math>`, …) and decode
 common HTML entities (`&amp;`, `&nbsp;`, …) from titles, references, journals,
 abstracts, and outcome quotes. Also collapse stray PDF-copy linebreaks in
-abstracts, outcome quotes, and `study_o` (joining single newlines with a space
-while preserving paragraph breaks). Done before preprint-dedup detection so
-title similarity is computed on clean strings, and before LLM classification
-so abstracts feed in clean.
+abstracts and outcome quotes (joining single newlines with a space while
+preserving paragraph breaks). Done before preprint-dedup detection so title
+similarity is computed on clean strings, and before LLM classification so
+abstracts feed in clean.
 
 ```{r clean-text-fields}
 flora_augmented <- clean_flora_text_fields(flora_augmented, verbose = TRUE)
@@ -852,7 +851,7 @@ cat("\n### Step 11: Formatting for output\n")
 
 # Select and reorder columns for output
 output_cols <- c(
-"doi_o", "doi_o_alt", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "url_o", "language_o", "study_o",
+"doi_o", "doi_o_alt", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "url_o", "language_o",
 "doi_r", "doi_r_alt", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
 "oa_url_o", "oa_url_r",
 "outcome", "outcome_quote", "outcome_quote_source", "type", "source",

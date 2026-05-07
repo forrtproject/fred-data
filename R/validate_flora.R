@@ -86,7 +86,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
 
   # --- Row identifier (FLoRA has no id column) ---
   data <- data %>%
-    mutate(id = paste(doi_o, study_o, coalesce(doi_r, url_r), sep = " | "))
+    mutate(id = paste(doi_o, coalesce(doi_r, url_r), sep = " | "))
 
   # --- Valid value sets ---
   VALID_REPLICATION_OUTCOMES <- c(
@@ -297,12 +297,12 @@ validate_flora_data <- function(data, suppressions = NULL) {
   # Check 12: No exact duplicates
   # =========================================================================
   issues <- data %>%
-    group_by(doi_o, study_o, doi_r) %>%
+    group_by(doi_o, doi_r) %>%
     filter(n() > 1) %>%
     ungroup()
   add_check(issues, "No exact duplicates",
-            fail_heading = "Exact duplicates (by doi_o + study_o + doi_r)",
-            description = "Rows that share the same doi_o, study_o, and doi_r combination.")
+            fail_heading = "Exact duplicates (by doi_o + doi_r)",
+            description = "Rows that share the same doi_o and doi_r combination.")
 
   # =========================================================================
   # Check 13: Required fields present
@@ -334,7 +334,7 @@ validate_flora_data <- function(data, suppressions = NULL) {
     "## FLoRA Data Validation Report\n",
     glue("_Generated: {format(Sys.time(), '%Y-%m-%d %H:%M:%S')} | Dataset: {nrow(data)} rows_"),
     "",
-    "Each row is identified as `doi_o | study_o | doi_r (or url_r)`, followed by check-specific details after `:`.",
+    "Each row is identified as `doi_o | doi_r (or url_r)`, followed by check-specific details after `:`.",
     "Check an item to mark it as a false positive; it will be suppressed on the next run.\n"
   )
 
