@@ -1,14 +1,16 @@
 # FAQs for the FORRT Library of Reproduction and Replication Attempts (FLoRA)
 
-
 ### Question
 
 Response
 
+
+
+## Coding and Validation
+
 ### Are replications with synthetic data included?
 
 Yes. Although some users of the data may not find repeated tests informative, others may. 
-
 
 ### What is the outcome based on?
 
@@ -33,13 +35,7 @@ Because there are *additional* observations, we are coding it as a replication.
 
 This would be coded as computational reproducible but not robust.
 
-### What are the quality criteria for including pairs of studies? 
 
-* We are not including **registrations** as they cannot reliably be linked to a publication and may lead to duplications. Also, they do not have enough info.  
-* We are not including reports that are on Google docs.  
-* Websites/blog posts like [Psychfiledrawer.org](http://Psychfiledrawer.org) are not persistent and we cannot ensure that links keep working  
-* Ideally, both the original and replication study should have a DOI or a stable URL (e.g., handle, URI, Pubmed ID). For example, blog post URLs can change, break, and there is no versionising.  
-* We are not assessing the quality of replications.
 
 ### Are reanalyses included if they do not test for numerical reproduction? What about multiverse analysis?
 
@@ -75,3 +71,24 @@ If multiple entries (e.g., studies) are part of a meta paper
 ### How is the peer review status determined?
 
 Crossref is extracting the journal. Cases where a journal could be found are coded as “journal article”, all NAs and publications in “SSRN Electronic Journal” are coded as “working papers”.  
+
+## Search Strategy
+
+### Where do the FLoRA entries come from?
+One part of FLoRA is made up of the FORRT Replication Database (FReD), which includes the work of hundreds of people over many years. The FORRT Replication Database is a crowdsourced effort, which aimed to gather unpublished and published replication results to estimate and track replicability in social sciences. Studies were manually found or submitted and then double-coded by humans. For more information and to explore the database, click [here](https://forrt-replications.shinyapps.io/fred_explorer/).
+
+Additional studies are included in FLoRA that are not in the FORRT Replication Database. A systematic search of OpenAlex has been conducted, using the keyword “replication” with automated extraction with R code and manual validation by a human of extracted variables. This is continuing over time. Reproductions are taken from the [Replication Network list](https://replicationnetwork.com/), and from the [Institute for Replication reports](https://i4replication.org/reports/?cpt=replication-report).
+
+
+### What are the quality criteria for including pairs of studies? 
+
+* We are not including **registrations** as they cannot reliably be linked to a publication and may lead to duplications. Also, they do not have enough info.  
+* We are not including reports that are on Google docs.  
+* Websites/blog posts like [Psychfiledrawer.org](http://Psychfiledrawer.org) are not persistent and we cannot ensure that links keep working. Reports on Zenodo or OSF, however, can be included.
+* Ideally, both the original and replication study should have a DOI or a stable URL (e.g., handle, URI, Pubmed ID). For example, blog post URLs can change, break, and there is no versionising.  
+* We are not assessing the quality of replications.
+
+
+### What are inclusion criteria?
+- Self-identify as a replication (e.g., “replication of Author (Year)”) before reporting results — replication must be an aim, not just a result. Identify specific target study/studies that it replicates. Replicate a study or experiment, not just a single association or finding.
+- Replications can range from close/direct (same methods, same population) to conceptual (testing the same hypothesis with different methods), as long as the above criteria are met. The plugin tags replication outcomes as Successful, Failed, or Mixed, based on how the replication authors characterise their results, usually in the abstract.
