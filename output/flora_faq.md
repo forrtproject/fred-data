@@ -1,11 +1,5 @@
 # FAQs for the FORRT Library of Reproduction and Replication Attempts (FLoRA)
 
-### Question
-
-Response
-
-
-
 ## Coding and Validation
 
 ### Are replications with synthetic data included?
