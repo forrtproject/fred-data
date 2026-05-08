@@ -5,6 +5,11 @@
 
 Response
 
+### Are replications with synthetic data included?
+
+Yes. Although some users of the data may not find repeated tests informative, others may. 
+
+
 ### What is the outcome based on?
 
 We rely on what replication authors say in the abstract, or if not stated there, what is written in the report (discussion and conclusion sections). If studies are part of a meta-paper, we rely on the individual reports where available, and otherwise on the main criterion used by the meta-paper's authors. The outcome refers to whether the central finding that the replication was designed to test could be replicated and may leave out robustness checks and exploratory analyses.
