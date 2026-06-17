@@ -724,71 +724,75 @@ cat(sprintf(
 ))
 ```
 
-## Step 9b: Classify Replication Intent
+## Step 9b: Exclude COS non-replications (frozen one-off validation)
 
-```{r classify-replication-intent}
-cat("\n### Step 9b: Classifying replication intent via LLM\n")
-cat("  (Only applied to COS data; FLORA and SCORE entries are pre-screened)\n")
+```{r exclude-cos-non-replications}
+# The COS replication-intent LLM classification was a ONE-OFF validation step
+# (see issue #124). Rather than re-running an LLM and shipping the derived
+# `self_identified_replication` / `replication_intent_confidence` columns on
+# every render, its result is frozen here as a static exclusion list.
+#
+# These (doi_o, doi_r) pairs are COS entries the validation flagged as NOT
+# genuine self-identified replications — meta-papers (e.g. the RSOS "176
+# student replications" summary), conceptual extensions, alternative-theory
+# tests, or withdrawn work. Frozen from the 2026-06-17 validation render; the
+# LLM code that produced them is preserved (disabled) at the end of this chunk.
+cos_non_replications <- tibble::tribble(
+  ~doi_o,                              ~doi_r,
+  "10.1016/j.cognition.2014.09.006",   "10.1007/s00213-019-05314-z",
+  "10.1016/j.jml.2010.11.002",         "10.3758/s13421-019-00899-4",
+  "10.1016/j.neuron.2006.03.036",      "10.1093/geronb/gbt044",
+  "10.1037/0022-3514.71.2.230",        "10.1037/0022-3514.83.2.406",
+  "10.1037/0022-3514.71.2.230",        "10.1037/0022-3514.90.6.893",
+  "10.1037/0022-3514.94.1.116",        "10.1177/0146167213510746",
+  "10.1037/0096-3445.136.2.241",       "10.1186/2050-7283-1-22",
+  "10.1037/a0019337",                  "10.3758/s13421-019-00958-w",
+  "10.1080/13506280544000110",         "10.1016/j.actpsy.2020.103138",
+  "10.1080/135062899395000",           "10.1080/17470218.2012.699077",
+  "10.1111/j.1467-7687.2009.00859.x",  "10.1037/a0024923",
+  "10.1111/j.1467-9280.2007.02004.x",  "10.1371/journal.pone.0096339",
+  "10.1177/0146167216684132",          "10.1525/collabra.185",
+  "10.1177/0956797611435919",          "10.1177/0956797613486983",
+  "10.1177/0956797617721270",          "10.3758/s13414-019-01723-6",
+  "10.1523/jneurosci.3427-13.2014",    "10.1093/cercor/bhx353"
+)
 
-# Split: only COS rows need LLM classification
-cos_rows <- flora_augmented %>% filter(source == "COS")
-non_cos_rows <- flora_augmented %>% filter(source != "COS")
+pre_excl <- nrow(flora_augmented)
+flora_augmented <- flora_augmented %>%
+  anti_join(cos_non_replications, by = c("doi_o", "doi_r"))
+cat(sprintf("\n### Step 9b: Excluded %d COS non-replications (frozen one-off validation)\n",
+            pre_excl - nrow(flora_augmented)))
 
-cat(sprintf("  COS rows to classify: %d\n", nrow(cos_rows)))
-cat(sprintf("  Pre-screened rows (FLORA/SCORE): %d\n", nrow(non_cos_rows)))
-
-# Fetch abstracts from OpenAlex for COS replication DOIs where abstract_r is missing
-dois_needing_abstract <- cos_rows %>%
-  filter(!is.na(doi_r), is.na(abstract_r) | abstract_r == "") %>%
-  pull(doi_r) %>%
-  unique()
-
-if (length(dois_needing_abstract) > 0) {
-  cat(sprintf("Fetching abstracts for %d replication DOIs from OpenAlex...\n",
-              length(dois_needing_abstract)))
-  openalex_abstracts <- get_openalex_abstracts(dois_needing_abstract, mailto = openalex_mailto)
-  openalex_abstracts <- openalex_abstracts[!is.na(openalex_abstracts$doi), ]
-
-  cos_rows <- cos_rows %>%
-    left_join(
-      openalex_abstracts %>% rename(doi_r = doi, abstract_r_oa = abstract),
-      by = "doi_r"
-    ) %>%
-    mutate(abstract_r = coalesce(abstract_r, abstract_r_oa)) %>%
-    select(-abstract_r_oa)
-
-  # Re-clean abstracts in case OpenAlex returned JATS markup or stray newlines
-  cos_rows <- clean_flora_text_fields(cos_rows, verbose = FALSE)
-
-  cat(sprintf("  Abstracts now available for %d / %d COS rows\n",
-              sum(!is.na(cos_rows$abstract_r) & cos_rows$abstract_r != ""),
-              nrow(cos_rows)))
-}
-
-# Run LLM classification on COS rows only
-cos_rows <- classify_replication_intent(cos_rows)
-
-# Non-COS rows are pre-screened: mark as self-identified replications
-non_cos_rows <- non_cos_rows %>%
-  mutate(
-    self_identified_replication = TRUE,
-    replication_intent_confidence = "high",
-    replication_intent_reasoning = "Pre-screened source"
-  )
-
-# Recombine
-flora_augmented <- bind_rows(cos_rows, non_cos_rows)
-
-cat(sprintf("  Self-identified replications: %d\n",
-            sum(flora_augmented$self_identified_replication == TRUE, na.rm = TRUE)))
-cat(sprintf("  Not self-identified: %d\n",
-            sum(flora_augmented$self_identified_replication == FALSE, na.rm = TRUE)))
-cat(sprintf("  Unclassified: %d\n",
-            sum(is.na(flora_augmented$self_identified_replication))))
-cat(sprintf("  Confidence breakdown: high=%d, medium=%d, low=%d\n",
-            sum(flora_augmented$replication_intent_confidence == "high", na.rm = TRUE),
-            sum(flora_augmented$replication_intent_confidence == "medium", na.rm = TRUE),
-            sum(flora_augmented$replication_intent_confidence == "low", na.rm = TRUE)))
+# --- DISABLED: original one-off LLM replication-intent classification --------
+# This generated `self_identified_replication`, `replication_intent_confidence`
+# and `replication_intent_reasoning` for COS rows. Re-enable (and re-add the
+# columns to output_cols) only to refresh the exclusion list above.
+#
+# cos_rows <- flora_augmented %>% filter(source == "COS")
+# non_cos_rows <- flora_augmented %>% filter(source != "COS")
+#
+# # Fetch abstracts from OpenAlex for COS replication DOIs where abstract_r is missing
+# dois_needing_abstract <- cos_rows %>%
+#   filter(!is.na(doi_r), is.na(abstract_r) | abstract_r == "") %>%
+#   pull(doi_r) %>% unique()
+# if (length(dois_needing_abstract) > 0) {
+#   openalex_abstracts <- get_openalex_abstracts(dois_needing_abstract, mailto = openalex_mailto)
+#   openalex_abstracts <- openalex_abstracts[!is.na(openalex_abstracts$doi), ]
+#   cos_rows <- cos_rows %>%
+#     left_join(openalex_abstracts %>% rename(doi_r = doi, abstract_r_oa = abstract), by = "doi_r") %>%
+#     mutate(abstract_r = coalesce(abstract_r, abstract_r_oa)) %>%
+#     select(-abstract_r_oa)
+#   cos_rows <- clean_flora_text_fields(cos_rows, verbose = FALSE)
+# }
+#
+# # Run LLM classification on COS rows only (function in R/llm_classification.R)
+# cos_rows <- classify_replication_intent(cos_rows)
+# non_cos_rows <- non_cos_rows %>%
+#   mutate(self_identified_replication = TRUE,
+#          replication_intent_confidence = "high",
+#          replication_intent_reasoning = "Pre-screened source")
+# flora_augmented <- bind_rows(cos_rows, non_cos_rows)
+# ---------------------------------------------------------------------------
 ```
 
 ## Step 9c: Add Open Access URLs from Unpaywall
@@ -893,8 +897,7 @@ output_cols <- c(
 "doi_o", "alt_identifier_o", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "url_o", "language_o",
 "doi_r", "alt_identifier_r", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
 "oa_url_o", "oa_url_r",
-"outcome", "outcome_quote", "outcome_quote_source", "type", "source",
-"self_identified_replication", "replication_intent_confidence"
+"outcome", "outcome_quote", "outcome_quote_source", "type", "source"
 )
 
 flora_renames <- c(
@@ -940,13 +943,8 @@ if (nrow(excluded_rows) > 0) {
 flora_final <- flora_all %>%
   filter(!is.na(title_o), title_o != "", !is.na(title_r), title_r != "")
 
-# Remove non-self-identified replications
-n_non_repl <- sum(flora_final$self_identified_replication == FALSE, na.rm = TRUE)
-if (n_non_repl > 0) {
-  cat(sprintf("⚠ %d rows removed: not self-identified as replications\n", n_non_repl))
-}
-flora_final <- flora_final %>%
-  filter(self_identified_replication == TRUE | is.na(self_identified_replication))
+# Non-replication COS rows are now excluded earlier (Step 9b, frozen list);
+# no self_identified_replication filter is applied here.
 
 cat(sprintf("✓ Formatted for output\n"))
 cat(sprintf("  Final columns: %d\n", ncol(flora_final)))
