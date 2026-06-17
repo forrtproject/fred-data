@@ -41,6 +41,11 @@ PREPRINT_DOI_PREFIXES <- c(
 CONFIRMED_DEDUP_PATH <- here::here("cache", "confirmed_preprint_duplicates.csv")
 CANDIDATES_PATH      <- here::here("output", "preprint_dedup_candidates.csv")
 
+# Marker used in the title of auto-filed GitHub issues so we can detect and
+# skip filing duplicates on subsequent runs.
+DEDUP_ISSUE_MARKER   <- "[preprint-dedup-review]"
+DEDUP_STALE_DAYS     <- 7
+
 # ---- (doi_o, doi_r) duplicate merge ----
 
 #' Merge rows that share (doi_o, doi_r) when their url_r values are compatible.
@@ -234,6 +239,30 @@ extract_first_author <- function(author_str) {
   }
   # Fallback: plain text — take first word (assumed surname)
   tolower(trimws(strsplit(author_str, "[,;&]")[[1]][1]))
+}
+
+#' Append an identifier to a comma-separated list, preserving existing entries
+#' and deduping case-insensitively. Returns NA when both inputs are NA/empty.
+append_alt_identifier <- function(existing, new_id) {
+  parts <- function(x) {
+    if (is.na(x) || !nzchar(trimws(as.character(x)))) return(character(0))
+    trimws(strsplit(as.character(x), ",", fixed = TRUE)[[1]])
+  }
+  combined <- c(parts(existing), parts(new_id))
+  combined <- combined[nzchar(combined)]
+  if (length(combined) == 0) return(NA_character_)
+  combined <- combined[!duplicated(tolower(combined))]
+  paste(combined, collapse = ", ")
+}
+
+#' Vectorised version: append `new_id[i]` to `existing[i]` row-wise.
+append_alt_identifier_vec <- function(existing, new_id) {
+  n <- max(length(existing), length(new_id))
+  existing <- rep_len(existing, n)
+  new_id   <- rep_len(new_id, n)
+  vapply(seq_len(n),
+         function(i) append_alt_identifier(existing[i], new_id[i]),
+         character(1))
 }
 
 #' Normalize a DOI to canonical form
@@ -509,9 +538,9 @@ derive_remove_keep <- function(action, doi_1, doi_2) {
 apply_confirmed_preprint_dedup <- function(data,
                                             confirmed_path = CONFIRMED_DEDUP_PATH,
                                             verbose = TRUE) {
-  # Ensure alt columns exist
-  if (!"doi_o_alt" %in% names(data)) data$doi_o_alt <- NA_character_
-  if (!"doi_r_alt" %in% names(data)) data$doi_r_alt <- NA_character_
+  # Ensure alt columns exist (sourced from flora replication sheet)
+  if (!"alt_identifier_o" %in% names(data)) data$alt_identifier_o <- NA_character_
+  if (!"alt_identifier_r" %in% names(data)) data$alt_identifier_r <- NA_character_
 
   if (!file.exists(confirmed_path)) {
     if (verbose) cat("No confirmed duplicates file found at:", confirmed_path, "\n")
@@ -539,13 +568,12 @@ apply_confirmed_preprint_dedup <- function(data,
 
   n_before <- nrow(data)
 
-  # --- Replication-side: transfer doi_r_alt from removed row to kept row, then remove ---
+  # --- Replication-side: append removed DOI to alt_identifier_r on kept rows, then drop ---
   repl_resolved <- resolved %>% filter(grepl("^replication", side))
 
   for (i in seq_len(nrow(repl_resolved))) {
     doi_rm <- tolower(repl_resolved$doi_remove[i])
     doi_kp <- tolower(repl_resolved$doi_keep[i])
-    doi_o_scope <- tolower(repl_resolved$doi_o_group[i])
 
     # Skip entries with NA doi_remove (nothing to remove)
     if (is.na(doi_rm)) {
@@ -556,23 +584,27 @@ apply_confirmed_preprint_dedup <- function(data,
     # Find all doi_o groups where the kept doi_r exists
     doi_os_with_kept <- unique(tolower(data$doi_o[tolower(data$doi_r) == doi_kp]))
 
-    # Remove doi_r=preprint only where doi_r=published also exists under the same doi_o
     is_target <- tolower(data$doi_r) == doi_rm & tolower(data$doi_o) %in% doi_os_with_kept
+    is_kept   <- tolower(data$doi_r) == doi_kp & tolower(data$doi_o) %in% doi_os_with_kept
+    is_target[is.na(is_target)] <- FALSE
+    is_kept[is.na(is_kept)]     <- FALSE
 
-    # Store the removed DOI as doi_r_alt on the kept row(s) in those same doi_o groups
-    is_kept <- tolower(data$doi_r) == doi_kp & tolower(data$doi_o) %in% doi_os_with_kept
-    data$doi_r_alt[is_kept & is.na(data$doi_r_alt)] <- repl_resolved$doi_remove[i]
+    # Confirmed override -> annotate alt_identifier_r on the kept row(s)
+    if (any(is_kept)) {
+      data$alt_identifier_r[is_kept] <- append_alt_identifier_vec(
+        data$alt_identifier_r[is_kept], repl_resolved$doi_remove[i]
+      )
+    }
 
-    # Remove the duplicate rows
     data <- data[!is_target, ]
   }
 
   if (nrow(repl_resolved) > 0 && verbose) {
-    cat(sprintf("  Removed %d replication-side duplicate rows (alt DOIs preserved)\n",
+    cat(sprintf("  Removed %d replication-side duplicate rows (alt identifiers preserved)\n",
                 n_before - nrow(data)))
   }
 
-  # --- Original-side: replace doi_remove with doi_keep, store old in doi_o_alt ---
+  # --- Original-side: replace doi_remove with doi_keep; record old DOI in alt_identifier_o ---
   orig_resolved <- resolved %>%
     filter(grepl("^original", side))
 
@@ -581,14 +613,14 @@ apply_confirmed_preprint_dedup <- function(data,
     matched <- tolower(data$doi_o) %in% names(doi_map)
     data <- data %>%
       mutate(
-        doi_o_alt = dplyr::if_else(matched & is.na(doi_o_alt),
-                                   doi_o,
-                                   doi_o_alt),
-        doi_o     = dplyr::if_else(matched,
-                                   doi_map[tolower(doi_o)],
-                                   doi_o)
+        alt_identifier_o = dplyr::if_else(matched,
+                                           append_alt_identifier_vec(alt_identifier_o, doi_o),
+                                           alt_identifier_o),
+        doi_o            = dplyr::if_else(matched,
+                                           unname(doi_map[tolower(doi_o)]),
+                                           doi_o)
       )
-    if (verbose) cat(sprintf("  Replaced %d original-side DOIs (alt DOIs preserved)\n",
+    if (verbose) cat(sprintf("  Replaced %d original-side DOIs (alt identifiers preserved)\n",
                               nrow(orig_resolved)))
 
     # Re-dedup after DOI replacement (may create exact duplicates).
@@ -636,6 +668,194 @@ default_resolve_pair <- function(side, doi_1, doi_2,
   list(doi_remove = doi_2, doi_keep = doi_1)
 }
 
+# ---- GitHub issue for unconfirmed auto-resolutions ----
+
+#' If there are auto-resolved candidate pairs and `cache/<confirmed_path>`
+#' has been stale for more than `stale_days`, ensure GitHub knows about it.
+#'
+#' Behaviour:
+#'   - No open issue with the marker in its title -> file a new issue.
+#'   - Open issue exists, last activity ≤ `stale_days` ago -> do nothing
+#'     (a review nudge is already pending).
+#'   - Open issue exists, last activity > `stale_days` ago -> add a comment
+#'     (a recurring nudge so reviewers don't forget about it).
+#'
+#' "Last activity" is the issue's `updatedAt` (which GitHub bumps on any
+#' edit/comment). Failures (no `gh`, not in a repo, network error) are
+#' reported but do not abort the pipeline.
+#'
+#' @param decisions  The decisions tibble built by `resolve_preprint_dedup`.
+#' @param confirmed_path  Path to confirmed duplicates CSV (mtime is the
+#'                        staleness reference).
+#' @param candidates_out  Path to candidates log (referenced in issue body).
+#' @param stale_days  Threshold in days. Default 7.
+#' @param verbose Print progress messages.
+#' @return One of "filed", "commented", or "skipped".
+maybe_open_dedup_review_issue <- function(decisions,
+                                          confirmed_path = CONFIRMED_DEDUP_PATH,
+                                          candidates_out = CANDIDATES_PATH,
+                                          stale_days     = DEDUP_STALE_DAYS,
+                                          verbose        = TRUE) {
+  auto_rows <- decisions %>%
+    filter(!is.na(resolution), grepl("^auto", resolution))
+  if (nrow(auto_rows) == 0) {
+    if (verbose) cat("  No auto-resolved pairs — no review issue needed.\n")
+    return("skipped")
+  }
+
+  if (!file.exists(confirmed_path)) {
+    age_days <- Inf
+  } else {
+    age_days <- as.numeric(difftime(Sys.time(),
+                                     file.info(confirmed_path)$mtime,
+                                     units = "days"))
+  }
+  if (age_days <= stale_days) {
+    if (verbose) cat(sprintf(
+      "  %d auto-resolved pair(s); confirmed file last touched %.1f day(s) ago — no issue activity needed.\n",
+      nrow(auto_rows), age_days))
+    return("skipped")
+  }
+
+  if (Sys.which("gh") == "") {
+    if (verbose) cat("  ⚠ gh CLI not found; skipping auto-issue creation.\n")
+    return("skipped")
+  }
+
+  # ---- Build body / preview ----
+  preview_n <- min(20L, nrow(auto_rows))
+  preview <- auto_rows %>%
+    head(preview_n) %>%
+    mutate(line = sprintf("- `%s` ⇄ `%s` (%s, sim=%s) — auto: %s",
+                          doi_1, doi_2, side,
+                          ifelse(is.na(title_sim), "?", as.character(title_sim)),
+                          applied_action)) %>%
+    pull(line) %>%
+    paste(collapse = "\n")
+
+  body_intro <- paste0(
+    "The FLoRA preparation pipeline auto-resolved **",
+    nrow(auto_rows),
+    "** preprint/publication duplicate pair(s), but `",
+    basename(confirmed_path),
+    "` has not been touched in over ", stale_days, " days ",
+    sprintf("(last edit %.1f days ago).", age_days),
+    "\n\n",
+    "Please review the candidates and either confirm the auto-default by adding ",
+    "the rows to `cache/", basename(confirmed_path), "` with `action=keep_1` / ",
+    "`keep_2`, or override with `keep_both`.\n\n",
+    "Until each pair is confirmed, the surviving row's `alt_identifier_*` will ",
+    "**not** be annotated with the dropped DOI.\n\n",
+    "**First ", preview_n, " of ", nrow(auto_rows), " auto-resolved pair(s):**\n\n",
+    preview,
+    "\n\n",
+    "Full log: `", candidates_out, "`\n\n",
+    "_Filed automatically by `R/preprint_dedup.R`._"
+  )
+
+  write_body_file <- function(body_text) {
+    f <- tempfile(fileext = ".md")
+    writeLines(body_text, f)
+    f
+  }
+
+  # ---- Look for existing open issue carrying the marker ----
+  existing_json <- tryCatch(
+    suppressWarnings(system2(
+      "gh",
+      c("issue", "list", "--state", "open",
+        "--search", DEDUP_ISSUE_MARKER,
+        "--json", "number,title,updatedAt",
+        "--limit", "20"),
+      stdout = TRUE
+    )),
+    error = function(e) character(0)
+  )
+
+  parsed <- tryCatch(
+    if (length(existing_json) == 0) list()
+    else jsonlite::fromJSON(paste(existing_json, collapse = "\n"),
+                             simplifyDataFrame = FALSE),
+    error = function(e) list()
+  )
+  matches <- Filter(function(x) grepl(DEDUP_ISSUE_MARKER, x$title %||% "", fixed = TRUE),
+                    parsed)
+
+  # ---- No open issue: file a new one ----
+  if (length(matches) == 0) {
+    title <- sprintf("%s %d unconfirmed preprint-duplicate exclusions need review",
+                     DEDUP_ISSUE_MARKER, nrow(auto_rows))
+    body_file <- write_body_file(body_intro)
+    on.exit(unlink(body_file), add = TRUE)
+    res <- tryCatch(
+      suppressWarnings(system2(
+        "gh",
+        c("issue", "create",
+          "--title", title,
+          "--body-file", body_file),
+        stdout = TRUE
+      )),
+      error = function(e) {
+        if (verbose) cat(sprintf("  ⚠ gh issue create failed: %s\n", e$message))
+        NULL
+      }
+    )
+    if (!is.null(res) && length(res) > 0) {
+      if (verbose) cat(sprintf("  ✓ Filed review issue: %s\n", paste(res, collapse = " ")))
+      return("filed")
+    }
+    if (verbose) cat("  ⚠ gh issue create produced no URL output.\n")
+    return("skipped")
+  }
+
+  # ---- Open issue exists: comment if its last activity is also stale ----
+  # Pick the most recently updated matching issue.
+  updated_at <- vapply(matches, function(x) x$updatedAt %||% NA_character_, character(1))
+  last_idx <- which.max(as.POSIXct(updated_at, tz = "UTC", format = "%Y-%m-%dT%H:%M:%SZ"))
+  issue <- matches[[last_idx]]
+  issue_age_days <- as.numeric(difftime(
+    Sys.time(),
+    as.POSIXct(issue$updatedAt, tz = "UTC", format = "%Y-%m-%dT%H:%M:%SZ"),
+    units = "days"
+  ))
+
+  if (is.na(issue_age_days) || issue_age_days <= stale_days) {
+    if (verbose) cat(sprintf(
+      "  Open review issue #%s last active %.1f day(s) ago (≤ %d) — leaving it alone.\n",
+      issue$number, issue_age_days %||% NA, stale_days))
+    return("skipped")
+  }
+
+  comment_body <- paste0(
+    sprintf("Still **%d** unconfirmed preprint-duplicate exclusion(s) outstanding ",
+            nrow(auto_rows)),
+    sprintf("(this issue was last touched %.1f days ago).\n\n", issue_age_days),
+    body_intro
+  )
+  body_file <- write_body_file(comment_body)
+  on.exit(unlink(body_file), add = TRUE)
+
+  res <- tryCatch(
+    suppressWarnings(system2(
+      "gh",
+      c("issue", "comment", as.character(issue$number),
+        "--body-file", body_file),
+      stdout = TRUE
+    )),
+    error = function(e) {
+      if (verbose) cat(sprintf("  ⚠ gh issue comment failed: %s\n", e$message))
+      NULL
+    }
+  )
+  if (!is.null(res) && length(res) > 0) {
+    if (verbose) cat(sprintf("  ✓ Commented on review issue #%s: %s\n",
+                              issue$number, paste(res, collapse = " ")))
+    return("commented")
+  }
+  if (verbose) cat("  ⚠ gh issue comment produced no URL output.\n")
+  "skipped"
+}
+
 # ---- pipeline integration ----
 
 #' Detect preprint/publication duplicate candidates and apply resolutions.
@@ -659,6 +879,8 @@ resolve_preprint_dedup <- function(data,
                                     confirmed_path = CONFIRMED_DEDUP_PATH,
                                     candidates_out = CANDIDATES_PATH,
                                     title_threshold = 0.80,
+                                    open_review_issue = TRUE,
+                                    stale_days = DEDUP_STALE_DAYS,
                                     verbose = TRUE) {
   if (verbose) cat("\n### Preprint-Publication Deduplication\n")
 
@@ -733,10 +955,14 @@ resolve_preprint_dedup <- function(data,
     }
   }
 
-  if (!"doi_o_alt" %in% names(data)) data$doi_o_alt <- NA_character_
-  if (!"doi_r_alt" %in% names(data)) data$doi_r_alt <- NA_character_
+  if (!"alt_identifier_o" %in% names(data)) data$alt_identifier_o <- NA_character_
+  if (!"alt_identifier_r" %in% names(data)) data$alt_identifier_r <- NA_character_
 
   to_apply <- decisions %>% filter(!is.na(doi_remove))
+  # Only confirmed (override) decisions annotate alt_identifier_*; auto
+  # resolutions still drop/replace rows but do not claim equivalence until
+  # the pair is reviewed and added to confirmed_preprint_duplicates.csv.
+  is_confirmed <- function(action) !is.na(action) & action %in% c("keep_1", "keep_2", "keep_both")
 
   n_before <- nrow(data)
 
@@ -747,18 +973,28 @@ resolve_preprint_dedup <- function(data,
     doi_os_with_kept <- unique(tolower(data$doi_o[tolower(data$doi_r) == doi_kp]))
     is_target <- tolower(data$doi_r) == doi_rm & tolower(data$doi_o) %in% doi_os_with_kept
     is_kept   <- tolower(data$doi_r) == doi_kp & tolower(data$doi_o) %in% doi_os_with_kept
-    data$doi_r_alt[is_kept & is.na(data$doi_r_alt)] <- repl$doi_remove[i]
+    is_target[is.na(is_target)] <- FALSE
+    is_kept[is.na(is_kept)]     <- FALSE
+    if (is_confirmed(repl$applied_action[i]) && any(is_kept)) {
+      data$alt_identifier_r[is_kept] <- append_alt_identifier_vec(
+        data$alt_identifier_r[is_kept], repl$doi_remove[i]
+      )
+    }
     data <- data[!is_target, ]
   }
 
   orig <- to_apply %>% filter(grepl("^original", side))
   if (nrow(orig) > 0) {
     doi_map <- setNames(tolower(orig$doi_keep), tolower(orig$doi_remove))
+    confirmed_doi_remove <- tolower(orig$doi_remove[is_confirmed(orig$applied_action)])
     matched <- tolower(data$doi_o) %in% names(doi_map)
+    annotate <- tolower(data$doi_o) %in% confirmed_doi_remove
     data <- data %>%
       mutate(
-        doi_o_alt = dplyr::if_else(matched & is.na(doi_o_alt), doi_o, doi_o_alt),
-        doi_o     = dplyr::if_else(matched, unname(doi_map[tolower(doi_o)]), doi_o)
+        alt_identifier_o = dplyr::if_else(annotate,
+                                           append_alt_identifier_vec(alt_identifier_o, doi_o),
+                                           alt_identifier_o),
+        doi_o            = dplyr::if_else(matched, unname(doi_map[tolower(doi_o)]), doi_o)
       )
 
     n_before_dedup <- nrow(data)
@@ -809,6 +1045,14 @@ resolve_preprint_dedup <- function(data,
       cat("  To override an auto-drop, add the row to confirmed_preprint_duplicates.csv\n")
       cat("  with action = keep_both (retain both) or keep_1/keep_2 (flip survivor)\n")
     }
+  }
+
+  if (open_review_issue) {
+    maybe_open_dedup_review_issue(decisions,
+                                   confirmed_path = confirmed_path,
+                                   candidates_out = candidates_out,
+                                   stale_days     = stale_days,
+                                   verbose        = verbose)
   }
 
   data

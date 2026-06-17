@@ -245,10 +245,13 @@ cat(sprintf("    ✓ Excluded %d rows based on manual exclusion list (withdrawn/
 ## Data Preparation
 
 ```{r prepare}
-# Select relevant fields for FLoRA
+# Select relevant fields for FLoRA. alt_identifier_o/_r are optional source-sheet
+# columns (currently only on the replications sheet) holding manually curated
+# alternative identifiers (e.g. preprint DOIs); preserved if present.
 flora_cols <- c("doi_o", "ref_o", "url_o",
                 "doi_r", "ref_r",  "url_r",
-                "abstract_r", "outcome", "outcome_quote", "outcome_quote_source", "type", "source")
+                "abstract_r", "outcome", "outcome_quote", "outcome_quote_source", "type", "source",
+                "alt_identifier_o", "alt_identifier_r")
 
 # Clean scraped DOIs: strip prefixes, whitespace, and trailing garbage phrases
 # (e.g. "10.1002/pits.22106digital object identifier (doi)",
@@ -266,7 +269,7 @@ clean_doi <- function(x) {
 }
 
 flora_data <- flora_raw %>%
-  select(all_of(flora_cols)) %>%
+  select(any_of(flora_cols)) %>%
   mutate(
     doi_o = clean_doi(doi_o),
     doi_r = clean_doi(doi_r)
@@ -862,8 +865,8 @@ cat("\n### Step 11: Formatting for output\n")
 
 # Select and reorder columns for output
 output_cols <- c(
-"doi_o", "doi_o_alt", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "url_o", "language_o",
-"doi_r", "doi_r_alt", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
+"doi_o", "alt_identifier_o", "doi_o_hash", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o", "apa_ref_o", "bibtex_ref_o", "url_o", "language_o",
+"doi_r", "alt_identifier_r", "doi_r_hash", "title_r", "author_r", "journal_r", "year_r", "volume_r", "issue_r", "pages_r", "apa_ref_r", "bibtex_ref_r", "url_r", "language_r",
 "oa_url_o", "oa_url_r",
 "outcome", "outcome_quote", "outcome_quote_source", "type", "source",
 "self_identified_replication", "replication_intent_confidence"

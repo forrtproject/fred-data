@@ -340,7 +340,7 @@ strip_dummy_dois <- function(data, verbose = TRUE) {
     doi_o = if ("doi_o" %in% names(data)) sum(is_dummy(data$doi_o)) else 0L,
     doi_r = if ("doi_r" %in% names(data)) sum(is_dummy(data$doi_r)) else 0L
   )
-  for (col in c("doi_o", "doi_r", "doi_o_alt", "doi_r_alt")) {
+  for (col in c("doi_o", "doi_r", "alt_identifier_o", "alt_identifier_r")) {
     if (col %in% names(data)) data[[col]][is_dummy(data[[col]])] <- NA_character_
   }
   # Hashes computed from DUMMY_* leak the placeholder via md5; null them too
