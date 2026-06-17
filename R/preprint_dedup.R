@@ -723,6 +723,9 @@ maybe_open_dedup_review_issue <- function(decisions,
   }
 
   # ---- Build body / preview ----
+  # Show the candidates log as a repo-relative path (absolute local paths are
+  # meaningless to other viewers on GitHub).
+  candidates_rel <- sub(paste0("^", here::here(), "/?"), "", candidates_out)
   preview_n <- min(20L, nrow(auto_rows))
   preview <- auto_rows %>%
     head(preview_n) %>%
@@ -749,7 +752,7 @@ maybe_open_dedup_review_issue <- function(decisions,
     "**First ", preview_n, " of ", nrow(auto_rows), " auto-resolved pair(s):**\n\n",
     preview,
     "\n\n",
-    "Full log: `", candidates_out, "`\n\n",
+    "Full log: `", candidates_rel, "`\n\n",
     "_Filed automatically by `R/preprint_dedup.R`._"
   )
 
@@ -764,7 +767,7 @@ maybe_open_dedup_review_issue <- function(decisions,
     suppressWarnings(system2(
       "gh",
       c("issue", "list", "--state", "open",
-        "--search", DEDUP_ISSUE_MARKER,
+        "--search", shQuote(DEDUP_ISSUE_MARKER),
         "--json", "number,title,updatedAt",
         "--limit", "20"),
       stdout = TRUE
@@ -791,8 +794,8 @@ maybe_open_dedup_review_issue <- function(decisions,
       suppressWarnings(system2(
         "gh",
         c("issue", "create",
-          "--title", title,
-          "--body-file", body_file),
+          "--title", shQuote(title),
+          "--body-file", shQuote(body_file)),
         stdout = TRUE
       )),
       error = function(e) {
@@ -838,8 +841,8 @@ maybe_open_dedup_review_issue <- function(decisions,
   res <- tryCatch(
     suppressWarnings(system2(
       "gh",
-      c("issue", "comment", as.character(issue$number),
-        "--body-file", body_file),
+      c("issue", "comment", shQuote(as.character(issue$number)),
+        "--body-file", shQuote(body_file)),
       stdout = TRUE
     )),
     error = function(e) {
