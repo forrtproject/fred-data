@@ -57,6 +57,7 @@ EXCLUSIONS_GSHEET_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0VnL
 FLORA_OUTPUT <- here::here("output", "flora.csv")
 
 SCORE_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=1421575264&single=true&output=csv"
+VALIDATED_EXPORT_URL <- "https://raw.githubusercontent.com/forrtproject/flora-validation/dev/data/validated_export.csv"
 
 cat("\n=== FLoRA Preparation Pipeline ===\n")
 ```
@@ -196,6 +197,30 @@ flora_raw <- bind_rows(
 
 cat(sprintf("✓ Merged with FLoRA data\n"))
 cat(sprintf("  Total rows after SCORE merge: %d\n", nrow(flora_raw)))
+```
+
+### Add Validated Export Data
+
+```{r validated-export}
+validated_export <- tryCatch({
+  read_csv(VALIDATED_EXPORT_URL, show_col_types = FALSE)
+}, error = function(e) {
+  warning("Failed to load validated export. Proceeding without it.\n", e$message)
+  NULL
+})
+
+if (!is.null(validated_export)) {
+  cat(sprintf("    ✓ Loaded %d validated export rows × %d columns\n",
+              nrow(validated_export), ncol(validated_export)))
+
+  common_cols <- intersect(names(flora_raw), names(validated_export))
+  flora_raw <- bind_rows(
+    flora_raw,
+    validated_export %>% select(all_of(common_cols))
+  )
+
+  cat(sprintf("    ✓ Total rows after validated export merge: %d\n", nrow(flora_raw)))
+}
 ```
 
 ### Apply Exclusions

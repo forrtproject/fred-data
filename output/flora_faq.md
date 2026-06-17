@@ -66,6 +66,10 @@ If multiple entries (e.g., studies) are part of a meta paper
 
 Crossref is extracting the journal. Cases where a journal could be found are coded as “journal article”, all NAs and publications in “SSRN Electronic Journal” are coded as “working papers”.  
 
+### Can meta-analyses that replicate previous meta-analysis also be included?
+
+Yes. If they use different data (e.g., a larger sample of studies) then they should be listed as replications.
+
 ## Search Strategy
 
 ### Where do the FLoRA entries come from?
