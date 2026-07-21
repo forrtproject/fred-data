@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-FReD CSV → DynamoDB (3 tables, DOI-centric record + reproduction support + search index)
+FReD CSV → DynamoDB (2 tables, DOI-centric record + reproduction support) — FINAL
 
 Input CSV compatibility:
 - Uses column name: "type"
 - Keeps output key: "type" inside replications[] / reproductions[] entries
 
-Behavior:
+Key behavior:
 1) Read replication/reproduction type from CSV column "type"
 
 2) Reproduction-only rows (no doi_r) are deduped using an in-memory
@@ -15,13 +15,15 @@ Behavior:
 3) Replication-only rows (no doi_r) are also stored in record.replications[]
    and deduped using an in-memory fingerprint set per doi_o. No "_id" is stored.
 
-4) When searching by replication DOI, entries in record.originals[] also include
-   "outcome" from CSV column "outcome".
-
-5) Builds a precomputed SEARCH_TABLE for fuzzy search:
+4) Builds a precomputed SEARCH_TABLE for fuzzy search:
    - meta item stores total chunk count
-   - chunk items "0", "1", ... store compact entries:
-       { "_doi", "title", "authors", "year" }
+   - chunk items "0", "1", ... store compact entries
+
+5) Adds top-level DOI roles in "types":
+   - "original"
+   - "replication"
+   - "reproduction"
+   A DOI may have one, two, or all three roles.
 
 Tables written:
   1) PREFIX_TABLE: prefix (3-char) -> dois (List[str])
@@ -57,10 +59,10 @@ PREFIX_TABLE = os.getenv("PREFIX_TABLE")
 DOI_TABLE = os.getenv("DOI_TABLE")
 SEARCH_TABLE = os.getenv("SEARCH_TABLE")
 PREFIX_LEN = int(os.getenv("PREFIX_LEN", "3"))
-SEARCH_CHUNK_SIZE = int(os.getenv("SEARCH_CHUNK_SIZE", "500"))
 CLEAR_TABLES = os.getenv("CLEAR_TABLES", "1").strip() not in (
     "0", "false", "False", "no", "NO"
 )
+SEARCH_CHUNK = int(os.getenv("SEARCH_CHUNK_SIZE", "500"))
 
 if not PREFIX_TABLE or not DOI_TABLE or not SEARCH_TABLE:
     print(
@@ -165,6 +167,9 @@ def get_or_create(store: dict, doi: str):
         store[doi] = {
             "doi": doi,
 
+            # Top-level DOI roles
+            "types": [],
+
             # DOI metadata (top-level)
             "doi_hash": None,
             "title": None,
@@ -216,7 +221,6 @@ def build_original_entry(row: pd.Series) -> dict:
         "pages": "pages_o",
         "apa_ref": "apa_ref_o",
         "bibtex_ref": "bibtex_ref_o",
-        "outcome": "outcome",
     }
     for k, col in mapping.items():
         if has_col(row, col):
@@ -424,7 +428,13 @@ def main():
     prefix_index: dict[str, set[str]] = defaultdict(set)
     doi_records: dict[str, dict] = {}
 
+    # Top-level DOI role tracking
+    doi_types: dict[str, set[str]] = defaultdict(set)
+
+    # In-memory dedupe set for reproduction-only rows (per doi_o)
     reproduction_seen: dict[str, set[str]] = defaultdict(set)
+
+    # In-memory dedupe set for replication-only rows (per doi_o)
     replication_seen: dict[str, set[str]] = defaultdict(set)
 
     for _, row in df.iterrows():
@@ -447,11 +457,24 @@ def main():
                     prefix_index[pfx_r].add(doi_r)
 
         if not doi_o:
+            if doi_r:
+                rep_entry = build_replication_entry(row)
+                rec_r = get_or_create(doi_records, doi_r)
+                merge_doi_meta_from_entry(rec_r, rep_entry)
+
+                if is_reproduction_type(rep_type):
+                    doi_types[doi_r].add("reproduction")
+                else:
+                    doi_types[doi_r].add("replication")
+
             continue
+
+        # Original-side DOI is always an original
+        doi_types[doi_o].add("original")
 
         orig_entry = build_original_entry(row)
 
-        # Case 1: doi_o + doi_r
+        # Case 1: two-way link exists (doi_o + doi_r)
         if doi_r:
             rep_entry = build_replication_entry(row)
 
@@ -459,15 +482,17 @@ def main():
             merge_doi_meta_from_entry(rec_o, orig_entry)
 
             if is_reproduction_type(rep_type):
+                doi_types[doi_r].add("reproduction")
                 dedupe_append_by_doi(rec_o["record"]["reproductions"], rep_entry)
             else:
+                doi_types[doi_r].add("replication")
                 dedupe_append_by_doi(rec_o["record"]["replications"], rep_entry)
 
             rec_r = get_or_create(doi_records, doi_r)
             merge_doi_meta_from_entry(rec_r, rep_entry)
             dedupe_append_by_doi(rec_r["record"]["originals"], orig_entry)
 
-        # Case 2: no doi_r
+        # Case 2: doi_r missing → either reproduction-only OR replication-only
         else:
             rec_o = get_or_create(doi_records, doi_o)
             merge_doi_meta_from_entry(rec_o, orig_entry)
@@ -509,16 +534,18 @@ def main():
                     rec_o["record"]["replications"].append(rep_only_entry)
                     replication_seen[doi_o].add(fp)
 
-    # Compute stats
+    # Compute coherent stats
     for _, record in doi_records.items():
         reps = record["record"]["replications"]
         repros = record["record"]["reproductions"]
         origs = record["record"]["originals"]
 
         uniq_ori = {x.get("doi") for x in origs if x.get("doi")}
+
         rep_with_doi = sum(1 for x in reps if x.get("doi"))
         rep_only = sum(1 for x in reps if not x.get("doi"))
         uniq_rep_dois = {x.get("doi") for x in reps if x.get("doi")}
+
         repro_with_doi = sum(1 for x in repros if x.get("doi"))
         repro_only = sum(1 for x in repros if not x.get("doi"))
 
@@ -535,6 +562,12 @@ def main():
             "n_originals_total": len(origs),
             "n_unique_original_dois": len(uniq_ori),
         }
+
+    # Finalize top-level DOI roles in stable order
+    type_order = ["original", "replication", "reproduction"]
+    for doi, record in doi_records.items():
+        roles = doi_types.get(doi, set())
+        record["types"] = [t for t in type_order if t in roles]
 
     print(f"Prepared {len(prefix_index)} prefixes and {len(doi_records)} doi records")
 
@@ -570,19 +603,51 @@ def main():
                 }
             )
 
+    def extract_author_names(raw_authors) -> list[str]:
+        """Normalize an authors field (list of dicts, list of strings, or CSV string) to names."""
+        if not raw_authors:
+            return []
+        if isinstance(raw_authors, list):
+            names = []
+            for a in raw_authors:
+                if isinstance(a, dict):
+                    given = str(a.get("given") or "").strip()
+                    family = str(a.get("family") or "").strip()
+                    name = f"{given} {family}".strip()
+                else:
+                    name = str(a).strip()
+                if name:
+                    names.append(name)
+            return names
+        return [n.strip() for n in str(raw_authors).split(",") if n.strip()]
+
     # Build + write SEARCH INDEX table
     search_entries = []
     for doi, record in doi_records.items():
-        search_entries.append({
-            "_doi": doi,
-            "title": str(record.get("title") or ""),
-            "authors": str(record.get("authors") or ""),
-            "year": str(record.get("year") or ""),
-        })
+        authors = extract_author_names(record.get("authors"))
+
+        nested = record.get("record", {})
+        seen_rep: set[str] = set(authors)
+        rep_authors: list[str] = []
+        for entry in nested.get("replications", []) + nested.get("reproductions", []) + nested.get("originals", []):
+            for name in extract_author_names(entry.get("authors")):
+                if name not in seen_rep:
+                    seen_rep.add(name)
+                    rep_authors.append(name)
+
+        search_entries.append(
+            {
+                "_doi": doi,
+                "title": str(record.get("title") or ""),
+                "authors": authors,
+                "rep_authors": rep_authors,
+                "year": str(record.get("year") or ""),
+            }
+        )
 
     chunks = [
-        search_entries[i:i + SEARCH_CHUNK_SIZE]
-        for i in range(0, len(search_entries), SEARCH_CHUNK_SIZE)
+        search_entries[i:i + SEARCH_CHUNK]
+        for i in range(0, len(search_entries), SEARCH_CHUNK)
     ]
     total_chunks = len(chunks)
 
