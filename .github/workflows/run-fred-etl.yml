@@ -1,6 +1,12 @@
 name: Run FReD ETL
 
 on:
+  # Run automatically every day at 07:00 Germany time
+  schedule:
+    - cron: "0 7 * * *"
+      timezone: "Europe/Berlin"
+
+  # Allow manual execution from the GitHub Actions page
   workflow_dispatch:
     inputs:
       target_tables:
@@ -36,32 +42,59 @@ jobs:
           pip install -r "API Integration Guide/requirements.txt"
 
       - name: Select target tables
+        shell: bash
         run: |
-          if [ "${{ inputs.target_tables }}" = "original" ]; then
+          # Scheduled runs always use the ORIGINAL/main tables.
+          # Manual runs use the option selected in GitHub Actions.
+
+          if [ "${{ github.event_name }}" = "schedule" ] || \
+             [ "${{ inputs.target_tables }}" = "original" ]; then
+
             echo "Using ORIGINAL tables"
-            echo "PREFIX_TABLE=${{ secrets.PROD_PREFIX_TABLE }}" >> $GITHUB_ENV
-            echo "DOI_TABLE=${{ secrets.PROD_DOI_TABLE }}" >> $GITHUB_ENV
-            echo "SEARCH_TABLE=${{ secrets.PROD_SEARCH_TABLE }}" >> $GITHUB_ENV
-            echo "CLEAR_TABLES=0" >> $GITHUB_ENV
+
+            echo "PREFIX_TABLE=${{ secrets.PROD_PREFIX_TABLE }}" >> "$GITHUB_ENV"
+            echo "DOI_TABLE=${{ secrets.PROD_DOI_TABLE }}" >> "$GITHUB_ENV"
+            echo "SEARCH_TABLE=${{ secrets.PROD_SEARCH_TABLE }}" >> "$GITHUB_ENV"
+            echo "CLEAR_TABLES=0" >> "$GITHUB_ENV"
+
           else
+
             echo "Using TEST tables"
-            echo "PREFIX_TABLE=${{ secrets.TEST_PREFIX_TABLE }}" >> $GITHUB_ENV
-            echo "DOI_TABLE=${{ secrets.TEST_DOI_TABLE }}" >> $GITHUB_ENV
-            echo "SEARCH_TABLE=${{ secrets.TEST_SEARCH_TABLE }}" >> $GITHUB_ENV
-            echo "CLEAR_TABLES=1" >> $GITHUB_ENV
+
+            echo "PREFIX_TABLE=${{ secrets.TEST_PREFIX_TABLE }}" >> "$GITHUB_ENV"
+            echo "DOI_TABLE=${{ secrets.TEST_DOI_TABLE }}" >> "$GITHUB_ENV"
+            echo "SEARCH_TABLE=${{ secrets.TEST_SEARCH_TABLE }}" >> "$GITHUB_ENV"
+            echo "CLEAR_TABLES=1" >> "$GITHUB_ENV"
+
           fi
 
       - name: Confirm selected tables
         run: |
+          echo "Event type: ${{ github.event_name }}"
           echo "PREFIX_TABLE = $PREFIX_TABLE"
           echo "DOI_TABLE = $DOI_TABLE"
+          echo "SEARCH_TABLE = $SEARCH_TABLE"
           echo "CLEAR_TABLES = $CLEAR_TABLES"
 
       - name: Debug files
         run: |
+          echo "Current directory:"
           pwd
+
+          echo "Repository files:"
           ls -R
+
+      - name: Check input CSV
+        run: |
+          if [ ! -f "output/flora.csv" ]; then
+            echo "Error: output/flora.csv was not found."
+            exit 1
+          fi
+
+          echo "CSV file found:"
+          ls -lh "output/flora.csv"
 
       - name: Run ETL
         run: |
-          python "API Integration Guide/load_fred_to_dynamodb.py" output/flora.csv
+          python "API Integration Guide/load_fred_to_dynamodb.py" \
+            "output/flora.csv"
