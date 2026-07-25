@@ -596,6 +596,29 @@ if ("score_entry" %in% names(fred_augmented) && "statistical_success" %in% names
   cat(sprintf("  Derived reported_success from statistical_success for %d SCORE entries\n", score_filled))
 }
 
+# Recode onto the canonical outcome vocabulary shared with FLoRA, so both
+# datasets report the same labels (see R/outcome_vocabulary.R).
+source(here::here("R", "outcome_vocabulary.R"))
+rs_before <- fred_augmented$reported_success
+fred_augmented <- fred_augmented %>%
+  mutate(reported_success = normalise_outcome(reported_success))
+
+rs_recodes <- outcome_recode_summary(rs_before, fred_augmented$reported_success)
+if (nrow(rs_recodes) == 0) {
+  cat("  ✓ All reported_success values already canonical\n")
+} else {
+  cat(sprintf("  ✓ Recoded %d reported_success value(s):\n", sum(rs_recodes$n)))
+  for (i in seq_len(nrow(rs_recodes))) {
+    cat(sprintf("      '%s' -> '%s' (%d)\n", rs_recodes$from[i], rs_recodes$to[i], rs_recodes$n[i]))
+  }
+}
+
+rs_unknown <- setdiff(na.omit(unique(fred_augmented$reported_success)), VALID_OUTCOMES)
+if (length(rs_unknown) > 0) {
+  cat(sprintf("  ⚠ reported_success values outside the allowed vocabulary: %s\n",
+              paste(sprintf("'%s'", rs_unknown), collapse = ", ")))
+}
+
 cat(sprintf("  Rows with reported_success: %d (%.1f%%)\n",
             sum(!is.na(fred_augmented$reported_success)),
             100 * sum(!is.na(fred_augmented$reported_success)) / nrow(fred_augmented)))

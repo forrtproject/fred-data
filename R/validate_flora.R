@@ -16,6 +16,8 @@ library(stringr)
 library(glue)
 library(here)
 
+source(here("R", "outcome_vocabulary.R"))
+
 is_doi <- function(x) grepl("^10\\.[0-9]{4,}/\\S+$", x)
 
 SUPPRESSIONS_FILE <- here("output", "flora_validation_suppressions.csv")
@@ -89,21 +91,8 @@ validate_flora_data <- function(data, suppressions = NULL) {
     mutate(id = paste(doi_o, coalesce(doi_r, url_r), sep = " | "))
 
   # --- Valid value sets ---
-  VALID_REPLICATION_OUTCOMES <- c(
-    "successful", "failed", "mixed", "descriptive only",
-    "uninformative", "statistically successful but flawed"
-  )
-  VALID_REPRODUCTION_OUTCOMES <- c(
-    "computationally successful, robust",
-    "computationally successful, robustness challenges",
-    "computationally successful, robustness not checked",
-    "computational issues, robust",
-    "computational issues, robustness challenges",
-    "computational issues, robustness not checked",
-    "computation not checked, robust",
-    "computation not checked, robustness challenges",
-    "computation not checked, robustness not checked"
-  )
+  # VALID_REPLICATION_OUTCOMES / VALID_REPRODUCTION_OUTCOMES come from
+  # R/outcome_vocabulary.R, which both pipelines normalise against.
   VALID_TYPES <- c("replication", "reproduction")
   VALID_SOURCES <- c("COS", "replications", "reproductions")
   URL_COLS <- c("url_r", "oa_url_o", "oa_url_r")
@@ -252,7 +241,11 @@ validate_flora_data <- function(data, suppressions = NULL) {
       is.na(outcome)
     )
   add_check(issues, "Outcome values valid",
-            description = "Outcome values that don't match the allowed set for the row's type (replication or reproduction).",
+            description = paste0(
+              "Outcome values that don't match the allowed set for the row's type ",
+              "(replication or reproduction). A value containing '", trimws(OUTCOME_CLASH_SEP),
+              "' is a genuine outcome clash between rows merged during preprint ",
+              "deduplication and needs resolving in the source coding sheet."),
             detail_template = "type={type}; outcome='{outcome}'")
 
   # =========================================================================

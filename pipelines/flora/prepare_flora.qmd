@@ -44,6 +44,7 @@ source(here::here("R", "llm_classification.R"))
 source(here::here("R", "unpaywall_cache.R"))
 source(here::here("R", "preprint_dedup.R"))
 source(here::here("R", "cos_quote_rewrite.R"))
+source(here::here("R", "outcome_vocabulary.R"))
 
 ```
 
@@ -220,6 +221,39 @@ if (!is.null(validated_export)) {
   )
 
   cat(sprintf("    ✓ Total rows after validated export merge: %d\n", nrow(flora_raw)))
+}
+```
+
+### Normalise outcome vocabulary
+
+The five sources (replications, reproductions, COS, SCORE, validated export)
+have drifted apart in how they spell the outcome codes. Recode onto the
+canonical vocabulary in `R/outcome_vocabulary.R` here, before deduplication, so
+that a spelling variant is never mistaken for a genuine outcome clash when rows
+are merged.
+
+```{r normalise-outcomes}
+outcome_before <- flora_raw$outcome
+flora_raw <- flora_raw %>% mutate(outcome = normalise_outcome(outcome))
+
+recodes <- outcome_recode_summary(outcome_before, flora_raw$outcome)
+if (nrow(recodes) == 0) {
+  cat("    ✓ All outcome values already canonical\n")
+} else {
+  cat(sprintf("    ✓ Recoded %d outcome value(s):\n", sum(recodes$n)))
+  for (i in seq_len(nrow(recodes))) {
+    cat(sprintf("        '%s' -> '%s' (%d)\n", recodes$from[i], recodes$to[i], recodes$n[i]))
+  }
+}
+
+unknown <- flora_raw %>%
+  filter(!is.na(outcome), !outcome %in% VALID_OUTCOMES) %>%
+  count(outcome, source, sort = TRUE)
+if (nrow(unknown) > 0) {
+  cat("    ⚠ Outcome values outside the allowed vocabulary (flagged by validation):\n")
+  for (i in seq_len(nrow(unknown))) {
+    cat(sprintf("        '%s' (%s, n = %d)\n", unknown$outcome[i], unknown$source[i], unknown$n[i]))
+  }
 }
 ```
 

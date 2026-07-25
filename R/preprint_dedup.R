@@ -25,6 +25,9 @@ library(dplyr)
 library(jsonlite)
 library(stringr)
 
+# Canonical outcome vocabulary + normalise_outcome(), used when merging rows.
+source(here::here("R", "outcome_vocabulary.R"))
+
 # ---- constants ----
 PREPRINT_DOI_PREFIXES <- c(
 "10.31234/",
@@ -108,12 +111,16 @@ merge_doi_pair_dups <- function(data, verbose = TRUE) {
     if (length(v) == 0) return(NA_character_)
     paste(as.character(v), collapse = sep)
   }
+  # Normalise before comparing, so that a spelling variant (e.g. "success" vs
+  # "successful") is not mistaken for a genuine outcome clash. A real clash is
+  # retained as an "A || B" value, which validate_flora.R's outcome check picks
+  # up because it is not in the allowed vocabulary.
   pick_outcome <- function(x) {
-    v <- unique(stats::na.omit(x))
+    v <- unique(stats::na.omit(normalise_outcome(x)))
     if (length(v) == 0) return(NA_character_)
     if (length(v) == 1) return(as.character(v))
     if (all(v %in% c("successful", "mixed", "failed"))) return("mixed")
-    paste(as.character(v), collapse = " || ")
+    paste(as.character(v), collapse = OUTCOME_CLASH_SEP)
   }
   first_nona <- function(x) {
     v <- x[!is.na(x)]
@@ -126,12 +133,16 @@ merge_doi_pair_dups <- function(data, verbose = TRUE) {
 
   # Detect outcome conflicts within groups about to be merged. Same paper +
   # same url_r but conflicting outcomes is a source-data mistake — log it.
+  # Compare normalised values so that a spelling variant is not reported as a
+  # conflict, and record how pick_outcome() actually resolved each group.
   outcome_conflicts <- if ("outcome" %in% cols) {
     to_merge %>%
+      mutate(.outcome_norm = normalise_outcome(outcome)) %>%
       group_by(doi_o, doi_r) %>%
       summarise(
-        outcomes = paste(sort(unique(stats::na.omit(outcome))), collapse = " | "),
-        n_outcomes = dplyr::n_distinct(outcome, na.rm = TRUE),
+        outcomes = paste(sort(unique(stats::na.omit(.outcome_norm))), collapse = " | "),
+        n_outcomes = dplyr::n_distinct(.outcome_norm, na.rm = TRUE),
+        resolved_to = pick_outcome(outcome),
         url_r = paste(unique(stats::na.omit(url_r)), collapse = " | "),
         sources = paste(sort(unique(stats::na.omit(source))), collapse = " | "),
         .groups = "drop"
@@ -172,16 +183,19 @@ merge_doi_pair_dups <- function(data, verbose = TRUE) {
   }
 
   if (nrow(outcome_conflicts) > 0) {
+    n_retained <- sum(grepl(OUTCOME_CLASH_SEP, outcome_conflicts$resolved_to, fixed = TRUE))
     cat(sprintf(
-      "  ⚠ %d merged group(s) had CONFLICTING outcomes (same paper, same url_r) — collapsed to 'mixed'.\n",
-      nrow(outcome_conflicts)
+      paste0("  ⚠ %d merged group(s) had CONFLICTING outcomes (same paper, same url_r); ",
+             "%d collapsed to 'mixed', %d retained as a clash for validation.\n"),
+      nrow(outcome_conflicts), nrow(outcome_conflicts) - n_retained, n_retained
     ))
     cat("    These are likely source-data mistakes. Affected (doi_o, doi_r):\n")
     for (i in seq_len(nrow(outcome_conflicts))) {
-      cat(sprintf("      - %s + %s  [outcomes: %s; sources: %s]\n",
+      cat(sprintf("      - %s + %s  [outcomes: %s -> '%s'; sources: %s]\n",
                   outcome_conflicts$doi_o[i],
                   outcome_conflicts$doi_r[i],
                   outcome_conflicts$outcomes[i],
+                  outcome_conflicts$resolved_to[i],
                   outcome_conflicts$sources[i]))
     }
     out_dir <- here::here("output")
