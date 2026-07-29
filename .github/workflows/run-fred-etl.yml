@@ -27,6 +27,10 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      # Optional settings used by the new Python script
+      PREFIX_LEN: "3"
+      SEARCH_CHUNK_SIZE: "500"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -35,11 +39,16 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: "API Integration Guide/requirements.txt"
 
       - name: Install ETL dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r "API Integration Guide/requirements.txt"
+
+          # Make sure the new ETL dependencies are installed
+          pip install boto3 pandas ftfy
 
       - name: Select target tables
         shell: bash
@@ -55,6 +64,8 @@ jobs:
             echo "PREFIX_TABLE=${{ secrets.PROD_PREFIX_TABLE }}" >> "$GITHUB_ENV"
             echo "DOI_TABLE=${{ secrets.PROD_DOI_TABLE }}" >> "$GITHUB_ENV"
             echo "SEARCH_TABLE=${{ secrets.PROD_SEARCH_TABLE }}" >> "$GITHUB_ENV"
+
+            # Do not delete the production tables before loading
             echo "CLEAR_TABLES=0" >> "$GITHUB_ENV"
 
           else
@@ -64,37 +75,60 @@ jobs:
             echo "PREFIX_TABLE=${{ secrets.TEST_PREFIX_TABLE }}" >> "$GITHUB_ENV"
             echo "DOI_TABLE=${{ secrets.TEST_DOI_TABLE }}" >> "$GITHUB_ENV"
             echo "SEARCH_TABLE=${{ secrets.TEST_SEARCH_TABLE }}" >> "$GITHUB_ENV"
+
+            # Clear test tables before loading
             echo "CLEAR_TABLES=1" >> "$GITHUB_ENV"
 
           fi
 
-      - name: Confirm selected tables
+      - name: Validate configuration
+        shell: bash
         run: |
           echo "Event type: ${{ github.event_name }}"
-          echo "PREFIX_TABLE = $PREFIX_TABLE"
-          echo "DOI_TABLE = $DOI_TABLE"
-          echo "SEARCH_TABLE = $SEARCH_TABLE"
-          echo "CLEAR_TABLES = $CLEAR_TABLES"
+          echo "CLEAR_TABLES: $CLEAR_TABLES"
+          echo "AWS region: $AWS_REGION"
 
-      - name: Debug files
-        run: |
-          echo "Current directory:"
-          pwd
-
-          echo "Repository files:"
-          ls -R
-
-      - name: Check input CSV
-        run: |
-          if [ ! -f "output/flora.csv" ]; then
-            echo "Error: output/flora.csv was not found."
+          if [ -z "$PREFIX_TABLE" ]; then
+            echo "Error: PREFIX_TABLE is empty."
             exit 1
           fi
 
-          echo "CSV file found:"
-          ls -lh "output/flora.csv"
+          if [ -z "$DOI_TABLE" ]; then
+            echo "Error: DOI_TABLE is empty."
+            exit 1
+          fi
 
-      - name: Run ETL
+          if [ -z "$SEARCH_TABLE" ]; then
+            echo "Error: SEARCH_TABLE is empty."
+            exit 1
+          fi
+
+          echo "All required table variables are configured."
+
+      - name: Check required files
+        shell: bash
         run: |
-          python "API Integration Guide/load_fred_to_dynamodb.py" \
+          CSV_FILE="output/flora.csv"
+          ETL_SCRIPT="API Integration Guide/build_two_tables_doi_records.py"
+
+          if [ ! -f "$CSV_FILE" ]; then
+            echo "Error: $CSV_FILE was not found."
+            exit 1
+          fi
+
+          if [ ! -f "$ETL_SCRIPT" ]; then
+            echo "Error: $ETL_SCRIPT was not found."
+            exit 1
+          fi
+
+          echo "Input CSV:"
+          ls -lh "$CSV_FILE"
+
+          echo "ETL script:"
+          ls -lh "$ETL_SCRIPT"
+
+      - name: Run FReD ETL
+        shell: bash
+        run: |
+          python "API Integration Guide/build_two_tables_doi_records.py" \
             "output/flora.csv"

@@ -563,6 +563,30 @@ def main():
             "n_unique_original_dois": len(uniq_ori),
         }
 
+        # Citation graph fields (computed from replications)
+        outcome_mix: dict[str, int] = {}
+        citation_timeline: dict[str, int] = {}
+        first_year: int | None = None
+        first_outcome: str | None = None
+        for rep in reps:
+            outcome = rep.get("outcome")
+            if outcome:
+                outcome_mix[outcome] = outcome_mix.get(outcome, 0) + 1
+            rep_year = rep.get("year")
+            if rep_year:
+                try:
+                    y = int(rep_year)
+                    citation_timeline[str(y)] = citation_timeline.get(str(y), 0) + 1
+                    if first_year is None or y < first_year:
+                        first_year = y
+                        first_outcome = outcome
+                except (ValueError, TypeError):
+                    pass
+        record["record"]["outcome_mix"] = outcome_mix
+        record["record"]["citation_timeline"] = citation_timeline
+        record["record"]["first_replication_year"] = str(first_year) if first_year is not None else None
+        record["record"]["first_replication_outcome"] = first_outcome
+
     # Finalize top-level DOI roles in stable order
     type_order = ["original", "replication", "reproduction"]
     for doi, record in doi_records.items():
