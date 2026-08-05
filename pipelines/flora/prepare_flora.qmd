@@ -97,12 +97,17 @@ reproductions <- reproductions %>%
 cat(sprintf("    ✓ Filtered to %d validated reproductions\n", nrow(reproductions)))
 
 # Combine both datasets (handle case where one might be empty)
-# Add source variable to track data origin. Both source sheets use
-# `out_quote_source`; the rest of the pipeline (and downstream COS/SCORE
-# branches) use `outcome_quote_source`, so harmonise here.
+# Add source variable to track data origin. The replications sheet uses
+# `out_quote_source` and the rest of the pipeline (and the COS/SCORE branches)
+# use `outcome_quote_source`, so harmonise here. The reproductions sheet has
+# NEITHER — it carries the two-axis vocabulary (`out_quote_computational_source`,
+# `out_quote_robust_source`) — so the rename must be a no-op when the column is
+# absent. `rename_with(~ "outcome_quote_source", ...)` was not: a constant .fn
+# returns length 1 against an empty selection, which dplyr rejects, and that is
+# what has failed every run since the reproductions sheet changed.
 tag_source <- function(df, type_label, source_label) {
   df %>%
-    rename_with(~ "outcome_quote_source", any_of("out_quote_source")) %>%
+    rename(any_of(c(outcome_quote_source = "out_quote_source"))) %>%
     mutate(type = type_label, source = source_label)
 }
 if (nrow(reproductions) == 0) {
@@ -139,6 +144,15 @@ cat(sprintf("    ✓ Rewrote %d shorthand outcome quotes\n",
                            "^Coded as |^Replicated = |^Rep\\. (s1|s2|s1\\+s2) = |^95% CI for the meta-analytic |^Subjective replication success rating |^Classified as mixed:|^Outcome classified as "),
                 na.rm = TRUE)))
 
+# `alt_identifier_r` is an optional source-sheet column (see Data Preparation):
+# on the COS sheet it holds the OSF registration DOIs for the replication report,
+# which is the only identifier those records have. The summarise below keeps an
+# explicit column list, so a column absent from it is silently dropped before
+# `flora_cols` can select it — ensure it exists, then carry it.
+if (!"alt_identifier_r" %in% names(replications_cos)) {
+  replications_cos$alt_identifier_r <- NA_character_
+}
+
 replications_cos <- replications_cos %>%
   mutate(repl_id = coalesce(url_r, doi_r)) %>%
   group_by(doi_o, repl_id) %>%
@@ -147,6 +161,7 @@ replications_cos <- replications_cos %>%
     ref_r = first(ref_r),
     url_r = first(url_r),
     doi_r = first(doi_r),
+    alt_identifier_r = first(alt_identifier_r),
     abstract_r = first(abstract_r),
     outcome = if (length(unique(outcome)) == 1) unique(outcome) else "mixed",
     outcome_quote = paste(unique(na.omit(outcome_quote)), collapse = " || "),
