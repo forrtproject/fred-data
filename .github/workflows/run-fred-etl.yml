@@ -1,10 +1,12 @@
 name: Run FReD ETL
 
 on:
-  # Run automatically every day at 07:00 Germany time
+  # Run automatically every day at 05:00 UTC.
+  # That is 07:00 in Berlin during summer (CEST) and 06:00 during winter (CET).
+  # GitHub Actions cron is always UTC - a `timezone:` key here is not valid syntax
+  # and makes the whole workflow file invalid.
   schedule:
-    - cron: "0 7 * * *"
-      timezone: "Europe/Berlin"
+    - cron: "0 5 * * *"
 
   # Allow manual execution from the GitHub Actions page
   workflow_dispatch:
@@ -18,16 +20,51 @@ on:
           - test
           - original
 
+      csv_file:
+        description: "Which CSV to load"
+        required: true
+        default: "output/flora.csv"
+        type: choice
+        options:
+          - output/flora.csv
+          - output/flora_filtered.csv
+
+      clear_tables:
+        description: "Delete all items before loading (default = clear test, keep original)"
+        required: true
+        default: "default"
+        type: choice
+        options:
+          - default
+          - "yes"
+          - "no"
+
+permissions:
+  contents: read
+
+# Never let two loads write the same tables at the same time.
+concurrency:
+  group: fred-etl-${{ inputs.target_tables || 'original' }}
+  cancel-in-progress: false
+
 jobs:
   run-etl:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
 
     env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
+      # Scheduled runs have no inputs, so they fall back to the defaults below.
+      AWS_REGION: ${{ secrets.AWS_REGION || 'eu-central-1' }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      # Optional settings used by the new Python script
+      TARGET_TABLES: ${{ inputs.target_tables || 'original' }}
+      CSV_FILE: ${{ inputs.csv_file || 'output/flora.csv' }}
+      CLEAR_TABLES_INPUT: ${{ inputs.clear_tables || 'default' }}
+
+      ETL_SCRIPT: "API Integration Guide/build_two_tables_doi_records.py"
+
+      # Optional settings used by the Python script
       PREFIX_LEN: "3"
       SEARCH_CHUNK_SIZE: "500"
 
@@ -45,79 +82,100 @@ jobs:
       - name: Install ETL dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r "API Integration Guide/requirements.txt"
 
-          # Make sure the new ETL dependencies are installed
-          pip install boto3 pandas ftfy
+          # requirements.txt already pins pandas, boto3 and ftfy
+          pip install -r "API Integration Guide/requirements.txt"
 
       - name: Select target tables
         shell: bash
+        env:
+          PROD_PREFIX_TABLE: ${{ secrets.PROD_PREFIX_TABLE }}
+          PROD_DOI_TABLE: ${{ secrets.PROD_DOI_TABLE }}
+          PROD_SEARCH_TABLE: ${{ secrets.PROD_SEARCH_TABLE }}
+          TEST_PREFIX_TABLE: ${{ secrets.TEST_PREFIX_TABLE }}
+          TEST_DOI_TABLE: ${{ secrets.TEST_DOI_TABLE }}
+          TEST_SEARCH_TABLE: ${{ secrets.TEST_SEARCH_TABLE }}
         run: |
+          set -euo pipefail
+
           # Scheduled runs always use the ORIGINAL/main tables.
           # Manual runs use the option selected in GitHub Actions.
 
-          if [ "${{ github.event_name }}" = "schedule" ] || \
-             [ "${{ inputs.target_tables }}" = "original" ]; then
+          if [ "$TARGET_TABLES" = "original" ]; then
 
             echo "Using ORIGINAL tables"
 
-            echo "PREFIX_TABLE=${{ secrets.PROD_PREFIX_TABLE }}" >> "$GITHUB_ENV"
-            echo "DOI_TABLE=${{ secrets.PROD_DOI_TABLE }}" >> "$GITHUB_ENV"
-            echo "SEARCH_TABLE=${{ secrets.PROD_SEARCH_TABLE }}" >> "$GITHUB_ENV"
+            echo "PREFIX_TABLE=$PROD_PREFIX_TABLE" >> "$GITHUB_ENV"
+            echo "DOI_TABLE=$PROD_DOI_TABLE" >> "$GITHUB_ENV"
+            echo "SEARCH_TABLE=$PROD_SEARCH_TABLE" >> "$GITHUB_ENV"
 
             # Do not delete the production tables before loading
-            echo "CLEAR_TABLES=0" >> "$GITHUB_ENV"
+            clear_tables="0"
 
           else
 
             echo "Using TEST tables"
 
-            echo "PREFIX_TABLE=${{ secrets.TEST_PREFIX_TABLE }}" >> "$GITHUB_ENV"
-            echo "DOI_TABLE=${{ secrets.TEST_DOI_TABLE }}" >> "$GITHUB_ENV"
-            echo "SEARCH_TABLE=${{ secrets.TEST_SEARCH_TABLE }}" >> "$GITHUB_ENV"
+            echo "PREFIX_TABLE=$TEST_PREFIX_TABLE" >> "$GITHUB_ENV"
+            echo "DOI_TABLE=$TEST_DOI_TABLE" >> "$GITHUB_ENV"
+            echo "SEARCH_TABLE=$TEST_SEARCH_TABLE" >> "$GITHUB_ENV"
 
             # Clear test tables before loading
-            echo "CLEAR_TABLES=1" >> "$GITHUB_ENV"
+            clear_tables="1"
 
           fi
 
-      - name: Validate configuration
+          # A manual run can override the default clearing behaviour.
+          case "$CLEAR_TABLES_INPUT" in
+            yes) clear_tables="1" ;;
+            no)  clear_tables="0" ;;
+          esac
+
+          echo "CLEAR_TABLES=$clear_tables" >> "$GITHUB_ENV"
+          echo "CLEAR_TABLES: $clear_tables"
+
+          if [ "$TARGET_TABLES" = "original" ] && [ "$clear_tables" = "0" ]; then
+            msg="Loading the original tables without clearing them."
+            msg="$msg DOIs removed from the CSV stay in the DOI table, and search chunks"
+            msg="$msg beyond the new meta count stay in the search table."
+            msg="$msg Run manually with clear_tables=yes for a full rebuild."
+            echo "::warning::$msg"
+          fi
+
+      - name: Preflight
         shell: bash
         run: |
-          echo "Event type: ${{ github.event_name }}"
-          echo "CLEAR_TABLES: $CLEAR_TABLES"
-          echo "AWS region: $AWS_REGION"
+          set -euo pipefail
 
-          if [ -z "$PREFIX_TABLE" ]; then
-            echo "Error: PREFIX_TABLE is empty."
-            exit 1
-          fi
+          echo "Event type:    ${{ github.event_name }}"
+          echo "Target tables: $TARGET_TABLES"
+          echo "AWS region:    $AWS_REGION"
+          echo "CLEAR_TABLES:  $CLEAR_TABLES"
+          echo "PREFIX_TABLE:  $PREFIX_TABLE"
+          echo "DOI_TABLE:     $DOI_TABLE"
+          echo "SEARCH_TABLE:  $SEARCH_TABLE"
 
-          if [ -z "$DOI_TABLE" ]; then
-            echo "Error: DOI_TABLE is empty."
-            exit 1
-          fi
+          fail=0
 
-          if [ -z "$SEARCH_TABLE" ]; then
-            echo "Error: SEARCH_TABLE is empty."
-            exit 1
-          fi
-
-          echo "All required table variables are configured."
-
-      - name: Check required files
-        shell: bash
-        run: |
-          CSV_FILE="output/flora.csv"
-          ETL_SCRIPT="API Integration Guide/build_two_tables_doi_records.py"
+          for var in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY \
+                     PREFIX_TABLE DOI_TABLE SEARCH_TABLE; do
+            if [ -z "${!var:-}" ]; then
+              echo "Error: $var is empty. Check the repository secrets."
+              fail=1
+            fi
+          done
 
           if [ ! -f "$CSV_FILE" ]; then
             echo "Error: $CSV_FILE was not found."
-            exit 1
+            fail=1
           fi
 
           if [ ! -f "$ETL_SCRIPT" ]; then
             echo "Error: $ETL_SCRIPT was not found."
+            fail=1
+          fi
+
+          if [ "$fail" -ne 0 ]; then
             exit 1
           fi
 
@@ -130,5 +188,23 @@ jobs:
       - name: Run FReD ETL
         shell: bash
         run: |
-          python "API Integration Guide/build_two_tables_doi_records.py" \
-            "output/flora.csv"
+          set -euo pipefail
+
+          python "$ETL_SCRIPT" "$CSV_FILE" | tee etl.log
+
+      - name: Write job summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "### FReD ETL"
+            echo ""
+            echo "- Tables: \`$TARGET_TABLES\`"
+            echo "- CSV: \`$CSV_FILE\`"
+            echo "- CLEAR_TABLES: \`${CLEAR_TABLES:-unset}\`"
+            if [ -f etl.log ]; then
+              grep -E '^(Prepared|Wrote|Cleared)' etl.log | sed 's/^/- /' || true
+            else
+              echo "- No ETL output (the run failed before the load started)."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
