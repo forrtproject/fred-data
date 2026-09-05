@@ -110,14 +110,25 @@ tag_source <- function(df, type_label, source_label) {
     rename(any_of(c(outcome_quote_source = "out_quote_source"))) %>%
     mutate(type = type_label, source = source_label)
 }
+# Each source is a separately type-guessed CSV, so a column that is text in one
+# sheet can parse as numeric in another (e.g. `study_o` when every value in a
+# sheet happens to be a bare number). Coerce to character wherever the
+# reference data frame holds character, so bind_rows never hits a type clash.
+align_types <- function(df, ref) {
+  shared <- intersect(names(df), names(ref))
+  to_chr <- shared[vapply(ref[shared], is.character, logical(1)) &
+                   !vapply(df[shared], is.character, logical(1))]
+  df %>% mutate(across(all_of(to_chr), as.character))
+}
 if (nrow(reproductions) == 0) {
   flora_raw <- tag_source(replications, "replication", "replications")
 } else if (nrow(replications) == 0) {
   flora_raw <- tag_source(reproductions, "reproduction", "reproductions")
 } else {
+  reps <- tag_source(replications, "replication", "replications")
   flora_raw <- bind_rows(
-    tag_source(replications, "replication", "replications"),
-    tag_source(reproductions, "reproduction", "reproductions")
+    reps,
+    align_types(tag_source(reproductions, "reproduction", "reproductions"), reps)
   )
 }
 ```
@@ -175,7 +186,7 @@ cat(sprintf("    ✓ Processed %d COS replication rows × %d columns\n", nrow(re
 
 flora_raw <- bind_rows(
   flora_raw,
-  replications_cos
+  align_types(replications_cos, flora_raw)
 )
 
 ```
@@ -208,7 +219,7 @@ cat(sprintf("  Common columns: %d\n", length(common_cols)))
 
 flora_raw <- bind_rows(
   flora_raw,
-  score_prepared %>% select(all_of(common_cols))
+  score_prepared %>% select(all_of(common_cols)) %>% align_types(flora_raw)
 )
 
 cat(sprintf("✓ Merged with FLoRA data\n"))
@@ -232,7 +243,7 @@ if (!is.null(validated_export)) {
   common_cols <- intersect(names(flora_raw), names(validated_export))
   flora_raw <- bind_rows(
     flora_raw,
-    validated_export %>% select(all_of(common_cols))
+    validated_export %>% select(all_of(common_cols)) %>% align_types(flora_raw)
   )
 
   cat(sprintf("    ✓ Total rows after validated export merge: %d\n", nrow(flora_raw)))
