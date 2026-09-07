@@ -1908,3 +1908,101 @@ compute_author_overlap <- function(data,
 
   data
 }
+
+
+#' Fill missing title/author/year from a hand-written APA reference
+#'
+#' Rows entered in the FLoRA sheets with a URL but no DOI carry their citation
+#' only as free text in `ref_<side>` (e.g. the i4replication reports). No
+#' lookup service can give them a title, so parse the APA string itself:
+#' `Authors (Year[, Month d]). Title. Rest.` Only rows still lacking a title
+#' after the DOI, manual-file and OpenAlex passes are touched, and only when
+#' the text has the citation shape (a bare DOI in the reference column is not).
+#' Sets `title`, `author` (as the JSON list the rest of the pipeline uses),
+#' `year`, and copies the text into `ref_<side>_clean` so it is exported as
+#' the APA reference.
+#' @return data with the parsed fields filled; prints how many rows were filled
+augment_titles_from_apa_text <- function(data, side = c("r", "o"), verbose = TRUE) {
+  stopifnot(is.data.frame(data))
+  side <- match.arg(side)
+  col_ref   <- paste0("ref_", side)
+  col_clean <- paste0("ref_", side, "_clean")
+  col_title <- paste0("title_", side)
+  col_author <- paste0("author_", side)
+  col_year  <- paste0("year_", side)
+  if (!col_ref %in% names(data)) return(data)
+  for (nm in c(col_clean, col_title, col_author)) {
+    if (!nm %in% names(data)) data[[nm]] <- NA_character_
+  }
+  if (!col_year %in% names(data)) data[[col_year]] <- NA_integer_
+
+  has_text_vec <- function(x) { x <- trimws(as.character(x)); !is.na(x) & nzchar(x) }
+
+  parse_one <- function(ref) {
+    ref <- str_squish(ref)
+    # Authors end at the first "(YYYY" or "(n.d.)" group; the title starts
+    # after "). ". A reference with no author is title-first:
+    # `Title [Working paper]. (n.d.). URL`.
+    m <- str_match(ref, "^(.*?)\\s*\\((\\d{4}|n\\.d\\.)[^)]*\\)\\.?\\s+(.*)$")
+    if (is.na(m[1, 1])) return(NULL)
+    authors <- m[1, 2]; rest <- m[1, 4]
+    year <- suppressWarnings(as.integer(m[1, 3]))
+    if (str_detect(authors, "[.!?\\]]$") && str_detect(rest, "^(https?://|doi|10\\.)")) {
+      title <- str_squish(str_remove(authors, "\\s*\\[[^]]*\\]\\.?$"))
+      title <- str_remove(title, "\\.$")
+      if (!nzchar(title)) return(NULL)
+      return(list(title = title, year = year, author = NA_character_))
+    }
+    # Title runs to the first ". " outside double quotes (titles may quote
+    # another paper's title, which itself may contain full stops).
+    # A closing quote right after a full stop also ends the title, and
+    # "et al." does not.
+    chars <- str_split(rest, "")[[1]]
+    n <- length(chars)
+    in_quote <- FALSE; end <- n
+    for (i in seq_len(n)) {
+      ch <- chars[i]
+      if (ch %in% c('"', "“", "”")) {
+        in_quote <- !in_quote
+        if (!in_quote && i > 1 && chars[i - 1] == "." && (i == n || chars[i + 1] == " ")) { end <- i; break }
+        next
+      }
+      if (in_quote || ch != "." || (i < n && chars[i + 1] != " ")) next
+      prev <- paste(chars[seq_len(i - 1)], collapse = "")
+      if (str_detect(prev, "\\bet al$")) next
+      end <- i - 1; break
+    }
+    title <- str_squish(paste(chars[seq_len(end)], collapse = ""))
+    if (!nzchar(title) || !nzchar(authors)) return(NULL)
+    # "Last, F. M., Last, G., & Last, H." -> alternating family / given parts.
+    parts <- str_split(str_replace_all(authors, ",?\\s*&\\s*", ", "), ",\\s*")[[1]]
+    parts <- parts[nzchar(parts)]
+    author_list <- if (length(parts) %% 2 == 0 && length(parts) > 0) {
+      lapply(seq(1, length(parts), by = 2), function(j)
+        list(family = parts[j], given = parts[j + 1]))
+    } else {
+      list(list(family = authors, given = ""))
+    }
+    author_list[[1]]$sequence <- "first"
+    if (length(author_list) > 1) for (j in 2:length(author_list)) author_list[[j]]$sequence <- "additional"
+    list(title = title, year = year,
+         author = as.character(toJSON(author_list, auto_unbox = TRUE)))
+  }
+
+  idx <- which(!has_text_vec(data[[col_title]]) & has_text_vec(data[[col_ref]]))
+  filled <- 0L
+  for (i in idx) {
+    p <- parse_one(data[[col_ref]][i])
+    if (is.null(p)) next
+    data[[col_title]][i] <- p$title
+    if (!has_text_vec(data[[col_author]][i]) && !is.na(p$author)) data[[col_author]][i] <- p$author
+    if (is.na(data[[col_year]][i]) && !is.na(p$year)) data[[col_year]][i] <- p$year
+    if (!has_text_vec(data[[col_clean]][i])) data[[col_clean]][i] <- str_squish(data[[col_ref]][i])
+    filled <- filled + 1L
+  }
+  if (verbose) {
+    cat(sprintf("  Parsed title_%s from APA text for %d of %d rows lacking a title\n",
+                side, filled, length(idx)))
+  }
+  data
+}
