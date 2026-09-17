@@ -438,14 +438,15 @@ For API issues:
 This chart is automatically updated after each pipeline run, showing the size of `output/flora.csv` over time.
 
 <!-- FLORA_UPDATE_LOG_START -->
-> **Latest (2026-09-16):** Total = 2,914 | Replications = 2,557 | Reproductions = 357
+> **Latest (2026-09-17):** Total = 2,916 | Replications = 2,557 | Reproductions = 359
 
 ![FLoRA dataset size over time](output/flora_history.png)
 
-<details><summary>Full history (174 entries)</summary>
+<details><summary>Full history (175 entries)</summary>
 
 | Date | Total | Replications | Reproductions |
 |------|------:|-------------:|--------------:|
+| 2026-09-17 | 2916 | 2557 | 359 |
 | 2026-09-16 | 2914 | 2557 | 357 |
 | 2026-09-15 | 2914 | 2557 | 357 |
 | 2026-09-14 | 2914 | 2557 | 357 |
