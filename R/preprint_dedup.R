@@ -30,8 +30,10 @@ source(here::here("R", "outcome_vocabulary.R"))
 
 # ---- constants ----
 PREPRINT_DOI_PREFIXES <- c(
-"10.31234/",
+  "10.31234/",
   "10.31219/",
+  "10.31222/", # MetaArXiv (OSF)
+  "10.31235/", # SocArXiv (OSF)
   "10.17605/",
   "10.48550/",
   "10.1101/",
