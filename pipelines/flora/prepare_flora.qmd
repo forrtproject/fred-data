@@ -96,6 +96,24 @@ reproductions <- reproductions %>%
   filter(validation %in% c("validated - chosen", "validated - changed", "validated - unchanged"))
 cat(sprintf("    ✓ Filtered to %d validated reproductions\n", nrow(reproductions)))
 
+# The reproductions sheet codes outcomes on two axes (outcome_computational,
+# outcome_robustness), each with its own quote and quote-source column, and has
+# no `outcome` column. flora_cols only exports `outcome`, `outcome_quote` and
+# `outcome_quote_source`, so combine the axes into those here — otherwise every
+# reproduction from this sheet is released with a blank outcome.
+if (nrow(reproductions) > 0) {
+  reproductions <- reproductions %>%
+    mutate(
+      outcome = combine_reproduction_outcome(outcome_computational, outcome_robustness),
+      outcome_quote = combine_reproduction_quotes(outcome_computational_quote,
+                                                  outcome_robustness_quote),
+      outcome_quote_source = combine_reproduction_quotes(out_quote_computational_source,
+                                                         out_quote_robust_source)
+    )
+  cat(sprintf("    ✓ Combined two-axis outcomes for %d of %d reproductions\n",
+              sum(!is.na(reproductions$outcome)), nrow(reproductions)))
+}
+
 # Combine both datasets (handle case where one might be empty)
 # Add source variable to track data origin. The replications sheet uses
 # `out_quote_source` and the rest of the pipeline (and the COS/SCORE branches)
