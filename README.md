@@ -1,6 +1,12 @@
 # FORRT Replication Database (FReD) — Data Processing & API
 
-This repository contains the complete data processing pipeline for the **FORRT Replication Database (FReD)** and **FLoRA** datasets, plus the backend API for the Zotero Replication Checker plugin.
+## Project status and where to contribute
+
+Most of this repository's FLoRA ingestion and validation work is superseded and partially redundant. **[flora-validation](https://github.com/forrtproject/flora-validation) is the current source for FLoRA ingestion and validation logic.** Propose new work on those components there rather than extending a second implementation here.
+
+This repository retains effect-level **FReD** processing (`pipelines/fred/`, producing `output/FReD.xlsx`), shared R helpers, historical FLoRA preparation code, and legacy API/loading and release tooling. FReD's effect-level work is distinct from FLoRA's paper-level dataset; the status above does not retire that work or establish that every script and scheduled workflow here has stopped running.
+
+The pipeline and API sections below describe the retained implementation. For current FLoRA preparation, permanent identities, and public API behaviour, use the [flora-validation implementation guide](https://github.com/forrtproject/flora-validation/blob/main/docs/README.md) and [API guide](https://github.com/forrtproject/flora-validation/blob/main/docs/FLORA_API.md). Discuss remaining FReD or compatibility work in an issue before changing shared logic or outputs. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [FORRT Code of Conduct](https://forrt.org/coc/).
 
 ## 📋 Table of Contents
 
@@ -367,36 +373,7 @@ To change cache locations, edit `R/cache_config.R` and update the paths.
 
 ## Contributing
 
-### Running with Debug Output
-
-```bash
-# Enable verbose logging
-quarto render pipelines/fred/prepare_fred.qmd --quiet false
-```
-
-### Testing Individual Functions
-
-```r
-# Test cleaning
-source("R/data_cleaning.R")
-result <- clean_fred_data(sample_data)
-
-# Test augmentation
-source("R/augmentation.R")
-data <- augment_with_author_overlap(sample_data)
-
-# Test caching
-source("R/crossref_cache.R")
-refs <- get_apa_references(c("10.1234/example"))
-```
-
-### Adding New Augmentations
-
-1. Create function in `R/augmentation.R`
-2. Follow pattern: `augment_with_[feature](data)`
-3. Add cache management as needed
-4. Call from appropriate pipeline file
-5. Document in pipeline comments
+See [CONTRIBUTING.md](CONTRIBUTING.md). New FLoRA ingestion and validation work belongs in [flora-validation](https://github.com/forrtproject/flora-validation). For effect-level FReD changes, retained compatibility code, or documentation corrections, open an issue describing the problem and the component that still needs to be maintained here.
 
 ---
 
@@ -429,7 +406,7 @@ For API issues:
 
 **Last Updated**: 2025-12-17
 **Version**: 2.0 (Reorganized with independent pipelines)
-**Status**: Production-ready
+**Status**: FLoRA ingestion/validation mostly superseded; retained FReD and compatibility work require scope confirmation
 
 ---
 
