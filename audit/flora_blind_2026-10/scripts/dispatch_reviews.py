@@ -21,8 +21,7 @@ def run(selections, root=a.R, base_worker=a.one, scope_worker=a.final_scope_one,
     lock = (root / 'argon/runner.lock').open('w')
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     try:
-        deadline = datetime.datetime.fromisoformat(json.loads(
-            (root / 'run_manifest.json').read_text())['deadlines']['adjudication'])
+        deadline = a.adjudication_deadline(root)
         groups, keys = {}, collections.defaultdict(set)
         for selection in selections:
             for item in json.loads(Path(selection).read_text())['items']:

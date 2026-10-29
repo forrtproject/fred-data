@@ -57,6 +57,22 @@ class DispatcherTests(unittest.TestCase):
             self.assertEqual(len(summary['not_dispatched_before_deadline']), 12)
             self.assertEqual(summary['review_results'], [])
 
+    def test_continuation_deadline_applies_only_while_active(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            self.fixture(root, past=True)
+            path = root / 'run_manifest.json'
+            manifest = json.loads(path.read_text())
+            original = d.a.adjudication_deadline(root)
+            renewed = d.utcnow() + datetime.timedelta(hours=1)
+            manifest['continuation'] = {'status': 'active',
+                                        'adjudication_deadline': renewed.isoformat()}
+            path.write_text(json.dumps(manifest))
+            self.assertEqual(d.a.adjudication_deadline(root), renewed)
+            manifest['continuation']['status'] = 'complete'
+            path.write_text(json.dumps(manifest))
+            self.assertEqual(d.a.adjudication_deadline(root), original)
+
     def test_final_state_cannot_be_redispatched(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)

@@ -1,3 +1,11 @@
+# Supplemental Argon review in progress
+
+User authorized the 102 previously uncalled field requests across 87 works. The single dispatcher uses adjudication_selection_continuation.json and the active continuation deadline in run_manifest.json. Max four concurrent Gemini 4 Argon (High) calls; max two attempts per work. Original run completion and removed schedules are preserved; no coding restart.
+
+Runner: retained exec session 74052; progress in argon/continuation_runner.log. Do not start a second pool. Parent must inspect returned source contexts, regenerate comparison and coverage, verify all outputs, update this file/report/PR, and push.
+
+Original bounded-run completion record follows:
+
 # FLoRA audit complete
 
 Completed within the authorised ten-hour window. No coding or adjudication processes remain. Both owned FLoRA schedules were deleted and their absence verified; the parallel FReD schedule was not changed. Queued tick.js calls see completed_at and return without mutation.

@@ -6,6 +6,14 @@ spec=importlib.util.spec_from_file_location('compare',R/'scripts/compare.py');c=
 def atomic(p,v):
  tmp=p.with_suffix(p.suffix+'.tmp');tmp.write_text(json.dumps(v,ensure_ascii=False,indent=2)+'\n');tmp.replace(p)
 
+def adjudication_deadline(root=None):
+    root = R if root is None else root
+    manifest = json.loads((pathlib.Path(root) / 'run_manifest.json').read_text())
+    continuation = manifest.get('continuation', {})
+    value = (continuation['adjudication_deadline'] if continuation.get('status') == 'active'
+             else manifest['deadlines']['adjudication'])
+    return datetime.datetime.fromisoformat(value)
+
 def decision_key(item):
     return (str(item.get('input_row_index', '')),
             item.get('target_index') if item.get('field') == 'missing_row' else None,
@@ -108,7 +116,7 @@ def final_scope_one(fk):
     state = c.read_json(statepath)[0] or {}
     if state.get('status') != 'scope_review_pending' or state.get('attempts') != 1:
         return {'file_key': fk, 'status': 'not_pending_or_exhausted'}
-    deadline = datetime.datetime.fromisoformat(json.loads((R/'run_manifest.json').read_text())['deadlines']['adjudication'])
+    deadline = adjudication_deadline()
     if datetime.datetime.now(datetime.timezone.utc) >= deadline:
         return {'file_key': fk, 'status': 'dispatch_deadline'}
     inputpath = R/'argon'/f'{fk}.scope_review.input.json'
@@ -160,7 +168,7 @@ def one(fk,items):
  statepath=R/'argon'/f'{fk}.state.json';state=c.read_json(statepath)[0] or {}
  if state.get('status')=='scope_review_pending':return {'file_key':fk,'status':'scope_review_pending'}
  if state.get('status') in ['validated','unresolved'] or state.get('attempts',0)>=2:return {'file_key':fk,'status':'already_final'}
- deadline=datetime.datetime.fromisoformat(json.loads((R/'run_manifest.json').read_text())['deadlines']['adjudication'])
+ deadline=adjudication_deadline()
  if datetime.datetime.now(datetime.timezone.utc)>=deadline:return {'file_key':fk,'status':'dispatch_deadline'}
  textpath=R/'texts'/f'{fk}.txt'; codingpath=R/'codings'/f'{fk}.json'
  if not textpath.exists() or not codingpath.exists():return {'file_key':fk,'status':'no_text'}
