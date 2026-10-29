@@ -511,7 +511,7 @@ def report(results, missing, works, issues):
         if r['final_verdict'] == 'error':
             doi = clean_doi(r['doi'])
             link = f'[{r["title"] or doi}](https://doi.org/{doi})' if doi else r['title']
-            lines.append(f'- Confirmed missing target: {link}; work {r["work_key"]}, target {r["target_index"]}. {r["evidence"]}')
+            lines.append(f'- Confirmed missing target: {link}; work '+(f'[replicating work](https://doi.org/{r["work_key"]})' if r['work_key'].startswith('10.') else r['work_key'])+f', target {r["target_index"]}. {r["evidence"]}')
     lines += [f'{sum(r["final_verdict"] == "unverified" for r in missing)} unmatched blind targets remain unverified. '
               'Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.', '', '## Skips and validation issues', '']
     skips = collections.Counter(w['skip_reason'] for w in works if w['skip_reason'])

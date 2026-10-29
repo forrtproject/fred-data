@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Parent-controlled Argon adjudication, <=4 parallel calls; validated JSON only."""
-import concurrent.futures,csv,datetime,hashlib,importlib.util,json,pathlib,subprocess,sys,time,fcntl
+import concurrent.futures,csv,datetime,hashlib,importlib.util,json,pathlib,subprocess,sys,time,fcntl,os
 R=pathlib.Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('compare',R/'scripts/compare.py');c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c)
 def atomic(p,v):
@@ -12,7 +12,7 @@ def one(fk,items):
  if not textpath.exists() or not codingpath.exists():return {'file_key':fk,'status':'no_text'}
  coding=json.loads(codingpath.read_text());text=textpath.read_text();work_key=coding['work_key']
  manifest=c.read_csv(R/'manifest.csv');indices=[int(x['input_row_index']) for x in manifest if x['file_key']==fk]
- raw=c.read_csv(c.INPUT);rows=[{'input_row_index':i,**raw[i]} for i in indices]
+ raw=c.read_csv(c.INPUT);rows=[{'input_row_index':i,**{k:raw[i][k] for k in ['doi_r','title_r','doi_o','title_o','author_o','year_o','type','outcome','outcome_quote','source']}} for i in indices]
  payload={'shipped_rows':rows,'blind_coding':coding,'review_items':items}
  sig=hashlib.sha256((json.dumps(payload,sort_keys=True)+text).encode()).hexdigest()
  # Final valid adjudication, including undeterminable, is not retried without changed input.
@@ -65,7 +65,8 @@ if __name__=='__main__':
  manifest=json.loads((R/'run_manifest.json').read_text())
  if datetime.datetime.now(datetime.timezone.utc)>=datetime.datetime.fromisoformat(manifest['deadlines']['adjudication']):
   print('Adjudication dispatch deadline passed');sys.exit(0)
- ds=json.loads((R/'disagreements.json').read_text())['items'];grouped={}
+ selection=pathlib.Path(os.environ.get('FLORA_ARGON_SELECTION',str(R/'disagreements.json')))
+ ds=json.loads(selection.read_text())['items'];grouped={}
  for d in ds:
   if d.get('resolution') not in ['unresolved',None]:continue
   if len(sys.argv)>1 and d['file_key'] not in sys.argv[1:]:continue
