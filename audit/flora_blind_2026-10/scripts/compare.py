@@ -537,6 +537,16 @@ def report(results, missing, works, issues):
             lines.append(f'- Row {r["input_row_index"]}, {link}: {"; ".join(changes)}.')
     if not errors:
         lines.append('No input-row errors are confirmed at this checkpoint.')
+    version_notes = {
+        '9dad580b3423aa2b': 'Row 2238 was checked against the verified 2020 working paper; the final 2022 article was not obtained.',
+        '0245b18b007f60d7': 'Row 929 was checked against the verified 2015 draft; the final 2017 article was not obtained.',
+    }
+    limits = [note for fk, note in version_notes.items() if any(
+        r['file_key'] == fk and any(r[k + '_final_verdict'] == 'error' for k in ('type', 'original', 'outcome'))
+        for r in results)]
+    if limits:
+        lines += ['', 'Source-version limits: ' + ' '.join(limits) +
+                  ' These judgments describe the supplied versions; changes in unseen final versions cannot be ruled out.']
     lines += ['', '## Unmatched blind targets', '']
     for r in missing:
         if r['final_verdict'] == 'error':
@@ -554,9 +564,9 @@ def report(results, missing, works, issues):
     lines += ['', '## Time per work', '']
     timed = [w for w in works if w['elapsed_seconds'] is not None]
     lines.append(f'Elapsed time supplied for {len(timed)} / {len(works)} works; missing times are not imputed. '
-                 'The total is worker time, not wall-clock audit duration.')
+                 'Times describe final saved checkpoints and exclude earlier failed or excluded attempts; this is worker time, not wall-clock audit duration.')
     if timed:
-        lines.append(f'Total reported worker time: {sum(w["elapsed_seconds"] for w in timed):.1f} seconds.')
+        lines.append(f'Sum of reported final-checkpoint times: {sum(w["elapsed_seconds"] for w in timed):.1f} seconds.')
         lines.append('Per-work elapsed time and skips are recorded in [work_times.csv](work_times.csv).')
     return '\n'.join(lines) + '\n'
 
@@ -599,8 +609,11 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
             recovered = state.get('partial_recovery', {}).get('recovered_complete_field_objects', 0)
             issues.append(f"Argon {state.get('file_key', state_path.stem)}: unresolved after {state.get('attempts')} attempts; {state.get('reason', 'failure')}. {recovered} independently valid field decisions recovered; remaining fields stay unverified.")
     incidents, _ = read_json(root / 'blinding_incidents.json')
-    for incident in incidents or []:
-        issues.append(f"Blinding exclusion {incident['file_key']}: original coding quarantined; only a fresh-child coding may enter primary results. See blinding_incidents.json.")
+    if incidents:
+        affected = len({incident['file_key'] for incident in incidents})
+        issues.append(f'Blinding incidents affected {affected} works; excluded judgments remain quarantined. '
+                      'Only independent fresh-child retries enter primary results; exhausted retries remain unverified. '
+                      'See blinding_incidents.json and post_exposure_exclusions.json for the complete record.')
     for work_key, keys in grouped.items():
         if len({k['file_key'] for k in keys}) != 1:
             raise ValueError('one work_key has multiple file_keys')
