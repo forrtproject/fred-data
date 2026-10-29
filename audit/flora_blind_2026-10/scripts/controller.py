@@ -1,4 +1,4 @@
-import pathlib,json,sys,datetime,subprocess,hashlib,os
+import pathlib,json,sys,datetime,subprocess,hashlib,os,re
 R=pathlib.Path(__file__).resolve().parents[1]
 NOW=lambda:datetime.datetime.now(datetime.timezone.utc)
 def read(p,default=None):
@@ -84,4 +84,4 @@ if __name__=='__main__':
  elif cmd=='prepare':print(json.dumps(prepare()))
  elif cmd=='event':event(json.loads(sys.argv[2]))
  elif cmd=='validate':
-  ps=list((R/'codings').glob('*.json'));print(json.dumps({'total':len(ps),'valid':sum(validate(p) for p in ps),'invalid':[p.name for p in ps if not validate(p)]}))
+  ps=[p for p in (R/'codings').glob('*.json') if re.fullmatch(r'[0-9a-f]{16}',p.stem)];print(json.dumps({'total':len(ps),'valid':sum(validate(p) for p in ps),'invalid':[p.name for p in ps if not validate(p)]}))
