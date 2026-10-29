@@ -326,6 +326,8 @@ def compare_work(rows, keys, coding, error, text, decisions):
         j, grade, sim = pair if pair else (None, 'unmatched', '')
         target = targets[j] if j is not None else {}
         flags = sorted(rf.get(i, set()) | (tf.get(j, set()) if j is not None else set()))
+        if target.get('identity_warning'):
+            flags = sorted(set(flags) | {'source_original_identity_warning'})
         identity_d = decision_for(decisions, 'original', text, key['input_row_index']) if not error else None
         adjudicated_identity = (i in identity_decisions and counts[identity_decisions[i][0]] == 1)
         identity = bool(pair) and (not flags or adjudicated_identity)

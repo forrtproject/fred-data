@@ -394,3 +394,18 @@ class SourceIdentityAdjudicationTests(unittest.TestCase):
                                                      decision(field='outcome', verdict='shipped_right', corrected_value='successful')])
         self.assertFalse(rs[0]['identity_resolved'])
         self.assertEqual(rs[0]['outcome_final_verdict'], 'unverified')
+
+
+class TargetIdentityWarningTests(unittest.TestCase):
+    def test_target_warning_blocks_automatic_agreement_without_excluding_source(self):
+        rs, _, _ = compare(code=coding([target(identity_warning='Conflicting original references')]))
+        self.assertIn('source_original_identity_warning', rs[0]['pairing_flags'])
+        self.assertFalse(rs[0]['identity_resolved'])
+        self.assertEqual(rs[0]['original_final_verdict'], 'unverified')
+        self.assertEqual(rs[0]['outcome_final_verdict'], 'unverified')
+
+    def test_explicit_source_adjudication_can_resolve_target_warning(self):
+        rs, _, _ = compare(code=coding([target(identity_warning='Conflicting original references')]),
+                           decisions=[decision(field='original', verdict='shipped_right', corrected_value='10.1/a', target_index=0)])
+        self.assertTrue(rs[0]['identity_resolved'])
+        self.assertEqual(rs[0]['original_final_verdict'], 'correct')
