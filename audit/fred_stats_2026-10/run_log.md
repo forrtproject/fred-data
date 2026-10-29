@@ -4698,3 +4698,30 @@ Paper-side skips/checkpoints logged 2026-10-29T12:50:28.465112+00:00:
 
 - Hourly checkpoint 2026-10-29T13:01:07.347888+00:00: {"checkpointed": 2164, "o_fully_checked": 179, "o_any_stat_checked": 735, "r_fully_checked": 257, "r_any_stat_checked": 1005, "any_field_checked": 1435, "fully_checked_effects": 32}; 178 confirmed field errors. All2164 first-pass checkpoints and bounded locator revisits complete; extraction active count0. Nineteen tests pass; dataset hash unchanged.
 - Locator revisit eligibility now also excludes first-pass tasks launched after the locator revision, because they already received those references. Some already completed revisit children correctly declined such unchanged inputs and preserved their checkpoints; no additional retries will occur.
+
+- Verified removal of orphaned own-audit CLI processes: [48262]. Matched exact paper payload hash and audit text root; unrelated processes excluded.
+- Verified that earlier SIGTERM did not actually exit orphan CLI48262; it lingered after its response and had fallen outside tracked active-call state. Forced it to exit and waited for confirmation. cleanup_argon.py now removes only terminal/stale own-audit clients, identified by exact paper-payload hash plus this audit's text root; it runs before launching further calls. Payload matching survives instruction-text revisions. Added process-identity regression coverage; twenty tests pass. No unrelated processes signalled.
+
+- Parent QC 2026-10-29T14:11:28.698915+00:00: scientific-notation p values with embedded spaces were being treated as differing. Added precision-preserving Decimal p parsing and inequality handling; rows852,853,854,855,857,858,859,862,863,864,882 replication p no longer count as errors (compatible intervals). Row856 remains a genuine candidate because shipped p < 0 is an empty bound. Raw zeros are evaluated at available workbook precision; original printed precision may be lost. Twenty-two regression checks pass.
+- Parent QC: held original ES779 for a focused second review because prior Argon substituted eta-squared for requested chi-square. Also held ES233(original),322(replication),644(original) to distinguish demonstrably wrong df/N annotations from merely unprinted annotations and obtain full statistic corrections. Prior replies retained.
+- Parent QC: a prior wrong-target blind flag no longer suppresses separately validated Argon evidence confirming the shipped value. Only shipped_right with a compatible independently reported value is accepted; ES additionally requires explicit matching metric or a parsed test statistic. Wrong-target proposed errors remain unverified without a target override. Primary-original evidence gate remains in force.
+- Obvious resolution row350 replication p: source p < .001 and shipped p < .01 have compatible intervals; a tighter source bound is not an error. Retained prior Argon response and evidence.
+
+Paper-side skips/checkpoints logged 2026-10-29T14:11:35.831425+00:00:
+
+- Partial/unevaluable row 669: pval_value_o (not_comparable). Evidence/reasons: extractions/669.json and results.csv.
+- Partial/unevaluable row 775: pval_value_o (not_comparable). Evidence/reasons: extractions/775.json and results.csv.
+- Partial/unevaluable row 1514: pval_value_o (not_comparable). Evidence/reasons: extractions/1514.json and results.csv.
+- Partial/unevaluable row 1911: pval_value_r (not_comparable). Evidence/reasons: extractions/1911.json and results.csv.
+- Partial/unevaluable row 1912: pval_value_r (not_comparable). Evidence/reasons: extractions/1912.json and results.csv.
+- Partial/unevaluable row 1913: pval_value_r (not_comparable). Evidence/reasons: extractions/1913.json and results.csv.
+- Partial/unevaluable row 1914: pval_value_r (not_comparable). Evidence/reasons: extractions/1914.json and results.csv.
+- Partial/unevaluable row 1915: pval_value_r (not_comparable). Evidence/reasons: extractions/1915.json and results.csv.
+- Partial/unevaluable row 1916: pval_value_r (not_comparable). Evidence/reasons: extractions/1916.json and results.csv.
+- Partial/unevaluable row 1917: pval_value_r (not_comparable). Evidence/reasons: extractions/1917.json and results.csv.
+- Partial/unevaluable row 1918: pval_value_r (not_comparable). Evidence/reasons: extractions/1918.json and results.csv.
+- Partial/unevaluable row 1919: pval_value_r (not_comparable). Evidence/reasons: extractions/1919.json and results.csv.
+- Partial/unevaluable row 1968: pval_value_o (not_comparable). Evidence/reasons: extractions/1968.json and results.csv.
+- Partial/unevaluable row 2121: pval_value_r (not_comparable). Evidence/reasons: extractions/2121.json and results.csv.
+
+- Hourly checkpoint 2026-10-29T14:11:41.096614+00:00: {"checkpointed": 2164, "o_fully_checked": 188, "o_any_stat_checked": 753, "r_fully_checked": 271, "r_any_stat_checked": 1078, "any_field_checked": 1468, "fully_checked_effects": 41}; 227 confirmed field errors pending remaining adjudications and held-case review. All2164 checkpoints valid;22 tests pass; dataset hash unchanged.

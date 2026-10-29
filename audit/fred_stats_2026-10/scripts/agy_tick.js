@@ -4,6 +4,7 @@ const write=async(name,x)=>tools.exec_command({cmd:`cat > '${B}/${name}' <<'FRED
 const append=async(name,x)=>tools.exec_command({cmd:`cat >> '${B}/${name}' <<'FRED_JSON_EOF'\n${JSON.stringify(x)}\nFRED_JSON_EOF`,max_output_tokens:100});
 await tools.exec_command({cmd:`python3 '${B}/scripts/control.py' agy`,max_output_tokens:1000});
 const control=JSON.parse(await read('agy_control.json'));const records=control.records;
+const cleanup=await tools.exec_command({cmd:`python3 '${B}/scripts/cleanup_argon.py'`,max_output_tokens:1000});if(cleanup.exit_code!==0)throw Error(cleanup.output);
 let states=control.states;
 const latest={};for(const r of records)latest[r.key]=r;
 for(const r of Object.values(latest)){

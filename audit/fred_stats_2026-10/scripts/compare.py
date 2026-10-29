@@ -1,7 +1,7 @@
 import json,csv,re,collections,datetime,hashlib,unicodedata
 from functools import lru_cache
 from pathlib import Path
-from consistency import number,rounding,pinterval
+from consistency import number,rounding,pinterval,p_parts
 from schema import validate
 from protect_enrichment import preserve_completed
 B=Path(__file__).resolve().parents[1]
@@ -52,14 +52,19 @@ def comp(field,raw,blind,r):
   return 'agree' if a==b else 'near' if abs(a-b)/max(a,1)<=.05 else 'differ'
  if field.startswith('pval'):
   typ=str(r['pval_type_'+field[-1]] or '').split(' ')[0]
-  if number(raw)==number(val) and typ==blind['bound']:return 'identical'
+  ap,bp=p_parts(raw,typ),p_parts(val,blind['bound'])
+  if raw in [None,''] and bp:return 'differ'
+  if not ap or not bp:return 'not_comparable'
   aa,bb=pinterval(raw,typ),pinterval(val,blind['bound'])
+  # Strict bounds at zero/one can represent an empty set, never an agreement.
+  if any(t=='l' and x==0 or t=='g' and x==1 for x,t in [ap,bp]):return 'differ'
+  if ap==bp:return 'identical'
   if not overlap(aa,bb):return 'differ'
   lo,hi=max(aa[0],bb[0]),min(aa[1],bb[1])
   if lo==hi:
-   for value,bound in [(raw,typ),(val,blind['bound'])]:
-    if bound in ['l','<'] and not lo<number(value):return 'differ'
-    if bound in ['g','>'] and not lo>number(value):return 'differ'
+   for value,bound in [ap,bp]:
+    if bound=='l' and not lo<value:return 'differ'
+    if bound=='g' and not lo>value:return 'differ'
   return 'compatible'
  if not metric(r['es_type_'+field[-1]]):return 'not_comparable'
  if metric(r['es_type_'+field[-1]])=='test statistic':
@@ -74,6 +79,13 @@ def comp(field,raw,blind,r):
  if a is None or b is None:return 'differ' if raw in [None,''] and b is not None else 'agree' if norm(raw)==norm(val) else 'not_comparable'
  if a*b<0:return 'differ'
  return 'agree' if a==b else 'compatible' if overlap(rounding(raw),rounding(val)) else 'differ'
+def adjudication_confirms_shipped(field,raw,a,row):
+ if a.get('verdict')!='shipped_right' or a.get('correct_value') is None:return False
+ if field.startswith('es_value'):
+  requested=metric(row.get('es_type_'+field[-1]))
+  if requested!='test statistic' and metric(a.get('correct_metric'))!=requested:return False
+ e={'value':a['correct_value'],'bound':a.get('correct_bound') or row.get('pval_type_'+field[-1]),'metric':a.get('correct_metric'),'test_statistic':a['correct_value']}
+ return comp(field,raw,e,row) in ['agree','identical','compatible']
 def source_prefix(value):
  s=str(value or '').strip()
  if not s:return '(missing)'
@@ -85,7 +97,7 @@ def original_secondary_source(e,row):
  info=SOURCE_PROVENANCE.get(e.get('source_path'))
  if info:return not (info.get('work_doi') and str(info['work_doi']).lower()==str(row.get('doi_o') or '').lower())
  doi=str(row.get('doi_r') or '').strip().lower()
- if not doi or row.get('doi_o')==row.get('doi_r'):return False
+ if not doi or str(row.get('doi_o') or '').strip().lower()==doi:return False
  key=hashlib.sha256(doi.encode()).hexdigest()[:24]
  return Path(e.get('source_path') or '').name.startswith(key)
 def original_primary_evidence(e,row):
@@ -150,7 +162,9 @@ def main():
     if (aid,f) in holds:a=None
     if a:
      resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=a.get('correct_value','');location=a.get('location','');reason=a.get('reason','')
-     if comparison=='mismatched_target':verdict='unverified';reason='Target mismatch remains unresolved; '+reason
+     if comparison=='mismatched_target':
+      if adjudication_confirms_shipped(f,raw,a,r):reason='Argon independently located evidence confirming the shipped target value; '+reason
+      else:verdict='unverified';reason='Target mismatch remains unresolved; '+reason
      if verdict=='error':errors.append({'audit_id':aid,'field':f,'shipped':raw,'error_kind':'coding omission' if raw in [None,''] else 'coded value/annotation','correction':suggestion,'location':location,'doi':r['doi_r' if side!='original' else 'doi_o'],'primary_source_url':next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('url_r') or '')+' '+str(r.get('es_repr_r') or ''))), '').rstrip('.,;)') if side!='original' else next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('es_repr_o') or ''))), '').rstrip('.,;)'),'reason':reason})
     else:candidates.append({'audit_id':aid,'field':f,'comparison':comparison,'shipped':raw,'shipped_metric':r.get('es_type_'+f[-1]) if side else None,'shipped_bound':r.get('pval_type_'+f[-1]) if side else None,'blind':e,'locator':{'study_o':r['study_o'],'study_r':r['study_r'],'description':next((a['description'] for a in json.loads((B/'inputs'/p.name).read_text()) if a['audit_id']==aid), '') if False else 'See assigned blind input'},'work_key':r['work_key']})
    if resolution=='unresolved' and (aid,f) in exhausted:reason=exhausted[(aid,f)]['reason']

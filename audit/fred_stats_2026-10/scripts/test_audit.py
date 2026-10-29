@@ -1,12 +1,13 @@
 import unittest,json
 from pathlib import Path
 from consistency import rounding,pinterval,stat_interval
-from compare import comp,source_prefix,original_secondary_source,original_primary_evidence,SOURCE_PROVENANCE
+from compare import adjudication_confirms_shipped,comp,source_prefix,original_secondary_source,original_primary_evidence,SOURCE_PROVENANCE
 from schema import validate
 from retries import failure,atomic
 from prepare import locators
 from validate_adjudication import validate_batch
 from protect_enrichment import preserve_completed
+from stop_argon import prompt_key
 class AuditChecks(unittest.TestCase):
  def test_printed_rounding(self):
   self.assertEqual(rounding('.010'),(.0095,.0105))
@@ -29,6 +30,22 @@ class AuditChecks(unittest.TestCase):
   self.assertEqual(comp('pval_value_o','.001',{'value':'.01','bound':'l'},{'pval_type_o':'l (<)'}),'compatible')
   self.assertEqual(comp('pval_value_o','.01',{'value':'.01','bound':'ge'},{'pval_type_o':'l (<)'}),'differ')
   self.assertEqual(comp('pval_value_o','.84',{'value':'.084','bound':'e'},{'pval_type_o':'e (=)'}),'differ')
+ def test_scientific_p_preserves_rounding_and_strict_bounds(self):
+  r={'pval_type_o':'e (=)'}
+  for v in ['2.2e -16','p = 2.2 × 10^{-16}','2.2e-400']:
+   self.assertEqual(comp('pval_value_o','0',{'value':v,'bound':'e'},r),'compatible')
+  self.assertEqual(comp('pval_value_o','.001',{'value':'<1.68e -305','bound':'l'},{'pval_type_o':'l (<)'}),'compatible')
+  self.assertEqual(comp('pval_value_o','0',{'value':'3.32e -285','bound':'l'},{'pval_type_o':'l (<)'}),'differ')
+  self.assertEqual(comp('pval_value_o','1e-400',{'value':'3e-400','bound':'e'},r),'differ')
+  self.assertEqual(comp('pval_value_o','.01',{'value':'p >= .01','bound':'ge'},{'pval_type_o':'l (<)'}),'differ')
+  self.assertEqual(comp('pval_value_o','.01',{'value':'.01 to .02','bound':'e'},r),'not_comparable')
+ def test_wrong_blind_target_can_be_resolved_by_direct_shipped_evidence(self):
+  a={'verdict':'shipped_right','correct_value':'2986'}
+  self.assertTrue(adjudication_confirms_shipped('n_r','2986',a,{}))
+  self.assertFalse(adjudication_confirms_shipped('n_r','2986',{**a,'verdict':'blind_right'},{}))
+  a={'verdict':'shipped_right','correct_value':'.03'}
+  self.assertFalse(adjudication_confirms_shipped('es_value_o','.03',a,{'es_type_o':'r'}))
+  self.assertTrue(adjudication_confirms_shipped('es_value_o','.03',{**a,'correct_metric':'r'},{'es_type_o':'r'}))
  def test_statistic_label_and_degrees_of_freedom(self):
   b={'value':'11.03','metric':'F','test_statistic':'F(1,154)=11.03'};r={'es_type_o':'test statistic'}
   self.assertEqual(comp('es_value_o','F(1, 154) = 11.03',b,r),'agree')
@@ -85,6 +102,12 @@ class AuditChecks(unittest.TestCase):
   self.assertEqual(comp('es_value_o',None,{'value':'.2','metric':'r'},{'es_type_o':'r'}),'differ')
   self.assertEqual(comp('es_value_o',None,{'value':'.2','metric':'r'},{'es_type_o':None}),'not_comparable')
   self.assertEqual(comp('pval_value_o',None,{'value':'.02','bound':'e'},{'pval_type_o':None}),'differ')
+ def test_cli_identity_survives_instruction_changes_and_excludes_other_audits(self):
+  import hashlib
+  root=str(Path(__file__).resolve().parents[1]/'texts');payload=[{'audit_id':1,'field':'n_o'}];expected=hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()[:16]
+  for preamble in ['Initial instruction','Revised instruction']:
+   self.assertEqual(prompt_key(['agy','-p',preamble+'\n\n'+json.dumps(payload),'--add-dir',root]),expected)
+  self.assertIsNone(prompt_key(['agy','-p','Other\n\n'+json.dumps(payload),'--add-dir','/unrelated/audit/texts']))
  def test_effect_keys_and_complete_exports(self):
   import csv
   b=Path(__file__).resolve().parents[1]

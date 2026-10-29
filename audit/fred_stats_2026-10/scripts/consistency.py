@@ -1,4 +1,4 @@
-import json,re,csv,math,decimal
+import json,re,csv,math,decimal,unicodedata
 from pathlib import Path
 from scipy import stats
 B=Path(__file__).resolve().parents[1]
@@ -9,13 +9,35 @@ def rounding(v):
  try:
   d=decimal.Decimal(str(v).strip().replace('−','-'));h=float(decimal.Decimal(10)**d.as_tuple().exponent)/2;return float(d)-h,float(d)+h
  except:return None
+def p_parts(value,bound):
+ """Normalise p formatting without discarding printed precision or inequalities."""
+ if value is None:return None
+ s=unicodedata.normalize('NFKC',str(value)).strip().lower().replace('−','-').replace('–','-')
+ s=s.replace('\\times','×').replace('\\cdot','×').replace('$','').replace('{','').replace('}','')
+ s=re.sub(r'^p(?:[- ]?value)?\s*','',s);s=re.sub(r'\s+','',s)
+ match=re.match(r'^(<=|>=|≤|≥|<|>|=)',s)
+ t=match[1] if match else str(bound or '').split(' ')[0]
+ if match:s=s[match.end():]
+ t={'=':'e','<':'l','>':'g','<=':'le','≤':'le','>=':'ge','≥':'ge'}.get(t,t)
+ if t not in ['e','l','g','le','ge']:return None
+ s=re.sub(r'(?:(?:×|\*)10\^)([+-]?\d+)$',r'e\1',s)
+ s=re.sub(r'^10\^([+-]?\d+)$',r'1e\1',s)
+ if not re.fullmatch(r'[+-]?(?:\d*\.\d+|\d+\.?\d*)(?:e[+-]?\d+)?',s):return None
+ try:
+  x=decimal.Decimal(s)
+  if not x.is_finite() or not 0<=x<=1:return None
+  return x,t
+ except decimal.InvalidOperation:return None
+
 def pinterval(v,t):
- x=number(v)
- if x is None:return None
- t=str(t or '').split(' ')[0]
- if t in ['e','=']:return tuple(max(0,min(1,q)) for q in rounding(v))
- if t in ['l','le','<','<=']:return (0,x)
- if t in ['g','ge','>','>=']:return (x,1)
+ parts=p_parts(v,t)
+ if parts is None:return None
+ x,t=parts;zero=decimal.Decimal(0);one=decimal.Decimal(1)
+ if t=='e':
+  h=decimal.Decimal(10)**x.as_tuple().exponent/2
+  return max(zero,x-h),min(one,x+h)
+ if t in ['l','le']:return zero,x
+ if t in ['g','ge']:return x,one
  return None
 def stat_interval(value,typ,n,nested,tails):
  s=str(value or '').replace('−','-').replace('χ','X').replace('²','2');num=r'([+-]?(?:\d*\.\d+|\d+\.?\d*))'
