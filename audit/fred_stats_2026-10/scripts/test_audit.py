@@ -3,7 +3,7 @@ from pathlib import Path
 from consistency import rounding,pinterval,stat_interval
 from compare import comp
 from schema import validate
-from retries import failure
+from retries import failure,atomic
 class AuditChecks(unittest.TestCase):
  def test_printed_rounding(self):
   self.assertEqual(rounding('.010'),(.0095,.0105))
@@ -33,6 +33,10 @@ class AuditChecks(unittest.TestCase):
  def test_failure_schema_rejects_fabricated_value(self):
   x=failure(1,'timeout');validate(x);x['original']['n']['value']='100'
   with self.assertRaises(ValueError):validate(x)
+ def test_atomic_failure_checkpoint(self):
+  import tempfile
+  with tempfile.TemporaryDirectory() as directory:
+   path=Path(directory)/'1.json';atomic(path,failure(1,'timeout'));validate(json.loads(path.read_text()));self.assertEqual(list(Path(directory).iterdir()),[path])
  def test_effect_keys_and_complete_exports(self):
   import csv
   b=Path(__file__).resolve().parents[1]

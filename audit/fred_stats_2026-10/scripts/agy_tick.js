@@ -1,9 +1,10 @@
 const B='/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10';
-const read=async name=>(await tools.exec_command({cmd:`cat '${B}/${name}'`,max_output_tokens:50000})).output;
+const read=async name=>{const r=await tools.exec_command({cmd:`cat '${B}/${name}'`,max_output_tokens:50000});if(r.exit_code!==0||r.output.startsWith('Warning: truncated'))throw Error('Cannot read complete adjudication control '+name);return r.output;};
 const write=async(name,x)=>tools.exec_command({cmd:`cat > '${B}/${name}' <<'FRED_JSON_EOF'\n${JSON.stringify(x,null,2)}\nFRED_JSON_EOF`,max_output_tokens:100});
 const append=async(name,x)=>tools.exec_command({cmd:`cat >> '${B}/${name}' <<'FRED_JSON_EOF'\n${JSON.stringify(x)}\nFRED_JSON_EOF`,max_output_tokens:100});
-const records=(await read('adjudication_tasks.jsonl')).trim().split('\n').filter(Boolean).map(JSON.parse);
-let states={};try{states=JSON.parse(await read('adjudication_status.json'));}catch{}
+await tools.exec_command({cmd:`python3 '${B}/scripts/control.py' agy`,max_output_tokens:1000});
+const control=JSON.parse(await read('agy_control.json'));const records=control.records;
+let states=control.states;
 const latest={};for(const r of records)latest[r.key]=r;
 for(const r of Object.values(latest)){
  if(states[r.key]?.terminal)continue;

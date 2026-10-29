@@ -1,12 +1,13 @@
 const B='/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10';
 const parse=r=>r.structuredContent??JSON.parse(r.content.find(x=>x.type==='text').text);
-const read=async name=>(await tools.exec_command({cmd:`cat '${B}/${name}'`,max_output_tokens:50000})).output;
+const read=async name=>{const r=await tools.exec_command({cmd:`cat '${B}/${name}'`,max_output_tokens:50000});if(r.exit_code!==0||r.output.startsWith('Warning: truncated'))throw Error('Cannot read complete control file '+name);return r.output;};
 const append=async (name,x)=>tools.exec_command({cmd:`cat >> '${B}/${name}' <<'FRED_JSON_EOF'\n${JSON.stringify(x)}\nFRED_JSON_EOF`,max_output_tokens:100});
-const records=(await read('tasks.jsonl')).trim().split('\n').filter(Boolean).map(JSON.parse);
+await tools.exec_command({cmd:`python3 '${B}/scripts/control.py'`,max_output_tokens:1000});
+const control=JSON.parse(await read('control.json'));const records=control.records;
 const manifest=JSON.parse(await read('run_manifest.json'));
-let status={};try{status=JSON.parse(await read('task_status.json'));}catch{}
+let status=control.status;
 for(const r of records){
- if(['completed','failed','cancelled','interrupted'].includes(status[r.taskId]?.status))continue;
+ if(r.terminal||['completed','failed','cancelled','interrupted'].includes(status[r.taskId]?.status))continue;
  const x=parse(await tools.mcp__t3_code__task_status({taskId:r.taskId}));status[r.taskId]={status:x.status,summary:x.summary,hasPendingQuestion:x.hasPendingQuestion,pendingApproval:x.pendingApproval};
  if(!['completed','failed','cancelled','interrupted'].includes(x.status) && r.started_at && Date.now()-Date.parse(r.started_at)>15*60000){
   const cancelled=parse(await tools.mcp__t3_code__task_cancel({taskId:r.taskId,clientRequestId:'fred-timeout-'+r.batch,reason:'15-minute hard worker ceiling'}));
@@ -14,13 +15,15 @@ for(const r of records){
  }
  if(x.providerInstanceId!=='codex'||x.model!=='gpt-6.1-sol'||!x.options?.some(v=>v.id==='reasoningEffort'&&v.value==='medium'))throw Error('Requested child identity mismatch');
 }
-await tools.exec_command({cmd:`cat > '${B}/task_status.json' <<'FRED_JSON_EOF'\n${JSON.stringify(status,null,2)}\nFRED_JSON_EOF`,max_output_tokens:100});
+await tools.exec_command({cmd:`cat > '${B}/task_status_updates.json' <<'FRED_JSON_EOF'\n${JSON.stringify(status,null,2)}\nFRED_JSON_EOF`,max_output_tokens:100});
+await tools.exec_command({cmd:`python3 '${B}/scripts/control.py' merge`,max_output_tokens:1000});
 const terminal=['completed','failed','cancelled','interrupted'];
-let active=records.filter(r=>!terminal.includes(status[r.taskId].status));
+let active=records.filter(r=>!r.terminal&&!terminal.includes(status[r.taskId].status));
 const elapsed=(Date.now()-Date.parse(manifest.launch_time))/60000;
-const cap=Math.min(10,3+Math.floor(elapsed/4));
+let cap=Math.min(10,3+Math.floor(elapsed/4));
+try{const throttle=JSON.parse(await read('throttle.json'));if(Date.now()<Date.parse(throttle.until))cap=Math.min(cap,throttle.cap);}catch{}
 const q=JSON.parse(await read('queue.json'));
-await tools.exec_command({cmd:`python3 '${B}/scripts/retries.py'`,max_output_tokens:1000});
+const retryResult=await tools.exec_command({cmd:`python3 '${B}/scripts/retries.py'`,max_output_tokens:1000});if(retryResult.exit_code!==0)throw Error('Retry preparation failed: '+retryResult.output);
 const retryQueue=JSON.parse(await read('retry_queue.json'));
 for(const r of active){r.large=q.find(x=>x.batch===r.batch)?.large??false;}
 const ins=await read('worker_instructions.txt');

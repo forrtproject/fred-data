@@ -26,6 +26,11 @@ def quote_ok(e):
 def metric(s):
  s=str(s or '').strip().lower().replace('’',"'")
  aliases={"cohen's d":'d','pearson r':'r','pearson correlation':'r',"hedges g":"hedges' g",'partial eta squared':'etasq (partial)','partial eta-squared':'etasq (partial)','ηp2':'etasq (partial)','eta squared':'etasq','eta-squared':'etasq','η2':'etasq','standardized beta':'beta (std)','standardised beta':'beta (std)','unstandardized b':'b (unstd)','unstandardised b':'b (unstd)','odds ratio':'or'}
+ if s.startswith('partial eta squared') or s.startswith('partial eta-squared'):return 'etasq (partial)'
+ if s in ['η²','η2','η² (eta squared)']:return 'etasq'
+ if s in ['η²p','ηp²','ηp2','η2p']:return 'etasq (partial)'
+ if s in ["pearson's r", "pearson's r (meta-analytic estimate)"]:return 'r'
+ if re.fullmatch(r'[dr] \(author-derived[^)]*\)',s):return s[0]
  return aliases.get(s,s)
 def parsed_stat(s):
  s=norm(s).replace('²','2').replace('χ','X')
@@ -66,10 +71,11 @@ def comp(field,raw,blind,r):
 def main():
  rows=json.loads((B/'parent_rows.json').read_text());results=[];candidates=[];invalid=[];coverage=collections.Counter();counts={f:collections.Counter() for f in FIELDS};projects=collections.defaultdict(lambda:{f:collections.Counter() for f in FIELDS});errors=[]
  adjud={}
+ holds={(a['audit_id'],a['field']) for a in json.loads((B/'adjudication_holds.json').read_text())} if (B/'adjudication_holds.json').exists() else set()
  target_overrides={}
  if (B/'target_overrides.json').exists():
   target_overrides={(a['audit_id'],a['side']):a for a in json.loads((B/'target_overrides.json').read_text())}
- for path in (B/'adjudications').glob('validated_*.json'):
+ for path in sorted((B/'adjudications').glob('validated_*.json'),key=lambda p:p.stat().st_mtime_ns):
   for a in json.loads(path.read_text()):adjud[(a['audit_id'],a['field'])]=a
  obvious_path=B/'obvious_resolutions.json'
  if obvious_path.exists():
@@ -92,8 +98,11 @@ def main():
     z[f+'_shipped_bound']=r['pval_type_'+f[-1]];z[f+'_blind_bound']=e.get('bound') if e else None
    if f.startswith('es_value'):
     z[f+'_shipped_metric']=r['es_type_'+f[-1]];z[f+'_blind_metric']=e.get('metric') if e else None
+    z[f+'_blind_printed_value']=v;z[f+'_blind_printed_metric']=e.get('metric') if e else None;z[f+'_blind_test_statistic']=e.get('test_statistic') if e else None;z[f+'_comparison_basis']='printed es value'
+    if e and metric(r['es_type_'+f[-1]])=='test statistic' and parsed_stat(e.get('test_statistic')):
+     v=e['test_statistic'];z[f+'_blind_metric']='test statistic';z[f+'_comparison_basis']='separately blind-extracted printed test_statistic (no conversion)'
    comparison='unverified';resolution='unresolved';verdict='unverified';suggestion='';location='';reason=''
-   if x and x[side or 'replication']['target_match'] is False:comparison='mismatched_target'
+   if x and v is not None and x[side or 'replication']['target_match'] is False:comparison='mismatched_target'
    elif e and quote_ok(e) and (side is None or x[side]['status']=='done' and x[side]['target_match'] is True):
     comparison=comp(f,raw,e,r)
     if comparison in ['agree','identical','compatible']:
@@ -102,6 +111,7 @@ def main():
    elif e and v is not None:reason='Evidence, confidence or target match not validated'
    if comparison in ['differ','near','soft','mismatched_target']:
     a=adjud.get((aid,f))
+    if (aid,f) in holds:a=None
     if a:
      resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=a.get('correct_value','');location=a.get('location','');reason=a.get('reason','')
      if comparison=='mismatched_target':verdict='unverified';reason='Target mismatch remains unresolved; '+reason

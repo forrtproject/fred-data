@@ -1,830 +1,185 @@
 # FReD statistics audit
 
-**Interim checkpoint — 2026-10-29T09:46:38.490252+00:00.** 13 confirmed field errors have been identified so far. Paper checking is still in progress; the deterministic screen alone is not verification.
+**Interim checkpoint — 2026-10-29T10:52:57.916680+00:00.** 65 confirmed field errors have been identified so far. Paper checking is still in progress; the deterministic screen alone is not verification.
 
-The frozen workbook contains 2,164 effects in 432 replication works. Part A screened every effect and flagged 175. 4 flagged effects currently contain a confirmed field error (this includes any error on those effects, not necessarily the flagged field).
+The frozen workbook contains 2,164 effects in 432 replication works. Part A screened every effect and flagged 175. 3/186 individual flags have a confirmed error in the corresponding field, affecting 3/175 flagged effects. Separately, 21 flagged effects contain any confirmed field error.
 
-Paper checkpoints exist for 187/2164 effects. All three original statistics are evaluable for 26/2164; all three replication statistics for 17/2164. All seven fields, including author-reported success, are checked for 2/2164. Individual-field coverage is below.
+Paper checkpoints exist for 981/2164 effects. All three original statistics are evaluable for 102/2164; all three replication statistics for 131/2164. All seven fields, including author-reported success, are checked for 16/2164. Individual-field coverage is below.
 
 Coverage depends on paper access and target identification. These results are not a representative sample of FReD. Bounds below describe remaining identification uncertainty, not binomial sampling intervals. Different metrics remain not comparable unless a documented transformation is reproduced.
 
 | Field | Confirmed errors / evaluable | Unverified | Not comparable | All-row error bounds |
 |---|---:|---:|---:|---:|
-| n_o | 0/43 (0.0%) | 2120 | 1 | 0.00%–98.01% |
-| es_value_o | 0/55 (0.0%) | 2102 | 7 | 0.00%–97.46% |
-| pval_value_o | 1/56 (1.8%) | 2108 | 0 | 0.05%–97.46% |
-| n_r | 6/76 (7.9%) | 2084 | 4 | 0.28%–96.77% |
-| es_value_r | 2/34 (5.9%) | 2081 | 49 | 0.09%–98.52% |
-| pval_value_r | 0/76 (0.0%) | 2088 | 0 | 0.00%–96.49% |
-| reported_success | 4/75 (5.3%) | 2089 | 0 | 0.18%–96.72% |
+| n_o | 5/198 (2.5%) | 1944 | 22 | 0.23%–91.08% |
+| es_value_o | 17/213 (8.0%) | 1842 | 109 | 0.79%–90.94% |
+| pval_value_o | 7/300 (2.3%) | 1864 | 0 | 0.32%–86.46% |
+| n_r | 10/319 (3.1%) | 1767 | 78 | 0.46%–85.72% |
+| es_value_r | 3/265 (1.1%) | 1728 | 171 | 0.14%–87.89% |
+| pval_value_r | 5/387 (1.3%) | 1777 | 0 | 0.23%–82.35% |
+| reported_success | 18/422 (4.3%) | 1742 | 0 | 0.83%–81.33% |
 
-Source-project breakdown uses the leading text before an underscore or digit in `fred_id`; `fred_id` is provenance, not an effect key. Each cell shows errors/evaluable; unverified and not-comparable values are shown separately.
+Provenance-prefix breakdown uses the leading text before an underscore or digit in `fred_id`; `fred_id` is provenance, not an effect key. Each cell gives **errors/evaluable (unverified; not comparable)**. The complete machine-readable rates, denominators and uncertainty bounds are in [field_summary_by_project.csv](field_summary_by_project.csv).
 
-| Project prefix | Field | Errors/evaluable | Unverified | Not comparable |
-|---|---|---:|---:|---:|
-|  | n_o | 0/0 | 23 | 0 |
-|  | es_value_o | 0/0 | 23 | 0 |
-|  | pval_value_o | 0/0 | 23 | 0 |
-|  | n_r | 0/0 | 23 | 0 |
-|  | es_value_r | 0/0 | 23 | 0 |
-|  | pval_value_r | 0/0 | 23 | 0 |
-|  | reported_success | 0/0 | 23 | 0 |
-| AOQj | n_o | 0/0 | 1 | 0 |
-| AOQj | es_value_o | 0/0 | 1 | 0 |
-| AOQj | pval_value_o | 0/0 | 1 | 0 |
-| AOQj | n_r | 0/0 | 1 | 0 |
-| AOQj | es_value_r | 0/0 | 1 | 0 |
-| AOQj | pval_value_r | 0/0 | 1 | 0 |
-| AOQj | reported_success | 0/0 | 1 | 0 |
-| AYQG | n_o | 0/0 | 1 | 0 |
-| AYQG | es_value_o | 0/0 | 1 | 0 |
-| AYQG | pval_value_o | 0/0 | 1 | 0 |
-| AYQG | n_r | 0/0 | 1 | 0 |
-| AYQG | es_value_r | 0/0 | 1 | 0 |
-| AYQG | pval_value_r | 0/0 | 1 | 0 |
-| AYQG | reported_success | 0/0 | 1 | 0 |
-| AgO | n_o | 0/0 | 1 | 0 |
-| AgO | es_value_o | 0/0 | 1 | 0 |
-| AgO | pval_value_o | 0/0 | 1 | 0 |
-| AgO | n_r | 0/0 | 1 | 0 |
-| AgO | es_value_r | 0/0 | 1 | 0 |
-| AgO | pval_value_r | 0/0 | 1 | 0 |
-| AgO | reported_success | 0/0 | 1 | 0 |
-| AqDO | n_o | 0/0 | 1 | 0 |
-| AqDO | es_value_o | 0/0 | 1 | 0 |
-| AqDO | pval_value_o | 0/0 | 1 | 0 |
-| AqDO | n_r | 0/0 | 1 | 0 |
-| AqDO | es_value_r | 0/0 | 1 | 0 |
-| AqDO | pval_value_r | 0/0 | 1 | 0 |
-| AqDO | reported_success | 0/0 | 1 | 0 |
-| Arb | n_o | 0/0 | 27 | 0 |
-| Arb | es_value_o | 0/0 | 27 | 0 |
-| Arb | pval_value_o | 0/0 | 27 | 0 |
-| Arb | n_r | 0/0 | 27 | 0 |
-| Arb | es_value_r | 0/0 | 27 | 0 |
-| Arb | pval_value_r | 0/0 | 27 | 0 |
-| Arb | reported_success | 0/0 | 27 | 0 |
-| Arb  | n_o | 0/0 | 5 | 0 |
-| Arb  | es_value_o | 0/0 | 5 | 0 |
-| Arb  | pval_value_o | 0/0 | 5 | 0 |
-| Arb  | n_r | 0/0 | 5 | 0 |
-| Arb  | es_value_r | 0/0 | 5 | 0 |
-| Arb  | pval_value_r | 0/0 | 5 | 0 |
-| Arb  | reported_success | 0/0 | 5 | 0 |
-| AvOr | n_o | 0/0 | 1 | 0 |
-| AvOr | es_value_o | 0/0 | 1 | 0 |
-| AvOr | pval_value_o | 0/0 | 1 | 0 |
-| AvOr | n_r | 0/0 | 1 | 0 |
-| AvOr | es_value_r | 0/0 | 1 | 0 |
-| AvOr | pval_value_r | 0/0 | 1 | 0 |
-| AvOr | reported_success | 0/0 | 1 | 0 |
-| Blxd | n_o | 0/0 | 2 | 0 |
-| Blxd | es_value_o | 0/0 | 2 | 0 |
-| Blxd | pval_value_o | 0/0 | 2 | 0 |
-| Blxd | n_r | 0/0 | 2 | 0 |
-| Blxd | es_value_r | 0/0 | 2 | 0 |
-| Blxd | pval_value_r | 0/0 | 2 | 0 |
-| Blxd | reported_success | 0/0 | 2 | 0 |
-| Boyce | n_o | 0/14 | 265 | 1 |
-| Boyce | es_value_o | 0/13 | 264 | 3 |
-| Boyce | pval_value_o | 1/11 | 269 | 0 |
-| Boyce | n_r | 4/12 | 268 | 0 |
-| Boyce | es_value_r | 2/9 | 266 | 5 |
-| Boyce | pval_value_r | 0/11 | 269 | 0 |
-| Boyce | reported_success | 4/16 | 264 | 0 |
-| Br | n_o | 0/0 | 3 | 0 |
-| Br | es_value_o | 0/0 | 3 | 0 |
-| Br | pval_value_o | 0/0 | 3 | 0 |
-| Br | n_r | 0/0 | 3 | 0 |
-| Br | es_value_r | 0/0 | 3 | 0 |
-| Br | pval_value_r | 0/0 | 3 | 0 |
-| Br | reported_success | 0/0 | 3 | 0 |
-| BrGp | n_o | 0/0 | 4 | 0 |
-| BrGp | es_value_o | 0/0 | 4 | 0 |
-| BrGp | pval_value_o | 0/0 | 4 | 0 |
-| BrGp | n_r | 0/0 | 4 | 0 |
-| BrGp | es_value_r | 0/0 | 4 | 0 |
-| BrGp | pval_value_r | 0/0 | 4 | 0 |
-| BrGp | reported_success | 0/0 | 4 | 0 |
-| CORE | n_o | 0/9 | 105 | 0 |
-| CORE | es_value_o | 0/10 | 104 | 0 |
-| CORE | pval_value_o | 0/10 | 104 | 0 |
-| CORE | n_r | 0/14 | 99 | 1 |
-| CORE | es_value_r | 0/3 | 108 | 3 |
-| CORE | pval_value_r | 0/7 | 107 | 0 |
-| CORE | reported_success | 0/14 | 100 | 0 |
-| Camereretal | n_o | 0/0 | 39 | 0 |
-| Camereretal | es_value_o | 0/0 | 39 | 0 |
-| Camereretal | pval_value_o | 0/0 | 39 | 0 |
-| Camereretal | n_r | 0/0 | 39 | 0 |
-| Camereretal | es_value_r | 0/0 | 39 | 0 |
-| Camereretal | pval_value_r | 0/0 | 39 | 0 |
-| Camereretal | reported_success | 0/0 | 39 | 0 |
-| D | n_o | 0/0 | 3 | 0 |
-| D | es_value_o | 0/0 | 3 | 0 |
-| D | pval_value_o | 0/0 | 3 | 0 |
-| D | n_r | 0/0 | 3 | 0 |
-| D | es_value_r | 0/0 | 3 | 0 |
-| D | pval_value_r | 0/0 | 3 | 0 |
-| D | reported_success | 0/0 | 3 | 0 |
-| DEqr | n_o | 0/0 | 1 | 0 |
-| DEqr | es_value_o | 0/0 | 1 | 0 |
-| DEqr | pval_value_o | 0/0 | 1 | 0 |
-| DEqr | n_r | 0/0 | 1 | 0 |
-| DEqr | es_value_r | 0/0 | 1 | 0 |
-| DEqr | pval_value_r | 0/0 | 1 | 0 |
-| DEqr | reported_success | 0/0 | 1 | 0 |
-| Data (editable) | n_o | 0/0 | 3 | 0 |
-| Data (editable) | es_value_o | 0/0 | 3 | 0 |
-| Data (editable) | pval_value_o | 0/0 | 3 | 0 |
-| Data (editable) | n_r | 0/0 | 3 | 0 |
-| Data (editable) | es_value_r | 0/0 | 3 | 0 |
-| Data (editable) | pval_value_r | 0/0 | 3 | 0 |
-| Data (editable) | reported_success | 0/0 | 3 | 0 |
-| E | n_o | 0/0 | 1 | 0 |
-| E | es_value_o | 0/0 | 1 | 0 |
-| E | pval_value_o | 0/0 | 1 | 0 |
-| E | n_r | 0/0 | 1 | 0 |
-| E | es_value_r | 0/0 | 1 | 0 |
-| E | pval_value_r | 0/0 | 1 | 0 |
-| E | reported_success | 0/0 | 1 | 0 |
-| EJpm | n_o | 0/0 | 3 | 0 |
-| EJpm | es_value_o | 0/0 | 3 | 0 |
-| EJpm | pval_value_o | 0/0 | 3 | 0 |
-| EJpm | n_r | 0/0 | 3 | 0 |
-| EJpm | es_value_r | 0/0 | 3 | 0 |
-| EJpm | pval_value_r | 0/0 | 3 | 0 |
-| EJpm | reported_success | 0/0 | 3 | 0 |
-| EKBZ | n_o | 0/0 | 1 | 0 |
-| EKBZ | es_value_o | 0/0 | 1 | 0 |
-| EKBZ | pval_value_o | 0/0 | 1 | 0 |
-| EKBZ | n_r | 0/0 | 1 | 0 |
-| EKBZ | es_value_r | 0/0 | 1 | 0 |
-| EKBZ | pval_value_r | 0/0 | 1 | 0 |
-| EKBZ | reported_success | 0/0 | 1 | 0 |
-| EQxa | n_o | 0/0 | 1 | 0 |
-| EQxa | es_value_o | 0/0 | 1 | 0 |
-| EQxa | pval_value_o | 0/0 | 1 | 0 |
-| EQxa | n_r | 0/0 | 1 | 0 |
-| EQxa | es_value_r | 0/0 | 1 | 0 |
-| EQxa | pval_value_r | 0/0 | 1 | 0 |
-| EQxa | reported_success | 0/0 | 1 | 0 |
-| Eb | n_o | 0/0 | 1 | 0 |
-| Eb | es_value_o | 0/0 | 1 | 0 |
-| Eb | pval_value_o | 0/0 | 1 | 0 |
-| Eb | n_r | 0/0 | 1 | 0 |
-| Eb | es_value_r | 0/0 | 1 | 0 |
-| Eb | pval_value_r | 0/0 | 1 | 0 |
-| Eb | reported_success | 0/0 | 1 | 0 |
-| FORRT | n_o | 0/0 | 24 | 0 |
-| FORRT | es_value_o | 0/0 | 24 | 0 |
-| FORRT | pval_value_o | 0/0 | 24 | 0 |
-| FORRT | n_r | 0/0 | 24 | 0 |
-| FORRT | es_value_r | 0/0 | 24 | 0 |
-| FORRT | pval_value_r | 0/0 | 24 | 0 |
-| FORRT | reported_success | 0/0 | 24 | 0 |
-| G | n_o | 0/0 | 1 | 0 |
-| G | es_value_o | 0/0 | 1 | 0 |
-| G | pval_value_o | 0/0 | 1 | 0 |
-| G | n_r | 0/0 | 1 | 0 |
-| G | es_value_r | 0/0 | 1 | 0 |
-| G | pval_value_r | 0/0 | 1 | 0 |
-| G | reported_success | 0/0 | 1 | 0 |
-| GXEW | n_o | 0/0 | 1 | 0 |
-| GXEW | es_value_o | 0/0 | 1 | 0 |
-| GXEW | pval_value_o | 0/0 | 1 | 0 |
-| GXEW | n_r | 0/0 | 1 | 0 |
-| GXEW | es_value_r | 0/0 | 1 | 0 |
-| GXEW | pval_value_r | 0/0 | 1 | 0 |
-| GXEW | reported_success | 0/0 | 1 | 0 |
-| Holzmeisteretal | n_o | 0/0 | 26 | 0 |
-| Holzmeisteretal | es_value_o | 0/0 | 26 | 0 |
-| Holzmeisteretal | pval_value_o | 0/0 | 26 | 0 |
-| Holzmeisteretal | n_r | 0/0 | 26 | 0 |
-| Holzmeisteretal | es_value_r | 0/0 | 26 | 0 |
-| Holzmeisteretal | pval_value_r | 0/0 | 26 | 0 |
-| Holzmeisteretal | reported_success | 0/0 | 26 | 0 |
-| JRpA | n_o | 0/0 | 2 | 0 |
-| JRpA | es_value_o | 0/0 | 2 | 0 |
-| JRpA | pval_value_o | 0/0 | 2 | 0 |
-| JRpA | n_r | 0/0 | 2 | 0 |
-| JRpA | es_value_r | 0/0 | 2 | 0 |
-| JRpA | pval_value_r | 0/0 | 2 | 0 |
-| JRpA | reported_success | 0/0 | 2 | 0 |
-| Keith | n_o | 0/0 | 1 | 0 |
-| Keith | es_value_o | 0/0 | 1 | 0 |
-| Keith | pval_value_o | 0/0 | 1 | 0 |
-| Keith | n_r | 0/0 | 1 | 0 |
-| Keith | es_value_r | 0/0 | 1 | 0 |
-| Keith | pval_value_r | 0/0 | 1 | 0 |
-| Keith | reported_success | 0/0 | 1 | 0 |
-| Kybl | n_o | 0/0 | 1 | 0 |
-| Kybl | es_value_o | 0/0 | 1 | 0 |
-| Kybl | pval_value_o | 0/0 | 1 | 0 |
-| Kybl | n_r | 0/0 | 1 | 0 |
-| Kybl | es_value_r | 0/0 | 1 | 0 |
-| Kybl | pval_value_r | 0/0 | 1 | 0 |
-| Kybl | reported_success | 0/0 | 1 | 0 |
-| LbEB | n_o | 0/0 | 1 | 0 |
-| LbEB | es_value_o | 0/0 | 1 | 0 |
-| LbEB | pval_value_o | 0/0 | 1 | 0 |
-| LbEB | n_r | 0/0 | 1 | 0 |
-| LbEB | es_value_r | 0/0 | 1 | 0 |
-| LbEB | pval_value_r | 0/0 | 1 | 0 |
-| LbEB | reported_success | 0/0 | 1 | 0 |
-| LmBx | n_o | 0/0 | 1 | 0 |
-| LmBx | es_value_o | 0/0 | 1 | 0 |
-| LmBx | pval_value_o | 0/0 | 1 | 0 |
-| LmBx | n_r | 0/0 | 1 | 0 |
-| LmBx | es_value_r | 0/0 | 1 | 0 |
-| LmBx | pval_value_r | 0/0 | 1 | 0 |
-| LmBx | reported_success | 0/0 | 1 | 0 |
-| LyLd | n_o | 0/0 | 1 | 0 |
-| LyLd | es_value_o | 0/0 | 1 | 0 |
-| LyLd | pval_value_o | 0/0 | 1 | 0 |
-| LyLd | n_r | 0/0 | 1 | 0 |
-| LyLd | es_value_r | 0/0 | 1 | 0 |
-| LyLd | pval_value_r | 0/0 | 1 | 0 |
-| LyLd | reported_success | 0/0 | 1 | 0 |
-| ManyLabs | n_o | 0/9 | 29 | 0 |
-| ManyLabs | es_value_o | 0/10 | 28 | 0 |
-| ManyLabs | pval_value_o | 0/10 | 28 | 0 |
-| ManyLabs | n_r | 0/16 | 20 | 2 |
-| ManyLabs | es_value_r | 0/0 | 20 | 18 |
-| ManyLabs | pval_value_r | 0/13 | 25 | 0 |
-| ManyLabs | reported_success | 0/10 | 28 | 0 |
-| Manylabs | n_o | 0/0 | 38 | 0 |
-| Manylabs | es_value_o | 0/0 | 38 | 0 |
-| Manylabs | pval_value_o | 0/0 | 38 | 0 |
-| Manylabs | n_r | 0/0 | 38 | 0 |
-| Manylabs | es_value_r | 0/0 | 38 | 0 |
-| Manylabs | pval_value_r | 0/0 | 38 | 0 |
-| Manylabs | reported_success | 0/0 | 38 | 0 |
-| N | n_o | 0/0 | 1 | 0 |
-| N | es_value_o | 0/0 | 1 | 0 |
-| N | pval_value_o | 0/0 | 1 | 0 |
-| N | n_r | 0/0 | 1 | 0 |
-| N | es_value_r | 0/0 | 1 | 0 |
-| N | pval_value_r | 0/0 | 1 | 0 |
-| N | reported_success | 0/0 | 1 | 0 |
-| None | n_o | 0/0 | 5 | 0 |
-| None | es_value_o | 0/0 | 5 | 0 |
-| None | pval_value_o | 0/0 | 5 | 0 |
-| None | n_r | 0/0 | 5 | 0 |
-| None | es_value_r | 0/0 | 5 | 0 |
-| None | pval_value_r | 0/0 | 5 | 0 |
-| None | reported_success | 0/0 | 5 | 0 |
-| OKRy | n_o | 0/0 | 1 | 0 |
-| OKRy | es_value_o | 0/0 | 1 | 0 |
-| OKRy | pval_value_o | 0/0 | 1 | 0 |
-| OKRy | n_r | 0/0 | 1 | 0 |
-| OKRy | es_value_r | 0/0 | 1 | 0 |
-| OKRy | pval_value_r | 0/0 | 1 | 0 |
-| OKRy | reported_success | 0/0 | 1 | 0 |
-| OYX | n_o | 0/0 | 3 | 0 |
-| OYX | es_value_o | 0/0 | 3 | 0 |
-| OYX | pval_value_o | 0/0 | 3 | 0 |
-| OYX | n_r | 0/0 | 3 | 0 |
-| OYX | es_value_r | 0/0 | 3 | 0 |
-| OYX | pval_value_r | 0/0 | 3 | 0 |
-| OYX | reported_success | 0/0 | 3 | 0 |
-| OeGv | n_o | 0/0 | 3 | 0 |
-| OeGv | es_value_o | 0/0 | 3 | 0 |
-| OeGv | pval_value_o | 0/0 | 3 | 0 |
-| OeGv | n_r | 0/0 | 3 | 0 |
-| OeGv | es_value_r | 0/0 | 3 | 0 |
-| OeGv | pval_value_r | 0/0 | 3 | 0 |
-| OeGv | reported_success | 0/0 | 3 | 0 |
-| OpenMKT | n_o | 0/0 | 102 | 0 |
-| OpenMKT | es_value_o | 0/7 | 95 | 0 |
-| OpenMKT | pval_value_o | 0/7 | 95 | 0 |
-| OpenMKT | n_r | 0/13 | 89 | 0 |
-| OpenMKT | es_value_r | 0/2 | 87 | 13 |
-| OpenMKT | pval_value_r | 0/15 | 87 | 0 |
-| OpenMKT | reported_success | 0/13 | 89 | 0 |
-| Ovkm | n_o | 0/0 | 1 | 0 |
-| Ovkm | es_value_o | 0/0 | 1 | 0 |
-| Ovkm | pval_value_o | 0/0 | 1 | 0 |
-| Ovkm | n_r | 0/0 | 1 | 0 |
-| Ovkm | es_value_r | 0/0 | 1 | 0 |
-| Ovkm | pval_value_r | 0/0 | 1 | 0 |
-| Ovkm | reported_success | 0/0 | 1 | 0 |
-| Ow | n_o | 0/0 | 1 | 0 |
-| Ow | es_value_o | 0/0 | 1 | 0 |
-| Ow | pval_value_o | 0/0 | 1 | 0 |
-| Ow | n_r | 0/0 | 1 | 0 |
-| Ow | es_value_r | 0/0 | 1 | 0 |
-| Ow | pval_value_r | 0/0 | 1 | 0 |
-| Ow | reported_success | 0/0 | 1 | 0 |
-| Q | n_o | 0/0 | 1 | 0 |
-| Q | es_value_o | 0/0 | 1 | 0 |
-| Q | pval_value_o | 0/0 | 1 | 0 |
-| Q | n_r | 0/0 | 1 | 0 |
-| Q | es_value_r | 0/0 | 1 | 0 |
-| Q | pval_value_r | 0/0 | 1 | 0 |
-| Q | reported_success | 0/0 | 1 | 0 |
-| QllV | n_o | 0/0 | 1 | 0 |
-| QllV | es_value_o | 0/0 | 1 | 0 |
-| QllV | pval_value_o | 0/0 | 1 | 0 |
-| QllV | n_r | 0/0 | 1 | 0 |
-| QllV | es_value_r | 0/0 | 1 | 0 |
-| QllV | pval_value_r | 0/0 | 1 | 0 |
-| QllV | reported_success | 0/0 | 1 | 0 |
-| R | n_o | 0/0 | 2 | 0 |
-| R | es_value_o | 0/0 | 2 | 0 |
-| R | pval_value_o | 0/0 | 2 | 0 |
-| R | n_r | 0/0 | 2 | 0 |
-| R | es_value_r | 0/0 | 2 | 0 |
-| R | pval_value_r | 0/0 | 2 | 0 |
-| R | reported_success | 0/0 | 2 | 0 |
-| RRR | n_o | 0/0 | 31 | 0 |
-| RRR | es_value_o | 0/0 | 31 | 0 |
-| RRR | pval_value_o | 0/0 | 31 | 0 |
-| RRR | n_r | 0/0 | 31 | 0 |
-| RRR | es_value_r | 0/0 | 31 | 0 |
-| RRR | pval_value_r | 0/0 | 31 | 0 |
-| RRR | reported_success | 0/0 | 31 | 0 |
-| RYKv | n_o | 0/0 | 3 | 0 |
-| RYKv | es_value_o | 0/0 | 3 | 0 |
-| RYKv | pval_value_o | 0/0 | 3 | 0 |
-| RYKv | n_r | 0/0 | 3 | 0 |
-| RYKv | es_value_r | 0/0 | 3 | 0 |
-| RYKv | pval_value_r | 0/0 | 3 | 0 |
-| RYKv | reported_success | 0/0 | 3 | 0 |
-| RrOb | n_o | 0/0 | 1 | 0 |
-| RrOb | es_value_o | 0/0 | 1 | 0 |
-| RrOb | pval_value_o | 0/0 | 1 | 0 |
-| RrOb | n_r | 0/0 | 1 | 0 |
-| RrOb | es_value_r | 0/0 | 1 | 0 |
-| RrOb | pval_value_r | 0/0 | 1 | 0 |
-| RrOb | reported_success | 0/0 | 1 | 0 |
-| Soto | n_o | 0/0 | 60 | 0 |
-| Soto | es_value_o | 0/0 | 60 | 0 |
-| Soto | pval_value_o | 0/0 | 60 | 0 |
-| Soto | n_r | 0/0 | 60 | 0 |
-| Soto | es_value_r | 0/0 | 60 | 0 |
-| Soto | pval_value_r | 0/0 | 60 | 0 |
-| Soto | reported_success | 0/0 | 60 | 0 |
-| VB | n_o | 0/0 | 1 | 0 |
-| VB | es_value_o | 0/0 | 1 | 0 |
-| VB | pval_value_o | 0/0 | 1 | 0 |
-| VB | n_r | 0/0 | 1 | 0 |
-| VB | es_value_r | 0/0 | 1 | 0 |
-| VB | pval_value_r | 0/0 | 1 | 0 |
-| VB | reported_success | 0/0 | 1 | 0 |
-| Vj | n_o | 0/0 | 3 | 0 |
-| Vj | es_value_o | 0/0 | 3 | 0 |
-| Vj | pval_value_o | 0/0 | 3 | 0 |
-| Vj | n_r | 0/0 | 3 | 0 |
-| Vj | es_value_r | 0/0 | 3 | 0 |
-| Vj | pval_value_r | 0/0 | 3 | 0 |
-| Vj | reported_success | 0/0 | 3 | 0 |
-| VvZX | n_o | 0/0 | 1 | 0 |
-| VvZX | es_value_o | 0/0 | 1 | 0 |
-| VvZX | pval_value_o | 0/0 | 1 | 0 |
-| VvZX | n_r | 0/0 | 1 | 0 |
-| VvZX | es_value_r | 0/0 | 1 | 0 |
-| VvZX | pval_value_r | 0/0 | 1 | 0 |
-| VvZX | reported_success | 0/0 | 1 | 0 |
-| WLpV | n_o | 0/0 | 1 | 0 |
-| WLpV | es_value_o | 0/0 | 1 | 0 |
-| WLpV | pval_value_o | 0/0 | 1 | 0 |
-| WLpV | n_r | 0/0 | 1 | 0 |
-| WLpV | es_value_r | 0/0 | 1 | 0 |
-| WLpV | pval_value_r | 0/0 | 1 | 0 |
-| WLpV | reported_success | 0/0 | 1 | 0 |
-| Wre | n_o | 0/0 | 1 | 0 |
-| Wre | es_value_o | 0/0 | 1 | 0 |
-| Wre | pval_value_o | 0/0 | 1 | 0 |
-| Wre | n_r | 0/0 | 1 | 0 |
-| Wre | es_value_r | 0/0 | 1 | 0 |
-| Wre | pval_value_r | 0/0 | 1 | 0 |
-| Wre | reported_success | 0/0 | 1 | 0 |
-| XPHI | n_o | 0/0 | 69 | 0 |
-| XPHI | es_value_o | 0/0 | 69 | 0 |
-| XPHI | pval_value_o | 0/0 | 69 | 0 |
-| XPHI | n_r | 0/0 | 69 | 0 |
-| XPHI | es_value_r | 0/0 | 69 | 0 |
-| XPHI | pval_value_r | 0/0 | 69 | 0 |
-| XPHI | reported_success | 0/0 | 69 | 0 |
-| YWep | n_o | 0/0 | 1 | 0 |
-| YWep | es_value_o | 0/0 | 1 | 0 |
-| YWep | pval_value_o | 0/0 | 1 | 0 |
-| YWep | n_r | 0/0 | 1 | 0 |
-| YWep | es_value_r | 0/0 | 1 | 0 |
-| YWep | pval_value_r | 0/0 | 1 | 0 |
-| YWep | reported_success | 0/0 | 1 | 0 |
-| YpZZ | n_o | 0/0 | 1 | 0 |
-| YpZZ | es_value_o | 0/0 | 1 | 0 |
-| YpZZ | pval_value_o | 0/0 | 1 | 0 |
-| YpZZ | n_r | 0/0 | 1 | 0 |
-| YpZZ | es_value_r | 0/0 | 1 | 0 |
-| YpZZ | pval_value_r | 0/0 | 1 | 0 |
-| YpZZ | reported_success | 0/0 | 1 | 0 |
-| aYyR | n_o | 0/0 | 1 | 0 |
-| aYyR | es_value_o | 0/0 | 1 | 0 |
-| aYyR | pval_value_o | 0/0 | 1 | 0 |
-| aYyR | n_r | 0/0 | 1 | 0 |
-| aYyR | es_value_r | 0/0 | 1 | 0 |
-| aYyR | pval_value_r | 0/0 | 1 | 0 |
-| aYyR | reported_success | 0/0 | 1 | 0 |
-| aag | n_o | 0/0 | 1 | 0 |
-| aag | es_value_o | 0/0 | 1 | 0 |
-| aag | pval_value_o | 0/0 | 1 | 0 |
-| aag | n_r | 0/0 | 1 | 0 |
-| aag | es_value_r | 0/0 | 1 | 0 |
-| aag | pval_value_r | 0/0 | 1 | 0 |
-| aag | reported_success | 0/0 | 1 | 0 |
-| acykd | n_o | 0/0 | 1 | 0 |
-| acykd | es_value_o | 0/0 | 1 | 0 |
-| acykd | pval_value_o | 0/0 | 1 | 0 |
-| acykd | n_r | 0/0 | 1 | 0 |
-| acykd | es_value_r | 0/0 | 1 | 0 |
-| acykd | pval_value_r | 0/0 | 1 | 0 |
-| acykd | reported_success | 0/0 | 1 | 0 |
-| add | n_o | 0/0 | 164 | 0 |
-| add | es_value_o | 0/0 | 164 | 0 |
-| add | pval_value_o | 0/0 | 164 | 0 |
-| add | n_r | 0/0 | 164 | 0 |
-| add | es_value_r | 0/0 | 164 | 0 |
-| add | pval_value_r | 0/0 | 164 | 0 |
-| add | reported_success | 0/0 | 164 | 0 |
-| additional | n_o | 0/11 | 340 | 0 |
-| additional | es_value_o | 0/14 | 333 | 4 |
-| additional | pval_value_o | 0/17 | 334 | 0 |
-| additional | n_r | 2/12 | 338 | 1 |
-| additional | es_value_r | 0/10 | 331 | 10 |
-| additional | pval_value_r | 0/19 | 332 | 0 |
-| additional | reported_success | 0/12 | 339 | 0 |
-| av | n_o | 0/0 | 166 | 0 |
-| av | es_value_o | 0/0 | 166 | 0 |
-| av | pval_value_o | 0/0 | 166 | 0 |
-| av | n_r | 0/0 | 166 | 0 |
-| av | es_value_r | 0/0 | 166 | 0 |
-| av | pval_value_r | 0/0 | 166 | 0 |
-| av | reported_success | 0/3 | 163 | 0 |
-| bY | n_o | 0/0 | 1 | 0 |
-| bY | es_value_o | 0/0 | 1 | 0 |
-| bY | pval_value_o | 0/0 | 1 | 0 |
-| bY | n_r | 0/0 | 1 | 0 |
-| bY | es_value_r | 0/0 | 1 | 0 |
-| bY | pval_value_r | 0/0 | 1 | 0 |
-| bY | reported_success | 0/0 | 1 | 0 |
-| bth | n_o | 0/0 | 1 | 0 |
-| bth | es_value_o | 0/0 | 1 | 0 |
-| bth | pval_value_o | 0/0 | 1 | 0 |
-| bth | n_r | 0/0 | 1 | 0 |
-| bth | es_value_r | 0/0 | 1 | 0 |
-| bth | pval_value_r | 0/0 | 1 | 0 |
-| bth | reported_success | 0/0 | 1 | 0 |
-| curatescience | n_o | 0/0 | 97 | 0 |
-| curatescience | es_value_o | 0/0 | 97 | 0 |
-| curatescience | pval_value_o | 0/0 | 97 | 0 |
-| curatescience | n_r | 0/6 | 91 | 0 |
-| curatescience | es_value_r | 0/6 | 91 | 0 |
-| curatescience | pval_value_r | 0/6 | 91 | 0 |
-| curatescience | reported_success | 0/4 | 93 | 0 |
-| d | n_o | 0/0 | 1 | 0 |
-| d | es_value_o | 0/0 | 1 | 0 |
-| d | pval_value_o | 0/0 | 1 | 0 |
-| d | n_r | 0/0 | 1 | 0 |
-| d | es_value_r | 0/0 | 1 | 0 |
-| d | pval_value_r | 0/0 | 1 | 0 |
-| d | reported_success | 0/0 | 1 | 0 |
-| datareplicada | n_o | 0/0 | 17 | 0 |
-| datareplicada | es_value_o | 0/0 | 17 | 0 |
-| datareplicada | pval_value_o | 0/0 | 17 | 0 |
-| datareplicada | n_r | 0/0 | 17 | 0 |
-| datareplicada | es_value_r | 0/0 | 17 | 0 |
-| datareplicada | pval_value_r | 0/0 | 17 | 0 |
-| datareplicada | reported_success | 0/0 | 17 | 0 |
-| dqv | n_o | 0/0 | 3 | 0 |
-| dqv | es_value_o | 0/0 | 3 | 0 |
-| dqv | pval_value_o | 0/0 | 3 | 0 |
-| dqv | n_r | 0/0 | 3 | 0 |
-| dqv | es_value_r | 0/0 | 3 | 0 |
-| dqv | pval_value_r | 0/0 | 3 | 0 |
-| dqv | reported_success | 0/0 | 3 | 0 |
-| e | n_o | 0/0 | 15 | 0 |
-| e | es_value_o | 0/0 | 15 | 0 |
-| e | pval_value_o | 0/0 | 15 | 0 |
-| e | n_r | 0/0 | 15 | 0 |
-| e | es_value_r | 0/0 | 15 | 0 |
-| e | pval_value_r | 0/0 | 15 | 0 |
-| e | reported_success | 0/0 | 15 | 0 |
-| eOQm | n_o | 0/0 | 1 | 0 |
-| eOQm | es_value_o | 0/0 | 1 | 0 |
-| eOQm | pval_value_o | 0/0 | 1 | 0 |
-| eOQm | n_r | 0/0 | 1 | 0 |
-| eOQm | es_value_r | 0/0 | 1 | 0 |
-| eOQm | pval_value_r | 0/0 | 1 | 0 |
-| eOQm | reported_success | 0/0 | 1 | 0 |
-| eg | n_o | 0/0 | 2 | 0 |
-| eg | es_value_o | 0/0 | 2 | 0 |
-| eg | pval_value_o | 0/0 | 2 | 0 |
-| eg | n_r | 0/0 | 2 | 0 |
-| eg | es_value_r | 0/0 | 2 | 0 |
-| eg | pval_value_r | 0/0 | 2 | 0 |
-| eg | reported_success | 0/0 | 2 | 0 |
-| exd | n_o | 0/0 | 1 | 0 |
-| exd | es_value_o | 0/0 | 1 | 0 |
-| exd | pval_value_o | 0/0 | 1 | 0 |
-| exd | n_r | 0/0 | 1 | 0 |
-| exd | es_value_r | 0/0 | 1 | 0 |
-| exd | pval_value_r | 0/0 | 1 | 0 |
-| exd | reported_success | 0/0 | 1 | 0 |
-| fmd | n_o | 0/0 | 1 | 0 |
-| fmd | es_value_o | 0/0 | 1 | 0 |
-| fmd | pval_value_o | 0/0 | 1 | 0 |
-| fmd | n_r | 0/0 | 1 | 0 |
-| fmd | es_value_r | 0/0 | 1 | 0 |
-| fmd | pval_value_r | 0/0 | 1 | 0 |
-| fmd | reported_success | 0/0 | 1 | 0 |
-| gRWz | n_o | 0/0 | 1 | 0 |
-| gRWz | es_value_o | 0/0 | 1 | 0 |
-| gRWz | pval_value_o | 0/0 | 1 | 0 |
-| gRWz | n_r | 0/0 | 1 | 0 |
-| gRWz | es_value_r | 0/0 | 1 | 0 |
-| gRWz | pval_value_r | 0/0 | 1 | 0 |
-| gRWz | reported_success | 0/0 | 1 | 0 |
-| gea | n_o | 0/0 | 1 | 0 |
-| gea | es_value_o | 0/0 | 1 | 0 |
-| gea | pval_value_o | 0/0 | 1 | 0 |
-| gea | n_r | 0/0 | 1 | 0 |
-| gea | es_value_r | 0/0 | 1 | 0 |
-| gea | pval_value_r | 0/0 | 1 | 0 |
-| gea | reported_success | 0/0 | 1 | 0 |
-| gh | n_o | 0/0 | 3 | 0 |
-| gh | es_value_o | 0/0 | 3 | 0 |
-| gh | pval_value_o | 0/0 | 3 | 0 |
-| gh | n_r | 0/0 | 3 | 0 |
-| gh | es_value_r | 0/0 | 3 | 0 |
-| gh | pval_value_r | 0/0 | 3 | 0 |
-| gh | reported_success | 0/0 | 3 | 0 |
-| is | n_o | 0/0 | 3 | 0 |
-| is | es_value_o | 0/0 | 3 | 0 |
-| is | pval_value_o | 0/0 | 3 | 0 |
-| is | n_r | 0/0 | 3 | 0 |
-| is | es_value_r | 0/0 | 3 | 0 |
-| is | pval_value_r | 0/0 | 3 | 0 |
-| is | reported_success | 0/0 | 3 | 0 |
-| j | n_o | 0/0 | 8 | 0 |
-| j | es_value_o | 0/0 | 8 | 0 |
-| j | pval_value_o | 0/0 | 8 | 0 |
-| j | n_r | 0/0 | 8 | 0 |
-| j | es_value_r | 0/0 | 8 | 0 |
-| j | pval_value_r | 0/0 | 8 | 0 |
-| j | reported_success | 0/0 | 8 | 0 |
-| jLr | n_o | 0/0 | 1 | 0 |
-| jLr | es_value_o | 0/0 | 1 | 0 |
-| jLr | pval_value_o | 0/0 | 1 | 0 |
-| jLr | n_r | 0/0 | 1 | 0 |
-| jLr | es_value_r | 0/0 | 1 | 0 |
-| jLr | pval_value_r | 0/0 | 1 | 0 |
-| jLr | reported_success | 0/0 | 1 | 0 |
-| jcre | n_o | 0/0 | 71 | 0 |
-| jcre | es_value_o | 0/0 | 71 | 0 |
-| jcre | pval_value_o | 0/0 | 71 | 0 |
-| jcre | n_r | 0/0 | 71 | 0 |
-| jcre | es_value_r | 0/0 | 71 | 0 |
-| jcre | pval_value_r | 0/0 | 71 | 0 |
-| jcre | reported_success | 0/0 | 71 | 0 |
-| kXp | n_o | 0/0 | 1 | 0 |
-| kXp | es_value_o | 0/0 | 1 | 0 |
-| kXp | pval_value_o | 0/0 | 1 | 0 |
-| kXp | n_r | 0/0 | 1 | 0 |
-| kXp | es_value_r | 0/0 | 1 | 0 |
-| kXp | pval_value_r | 0/0 | 1 | 0 |
-| kXp | reported_success | 0/0 | 1 | 0 |
-| lJ | n_o | 0/0 | 1 | 0 |
-| lJ | es_value_o | 0/0 | 1 | 0 |
-| lJ | pval_value_o | 0/0 | 1 | 0 |
-| lJ | n_r | 0/0 | 1 | 0 |
-| lJ | es_value_r | 0/0 | 1 | 0 |
-| lJ | pval_value_r | 0/0 | 1 | 0 |
-| lJ | reported_success | 0/0 | 1 | 0 |
-| mBL | n_o | 0/0 | 1 | 0 |
-| mBL | es_value_o | 0/0 | 1 | 0 |
-| mBL | pval_value_o | 0/0 | 1 | 0 |
-| mBL | n_r | 0/0 | 1 | 0 |
-| mBL | es_value_r | 0/0 | 1 | 0 |
-| mBL | pval_value_r | 0/0 | 1 | 0 |
-| mBL | reported_success | 0/0 | 1 | 0 |
-| mJDj | n_o | 0/0 | 1 | 0 |
-| mJDj | es_value_o | 0/0 | 1 | 0 |
-| mJDj | pval_value_o | 0/0 | 1 | 0 |
-| mJDj | n_r | 0/0 | 1 | 0 |
-| mJDj | es_value_r | 0/0 | 1 | 0 |
-| mJDj | pval_value_r | 0/0 | 1 | 0 |
-| mJDj | reported_success | 0/0 | 1 | 0 |
-| mxyQ | n_o | 0/0 | 1 | 0 |
-| mxyQ | es_value_o | 0/0 | 1 | 0 |
-| mxyQ | pval_value_o | 0/0 | 1 | 0 |
-| mxyQ | n_r | 0/0 | 1 | 0 |
-| mxyQ | es_value_r | 0/0 | 1 | 0 |
-| mxyQ | pval_value_r | 0/0 | 1 | 0 |
-| mxyQ | reported_success | 0/0 | 1 | 0 |
-| odonnell | n_o | 0/0 | 6 | 0 |
-| odonnell | es_value_o | 0/0 | 6 | 0 |
-| odonnell | pval_value_o | 0/0 | 6 | 0 |
-| odonnell | n_r | 0/0 | 6 | 0 |
-| odonnell | es_value_r | 0/0 | 6 | 0 |
-| odonnell | pval_value_r | 0/0 | 6 | 0 |
-| odonnell | reported_success | 0/0 | 6 | 0 |
-| osc | n_o | 0/0 | 99 | 0 |
-| osc | es_value_o | 0/0 | 99 | 0 |
-| osc | pval_value_o | 0/0 | 99 | 0 |
-| osc | n_r | 0/0 | 99 | 0 |
-| osc | es_value_r | 0/0 | 99 | 0 |
-| osc | pval_value_r | 0/1 | 98 | 0 |
-| osc | reported_success | 0/1 | 98 | 0 |
-| plLK | n_o | 0/0 | 1 | 0 |
-| plLK | es_value_o | 0/0 | 1 | 0 |
-| plLK | pval_value_o | 0/0 | 1 | 0 |
-| plLK | n_r | 0/0 | 1 | 0 |
-| plLK | es_value_r | 0/0 | 1 | 0 |
-| plLK | pval_value_r | 0/0 | 1 | 0 |
-| plLK | reported_success | 0/0 | 1 | 0 |
-| q | n_o | 0/0 | 5 | 0 |
-| q | es_value_o | 0/0 | 5 | 0 |
-| q | pval_value_o | 0/0 | 5 | 0 |
-| q | n_r | 0/0 | 5 | 0 |
-| q | es_value_r | 0/0 | 5 | 0 |
-| q | pval_value_r | 0/0 | 5 | 0 |
-| q | reported_success | 0/0 | 5 | 0 |
-| qXX | n_o | 0/0 | 1 | 0 |
-| qXX | es_value_o | 0/0 | 1 | 0 |
-| qXX | pval_value_o | 0/0 | 1 | 0 |
-| qXX | n_r | 0/0 | 1 | 0 |
-| qXX | es_value_r | 0/0 | 1 | 0 |
-| qXX | pval_value_r | 0/0 | 1 | 0 |
-| qXX | reported_success | 0/0 | 1 | 0 |
-| qYr | n_o | 0/0 | 3 | 0 |
-| qYr | es_value_o | 0/0 | 3 | 0 |
-| qYr | pval_value_o | 0/0 | 3 | 0 |
-| qYr | n_r | 0/0 | 3 | 0 |
-| qYr | es_value_r | 0/0 | 3 | 0 |
-| qYr | pval_value_r | 0/0 | 3 | 0 |
-| qYr | reported_success | 0/0 | 3 | 0 |
-| qgWj | n_o | 0/0 | 4 | 0 |
-| qgWj | es_value_o | 0/0 | 4 | 0 |
-| qgWj | pval_value_o | 0/0 | 4 | 0 |
-| qgWj | n_r | 0/0 | 4 | 0 |
-| qgWj | es_value_r | 0/0 | 4 | 0 |
-| qgWj | pval_value_r | 0/0 | 4 | 0 |
-| qgWj | reported_success | 0/0 | 4 | 0 |
-| resciencex | n_o | 0/0 | 8 | 0 |
-| resciencex | es_value_o | 0/0 | 8 | 0 |
-| resciencex | pval_value_o | 0/0 | 8 | 0 |
-| resciencex | n_r | 0/0 | 8 | 0 |
-| resciencex | es_value_r | 0/0 | 8 | 0 |
-| resciencex | pval_value_r | 0/0 | 8 | 0 |
-| resciencex | reported_success | 0/0 | 8 | 0 |
-| rpq | n_o | 0/0 | 1 | 0 |
-| rpq | es_value_o | 0/0 | 1 | 0 |
-| rpq | pval_value_o | 0/0 | 1 | 0 |
-| rpq | n_r | 0/0 | 1 | 0 |
-| rpq | es_value_r | 0/0 | 1 | 0 |
-| rpq | pval_value_r | 0/0 | 1 | 0 |
-| rpq | reported_success | 0/0 | 1 | 0 |
-| rtn | n_o | 0/0 | 1 | 0 |
-| rtn | es_value_o | 0/0 | 1 | 0 |
-| rtn | pval_value_o | 0/0 | 1 | 0 |
-| rtn | n_r | 0/0 | 1 | 0 |
-| rtn | es_value_r | 0/0 | 1 | 0 |
-| rtn | pval_value_r | 0/0 | 1 | 0 |
-| rtn | reported_success | 0/0 | 1 | 0 |
-| shah | n_o | 0/0 | 13 | 0 |
-| shah | es_value_o | 0/1 | 12 | 0 |
-| shah | pval_value_o | 0/1 | 12 | 0 |
-| shah | n_r | 0/2 | 11 | 0 |
-| shah | es_value_r | 0/1 | 12 | 0 |
-| shah | pval_value_r | 0/1 | 12 | 0 |
-| shah | reported_success | 0/1 | 12 | 0 |
-| soscisubmission | n_o | 0/0 | 129 | 0 |
-| soscisubmission | es_value_o | 0/0 | 129 | 0 |
-| soscisubmission | pval_value_o | 0/0 | 129 | 0 |
-| soscisubmission | n_r | 0/1 | 128 | 0 |
-| soscisubmission | es_value_r | 0/3 | 126 | 0 |
-| soscisubmission | pval_value_r | 0/3 | 126 | 0 |
-| soscisubmission | reported_success | 0/1 | 128 | 0 |
-| svodevelopment | n_o | 0/0 | 7 | 0 |
-| svodevelopment | es_value_o | 0/0 | 7 | 0 |
-| svodevelopment | pval_value_o | 0/0 | 7 | 0 |
-| svodevelopment | n_r | 0/0 | 7 | 0 |
-| svodevelopment | es_value_r | 0/0 | 7 | 0 |
-| svodevelopment | pval_value_r | 0/0 | 7 | 0 |
-| svodevelopment | reported_success | 0/0 | 7 | 0 |
-| uxajg | n_o | 0/0 | 1 | 0 |
-| uxajg | es_value_o | 0/0 | 1 | 0 |
-| uxajg | pval_value_o | 0/0 | 1 | 0 |
-| uxajg | n_r | 0/0 | 1 | 0 |
-| uxajg | es_value_r | 0/0 | 1 | 0 |
-| uxajg | pval_value_r | 0/0 | 1 | 0 |
-| uxajg | reported_success | 0/0 | 1 | 0 |
-| vGqL | n_o | 0/0 | 1 | 0 |
-| vGqL | es_value_o | 0/0 | 1 | 0 |
-| vGqL | pval_value_o | 0/0 | 1 | 0 |
-| vGqL | n_r | 0/0 | 1 | 0 |
-| vGqL | es_value_r | 0/0 | 1 | 0 |
-| vGqL | pval_value_r | 0/0 | 1 | 0 |
-| vGqL | reported_success | 0/0 | 1 | 0 |
-| w | n_o | 0/0 | 2 | 0 |
-| w | es_value_o | 0/0 | 2 | 0 |
-| w | pval_value_o | 0/0 | 2 | 0 |
-| w | n_r | 0/0 | 2 | 0 |
-| w | es_value_r | 0/0 | 2 | 0 |
-| w | pval_value_r | 0/0 | 2 | 0 |
-| w | reported_success | 0/0 | 2 | 0 |
-| wRvv | n_o | 0/0 | 2 | 0 |
-| wRvv | es_value_o | 0/0 | 2 | 0 |
-| wRvv | pval_value_o | 0/0 | 2 | 0 |
-| wRvv | n_r | 0/0 | 2 | 0 |
-| wRvv | es_value_r | 0/0 | 2 | 0 |
-| wRvv | pval_value_r | 0/0 | 2 | 0 |
-| wRvv | reported_success | 0/0 | 2 | 0 |
-| x | n_o | 0/0 | 2 | 0 |
-| x | es_value_o | 0/0 | 2 | 0 |
-| x | pval_value_o | 0/0 | 2 | 0 |
-| x | n_r | 0/0 | 2 | 0 |
-| x | es_value_r | 0/0 | 2 | 0 |
-| x | pval_value_r | 0/0 | 2 | 0 |
-| x | reported_success | 0/0 | 2 | 0 |
-| xYbO | n_o | 0/0 | 1 | 0 |
-| xYbO | es_value_o | 0/0 | 1 | 0 |
-| xYbO | pval_value_o | 0/0 | 1 | 0 |
-| xYbO | n_r | 0/0 | 1 | 0 |
-| xYbO | es_value_r | 0/0 | 1 | 0 |
-| xYbO | pval_value_r | 0/0 | 1 | 0 |
-| xYbO | reported_success | 0/0 | 1 | 0 |
-| xszk | n_o | 0/0 | 2 | 0 |
-| xszk | es_value_o | 0/0 | 2 | 0 |
-| xszk | pval_value_o | 0/0 | 2 | 0 |
-| xszk | n_r | 0/0 | 2 | 0 |
-| xszk | es_value_r | 0/0 | 2 | 0 |
-| xszk | pval_value_r | 0/0 | 2 | 0 |
-| xszk | reported_success | 0/0 | 2 | 0 |
-| yAPR | n_o | 0/0 | 1 | 0 |
-| yAPR | es_value_o | 0/0 | 1 | 0 |
-| yAPR | pval_value_o | 0/0 | 1 | 0 |
-| yAPR | n_r | 0/0 | 1 | 0 |
-| yAPR | es_value_r | 0/0 | 1 | 0 |
-| yAPR | pval_value_r | 0/0 | 1 | 0 |
-| yAPR | reported_success | 0/0 | 1 | 0 |
-| yypJ | n_o | 0/0 | 1 | 0 |
-| yypJ | es_value_o | 0/0 | 1 | 0 |
-| yypJ | pval_value_o | 0/0 | 1 | 0 |
-| yypJ | n_r | 0/0 | 1 | 0 |
-| yypJ | es_value_r | 0/0 | 1 | 0 |
-| yypJ | pval_value_r | 0/0 | 1 | 0 |
-| yypJ | reported_success | 0/0 | 1 | 0 |
-| zK | n_o | 0/0 | 1 | 0 |
-| zK | es_value_o | 0/0 | 1 | 0 |
-| zK | pval_value_o | 0/0 | 1 | 0 |
-| zK | n_r | 0/0 | 1 | 0 |
-| zK | es_value_r | 0/0 | 1 | 0 |
-| zK | pval_value_r | 0/0 | 1 | 0 |
-| zK | reported_success | 0/0 | 1 | 0 |
-| zNEm | n_o | 0/0 | 1 | 0 |
-| zNEm | es_value_o | 0/0 | 1 | 0 |
-| zNEm | pval_value_o | 0/0 | 1 | 0 |
-| zNEm | n_r | 0/0 | 1 | 0 |
-| zNEm | es_value_r | 0/0 | 1 | 0 |
-| zNEm | pval_value_r | 0/0 | 1 | 0 |
-| zNEm | reported_success | 0/0 | 1 | 0 |
-| zb | n_o | 0/0 | 4 | 0 |
-| zb | es_value_o | 0/0 | 4 | 0 |
-| zb | pval_value_o | 0/0 | 4 | 0 |
-| zb | n_r | 0/0 | 4 | 0 |
-| zb | es_value_r | 0/0 | 4 | 0 |
-| zb | pval_value_r | 0/0 | 4 | 0 |
-| zb | reported_success | 0/0 | 4 | 0 |
-| zlBL | n_o | 0/0 | 3 | 0 |
-| zlBL | es_value_o | 0/0 | 3 | 0 |
-| zlBL | pval_value_o | 0/0 | 3 | 0 |
-| zlBL | n_r | 0/0 | 3 | 0 |
-| zlBL | es_value_r | 0/0 | 3 | 0 |
-| zlBL | pval_value_r | 0/0 | 3 | 0 |
-| zlBL | reported_success | 0/0 | 3 | 0 |
-| zlm | n_o | 0/0 | 1 | 0 |
-| zlm | es_value_o | 0/0 | 1 | 0 |
-| zlm | pval_value_o | 0/0 | 1 | 0 |
-| zlm | n_r | 0/0 | 1 | 0 |
-| zlm | es_value_r | 0/0 | 1 | 0 |
-| zlm | pval_value_r | 0/0 | 1 | 0 |
-| zlm | reported_success | 0/0 | 1 | 0 |
-| zmYY | n_o | 0/0 | 1 | 0 |
-| zmYY | es_value_o | 0/0 | 1 | 0 |
-| zmYY | pval_value_o | 0/0 | 1 | 0 |
-| zmYY | n_r | 0/0 | 1 | 0 |
-| zmYY | es_value_r | 0/0 | 1 | 0 |
-| zmYY | pval_value_r | 0/0 | 1 | 0 |
-| zmYY | reported_success | 0/0 | 1 | 0 |
+| Project prefix | Original n | Original ES | Original p | Replication n | Replication ES | Replication p | Success |
+|---|---|---|---|---|---|---|---|
+| (blank/numeric) | 0/1 (22; 0) | 0/1 (21; 1) | 0/2 (21; 0) | 0/3 (20; 0) | 0/1 (18; 4) | 0/5 (18; 0) | 0/4 (19; 0) |
+| AOQj | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| AYQG | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| AgO | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| AqDO | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| Arb | 0/0 (27; 0) | 0/3 (23; 1) | 0/4 (23; 0) | 0/1 (22; 4) | 0/1 (24; 2) | 0/2 (25; 0) | 0/3 (24; 0) |
+| Arb  | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) |
+| AvOr | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| Blxd | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
+| Boyce | 2/52 (226; 2) | 0/38 (218; 24) | 2/52 (228; 0) | 8/54 (226; 0) | 2/30 (226; 24) | 4/47 (233; 0) | 9/47 (233; 0) |
+| Br | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| BrGp | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
+| CORE | 0/21 (93; 0) | 0/15 (95; 4) | 0/19 (95; 0) | 0/25 (85; 4) | 0/19 (84; 11) | 0/23 (91; 0) | 1/36 (78; 0) |
+| Camereretal | 0/13 (22; 4) | 0/9 (19; 11) | 0/21 (18; 0) | 0/20 (19; 0) | 0/17 (18; 4) | 0/20 (19; 0) | 0/6 (33; 0) |
+| D | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| DEqr | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| Data (editable) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| E | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| EJpm | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| EKBZ | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) |
+| EQxa | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| Eb | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| FORRT | 0/15 (9; 0) | 0/14 (10; 0) | 0/15 (9; 0) | 0/2 (7; 15) | 0/4 (18; 2) | 0/2 (22; 0) | 0/1 (23; 0) |
+| G | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| GXEW | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| Holzmeisteretal | 0/7 (19; 0) | 0/3 (19; 4) | 0/8 (18; 0) | 0/25 (1; 0) | 0/12 (0; 14) | 0/25 (1; 0) | 0/26 (0; 0) |
+| JRpA | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
+| Keith | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
+| Kybl | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| LbEB | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| LmBx | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| LyLd | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| ManyLabs | 0/9 (29; 0) | 0/10 (28; 0) | 0/10 (28; 0) | 0/16 (19; 3) | 0/32 (6; 0) | 0/28 (10; 0) | 0/11 (27; 0) |
+| Manylabs | 0/0 (38; 0) | 0/0 (38; 0) | 0/0 (38; 0) | 0/0 (27; 11) | 0/12 (26; 0) | 0/7 (31; 0) | 0/9 (29; 0) |
+| N | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| None | 0/0 (5; 0) | 0/0 (4; 1) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) |
+| OKRy | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| OYX | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| OeGv | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| OpenMKT | 0/0 (102; 0) | 0/22 (80; 0) | 0/7 (95; 0) | 0/28 (74; 0) | 0/17 (72; 13) | 0/30 (72; 0) | 0/26 (76; 0) |
+| Ovkm | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| Ow | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| Q | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| QllV | 0/0 (1; 0) | 0/0 (0; 1) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| R | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
+| RRR | 0/11 (20; 0) | 0/9 (22; 0) | 0/15 (16; 0) | 0/4 (18; 9) | 0/9 (16; 6) | 0/15 (16; 0) | 0/6 (25; 0) |
+| RYKv | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/1 (2; 0) |
+| RrOb | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
+| Soto | 0/4 (56; 0) | 0/3 (56; 1) | 0/3 (57; 0) | 0/12 (48; 0) | 0/2 (49; 9) | 0/8 (52; 0) | 0/0 (60; 0) |
+| VB | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| Vj | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| VvZX | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
+| WLpV | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| Wre | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| XPHI | 0/7 (62; 0) | 0/4 (64; 1) | 0/7 (62; 0) | 0/6 (63; 0) | 0/5 (62; 2) | 0/7 (62; 0) | 0/11 (58; 0) |
+| YWep | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| YpZZ | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| aYyR | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| aag | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| acykd | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| add | 0/9 (148; 7) | 0/10 (133; 21) | 0/18 (146; 0) | 0/10 (143; 11) | 0/13 (139; 12) | 0/23 (141; 0) | 0/18 (146; 0) |
+| additional | 3/18 (327; 6) | 17/45 (290; 16) | 5/67 (284; 0) | 2/48 (302; 1) | 1/20 (306; 25) | 1/49 (302; 0) | 8/101 (250; 0) |
+| av | 0/5 (161; 0) | 0/10 (153; 3) | 0/13 (153; 0) | 0/12 (144; 10) | 0/16 (149; 1) | 0/8 (158; 0) | 0/23 (143; 0) |
+| bY | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| bth | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
+| curatescience | 0/15 (82; 0) | 0/7 (80; 10) | 0/14 (83; 0) | 0/18 (72; 7) | 0/20 (65; 12) | 0/31 (66; 0) | 0/25 (72; 0) |
+| d | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| datareplicada | 0/0 (17; 0) | 0/0 (17; 0) | 0/2 (15; 0) | 0/1 (16; 0) | 0/4 (13; 0) | 0/2 (15; 0) | 0/4 (13; 0) |
+| dqv | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| e | 0/0 (15; 0) | 0/0 (15; 0) | 0/0 (15; 0) | 0/0 (15; 0) | 0/13 (2; 0) | 0/13 (2; 0) | 0/10 (5; 0) |
+| eOQm | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| eg | 0/0 (2; 0) | 0/0 (1; 1) | 0/1 (1; 0) | 0/1 (1; 0) | 0/0 (2; 0) | 0/1 (1; 0) | 0/1 (1; 0) |
+| exd | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| fmd | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| gRWz | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| gea | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
+| gh | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| is | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/1 (2; 0) | 0/1 (2; 0) | 0/1 (2; 0) | 0/0 (3; 0) |
+| j | 0/1 (7; 0) | 0/0 (8; 0) | 0/1 (7; 0) | 0/1 (7; 0) | 0/0 (7; 1) | 0/0 (8; 0) | 0/1 (7; 0) |
+| jLr | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| jcre | 0/0 (71; 0) | 0/0 (71; 0) | 0/0 (71; 0) | 0/0 (71; 0) | 0/0 (62; 9) | 0/1 (70; 0) | 0/0 (71; 0) |
+| kXp | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| lJ | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| mBL | 0/0 (0; 1) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) |
+| mJDj | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| mxyQ | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
+| odonnell | 0/2 (4; 0) | 0/3 (2; 1) | 0/4 (2; 0) | 0/2 (3; 1) | 0/3 (2; 1) | 0/3 (3; 0) | 0/3 (3; 0) |
+| osc | 0/1 (98; 0) | 0/0 (97; 2) | 0/3 (96; 0) | 0/1 (97; 1) | 0/2 (96; 1) | 0/3 (96; 0) | 0/15 (84; 0) |
+| plLK | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| q | 0/1 (4; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/0 (5; 0) | 0/1 (4; 0) | 0/2 (3; 0) |
+| qXX | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| qYr | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| qgWj | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
+| resciencex | 0/0 (8; 0) | 0/0 (8; 0) | 0/0 (8; 0) | 0/0 (8; 0) | 0/0 (8; 0) | 0/0 (8; 0) | 0/0 (8; 0) |
+| rpq | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| rtn | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| shah | 0/0 (13; 0) | 0/1 (12; 0) | 0/1 (12; 0) | 0/2 (11; 0) | 0/1 (12; 0) | 0/1 (12; 0) | 0/1 (12; 0) |
+| soscisubmission | 0/2 (125; 2) | 0/4 (124; 1) | 0/3 (126; 0) | 0/11 (118; 0) | 0/6 (117; 6) | 0/12 (117; 0) | 0/11 (118; 0) |
+| svodevelopment | 0/0 (7; 0) | 0/0 (7; 0) | 0/0 (7; 0) | 0/0 (7; 0) | 0/0 (7; 0) | 0/0 (7; 0) | 0/0 (7; 0) |
+| uxajg | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| vGqL | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| w | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
+| wRvv | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/1 (1; 0) | 0/0 (1; 1) | 0/1 (1; 0) | 0/2 (0; 0) |
+| x | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/1 (1; 0) | 0/0 (1; 1) | 0/1 (1; 0) | 0/1 (1; 0) |
+| xYbO | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| xszk | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
+| yAPR | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| yypJ | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| zK | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| zNEm | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| zb | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
+| zlBL | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
+| zlm | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| zmYY | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 
 ## Confirmed errors
 
+- Effect row 22, `reported_success`: `failed` → `successful`. p. 44 (article p. 9), Section 3 Results; p. 51 (article p. 16), Section 4 Discussion. The target outcome is specifically Problem 4 ('Share of the enriched alternative in Problem 4'). While the replication failed to find consistent support across all eight problems overall, for Problem 4 specifically the authors report empirical support for both Hypothesis 1 ('The results of one-proportion z-test investigating Hypothesis 1 indicated support in Problem 4 (z = 4.18, p < .001, d = 0.26, 95% CI [0.14,0.39])', p. 44) and Hypothesis 2 (p. 45), and explicitly state in the Discussion (p. 51) that they 'successfully replicated the results of Problem 4 and Problem 5 of the original study.' The shipped value ('failed') erroneously applied the overall paper-level conclusion to Problem 4. [Paper](https://doi.org/10.1017/s1930297500008299).
+- Effect row 58, `pval_value_r`: `0.618` → `0.438`. p. 41, Results; p. 45, Appendix D, Figure 1. The target effect replicating Stellar et al. (2018) Study 3 (t(84) = 2.38, p = 0.02) is the balance between disclosed strengths and weaknesses (the composite humility score), for which the replication reports t(69) = –0.34, p = 0.438. The shipped p-value of 0.618 comes from a follow-up test examining log-transformed weaknesses individually (t(82) = 0.50, p = 0.618). [Paper](https://doi.org/10.26443/msurj.v19i1.231).
+- Effect row 69, `pval_value_o`: `0.41` → `0.47`. OnlineFirst p. 7, Table 3, Subgroup Analyses, Sample size row, χ²(1), p column. Table 3 reports the subgroup homogeneity test for sample size as χ²(1) = 0.53, p = .47. The shipped p-value of 0.41 is incorrect and the blind extraction of .47 (0.47) is correct. [Paper](https://doi.org/10.3102/0013189x13507104).
+- Effect row 80, `reported_success`: `mixed` → `failed`. Results (Effect of L-DOPA administration post extinction on extinction memory retrieval, p. 4) and Discussion. For the target preregistered test of hypothesis 1 on p. 4 (the relationship between post-extinction L-DOPA administration and extinction memory retrieval at test), the authors explicitly report that they did not confirm an effect of L-DOPA (F(1,53) = 0.02, p = 0.887, BF01 = 3.85) and state in the Discussion that they could not replicate hypothesis 1. The shipped value ('mixed') conflates this failed target hypothesis with the replication of hypothesis 2 or non-preregistered exploratory moderation analyses involving salivary alpha-amylase. [Paper](https://doi.org/10.1038/s41467-024-46936-y).
+- Effect row 81, `n_o`: `40` → `35`. Results, The effect of l-DOPA on extinction memory retrieval can be explained by its effect on vmPFC reactivations (p. 5); Fig. 2g (p. 4). The target description specifies the mediation analysis examining the relationship between L-DOPA and extinction memory retrieval (day-3 SCRs) with the number of vmPFC pattern reactivations as a mediator. Although 40 participants completed the experiment, 5 had invalid day-3 SCR data (>75% zero trials), leaving n = 35 for all day-3 extinction memory retrieval and mediation analyses. The shipped value of 40 comes from the preceding repeated-measures ANOVA in the same paragraph testing only day-2 vmPFC reactivation counts (time x group: F(3,114) = 3.51, P = 0.02, partial eta^2 = 0.09; n = 40). [Paper](https://doi.org/10.1038/s41467-018-06785-y).
+- Effect row 81, `pval_value_o`: `0.02` → `0.007`. Results, The effect of l-DOPA on extinction memory retrieval can be explained by its effect on vmPFC reactivations (p. 5); Fig. 2g (p. 4). For the target mediation analysis (effect of L-DOPA on extinction memory retrieval mediated by vmPFC pattern reactivations), the indirect mediator effect has P = 0.007 (beta = -0.09, n = 35). Shipped mistakenly extracted P = 0.02 (along with partial eta^2 = 0.09 and n = 40) from the time x group ANOVA on day-2 vmPFC reactivations reported earlier in the same paragraph on p. 5. [Paper](https://doi.org/10.1038/s41467-018-06785-y).
+- Effect row 81, `reported_success`: `mixed` → `failed`. Abstract, Results (Effect of L-DOPA administration post extinction on vmPFC reactivations, p. 5), and Discussion. For the target effect on p. 5 examining the effect of L-DOPA on the number of post-extinction vmPFC reactivations as a mediator of extinction retrieval (hypothesis 3), the authors explicitly state that there was no statistically significant effect of L-DOPA on vmPFC reactivations (F(1,44) = 0.87, p = 0.356, BF01 = 15.00) and conclude in both the Abstract and Discussion that they failed to replicate this effect and its mediation. [Paper](https://doi.org/10.1038/s41467-024-46936-y).
 - Effect row 100, `n_r`: `229` → `16`. Results, Correlation between MA and the misinformation effect change at the item level, p. 22, Footnote 9. The target effect is an item-level correlation (r = -.385, p = .07, one-tailed) between misinformation availability and net change in the misinformation effect (misinformation endorsement operationalization). Footnote 9 explicitly states that the correlation is computed across 16 item-by-condition data points (8 critical items across 2 MA conditions, df = 14), whereas the shipped value (229) is the total participant count before aggregation to the item level. [Paper](https://doi.org/10.1002/acp.4202).
 - Effect row 101, `n_r`: `229` → `16`. Results, Correlation between MA and the misinformation effect change at the item level, p. 22, Footnote 9. The target effect is an item-level correlation (r = -.57, p = .01, one-tailed) between misinformation availability and net change in the misinformation effect (accuracy operationalization). Footnote 9 explicitly states that the correlation is based on 16 item-by-condition data points (8 critical items across 2 MA conditions, df = 14), whereas the shipped value (229) is the total number of participants in the experiment rather than the sample size of the correlation. [Paper](https://doi.org/10.1002/acp.4202).
+- Effect row 136, `reported_success`: `statistically successful but flawed` → `mixed`. p. 1450 (PDF p. 12), Table 2; Discussion and Conclusion, paragraphs 1-2. The author explicitly characterizes the replication outcome for both tasks in Table 2 and the Discussion as a 'Partial' replication ('mixed'): while the null main effect of group was replicated in both ANOVAs, the null interaction only replicated in one task, position main effects were significant in both tasks unlike the original study, and only two of the four TOST equivalence tests demonstrated practical equivalence. [Paper](https://doi.org/10.1017/s0272263124000342).
+- Effect row 137, `reported_success`: `statistically successful but flawed` → `mixed`. p. 1450 (PDF p. 12), Table 2; Discussion and Conclusion, paragraphs 1-2. Table 2 and the Discussion explicitly classify the replication of both tasks as 'Partial' ('mixed'). Furthermore, for the item type (preposed vs. postposed) effect on the semantic interpretation task specifically, the replication found a significant main effect of position (F[1, 209] = 8.41, p < .05) contrary to the original study's null effect. [Paper](https://doi.org/10.1017/s0272263124000342).
+- Effect row 138, `reported_success`: `statistically successful but flawed` → `mixed`. p. 1450 (PDF p. 12), Table 2; Discussion and Conclusion, paragraphs 1-2. The author explicitly characterizes the replication outcome in Table 2 and the Discussion as a 'Partial' replication ('mixed'): the null main effect of group replicated in both tasks, but the group by position interaction was significant in the semantic interpretation task (F[1, 209] = 6.72, p < .05), and only two of the four equivalence tests showed practical equivalence. [Paper](https://doi.org/10.1017/s0272263124000342).
+- Effect row 139, `reported_success`: `statistically successful but flawed` → `mixed`. p. 1450 (PDF p. 12), Table 2; Discussion and Conclusion, paragraphs 1-2. The author explicitly summarizes the replication in Table 2 and the Discussion as 'Partial' ('mixed'), noting that only two of the four null main effects and interactions replicated in the ANOVAs and only two of the four TOST equivalence tests supported practical equivalence. [Paper](https://doi.org/10.1017/s0272263124000342).
+- Effect row 140, `reported_success`: `statistically successful but flawed` → `mixed`. p. 1450 (PDF p. 12), Table 2; Discussion and Conclusion, paragraphs 1-2. The author explicitly classifies the replication in Table 2 and the Discussion as a 'Partial' replication ('mixed'), as not all null ANOVA effects replicated across the two tasks and only two of the four follow-up equivalence tests were significant. [Paper](https://doi.org/10.1017/s0272263124000342).
+- Effect row 141, `reported_success`: `statistically successful but flawed` → `mixed`. p. 1450 (PDF p. 12), Table 2; Discussion and Conclusion, paragraphs 1-2. Table 2 and the Discussion explicitly classify the replication of the collocation task and overall study as 'Partial' ('mixed'). Furthermore, for the item type (preposed vs. postposed) effect on the collocation task specifically, the replication found a significant main effect of position (F[1, 213] = 36.06, p < .05) contrary to the original study's null effect. [Paper](https://doi.org/10.1017/s0272263124000342).
+- Effect row 180, `es_value_o`: `X2(1, N = 40) = 22.77` → `X2(1, N = 85) = 22.771`. Accepted manuscript p. 19, footnote 8 & footnote 9; p. 20, section 4.2. Reconciling prior adjudication with parent response: compatible two-decimal rounding in shipped (22.77 vs. 22.771) is acceptable, and df = 1 is explicitly confirmed by Footnote 9 ('our χ2 contrasts are always based on a 2x2 contingency table, so the degrees of freedom (df) are always 1'). However, shipped's sample size annotation N = 40 is demonstrably wrong: 40 is the number of learner texts sampled in the corpus (p. 12), whereas UAM Corpus Tool computed the 2x2 chi-square test on raw obligatory-context token frequencies (p. 18, section 3.3; p. 19, footnotes 7–8), which for progressive -ing are 18/38 (beginners) vs. 44/47 (intermediates), giving a contingency-table total of N = 38 + 47 = 85 (reproducing χ2 = 85*(18*3 - 20*44)^2 / (38*47*62*23) = 22.771). Because shipped has the wrong N annotation (N = 40) and blind provides only the bare number without df and N annotations, both are wrong and the full corrected statistic is X2(1, N = 85) = 22.771 (or 22.77 with two-decimal rounding). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 181, `es_value_o`: `X2(1, N = 40) = 0.03` → `X2(1, N = 69) = 0.027`. Accepted manuscript p. 19, section 4.1 & footnote 9. Reconciling prior adjudication with parent response: compatible two-decimal rounding in shipped (0.03 vs. 0.027) is acceptable, and df = 1 is explicitly confirmed by Footnote 9 ('our χ2 contrasts are always based on a 2x2 contingency table, so the degrees of freedom (df) are always 1'). However, shipped's sample size annotation N = 40 is demonstrably wrong: 40 is the number of learner texts sampled in the corpus (p. 12), whereas UAM Corpus Tool computed the 2x2 chi-square test on raw obligatory-context token frequencies (p. 18, section 3.3; p. 19, footnote 7), which for plural -s are 14/15 (beginners) vs. 51/54 (intermediates), giving a contingency-table total of N = 15 + 54 = 69 (reproducing χ2 = 69*(14*3 - 1*51)^2 / (15*54*65*4) = 0.027). Because shipped has the wrong N annotation (N = 40) and blind provides only the bare number without df and N annotations, both are wrong and the full corrected statistic is X2(1, N = 69) = 0.027 (or 0.03 with two-decimal rounding). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 181, `pval_value_o`: `0.05` → `> 0.05`. Accepted manuscript p. 19, section 4.1. The contrast for plural -s is explicitly reported as non-significant with p>0.05, whereas shipped recorded the bound as '<' (l). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 182, `es_value_o`: `X2(1, N = 40) = 11.59` → `X2(1, N = 154) = 11.587`. Accepted manuscript p. 19, footnote 8 & footnote 9. Reconciling prior adjudication with parent response: compatible two-decimal rounding in shipped (11.59 vs. 11.587) is acceptable, and df = 1 is explicitly confirmed by Footnote 9 ('our χ2 contrasts are always based on a 2x2 contingency table, so the degrees of freedom (df) are always 1'). However, shipped's sample size annotation N = 40 is demonstrably wrong: 40 is the number of learner texts sampled in the corpus (p. 12), whereas UAM Corpus Tool computed the 2x2 chi-square test on raw obligatory-context token frequencies (p. 18, section 3.3; p. 19, footnotes 7–8), which for copula be are 44/61 (beginners) vs. 86/93 (intermediates), giving a contingency-table total of N = 61 + 93 = 154 (reproducing χ2 = 154*(44*7 - 17*86)^2 / (61*93*130*24) = 11.587). Because shipped has the wrong N annotation (N = 40) and blind provides only the bare number without df and N annotations, both are wrong and the full corrected statistic is X2(1, N = 154) = 11.587 (or 11.59 with two-decimal rounding). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 183, `es_value_o`: `X2(1, N = 40) = 24.44` → `X2(1, N = 88) = 24.444`. Accepted manuscript p. 19, footnote 8 & footnote 9. Reconciling prior adjudication with parent response: compatible two-decimal rounding in shipped (24.44 vs. 24.444) is acceptable, and df = 1 is explicitly confirmed by Footnote 9 ('our χ2 contrasts are always based on a 2x2 contingency table, so the degrees of freedom (df) are always 1'). However, shipped's sample size annotation N = 40 is demonstrably wrong: 40 is the number of learner texts sampled in the corpus (p. 12), whereas UAM Corpus Tool computed the 2x2 chi-square test on raw obligatory-context token frequencies (p. 18, section 3.3; p. 19, footnotes 7–8), which for auxiliary be are 20/40 (beginners) vs. 46/48 (intermediates), giving a contingency-table total of N = 40 + 48 = 88 (reproducing χ2 = 88*(20*2 - 20*46)^2 / (40*48*66*22) = 24.444). Because shipped has the wrong N annotation (N = 40) and blind provides only the bare number without df and N annotations, both are wrong and the full corrected statistic is X2(1, N = 88) = 24.444 (or 24.44 with two-decimal rounding). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 184, `es_value_o`: `X2(1, N = 40) = 23.46` → `X2(1, N = 826) = 23.456`. Accepted manuscript p. 19, footnote 8 & footnote 9; p. 23, section 4.4. Reconciling prior adjudication with parent response: compatible two-decimal rounding in shipped (23.46 vs. 23.456) is acceptable, and df = 1 is explicitly confirmed by Footnote 9 ('our χ2 contrasts are always based on a 2x2 contingency table, so the degrees of freedom (df) are always 1'). However, shipped's sample size annotation N = 40 is demonstrably wrong: 40 is the number of learner texts sampled in the corpus (p. 12), whereas UAM Corpus Tool computed the 2x2 chi-square test on raw obligatory-context token frequencies (p. 18, section 3.3; p. 19, footnotes 7–8), which for articles are 311/386 (beginners) vs. 405/440 (intermediates), giving a contingency-table total of N = 386 + 440 = 826 (reproducing χ2 = 826*(311*35 - 75*405)^2 / (386*440*716*110) = 23.456). Because shipped has the wrong N annotation (N = 40) and blind provides only the bare number without df and N annotations, both are wrong and the full corrected statistic is X2(1, N = 826) = 23.456 (or 23.46 with two-decimal rounding). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 185, `es_value_o`: `X2(1, N = 40) = 37.43` → `X2(1, N = 221) = 37.429`. Accepted manuscript p. 19, footnote 8 & footnote 9; p. 25, section 4.6. Reconciling prior adjudication with parent response: compatible two-decimal rounding in shipped (37.43 vs. 37.429) is acceptable, and df = 1 is explicitly confirmed by Footnote 9 ('our χ2 contrasts are always based on a 2x2 contingency table, so the degrees of freedom (df) are always 1'). However, shipped's sample size annotation N = 40 is demonstrably wrong: 40 is the number of learner texts sampled in the corpus (p. 12), whereas UAM Corpus Tool computed the 2x2 chi-square test on raw obligatory-context token frequencies (p. 18, section 3.3; p. 19, footnotes 7–8), which for past irregular are 27/65 (beginners) vs. 129/156 (intermediates), giving a contingency-table total of N = 65 + 156 = 221 (reproducing χ2 = 221*(27*27 - 38*129)^2 / (65*156*156*65) = 37.429). Because shipped has the wrong N annotation (N = 40) and blind provides only the bare number without df and N annotations, both are wrong and the full corrected statistic is X2(1, N = 221) = 37.429 (or 37.43 with two-decimal rounding). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 186, `es_value_o`: `X2(1, N = 40) = 42.12` → `X2(1, N = 221) = 42.119`. Accepted manuscript p. 19, footnote 8 & footnote 9; p. 26, section 4.6. Reconciling prior adjudication with parent response: compatible two-decimal rounding in shipped (42.12 vs. 42.119) is acceptable, and df = 1 is explicitly confirmed by Footnote 9 ('our χ2 contrasts are always based on a 2x2 contingency table, so the degrees of freedom (df) are always 1'). However, shipped's sample size annotation N = 40 is demonstrably wrong (and mathematically impossible since a 2x2 contingency table always satisfies χ2 <= N, whereas 42.119 > 40): 40 is the number of learner texts sampled in the corpus (p. 12), whereas UAM Corpus Tool computed the 2x2 chi-square test on raw obligatory-context token frequencies (p. 18, section 3.3; p. 19, footnotes 7–8), which for past regular -ed are 25/63 (beginners) vs. 132/158 (intermediates), giving a contingency-table total of N = 63 + 158 = 221 (reproducing χ2 = 221*(25*26 - 38*132)^2 / (63*158*157*64) = 42.119). Because shipped has the wrong N annotation (N = 40) and blind provides only the bare number without df and N annotations, both are wrong and the full corrected statistic is X2(1, N = 221) = 42.119 (or 42.12 with two-decimal rounding). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 187, `es_value_o`: `X2(1, N = 40) = 1.4` → `X2(1, N = 14) = 1.400`. Accepted manuscript p. 19, section 4.1 & footnote 9; pp. 24–25, section 4.5. Reconciling prior adjudication with parent response: compatible formatting in shipped (1.4 vs. 1.400) is acceptable, and df = 1 is explicitly confirmed by Footnote 9 ('our χ2 contrasts are always based on a 2x2 contingency table, so the degrees of freedom (df) are always 1'). However, shipped's sample size annotation N = 40 is demonstrably wrong: 40 is the total number of learner texts in the corpus (and p. 24 explicitly notes that 'Most files could not be tagged for possessive as no instances were produced'), whereas UAM Corpus Tool computed the 2x2 chi-square test on raw token frequencies (p. 18, section 3.3), where the reported group denominators in 'TLU=7/7 vs. 7/7' sum to N = 7 + 7 = 14 tokens (note that while 7/7 vs. 7/7 is a text typo in the numerators since Section 4.5 reports B1 non-TLU errors, a 7-vs-7 row-total table with N = 14 such as 6/7 vs. 4/7 reproduces χ2 = 14*(18-4)^2/(7*7*10*4) = 1.400 exactly). Because shipped has the wrong N annotation (N = 40) and blind provides only the bare number without df and N annotations, both are wrong and the full corrected statistic is X2(1, N = 14) = 1.400 (or 1.4). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 187, `pval_value_o`: `0.05` → `> 0.05`. Accepted manuscript p. 19, section 4.1. The contrast for possessive -'s is explicitly reported as non-significant with p>0.05, whereas shipped recorded the bound as '<' (l). [Paper](https://doi.org/10.1075/resla.17019.loz).
+- Effect row 203, `pval_value_o`: `0.05` → `< 0.01`. p. 424, Results, Allocation of Resources, paragraph 2. The target effect is the comparison between process accountability and outcome accountability on escalating commitment (resource allocation to the initial choice). On p. 424, the planned contrast between process accountability and outcome accountability is reported as F(1, 183) = 12.41, p < .01. The shipped entry (> 0.05) confused this contrast with comparisons against the baseline condition, whereas the blind extraction (< .01) is correct. [Paper](https://doi.org/10.1037/0021-9010.77.4.419).
+- Effect row 221, `n_o`: `240` → `239`. Journal p. 34, Summary of Treatment Groups; Journal p. 37 (article page 11), Table 5. Although 240 students initially participated (120 per responsibility condition), one participant in the high personal responsibility condition made no initial choice and was excluded from further analyses, leaving 119 + 120 = 239 participants in the 2 x 2 ANOVA reported in Table 5 (consistent with error df = 235). [Paper](https://doi.org/10.1016/0030-5073(76)90005-2).
+- Effect row 222, `n_o`: `240` → `239`. Journal p. 34, Summary of Treatment Groups; Journal p. 37 (article page 11), Table 5. Although 240 students initially participated (120 per responsibility condition), one participant in the high personal responsibility condition made no initial choice and was excluded from further analyses, leaving 119 + 120 = 239 participants in the 2 x 2 ANOVA reported in Table 5 (consistent with error df = 235). [Paper](https://doi.org/10.1016/0030-5073(76)90005-2).
+- Effect row 291, `es_value_o`: `F(3, 78) = 5.93` → `F(1, 26) = 5.93`. Section 1.1.1, p. 2; Table 1, p. 5 (RT to arrows column; Proximity effect 1/4, 1/3, 1/2, 1/1). Reconciling with the parent response: although inferring degrees of freedom is permitted when unprinted, positive evidence demonstrates that the shipped df annotation (3, 78) is wrong. Table 1 explicitly states that the ANOVAs examine 'the linear effects of proximity and expended effort across 4, 3, and 2 trials' (a 1-df polynomial contrast, df = 1, 26 for N = 27), which yields the exact printed p = .0220 for F(1, 26) = 5.93, whereas an omnibus F(3, 78) = 5.93 would yield p = .0011. Providing the full corrected statistic with established df gives F(1, 26) = 5.93. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 292, `es_value_o`: `F(2, 52) = 4.00` → `F(1, 26) = 4.00`. Section 1.1.1, p. 2; Table 1, p. 5 (Motivation column; Proximity effect 2/4, 2/3, 2/2). Reconciling with the parent response: although inferring degrees of freedom is permitted when unprinted, positive evidence demonstrates that the shipped df annotation (2, 52) is wrong. Table 1 explicitly states that the ANOVAs examine 'the linear effects of proximity and expended effort across 4, 3, and 2 trials' (a 1-df linear contrast, df = 1, 26 for N = 27), which yields the exact printed p = .0560 for F(1, 26) = 4.00, whereas an omnibus F(2, 52) = 4.00 would yield p = .0242 (changing marginal to significant). Providing the full corrected statistic with established df gives F(1, 26) = 4.00. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 293, `es_value_o`: `F(2, 52) = 6.12` → `F(1, 26) = 6.12`. Section 1.1.1, p. 2; Table 1, p. 5 (RT to arrows column; Proximity effect 2/4, 2/3, 2/2). Reconciling with the parent response: although inferring degrees of freedom is permitted when unprinted, positive evidence demonstrates that the shipped df annotation (2, 52) is wrong. Table 1 explicitly states that the ANOVAs examine 'the linear effects of proximity and expended effort across 4, 3, and 2 trials' (a 1-df linear contrast, df = 1, 26 for N = 27), which yields the exact printed p = .0202 for F(1, 26) = 6.12, whereas an omnibus F(2, 52) = 6.12 would yield p = .0041. Providing the full corrected statistic with established df gives F(1, 26) = 6.12. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 295, `es_value_o`: `F(2, 52) = 5.16` → `F(1, 26) = 5.16`. Section 1.1.1, p. 2; Section 1.1.4, p. 3; Table 1, p. 5 (RT to arrows column; Proximity effect 3/4, 3/3). Reconciling with the parent response: positive evidence demonstrates that the shipped df annotation (2, 52) is wrong. This row compares only 2 conditions ('the third trials (3/4 and 3/3; proximity 1 to 2; effort level = 3)', Section 1.1.4) across N = 27 participants, so df = (1, 26) even under a standard repeated-measures ANOVA (as shipped coded for Motivation in the same row, audit_id 294). F(1, 26) = 5.16 yields the printed p = .032 (p = .0316), whereas F(2, 52) = 5.16 would yield p = .0090. Providing the full corrected statistic with established df gives F(1, 26) = 5.16. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 298, `es_value_o`: `F(3, 23) = 16.69` → `F(1, 26) = 16.69`. Section 1.1.1, p. 2; Table 1, p. 5 (Motivation column; Expended effort effect 4/4, 3/3, 2/2, 1/1). Reconciling with the parent response: positive evidence demonstrates that the shipped df annotation (3, 23) is wrong. First, (3, 23) is internally inconsistent even with shipped's own (3, 78) for the RT column of the same 4-condition row (audit_id 299) and miscalculates denominator df (N = 27 gives N - 1 = 26, not 23; multivariate df2 would be N - k + 1 = 24). Second, Table 1's caption explicitly states that the ANOVAs examine 'the linear effects of proximity and expended effort across 4, 3, and 2 trials', which are 1-df linear contrasts with df = (1, 26) as confirmed by all exact p-values across Table 1. Providing the full corrected statistic with established df gives F(1, 26) = 16.69. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 299, `es_value_o`: `F(3, 78) = 2.34` → `F(1, 26) = 2.34`. Section 1.1.1, p. 2; Table 1, p. 5 (RT to arrows column; Expended effort effect 4/4, 3/3, 2/2, 1/1). Reconciling with the parent response: positive evidence demonstrates that the shipped df annotation (3, 78) is wrong. Table 1 explicitly states that the ANOVAs examine 'the linear effects of proximity and expended effort across 4, 3, and 2 trials' (a 1-df linear contrast, df = 1, 26 for N = 27), which yields p = .1382 (matching the printed p = .139), whereas an omnibus F(3, 78) = 2.34 would yield p = .0798. Providing the full corrected statistic with established df gives F(1, 26) = 2.34. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 300, `es_value_o`: `F(2, 52) = 27.5` → `F(1, 26) = 27.50`. Section 1.1.1, p. 2; Table 1, p. 5 (Motivation column; Expended effort effect 3/4, 2/3, 1/2). Reconciling with the parent response: while 27.5 vs. 27.50 is compatible rounding, positive evidence demonstrates that the shipped df annotation (2, 52) is wrong. Table 1's caption explicitly states that the ANOVAs test 'the linear effects of proximity and expended effort across 4, 3, and 2 trials' (a 1-df linear contrast, df = 1, 26 for N = 27), which is confirmed by the exact p-values in the same row (e.g., RT F = 9.26, p = .005; Frustration F = 10.35, p = .003; Force F = 1.68, p = .207, all of which require df = 1, 26). Providing the full corrected statistic with established df gives F(1, 26) = 27.50. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 301, `es_value_o`: `F(2, 52) = 9.26` → `F(1, 26) = 9.26`. Section 1.1.1, p. 2; Table 1, p. 5 (RT to arrows column; Expended effort effect 3/4, 2/3, 1/2). Reconciling with the parent response: positive evidence demonstrates that the shipped df annotation (2, 52) is wrong. Table 1 explicitly states that the ANOVAs examine 'the linear effects of proximity and expended effort across 4, 3, and 2 trials' (a 1-df linear contrast, df = 1, 26 for N = 27), which yields the printed p = .005 (p = .0053) for F(1, 26) = 9.26, whereas an omnibus F(2, 52) = 9.26 would yield p = .00037 (p < .001). Providing the full corrected statistic with established df gives F(1, 26) = 9.26. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 322, `es_value_o`: `F(3, 78) = 10.76` → `F = 10.76`. Proof p. 5, Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1 row, Motivation column. Table 1 in Yu et al. (2014) reports F = 10.76 (p = .003) for the Motivation proximity effect across the first trials of the four schedules (1/4, 1/3, 1/2, 1/1) without reporting degrees of freedom. Moreover, the Table 1 caption specifies that the ANOVAs examine linear effects (which for N = 27 has df = 1, 26, matching p = .003), so the shipped degrees of freedom (3, 78) are not in the source text and do not match the reported p-value. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
+- Effect row 322, `es_value_r`: `F(3, 28) = 27.62` → `27.62`. Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1 row, Motivation column. Table 1 reports the F-statistic for Motivation on the Proximity effect (1/4, 1/3, 1/2, 1/1) as 27.62 without degrees of freedom. Degrees of freedom (3, 28) in the shipped string do not appear anywhere in the paper (and N = 32 in a 4-level within-subjects ANOVA would have df = 3, 93 rather than 3, 28), so the blind numeric extraction 27.62 is right. [Paper](https://doi.org/10.12688/openreseurope.17749.1).
+- Effect row 331, `n_r`: `58` → `55`. Methods Addendum (Post Data Collection) - Actual Sample; Confirmatory analysis (Table 3). The shipped value of 58 was the pre-data-collection planned sample size from the power analysis ('N = 58 (planned) in the replication study'). After excluding 2 researcher pre-tests and 13 incomplete responses from the 70 total survey responses, the actual final analytical sample size used across all descriptive and confirmatory regression analyses (F(5, 49) = 2.39, Observations = 55; n = 29 impersonal, n = 26 personal) was 55. [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 341, `n_r`: `81` → `42`. Methods Addendum, Actual Sample; Results, T-tests. The target analysis is the within-condition paired t-test for the bar graph condition (df = 41), which included 42 participants, whereas shipped recorded the total study sample size across both conditions (N = 81). [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 342, `n_r`: `81` → `39`. Methods Addendum, Actual Sample; Results, T-tests. The target analysis is the within-condition paired t-test for the dot plot condition (df = 38), which included 39 participants, whereas shipped recorded the total study sample size across both conditions (N = 81). [Paper](https://doi.org/10.1098/rsos.231240).
 - Effect row 380, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. The target RPubs replication report analyzes 4 pilot participants (length(unique(d.raw$workerid)) = 4). The shipped value of 64 confuses the number of participants (4) with the total number of trait-rating observations across the 16 traits (4 participants x 16 traits = 64 observations; 'Number of obs: 64, groups: workerid, 4'). [Paper](https://doi.org/10.1098/rsos.231240).
 - Effect row 380, `es_value_r`: `F(1, 56) = 57.800` → `F(1, 2) = 57.800`. Confirmatory analysis, Main Data analysis: Mixed model ANOVA (lines 294-309). In the mixed-model ANOVA table under the 'Error: workerid:traitType' stratum, the main effect of traitType has numerator df = 1, denominator (Residuals) df = 2, and F = 57.800 (also reported in the text at line 309 as 'F(1,2)=57.80'). Shipped erroneously took df2 = 56 from the 'Error: Within' residual stratum below. [Paper](https://doi.org/10.1098/rsos.231240).
 - Effect row 381, `pval_value_o`: `0.84` → `.084`. p. 1754, Study 1 Results. Visible decimal transcription slip: Study 1 condition × trait-type interaction is printed F(1,78)=3.05, p=.084, partial eta-squared=.04; shipped effect .04 matches but p=.84 omits a zero. [Paper](https://doi.org/10.1177/0956797615598739).
@@ -836,39 +191,53 @@ Source-project breakdown uses the leading text before an underscore or digit in 
 - Effect row 384, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. The study sample comprises 4 pilot participants (32 masculine trait ratings across the 4 participants x 8 masculine traits in fitMasculine). The shipped value of 64 is the total number of trait-rating observations across all 16 traits ('Number of obs: 64, groups: workerid, 4'). [Paper](https://doi.org/10.1098/rsos.231240).
 - Effect row 384, `reported_success`: `successful` → `failed`. Confirmatory analysis, Follow up data analyses: trait type rating between conditions. The author explicitly states that unlike the original study, thinking condition (divergent vs. convergent) had no effect on the perceived centrality of masculine traits to creativity. [Paper](https://doi.org/10.1098/rsos.231240).
 - Effect row 385, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. The study sample comprises 4 pilot participants (32 feminine trait ratings across the 4 participants x 8 feminine traits in fitFeminine). The shipped value of 64 is the total number of trait-rating observations across all 16 traits ('Number of obs: 64, groups: workerid, 4'). [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 408, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. Although the author notes in the Results section that the interaction term in the linear mixed model was not statistically significant, in the 'Summary of Replication Attempt' section she explicitly concludes that the replication was successful because the difference between high- and low-dosage violations was much higher for harm than for purity violations and the interaction estimate (about 6.8) was fairly similar to the original (b = 9.599). [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 409, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. In the simplified linear mixed model without the interaction term, the author notes that dosage has a clear effect (about 7.4, comparable to the original study), and in the 'Summary of Replication Attempt' section she explicitly characterizes the replication as successful. [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 410, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. In the simplified linear mixed model without the interaction term, the author notes that domain (harm vs. purity) does not have a big effect (about 3.5, matching the original paper's finding of b = 3.400 showing the domains were matched for severity), and in the 'Summary of Replication Attempt' section she explicitly states that the replication was successful. [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 491, `reported_success`: `mixed` → `failed`. Analysis > Main Analysis; Conclusions. In the RPubs replication report for Xu & Franconeri (2015) Experiment 1a, the main capacity analysis yielded F(1,26) = 3.645357, p = 0.0673199, and the author explicitly concludes 'We were unable to replicate the original result.' (and notes under subsequent analyses 'We did not replicate the original results in this analysis either'). Although the author notes the effect was trending towards significance in the same direction, the narrative conclusion explicitly characterizes the replication as unsuccessful ('failed'). [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 492, `reported_success`: `mixed` → `failed`. Analysis > Secondary analyses > Accuracy-based analysis; Conclusions. The secondary accuracy-based check of the main result yielded F(1,26) = 3.1593304, p = 0.0871952, which the author immediately follows by stating 'We did not replicate the original results in this analysis either' and concluding overall 'We were unable to replicate the original result.' Thus, reported replication success is 'failed'. [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 493, `pval_value_r`: `3.20E-04` → `3.254853668646976e-4`. Primary authors processed_data.csv, line 178 (data row 175), yang2018, column rep_p_calc. The target replication locator is processed_data.csv itself, where rep_p_calc for yang2018 is 3.254853668646976e-4 (which rounds to 3.25e-4, whereas shipped truncated/mistyped the third digit as 3.20E-04). [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 534, `pval_value_r`: `0.41435` → `0.10256`. Exploratory analyses, glm(hire_rec ~ manipulation + candidate_name + participant_sex + participant_parent) coefficients. In the multivariable hire_rec regression where b = -0.07025 for applicant motherhood status (manipulationparent), the p-value is 0.10256; shipped mistakenly recorded 0.41435, which is the p-value for participant_parent (-0.03677). [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 557, `pval_value_o`: `0.01548195` → `< 0.01`. p. 26, Experiment 5, Results and Discussion; Table 7A. In Gick & Holyoak (1983), Experiment 5 (p. 26, Table 7A), the key comparison of producing the convergence solution before the hint between the with-principle condition (62%, 45/73) and the without-principle condition (40%, 28/70) is tested using a maximum-likelihood chi-square test reported as G2(1) = 6.75, p < .01 (exact p = 0.009375). The shipped value (0.01548195) is not from the original paper; it was recalculated in Boyce et al. (2023) using a Yates-corrected Pearson chi-square test on the 2x2 counts (45/73 vs. 28/70, X2(1) = 5.8608, p = 0.01548195). The blind extraction correctly captures the original paper's reported p-value (< .01). [Paper](https://doi.org/10.1016/0010-0285(83)90002-6).
+- Effect row 557, `pval_value_r`: `None` → `0.0001934`. Results, Confirmatory analysis, GTest(contingency_table). The student replication report of Gick & Holyoak (1983) Experiment 5 (Pérez, 2018; url_r) explicitly reports the confirmatory G-test comparing before-hint convergence solution frequencies between the with-principle (32 vs. 51) and without-principle (13 vs. 79) conditions on the final cleaned sample (N = 175), yielding G = 13.895, df = 1, p-value = 0.0001934 (also reported in the Discussion as G2(1)=13.895, p = 0.0001934). Shipped left pval_value_r as null, so the blind extraction is correct. [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 558, `n_r`: `90` → `72`. Results, Confirmatory Analysis, Main analysis: AUC values (lines 268-272). Although 90 participants (47 older and 43 younger adults; also matching the planned sample of 90) passed the initial attention check and demographic screening, 18 participants were excluded from the primary confirmatory analysis of log-transformed AUC donation values due to failed hyperbolic discount curve fitting or outliers exceeding 3 SDs. This left a final analytic sample of 72 participants (37 older, 35 younger), which directly corresponds to the degrees of freedom in the confirmatory ANOVA (F(1, 70)) and post-hoc Welch t-test (t(69.23) = -0.03). [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 559, `n_o`: `29` → `25`. pp. 518–519, §7.1.1 Participants. In Experiment 4, 29 undergraduates were initially recruited, but 4 participants were removed from further analysis for writing the number to test twice instead of the hypothesis, leaving a final analyzed sample of 25 participants (12 in the ·C + K condition and 13 in the sum last two condition). The shipped value (29) reflects the pre-exclusion total rather than the analyzed sample size. [Paper](https://doi.org/10.1111/j.1551-6709.2010.01161.x).
+- Effect row 568, `pval_value_r`: `None` → `0.376`. Results, Confirmatory analysis, rating model table, condition1. The replication report (hopkins2016.html) explicitly reports the p-value for the main effect of explanation level (condition1: Reductive vs. Horizontal, b = 0.14, 95% CI [-0.18, 0.47]) in the confirmatory mixed-effects regression model (N = 93) as p = 0.376 (also reiterated in the Discussion: 'The original study’s main finding, a significant effect of explanation level, did not replciate (p = .376)'). Shipped left pval_value_r as null because the Boyce et al. (2023) summary CSV omitted p-values for beta estimates. [Paper](https://doi.org/10.1098/rsos.231240).
+- Effect row 569, `n_o`: `29` → `28`. Study 3, Method (Participants) and Results and discussion, pp. 2484–2485. In Study 3, the focal within-subjects comparison of subjective age (posttest vs. baseline) in the memory-test condition (t(27) = 2.71, d = 0.76) has n = 28 participants (with 0 exclusions in the memory condition). The shipped value of 29 confuses the memory-test sample size with the pre-exclusion sample size of the vocabulary-test condition (n = 29, from which 3 participants were excluded). [Paper](https://doi.org/10.1177/0956797613494853).
 
 ## Unverified and skipped work
 
-1977 effects have no paper checkpoint yet. A checkpoint with unavailable or insufficient fields is not a verified effect.
+1183 effects have no paper checkpoint yet. A checkpoint with unavailable or insufficient fields is not a verified effect.
 
-- original: done: 143 sides.
-- original: locator_insufficient: 33 sides.
-- original: paper_unavailable: 35 sides.
-- replication: done: 151 sides.
-- replication: locator_insufficient: 49 sides.
-- replication: paper_unavailable: 11 sides.
+- original: done: 642 sides.
+- original: locator_insufficient: 143 sides.
+- original: paper_unavailable: 181 sides.
+- original: timeout: 15 sides.
+- replication: done: 715 sides.
+- replication: locator_insufficient: 203 sides.
+- replication: paper_unavailable: 63 sides.
 
 Detailed access/target reasons are retained in the per-effect JSON checkpoints. Frequent reasons at this checkpoint:
 
+- 44 sides: 
+- 14 sides: Replication study 1: second-year police cadets, intervention versus active control, plus exploratory comparisons with senior officers; multiple outcomes and Time, Group/Sample, interaction, and within-group tests in Results. Supplied locator p. 8 and generic gaze-control/visual-attention description do not identify a unique outcome and test.
+- 14 sides: Western university students; Table 2 multiple regressions report PMS and CMM semipartial correlations for multiple moral attitudes. Supplied p. 9 also discusses Table 3 models controlling general perfectionism; predictor, outcome, and model are not uniquely identified.
 - 12 sides: Primary original paper not obtained through permitted open-access routes. Locator names p. 7, Table 2 but gives no row, column, outcome, sample, or test identifier.
 - 12 sides: Verified Haller, Flaherty and Balsvik (2023), DOI 10.18718/81781.29. Printed p. 24, Table A3 contains log annual wage regressions by high/low unionisation and skill intensity for Brazil, two Irish periods and Norway. PDF page 24 instead is printed p. 23, Table A2 with four specifications and those country/period panels. Neither interpretation selects one target test.
-- 7 sides: Original paper reference supplied, but study, outcome, sample and test are unspecified; no neutral description or locator supplied.
-- 7 sides: No replication reference, DOI, URL, study identifier, description or locator supplied.
-- 6 sides: Full paper not acquired; the supplied general description and p.4 locator do not independently identify a specific test. No test-level values extracted from previews or abstracts.
-- 6 sides: Experiment 2 focus: first shot of each level, very first shot of game, and points per shot among nonborrowers are distinct candidate tests.
-- 3 sides: Original Study 1 full paper could not be acquired through permitted open-access routes.
-- 3 sides: Movement onset and object contact each have movement-direction/object analyses; description does not uniquely identify the response-time phase and test.
-- 3 sides: p. 5 contains distinct stimulus-by-direction tests for movement onset and contact; supplied description does not distinguish them.
-- 3 sides: Matching original-paper bibliographic title verified; full paper could not be acquired within acquisition allowance.
-- 3 sides: Original full paper not acquired within the per-paper acquisition window.
-- 3 sides: Verified Castro, Hur, and Berenbaum (2022), p. 5, section 4.2 and Table 3: five worry/rumination/reflection models and three nested chi-square comparisons, all for the extension analysis. The assigned description and p. 5 locator do not identify which model or model-comparison test belongs to this audit_id. All three assigned entries have identical study identifiers, descriptions and locators; no mapping can be established independently. No model row or comparison was assigned by input order.
-- 3 sides: Liu, Wright, Cole, and Warren (2024), title verified using publisher metadata, Unpaywall and OpenAlex. Full paper could not be acquired through permitted open-access routes within the per-paper acquisition limit. Publisher exposes an article preview and section snippets, not complete p. 3 or Table 1; no target-test extraction from snippets.
-- 2 sides: Experiment 1 job-choice decoy effect. Section 2.2.1 reports separate exact-binomial tests for Control and Regret-Salient participants, plus a between-condition Fisher exact test. The supplied description and page locator do not select one of these tests.
-- 2 sides: Study 2 replication of Connolly et al. Experiment 1. Confirmatory analysis reports separate exact-binomial tests against .5 for Control and Regret-Salient conditions; a separate Fisher exact test compares these conditions. The supplied locator does not identify which condition/test is assigned. The author final preprint has different pagination: its p.18 belongs to Study 1, whereas Study 2 decoy results are pp.35–38.
+- 11 sides: Full original article not obtained. DOI landing page, Unpaywall, OpenAlex and LMU repository did not supply full paper. Author dissertation includes only an article citation placeholder, not the original paper.
+- 10 sides: Locator does not uniquely distinguish a target contrast/outcome from multiple reported tests; no assignment inferred from input order.
+- 10 sides: Original study 1: senior police officers, individual video-based intervention versus active control; multiple outcomes and Time, Group, Time × Group, and within-group tests in Results. Supplied locator p. 10 and generic gaze-control/visual-attention description do not identify a unique outcome and test.
+- 9 sides: Full original paper not acquired within acquisition budget.
+- 9 sides: Primary original paper could not be acquired within the acquisition allowance. DOI publisher returned a 403 challenge; OpenAlex had no best OA location; author site had a TLS hostname mismatch; CiteSeer alternative returned 404. Original statistics summarized in the replication article were not substituted for the primary paper.
+- 8 sides: Replication Experiment 1 object working memory. PDF p. 7 has Fig. 2 with three outcomes and Table 1 with condition, rotation, and condition-by-rotation tests for mental-rotation response time. Other Experiment 1 outcomes are analyzed separately in Tables 2 and 3 on PDF p. 8. The supplied locator does not identify a target outcome or model term. The final Experiment 1 participant sample is reported as 119 on PDF p. 3; this does not identify the target test.
+- 8 sides: Matching original full text not acquired from permitted open-access routes; supplied locator is p. 9 with no target outcome or test.
+- 8 sides: No target study, outcome, sample, or test is identified in the assigned input; the reference alone does not distinguish the assigned effect.
+- 8 sides: Study 3, Chinese university students; Table 1 has PMS and CMM partial correlations with forgiveness, gratitude, indebtedness, willingness to help, and wrong behavior judgments. Predictor and outcome are unspecified.
+- 7 sides: Experiment 1 object working memory, original PDF p. 2 (journal p. 155): separate ANOVAs for mental-rotation response time, mental-rotation accuracy, and memory accuracy; main effects and condition-by-rotation interactions. Fifteen participants are reported, with trial exclusions. The supplied description and page do not distinguish the target outcome, model term, or test; no test-specific analytic sample or statistic can be selected.
 
 ## Method and limits
 
-Extraction workers received references, studies, neutral descriptions, requested metric labels, and sanitized page/table/primary-source URLs, with no shipped n, estimates, p-values or success verdicts. The first 20 sanitized descriptions and later batch samples were inspected. Original and replication statistics were extracted separately, with printed metric and bound type. Comparisons require confident matching targets and validated source quotes. Non-obvious disagreements go to Gemini 4 Argon (High); obvious decisions retain a reason and evidence location.
+Extraction workers received references, studies, neutral descriptions, requested metric labels, and sanitised page/table/primary-source URLs, with no shipped n, estimates, p-values or success verdicts. The first 20 sanitised descriptions and later batch samples were inspected. Original and replication statistics were extracted separately, with printed metric and bound type. Comparisons require confident matching targets and validated source quotes. Non-obvious disagreements go to Gemini 4 Argon (High); obvious decisions retain a reason and evidence location.
 
 The screen checks positive-integer n, p and r ranges, recognized F/t/chi-square/z reports, and non-nested Pearson r with coded analytic n. Missing tails are labelled as an assumed two-sided screen. The codebook does not enumerate every allowed metric, so unfamiliar labels are not declared invalid. No source-project success rule has been established for automatic significance/direction checks. Rounding intervals use stored cell strings; XLSX may already have lost printed precision.
 
