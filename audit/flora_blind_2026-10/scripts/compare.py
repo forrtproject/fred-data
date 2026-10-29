@@ -231,6 +231,10 @@ def load_coding(root, file_key, work_key, schema):
         return {}, 'malformed coding: expected object', ''
     if coding.get('blind_source_warning'):
         return coding, 'blinding compromised; coding excluded', ''
+    if coding.get('identity_warning'):
+        return coding, 'paper identity conflict; coding excluded', ''
+    if coding.get('text_scope_complete') is False:
+        return coding, 'source scope incomplete; coding excluded', ''
     if coding.get('work_key') != work_key:
         return coding, 'work_key mismatch', ''
     if coding.get('status') != 'done':
@@ -496,22 +500,31 @@ def report(results, missing, works, issues):
             for field in FIELDS:
                 applicable = subset if field not in ('outcome_computation', 'outcome_robustness') else [r for r in subset if r['type'] == 'reproduction']
                 lines.append(f'  - {field}: {rate_line(applicable, field)}')
-    lines += ['', '## Every confirmed input-row error', '']
+    lines += ['', '## Every confirmed input-row error', '', 'Complete quotes, locations, reasons and corrected values are retained in [results.csv](results.csv), keyed by the immutable input row index.', '']
     for r in results:
         fields = [k for k in ('type', 'original', 'outcome') if r[k + '_final_verdict'] == 'error']
         if fields:
             doi = clean_doi(r['doi_r'])
             link = f'[replicating work](https://doi.org/{doi})' if doi else 'replicating work (DOI unavailable)'
-            lines.append(f'- Row {r["input_row_index"]}, {link}: {", ".join(fields)}. '
-                         f'Correction: {r["suggested_correction"]}. Evidence: {r["correction_evidence"]}.')
+            corrections = json.loads(r['suggested_correction'])
+            changes = []
+            for field, value in corrections.items():
+                old = r.get('doi_o' if field == 'original' else field, '')
+                if isinstance(value, dict):
+                    value = (value.get('doi') or value.get('title') or
+                             '; '.join(f'{k}: {v}' for k, v in value.items()))
+                label = field.replace('_', ' ')
+                changes.append(f'{label}: {old} → {value}' if old else f'{label}: {value}')
+            lines.append(f'- Row {r["input_row_index"]}, {link}: {"; ".join(changes)}.')
     if not errors:
         lines.append('No input-row errors are confirmed at this checkpoint.')
     lines += ['', '## Unmatched blind targets', '']
     for r in missing:
         if r['final_verdict'] == 'error':
             doi = clean_doi(r['doi'])
-            link = f'[{r["title"] or doi}](https://doi.org/{doi})' if doi else r['title']
-            lines.append(f'- Confirmed missing target: {link}; work '+(f'[replicating work](https://doi.org/{r["work_key"]})' if r['work_key'].startswith('10.') else r['work_key'])+f', target {r["target_index"]}. {r["evidence"]}')
+            name = r['title'] or (r['authors'] + ' (' + r['year'] + ')').strip() or doi
+            link = f'[{name}](https://doi.org/{doi})' if doi else name
+            lines.append(f'- Confirmed missing target: {link}; work '+(f'[replicating work](https://doi.org/{r["work_key"]})' if r['work_key'].startswith('10.') else r['work_key'])+f', target {r["target_index"]} ({r["resolution"]}).')
     lines += [f'{sum(r["final_verdict"] == "unverified" for r in missing)} unmatched blind targets remain unverified. '
               'Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.', '', '## Skips and validation issues', '']
     skips = collections.Counter(w['skip_reason'] for w in works if w['skip_reason'])
@@ -561,6 +574,11 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
         for line in (root / 'tasks.jsonl').read_text().splitlines():
             try: attempted_files.update(json.loads(line).get('files', []))
             except (ValueError, TypeError): pass
+    for state_path in sorted((root / 'argon').glob('*.state.json')):
+        state, _ = read_json(state_path)
+        if isinstance(state, dict) and state.get('status') == 'unresolved':
+            recovered = state.get('partial_recovery', {}).get('recovered_complete_field_objects', 0)
+            issues.append(f"Argon {state.get('file_key', state_path.stem)}: unresolved after {state.get('attempts')} attempts; {state.get('reason', 'failure')}. {recovered} independently valid field decisions recovered; remaining fields stay unverified.")
     incidents, _ = read_json(root / 'blinding_incidents.json')
     for incident in incidents or []:
         issues.append(f"Blinding exclusion {incident['file_key']}: original coding quarantined; only a fresh-child coding may enter primary results. See blinding_incidents.json.")

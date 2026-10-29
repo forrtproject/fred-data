@@ -13,7 +13,7 @@ for p in (R/'codings').glob('*.json'):
  if not re.fullmatch(r'[0-9a-f]{16}',p.stem):continue
  try:c=json.loads(p.read_text())
  except (OSError,ValueError):continue
- if c.get('status')!='done':continue
+ if c.get('status')!='done' or c.get('identity_warning'):continue
  missing=[k for k in ['source_url','retrieved_at','text_sha256','parser'] if not isinstance(c.get(k),str) or not c[k].strip()]
  if not missing:continue
  if 'cache' not in str(c.get('parser','')).lower():

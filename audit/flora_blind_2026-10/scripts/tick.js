@@ -15,7 +15,7 @@ for(const e of p.active){
  }
  if(!s){text(r);continue;}
  await record({taskId:e.taskId,status:s.status,summary:s.summary,pendingApproval:s.pendingApproval,hasPendingQuestion:s.hasPendingQuestion});
- if(s.status!=='running'&&s.status!=='queued')text({taskId:e.taskId,status:s.status,summary:s.summary});
+ if(s.status!=='running'&&s.status!=='queued')text({taskId:e.taskId,batch:e.batch,status:s.status,...(s.status==='completed'?{}:{summary:s.summary})});
 }
 p=await py('plan');
 if(p.finish_due){text({finish_due:true,active:p.active});return;}

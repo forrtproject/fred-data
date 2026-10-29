@@ -338,3 +338,14 @@ class BlindingValidityTests(unittest.TestCase):
             _, error, text=c.load_coding(root,'test',data.get('work_key',''),{})
             self.assertEqual(error,'blinding compromised; coding excluded')
             self.assertEqual(text,'')
+
+
+class SourceIdentityTests(unittest.TestCase):
+    def test_alternative_paper_or_partial_collection_is_excluded(self):
+        for warning, expected in [('identity_warning','paper identity conflict; coding excluded'),('text_scope_complete','source scope incomplete; coding excluded')]:
+            with tempfile.TemporaryDirectory(dir=Path(__file__).parent) as folder:
+                root=Path(folder);(root/'codings').mkdir();(root/'texts').mkdir()
+                data=coding(**{warning: 'Different companion DOI' if warning=='identity_warning' else False})
+                (root/'codings'/'test.json').write_text(json.dumps(data));(root/'texts'/'test.txt').write_text(TEXT)
+                _,error,text=c.load_coding(root,'test',data['work_key'],{})
+                self.assertEqual(error,expected);self.assertEqual(text,'')
