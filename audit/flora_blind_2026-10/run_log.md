@@ -533,3 +533,5 @@
 - 2026-10-29T19:00:30.770960+00:00: Finalgitreadbackfoundfouruntracked*.blindmeta.jsonacquisitionhelpers(containonlysourceprovenancekeys). AddednarrowFLoRA-onlyignorerule,preservedhelperslocally;finalprovenanceisalreadyinthevalidatedcodingenvelopes. Noauditoutputs/source/datasetmodified;allownedschedulesremainremoved.
 
 - 2026-10-29T23:12:26.697974+00:00: User explicitly authorized continuation of the 102 uncalled Argon field requests (87 works). Separate bounded supplemental review phase; original deadlines/completion preserved. Max4 concurrent/max2 attempts per work, unchanged evidence rules, no coding restart or schedules. Prior results retained in git.
+
+- 2026-10-29T23:39:10.234995+00:00: Supplemental ~30min checkpoint: {"validated": 52, "queued": 30, "scope_review_running": 3, "scope_review_pending": 1, "running": 1}; 74 consumed attempts, 51 works source-inspected. Scope objections handled only in second/final calls. No new acquisition; saved-source standard unchanged. One work retains two genuinely unverified fields after final scope. Original FLoRA remains untouched.
