@@ -38,10 +38,14 @@ INPUTS:\n'''+serialized+'\n\nPut your whole result in your reply; do not create 
    error="adjudication dispatch deadline reached";break
   attempted=attempt
   output=R/'argon'/f'{fk}.attempt{attempt}.txt'
+  attempt_prompt=prompt
+  if attempt>1:
+   attempt_prompt+='\n\nRETRY FEEDBACK: The preceding reply failed validation: '+error+'. Return every requested decision again. Copy a different, short, contiguous passage directly from the supplied text if a quotation failed. Do not reconstruct sentences across interleaved PDF columns, omit intervening text, or repair words. Prefer an intact abstract, conclusion, or reference passage where relevant. Unsupported fields remain undeterminable; the evidence standard is unchanged.'
+   (R/'argon'/f'{fk}.retry.prompt.txt').write_text(attempt_prompt)
   try:
    with output.open('w') as f:
     try:
-     p=subprocess.run(['agy','-p',prompt,'--model','Gemini 4 Argon (High)','--sandbox','--add-dir',str(R),'--print-timeout','10m'],stdout=f,stderr=subprocess.STDOUT,timeout=660)
+     p=subprocess.run(['agy','-p',attempt_prompt,'--model','Gemini 4 Argon (High)','--sandbox','--add-dir',str(R),'--print-timeout','10m'],stdout=f,stderr=subprocess.STDOUT,timeout=660)
     except subprocess.TimeoutExpired:
      # run() has killed and reaped our CLI. A complete final answer may already
      # have been emitted before a transport shutdown hang; validate it below.

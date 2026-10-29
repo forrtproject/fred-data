@@ -1,19 +1,45 @@
 # Parent audit resume
 
-Work ONLY in /home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10 on audit/flora-blind-2026-10. No questions. Never touch flora.csv, pipelines, main checkout, or FReD.
+Work only in `/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10`, branch `audit/flora-blind-2026-10`. Continue unattended; no questions. Never modify flora.csv, pipelines, the main checkout, or FReD.
 
-Blind coding FINISHED at13:50UTC:2344validated checkpoints,2290done(1710fulltext,580abstract),50no_text,3error,1timeout. Primary usable2289(one wrong-paper done excluded). Native children0active. Valid done/no_text final; no more coding.
+## Live processes and next work
 
-CURRENT owned Argon runner: round021, terminal43925,24parent-source-triaged outcome-difference workgroups. Collect fully before ending turn. Max4calls via global lock/executor; group_limit24 only queues, never adds concurrency. Model Gemini 4 Argon (High), sandbox/read-only. Comparison19549 collected. No other live owned terminal sessions.
+- Current Argon runner: round 022, terminal session **81596**, 24 source-triaged outcome groups. Maximum four concurrent calls, enforced by the global lock and executor. Collect it before ending the turn.
+- Comparison session **13202** is pending collection. No other live owned sessions.
+- Round 021/session43925 and final scope review/session25666 are fully collected.
+- After 022 is collected and integrated, dispatch **selection026** with group limit24. It combines already-triaged023(8multitargetgroups) and024(16typegroups),24distinctworks. Do not separately dispatch023/024 afterward. Then selection025 has16source-triaged reproduction-axis groups.
+- All unresolved fields for one work go in one review. Model Gemini 4 Argon (High), sandbox/read-only. Two calls maximum per work, including scope reviews. No third calls.
 
-Round020/session66640 COMPLETED/collected.10works fullyvalidated;CALHM1/row201 has5valid agreeing recovered fields, original unverified after2invalidquotes. Face/gaze row237 exhausted2quotes; no validfields, no correction. Saved PDF interleaves columns; model reconstructed sentences are not contiguous. Do NOT broaden exact quote matcher or alter immutable blind text. No thirdcalls. All other decisions inspected: wrongoriginal corrections127Mechling,195Duff,261Pelzl,289Krochchapter,294Boroditskychapter,306Dijksterhuis2004. Retain shippedFacebook/Knoppen/Growthmindset/Medicare originals; reject companion/background targets with source-based reasons. OfficialCrossref metadata saved in doi_verification.json.
+## Completed coding
 
-PREPARED ONLY: selection022(24source-triaged further outcome works),selection023(8source-triaged multitarget omission/scope works). After021 collected/integrated, dispatch022 with FLORA_ARGON_GROUP_LIMIT=24. Then023. Do not duplicate any final Argon state or work in activequeue. Batch ALL unresolved fields per work. Failed replies one retry only; independently complete valid agreeing field objects may be recovered, never repair quotations/JSON or call thirdtime.
+Blind coding finished at13:50UTC:all2,344 validated checkpoints;2,290done(1,710fulltext,580abstract),50no_text,3terminalerrors,1timeout. Primary usable done2,289 after excluding one wrong-paper coding. Native coding children zero active. Final done/no_text records stay final; no recoding.
 
-Use scripts/tick.js exactly as user requires: read via tools.exec_command, evaluate async Function constructor through functions.exec. It reconciles native tasks without polling, currentlyactive0. Use controller.py validate and compare.py.39tests pass. All2818rows in immutableorder. Post020 comparison has77confirmederrorrows/95correctionfields sourceverified;all2818ordered. Quote checker accepts literal NFKC/case/spacing or line-end-dehyphenation only; no scattered-fragment matching. Confidence nevergates.
+Run the user-prescribed tick: read scripts/tick.js through tools.exec_command, then evaluate through the async Function constructor in functions.exec. It reconciles native tasks without polling, currentlyactive0. Models/options remain codex/gpt-6.1-sol/reasoningEffort medium.
 
-Latest PUSHED f8a2feff(13:35UTC);later020/019/scope/sourceverification/finalcoding metadata uncommitted. Parent alone stages explicit audit paths +.gitignore with stage_checkpoint.py, inspect cachedscope, commit/push roughlyhourly. No texts/rawArgonstdout staged. Previous flora SHA256 remains6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7.
+## Integrated findings and verification
 
-Deadlines in run_manifest: coding17:19:58UTC,adjudication18:49:58UTC,finish19:19:58UTC. TWO schedules remainactive(recovery every5min and hardstop), both IDs inmanifest. At earlycompletion or hardstop collect/cancel ownedwork,finalreport,verifyflora hash,scopedcommitpush,draftPRmain,immediate native link_pull_request,verifylist_thread_pull_requests,DELETE BOTH schedules. NoPRyet. Neverclaimcompletewithscheduledworkremaining.
+Post021 provisional report:94 input rows with confirmed errors,1,695fullyresolved,all2,818ordered.112correctionfields sourcequote/location/reason checked;flora hash unchanged. New source-verified missing target:Shevlin2020 psychologicalhealth DOI10.1192/bjo.2020.109;the somaticsymptoms target retains a separate successful verdict. Row2418 wrongly cites a theory/method source and is a duplicate of67 after original correction. OfficialCrossref verification retained in doi_verification.json.
 
-Full history, quarantine exclusions, sourceversion limits and exhaustedcalls remain inrun_log andmetadata. Rows2238(2020workingversion) and929(2015draft) limited. Wrongpaper7fd4excluded;collectiona94ftimeout;exposure70514/90fc/8dbterminal. Freshpostexposure retries308/309/360valid. Do not recode or silently remove history.
+Round021:22works fullyvalidated on first attempt. PPBS04117/row250 plus DeYoungcandidate exhausted two invalid quotations:interleavedPDF reconstruction and ellipsis;no fields recovered. Cardiotoxicity7c772/row266 exhausted two calls:only outcome quote mechanically valid, but parent withheld it because pooled original+new data support conflicts with independent-cohort replicationfailure. All candidates/objection retained under unresolved_scope;no accepted decisions.
+
+Row204/d8b67 scope review is FINAL and unresolved. First mixed verdict relied on participant counts/magnitude alone, so parent held it. Second/final call supported successful and sustained the objection, but its sole JSON decision contains unescaped quotation marks and cannot decode. No complete field object can be recovered. No JSON repair or thirdcall. Priorreview/objection/secondresponsehash/transport retained in adjudication and state. There is no active scope process.
+
+Round020 all collected and integrated:10fullyvalidated;CALHM1/row201 has5valid recovered agreeingfields,originalunverified after two failed quotes;face/gaze row237 all quotes noncontiguous due interleavedPDF,unverified. Wrong-original corrections127Mechling,195Duff,261Pelzl,289Krochchapter,294Boroditskychapter,306Dijksterhuis2004. Facebook/Knoppen/Growthmindset/Medicare originals retained;companion/background candidates rejected with reasons.
+
+## Recent code and timing changes
+
+39 comparator tests pass. Quotation matching permits literal NFKC/case/spacing or line-end dehyphenation only, never word/sign repair or scattered fragments. Report explicitly labels zero-based input indices0–2817.
+
+Future single retries now include the failed validation and warn against assembling interleavedPDF fragments. Actual retry prompts persist as *.retry.prompt.txt. Mocked transport verified invalid→valid and invalid→invalid:exactly2calls,feedback only on retry,no third. Current022 uses this update;021 used earlier code.
+
+A separate timing_corrections.json applies a child-reported upper bound of39seconds to f624 (original erroneous estimate164). Original coding byte hash is unchanged;work_times.csv retains original time and correction basis. Report labels bounds;acquisition duration unknown. All other elapsed values unchanged. Comparator rejects stale/mismatched/nonfinite overrides.
+
+## Git, constraints and finish
+
+Latest pushed checkpoint **5ad412d7** (14:03UTC):final codings,019/scope/020,77errorrows. Later021,heldscope,timing/retry changes and prepared024/025/026 await checkpoint. Parent alone stages explicit audit paths plus.gitignore with stage_checkpoint.py;inspect cached scope,commit/push roughly hourly. No texts or raw Argonstdout.
+
+Expected output/flora.csv SHA256:6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7.
+
+Deadlines in run_manifest:coding17:19:58UTC,adjudication18:49:58UTC,finish19:19:58UTC. TWO schedules remain active, IDs in manifest. At completion, including early completion:collect/cancel owned work,finalize report,verifyflora hash,scopedcommit/push,draftPR against main,immediate native link_pull_request,verifylist_thread_pull_requests,and DELETE BOTH schedules. No PR yet. Never claim completion while schedules remain.
+
+Full history is in run_log.md. Valid done/no_text are final. Wrongpaper7fd4 excluded;collectiona94f timedout;exposure70514/90fc/8db terminal. Fresh retries308/309/360 valid. Source versions2238(2020workingpaper) and929(2015draft) remain explicit limits. Do not discard quarantined history or retry exhausted cases.

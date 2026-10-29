@@ -527,7 +527,7 @@ def report(results, missing, works, issues):
             for field in FIELDS:
                 applicable = subset if field not in ('outcome_computation', 'outcome_robustness') else [r for r in subset if r['type'] == 'reproduction']
                 lines.append(f'  - {field}: {rate_line(applicable, field)}')
-    lines += ['', '## Every confirmed input-row error', '', 'Complete quotes, locations, reasons and corrected values are retained in [results.csv](results.csv), keyed by the immutable input row index.', '']
+    lines += ['', '## Every confirmed input-row error', '', 'Complete quotes, locations, reasons and corrected values are retained in [results.csv](results.csv), keyed by the immutable, zero-based input row index (0–2817).', '']
     for r in results:
         fields = [k for k in ('type', 'original', 'outcome') if r[k + '_final_verdict'] == 'error']
         if fields:
@@ -575,6 +575,10 @@ def report(results, missing, works, issues):
     timed = [w for w in works if w['elapsed_seconds'] is not None]
     lines.append(f'Elapsed time supplied for {len(timed)} / {len(works)} works; missing times are not imputed. '
                  'Times describe final saved checkpoints and exclude earlier failed or excluded attempts; this is worker time, not wall-clock audit duration.')
+    adjusted = [w for w in works if w.get('timing_basis')]
+    if adjusted:
+        lines.append(f'{len(adjusted)} reported timing correction(s) are applied from [timing_corrections.json](timing_corrections.json); '
+                     'the original checkpoint times and correction bases remain in work_times.csv. Clock bounds are reported as bounds, not exact measurements.')
     if timed:
         lines.append(f'Sum of reported final-checkpoint times: {sum(w["elapsed_seconds"] for w in timed):.1f} seconds.')
         lines.append('Per-work elapsed time and skips are recorded in [work_times.csv](work_times.csv).')
@@ -608,6 +612,8 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
         file_keys[fk] = key['work_key']
         grouped[key['work_key']].append(key)
     results, missing, disagreements, works, issues = [], [], [], [], []
+    timing_path = root / 'timing_corrections.json'
+    timing_corrections = json.loads(timing_path.read_text()) if timing_path.exists() else {}
     attempted_files = set()
     if (root / 'tasks.jsonl').exists():
         for line in (root / 'tasks.jsonl').read_text().splitlines():
@@ -646,11 +652,23 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
         elapsed = next((coding.get(k) for k in ('elapsed_seconds', 'seconds', 'duration_seconds')
                         if isinstance(coding.get(k), (int, float)) and not isinstance(coding.get(k), bool)
                         and 0 <= coding[k] < float('inf')), None)
+        checkpoint_elapsed = elapsed
+        timing_basis = ''
+        if fk in timing_corrections:
+            correction = timing_corrections[fk]
+            value = correction.get('elapsed_seconds')
+            if (correction.get('work_key') != work_key
+                    or correction.get('checkpoint_elapsed_seconds') != elapsed
+                    or not isinstance(value, (int, float)) or isinstance(value, bool)
+                    or not 0 <= value < float('inf') or not correction.get('basis')):
+                raise ValueError(f'{fk}: invalid or stale timing correction')
+            elapsed, timing_basis = value, correction['basis']
         works.append({'work_key': work_key, 'file_key': fk,
                       'attempted': fk in attempted_files or (root / 'codings' / (fk + '.json')).exists(),
                       'coded': not error, 'text_obtained': bool(text),
                       'evidence_level': coding.get('evidence_level') or 'none',
-                      'skip_reason': error, 'elapsed_seconds': elapsed})
+                      'skip_reason': error, 'elapsed_seconds': elapsed,
+                      'checkpoint_elapsed_seconds': checkpoint_elapsed, 'timing_basis': timing_basis})
     results.sort(key=lambda r: int(r['input_row_index']))
     output.mkdir(parents=True, exist_ok=True)
     write_csv(output / 'work_times.csv', works, list(works[0]) if works else ['work_key','file_key'])
