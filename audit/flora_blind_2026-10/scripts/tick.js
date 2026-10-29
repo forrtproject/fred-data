@@ -24,6 +24,7 @@ let ok=await cmd('test -f '+base+'/adapter_check.json && cat '+base+'/adapter_ch
 if(!ok || !JSON.parse(ok).passed){text('Waiting for adapter tests before coding dispatch.');return;}
 while(p.coding_open && p.active.length<p.limit){
  let b=await py('prepare');if(!b)break;
+ p=await py('plan');if(!p.coding_open)break;
  const r=await tools.mcp__t3_code__delegate_task({clientRequestId:b.clientRequestId,title:'Blind FLoRA '+b.batch,mode:'async',isolation:'shared',target:{providerInstanceId:'codex',model:'gpt-6.1-sol',options:{reasoningEffort:'medium'}},task:b.task});
  const s=r.structuredContent;
  if(!s){text(r);break;}

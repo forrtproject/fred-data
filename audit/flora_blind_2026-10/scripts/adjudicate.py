@@ -30,7 +30,11 @@ Return exactly a JSON object with decisions array, one object for every listed r
 INPUTS:\n'''+serialized+'\n\nPut your whole result in your reply; do not create files or run commands.'
  (R/'argon'/f'{fk}.prompt.txt').write_text(prompt)
  start=time.monotonic()
+ attempted=0
  for attempt in range(1,3):
+  if datetime.datetime.now(datetime.timezone.utc)>=deadline:
+   error="adjudication dispatch deadline reached";break
+  attempted=attempt
   output=R/'argon'/f'{fk}.attempt{attempt}.txt'
   try:
    with output.open('w') as f:
@@ -55,7 +59,7 @@ INPUTS:\n'''+serialized+'\n\nPut your whole result in your reply; do not create 
    atomic(statepath,result);return result
   except (ValueError,subprocess.TimeoutExpired,OSError) as e:
    error=str(e)
- result={'file_key':fk,'status':'unresolved','attempts':2,'input_sha256':sig,'reason':error,'elapsed_seconds':time.monotonic()-start}
+ result={'file_key':fk,'status':'unresolved','attempts':attempted,'input_sha256':sig,'reason':error,'elapsed_seconds':time.monotonic()-start}
  atomic(statepath,result);return result
 if __name__=='__main__':
  lock=(R/'argon'/'runner.lock').open('w')
