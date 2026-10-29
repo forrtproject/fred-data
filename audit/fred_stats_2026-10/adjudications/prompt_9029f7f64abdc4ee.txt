@@ -1,0 +1,86 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1975,
+    "field": "es_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "F(1, 1000) = 0.01",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.654",
+      "metric": "F",
+      "test_statistic": "F = 0.654",
+      "location": "p. 12, Table 8, H2a without joint condition [S1], Replication row, F column",
+      "quote": "Replication                                            0.654                     .419",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/990e3dc6c7fee46ef2b754fa.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Small, D. A., Loewenstein, G., & Slovic, P. (2007). Sympathy and callousness: The impact of deliberative thought on donations to identifiable and statistical victims. Organizational Behavior and Human Decision Processes, 102(2), 143–153. https://doi.org/10.1016/j.obhdp.2006.01.005",
+      "doi_o": "10.1016/j.obhdp.2006.01.005",
+      "study_o": "1",
+      "ref_r": "Maier, M., Wong, Y. C., & Feldman, G. (2024). Revisiting and Rethinking the Identifiable Victim Effect: Replication and Extension of Small, Loewenstein, and Slovic (2007). Collabra: Psychology, 9(1). https://doi.org/10.1525/collabra.90203",
+      "doi_r": "10.1525/collabra.90203",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1975,
+      "description": "Giving to an identifiable victim in relation to analytical thinking about the value of lives.",
+      "locators_o": "p.4",
+      "locators_r": "p.12; Table 8",
+      "text_paths": {}
+    },
+    "work_key": "10.1525/collabra.90203",
+    "coding_context": {
+      "es_repr": "p.12/ Table 8",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1975,
+    "field": "pval_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.923",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".419",
+      "bound": "e",
+      "location": "p. 12, Table 8, same H2a Replication row, p column",
+      "quote": "Replication                                            0.654                     .419",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/990e3dc6c7fee46ef2b754fa.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Small, D. A., Loewenstein, G., & Slovic, P. (2007). Sympathy and callousness: The impact of deliberative thought on donations to identifiable and statistical victims. Organizational Behavior and Human Decision Processes, 102(2), 143–153. https://doi.org/10.1016/j.obhdp.2006.01.005",
+      "doi_o": "10.1016/j.obhdp.2006.01.005",
+      "study_o": "1",
+      "ref_r": "Maier, M., Wong, Y. C., & Feldman, G. (2024). Revisiting and Rethinking the Identifiable Victim Effect: Replication and Extension of Small, Loewenstein, and Slovic (2007). Collabra: Psychology, 9(1). https://doi.org/10.1525/collabra.90203",
+      "doi_r": "10.1525/collabra.90203",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1975,
+      "description": "Giving to an identifiable victim in relation to analytical thinking about the value of lives.",
+      "locators_o": "p.4",
+      "locators_r": "p.12; Table 8",
+      "text_paths": {}
+    },
+    "work_key": "10.1525/collabra.90203",
+    "coding_context": {
+      "es_repr": "p.12/ Table 8",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

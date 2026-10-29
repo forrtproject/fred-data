@@ -26,10 +26,21 @@ class AuditChecks(unittest.TestCase):
   self.assertIsNone(stat_interval('.4','d','100','no','2')[0]);self.assertIsNone(stat_interval('.4','r','100','yes','2')[0]);self.assertIsNotNone(stat_interval('.4','r','100','no','2')[0])
  def test_sample_counts_exact_and_near(self):
   self.assertEqual(comp('n_o','100',{'value':'101'},{}),'near');self.assertEqual(comp('n_o','100',{'value':'106'},{}),'differ')
+ def test_integer_count_grouping_is_formatting_only(self):
+  from consistency import analytic_n,number
+  for text in ['1,950','1 950','1\u202f950']:
+   self.assertEqual(comp('n_o','1950',{'value':text},{}),'agree')
+  self.assertEqual(comp('n_r','1036',{'value':'1,032'},{}),'near')
+  self.assertIsNone(analytic_n('34;42'));self.assertIsNone(analytic_n('0,25'))
+  self.assertIsNone(number('1,950')) # never reinterpret an ES decimal convention
  def test_compatible_bounded_p_not_identical(self):
   self.assertEqual(comp('pval_value_o','.001',{'value':'.01','bound':'l'},{'pval_type_o':'l (<)'}),'compatible')
   self.assertEqual(comp('pval_value_o','.01',{'value':'.01','bound':'ge'},{'pval_type_o':'l (<)'}),'differ')
   self.assertEqual(comp('pval_value_o','.84',{'value':'.084','bound':'e'},{'pval_type_o':'e (=)'}),'differ')
+ def test_p_identical_requires_equal_printed_precision_intervals(self):
+  r={'pval_type_o':'e (=)'}
+  self.assertEqual(comp('pval_value_o','.010',{'value':'.01','bound':'e'},r),'compatible')
+  self.assertEqual(comp('pval_value_o','.010',{'value':'1.0e -2','bound':'e'},r),'identical')
  def test_scientific_p_preserves_rounding_and_strict_bounds(self):
   r={'pval_type_o':'e (=)'}
   for v in ['2.2e -16','p = 2.2 × 10^{-16}','2.2e-400']:
@@ -128,6 +139,18 @@ class AuditChecks(unittest.TestCase):
    args=['agy','-p','FRED_AUDIT_PROMPT_FILE: '+str(path)+'\nRead it.','--add-dir',str(root/'texts')]
    self.assertEqual(prompt_key(args),key)
    args[2]='FRED_AUDIT_PROMPT_FILE: /unrelated/prompt_'+key+'.txt';self.assertIsNone(prompt_key(args))
+ def test_focused_review_survives_old_response_cache_refresh(self):
+  import tempfile,os
+  from compare import load_adjudications
+  with tempfile.TemporaryDirectory() as temp:
+   root=Path(temp);(root/'adjudications').mkdir()
+   old={'audit_id':1,'field':'n_o','verdict':'blind_right','correct_value':'99'}
+   review={**old,'verdict':'shipped_right','correct_value':'100'}
+   (root/'adjudications/validated_old.json').write_text(json.dumps([old]))
+   (root/'adjudications/validated_review.json').write_text(json.dumps([review]))
+   (root/'adjudication_tasks.jsonl').write_text(json.dumps({'key':'old','started_at':'2026-10-29T09:00:00Z','focused_review':False})+'\n'+json.dumps({'key':'review','started_at':'2026-10-29T10:00:00Z','focused_review':True})+'\n')
+   os.utime(root/'adjudications/validated_old.json',(2000000000,2000000000))
+   self.assertEqual(load_adjudications(root)[1,'n_o'],review)
  def test_flag_confirmation_requires_recomputed_resolution(self):
   from confirm_flags import confirm_flags
   r={'input_row_index':1,'es_value_o':'t(48)=2.1','es_type_o':'test statistic','n_o':'49','nested_o':'no','pval_tails_o':'2','pval_value_o':'.8','pval_type_o':'e'}

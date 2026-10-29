@@ -4790,3 +4790,278 @@ Paper-side skips/checkpoints logged 2026-10-29T14:23:58.820045+00:00:
 - Repaired large batch8eac59ce2936132c completed with all110 items valid as complete JSON; no additional substantive retry needed. Future CLI task records also retain the intended output-file path separately from captured launcher stdout, rather than allowing the latter to overwrite it. Older raw response paths remain deterministically identified by task key.
 
 - Hourly checkpoint 2026-10-29T14:59:43.625574+00:00: {"checkpointed": 2164, "o_fully_checked": 216, "o_any_stat_checked": 772, "r_fully_checked": 362, "r_any_stat_checked": 1155, "any_field_checked": 1550, "fully_checked_effects": 57}; 246 confirmed field errors; 131 paper groups pending bounded adjudication. All2164 checkpoints valid,26 unit checks and full export/evidence accounting preflight pass; dataset hash unchanged. Repaired110-field delivery completed successfully. Parent loop now omits finished extraction polling and reports compact adjudication progress every cycle; four-call ceiling and all deadlines unchanged.
+
+- Parent coverage/identity check:214 statistic observations across40 works have a complete source-verifiable quotation but worker target_match=null (210 otherwise confident;4 uncertain). The comparison rule requires identity disagreements to reach adjudication, so these now enter mismatched_target review rather than silently remaining unverified. No automatic error/correct classification; primary-source and explicit matching-value safeguards remain. Success fields on the same uncertain replication targets are handled likewise. A separately extracted printed test_statistic can now supply the quote-validation value when the printed effect-size value itself is null; this does not convert metrics or relax quotation/confidence checks.
+
+Paper-side skips/checkpoints logged 2026-10-29T15:03:55.867987+00:00:
+
+- Partial/unevaluable row 20: reported_success (mismatched_target). Evidence/reasons: extractions/20.json and results.csv.
+- Partial/unevaluable row 56: reported_success (mismatched_target). Evidence/reasons: extractions/56.json and results.csv.
+- Partial/unevaluable row 73: reported_success (mismatched_target). Evidence/reasons: extractions/73.json and results.csv.
+- Partial/unevaluable row 74: reported_success (mismatched_target). Evidence/reasons: extractions/74.json and results.csv.
+- Partial/unevaluable row 75: reported_success (mismatched_target). Evidence/reasons: extractions/75.json and results.csv.
+- Partial/unevaluable row 76: reported_success (mismatched_target). Evidence/reasons: extractions/76.json and results.csv.
+- Partial/unevaluable row 77: reported_success (mismatched_target). Evidence/reasons: extractions/77.json and results.csv.
+- Partial/unevaluable row 78: reported_success (mismatched_target). Evidence/reasons: extractions/78.json and results.csv.
+- Partial/unevaluable row 79: reported_success (mismatched_target). Evidence/reasons: extractions/79.json and results.csv.
+- Partial/unevaluable row 81: reported_success (mismatched_target). Evidence/reasons: extractions/81.json and results.csv.
+- Partial/unevaluable row 88: es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/88.json and results.csv.
+- Partial/unevaluable row 100: n_o (mismatched_target). Evidence/reasons: extractions/100.json and results.csv.
+- Partial/unevaluable row 101: n_o (mismatched_target). Evidence/reasons: extractions/101.json and results.csv.
+- Partial/unevaluable row 102: reported_success (mismatched_target). Evidence/reasons: extractions/102.json and results.csv.
+- Partial/unevaluable row 103: reported_success (mismatched_target). Evidence/reasons: extractions/103.json and results.csv.
+- Partial/unevaluable row 104: reported_success (mismatched_target). Evidence/reasons: extractions/104.json and results.csv.
+- Partial/unevaluable row 105: reported_success (mismatched_target). Evidence/reasons: extractions/105.json and results.csv.
+- Partial/unevaluable row 106: reported_success (mismatched_target). Evidence/reasons: extractions/106.json and results.csv.
+- Partial/unevaluable row 107: reported_success (mismatched_target). Evidence/reasons: extractions/107.json and results.csv.
+- Partial/unevaluable row 108: reported_success (mismatched_target). Evidence/reasons: extractions/108.json and results.csv.
+- Partial/unevaluable row 136: reported_success (mismatched_target). Evidence/reasons: extractions/136.json and results.csv.
+- Partial/unevaluable row 138: reported_success (mismatched_target). Evidence/reasons: extractions/138.json and results.csv.
+- Partial/unevaluable row 139: reported_success (mismatched_target). Evidence/reasons: extractions/139.json and results.csv.
+- Partial/unevaluable row 140: reported_success (mismatched_target). Evidence/reasons: extractions/140.json and results.csv.
+- Partial/unevaluable row 229: reported_success (mismatched_target). Evidence/reasons: extractions/229.json and results.csv.
+- Partial/unevaluable row 230: reported_success (mismatched_target). Evidence/reasons: extractions/230.json and results.csv.
+- Partial/unevaluable row 231: reported_success (mismatched_target). Evidence/reasons: extractions/231.json and results.csv.
+- Partial/unevaluable row 240: n_o (mismatched_target), es_value_o (mismatched_target). Evidence/reasons: extractions/240.json and results.csv.
+- Partial/unevaluable row 242: n_o (mismatched_target). Evidence/reasons: extractions/242.json and results.csv.
+- Partial/unevaluable row 244: es_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/244.json and results.csv.
+- Partial/unevaluable row 245: es_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/245.json and results.csv.
+- Partial/unevaluable row 253: reported_success (mismatched_target). Evidence/reasons: extractions/253.json and results.csv.
+- Partial/unevaluable row 254: reported_success (mismatched_target). Evidence/reasons: extractions/254.json and results.csv.
+- Partial/unevaluable row 255: n_o (mismatched_target), n_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/255.json and results.csv.
+- Partial/unevaluable row 256: n_o (mismatched_target), n_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/256.json and results.csv.
+- Partial/unevaluable row 260: es_value_o (mismatched_target), es_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/260.json and results.csv.
+- Partial/unevaluable row 261: es_value_o (mismatched_target), es_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/261.json and results.csv.
+- Partial/unevaluable row 262: es_value_o (mismatched_target), es_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/262.json and results.csv.
+- Partial/unevaluable row 287: reported_success (mismatched_target). Evidence/reasons: extractions/287.json and results.csv.
+- Partial/unevaluable row 288: reported_success (mismatched_target). Evidence/reasons: extractions/288.json and results.csv.
+- Partial/unevaluable row 363: reported_success (mismatched_target). Evidence/reasons: extractions/363.json and results.csv.
+- Partial/unevaluable row 364: reported_success (mismatched_target). Evidence/reasons: extractions/364.json and results.csv.
+- Partial/unevaluable row 366: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/366.json and results.csv.
+- Partial/unevaluable row 367: n_r (mismatched_target). Evidence/reasons: extractions/367.json and results.csv.
+- Partial/unevaluable row 368: n_r (mismatched_target). Evidence/reasons: extractions/368.json and results.csv.
+- Partial/unevaluable row 369: n_r (mismatched_target). Evidence/reasons: extractions/369.json and results.csv.
+- Partial/unevaluable row 431: es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/431.json and results.csv.
+- Partial/unevaluable row 441: reported_success (mismatched_target). Evidence/reasons: extractions/441.json and results.csv.
+- Partial/unevaluable row 444: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/444.json and results.csv.
+- Partial/unevaluable row 453: reported_success (mismatched_target). Evidence/reasons: extractions/453.json and results.csv.
+- Partial/unevaluable row 457: reported_success (mismatched_target). Evidence/reasons: extractions/457.json and results.csv.
+- Partial/unevaluable row 482: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/482.json and results.csv.
+- Partial/unevaluable row 512: reported_success (mismatched_target). Evidence/reasons: extractions/512.json and results.csv.
+- Partial/unevaluable row 513: reported_success (mismatched_target). Evidence/reasons: extractions/513.json and results.csv.
+- Partial/unevaluable row 554: reported_success (mismatched_target). Evidence/reasons: extractions/554.json and results.csv.
+- Partial/unevaluable row 560: es_value_r (mismatched_target). Evidence/reasons: extractions/560.json and results.csv.
+- Partial/unevaluable row 561: es_value_r (mismatched_target). Evidence/reasons: extractions/561.json and results.csv.
+- Partial/unevaluable row 564: es_value_r (mismatched_target). Evidence/reasons: extractions/564.json and results.csv.
+- Partial/unevaluable row 565: es_value_r (mismatched_target). Evidence/reasons: extractions/565.json and results.csv.
+- Partial/unevaluable row 567: es_value_r (mismatched_target). Evidence/reasons: extractions/567.json and results.csv.
+- Partial/unevaluable row 571: es_value_r (mismatched_target). Evidence/reasons: extractions/571.json and results.csv.
+- Partial/unevaluable row 589: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/589.json and results.csv.
+- Partial/unevaluable row 591: n_r (mismatched_target), es_value_r (mismatched_target). Evidence/reasons: extractions/591.json and results.csv.
+- Partial/unevaluable row 592: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/592.json and results.csv.
+- Partial/unevaluable row 594: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/594.json and results.csv.
+- Partial/unevaluable row 595: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/595.json and results.csv.
+- Partial/unevaluable row 597: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/597.json and results.csv.
+- Partial/unevaluable row 601: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/601.json and results.csv.
+- Partial/unevaluable row 610: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/610.json and results.csv.
+- Partial/unevaluable row 661: reported_success (mismatched_target). Evidence/reasons: extractions/661.json and results.csv.
+- Partial/unevaluable row 754: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/754.json and results.csv.
+- Partial/unevaluable row 755: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/755.json and results.csv.
+- Partial/unevaluable row 756: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/756.json and results.csv.
+- Partial/unevaluable row 757: pval_value_o (mismatched_target). Evidence/reasons: extractions/757.json and results.csv.
+- Partial/unevaluable row 903: es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/903.json and results.csv.
+- Partial/unevaluable row 904: es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/904.json and results.csv.
+- Partial/unevaluable row 905: es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/905.json and results.csv.
+- Partial/unevaluable row 920: es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/920.json and results.csv.
+- Partial/unevaluable row 923: es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/923.json and results.csv.
+- Partial/unevaluable row 1019: reported_success (mismatched_target). Evidence/reasons: extractions/1019.json and results.csv.
+- Partial/unevaluable row 1024: reported_success (mismatched_target). Evidence/reasons: extractions/1024.json and results.csv.
+- Partial/unevaluable row 1031: reported_success (mismatched_target). Evidence/reasons: extractions/1031.json and results.csv.
+- Partial/unevaluable row 1071: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1071.json and results.csv.
+- Partial/unevaluable row 1087: reported_success (mismatched_target). Evidence/reasons: extractions/1087.json and results.csv.
+- Partial/unevaluable row 1088: reported_success (mismatched_target). Evidence/reasons: extractions/1088.json and results.csv.
+- Partial/unevaluable row 1089: reported_success (mismatched_target). Evidence/reasons: extractions/1089.json and results.csv.
+- Partial/unevaluable row 1090: reported_success (mismatched_target). Evidence/reasons: extractions/1090.json and results.csv.
+- Partial/unevaluable row 1091: reported_success (mismatched_target). Evidence/reasons: extractions/1091.json and results.csv.
+- Partial/unevaluable row 1115: reported_success (mismatched_target). Evidence/reasons: extractions/1115.json and results.csv.
+- Partial/unevaluable row 1116: reported_success (mismatched_target). Evidence/reasons: extractions/1116.json and results.csv.
+- Partial/unevaluable row 1117: reported_success (mismatched_target). Evidence/reasons: extractions/1117.json and results.csv.
+- Partial/unevaluable row 1118: reported_success (mismatched_target). Evidence/reasons: extractions/1118.json and results.csv.
+- Partial/unevaluable row 1119: reported_success (mismatched_target). Evidence/reasons: extractions/1119.json and results.csv.
+- Partial/unevaluable row 1120: reported_success (mismatched_target). Evidence/reasons: extractions/1120.json and results.csv.
+- Partial/unevaluable row 1122: reported_success (mismatched_target). Evidence/reasons: extractions/1122.json and results.csv.
+- Partial/unevaluable row 1123: reported_success (mismatched_target). Evidence/reasons: extractions/1123.json and results.csv.
+- Partial/unevaluable row 1124: reported_success (mismatched_target). Evidence/reasons: extractions/1124.json and results.csv.
+- Partial/unevaluable row 1125: reported_success (mismatched_target). Evidence/reasons: extractions/1125.json and results.csv.
+- Partial/unevaluable row 1128: reported_success (mismatched_target). Evidence/reasons: extractions/1128.json and results.csv.
+- Partial/unevaluable row 1133: reported_success (mismatched_target). Evidence/reasons: extractions/1133.json and results.csv.
+- Partial/unevaluable row 1139: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1139.json and results.csv.
+- Partial/unevaluable row 1141: reported_success (mismatched_target). Evidence/reasons: extractions/1141.json and results.csv.
+- Partial/unevaluable row 1142: reported_success (mismatched_target). Evidence/reasons: extractions/1142.json and results.csv.
+- Partial/unevaluable row 1214: es_value_o (mismatched_target), pval_value_o (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1214.json and results.csv.
+- Partial/unevaluable row 1232: es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1232.json and results.csv.
+- Partial/unevaluable row 1240: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1240.json and results.csv.
+- Partial/unevaluable row 1244: reported_success (mismatched_target). Evidence/reasons: extractions/1244.json and results.csv.
+- Partial/unevaluable row 1245: reported_success (mismatched_target). Evidence/reasons: extractions/1245.json and results.csv.
+- Partial/unevaluable row 1266: es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/1266.json and results.csv.
+- Partial/unevaluable row 1267: es_value_o (mismatched_target), pval_value_o (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1267.json and results.csv.
+- Partial/unevaluable row 1274: reported_success (mismatched_target). Evidence/reasons: extractions/1274.json and results.csv.
+- Partial/unevaluable row 1342: reported_success (mismatched_target). Evidence/reasons: extractions/1342.json and results.csv.
+- Partial/unevaluable row 1343: reported_success (mismatched_target). Evidence/reasons: extractions/1343.json and results.csv.
+- Partial/unevaluable row 1345: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1345.json and results.csv.
+- Partial/unevaluable row 1349: reported_success (mismatched_target). Evidence/reasons: extractions/1349.json and results.csv.
+- Partial/unevaluable row 1350: reported_success (mismatched_target). Evidence/reasons: extractions/1350.json and results.csv.
+- Partial/unevaluable row 1359: reported_success (mismatched_target). Evidence/reasons: extractions/1359.json and results.csv.
+- Partial/unevaluable row 1382: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1382.json and results.csv.
+- Partial/unevaluable row 1416: reported_success (mismatched_target). Evidence/reasons: extractions/1416.json and results.csv.
+- Partial/unevaluable row 1515: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1515.json and results.csv.
+- Partial/unevaluable row 1516: reported_success (mismatched_target). Evidence/reasons: extractions/1516.json and results.csv.
+- Partial/unevaluable row 1522: es_value_r (mismatched_target). Evidence/reasons: extractions/1522.json and results.csv.
+- Partial/unevaluable row 1523: reported_success (mismatched_target). Evidence/reasons: extractions/1523.json and results.csv.
+- Partial/unevaluable row 1529: reported_success (mismatched_target). Evidence/reasons: extractions/1529.json and results.csv.
+- Partial/unevaluable row 1551: reported_success (mismatched_target). Evidence/reasons: extractions/1551.json and results.csv.
+- Partial/unevaluable row 1554: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/1554.json and results.csv.
+- Partial/unevaluable row 1581: reported_success (mismatched_target). Evidence/reasons: extractions/1581.json and results.csv.
+- Partial/unevaluable row 1582: reported_success (mismatched_target). Evidence/reasons: extractions/1582.json and results.csv.
+- Partial/unevaluable row 1583: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/1583.json and results.csv.
+- Partial/unevaluable row 1598: n_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1598.json and results.csv.
+- Partial/unevaluable row 1599: n_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1599.json and results.csv.
+- Partial/unevaluable row 1600: n_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1600.json and results.csv.
+- Partial/unevaluable row 1603: reported_success (mismatched_target). Evidence/reasons: extractions/1603.json and results.csv.
+- Partial/unevaluable row 1604: n_o (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1604.json and results.csv.
+- Partial/unevaluable row 1605: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1605.json and results.csv.
+- Partial/unevaluable row 1608: n_r (mismatched_target), es_value_r (mismatched_target). Evidence/reasons: extractions/1608.json and results.csv.
+- Partial/unevaluable row 1646: reported_success (mismatched_target). Evidence/reasons: extractions/1646.json and results.csv.
+- Partial/unevaluable row 1709: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1709.json and results.csv.
+- Partial/unevaluable row 1710: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1710.json and results.csv.
+- Partial/unevaluable row 1780: reported_success (mismatched_target). Evidence/reasons: extractions/1780.json and results.csv.
+- Partial/unevaluable row 1794: n_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), es_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1794.json and results.csv.
+- Partial/unevaluable row 1795: n_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), es_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1795.json and results.csv.
+- Partial/unevaluable row 1796: n_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), es_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1796.json and results.csv.
+- Partial/unevaluable row 1800: reported_success (mismatched_target). Evidence/reasons: extractions/1800.json and results.csv.
+- Partial/unevaluable row 1801: reported_success (mismatched_target). Evidence/reasons: extractions/1801.json and results.csv.
+- Partial/unevaluable row 1802: reported_success (mismatched_target). Evidence/reasons: extractions/1802.json and results.csv.
+- Partial/unevaluable row 1803: reported_success (mismatched_target). Evidence/reasons: extractions/1803.json and results.csv.
+- Partial/unevaluable row 1804: reported_success (mismatched_target). Evidence/reasons: extractions/1804.json and results.csv.
+- Partial/unevaluable row 1805: reported_success (mismatched_target). Evidence/reasons: extractions/1805.json and results.csv.
+- Partial/unevaluable row 1806: reported_success (mismatched_target). Evidence/reasons: extractions/1806.json and results.csv.
+- Partial/unevaluable row 1807: reported_success (mismatched_target). Evidence/reasons: extractions/1807.json and results.csv.
+- Partial/unevaluable row 1808: reported_success (mismatched_target). Evidence/reasons: extractions/1808.json and results.csv.
+- Partial/unevaluable row 1809: reported_success (mismatched_target). Evidence/reasons: extractions/1809.json and results.csv.
+- Partial/unevaluable row 1828: reported_success (mismatched_target). Evidence/reasons: extractions/1828.json and results.csv.
+- Partial/unevaluable row 1829: reported_success (mismatched_target). Evidence/reasons: extractions/1829.json and results.csv.
+- Partial/unevaluable row 1830: reported_success (mismatched_target). Evidence/reasons: extractions/1830.json and results.csv.
+- Partial/unevaluable row 1838: es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1838.json and results.csv.
+- Partial/unevaluable row 1862: reported_success (mismatched_target). Evidence/reasons: extractions/1862.json and results.csv.
+- Partial/unevaluable row 1863: reported_success (mismatched_target). Evidence/reasons: extractions/1863.json and results.csv.
+- Partial/unevaluable row 1864: reported_success (mismatched_target). Evidence/reasons: extractions/1864.json and results.csv.
+- Partial/unevaluable row 1865: reported_success (mismatched_target). Evidence/reasons: extractions/1865.json and results.csv.
+- Partial/unevaluable row 1867: n_r (mismatched_target), es_value_r (mismatched_target). Evidence/reasons: extractions/1867.json and results.csv.
+- Partial/unevaluable row 1868: n_r (mismatched_target), es_value_r (mismatched_target). Evidence/reasons: extractions/1868.json and results.csv.
+- Partial/unevaluable row 1876: n_o (mismatched_target), pval_value_o (mismatched_target). Evidence/reasons: extractions/1876.json and results.csv.
+- Partial/unevaluable row 1885: reported_success (mismatched_target). Evidence/reasons: extractions/1885.json and results.csv.
+- Partial/unevaluable row 1886: reported_success (mismatched_target). Evidence/reasons: extractions/1886.json and results.csv.
+- Partial/unevaluable row 1887: reported_success (mismatched_target). Evidence/reasons: extractions/1887.json and results.csv.
+- Partial/unevaluable row 1888: reported_success (mismatched_target). Evidence/reasons: extractions/1888.json and results.csv.
+- Partial/unevaluable row 1889: reported_success (mismatched_target). Evidence/reasons: extractions/1889.json and results.csv.
+- Partial/unevaluable row 1890: reported_success (mismatched_target). Evidence/reasons: extractions/1890.json and results.csv.
+- Partial/unevaluable row 1891: reported_success (mismatched_target). Evidence/reasons: extractions/1891.json and results.csv.
+- Partial/unevaluable row 1892: reported_success (mismatched_target). Evidence/reasons: extractions/1892.json and results.csv.
+- Partial/unevaluable row 1893: reported_success (mismatched_target). Evidence/reasons: extractions/1893.json and results.csv.
+- Partial/unevaluable row 1894: reported_success (mismatched_target). Evidence/reasons: extractions/1894.json and results.csv.
+- Partial/unevaluable row 1895: reported_success (mismatched_target). Evidence/reasons: extractions/1895.json and results.csv.
+- Partial/unevaluable row 1896: reported_success (mismatched_target). Evidence/reasons: extractions/1896.json and results.csv.
+- Partial/unevaluable row 1897: reported_success (mismatched_target). Evidence/reasons: extractions/1897.json and results.csv.
+- Partial/unevaluable row 1898: reported_success (mismatched_target). Evidence/reasons: extractions/1898.json and results.csv.
+- Partial/unevaluable row 1899: reported_success (mismatched_target). Evidence/reasons: extractions/1899.json and results.csv.
+- Partial/unevaluable row 1900: reported_success (mismatched_target). Evidence/reasons: extractions/1900.json and results.csv.
+- Partial/unevaluable row 1926: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1926.json and results.csv.
+- Partial/unevaluable row 1927: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1927.json and results.csv.
+- Partial/unevaluable row 1934: pval_value_o (mismatched_target). Evidence/reasons: extractions/1934.json and results.csv.
+- Partial/unevaluable row 1935: n_o (mismatched_target). Evidence/reasons: extractions/1935.json and results.csv.
+- Partial/unevaluable row 1943: reported_success (mismatched_target). Evidence/reasons: extractions/1943.json and results.csv.
+- Partial/unevaluable row 1944: reported_success (mismatched_target). Evidence/reasons: extractions/1944.json and results.csv.
+- Partial/unevaluable row 1945: reported_success (mismatched_target). Evidence/reasons: extractions/1945.json and results.csv.
+- Partial/unevaluable row 1946: reported_success (mismatched_target). Evidence/reasons: extractions/1946.json and results.csv.
+- Partial/unevaluable row 1947: reported_success (mismatched_target). Evidence/reasons: extractions/1947.json and results.csv.
+- Partial/unevaluable row 1948: reported_success (mismatched_target). Evidence/reasons: extractions/1948.json and results.csv.
+- Partial/unevaluable row 1949: reported_success (mismatched_target). Evidence/reasons: extractions/1949.json and results.csv.
+- Partial/unevaluable row 1950: reported_success (mismatched_target). Evidence/reasons: extractions/1950.json and results.csv.
+- Partial/unevaluable row 1951: reported_success (mismatched_target). Evidence/reasons: extractions/1951.json and results.csv.
+- Partial/unevaluable row 1952: reported_success (mismatched_target). Evidence/reasons: extractions/1952.json and results.csv.
+- Partial/unevaluable row 1953: reported_success (mismatched_target). Evidence/reasons: extractions/1953.json and results.csv.
+- Partial/unevaluable row 1954: reported_success (mismatched_target). Evidence/reasons: extractions/1954.json and results.csv.
+- Partial/unevaluable row 1955: reported_success (mismatched_target). Evidence/reasons: extractions/1955.json and results.csv.
+- Partial/unevaluable row 1956: reported_success (mismatched_target). Evidence/reasons: extractions/1956.json and results.csv.
+- Partial/unevaluable row 1969: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1969.json and results.csv.
+- Partial/unevaluable row 1973: es_value_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/1973.json and results.csv.
+- Partial/unevaluable row 1975: es_value_o (mismatched_target), pval_value_o (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1975.json and results.csv.
+- Partial/unevaluable row 1976: reported_success (mismatched_target). Evidence/reasons: extractions/1976.json and results.csv.
+- Partial/unevaluable row 1977: reported_success (mismatched_target). Evidence/reasons: extractions/1977.json and results.csv.
+- Partial/unevaluable row 1992: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1992.json and results.csv.
+- Partial/unevaluable row 1993: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1993.json and results.csv.
+- Partial/unevaluable row 1994: n_o (mismatched_target), es_value_o (mismatched_target), pval_value_o (mismatched_target), n_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1994.json and results.csv.
+- Partial/unevaluable row 1996: reported_success (mismatched_target). Evidence/reasons: extractions/1996.json and results.csv.
+- Partial/unevaluable row 1997: reported_success (mismatched_target). Evidence/reasons: extractions/1997.json and results.csv.
+- Partial/unevaluable row 1998: reported_success (mismatched_target). Evidence/reasons: extractions/1998.json and results.csv.
+- Partial/unevaluable row 1999: reported_success (mismatched_target). Evidence/reasons: extractions/1999.json and results.csv.
+- Partial/unevaluable row 2000: reported_success (mismatched_target). Evidence/reasons: extractions/2000.json and results.csv.
+- Partial/unevaluable row 2001: reported_success (mismatched_target). Evidence/reasons: extractions/2001.json and results.csv.
+- Partial/unevaluable row 2002: reported_success (mismatched_target). Evidence/reasons: extractions/2002.json and results.csv.
+- Partial/unevaluable row 2003: reported_success (mismatched_target). Evidence/reasons: extractions/2003.json and results.csv.
+- Partial/unevaluable row 2004: reported_success (mismatched_target). Evidence/reasons: extractions/2004.json and results.csv.
+- Partial/unevaluable row 2005: reported_success (mismatched_target). Evidence/reasons: extractions/2005.json and results.csv.
+- Partial/unevaluable row 2006: reported_success (mismatched_target). Evidence/reasons: extractions/2006.json and results.csv.
+- Partial/unevaluable row 2007: reported_success (mismatched_target). Evidence/reasons: extractions/2007.json and results.csv.
+- Partial/unevaluable row 2008: reported_success (mismatched_target). Evidence/reasons: extractions/2008.json and results.csv.
+- Partial/unevaluable row 2009: reported_success (mismatched_target). Evidence/reasons: extractions/2009.json and results.csv.
+- Partial/unevaluable row 2043: n_o (mismatched_target), n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/2043.json and results.csv.
+- Partial/unevaluable row 2047: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/2047.json and results.csv.
+- Partial/unevaluable row 2059: reported_success (mismatched_target). Evidence/reasons: extractions/2059.json and results.csv.
+- Partial/unevaluable row 2090: n_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/2090.json and results.csv.
+- Partial/unevaluable row 2094: reported_success (mismatched_target). Evidence/reasons: extractions/2094.json and results.csv.
+- Partial/unevaluable row 2109: reported_success (mismatched_target). Evidence/reasons: extractions/2109.json and results.csv.
+- Partial/unevaluable row 2134: reported_success (mismatched_target). Evidence/reasons: extractions/2134.json and results.csv.
+- Partial/unevaluable row 2147: n_r (mismatched_target). Evidence/reasons: extractions/2147.json and results.csv.
+- Partial/unevaluable row 2156: n_r (mismatched_target), es_value_r (mismatched_target), pval_value_r (mismatched_target), reported_success (mismatched_target). Evidence/reasons: extractions/2156.json and results.csv.
+
+- Clarification of uncertain-target routing: applies to the three statistical fields on a side. reported_success retains its independent done/confident narrative assessment; an unidentifiable numerical test does not by itself invalidate a clearly identified author verdict for the named study/outcome. The first integration briefly inherited statistical target_match=null into success as well, unnecessarily withdrawing147 otherwise evaluable effects and queuing their narrative evidence; this was corrected before the next committed checkpoint. No target-uncertain statistic is automatically verified and known-false targets still receive adjudication.
+
+- Count-format QC:91 n fields were not_comparable solely because blind sample counts used comma thousands groups (e.g.1,950 versus1950). Added analytic_n normalisation limited to unambiguous grouped positive-integer counts (commas/standard narrow spaces); no ES or p decimal convention is reinterpreted, and multi-count strings remain uncomparable. Raw values remain unchanged. True count discrepancies now follow exact/near/differ and adjudication. PartA/flag-confirmation use the same count parser.27 tests pass.
+
+Paper-side skips/checkpoints logged 2026-10-29T15:10:26.464452+00:00:
+
+- Partial/unevaluable row 326: n_r (near). Evidence/reasons: extractions/326.json and results.csv.
+- Partial/unevaluable row 706: n_r (near). Evidence/reasons: extractions/706.json and results.csv.
+- Partial/unevaluable row 864: n_r (differ). Evidence/reasons: extractions/864.json and results.csv.
+- Partial/unevaluable row 872: n_r (near). Evidence/reasons: extractions/872.json and results.csv.
+- Partial/unevaluable row 876: n_r (near). Evidence/reasons: extractions/876.json and results.csv.
+- Partial/unevaluable row 1317: n_r (differ). Evidence/reasons: extractions/1317.json and results.csv.
+- Partial/unevaluable row 1318: n_r (differ). Evidence/reasons: extractions/1318.json and results.csv.
+- Partial/unevaluable row 1319: n_r (differ). Evidence/reasons: extractions/1319.json and results.csv.
+- Partial/unevaluable row 1555: n_r (differ). Evidence/reasons: extractions/1555.json and results.csv.
+- Partial/unevaluable row 1866: n_r (differ). Evidence/reasons: extractions/1866.json and results.csv.
+- Partial/unevaluable row 1987: n_r (near). Evidence/reasons: extractions/1987.json and results.csv.
+- Partial/unevaluable row 2111: n_o (differ). Evidence/reasons: extractions/2111.json and results.csv.
+- Partial/unevaluable row 2138: n_r (differ). Evidence/reasons: extractions/2138.json and results.csv.
+- Partial/unevaluable row 2154: n_o (differ), n_r (differ). Evidence/reasons: extractions/2154.json and results.csv.
+
+- Narrative-scope QC 2026-10-29T15:13:50.417503+00:00: held reported_success1244–1248 for focused review of whether the overall moderated-mediation verdict actually establishes each individual path/interaction/conditional effect. The critical moderated-mediation index1249 has directly linked author interpretation and remains a confirmed correction; do not infer component-level failure simply from full-model failure, or success simply from a component p-value.
+
+- Focused narrative-scope review 2026-10-29T15:19:40.872936+00:00: reported_success1244–1248 are undeterminable; authors attach their explicit unsupported conclusion to the overall moderated-mediation index, not separate component paths/interactions/conditional effects. Five prior proposed errors withdrawn; overall-index1249 remains linked to the actual author conclusion. Reply91628c2397fdcc45 validated, holds cleared.
+
+- P-comparison precision clarification: identical now requires the same normalised value/bound AND the same interval implied by printed precision; numerically equal p-values with different precision are compatible instead. This changes comparison/resolution labels only, not correctness or error counts.28 tests pass.
+
+- Remaining adjudication priority around15:35:157 source groups remain (102 with numerical/soft disagreements;55 identity-only). Keep focused reviews and repaired deliveries first, then effects with PartA flags, then numerical disagreements before identity-only cases, preferring more fields from the same paper within a tier. Four calls maximum, same model, same evidence standards and fixed deadlines. This prioritises potentially actionable checked-target discrepancies while retaining every unresolved identity case and its coverage bounds.
+
+- Private source archive verified 2026-10-29T15:37:53.187484+00:00:1542 files,76559726bytes copied to fred-stats-2026-10-b48a7d6-20261029T092009Z/texts. VFS uploads in progress/queued/errored all0; direct remote download check found0differences/1542matching files; rclone lsjson confirms all paths/sizes; direct manifest checksum matches c9455e67f45ec1026efaf65d277b59de7cdc2dc1350cff3a0364fee7de89aa7b. Active readers still use local SSD directory; move/link waits until they finish. No full text enters Git.
+
+- Deterministic decision precedence: comparison and focused-review prompts now load adjudications by recorded review context and task launch order (focused reviews supersede ordinary rounds), with parent obvious resolutions last. They no longer use mutable validated-file mtimes, which can change during parser/evidence cache refresh. This prevents an old ordinary response from reviving a retracted finding on rerun.29 tests pass, including simulated cache refresh of an older wrong decision. No new model call or changed evidence standard.
+
+- Parent QC 2026-10-29T15:49:14.286957+00:00: qc_errors.py flagged ES1310 original because the proposed bare4.59 correction only removes unprinted df2. Held for focused source/design/p-bound review; absence alone cannot establish error. Numeric/different-metric/formatting triage is now reusable in scripts/qc_errors.py (read only, no automatic decisions), with recorded review precedence.
+
+- Target-scope QC 2026-10-29T15:53:24.897766+00:00: held pval_value_r1558/1834 and reported_success1558. Neutral description1558 specifies NOT alert frequency while an earlier unblinded review selected timing from the coded F statistic; description1834 specifies timing while Table1/OR locator specifies frequency. Need independent locator/construct and pagination reconciliation, not numeric-coincidence target selection. If neutral metadata conflict cannot be resolved, retain mismatched_target/unverified rather than counting a statistical error.
+
+- Focused ES1310 original review validated7199c836821eef8e: retain correction t=4.59, not bare4.59. Coded finite df2 is contradicted by printed p<.001 (parent independently computed two-tailed t2 p=.0443, versus Wald-normal p=.00000443); source logistic-regression coefficient ratio has no finite df stated. This is a demonstrated wrong annotation, not an inference that absent df must be wrong. Hold cleared; therapy-target reviews remain pending.
+
+- Hourly checkpoint 2026-10-29T16:05:36.091396+00:00: {"checkpointed": 2164, "o_fully_checked": 223, "o_any_stat_checked": 792, "r_fully_checked": 421, "r_any_stat_checked": 1203, "any_field_checked": 1575, "fully_checked_effects": 70}; 288 confirmed field errors; 141 source groups/397 fields queued.29 tests, full row/checkpoint/export/evidence accounting and correction triage pass; dataset hash unchanged. Private archive verified; active source reads remain local. Therapy-target holds remain pending and excluded.

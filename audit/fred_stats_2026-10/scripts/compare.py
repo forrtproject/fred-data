@@ -1,7 +1,7 @@
 import json,csv,re,collections,datetime,hashlib,unicodedata
 from functools import lru_cache
 from pathlib import Path
-from consistency import number,rounding,pinterval,p_parts
+from consistency import number,analytic_n,rounding,pinterval,p_parts
 from schema import validate
 from protect_enrichment import preserve_completed
 B=Path(__file__).resolve().parents[1]
@@ -80,7 +80,7 @@ def comp(field,raw,blind,r):
  val=blind['value']
  if field=='reported_success':return 'agree' if val==raw else 'soft' if {val,raw}=={'failed','mixed'} else 'differ'
  if field.startswith('n_'):
-  a,b=number(raw),number(val)
+  a,b=analytic_n(raw),analytic_n(val)
   if a is None or b is None:return 'differ' if raw in [None,''] and b is not None else 'not_comparable'
   return 'agree' if a==b else 'near' if abs(a-b)/max(a,1)<=.05 else 'differ'
  if field.startswith('pval'):
@@ -91,7 +91,7 @@ def comp(field,raw,blind,r):
   aa,bb=pinterval(raw,typ),pinterval(val,blind['bound'])
   # Strict bounds at zero/one can represent an empty set, never an agreement.
   if any(t=='l' and x==0 or t=='g' and x==1 for x,t in [ap,bp]):return 'differ'
-  if ap==bp:return 'identical'
+  if ap==bp and aa==bb:return 'identical'
   if not overlap(aa,bb):return 'differ'
   lo,hi=max(aa[0],bb[0]),min(aa[1],bb[1])
   if lo==hi:
@@ -139,16 +139,29 @@ def original_primary_evidence(e,row):
  info=SOURCE_PROVENANCE.get(path)
  if info:return bool(info.get('work_doi') and str(info['work_doi']).lower()==doi)
  return Path(path).name.startswith(hashlib.sha256(doi.encode()).hexdigest()[:24])
+def load_adjudications(root):
+ """Review precedence follows recorded rounds, never mutable file mtimes."""
+ tasks={}
+ history=root/'adjudication_tasks.jsonl'
+ if history.exists():
+  for line in history.read_text().splitlines():
+   if line:
+    a=json.loads(line);tasks[a['key']]=a
+ def priority(path):
+  key=path.stem.removeprefix('validated_');a=tasks.get(key,{})
+  return bool(a.get('focused_review')),a.get('started_at',''),a.get('attempt',0),key
+ decisions={}
+ for path in sorted((root/'adjudications').glob('validated_*.json'),key=priority):
+  for a in json.loads(path.read_text()):decisions[(a['audit_id'],a['field'])]=a
+ return decisions
 def main():
  rows=json.loads((B/'parent_rows.json').read_text());results=[];candidates=[];invalid=[];coverage=collections.Counter();counts={f:collections.Counter() for f in FIELDS};projects=collections.defaultdict(lambda:{f:collections.Counter() for f in FIELDS});errors=[]
- adjud={}
+ adjud=load_adjudications(B)
  exhausted={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_exhausted.json').read_text())} if (B/'adjudication_exhausted.json').exists() else {}
  holds={(a['audit_id'],a['field']) for a in json.loads((B/'adjudication_holds.json').read_text())} if (B/'adjudication_holds.json').exists() else set()
  target_overrides={}
  if (B/'target_overrides.json').exists():
   target_overrides={(a['audit_id'],a['side']):a for a in json.loads((B/'target_overrides.json').read_text())}
- for path in sorted((B/'adjudications').glob('validated_*.json'),key=lambda p:p.stat().st_mtime_ns):
-  for a in json.loads(path.read_text()):adjud[(a['audit_id'],a['field'])]=a
  obvious_path=B/'obvious_resolutions.json'
  if obvious_path.exists():
   for a in json.loads(obvious_path.read_text()):adjud[(a['audit_id'],a['field'])]=a
@@ -180,8 +193,8 @@ def main():
     z[f+'_blind_source_path']=e.get('source_path') if e else None;z[f+'_evidence_basis']='replication source only (original unverified)' if secondary else 'paper evidence supplied' if e and e.get('source_path') else 'none'
    comparison='unverified';resolution='unresolved';verdict='unverified';suggestion='';location='';reason=''
    if secondary:reason='Original statistic is supported only by a replication paper/table; original primary-source verification remains unavailable.'
-   elif x and v is not None and x[side or 'replication']['target_match'] is False:comparison='mismatched_target'
-   elif e and quote_ok(e) and (side is None or x[side]['status']=='done' and x[side]['target_match'] is True):
+   elif x and v is not None and (x[side or 'replication']['target_match'] is False or side is not None and x[side]['target_match'] is None and quote_ok({**e,'value':v,'confident':True})):comparison='mismatched_target'
+   elif e and quote_ok({**e,'value':v}) and (side is None or x[side]['status']=='done' and x[side]['target_match'] is True):
     comparison=comp(f,raw,e,r)
     if comparison in ['agree','identical','compatible']:
      resolution='agree' if comparison in ['agree','identical'] else 'obvious';verdict='correct';reason='Compatible printed rounding intervals' if comparison=='compatible' else ''
@@ -189,7 +202,7 @@ def main():
    elif e and v is not None:reason='Evidence, confidence or target match not validated'
    primary_adjud=bool(secondary and adjud.get((aid,f)) and original_primary_evidence(adjud[(aid,f)],r))
    if primary_adjud:
-    comparison=comp(f,raw,e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated by Argon'
+    comparison=comp(f,raw,e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
    if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud:
     a=adjud.get((aid,f))
     if (aid,f) in holds:a=None

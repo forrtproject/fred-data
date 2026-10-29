@@ -1,7 +1,7 @@
 """Recompute diagnostic flags using only source-confirmed corrections."""
 import json,csv
 from pathlib import Path
-from consistency import number,pinterval,stat_interval
+from consistency import number,analytic_n,pinterval,stat_interval
 B=Path(__file__).resolve().parents[1]
 def confirm_flags(rows,flags,errors):
  corrections={}
@@ -17,7 +17,7 @@ def confirm_flags(rows,flags,errors):
    if relevant:
     passed=None
     if flag.startswith('n_range'):
-     n=number(r['n_'+side]);passed=n is not None and n>0 and n.is_integer()
+     n=analytic_n(r['n_'+side]);passed=n is not None and n>0 and n.is_integer()
     elif flag.startswith('p_range'):
      interval=pinterval(r['pval_value_'+side],r['pval_type_'+side]);passed=interval is not None
     elif flag.startswith('r_range'):

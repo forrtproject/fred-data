@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 2043,
+    "field": "n_r",
+    "comparison": "mismatched_target",
+    "shipped": "27",
+    "shipped_metric": "ser_method",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "27",
+      "sample_role": "Country-level effect estimates in the random-effects meta-analysis (k).",
+      "exclusions": "Country/sample exclusions not documented in the provided report or estimation summary.",
+      "location": "Estimation Results PDF, p. 1, embedded R console, Random-Effects Model heading",
+      "quote": "Random-Effects Model (k = 27; tau^2 estimator: REML)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/409b1be120071283638761c8.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Brons, M. D. (Anne), Liefbroer, A. C., & Ganzeboom, H. B. G. (2017). Parental Socio-Economic Status and First Union Formation: Can European Variation Be Explained by the Second Demographic Transition Theory? European Sociological Review, 33(6), 809–822. https://doi.org/10.1093/esr/jcx078",
+      "doi_o": "10.1093/esr/jcx078",
+      "study_o": null,
+      "ref_r": "Parsons, E. S., Miske, O., Luis, B., Loomas, Z., Fox, N. W., Tyner, A. H., … Reed, W. R. (2025, November 18). Brons_EurSocioRev_2017_e227 - Reed - Secondary Data Replication - 24yw6. Retrieved from osf.io/9mx5w",
+      "doi_r": null,
+      "url_r": "https://osf.io/4usmq",
+      "study_r": null,
+      "es_type_o": "ser_method",
+      "es_type_r": "ser_method",
+      "audit_id": 2043,
+      "description": null,
+      "locators_o": "p. 7",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a0a0fbf1f9421bd65d7a76c3.txt"
+      }
+    },
+    "work_key": "https://osf.io/4usmq",
+    "coding_context": {
+      "es_repr": null,
+      "pval_tails": "2",
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.
