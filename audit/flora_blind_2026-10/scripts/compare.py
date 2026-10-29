@@ -172,11 +172,12 @@ def pair_originals(rows, targets):
     return sorted(pairs), row_flags, target_flags
 
 
-@lru_cache(maxsize=16)
-def normalized_quote_text(value):
+@lru_cache(maxsize=32)
+def normalized_quote_text(value, dehyphenate=True):
     # Reuse document normalization across hundreds of target/field checks.
     value = unicodedata.normalize('NFKC', value).casefold()
-    value = re.sub(r'(?<=\w)-\s*\n\s*(?=\w)', '', value)
+    if dehyphenate:
+        value = re.sub(r'(?<=\w)-\s*\n\s*(?=\w)', '', value)
     return re.sub(r'\s+', ' ', value).strip()
 
 
@@ -188,9 +189,15 @@ def quote_present(quote, text):
     """
     if not isinstance(quote, str) or not quote.strip() or not text:
         return False
-    source = normalized_quote_text(text)
+    # Preserve a literal whitespace-normalized view too: a copied PDF quote may
+    # retain its line-end hyphen while changing the line break to a space.
+    # Dehyphenating only the source must not erase that exact literal match.
+    modes = (False, True)
+    sources = [normalized_quote_text(text, mode) for mode in modes]
     parts = quote.split(' | ')
-    return all(normalized_quote_text(part) and normalized_quote_text(part) in source for part in parts)
+    return all(any(normalized_quote_text(part, mode) and
+                   normalized_quote_text(part, mode) in source
+                   for mode, source in zip(modes, sources)) for part in parts)
 
 
 def outcome_grade(row, target, axis=None):
@@ -491,7 +498,8 @@ def rate_line(rows, field):
 def report(results, missing, works, issues):
     lines = ['# FLoRA blind audit — provisional', '',
              'This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. '
-             'Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote.', '']
+             'Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. '
+             'Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.', '']
     errors = sum(any(r[k + '_final_verdict'] == 'error' for k in ('type', 'original', 'outcome')) for r in results)
     resolved = sum(r['resolution'] != 'unresolved' for r in results)
     lines += [f'{errors} input rows have at least one confirmed field error; {resolved} / {len(results)} rows are fully resolved. '
@@ -524,7 +532,9 @@ def report(results, missing, works, issues):
         fields = [k for k in ('type', 'original', 'outcome') if r[k + '_final_verdict'] == 'error']
         if fields:
             doi = clean_doi(r['doi_r'])
-            link = f'[replicating work](https://doi.org/{doi})' if doi else 'replicating work (DOI unavailable)'
+            link = (f'[replicating work](https://doi.org/{doi})' if doi else
+                    f'[replicating work]({r["work_key"]}) (DOI unavailable)' if r['work_key'].startswith(('https://', 'http://')) else
+                    'replicating work (DOI unavailable)')
             corrections = json.loads(r['suggested_correction'])
             changes = []
             for field, value in corrections.items():

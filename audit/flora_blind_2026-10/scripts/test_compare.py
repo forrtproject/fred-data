@@ -153,6 +153,16 @@ class EvidenceTests(unittest.TestCase):
         self.assertFalse(c.quote_present('effect = 0.5', 'effect = -0.5'))
         self.assertTrue(c.quote_present('The ﬁnding was reproduced.', 'The finding was re-\nproduced.'))
 
+    def test_literal_pdf_hyphen_survives_whitespace_normalization(self):
+        self.assertTrue(c.quote_present('course perfor- mance improved.',
+                                        'course perfor-\nmance improved.'))
+        self.assertTrue(c.quote_present('course perfor-\nmance improved.',
+                                        'course perfor- mance improved.'))
+        self.assertFalse(c.quote_present('course perfor mance improved.',
+                                         'course performance improved.'))
+        self.assertFalse(c.quote_present('coefficient = 0.5',
+                                         'coefficient = -0.5'))
+
     def test_agreement_low_confidence_and_prospective(self):
         rs, _, _ = compare(code=coding(study_status='prospective'))
         self.assertTrue(rs[0]['type_agree'])
