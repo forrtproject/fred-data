@@ -2,8 +2,20 @@ import json,re,csv,math,decimal,unicodedata
 from pathlib import Path
 from scipy import stats
 B=Path(__file__).resolve().parents[1]
+SUPERSCRIPT=str.maketrans('⁺⁻⁰¹²³⁴⁵⁶⁷⁸⁹','+-0123456789')
+def power_notation(s):
+ return re.sub(r'10([⁺⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+)',lambda m:'10^'+m[1].translate(SUPERSCRIPT),s)
+def numeric_text(v):
+ s=power_notation(str(v).strip()).replace('−','-').replace('–','-')
+ s=re.sub(r'^([+-])\s+(?=[\d.])',r'\1',s)
+ s=re.sub(r'(?i)(?<=\d)\s*e\s*([+-]?)\s*(?=\d)',r'e\1',s)
+ num=r'[+-]?(?:\d*\.\d+|\d+\.?\d*)'
+ match=re.fullmatch('('+num+r')\s*(?:×|·|\*)\s*10\s*\^\s*\{?\s*([+-]?\d+)\s*\}?',s)
+ if match:s=match[1]+'e'+match[2]
+ return s
+
 def number(v):
- try:return float(str(v).replace('−','-'))
+ try:return float(numeric_text(v))
  except (ValueError,TypeError):return None
 def analytic_n(v):
  s=str(v).strip()
@@ -14,12 +26,12 @@ def analytic_n(v):
  return number(s)
 def rounding(v):
  try:
-  d=decimal.Decimal(str(v).strip().replace('−','-'));h=float(decimal.Decimal(10)**d.as_tuple().exponent)/2;return float(d)-h,float(d)+h
+  d=decimal.Decimal(numeric_text(v));h=float(decimal.Decimal(10)**d.as_tuple().exponent)/2;return float(d)-h,float(d)+h
  except:return None
 def p_parts(value,bound):
  """Normalise p formatting without discarding printed precision or inequalities."""
  if value is None:return None
- s=unicodedata.normalize('NFKC',str(value)).strip().lower().replace('−','-').replace('–','-')
+ s=unicodedata.normalize('NFKC',power_notation(str(value))).strip().lower().replace('−','-').replace('–','-')
  s=s.replace('\\times','×').replace('\\cdot','×').replace('$','').replace('{','').replace('}','')
  s=re.sub(r'^p(?:[- ]?value)?\s*','',s);s=re.sub(r'\s+','',s)
  match=re.match(r'^(<=|>=|≤|≥|<|>|=)',s)

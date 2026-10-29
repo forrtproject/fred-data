@@ -72,6 +72,13 @@ class AuditChecks(unittest.TestCase):
   self.assertNotEqual(metric('etasq'),metric('partial eta squared'))
   self.assertNotEqual(metric('r'),metric('partial r'))
   self.assertNotEqual(metric('beta (std)'),metric('β (logistic regression coefficient; not explicitly standardised)'))
+ def test_es_typography_preserves_metric_sign_and_precision(self):
+  self.assertEqual(comp('es_value_r','-.068',{'value':'–0.068','metric':'d'},{'es_type_r':'d'}),'agree')
+  self.assertEqual(comp('es_value_r','.00005',{'value':'5.46 e-5','metric':'partial eta squared'},{'es_type_r':'etasq (partial)'}),'compatible')
+  self.assertEqual(comp('es_value_o','188000000000',{'value':'1.88 · 10¹¹','metric':'OR'},{'es_type_o':'OR'}),'agree')
+  self.assertEqual(comp('es_value_r','.001',{'value':'< .001','metric':'partial eta squared'},{'es_type_r':'etasq (partial)'}),'compatible')
+  self.assertEqual(comp('es_value_r','.02',{'value':'< .001','metric':'partial eta squared'},{'es_type_r':'etasq (partial)'}),'differ')
+  self.assertEqual(comp('pval_value_o','0',{'value':'2.2 × 10⁻¹⁶','bound':'e'},{'pval_type_o':'e'}),'compatible')
  def test_failure_schema_rejects_fabricated_value(self):
   x=failure(1,'timeout');validate(x);x['original']['n']['value']='100'
   with self.assertRaises(ValueError):validate(x)
@@ -139,6 +146,12 @@ class AuditChecks(unittest.TestCase):
    args=['agy','-p','FRED_AUDIT_PROMPT_FILE: '+str(path)+'\nRead it.','--add-dir',str(root/'texts')]
    self.assertEqual(prompt_key(args),key)
    args[2]='FRED_AUDIT_PROMPT_FILE: /unrelated/prompt_'+key+'.txt';self.assertIsNone(prompt_key(args))
+ def test_paper_level_success_does_not_certify_unidentified_effect(self):
+  from compare import narrative_scope_unknown
+  x={'replication':{'status':'locator_insufficient'},'reported_success':{'location':'Discussion'},'notes':'The value records only a paper-level narrative, not an identified individual effect.'}
+  self.assertTrue(narrative_scope_unknown(x))
+  x['replication']['status']='done';self.assertFalse(narrative_scope_unknown(x))
+  x['replication']['status']='locator_insufficient';x['notes']='A target-specific author verdict is available although the exact numerical test is not located.';self.assertFalse(narrative_scope_unknown(x))
  def test_focused_review_survives_old_response_cache_refresh(self):
   import tempfile,os
   from compare import load_adjudications

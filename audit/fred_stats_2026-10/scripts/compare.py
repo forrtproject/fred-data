@@ -108,10 +108,18 @@ def comp(field,raw,blind,r):
   if a[3] is not None and b[3] is not None and a[3]!=b[3]:return 'differ'
   return 'agree' if number(a[2])==number(b[2]) else 'compatible' if overlap(rounding(a[2]),rounding(b[2])) else 'differ'
  if metric(r['es_type_'+field[-1]])!=metric(blind['metric']):return 'not_comparable'
+ if metric(r['es_type_'+field[-1]]) in ['etasq','etasq (partial)'] and any(re.match(r'^\s*[<>≤≥]',str(q or '')) for q in [raw,val]):
+  aa,bb=pinterval(raw,'e'),pinterval(val,'e')
+  if aa is None or bb is None:return 'not_comparable'
+  return 'compatible' if overlap(aa,bb) else 'differ'
  a,b=number(raw),number(val)
  if a is None or b is None:return 'differ' if raw in [None,''] and b is not None else 'agree' if norm(raw)==norm(val) else 'not_comparable'
  if a*b<0:return 'differ'
  return 'agree' if a==b else 'compatible' if overlap(rounding(raw),rounding(val)) else 'differ'
+def narrative_scope_unknown(x):
+ if not x or x['replication']['status']!='locator_insufficient':return False
+ text=str(x.get('notes',''))+' '+str(x['reported_success'].get('location',''))
+ return bool(re.search(r'(?i)\b(?:paper[ -]level|overall narrative|overall paper)\b',text))
 def adjudication_confirms_shipped(field,raw,a,row):
  if a.get('verdict')!='shipped_right' or a.get('correct_value') is None:return False
  if field.startswith('es_value'):
@@ -188,11 +196,14 @@ def main():
     z[f+'_blind_printed_value']=v;z[f+'_blind_printed_metric']=e.get('metric') if e else None;z[f+'_blind_test_statistic']=e.get('test_statistic') if e else None;z[f+'_comparison_basis']='printed es value'
     if e and metric(r['es_type_'+f[-1]])=='test statistic' and parsed_stat(e.get('test_statistic')):
      v=e['test_statistic'];z[f+'_blind_metric']='test statistic';z[f+'_comparison_basis']='separately blind-extracted printed test_statistic (no conversion)'
+   broad_success=bool(f=='reported_success' and narrative_scope_unknown(x))
+   if f=='reported_success':z[f+'_scope_note']='Worker reports a broad paper narrative while the individual effect remains unidentified.' if broad_success else ''
    secondary=bool(e and side=='original' and original_secondary_source(e,r))
    if side:
     z[f+'_blind_source_path']=e.get('source_path') if e else None;z[f+'_evidence_basis']='replication source only (original unverified)' if secondary else 'paper evidence supplied' if e and e.get('source_path') else 'none'
    comparison='unverified';resolution='unresolved';verdict='unverified';suggestion='';location='';reason=''
    if secondary:reason='Original statistic is supported only by a replication paper/table; original primary-source verification remains unavailable.'
+   elif broad_success and v is not None:comparison='mismatched_target';reason='Only broad paper-level narrative is identified; no individual-effect verdict established.'
    elif x and v is not None and (x[side or 'replication']['target_match'] is False or side is not None and x[side]['target_match'] is None and quote_ok({**e,'value':v,'confident':True})):comparison='mismatched_target'
    elif e and quote_ok({**e,'value':v}) and (side is None or x[side]['status']=='done' and x[side]['target_match'] is True):
     comparison=comp(f,raw,e,r)
@@ -209,10 +220,12 @@ def main():
     if a:
      resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=a.get('correct_value','');location=a.get('location','');reason=a.get('reason','')
      if comparison=='mismatched_target':
-      if adjudication_confirms_shipped(f,raw,a,r):reason='Argon independently located evidence confirming the shipped target value; '+reason
+      if broad_success and a.get('effect_specific_verdict_confirmed') is not True:verdict='unverified';reason='Paper-level narrative scope remains unresolved; '+reason
+      elif broad_success:reason='Independent review establishes an effect-specific author verdict; '+reason
+      elif adjudication_confirms_shipped(f,raw,a,r):reason='Argon independently located evidence confirming the shipped target value; '+reason
       else:verdict='unverified';reason='Target mismatch remains unresolved; '+reason
      if verdict=='error':errors.append({'audit_id':aid,'field':f,'shipped':raw,'error_kind':'coding omission' if raw in [None,''] else 'coded value/annotation','correction':suggestion,'location':location,'doi':r['doi_r' if side!='original' else 'doi_o'],'primary_source_url':next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('url_r') or '')+' '+str(r.get('es_repr_r') or ''))), '').rstrip('.,;)') if side!='original' else next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('es_repr_o') or ''))), '').rstrip('.,;)'),'reason':reason})
-    else:candidates.append({'audit_id':aid,'field':f,'comparison':comparison,'shipped':raw,'shipped_metric':r.get('es_type_'+f[-1]) if side else None,'shipped_bound':r.get('pval_type_'+f[-1]) if side else None,'blind':e,'locator':{'study_o':r['study_o'],'study_r':r['study_r'],'description':next((a['description'] for a in json.loads((B/'inputs'/p.name).read_text()) if a['audit_id']==aid), '') if False else 'See assigned blind input'},'work_key':r['work_key']})
+    else:candidates.append({'audit_id':aid,'field':f,'comparison':comparison,'shipped':raw,'shipped_metric':r.get('es_type_'+f[-1]) if side else None,'shipped_bound':r.get('pval_type_'+f[-1]) if side else None,'blind':e,'scope_note':(str(x['replication']['target_description'])+' '+str(x.get('notes',''))) if broad_success else None,'locator':{'study_o':r['study_o'],'study_r':r['study_r'],'description':next((a['description'] for a in json.loads((B/'inputs'/p.name).read_text()) if a['audit_id']==aid), '') if False else 'See assigned blind input'},'work_key':r['work_key']})
    if resolution=='unresolved' and (aid,f) in exhausted:reason=exhausted[(aid,f)]['reason']
    if comparison=='mismatched_target' and resolution=='unresolved':verdict='unverified'
    if verdict in ['correct','error']:

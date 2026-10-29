@@ -1,0 +1,87 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item carrying scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1351,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "PDF p. 9, Discussion, first paragraph",
+      "quote": "We found that personal force influences a person’s decision in footbridge and speedboat dilemmas, such that a person is more likely to present a deontological response if the action entails personal force, supporting H1 and H2.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dfe1d43c0c873ab6a9ac3cbc.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Greene, J. D., Cushman, F. A., Stewart, L. E., Lowenberg, K., Nystrom, L. E., & Cohen, J. D. (2009). Pushing moral buttons: The interaction between personal force and intention in moral judgment. Cognition, 111(3), 364–371. https://doi.org/10.1016/j.cognition.2009.02.001",
+      "doi_o": "10.1016/j.cognition.2009.02.001",
+      "study_o": "1a",
+      "ref_r": "Lynds, T. M., & Mackinnon, S. P. (2024). Effects of personal force and physical contact on moral decision-making: A replication. https://doi.org/10.31234/osf.io/dca65",
+      "doi_r": "10.31234/osf.io/dca65",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 1351,
+      "description": "Comparison of moral acceptability of sacrificing one life to save five with versus without personal force.",
+      "locators_o": "p.4",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.31234/osf.io/dca65",
+    "coding_context": {
+      "es_repr": "p.9",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1644,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "PDF p. 9, Discussion, first paragraph",
+      "quote": "We found that personal force influences a person’s decision in footbridge and speedboat dilemmas, such that a person is more likely to present a deontological response if the action entails personal force, supporting H1 and H2.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dfe1d43c0c873ab6a9ac3cbc.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Greene, J. D., Cushman, F. A., Stewart, L. E., Lowenberg, K., Nystrom, L. E., & Cohen, J. D. (2009). Pushing moral buttons: The interaction between personal force and intention in moral judgment. Cognition, 111(3), 364–371. https://doi.org/10.1016/j.cognition.2009.02.001",
+      "doi_o": "10.1016/j.cognition.2009.02.001",
+      "study_o": "1b",
+      "ref_r": "Lynds, T. M., & Mackinnon, S. P. (2024). Effects of personal force and physical contact on moral decision-making: A replication. https://doi.org/10.31234/osf.io/dca65",
+      "doi_r": "10.31234/osf.io/dca65",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 1644,
+      "description": "Moral acceptability of sacrificing one life to save five using personal force versus without personal force.",
+      "locators_o": "p. 5",
+      "locators_r": "p. 15",
+      "text_paths": {}
+    },
+    "work_key": "10.31234/osf.io/dca65",
+    "coding_context": {
+      "es_repr": "p. 15",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

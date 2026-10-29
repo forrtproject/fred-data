@@ -5065,3 +5065,41 @@ Paper-side skips/checkpoints logged 2026-10-29T15:10:26.464452+00:00:
 - Focused ES1310 original review validated7199c836821eef8e: retain correction t=4.59, not bare4.59. Coded finite df2 is contradicted by printed p<.001 (parent independently computed two-tailed t2 p=.0443, versus Wald-normal p=.00000443); source logistic-regression coefficient ratio has no finite df stated. This is a demonstrated wrong annotation, not an inference that absent df must be wrong. Hold cleared; therapy-target reviews remain pending.
 
 - Hourly checkpoint 2026-10-29T16:05:36.091396+00:00: {"checkpointed": 2164, "o_fully_checked": 223, "o_any_stat_checked": 792, "r_fully_checked": 421, "r_any_stat_checked": 1203, "any_field_checked": 1575, "fully_checked_effects": 70}; 288 confirmed field errors; 141 source groups/397 fields queued.29 tests, full row/checkpoint/export/evidence accounting and correction triage pass; dataset hash unchanged. Private archive verified; active source reads remain local. Therapy-target holds remain pending and excluded.
+
+Paper-side skips/checkpoints logged 2026-10-29T16:16:30.854683+00:00:
+
+- Partial/unevaluable row 848: reported_success (mismatched_target). Evidence/reasons: extractions/848.json and results.csv.
+- Partial/unevaluable row 1150: reported_success (mismatched_target). Evidence/reasons: extractions/1150.json and results.csv.
+- Partial/unevaluable row 1151: reported_success (mismatched_target). Evidence/reasons: extractions/1151.json and results.csv.
+- Partial/unevaluable row 1152: reported_success (mismatched_target). Evidence/reasons: extractions/1152.json and results.csv.
+- Partial/unevaluable row 1153: reported_success (mismatched_target). Evidence/reasons: extractions/1153.json and results.csv.
+- Partial/unevaluable row 1154: reported_success (mismatched_target). Evidence/reasons: extractions/1154.json and results.csv.
+- Partial/unevaluable row 1155: reported_success (mismatched_target). Evidence/reasons: extractions/1155.json and results.csv.
+- Partial/unevaluable row 1156: reported_success (mismatched_target). Evidence/reasons: extractions/1156.json and results.csv.
+- Partial/unevaluable row 1157: reported_success (mismatched_target). Evidence/reasons: extractions/1157.json and results.csv.
+- Partial/unevaluable row 1158: reported_success (mismatched_target). Evidence/reasons: extractions/1158.json and results.csv.
+- Partial/unevaluable row 1159: reported_success (mismatched_target). Evidence/reasons: extractions/1159.json and results.csv.
+- Partial/unevaluable row 1160: reported_success (mismatched_target). Evidence/reasons: extractions/1160.json and results.csv.
+- Partial/unevaluable row 1413: reported_success (mismatched_target). Evidence/reasons: extractions/1413.json and results.csv.
+- Partial/unevaluable row 1511: reported_success (mismatched_target). Evidence/reasons: extractions/1511.json and results.csv.
+- Partial/unevaluable row 1607: reported_success (mismatched_target). Evidence/reasons: extractions/1607.json and results.csv.
+
+- Paper-scope safeguard 2026-10-29T16:17:27.195908+00:00:43 verdict records explicitly advertise a paper-level/overall narrative while the numerical target is locator_insufficient. These now remain unverified unless independent adjudication explicitly establishes an effect-specific author verdict, instead of inheriting the article label. Source scope_note is sent to Argon. Previously adjudicated labels needing focused scope review: [102, 103, 104, 105, 106, 107, 108, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009]. This includes1996–2009, where the worker explicitly says no individual effect was identified; a global mixed outcome cannot prove all14 successful labels wrong. Independent effect-specific success records are unaffected.30 tests pass.
+
+- Focused scope decisions 2026-10-29T16:30:17.765757+00:00:24 held fields are undeterminable (therapy1558/1834:3; linguistic102–108:7; moral-perfectionism1996–2009:14). All replies validated; reviewed endpoints and unique item/status summaries, holds cleared. Global/omnibus labels do not identify these individual targets.
+- The therapy review982d9debcb032725 confirms genuine neutral-metadata conflict across both outcomes, including pagination/cover-offset ambiguity and conflicting Table1/OR versus timing description. Parent sets the affected side targets unknown and records known target-scope exclusions for remaining observed fields [[1558, "n_r"], [1558, "es_value_r"], [1834, "es_value_o"], [1834, "pval_value_o"], [1834, "n_r"], [1834, "es_value_r"], [1834, "reported_success"]], instead of allowing mismatched values to become correct/error merely from metric or numerical matches. Raw values retained; no dataset/description edit.
+
+Paper-side skips/checkpoints logged 2026-10-29T16:30:44.453674+00:00:
+
+- Partial/unevaluable row 1558: es_value_r (mismatched_target), pval_value_r (mismatched_target). Evidence/reasons: extractions/1558.json and results.csv.
+- Partial/unevaluable row 1834: es_value_o (mismatched_target), pval_value_o (mismatched_target), reported_success (soft). Evidence/reasons: extractions/1834.json and results.csv.
+
+- Cohort-specific narrative QC 2026-10-29T16:41:17.888925+00:00: held reported_success1423. Replication primary Discussion explicitly supports prior African-ancestry null findings, including Amundadottir African Americans; earlier failed verdict appears to transfer a positive-association baseline from the other three cohorts. Focused review must distinguish matching-null author interpretation from numerical nonsignificance. No original numeric value is certified from this secondary reference.
+
+- Prospective adjudication prompt strengthened with the settled rounding/inferred-annotation rule: compatible formatting is correct; unprinted df/N alone is not an error; require positive design/reference/count/p contradiction and a full statistic correction, or undeterminable. This applies to new calls; prior responses and focused retractions remain recorded. No new model or retry solely for the wording change.
+
+- ES-format QC: identified14 same-metric observations left incomparable, mostly literal en-dash minus signs/scientific notation, plus nonnegative eta-squared bounds. Numeric text now normalises explicit minus/exponent typography while preserving printed precision and rejecting multi-count strings. Eta/partial-eta bounds use their implied0–1 intervals when both inputs are valid; other signed metrics are not assigned bound intervals. No metric conversion or sign reversal. The one eta-coded F string remains not_comparable.31 tests pass, including high-magnitude OR, small ES exponent, eta bounds and superscript p.
+
+- 16:59 UTC parent review: focused Argon 341ee5761db3c09e confirms reported_success1423 successful. The primary Discussion explicitly says the Tobago null supports earlier African-ancestry null findings, including the matched African American cohort. Cleared the hold after checking the paragraph; no inference from nonsignificance alone and original numeric fields remain unverified. All31 current regression tests pass, including ES typography and bound comparisons.
+
+- Hourly checkpoint 2026-10-29T17:01:44.975858+00:00: {'checkpointed': 2164, 'o_fully_checked': 230, 'o_any_stat_checked': 813, 'r_fully_checked': 466, 'r_any_stat_checked': 1224, 'any_field_checked': 1574, 'fully_checked_effects': 81}; 400 confirmed field errors; 87 source groups/210 fields awaiting adjudication. All31 tests and full2164-row/checkpoint/evidence/export/hash validation pass. Parent QC found no correction numerically agreeing with the shipped value. Report error appendix shortened to correction/location/source, with full reasons retained in results.csv. Dataset unchanged.
