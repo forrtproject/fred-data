@@ -1,0 +1,121 @@
+import json,csv,re,collections,datetime,hashlib,unicodedata
+from functools import lru_cache
+from pathlib import Path
+from consistency import number,rounding,pinterval
+from schema import validate
+B=Path(__file__).resolve().parents[1]
+FIELDS=['n_o','es_value_o','pval_value_o','n_r','es_value_r','pval_value_r','reported_success']
+def norm(s):return re.sub(r'\s+',' ',unicodedata.normalize('NFKC',str(s)).replace('−','-').replace('“','"').replace('”','"').replace('’',"'")).strip()
+@lru_cache(maxsize=2048)
+def source_text(path,mtime_ns):return norm(Path(path).read_text())
+def quote_ok(e):
+ if e.get('value') is None or not e.get('confident') or not e.get('quote') or not e.get('location'):return False
+ p=Path(e.get('source_path',''))
+ try:
+  if not p.resolve().is_relative_to((B/'texts').resolve()):return False
+  text=source_text(str(p),p.stat().st_mtime_ns);quote=norm(e['quote'])
+  if quote in text:return True
+  parts=[z.strip() for z in re.split(r'\[?\.{3}\]?|…',quote) if z.strip()]
+  pos=0
+  for z in parts:
+   idx=text.find(z,pos)
+   if idx<0:return False
+   pos=idx+len(z)
+  return bool(parts)
+ except (OSError,ValueError):return False
+def metric(s):
+ s=str(s or '').strip().lower().replace('’',"'")
+ aliases={"cohen's d":'d','pearson r':'r','pearson correlation':'r',"hedges g":"hedges' g",'partial eta squared':'etasq (partial)','partial eta-squared':'etasq (partial)','ηp2':'etasq (partial)','eta squared':'etasq','eta-squared':'etasq','η2':'etasq','standardized beta':'beta (std)','standardised beta':'beta (std)','unstandardized b':'b (unstd)','unstandardised b':'b (unstd)','odds ratio':'or'}
+ return aliases.get(s,s)
+def parsed_stat(s):
+ s=norm(s).replace('²','2').replace('χ','X')
+ m=re.search(r'(?i)(F|t|z|X2|chi2|G2?)\s*(?:\(\s*([^)]*)\))?\s*=\s*([+-]?(?:\d*\.\d+|\d+\.?\d*))',s)
+ if not m:return None
+ kind=m[1].lower();kind='g' if kind in ['g','g2'] else 'chi2' if kind in ['x2','chi2'] else kind
+ dfs=tuple(number(x) for x in (m[2] or '').split(',') if number(x) is not None)
+ return kind,dfs,m[3]
+def overlap(a,b):return a is not None and b is not None and max(a[0],b[0])<=min(a[1],b[1])
+def comp(field,raw,blind,r):
+ val=blind['value']
+ if field=='reported_success':return 'agree' if val==raw else 'soft' if {val,raw}=={'failed','mixed'} else 'differ'
+ if field.startswith('n_'):
+  a,b=number(raw),number(val)
+  if a is None or b is None:return 'not_comparable'
+  return 'agree' if a==b else 'near' if abs(a-b)/max(a,1)<=.05 else 'differ'
+ if field.startswith('pval'):
+  typ=str(r['pval_type_'+field[-1]] or '').split(' ')[0]
+  if number(raw)==number(val) and typ==blind['bound']:return 'identical'
+  aa,bb=pinterval(raw,typ),pinterval(val,blind['bound'])
+  if not overlap(aa,bb):return 'differ'
+  lo,hi=max(aa[0],bb[0]),min(aa[1],bb[1])
+  if lo==hi:
+   for value,bound in [(raw,typ),(val,blind['bound'])]:
+    if bound in ['l','<'] and not lo<number(value):return 'differ'
+    if bound in ['g','>'] and not lo>number(value):return 'differ'
+  return 'compatible'
+ if metric(r['es_type_'+field[-1]])=='test statistic':
+  a=parsed_stat(raw);b=parsed_stat(blind.get('test_statistic') or val)
+  if not a or not b or a[0]!=b[0]:return 'not_comparable'
+  if a[1]!=b[1]:return 'differ'
+  return 'agree' if number(a[2])==number(b[2]) else 'compatible' if overlap(rounding(a[2]),rounding(b[2])) else 'differ'
+ if metric(r['es_type_'+field[-1]])!=metric(blind['metric']):return 'not_comparable'
+ a,b=number(raw),number(val)
+ if a is None or b is None:return 'agree' if norm(raw)==norm(val) else 'not_comparable'
+ if a*b<0:return 'differ'
+ return 'agree' if a==b else 'compatible' if overlap(rounding(raw),rounding(val)) else 'differ'
+def main():
+ rows=json.loads((B/'parent_rows.json').read_text());results=[];candidates=[];invalid=[];coverage=collections.Counter();counts={f:collections.Counter() for f in FIELDS};projects=collections.defaultdict(lambda:{f:collections.Counter() for f in FIELDS});errors=[]
+ adjud={}
+ target_overrides={}
+ if (B/'target_overrides.json').exists():
+  target_overrides={(a['audit_id'],a['side']):a for a in json.loads((B/'target_overrides.json').read_text())}
+ for path in (B/'adjudications').glob('validated_*.json'):
+  for a in json.loads(path.read_text()):adjud[(a['audit_id'],a['field'])]=a
+ obvious_path=B/'obvious_resolutions.json'
+ if obvious_path.exists():
+  for a in json.loads(obvious_path.read_text()):adjud[(a['audit_id'],a['field'])]=a
+ for r in rows:
+  aid=r['input_row_index'];path=B/'extractions'/f'{aid}.json';x=None
+  if path.exists():
+   try:x=validate(json.loads(path.read_text()));assert x['audit_id']==aid
+   except Exception as e:invalid.append({'audit_id':aid,'error':str(e)[:400]});x=None
+  if x:
+   coverage['checkpointed']+=1
+   for side in ['original','replication']:
+    if (aid,side) in target_overrides:x[side]['target_match']=target_overrides[(aid,side)]['target_match']
+  z={'input_row_index':aid,'effect_id':r['effect_id'],'fred_id':r['fred_id']};full=True;side_ok={'o':True,'r':True}
+  for f in FIELDS:
+   raw=r[f];side=None if f=='reported_success' else ('original' if f[-1]=='o' else 'replication');sub='n' if f.startswith('n_') else 'es' if f.startswith('es_value') else 'p'
+   e=None if not x else x[f] if side is None else x[side][sub]
+   v=None if not e else e.get('value');
+   if f.startswith('pval'):
+    z[f+'_shipped_bound']=r['pval_type_'+f[-1]];z[f+'_blind_bound']=e.get('bound') if e else None
+   if f.startswith('es_value'):
+    z[f+'_shipped_metric']=r['es_type_'+f[-1]];z[f+'_blind_metric']=e.get('metric') if e else None
+   comparison='unverified';resolution='unresolved';verdict='unverified';suggestion='';location='';reason=''
+   if x and x[side or 'replication']['target_match'] is False:comparison='mismatched_target'
+   elif e and quote_ok(e) and (side is None or x[side]['status']=='done' and x[side]['target_match'] is True):
+    comparison=comp(f,raw,e,r)
+    if comparison in ['agree','identical','compatible']:
+     resolution='agree' if comparison in ['agree','identical'] else 'obvious';verdict='correct';reason='Compatible printed rounding intervals' if comparison=='compatible' else ''
+    elif comparison=='not_comparable':verdict='not_comparable'
+   elif e and v is not None:reason='Evidence, confidence or target match not validated'
+   if comparison in ['differ','near','soft','mismatched_target']:
+    a=adjud.get((aid,f))
+    if a:
+     resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=a.get('correct_value','');location=a.get('location','');reason=a.get('reason','')
+     if comparison=='mismatched_target':verdict='unverified';reason='Target mismatch remains unresolved; '+reason
+     if verdict=='error':errors.append({'audit_id':aid,'field':f,'shipped':raw,'correction':suggestion,'location':location,'doi':r['doi_r' if side!='original' else 'doi_o'],'reason':reason})
+    else:candidates.append({'audit_id':aid,'field':f,'comparison':comparison,'shipped':raw,'shipped_metric':r.get('es_type_'+f[-1]) if side else None,'shipped_bound':r.get('pval_type_'+f[-1]) if side else None,'blind':e,'locator':{'study_o':r['study_o'],'study_r':r['study_r'],'description':next((a['description'] for a in json.loads((B/'inputs'/p.name).read_text()) if a['audit_id']==aid), '') if False else 'See assigned blind input'},'work_key':r['work_key']})
+   if comparison=='mismatched_target' and resolution=='unresolved':verdict='unverified'
+   if verdict not in ['correct','error']:full=False
+   if side and verdict not in ['correct','error']:side_ok[f[-1]]=False
+   counts[f][verdict]+=1;projects[re.split(r'[_\d]',str(r['fred_id']))[0]][f][verdict]+=1
+   for suffix,value in [('shipped',raw),('blind',v),('comparison',comparison),('resolution',resolution),('final_verdict',verdict),('suggested_correction',suggestion),('location',location),('reason',reason)]:z[f+'_'+suffix]=value
+  for s,ok in side_ok.items():coverage[s+'_fully_checked']+=int(ok)
+  coverage['fully_checked_effects']+=int(full);results.append(z)
+ with (B/'results.csv').open('w',encoding='utf-8-sig',newline='') as f:
+  w=csv.DictWriter(f,fieldnames=results[0]);w.writeheader();w.writerows(results)
+ for name,value in [('disagreements.json',candidates),('validation_errors.json',invalid),('progress.json',{'updated_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'coverage':coverage,'field_counts':counts,'project_counts':projects,'confirmed_errors':errors})]:(B/name).write_text(json.dumps(value,indent=2,ensure_ascii=False))
+ print({'coverage':coverage,'disagreements':len(candidates),'invalid':len(invalid),'confirmed_errors':len(errors)})
+if __name__=='__main__':main()
