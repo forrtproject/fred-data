@@ -329,6 +329,11 @@ def compare_work(rows, keys, coding, error, text, decisions):
         identity_d = decision_for(decisions, 'original', text, key['input_row_index']) if not error else None
         adjudicated_identity = (i in identity_decisions and counts[identity_decisions[i][0]] == 1)
         identity = bool(pair) and (not flags or adjudicated_identity)
+        identity_value = identity_d.get('corrected_value') if identity_d else None
+        identity_doi = clean_doi(identity_value.get('doi')) if isinstance(identity_value, dict) else clean_doi(identity_value)
+        source_identity = bool(identity_d and identity_d.get('target_index') is None
+                               and identity_d.get('verdict') == 'shipped_right'
+                               and identity_doi and identity_doi == clean_doi(row.get('doi_o')))
         r = {**key, **{k: row.get(k, '') for k in ('doi_r', 'doi_o', 'type', 'source')},
              'outcome': row.get('_raw_outcome', row.get('outcome', '')),
              'coding_status': coding.get('status', 'unattempted'), 'skip_reason': error,
@@ -341,7 +346,8 @@ def compare_work(rows, keys, coding, error, text, decisions):
              'blind_outcome_robustness': target.get('outcome_robustness', ''),
              'evidence_level': coding.get('evidence_level') if coding.get('evidence_level') in ('full_text', 'abstract') else 'none',
              'type_agree': '', 'original_grade': grade if not error else 'unverified',
-             'title_similarity': sim, 'identity_resolved': identity,
+             'title_similarity': sim, 'identity_resolved': identity or source_identity,
+             'identity_resolution_method': 'pairing' if identity else 'source_adjudication' if source_identity else '',
              'pairing_flags': '; '.join(flags), 'outcome_grade': 'unverified',
              'outcome_computation_grade': 'unverified', 'outcome_robustness_grade': 'unverified',
              'confident': target.get('outcome_confident', ''), 'resolution': 'unresolved',
@@ -379,7 +385,7 @@ def compare_work(rows, keys, coding, error, text, decisions):
                 d = decision_for(decisions, field, text, key['input_row_index'])
                 if not d:
                     continue
-                if field.startswith('outcome') and not identity:
+                if field.startswith('outcome') and not (identity or source_identity):
                     continue
                 if field == 'original' and d.get('target_index') is not None and not adjudicated_identity:
                     continue

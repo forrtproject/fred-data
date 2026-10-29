@@ -371,3 +371,26 @@ class SourceIdentityTests(unittest.TestCase):
                 (root/'codings'/'test.json').write_text(json.dumps(data));(root/'texts'/'test.txt').write_text(TEXT)
                 _,error,text=c.load_coding(root,'test',data['work_key'],{})
                 self.assertEqual(error,expected);self.assertEqual(text,'')
+
+
+class SourceIdentityAdjudicationTests(unittest.TestCase):
+    def test_supported_shipped_identity_needs_no_invented_blind_target(self):
+        ds = [decision(field='original', verdict='shipped_right', corrected_value='10.1/a'),
+              decision(field='outcome', verdict='shipped_right', corrected_value='successful')]
+        rs, _, _ = compare(code=coding([]), decisions=ds)
+        self.assertEqual(rs[0]['original_grade'], 'unmatched')
+        self.assertEqual(rs[0]['identity_resolution_method'], 'source_adjudication')
+        self.assertEqual(rs[0]['original_final_verdict'], 'correct')
+        self.assertEqual(rs[0]['outcome_final_verdict'], 'correct')
+        self.assertEqual(rs[0]['blind_target_index'], '')
+
+    def test_no_outcome_inference_from_identity_alone(self):
+        rs, _, _ = compare(code=coding([]), decisions=[decision(field='original', verdict='shipped_right', corrected_value='10.1/a')])
+        self.assertTrue(rs[0]['identity_resolved'])
+        self.assertEqual(rs[0]['outcome_final_verdict'], 'unverified')
+
+    def test_unresolved_identity_blocks_even_adjudicated_outcome(self):
+        rs, _, _ = compare(code=coding([]), decisions=[decision(field='original', verdict='undeterminable', corrected_value=None),
+                                                     decision(field='outcome', verdict='shipped_right', corrected_value='successful')])
+        self.assertFalse(rs[0]['identity_resolved'])
+        self.assertEqual(rs[0]['outcome_final_verdict'], 'unverified')
