@@ -22,6 +22,8 @@ def main():
  assert expected_errors=={(a['audit_id'],a['field']) for a in progress['confirmed_errors']}
  for path in [*(B/'adjudications').glob('validated_*.json'),B/'obvious_resolutions.json']:
   for a in json.loads(path.read_text()):assert quote_ok({**a,'value':a['correct_value'] if a['correct_value'] is not None else 'undeterminable','confident':True}),(path,a['audit_id'],a['field'])
+ for a in json.loads((B/'target_overrides.json').read_text()):
+  if a.get('field'):assert quote_ok({**a,'value':'field target confirmed','confident':True}),('field target evidence',a['audit_id'],a['field'])
  consistency=list(csv.DictReader((B/'consistency.csv').open(encoding='utf-8-sig')));flags=list(csv.DictReader((B/'flag_confirmation.csv').open(encoding='utf-8-sig')))
  assert len(consistency)==2164 and len(flags)==sum(int(r['flag_count']) for r in consistency)
  summary=list(csv.DictReader((B/'field_summary_by_project.csv').open(encoding='utf-8-sig')))

@@ -120,6 +120,12 @@ def narrative_scope_unknown(x):
  if not x or x['replication']['status']!='locator_insufficient':return False
  text=str(x.get('notes',''))+' '+str(x['reported_success'].get('location',''))
  return bool(re.search(r'(?i)\b(?:paper[ -]level|overall narrative|overall paper)\b',text))
+def field_target_match(x,field,overrides):
+ """A parent-confirmed field target never changes another field's target."""
+ key=(x['audit_id'],field)
+ if key in overrides:return overrides[key]['target_match']
+ side='original' if field.endswith('_o') else 'replication'
+ return x[side]['target_match']
 def adjudication_confirms_shipped(field,raw,a,row):
  if a.get('verdict')!='shipped_right' or a.get('correct_value') is None:return False
  if field.startswith('es_value'):
@@ -167,9 +173,11 @@ def main():
  adjud=load_adjudications(B)
  exhausted={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_exhausted.json').read_text())} if (B/'adjudication_exhausted.json').exists() else {}
  holds={(a['audit_id'],a['field']) for a in json.loads((B/'adjudication_holds.json').read_text())} if (B/'adjudication_holds.json').exists() else set()
- target_overrides={}
+ target_overrides={};field_overrides={}
  if (B/'target_overrides.json').exists():
-  target_overrides={(a['audit_id'],a['side']):a for a in json.loads((B/'target_overrides.json').read_text())}
+  overrides=json.loads((B/'target_overrides.json').read_text())
+  target_overrides={(a['audit_id'],a['side']):a for a in overrides if not a.get('field')}
+  field_overrides={(a['audit_id'],a['field']):a for a in overrides if a.get('field')}
  obvious_path=B/'obvious_resolutions.json'
  if obvious_path.exists():
   for a in json.loads(obvious_path.read_text()):adjud[(a['audit_id'],a['field'])]=a
@@ -197,6 +205,8 @@ def main():
     if e and metric(r['es_type_'+f[-1]])=='test statistic' and parsed_stat(e.get('test_statistic')):
      v=e['test_statistic'];z[f+'_blind_metric']='test statistic';z[f+'_comparison_basis']='separately blind-extracted printed test_statistic (no conversion)'
    broad_success=bool(f=='reported_success' and narrative_scope_unknown(x))
+   matched_target=field_target_match(x,f,field_overrides) if x else None
+   z[f+'_target_basis']=field_overrides.get((aid,f),{}).get('reason','')
    if f=='reported_success':z[f+'_scope_note']='Worker reports a broad paper narrative while the individual effect remains unidentified.' if broad_success else ''
    secondary=bool(e and side=='original' and original_secondary_source(e,r))
    if side:
@@ -204,8 +214,8 @@ def main():
    comparison='unverified';resolution='unresolved';verdict='unverified';suggestion='';location='';reason=''
    if secondary:reason='Original statistic is supported only by a replication paper/table; original primary-source verification remains unavailable.'
    elif broad_success and v is not None:comparison='mismatched_target';reason='Only broad paper-level narrative is identified; no individual-effect verdict established.'
-   elif x and v is not None and (x[side or 'replication']['target_match'] is False or side is not None and x[side]['target_match'] is None and quote_ok({**e,'value':v,'confident':True})):comparison='mismatched_target'
-   elif e and quote_ok({**e,'value':v}) and (side is None or x[side]['status']=='done' and x[side]['target_match'] is True):
+   elif x and v is not None and (matched_target is False or side is not None and matched_target is None and quote_ok({**e,'value':v,'confident':True})):comparison='mismatched_target'
+   elif e and quote_ok({**e,'value':v}) and (side is None or x[side]['status']=='done' and matched_target is True):
     comparison=comp(f,raw,e,r)
     if comparison in ['agree','identical','compatible']:
      resolution='agree' if comparison in ['agree','identical'] else 'obvious';verdict='correct';reason='Compatible printed rounding intervals' if comparison=='compatible' else ''

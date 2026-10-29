@@ -9,7 +9,14 @@ from validate_adjudication import validate_batch,parse_response
 from protect_enrichment import preserve_completed
 from stop_argon import prompt_key
 from completed_argon import ready_reply
+from compare import field_target_match
 class AuditChecks(unittest.TestCase):
+ def test_target_confirmation_stays_scoped_to_its_field(self):
+  x={'audit_id':224,'original':{'target_match':True},'replication':{'target_match':False}}
+  overrides={(224,'n_r'):{'target_match':True}}
+  self.assertIs(field_target_match(x,'n_r',overrides),True)
+  for f in ['es_value_r','pval_value_r','reported_success']:self.assertIs(field_target_match(x,f,overrides),False)
+  self.assertIs(field_target_match(x,'n_o',overrides),True)
  def test_only_stable_fully_validated_final_replies_close_cli(self):
   import tempfile,hashlib,os
   with tempfile.TemporaryDirectory() as directory:
