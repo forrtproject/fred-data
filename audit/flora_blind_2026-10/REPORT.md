@@ -1,20 +1,22 @@
-# FLoRA blind audit — provisional
+# FLoRA blind audit
 
-286 input rows have at least one confirmed field error; 1932 / 2818 rows are fully resolved. 806 blind targets have no proposed shipped counterpart; these are not errors by default.
+328 input rows have at least one confirmed field error; 1982 / 2818 rows are fully resolved. 807 blind targets have no proposed shipped counterpart; these are not errors by default.
 
-This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
+Audit finalized at 2026-10-29T18:56:56.920931+00:00. Unverified fields remain unresolved within the available evidence and review budget. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2289 with verified saved text (1710 full text, 579 abstract); 2289 with validated usable coding. Rows fully resolved: 1932 / 2818.
+Works: 2344 total; 2344 attempted; 2289 with verified saved text (1710 full text, 579 abstract); 2289 with validated usable coding. Rows fully resolved: 1982 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. Dependent outcome replacements after a type correction remain in results.csv and the error list.
 
+Cross-model review used 508 call attempts across 427 works. 30 reviewed works retain unresolved fields; separately supported fields remain usable. 87 prepared works (102 distinct field requests) received no call before the review cutoff. These requests establish no error. Other unverified fields also include missing text, ambiguous identity and insufficient evidence.
+
 ## Confirmed field error rates
 
-- type: 37 / 2351 (1.6%); 467 unverified; all-row unresolved bounds 1.3%–17.9% (N=2818)
-- original: 29 / 2353 (1.2%); 465 unverified; all-row unresolved bounds 1.0%–17.5% (N=2818)
-- outcome: 226 / 1772 (12.8%); 841 unverified; all-row unresolved bounds 8.6%–40.8% (N=2613)
+- type: 37 / 2352 (1.6%); 466 unverified; all-row unresolved bounds 1.3%–17.8% (N=2818)
+- original: 30 / 2355 (1.3%); 463 unverified; all-row unresolved bounds 1.1%–17.5% (N=2818)
+- outcome: 267 / 1822 (14.7%); 791 unverified; all-row unresolved bounds 10.2%–40.5% (N=2613)
 - outcome_computation: 21 / 176 (11.9%); 29 unverified; all-row unresolved bounds 10.2%–24.4% (N=205)
 - outcome_robustness: 6 / 186 (3.2%); 19 unverified; all-row unresolved bounds 2.9%–12.2% (N=205)
 
@@ -23,7 +25,7 @@ Coverage is prioritized and depends on text access. This is not a representative
 - COS:
   - type: 1 / 628 (0.2%); 92 unverified; all-row unresolved bounds 0.1%–12.9% (N=720)
   - original: 2 / 630 (0.3%); 90 unverified; all-row unresolved bounds 0.3%–12.8% (N=720)
-  - outcome: 37 / 443 (8.4%); 277 unverified; all-row unresolved bounds 5.1%–43.6% (N=720)
+  - outcome: 54 / 461 (11.7%); 259 unverified; all-row unresolved bounds 7.5%–43.5% (N=720)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - SCORE:
@@ -39,15 +41,15 @@ Coverage is prioritized and depends on text access. This is not a representative
   - outcome_computation: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
   - outcome_robustness: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
 - openalex:
-  - type: 4 / 221 (1.8%); 45 unverified; all-row unresolved bounds 1.5%–18.4% (N=266)
-  - original: 2 / 223 (0.9%); 43 unverified; all-row unresolved bounds 0.8%–16.9% (N=266)
-  - outcome: 5 / 175 (2.9%); 84 unverified; all-row unresolved bounds 1.9%–34.4% (N=259)
+  - type: 4 / 222 (1.8%); 44 unverified; all-row unresolved bounds 1.5%–18.0% (N=266)
+  - original: 3 / 225 (1.3%); 41 unverified; all-row unresolved bounds 1.1%–16.5% (N=266)
+  - outcome: 20 / 195 (10.3%); 64 unverified; all-row unresolved bounds 7.7%–32.4% (N=259)
   - outcome_computation: 2 / 5 (40.0%); 2 unverified; all-row unresolved bounds 28.6%–57.1% (N=7)
   - outcome_robustness: 2 / 7 (28.6%); 0 unverified; all-row unresolved bounds 28.6%–28.6% (N=7)
 - openalex_snapshot:
   - type: 2 / 77 (2.6%); 16 unverified; all-row unresolved bounds 2.2%–19.4% (N=93)
   - original: 2 / 78 (2.6%); 15 unverified; all-row unresolved bounds 2.2%–18.3% (N=93)
-  - outcome: 1 / 58 (1.7%); 35 unverified; all-row unresolved bounds 1.1%–38.7% (N=93)
+  - outcome: 10 / 70 (14.3%); 23 unverified; all-row unresolved bounds 10.8%–35.5% (N=93)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - replications:
@@ -72,9 +74,9 @@ Coverage is prioritized and depends on text access. This is not a representative
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - full_text:
-  - type: 30 / 1962 (1.5%); 208 unverified; all-row unresolved bounds 1.4%–11.0% (N=2170)
-  - original: 29 / 1962 (1.5%); 208 unverified; all-row unresolved bounds 1.3%–10.9% (N=2170)
-  - outcome: 216 / 1505 (14.4%); 469 unverified; all-row unresolved bounds 10.9%–34.7% (N=1974)
+  - type: 30 / 1963 (1.5%); 207 unverified; all-row unresolved bounds 1.4%–10.9% (N=2170)
+  - original: 30 / 1964 (1.5%); 206 unverified; all-row unresolved bounds 1.4%–10.9% (N=2170)
+  - outcome: 257 / 1555 (16.5%); 419 unverified; all-row unresolved bounds 13.0%–34.2% (N=1974)
   - outcome_computation: 21 / 176 (11.9%); 20 unverified; all-row unresolved bounds 10.7%–20.9% (N=196)
   - outcome_robustness: 6 / 183 (3.3%); 13 unverified; all-row unresolved bounds 3.1%–9.7% (N=196)
 - none:
@@ -331,34 +333,76 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 1729, [replicating work](https://doi.org/10.1007/s13164-018-0400-9): outcome: successful → failed.
 - Row 1753, [replicating work](https://doi.org/10.1098/rsos.210641): outcome: successful → mixed.
 - Row 1796, [replicating work](https://doi.org/10.1093/applin/amae042): outcome: failed → mixed.
+- Row 1799, [replicating work](https://doi.org/10.31234/osf.io/ntukz): outcome: mixed → statistically successful but flawed.
+- Row 1813, [replicating work](https://doi.org/10.1002/rrq.62): outcome: mixed → failed.
 - Row 1836, [replicating work](https://doi.org/10.1073/pnas.2103313118): outcome: mixed → failed.
+- Row 1844, [replicating work](https://doi.org/10.1525/collabra.68054): outcome: successful → mixed.
+- Row 1865, [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004): outcome: mixed → successful.
+- Row 1868, [replicating work](https://doi.org/10.1016/j.dcn.2017.12.003): outcome: successful → mixed.
+- Row 1871, [replicating work](https://doi.org/10.18718/81781.38): outcome: mixed → failed.
+- Row 1876, [replicating work](https://doi.org/10.1080/15248372.2018.1544140): outcome: failed → mixed.
+- Row 1889, [replicating work](https://doi.org/10.1177/2515245920917931): outcome: failed → uninformative.
+- Row 1898, [replicating work](https://doi.org/10.17605/osf.io/ehjdm): outcome: successful → mixed.
 - Row 1906, [replicating work](https://doi.org/10.1177/2515245920958687): outcome: failed → successful.
+- Row 1923, [replicating work](https://doi.org/10.3389/fpsyg.2014.00786): outcome: successful → mixed.
+- Row 1927, [replicating work](https://doi.org/10.3389/fpsyg.2014.01276): outcome: successful → mixed.
 - Row 1932, [replicating work](https://doi.org/10.1177/2515245918810225): outcome: mixed → successful.
 - Row 1937, [replicating work](https://doi.org/10.1007/s13164-018-0400-9): original: 10.1111/j.1468-0068.2010.00795.x → remove this row.
 - Row 1940, [replicating work](https://doi.org/10.1098/rsos.231240): outcome: uninformative → mixed.
 - Row 1957, [replicating work](https://doi.org/10.1038/s41562-018-0399-z): outcome: successful → failed.
+- Row 1973, [replicating work](https://doi.org/10.1037/pspa0000064): outcome: mixed → failed.
 - Row 1986, [replicating work](https://doi.org/10.1098/rsos.231240): outcome: successful → mixed.
 - Row 1990, [replicating work](https://doi.org/10.1007/s13164-018-0400-9): original: 10.1163/156853706776931222 → remove this row.
+- Row 2002, [replicating work](https://doi.org/10.1525/collabra.32964): outcome: successful → mixed.
+- Row 2003, [replicating work](https://doi.org/10.1017/s0272263124000342): outcome: statistically successful but flawed → mixed.
 - Row 2018, [replicating work](https://doi.org/10.1177/2515245918810225): outcome: mixed → successful.
 - Row 2042, [replicating work](https://doi.org/10.1098/rsos.231240): outcome: mixed → failed.
 - Row 2046, [replicating work](https://doi.org/10.1098/rsos.231240): outcome: successful → mixed.
 - Row 2049, [replicating work](https://doi.org/10.1073/pnas.2103313118): outcome: mixed → successful.
 - Row 2068, [replicating work](https://doi.org/10.1098/rsos.231240): outcome: successful → mixed.
+- Row 2080, [replicating work](https://doi.org/10.1037/xge0000067): outcome: mixed → failed.
 - Row 2082, [replicating work](https://doi.org/10.1098/rsos.231240): outcome: failed → successful.
 - Row 2125, [replicating work](https://doi.org/10.3389/fped.2021.590040): type: replication → reproduction; outcome: failed → outcome_computation: not checked; outcome_robustness: robustness challenges.
+- Row 2131, [replicating work](https://doi.org/10.3758/s13414-015-0849-x): outcome: successful → mixed.
+- Row 2133, [replicating work](https://doi.org/10.1017/s1930297500008299): outcome: failed → mixed.
+- Row 2151, [replicating work](https://doi.org/10.18148/srm/2016.v10i2.6274): outcome: successful → mixed.
 - Row 2166, [replicating work](https://doi.org/10.7275/11867619): type: replication → reproduction; outcome: failed → outcome_computation: computationally reproducible; outcome_robustness: robustness challenges.
 - Row 2170, [replicating work](https://doi.org/10.31235/osf.io/zugae): type: replication → reproduction; outcome: failed → outcome_computation: computational issues; outcome_robustness: robustness challenges.
+- Row 2207, [replicating work](https://doi.org/10.1561/107.00000066): outcome: failed → mixed.
+- Row 2214, [replicating work](https://doi.org/10.32601/ejal.911399): outcome: successful → failed.
 - Row 2216, [replicating work](https://doi.org/10.1027/1614-0001/a000311): original: 10.1037/0022-3514.93.5.880 → remove this row.
+- Row 2219, [replicating work](https://doi.org/10.1080/14459795.2022.2135227): outcome: mixed → successful.
+- Row 2233, [replicating work](https://doi.org/10.1086/695137): outcome: successful → mixed.
 - Row 2238, [replicating work](https://doi.org/10.1002/jae.2922): type: replication → reproduction; outcome: failed → outcome_computation: computationally reproducible; outcome_robustness: robustness challenges.
+- Row 2267, [replicating work](https://doi.org/10.4995/muse.2019.10390): outcome: descriptive only → mixed.
 - Row 2269, [replicating work](https://doi.org/10.1002/jae.2861): outcome robustness: robust.
+- Row 2285, [replicating work](https://doi.org/10.1167/jov.20.6.18): outcome: successful → mixed.
+- Row 2292, [replicating work](https://doi.org/10.1037/a0030530): outcome: mixed → statistically successful but flawed.
 - Row 2299, [replicating work](https://doi.org/10.1371/journal.pone.0253023): type: replication → reproduction; outcome: successful → outcome_computation: computational issues; outcome_robustness: robust.
 - Row 2308, [replicating work](https://doi.org/10.1111/nana.12722): outcome computation: computationally reproducible; outcome robustness: robustness challenges.
+- Row 2318, [replicating work](https://doi.org/10.1002/jaba.613): outcome: mixed → descriptive only.
+- Row 2330, [replicating work](https://doi.org/10.1016/j.paid.2022.111910): outcome: successful → mixed.
 - Row 2334, [replicating work](https://doi.org/10.5334/irsp.546): outcome computation: not checked.
+- Row 2355, [replicating work](https://doi.org/10.1080/10508619.2020.1774205): outcome: failed → successful.
+- Row 2357, [replicating work](https://doi.org/10.17605/osf.io/e5wka): outcome: mixed → failed.
+- Row 2365, [replicating work](https://doi.org/10.17605/osf.io/r8qp2): outcome: failed → mixed.
 - Row 2376, [replicating work](https://doi.org/10.1002/hrdq.21464): type: replication → reproduction; outcome: failed → outcome_computation: cannot_be_determined; outcome_robustness: robustness challenges.
+- Row 2378, [replicating work](https://doi.org/10.18466/cbayarfbe.489291): outcome: failed → statistically successful but flawed.
+- Row 2393, [replicating work](https://doi.org/10.1016/j.annepidem.2022.05.005): outcome: failed → mixed.
+- Row 2398, [replicating work](https://doi.org/10.3200/jexe.74.3.267-288): outcome: mixed → failed.
+- Row 2403, [replicating work](https://doi.org/10.1037/xhp0000556): outcome: failed → mixed.
+- Row 2412, [replicating work](https://doi.org/10.1038/s41598-017-07404-4): outcome: mixed → failed.
 - Row 2418, [replicating work](https://doi.org/10.1017/s0142716414000137): original: 10.1017/s0142716400010845 → 10.1017/S0142716409990014.
 - Row 2429, [replicating work](https://doi.org/10.20381/ruor-28430): type: replication → reproduction; original: 10.7326/0003-4819-127-1-199707010-00007 → Effectiveness of different adjunctive interventions in the management of orthodontically induced white spot lesions: A systematic review of systematic reviews and meta-analyses..
 - Row 2445, [replicating work](https://doi.org/10.25810/spvf-m355): outcome: successful → statistically successful but flawed.
+- Row 2453, [replicating work](https://doi.org/10.1016/j.pmedr.2017.02.001): outcome: failed → mixed.
+- Row 2456, [replicating work](https://doi.org/10.26686/wgtn.17143838.v1): original: 10.1111/j.1467-9922.2012.00730.x → remove this row.
+- Row 2463, [replicating work](https://doi.org/10.1037/xhp0000483): outcome: successful → mixed.
+- Row 2477, [replicating work](https://doi.org/10.1007/s11292-017-9305-3): outcome: successful → mixed.
 - Row 2494, [replicating work](https://doi.org/10.1177/25152459251401177): original: 10.1037/0096-3445.135.4.641 → remove this row.
+- Row 2497, [replicating work](https://doi.org/10.31274/psllt.17573): outcome: mixed → successful.
+- Row 2501, [replicating work](https://doi.org/10.7554/elife.91498): outcome: successful → mixed.
+- Row 2504, [replicating work](https://doi.org/10.1038/s41598-017-07404-4): outcome: mixed → failed.
 - Row 2522, [replicating work](https://doi.org/10.1177/2515245918810225): outcome: mixed → successful.
 - Row 2622, [replicating work](https://doi.org/10.17885/heiup.1157.c19369): type: replication → reproduction; outcome: mixed → outcome_computation: not checked; outcome_robustness: robust.
 - Row 2630, [replicating work](https://osf.io/7qv89) (DOI unavailable): outcome computation: computational issues.
@@ -441,8 +485,27 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 - Confirmed missing target: The visible host: Does race guide Airbnb rental rates in San Francisco?; work [replicating work](https://doi.org/10.1016/j.joep.2018.11.004), target 2 (argon).
 - Confirmed missing target: The model minority? Not on Airbnb.com: A hedonic pricing model to quantify racial bias against Asian Americans.; work [replicating work](https://doi.org/10.1016/j.joep.2018.11.004), target 3 (argon).
 - Confirmed missing target: [Seeking subjective dominance in multidimensional space: An explanation of the asymmetric dominance effect.](https://doi.org/10.1006/obhd.1995.1075); work [replicating work](https://doi.org/10.1080/23743603.2021.1878340), target 0 (argon).
+- Confirmed missing target: [Effects of a voluntary summer reading intervention on reading achievement: Results from a randomized field trial.](https://doi.org/10.3102/01623737028004335); work [replicating work](https://doi.org/10.1002/rrq.62), target 0 (argon).
+- Confirmed missing target: Eighteen-month-old infants show false belief understanding in an active helping paradigm.; work [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004), target 0 (argon).
+- Confirmed missing target: Do 15-month-old infants understand false beliefs?; work [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004), target 2 (argon).
+- Confirmed missing target: Can an agent’s false belief be corrected by an appropriate communication? Psychological reasoning in 18-month-old infants.; work [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004), target 3 (argon).
+- Confirmed missing target: Early theory of mind competencies: do infants understand others’ beliefs?; work [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004), target 4 (argon).
+- Confirmed missing target: [When Efortful Thinking Influences Judgmental Anchoring: Differential Effects of Forewarning and Incentives on Self-generated and Externally Provided Anchors](https://doi.org/10.1002/bdm.495); work [replicating work](https://doi.org/10.18718/81781.38), target 1 (argon).
+- Confirmed missing target: [Where will the triangle look for it? Attributing false beliefs to a geometric shape at 17 months](https://doi.org/10.1111/j.2044-835x.2011.02046.x); work [replicating work](https://doi.org/10.1080/15248372.2018.1544140), target 1 (argon).
 - Confirmed missing target: How Elastic Are Preferences for Redistribution? Evidence from Randomized Survey Experiments.; work [replicating work](https://doi.org/10.1353/eca.2016.0000), target 0 (argon).
+- Confirmed missing target: [A direct and conceptual replication of post-loss speeding when gambling.](https://doi.org/10.1098/rsos.200090); work [replicating work](https://doi.org/10.1080/14459795.2022.2135227), target 1 (argon).
+- Confirmed missing target: Gender-Biased Breastfeeding in Egypt: Examining the Fertility Preference Hypotheses of Jayachandran and Kuziemko (2011).; work [replicating work](https://doi.org/10.1086/695137), target 1 (argon).
+- Confirmed missing target: [Kin recognition and the perceived facial similarity of children](https://doi.org/10.1167/6.10.4); work [replicating work](https://doi.org/10.1167/jov.20.6.18), target 0 (argon).
+- Confirmed missing target: [Effects of two variations of differential reinforcement on prompt dependency](https://doi.org/10.1002/jaba.67); work [replicating work](https://doi.org/10.1002/jaba.613), target 1 (argon).
+- Confirmed missing target: [The Language of Political Aggression](https://doi.org/10.1177/0261927x12460666); work [replicating work](https://doi.org/10.17605/osf.io/r8qp2), target 1 (argon).
 - Confirmed missing target: Job attitudes and employee engagement: Considering the "A-factor".; work [replicating work](https://doi.org/10.1002/hrdq.21464), target 0 (argon).
+- Confirmed missing target: [Loci associated with ischaemic stroke and its subtypes (SiGN): a genome-wide association study](https://doi.org/10.1016/s1474-4422(15)00338-5); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 0 (argon).
+- Confirmed missing target: [Risk variants for atrial fibrillation on chromosome 4q25 associate with ischemic stroke](https://doi.org/10.1002/ana.21480); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 1 (argon).
+- Confirmed missing target: [Genetic risk factors for ischaemic stroke and its subtypes (the METASTROKE Collaboration): A meta-analysis of genome-wide association studies](https://doi.org/10.1016/s1474-4422(12)70234-x); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 2 (argon).
+- Confirmed missing target: [Sequence variants on chromosome 9p21.3 confer risk for atherosclerotic stroke](https://doi.org/10.1002/ana.21590); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 4 (argon).
+- Confirmed missing target: [Ischemic stroke is associated with the ABO locus: the EuroCLOT study](https://doi.org/10.1002/ana.23838); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 5 (argon).
+- Confirmed missing target: [Meta-analysis in more than 17,900 cases of ischemic stroke reveals a novel association at 12q24.12](https://doi.org/10.1212/wnl.0000000000000707); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 6 (argon).
+- Confirmed missing target: [A sequence variant in ZFHX3 on 16q22 associates with atrial fibrillation and ischemic stroke](https://doi.org/10.1038/ng.417); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 7 (argon).
 - Confirmed missing target: Do arthroscopic and open stabilization techniques restore equivalent stability to the shoulder in the setting of anterior glenohumeral instability? a systematic review of overlapping meta-analyses.; work [replicating work](https://doi.org/10.20381/ruor-28430), target 1 (argon).
 - Confirmed missing target: A case study of discordant overlapping meta-analyses: vitamin d supplements and fracture.; work [replicating work](https://doi.org/10.20381/ruor-28430), target 2 (argon).
 - Confirmed missing target: Patellar resurfacing versus patellar retention in primary total knee arthroplasty: a systematic review of overlapping meta-analyses.; work [replicating work](https://doi.org/10.20381/ruor-28430), target 3 (argon).
@@ -467,7 +530,7 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 - Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 2 (argon).
 - Confirmed missing target: [Classifying the torture experiences of refugees living in the United States](https://doi.org/10.1177/0886260506294999); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 3 (argon).
 - Confirmed missing target: [Nature of torture, PTSD, and somatic symptoms among political ex-prisoners](https://doi.org/10.1002/jts.20541); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 4 (argon).
-636 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+609 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
@@ -483,12 +546,13 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 - Argon 186c024fa1d798a4: unresolved after 2 attempts; invalid decision or quote: original. 1 complete field decisions recovered from partial replies. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 257b22aa43abe7f6: unresolved after 2 attempts; Parent scope limit after both calls: the valid reply treats absence of activation in the native cell assay as failed,but the source concludes activation occurs only with the artificial fluorophore substrate and frames the original activation assay as an artifact. Failed versus statistically successful but flawed main-message scope was not resolved; no third call.. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 2736b815e9f115a4: unresolved after 2 attempts; Unterminated string starting at: line 274 column 17 (char 26129). 25 complete field decisions recovered from partial replies. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
-- Argon 53f8f86a18c3cad8: unresolved after 2 attempts; nonzero transport exit. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
+- Argon 53f8f86a18c3cad8: unresolved after 2 attempts; Final source-scope call rejected by agy with requested model temporarily unrecognized. Live catalog confirmed exact model remained available. Both calls consumed; mixed-versus-main-methodological-flaw outcome remains unverified, no third call.. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 58537b5a1a67b22d: unresolved after 2 attempts; Parent scope limit after both calls consumed: VD1 reconstruction recovers the original thematic trend while VD2 reverses it,and the central conclusion critiques static-image selection as phenologically biased. The valid reply did not resolve failed versus statistically successful but flawed under that main-message rule. Outcome remains unverified; no third call. Replication type and explicit Sonnenschein2011 target remain supported.. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 5b3bc0521d2f9aa1: unresolved after 2 attempts; invalid decision or quote: original. 5 complete field decisions recovered from partial replies. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 6c8ce5072ad5bef2: unresolved after 2 attempts; invalid decision or quote: original. 2 complete field decisions recovered from partial replies. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 73bcc3e73f111e2c: unresolved after 2 attempts; invalid decision or quote: type. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 7c772579daf4141a: unresolved after 2 attempts; invalid decision or quote: type. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
+- Argon 834b55f482c6e8a1: unresolved after 1 attempts; The pre-cutoff Argon call returned only a ten-minute CLI timeout notice, with no JSON answer. The dispatch deadline had passed before a retry could start, so this work remains unresolved after one consumed attempt; no late retry.. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 9b3c6d39a871d365: unresolved after 2 attempts; invalid decision or quote: outcome. 1 complete field decisions recovered from partial replies. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 9c0e3d488066f983: unresolved after 2 attempts; failure. Supported field decisions retained separately remain usable; unresolved fields stay unverified.
 - Argon 9fed70371eeb17ff: unresolved after 2 attempts; Both allowed Argon calls returned only a ten-minute CLI timeout notice, with no JSON decisions; no further call is permitted.. Supported field decisions retained separately remain usable; unresolved fields stay unverified.

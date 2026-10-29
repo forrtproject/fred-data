@@ -514,7 +514,7 @@ def rate_line(rows, field):
     return f'{errors} / {n} ({rate}); {unresolved} unverified; all-row unresolved bounds {bounds} (N={total})'
 
 
-def report(results, missing, works, issues, finalized_at=None):
+def report(results, missing, works, issues, finalized_at=None, review_summary=None):
     status = (f'Audit finalized at {finalized_at}. Unverified fields remain unresolved within the available evidence and review budget. '
               if finalized_at else 'This report is provisional until the parent finalizes the audit. ')
     lines = ['# FLoRA blind audit' + ('' if finalized_at else ' — provisional'), '',
@@ -541,6 +541,17 @@ def report(results, missing, works, issues, finalized_at=None):
               'Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. '
               'Dependent outcome replacements after a type correction remain in results.csv and the error list.', '',
               '## Confirmed field error rates', '']
+    if review_summary:
+        position = lines.index('## Confirmed field error rates')
+        lines[position:position] = [
+            f'Cross-model review used {review_summary["call_attempts_consumed"]} call attempts across '
+            f'{review_summary["workgroups_with_calls"]} works. '
+            f'{review_summary["unresolved_workgroups"]} reviewed works retain unresolved fields; '
+            'separately supported fields remain usable. '
+            f'{review_summary["prepared_workgroups_without_call"]} prepared works '
+            f'({review_summary["prepared_fields_without_call"]} distinct field requests) received no call '
+            'before the review cutoff. These requests establish no error. '
+            'Other unverified fields also include missing text, ambiguous identity and insufficient evidence.', '']
     for field in FIELDS:
         applicable = applicable_rate_rows(results, field)
         lines.append(f'- {field}: {rate_line(applicable, field)}')
@@ -717,7 +728,8 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
     (output / 'disagreements.json').write_text(json.dumps({'provisional': not bool(finalized_at),
                                                          'finalized_at': finalized_at, 'items': disagreements,
                                                          'validation_issues': issues}, ensure_ascii=False, indent=2) + '\n')
-    (output / 'REPORT.md').write_text(report(results, missing, works, issues, finalized_at), encoding='utf-8')
+    (output / 'REPORT.md').write_text(report(results, missing, works, issues, finalized_at,
+                                            run_manifest.get('review_summary') if isinstance(run_manifest, dict) else None), encoding='utf-8')
     return {'rows': len(results), 'works': len(works), 'missing_targets': len(missing),
             'disagreements': len(disagreements), 'output_dir': str(output.resolve())}
 
