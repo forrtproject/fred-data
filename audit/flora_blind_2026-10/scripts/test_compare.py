@@ -319,6 +319,28 @@ class TypeCorrectionTests(unittest.TestCase):
         self.assertEqual(rs[0]['outcome_final_verdict'], 'error')
         self.assertIn('outcome_computation', rs[0]['suggested_correction'])
 
+    def test_partial_reproduction_correction_keeps_unknown_axis_explicit(self):
+        value = {'outcome_computation': 'cannot_be_determined', 'outcome_robustness': 'robustness challenges'}
+        rs, _, _ = compare(decisions=[decision(field='type', corrected_value='reproduction'),
+                                    decision(field='outcome', corrected_value=value)])
+        self.assertEqual(rs[0]['outcome_final_verdict'], 'error')
+        self.assertEqual(json.loads(rs[0]['suggested_correction'])['outcome'], value)
+
+    def test_two_unknown_axes_cannot_establish_outcome_error(self):
+        value = {'outcome_computation': 'cannot_be_determined', 'outcome_robustness': 'cannot_be_determined'}
+        rs, _, _ = compare(decisions=[decision(field='type', corrected_value='reproduction'),
+                                    decision(field='outcome', corrected_value=value)])
+        self.assertEqual(rs[0]['outcome_final_verdict'], 'unverified')
+
+    def test_replication_outcome_after_reverse_type_correction(self):
+        rs, _, _ = compare(rows=[row(typ='reproduction', outcome='computationally reproducible, robust')],
+                           decisions=[decision(field='type', corrected_value='replication'),
+                                      decision(field='outcome', corrected_value='failed')])
+        self.assertEqual(rs[0]['type_final_verdict'], 'error')
+        self.assertEqual(rs[0]['outcome_final_verdict'], 'error')
+        self.assertEqual(json.loads(rs[0]['suggested_correction'])['outcome'], 'failed')
+        self.assertEqual(rs[0]['outcome_computation_final_verdict'], 'unverified')
+
 
 class NoAdditionDecisionTests(unittest.TestCase):
     def test_no_addition_requires_evidence_but_no_replacement_value(self):

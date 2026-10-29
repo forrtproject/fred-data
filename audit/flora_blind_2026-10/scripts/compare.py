@@ -371,10 +371,10 @@ def compare_work(rows, keys, coding, error, text, decisions):
                         r[field + '_final_verdict'] = 'correct'
                         r[field + '_resolution'] = 'agree'
             for field in FIELDS:
-                if row.get('type') != 'reproduction' and field in ('outcome_computation', 'outcome_robustness'):
+                if (row.get('type') != 'reproduction' or corrections.get('type') == 'replication') and field in ('outcome_computation', 'outcome_robustness'):
                     continue
                 # Reproduction outcomes are adjudicated per axis only.
-                if row.get('type') == 'reproduction' and field == 'outcome':
+                if row.get('type') == 'reproduction' and corrections.get('type') != 'replication' and field == 'outcome':
                     continue
                 d = decision_for(decisions, field, text, key['input_row_index'])
                 if not d:
@@ -391,8 +391,10 @@ def compare_work(rows, keys, coding, error, text, decisions):
                                'outcome_robustness': set(ROBUSTNESS.values()) - UNKNOWN}
                     changed_to_reproduction = (field == 'outcome' and isinstance(value, dict)
                         and corrections.get('type') == 'reproduction'
-                        and value.get('outcome_computation') in set(COMPUTATION.values()) - UNKNOWN
-                        and value.get('outcome_robustness') in set(ROBUSTNESS.values()) - UNKNOWN)
+                        and value.get('outcome_computation') in set(COMPUTATION.values()) | {'cannot_be_determined'}
+                        and value.get('outcome_robustness') in set(ROBUSTNESS.values()) | {'cannot_be_determined'}
+                        and (value.get('outcome_computation') in set(COMPUTATION.values()) - UNKNOWN
+                             or value.get('outcome_robustness') in set(ROBUSTNESS.values()) - UNKNOWN))
                     if field in allowed and not changed_to_reproduction and (not isinstance(value, str) or value not in allowed[field]):
                         continue
                     shipped = row.get('doi_o') if field == 'original' else row.get(field)
@@ -409,7 +411,15 @@ def compare_work(rows, keys, coding, error, text, decisions):
                 evidence[field] = {k: d.get(k) for k in ('quote', 'location', 'reason', 'method')}
                 if verdict(d) == 'error':
                     corrections[field] = value
-            if row.get('type') == 'reproduction':
+                    if field == 'type' and value != row.get('type'):
+                        # Agreement in the old type's vocabulary cannot survive a
+                        # corrected type. Only a supported subsequent outcome
+                        # decision can establish its replacement.
+                        for outcome_field in ('outcome', 'outcome_computation', 'outcome_robustness'):
+                            r[outcome_field + '_final_verdict'] = 'unverified'
+                            r[outcome_field + '_resolution'] = 'unresolved'
+                            r[outcome_field + '_grade'] = 'unverified'
+            if row.get('type') == 'reproduction' and corrections.get('type') != 'replication':
                 axes = ['outcome_computation', 'outcome_robustness']
                 values = [r[k + '_final_verdict'] for k in axes]
                 r['outcome_final_verdict'] = 'error' if 'error' in values else 'correct' if values == ['correct', 'correct'] else 'unverified'
