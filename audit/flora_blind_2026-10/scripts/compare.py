@@ -251,7 +251,7 @@ def load_coding(root, file_key, work_key, schema):
     try:
         jsonschema.validate(coding, schema)
     except jsonschema.ValidationError as exc:
-        return coding, 'invalid coding: ' + exc.message, ''
+        return coding, 'invalid coding: ' + str(exc.validator) + ' constraint at ' + '.'.join(map(str, exc.absolute_path)), ''
     text_path = root / 'texts' / (file_key + '.txt')
     try:
         raw = text_path.read_bytes()
@@ -271,6 +271,7 @@ def valid_decision(decision, text):
             and decision.get('verdict') in {'shipped_right', 'blind_right', 'both_wrong', 'undeterminable'}
             and bool(str(decision.get('reason') or '').strip())
             and bool(str(decision.get('location') or '').strip())
+            and isinstance(decision.get('quote'), str) and len(decision['quote']) <= 6000
             and quote_present(decision.get('quote'), text)
             and (decision.get('verdict') == 'undeterminable'
                  or (decision.get('field') == 'missing_row' and decision.get('verdict') == 'shipped_right')

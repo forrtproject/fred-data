@@ -1,7 +1,14 @@
 // Run from functions.exec using AsyncFunction('tools','text', source)(tools,text).
 const base='audit/flora_blind_2026-10';
 const q=s=>"'"+s.replaceAll("'","'\\''")+"'";
-const cmd=async s=>{let r=await tools.exec_command({cmd:s,max_output_tokens:64000});if(r.exit_code!==0)throw Error(r.output);return r.output;};
+const cmd=async s=>{
+ let r=await tools.exec_command({cmd:s,max_output_tokens:64000,yield_time_ms:1000});
+ let out=r.output||'';let polls=0;
+ while(r.session_id && r.exit_code===undefined && polls++<36){
+  r=await tools.write_stdin({session_id:r.session_id,chars:'',yield_time_ms:1000,max_output_tokens:64000});out+=r.output||'';
+ }
+ if(r.exit_code!==0)throw Error(out||('Command not complete; retained session '+r.session_id));return out;
+};
 const py=async (...args)=>JSON.parse(await cmd('python3 '+base+'/scripts/controller.py '+args.map(q).join(' ')));
 const record=async x=>{await cmd('python3 '+base+'/scripts/controller.py event '+q(JSON.stringify(x)));};
 text(await cmd('python3 '+base+'/scripts/quarantine_warnings.py'));
