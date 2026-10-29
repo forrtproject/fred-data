@@ -31,3 +31,5 @@ while(p.coding_open && p.active.length<p.limit){
  p=await py('plan');
 }
 text({active:p.active.length,limit:p.limit,age_seconds:p.age_seconds,coding_open:p.coding_open});
+
+text(await cmd('python3 '+base+'/scripts/progress.py'));

@@ -73,6 +73,10 @@ Checkpoints: valid done is final, never overwrite it. no_text is final. timeout/
 
 CODEBOOK (verbatim):
 '''+book+'\n\nSUCCESS SCHEMA:\n'+schema+'\n\nASSIGNED WORKS:\n'+json.dumps(payload,ensure_ascii=False,indent=2)
+ forecast=read(R/'forecast.json',{})
+ budget=forecast.get('acquisition_budget',{})
+ if budget.get('first_pass_seconds')==60:
+  prompt=prompt.replace('Budget acquisition 90 seconds plus at most 30 seconds','Budget acquisition 60 seconds plus at most 20 seconds')
  (R/'batches'/f'{bid}.txt').write_text(prompt)
  info={'batch':bid,'files':[w['file_key'] for w in chosen],'large':chosen[0]['row_count']>8,'budget_seconds':sum(x['time_cap_seconds'] for x in payload)+180,'clientRequestId':'flora-'+bid+'-v1','prompt_path':str(R/'batches'/f'{bid}.txt')}
  (R/'batches'/f'{bid}.json').write_text(json.dumps(info,indent=2))

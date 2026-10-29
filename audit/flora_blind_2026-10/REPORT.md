@@ -2,34 +2,34 @@
 
 This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote.
 
-2 input rows have at least one confirmed field error; 55 / 2818 rows are fully resolved. 24 blind targets have no proposed shipped counterpart; these are not errors by default.
+6 input rows have at least one confirmed field error; 229 / 2818 rows are fully resolved. 112 blind targets have no proposed shipped counterpart; these are not errors by default.
 
 ## Coverage
 
-Works: 2344 total; 57 attempted; 47 with verified saved text (36 full text, 11 abstract); 47 with validated usable coding. Rows fully resolved: 55 / 2818.
+Works: 2344 total; 230 attempted; 193 with verified saved text (150 full text, 43 abstract); 193 with validated usable coding. Rows fully resolved: 229 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement.
 
 ## Confirmed field error rates
 
-- type: 1 / 65 (1.5%); 2753 unverified; all-row unresolved bounds 0.0%–97.7% (N=2818)
-- original: 0 / 65 (0.0%); 2753 unverified; all-row unresolved bounds 0.0%–97.7% (N=2818)
-- outcome: 2 / 55 (3.6%); 2763 unverified; all-row unresolved bounds 0.1%–98.1% (N=2818)
-- outcome_computation: 0 / 2 (0.0%); 203 unverified; all-row unresolved bounds 0.0%–99.0% (N=205)
-- outcome_robustness: 0 / 2 (0.0%); 203 unverified; all-row unresolved bounds 0.0%–99.0% (N=205)
+- type: 1 / 409 (0.2%); 2409 unverified; all-row unresolved bounds 0.0%–85.5% (N=2818)
+- original: 1 / 410 (0.2%); 2408 unverified; all-row unresolved bounds 0.0%–85.5% (N=2818)
+- outcome: 5 / 229 (2.2%); 2589 unverified; all-row unresolved bounds 0.2%–92.1% (N=2818)
+- outcome_computation: 0 / 13 (0.0%); 192 unverified; all-row unresolved bounds 0.0%–93.7% (N=205)
+- outcome_robustness: 0 / 15 (0.0%); 190 unverified; all-row unresolved bounds 0.0%–92.7% (N=205)
 
 ### By source
 
 - COS:
-  - type: 0 / 1 (0.0%); 719 unverified; all-row unresolved bounds 0.0%–99.9% (N=720)
-  - original: 0 / 1 (0.0%); 719 unverified; all-row unresolved bounds 0.0%–99.9% (N=720)
-  - outcome: 0 / 1 (0.0%); 719 unverified; all-row unresolved bounds 0.0%–99.9% (N=720)
+  - type: 0 / 244 (0.0%); 476 unverified; all-row unresolved bounds 0.0%–66.1% (N=720)
+  - original: 0 / 244 (0.0%); 476 unverified; all-row unresolved bounds 0.0%–66.1% (N=720)
+  - outcome: 0 / 96 (0.0%); 624 unverified; all-row unresolved bounds 0.0%–86.7% (N=720)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - SCORE:
-  - type: 0 / 0 (not estimable); 88 unverified; all-row unresolved bounds 0.0%–100.0% (N=88)
-  - original: 0 / 0 (not estimable); 88 unverified; all-row unresolved bounds 0.0%–100.0% (N=88)
-  - outcome: 0 / 0 (not estimable); 88 unverified; all-row unresolved bounds 0.0%–100.0% (N=88)
+  - type: 0 / 2 (0.0%); 86 unverified; all-row unresolved bounds 0.0%–97.7% (N=88)
+  - original: 0 / 2 (0.0%); 86 unverified; all-row unresolved bounds 0.0%–97.7% (N=88)
+  - outcome: 0 / 2 (0.0%); 86 unverified; all-row unresolved bounds 0.0%–97.7% (N=88)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - i4r:
@@ -39,67 +39,76 @@ Coverage is prioritized and depends on text access. This is not a representative
   - outcome_computation: 0 / 0 (not estimable); 1 unverified; all-row unresolved bounds 0.0%–100.0% (N=1)
   - outcome_robustness: 0 / 0 (not estimable); 1 unverified; all-row unresolved bounds 0.0%–100.0% (N=1)
 - openalex:
-  - type: 0 / 3 (0.0%); 263 unverified; all-row unresolved bounds 0.0%–98.9% (N=266)
-  - original: 0 / 3 (0.0%); 263 unverified; all-row unresolved bounds 0.0%–98.9% (N=266)
-  - outcome: 0 / 3 (0.0%); 263 unverified; all-row unresolved bounds 0.0%–98.9% (N=266)
+  - type: 0 / 17 (0.0%); 249 unverified; all-row unresolved bounds 0.0%–93.6% (N=266)
+  - original: 0 / 17 (0.0%); 249 unverified; all-row unresolved bounds 0.0%–93.6% (N=266)
+  - outcome: 0 / 13 (0.0%); 253 unverified; all-row unresolved bounds 0.0%–95.1% (N=266)
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
-  - outcome_robustness: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
+  - outcome_robustness: 0 / 2 (0.0%); 5 unverified; all-row unresolved bounds 0.0%–71.4% (N=7)
 - openalex_snapshot:
-  - type: 0 / 2 (0.0%); 91 unverified; all-row unresolved bounds 0.0%–97.8% (N=93)
-  - original: 0 / 2 (0.0%); 91 unverified; all-row unresolved bounds 0.0%–97.8% (N=93)
-  - outcome: 0 / 1 (0.0%); 92 unverified; all-row unresolved bounds 0.0%–98.9% (N=93)
+  - type: 0 / 7 (0.0%); 86 unverified; all-row unresolved bounds 0.0%–92.5% (N=93)
+  - original: 0 / 7 (0.0%); 86 unverified; all-row unresolved bounds 0.0%–92.5% (N=93)
+  - outcome: 0 / 3 (0.0%); 90 unverified; all-row unresolved bounds 0.0%–96.8% (N=93)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - replications:
-  - type: 1 / 57 (1.8%); 1396 unverified; all-row unresolved bounds 0.1%–96.1% (N=1453)
-  - original: 0 / 57 (0.0%); 1396 unverified; all-row unresolved bounds 0.0%–96.1% (N=1453)
-  - outcome: 2 / 48 (4.2%); 1405 unverified; all-row unresolved bounds 0.1%–96.8% (N=1453)
+  - type: 1 / 125 (0.8%); 1328 unverified; all-row unresolved bounds 0.1%–91.5% (N=1453)
+  - original: 1 / 126 (0.8%); 1327 unverified; all-row unresolved bounds 0.1%–91.4% (N=1453)
+  - outcome: 5 / 103 (4.9%); 1350 unverified; all-row unresolved bounds 0.3%–93.3% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - reproductions:
-  - type: 0 / 2 (0.0%); 195 unverified; all-row unresolved bounds 0.0%–99.0% (N=197)
-  - original: 0 / 2 (0.0%); 195 unverified; all-row unresolved bounds 0.0%–99.0% (N=197)
-  - outcome: 0 / 2 (0.0%); 195 unverified; all-row unresolved bounds 0.0%–99.0% (N=197)
-  - outcome_computation: 0 / 2 (0.0%); 195 unverified; all-row unresolved bounds 0.0%–99.0% (N=197)
-  - outcome_robustness: 0 / 2 (0.0%); 195 unverified; all-row unresolved bounds 0.0%–99.0% (N=197)
+  - type: 0 / 14 (0.0%); 183 unverified; all-row unresolved bounds 0.0%–92.9% (N=197)
+  - original: 0 / 14 (0.0%); 183 unverified; all-row unresolved bounds 0.0%–92.9% (N=197)
+  - outcome: 0 / 12 (0.0%); 185 unverified; all-row unresolved bounds 0.0%–93.9% (N=197)
+  - outcome_computation: 0 / 13 (0.0%); 184 unverified; all-row unresolved bounds 0.0%–93.4% (N=197)
+  - outcome_robustness: 0 / 13 (0.0%); 184 unverified; all-row unresolved bounds 0.0%–93.4% (N=197)
 
 ### By evidence_level
 
 - abstract:
-  - type: 1 / 8 (12.5%); 3 unverified; all-row unresolved bounds 9.1%–36.4% (N=11)
-  - original: 0 / 8 (0.0%); 3 unverified; all-row unresolved bounds 0.0%–27.3% (N=11)
-  - outcome: 1 / 6 (16.7%); 5 unverified; all-row unresolved bounds 9.1%–54.5% (N=11)
-  - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
-  - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
+  - type: 1 / 31 (3.2%); 12 unverified; all-row unresolved bounds 2.3%–30.2% (N=43)
+  - original: 0 / 31 (0.0%); 12 unverified; all-row unresolved bounds 0.0%–27.9% (N=43)
+  - outcome: 1 / 24 (4.2%); 19 unverified; all-row unresolved bounds 2.3%–46.5% (N=43)
+  - outcome_computation: 0 / 0 (not estimable); 1 unverified; all-row unresolved bounds 0.0%–100.0% (N=1)
+  - outcome_robustness: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
 - full_text:
-  - type: 0 / 57 (0.0%); 3 unverified; all-row unresolved bounds 0.0%–5.0% (N=60)
-  - original: 0 / 57 (0.0%); 3 unverified; all-row unresolved bounds 0.0%–5.0% (N=60)
-  - outcome: 1 / 49 (2.0%); 11 unverified; all-row unresolved bounds 1.7%–20.0% (N=60)
-  - outcome_computation: 0 / 2 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=2)
-  - outcome_robustness: 0 / 2 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=2)
+  - type: 0 / 378 (0.0%); 43 unverified; all-row unresolved bounds 0.0%–10.2% (N=421)
+  - original: 1 / 379 (0.3%); 42 unverified; all-row unresolved bounds 0.2%–10.2% (N=421)
+  - outcome: 4 / 205 (2.0%); 216 unverified; all-row unresolved bounds 1.0%–52.3% (N=421)
+  - outcome_computation: 0 / 13 (0.0%); 2 unverified; all-row unresolved bounds 0.0%–13.3% (N=15)
+  - outcome_robustness: 0 / 14 (0.0%); 1 unverified; all-row unresolved bounds 0.0%–6.7% (N=15)
 - none:
-  - type: 0 / 0 (not estimable); 2747 unverified; all-row unresolved bounds 0.0%–100.0% (N=2747)
-  - original: 0 / 0 (not estimable); 2747 unverified; all-row unresolved bounds 0.0%–100.0% (N=2747)
-  - outcome: 0 / 0 (not estimable); 2747 unverified; all-row unresolved bounds 0.0%–100.0% (N=2747)
-  - outcome_computation: 0 / 0 (not estimable); 203 unverified; all-row unresolved bounds 0.0%–100.0% (N=203)
-  - outcome_robustness: 0 / 0 (not estimable); 203 unverified; all-row unresolved bounds 0.0%–100.0% (N=203)
+  - type: 0 / 0 (not estimable); 2354 unverified; all-row unresolved bounds 0.0%–100.0% (N=2354)
+  - original: 0 / 0 (not estimable); 2354 unverified; all-row unresolved bounds 0.0%–100.0% (N=2354)
+  - outcome: 0 / 0 (not estimable); 2354 unverified; all-row unresolved bounds 0.0%–100.0% (N=2354)
+  - outcome_computation: 0 / 0 (not estimable); 189 unverified; all-row unresolved bounds 0.0%–100.0% (N=189)
+  - outcome_robustness: 0 / 0 (not estimable); 189 unverified; all-row unresolved bounds 0.0%–100.0% (N=189)
 
 ## Every confirmed input-row error
 
+- Row 177, [replicating work](https://doi.org/10.1186/1471-2415-14-140): original. Correction: {"original": {"doi": "10.1074/jbc.M111.275990", "title": "High temperature requirement factor A1 (HTRA1) gene regulates angiogenesis through transforming growth factor-beta family member growth differentiation factor 6", "authors": "Zhang L, Lim SL, Du H, Zhang M, Kozak I, Hannum G, Wang X, Ouyang H, Hughes G, Zhao L, Zhu X, Lee C, Su Z, Zhou X, Shaw R, Geum D, Wei X, Zhu J, Ideker T, Oka C, Wang N, Yang Z, Shaw PX, Zhang K", "year": "2012"}}. Evidence: {"type": {"quote": "Recently, a study in a Caucasian cohort identified that a single nucleotide polymorphism (SNP) rs6982567 near  GDF6  was associated with AMD [ 16 ]. Given that early AMD, advanced AMD, and PCV were not distinguished in this study, and no research about this SNP has been undertaken in Chinese populations, we conducted this study to determine whether rs6982567 was associated with nAMD and PCV in a Han Chinese population.", "location": "introduction", "reason": "Both shipped and blind coding agree that this study is a replication collecting new genotype data in an independent Han Chinese cohort to re-test the previously reported association of SNP rs6982567 near GDF6 with AMD.", "method": "argon"}, "original": {"quote": "Recently, a study in a Caucasian cohort identified that a single nucleotide polymorphism (SNP) rs6982567 near  GDF6  was associated with AMD [ 16 ]. Given that early AMD, advanced AMD, and PCV were not distinguished in this study, and no research about this SNP has been undertaken in Chinese populations, we conducted this study to determine whether rs6982567 was associated with nAMD and PCV in a Han Chinese population.", "location": "introduction", "reason": "Wrong original in shipped row 177. The paper re-tests reference [16] (Zhang et al., 2012, DOI 10.1074/jbc.M111.275990), which identified the association between rs6982567 near GDF6 and AMD in a Caucasian cohort (and which the shipped outcome quote also describes). The shipped original (Fritsche et al., 2013, DOI 10.1038/ng.2578, reference [22]) is cited only once as background on the TGF superfamily in the Discussion and is not re-tested. Blind target 0 matches row 177 and gives the correct original.", "method": "argon"}, "outcome": {"quote": "There were no significant differences in genotype distributions or models in nAMD. Conclusions There was a possible weak association between the rs6982567 near  GDF6  and PCV in this replication study with an independent Han Chinese cohort.", "location": "abstract", "reason": "With original identity resolved to reference [16] (Zhang et al., 2012, which did not distinguish PCV from AMD), the authors test rs6982567 across PCV and nAMD in a Han Chinese cohort. They conclude that there is a possible weak/marginal association between rs6982567 and PCV under a recessive model (which did not survive Bonferroni correction), while finding no association with nAMD and discussing reasons for the inconsistency with the Caucasian AMD finding. Because the authors frame their results as showing a weak/marginal association in PCV alongside no association in nAMD, the shipped outcome 'mixed' is supported.", "method": "argon"}}.
+- Row 365, [replicating work](https://doi.org/10.5964/jnc.7029): outcome. Correction: {"outcome": "mixed"}. Evidence: {"outcome": {"quote": "A second issue concerned the age of acquisition of cardinal knowledge. Wynn (1992) claimed that children become CP-knowers around 3 ½ year-old (42 months) and reported an effect of age suggesting that younger children exhibit lower level of cardinal knowledge (one-, two-and three-knowers) than older children. A similar correlation between age and cardinal knowledge was indeed observed in Study 1. However, convergent observations from Study 1 and 2 indicates that cardinal knowledge were far from achieving maturity at the age of 3 ½ years.", "location": "General Discussion (line 55)", "reason": "The paper states no single overarching replication verdict that overrides its specific comparisons to Wynn (1992). Across the tested claims, the authors explicitly report agreement with several original findings (overall correlation between age and cardinal knowledge level in Study 1, sequential acquisition of small number words, large inter-individual variability in age and developmental time span, and greater use of counting for large than small number words among large-number knowers) alongside explicit disagreement with others (children learned large number words 4-7 sequentially rather than generalizing all-at-once after 3 or 4, achieved full cardinal knowledge much later than 3.5 years, and succeeded at large numbers even with a grabbing strategy). Per the codebook, conflicting comparisons across tested claims yield 'mixed'.", "method": "argon"}}.
+- Row 453, [replicating work](https://doi.org/10.1016/j.jenvp.2026.102956): outcome. Correction: {"outcome": "mixed"}. Evidence: {"outcome": {"quote": "Taken together, the present multisite study partially confirmed the original findings by Ulrich et al. (1991), demonstrating that viewing nature imagery promotes psychophysiological recovery. However, the results for physiological responses highlight the nuanced ways in which exposure to natural and urban environments may influence psychophysiological stress recovery.", "location": "Section 4 (Discussion), p. 10 (lines 860-864); see also Abstract (lines 85-86) and Section 3.2.6 (lines 842-849)", "reason": "The authors explicitly state an overall verdict that their study 'partially confirmed' and 'partially replicate[d]' the original findings of Ulrich et al. (1991). While self-reported psychological recovery (positive affect and anger/aggression) and initial parasympathetic recovery in the forest condition replicated the original results, recovery from fear and sympathetic physiological recovery (SCR and PEP) did not replicate greater recovery in natural conditions, and the stream condition failed to replicate physiological recovery. Under the codebook rules, both the explicit partial-confirmation verdict and the combination of replicated and non-replicated effects require coding the outcome as 'mixed' rather than 'successful'.", "method": "argon"}}.
 - Row 823, [replicating work](https://doi.org/10.1016/j.heliyon.2024.e32467): outcome. Correction: {"outcome": "mixed"}. Evidence: {"outcome": {"quote": "Specifically, the total score of user willingness to pay for social media platforms was higher in 2022 compared to 2020. Furthermore, there was a significant difference in participants’ interest towards data protection, usage not prolonged, and fake news and radicalism reduction. However, the monthly amount participants were willing to pay for messenger services was higher in 2020. The results for Comparison 3 replicated the outcome of Comparison 2 except for data protection and the amount of monthly messenger fee, where the difference between Germans 2020 vs. Germans and Europeans 2022 was insignificant.", "location": "Section 3.2 Comparative analysis", "reason": "The shipped coding ('successful') misinterprets a significant increase in willingness to pay between 2020 and 2022 as confirmation of the 2020 finding. The authors state no overall replication confirmation/failure verdict and instead compare the 2020 and 2022 datasets across multiple measures: some patterns hold across both datasets (insignificant gender and age differences, positive inter-correlations among payment variables, and no significant difference in 'data not used for marketing' or monthly social networking site fee, plus insignificant differences for data protection and monthly messenger fee in Comparison 3), whereas total willingness to pay and several specific service scores differed significantly between 2020 and 2022. Under Rule 2, because some comparisons agree and others diverge, the outcome is 'mixed'.", "method": "argon"}}.
+- Row 1184, [replicating work](https://doi.org/10.1080/01434632.2020.1730861): outcome. Correction: {"outcome": "mixed"}. Evidence: {"outcome": {"quote": "From Table 3, we can see that the previous explicit preference for NESTs has remained\nunchanged, the previous warmer feelings towards LETs have now become neutral, and the previous\nlack of any implicit preference has now become a weak implicit preference for NESTs. Overall, it\nappears that there has been a shift in attitudes of all types in favour of NESTs.", "location": "Results, comparison of Table 3 with prior study", "reason": "Soft failed-versus-mixed difference settled by explicit author comparisons: prior explicit preference remains unchanged, while warmer feelings and implicit preference change. This is partial agreement and partial disagreement, not a failure of every original result.", "method": "obvious"}}.
 - Row 1269, [replicating work](https://doi.org/10.1111/ssqu.13292): type, outcome. Correction: {"type": "reproduction", "outcome": {"outcome_computation": "computational issues", "outcome_robustness": "robustness challenges"}}. Evidence: {"type": {"quote": "Methods I created a dataset that closely matched Kim and Berry's original dataset. I then applied the same difference‐in‐differences model they reported using and two supplementary difference‐in‐differences models. Additionally, I used synthetic control methods for four states to further investigate the causal claim.", "location": "abstract", "reason": "Although titled a replication, the study does not test the finding in a new sample; instead, it reconstructs Kim and Berry's original observational dataset to match their summary statistics, re-runs their reported difference-in-differences specification, and applies alternative difference-in-differences and synthetic control specifications to the same state-level policy data. Under the codebook, re-analysing the original observational data and checking robustness is a reproduction.", "method": "argon"}, "outcome": {"quote": "When excluding fixed effects and trend variables, I found that states with WSPs had about 20 percent fewer unemployed low‐income females. The inclusion of fixed effects and trend variables, which Kim and Berry reported using in their model, caused the WSP variable to become about 0 percent and insignificant. The results of the synthetic control methods provided additional evidence that questions the validity of the original findings. Conclusions Kim and Berry's research seemingly contains significant flaws, including incorrect results.", "location": "abstract", "reason": "With the record type resolved to reproduction, outcome is coded on the two reproduction axes. Re-running the original difference-in-differences specification with the fixed effects and trend variables that Kim and Berry reported using yielded a ~0% insignificant effect rather than the reported ~18% reduction (which only appeared when excluding those controls), establishing 'computational issues'. Supplementary difference-in-differences and synthetic control analyses also challenged the validity of the original causal finding, establishing 'robustness challenges'.", "method": "argon"}}.
 
 ## Unmatched blind targets
 
-24 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+- Confirmed missing target: [Children's understanding of counting](https://doi.org/10.1016/0010-0277(90)90003-3); work 10.5964/jnc.7029, target 0. {"target_index": 0, "field": "missing_row", "method": "argon", "verdict": "blind_right", "corrected_value": {"classification": "omitted target", "doi": "10.1016/0010-0277(90)90003-3", "title": "Children's understanding of counting", "authors": "Wynn, K.", "year": "1990", "type": "replication", "outcome": "mixed"}, "quote": "The present work focused on the GaN from Wynn's (1990Wynn's ( , 1992) ) studies with no intention to test the replicability of results coming from the other tasks (i.e., the Point-to-x task or the colour control task were not administered).", "location": "Study 1, Materials (line 17)", "reason": "Omitted target. The authors explicitly frame their work as a conceptual replication of the Give-a-Number (GaN) observations from both Wynn (1990) and Wynn (1992), and in Study 1 they directly re-test Wynn's (1990) counter vs. grabber strategy predictions (line 30) as well as the all-at-once generalization assumption attributed to Wynn (1990, 1992) (line 28), finding mixed support (confirming that large-number knowers count more frequently for large than small numbers, but finding sequential acquisition of large number words and no difference between terminal-counters and terminal-grabbers in reaching large-number knowledge)."}
+- Confirmed missing target: [The effects of torture: Two community studies](https://doi.org/10.1207/s15327949pac1203_1); work 10.4236/psych.2013.45067, target 0. {"target_index": 0, "field": "missing_row", "method": "argon", "verdict": "blind_right", "corrected_value": {"doi": "10.1207/s15327949pac1203_1", "title": "The effects of torture: Two community studies", "authors": "Kira, I., Templin, T., Lewandowski, L., Clifford, D., Wiencek, E., Hammad, A., Al-Haidar, A., & Mohanesh, J.", "year": "2006"}, "quote": "Partial correlation and hierarchical regression results found that torture trauma and torture severity were not significant predictors of PTSD, other cumulative life traumas that happened before and after torture were the highly significant predictors. These results replicated previous findings of Kira et al., 2006;and Hollifield et al., 2011.", "location": "discussion", "reason": "Omitted target: the paper introduces Kira et al. (2006) in the Introduction as finding that torture did not predict PTSD after controlling for cumulative traumas before and after torture, directly re-tests this relationship in Hypothesis 1 using the CTS in a new clinical sample of 326 torture survivors, and explicitly states in the Discussion that the results replicated the findings of both Kira et al. (2006) and Hollifield et al. (2011) (outcome: successful)."}
+- Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work 10.4236/psych.2013.45067, target 2. {"target_index": 2, "field": "missing_row", "method": "argon", "verdict": "blind_right", "corrected_value": {"doi": "10.1037/a0015681", "title": "A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture", "authors": "Başoglu, M.", "year": "2009"}, "quote": "For torture types, while physical torture did not predict PTSD or CTD, witnessing or psychological torture predicted CTD, and PTSD, replicating Basoglu et al.'s (2009) findings.", "location": "discussion", "reason": "Omitted target: the paper reviews Başoglu (2009) in the Introduction as finding that psychological torture rather than physical torture predicts PTSD, tests the differential effects of physical vs. witnessing/psychological torture subscales in a new clinical sample, and explicitly reports in the Discussion that these results replicated Başoglu et al.'s (2009) findings (outcome: successful)."}
+- Confirmed missing target: [Classifying the torture experiences of refugees living in the United States](https://doi.org/10.1177/0886260506294999); work 10.4236/psych.2013.45067, target 3. {"target_index": 3, "field": "missing_row", "method": "argon", "verdict": "blind_right", "corrected_value": {"doi": "10.1177/0886260506294999", "title": "Classifying the torture experiences of refugees living in the United States", "authors": "Hooberman, J., Rosenfeld, B., Lhewa, D., Rasmussen, A., & Keller, A.", "year": "2007"}, "quote": "Anal rape was associated with PTSD and CTD. Vaginal rape predicted CTD. These results replicated Hooberman et al., 2007, andPunamaki et al., 2010 findings on the development of PTSD symptom following sexual torture.", "location": "discussion", "reason": "Omitted target: the paper introduces Hooberman et al. (2007) in the Introduction as finding that torture rape was the factor associated with PTSD symptoms, tests sexual torture (anal and vaginal rape) as predictors of PTSD and CTD in Hypothesis 2 and hierarchical regressions in a new sample, and explicitly concludes in the Discussion that the results replicated Hooberman et al. (2007) (outcome: successful)."}
+- Confirmed missing target: [Nature of torture, PTSD, and somatic symptoms among political ex-prisoners](https://doi.org/10.1002/jts.20541); work 10.4236/psych.2013.45067, target 4. {"target_index": 4, "field": "missing_row", "method": "argon", "verdict": "blind_right", "corrected_value": {"doi": "10.1002/jts.20541", "title": "Nature of torture, PTSD, and somatic symptoms among political ex-prisoners", "authors": "Punamäki, R., Qouta, S. R., & EI Sarraj, E.", "year": "2010"}, "quote": "Anal rape was associated with PTSD and CTD. Vaginal rape predicted CTD. These results replicated Hooberman et al., 2007, andPunamaki et al., 2010 findings on the development of PTSD symptom following sexual torture.", "location": "discussion", "reason": "Omitted target: the paper cites Punamäki et al. (2010) in the Introduction on torture components and mental health outcomes, re-tests specific torture components including sexual torture in a new clinical sample, and explicitly states in the Discussion that the results replicated Punamäki et al. (2010) findings on the development of PTSD symptoms following sexual torture (outcome: successful)."}
+107 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
-- no_text: 3 works.
-- unattempted: 2294 works.
+- no_text: 11 works.
+- unattempted: 2140 works.
 
 ## Time per work
 
-Elapsed time supplied for 50 / 2344 works; missing times are not imputed. The total is worker time, not wall-clock audit duration.
-Total reported worker time: 3363.5 seconds.
+Elapsed time supplied for 204 / 2344 works; missing times are not imputed. The total is worker time, not wall-clock audit duration.
+Total reported worker time: 15834.0 seconds.
 Per-work elapsed time and skips are recorded in [work_times.csv](work_times.csv).

@@ -18,21 +18,31 @@ def one(fk,items):
  # Final valid adjudication, including undeterminable, is not retried without changed input.
  statepath=R/'argon'/f'{fk}.state.json';state=c.read_json(statepath)[0] or {}
  if state.get('input_sha256')==sig and state.get('status') in ['validated','unresolved']:return {'file_key':fk,'status':'already_final'}
+ serialized=json.dumps(payload,ensure_ascii=False,indent=2)
+ if len(serialized.encode())>90000:
+  payloadpath=R/'argon'/f'{fk}.input.json'
+  atomic(payloadpath,payload)
+  serialized=f'Read the full input JSON at {payloadpath}. It contains shipped_rows, blind_coding, and all review_items. Read the entire input before deciding; return a decision for every requested row/target and field.'
  prompt=f'''Independently adjudicate this FLoRA audit disagreement using the coding rules. Read the source at {textpath} and the codebook at {R/'codebook.md'}. Evidence level is {coding.get('evidence_level')}; abstracts cannot establish absence of evidence in unseen full text. The blind coder is not automatically right and the shipped outcome quote is only a pointer: verify it in source. Identity must be resolved before judging outcomes. Unmatched rows/targets are not errors merely because unmatched; classify as wrong original, omitted target, duplicate, or insufficient evidence from the source. Missing evidence, unclear and cannot_be_determined establish no error. Confidence is descriptive only. Plans retain separate study_status.
 
 Return exactly a JSON object with decisions array, one object for every listed row/field or target/field. Each decision needs input_row_index (for shipped rows) or target_index (for missing_row), field, method="argon", verdict (shipped_right|blind_right|both_wrong|undeterminable), corrected_value (actual final value, or null for undeterminable), quote (verbatim supporting source passage), location, reason. For original-identity decisions, corrected_value is a DOI string or object with doi/title/authors/year; include target_index only where that blind target matches the row, to resolve ambiguous pairing. Valid field names type, original, outcome, outcome_computation, outcome_robustness, missing_row. A shipped_right corrected_value must equal the shipped value in the comparison vocabulary. For reproductions normalize computation not checked/robustness not checked to not checked. For type disagreements also settle outcome if supported; retain unverified if vocabulary depends on an unresolved type. Do not propose an error without a supporting quote. For insufficient evidence give undeterminable and quote the relevant passage showing what the source does support. Use only actual quote text that occurs in the supplied source. End your response with the answer itself under a heading `## Answer`.
 
-INPUTS:\n'''+json.dumps(payload,ensure_ascii=False,indent=2)+'\n\nPut your whole result in your reply; do not create files or run commands.'
+INPUTS:\n'''+serialized+'\n\nPut your whole result in your reply; do not create files or run commands.'
  (R/'argon'/f'{fk}.prompt.txt').write_text(prompt)
  start=time.monotonic()
  for attempt in range(1,3):
   output=R/'argon'/f'{fk}.attempt{attempt}.txt'
   try:
    with output.open('w') as f:
-    p=subprocess.run(['agy','-p',prompt,'--model','Gemini 4 Argon (High)','--sandbox','--add-dir',str(R),'--print-timeout','10m'],stdout=f,stderr=subprocess.STDOUT,timeout=660)
+    try:
+     p=subprocess.run(['agy','-p',prompt,'--model','Gemini 4 Argon (High)','--sandbox','--add-dir',str(R),'--print-timeout','10m'],stdout=f,stderr=subprocess.STDOUT,timeout=660)
+    except subprocess.TimeoutExpired:
+     # run() has killed and reaped our CLI. A complete final answer may already
+     # have been emitted before a transport shutdown hang; validate it below.
+     p=None
    answer=output.read_text();answer=answer.rsplit('## Answer',1)[-1].strip()
    startjson=answer.index('{');obj,end=json.JSONDecoder().raw_decode(answer[startjson:])
-   if p.returncode!=0:raise ValueError('nonzero exit')
+   if p is not None and p.returncode!=0:raise ValueError('nonzero exit')
    if not isinstance(obj.get('decisions'),list) or not obj['decisions']:raise ValueError('missing decisions')
    for d in obj['decisions']:
     d['method']='argon'
@@ -41,7 +51,7 @@ INPUTS:\n'''+json.dumps(payload,ensure_ascii=False,indent=2)+'\n\nPut your whole
    returned={(str(x.get('input_row_index','')),x.get('target_index') if x['field']=='missing_row' else None,x['field']) for x in obj['decisions']}
    if not requested<=returned:raise ValueError('not all requested fields returned')
    atomic(R/'adjudications'/f'{fk}.json',obj)
-   result={'file_key':fk,'status':'validated','attempts':attempt,'input_sha256':sig,'elapsed_seconds':time.monotonic()-start,'at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+   result={'file_key':fk,'status':'validated','attempts':attempt,'input_sha256':sig,'elapsed_seconds':time.monotonic()-start,'transport_timed_out_after_answer':p is None,'at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
    atomic(statepath,result);return result
   except (ValueError,subprocess.TimeoutExpired,OSError) as e:
    error=str(e)

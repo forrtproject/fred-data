@@ -15,6 +15,7 @@ import argparse
 import collections
 import csv
 import hashlib
+from functools import lru_cache
 import json
 from pathlib import Path
 import re
@@ -171,6 +172,14 @@ def pair_originals(rows, targets):
     return sorted(pairs), row_flags, target_flags
 
 
+@lru_cache(maxsize=16)
+def normalized_quote_text(value):
+    # Reuse document normalization across hundreds of target/field checks.
+    value = unicodedata.normalize('NFKC', value).casefold()
+    value = re.sub(r'(?<=\w)-\s*\n\s*(?=\w)', '', value)
+    return re.sub(r'\s+', ' ', value).strip()
+
+
 def quote_present(quote, text):
     """All quoted parts must occur contiguously, allowing Unicode/spacing fixes.
 
@@ -179,13 +188,9 @@ def quote_present(quote, text):
     """
     if not isinstance(quote, str) or not quote.strip() or not text:
         return False
-    def normalized(value):
-        value = unicodedata.normalize('NFKC', value).casefold()
-        value = re.sub(r'(?<=\w)-\s*\n\s*(?=\w)', '', value)
-        return re.sub(r'\s+', ' ', value).strip()
-    source = normalized(text)
+    source = normalized_quote_text(text)
     parts = quote.split(' | ')
-    return all(normalized(part) and normalized(part) in source for part in parts)
+    return all(normalized_quote_text(part) and normalized_quote_text(part) in source for part in parts)
 
 
 def outcome_grade(row, target, axis=None):
@@ -262,6 +267,7 @@ def valid_decision(decision, text):
             and bool(str(decision.get('location') or '').strip())
             and quote_present(decision.get('quote'), text)
             and (decision.get('verdict') == 'undeterminable'
+                 or (decision.get('field') == 'missing_row' and decision.get('verdict') == 'shipped_right')
                  or decision.get('corrected_value') not in (None, '', {}, [])))
 
 

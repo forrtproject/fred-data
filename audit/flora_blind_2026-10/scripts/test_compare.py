@@ -318,3 +318,11 @@ class TypeCorrectionTests(unittest.TestCase):
         self.assertEqual(rs[0]['type_final_verdict'], 'error')
         self.assertEqual(rs[0]['outcome_final_verdict'], 'error')
         self.assertIn('outcome_computation', rs[0]['suggested_correction'])
+
+
+class NoAdditionDecisionTests(unittest.TestCase):
+    def test_no_addition_requires_evidence_but_no_replacement_value(self):
+        d=decision(field='missing_row', verdict='shipped_right', corrected_value='')
+        self.assertTrue(c.valid_decision(d,TEXT))
+        d['quote']='Invented sentence.'
+        self.assertFalse(c.valid_decision(d,TEXT))
