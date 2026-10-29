@@ -2,34 +2,34 @@
 
 This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote.
 
-28 input rows have at least one confirmed field error; 854 / 2818 rows are fully resolved. 399 blind targets have no proposed shipped counterpart; these are not errors by default.
+30 input rows have at least one confirmed field error; 924 / 2818 rows are fully resolved. 451 blind targets have no proposed shipped counterpart; these are not errors by default.
 
 ## Coverage
 
-Works: 2344 total; 1123 attempted; 1048 with verified saved text (773 full text, 275 abstract); 1048 with validated usable coding. Rows fully resolved: 854 / 2818.
+Works: 2344 total; 1253 attempted; 1163 with verified saved text (857 full text, 306 abstract); 1163 with validated usable coding. Rows fully resolved: 924 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement.
 
 ## Confirmed field error rates
 
-- type: 3 / 1204 (0.2%); 1614 unverified; all-row unresolved bounds 0.1%–57.4% (N=2818)
-- original: 2 / 1217 (0.2%); 1601 unverified; all-row unresolved bounds 0.1%–56.9% (N=2818)
-- outcome: 25 / 856 (2.9%); 1962 unverified; all-row unresolved bounds 0.9%–70.5% (N=2818)
-- outcome_computation: 0 / 69 (0.0%); 136 unverified; all-row unresolved bounds 0.0%–66.3% (N=205)
-- outcome_robustness: 0 / 84 (0.0%); 121 unverified; all-row unresolved bounds 0.0%–59.0% (N=205)
+- type: 5 / 1298 (0.4%); 1520 unverified; all-row unresolved bounds 0.2%–54.1% (N=2818)
+- original: 2 / 1311 (0.2%); 1507 unverified; all-row unresolved bounds 0.1%–53.5% (N=2818)
+- outcome: 27 / 926 (2.9%); 1892 unverified; all-row unresolved bounds 1.0%–68.1% (N=2818)
+- outcome_computation: 0 / 73 (0.0%); 132 unverified; all-row unresolved bounds 0.0%–64.4% (N=205)
+- outcome_robustness: 0 / 90 (0.0%); 115 unverified; all-row unresolved bounds 0.0%–56.1% (N=205)
 
 ### By source
 
 - COS:
-  - type: 0 / 449 (0.0%); 271 unverified; all-row unresolved bounds 0.0%–37.6% (N=720)
-  - original: 0 / 451 (0.0%); 269 unverified; all-row unresolved bounds 0.0%–37.4% (N=720)
-  - outcome: 10 / 281 (3.6%); 439 unverified; all-row unresolved bounds 1.4%–62.4% (N=720)
+  - type: 0 / 460 (0.0%); 260 unverified; all-row unresolved bounds 0.0%–36.1% (N=720)
+  - original: 0 / 463 (0.0%); 257 unverified; all-row unresolved bounds 0.0%–35.7% (N=720)
+  - outcome: 10 / 291 (3.4%); 429 unverified; all-row unresolved bounds 1.4%–61.0% (N=720)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - SCORE:
-  - type: 0 / 16 (0.0%); 72 unverified; all-row unresolved bounds 0.0%–81.8% (N=88)
-  - original: 0 / 16 (0.0%); 72 unverified; all-row unresolved bounds 0.0%–81.8% (N=88)
-  - outcome: 0 / 12 (0.0%); 76 unverified; all-row unresolved bounds 0.0%–86.4% (N=88)
+  - type: 0 / 20 (0.0%); 68 unverified; all-row unresolved bounds 0.0%–77.3% (N=88)
+  - original: 0 / 20 (0.0%); 68 unverified; all-row unresolved bounds 0.0%–77.3% (N=88)
+  - outcome: 0 / 15 (0.0%); 73 unverified; all-row unresolved bounds 0.0%–83.0% (N=88)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - i4r:
@@ -39,50 +39,50 @@ Coverage is prioritized and depends on text access. This is not a representative
   - outcome_computation: 0 / 0 (not estimable); 1 unverified; all-row unresolved bounds 0.0%–100.0% (N=1)
   - outcome_robustness: 0 / 0 (not estimable); 1 unverified; all-row unresolved bounds 0.0%–100.0% (N=1)
 - openalex:
-  - type: 0 / 100 (0.0%); 166 unverified; all-row unresolved bounds 0.0%–62.4% (N=266)
-  - original: 0 / 103 (0.0%); 163 unverified; all-row unresolved bounds 0.0%–61.3% (N=266)
-  - outcome: 0 / 81 (0.0%); 185 unverified; all-row unresolved bounds 0.0%–69.5% (N=266)
+  - type: 0 / 110 (0.0%); 156 unverified; all-row unresolved bounds 0.0%–58.6% (N=266)
+  - original: 0 / 113 (0.0%); 153 unverified; all-row unresolved bounds 0.0%–57.5% (N=266)
+  - outcome: 0 / 88 (0.0%); 178 unverified; all-row unresolved bounds 0.0%–66.9% (N=266)
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - openalex_snapshot:
-  - type: 0 / 43 (0.0%); 50 unverified; all-row unresolved bounds 0.0%–53.8% (N=93)
-  - original: 0 / 43 (0.0%); 50 unverified; all-row unresolved bounds 0.0%–53.8% (N=93)
-  - outcome: 0 / 34 (0.0%); 59 unverified; all-row unresolved bounds 0.0%–63.4% (N=93)
+  - type: 0 / 47 (0.0%); 46 unverified; all-row unresolved bounds 0.0%–49.5% (N=93)
+  - original: 0 / 47 (0.0%); 46 unverified; all-row unresolved bounds 0.0%–49.5% (N=93)
+  - outcome: 0 / 37 (0.0%); 56 unverified; all-row unresolved bounds 0.0%–60.2% (N=93)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - replications:
-  - type: 3 / 508 (0.6%); 945 unverified; all-row unresolved bounds 0.2%–65.2% (N=1453)
-  - original: 2 / 514 (0.4%); 939 unverified; all-row unresolved bounds 0.1%–64.8% (N=1453)
-  - outcome: 15 / 386 (3.9%); 1067 unverified; all-row unresolved bounds 1.0%–74.5% (N=1453)
+  - type: 5 / 567 (0.9%); 886 unverified; all-row unresolved bounds 0.3%–61.3% (N=1453)
+  - original: 2 / 573 (0.3%); 880 unverified; all-row unresolved bounds 0.1%–60.7% (N=1453)
+  - outcome: 17 / 429 (4.0%); 1024 unverified; all-row unresolved bounds 1.2%–71.6% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - reproductions:
-  - type: 0 / 88 (0.0%); 109 unverified; all-row unresolved bounds 0.0%–55.3% (N=197)
-  - original: 0 / 90 (0.0%); 107 unverified; all-row unresolved bounds 0.0%–54.3% (N=197)
-  - outcome: 0 / 62 (0.0%); 135 unverified; all-row unresolved bounds 0.0%–68.5% (N=197)
-  - outcome_computation: 0 / 69 (0.0%); 128 unverified; all-row unresolved bounds 0.0%–65.0% (N=197)
-  - outcome_robustness: 0 / 81 (0.0%); 116 unverified; all-row unresolved bounds 0.0%–58.9% (N=197)
+  - type: 0 / 94 (0.0%); 103 unverified; all-row unresolved bounds 0.0%–52.3% (N=197)
+  - original: 0 / 95 (0.0%); 102 unverified; all-row unresolved bounds 0.0%–51.8% (N=197)
+  - outcome: 0 / 66 (0.0%); 131 unverified; all-row unresolved bounds 0.0%–66.5% (N=197)
+  - outcome_computation: 0 / 73 (0.0%); 124 unverified; all-row unresolved bounds 0.0%–62.9% (N=197)
+  - outcome_robustness: 0 / 87 (0.0%); 110 unverified; all-row unresolved bounds 0.0%–55.8% (N=197)
 
 ### By evidence_level
 
 - abstract:
-  - type: 2 / 182 (1.1%); 94 unverified; all-row unresolved bounds 0.7%–34.8% (N=276)
-  - original: 0 / 184 (0.0%); 92 unverified; all-row unresolved bounds 0.0%–33.3% (N=276)
-  - outcome: 4 / 129 (3.1%); 147 unverified; all-row unresolved bounds 1.4%–54.7% (N=276)
+  - type: 3 / 204 (1.5%); 103 unverified; all-row unresolved bounds 1.0%–34.5% (N=307)
+  - original: 0 / 205 (0.0%); 102 unverified; all-row unresolved bounds 0.0%–33.2% (N=307)
+  - outcome: 5 / 146 (3.4%); 161 unverified; all-row unresolved bounds 1.6%–54.1% (N=307)
   - outcome_computation: 0 / 0 (not estimable); 3 unverified; all-row unresolved bounds 0.0%–100.0% (N=3)
   - outcome_robustness: 0 / 3 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=3)
 - full_text:
-  - type: 1 / 1022 (0.1%); 163 unverified; all-row unresolved bounds 0.1%–13.8% (N=1185)
-  - original: 2 / 1033 (0.2%); 152 unverified; all-row unresolved bounds 0.2%–13.0% (N=1185)
-  - outcome: 21 / 727 (2.9%); 458 unverified; all-row unresolved bounds 1.8%–40.4% (N=1185)
-  - outcome_computation: 0 / 69 (0.0%); 26 unverified; all-row unresolved bounds 0.0%–27.4% (N=95)
-  - outcome_robustness: 0 / 81 (0.0%); 14 unverified; all-row unresolved bounds 0.0%–14.7% (N=95)
+  - type: 2 / 1094 (0.2%); 177 unverified; all-row unresolved bounds 0.2%–14.1% (N=1271)
+  - original: 2 / 1106 (0.2%); 165 unverified; all-row unresolved bounds 0.2%–13.1% (N=1271)
+  - outcome: 22 / 780 (2.8%); 491 unverified; all-row unresolved bounds 1.7%–40.4% (N=1271)
+  - outcome_computation: 0 / 73 (0.0%); 28 unverified; all-row unresolved bounds 0.0%–27.7% (N=101)
+  - outcome_robustness: 0 / 87 (0.0%); 14 unverified; all-row unresolved bounds 0.0%–13.9% (N=101)
 - none:
-  - type: 0 / 0 (not estimable); 1357 unverified; all-row unresolved bounds 0.0%–100.0% (N=1357)
-  - original: 0 / 0 (not estimable); 1357 unverified; all-row unresolved bounds 0.0%–100.0% (N=1357)
-  - outcome: 0 / 0 (not estimable); 1357 unverified; all-row unresolved bounds 0.0%–100.0% (N=1357)
-  - outcome_computation: 0 / 0 (not estimable); 107 unverified; all-row unresolved bounds 0.0%–100.0% (N=107)
-  - outcome_robustness: 0 / 0 (not estimable); 107 unverified; all-row unresolved bounds 0.0%–100.0% (N=107)
+  - type: 0 / 0 (not estimable); 1240 unverified; all-row unresolved bounds 0.0%–100.0% (N=1240)
+  - original: 0 / 0 (not estimable); 1240 unverified; all-row unresolved bounds 0.0%–100.0% (N=1240)
+  - outcome: 0 / 0 (not estimable); 1240 unverified; all-row unresolved bounds 0.0%–100.0% (N=1240)
+  - outcome_computation: 0 / 0 (not estimable); 101 unverified; all-row unresolved bounds 0.0%–100.0% (N=101)
+  - outcome_robustness: 0 / 0 (not estimable); 101 unverified; all-row unresolved bounds 0.0%–100.0% (N=101)
 
 ## Every confirmed input-row error
 
@@ -104,8 +104,10 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 505, [replicating work](https://doi.org/10.1073/pnas.2103313118): outcome: failed → successful.
 - Row 823, [replicating work](https://doi.org/10.1016/j.heliyon.2024.e32467): outcome: successful → mixed.
 - Row 833, [replicating work](https://doi.org/10.4054/demres.2025.53.29): type: replication → reproduction.
+- Row 1005, [replicating work](https://doi.org/10.29338/wp2019-15): type: replication → reproduction; outcome: failed → outcome_computation: computationally reproducible; outcome_robustness: robustness challenges.
 - Row 1184, [replicating work](https://doi.org/10.1080/01434632.2020.1730861): outcome: failed → mixed.
 - Row 1269, [replicating work](https://doi.org/10.1111/ssqu.13292): type: replication → reproduction; outcome: failed → outcome_computation: computational issues; outcome_robustness: robustness challenges.
+- Row 1292, [replicating work](https://doi.org/10.1515/jbnst-2025-0084): type: replication → reproduction; outcome: mixed → outcome_computation: computationally reproducible; outcome_robustness: robustness challenges.
 - Row 1479, [replicating work](https://doi.org/10.1073/pnas.2103313118): outcome: mixed → failed.
 - Row 1717, [replicating work](https://doi.org/10.1098/rsos.231240): outcome: failed → uninformative.
 - Row 1836, [replicating work](https://doi.org/10.1073/pnas.2103313118): outcome: mixed → failed.
@@ -128,15 +130,15 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 2 (argon).
 - Confirmed missing target: [Classifying the torture experiences of refugees living in the United States](https://doi.org/10.1177/0886260506294999); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 3 (argon).
 - Confirmed missing target: [Nature of torture, PTSD, and somatic symptoms among political ex-prisoners](https://doi.org/10.1002/jts.20541); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 4 (argon).
-388 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+440 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
 - blinding compromised; coding excluded: 3 works.
-- no_text: 39 works.
-- paper identity conflict; coding excluded: 7 works.
+- no_text: 40 works.
+- paper identity conflict; coding excluded: 9 works.
 - source scope incomplete; coding excluded: 1 works.
-- unattempted: 1246 works.
+- unattempted: 1128 works.
 - Argon 2736b815e9f115a4: unresolved after 2 attempts; Unterminated string starting at: line 274 column 17 (char 26129). 25 independently valid field decisions recovered; remaining fields stay unverified.
 - Argon 9b3c6d39a871d365: unresolved after 2 attempts; invalid decision or quote: outcome. 1 independently valid field decisions recovered; remaining fields stay unverified.
 - Argon ed1f7b7135e869e8: unresolved after 2 attempts; Read-only CLI auto-denied command permission on both attempts; no valid JSON response.. 0 independently valid field decisions recovered; remaining fields stay unverified.
@@ -152,6 +154,6 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 
 ## Time per work
 
-Elapsed time supplied for 1094 / 2344 works; missing times are not imputed. The total is worker time, not wall-clock audit duration.
-Total reported worker time: 74279.9 seconds.
+Elapsed time supplied for 1212 / 2344 works; missing times are not imputed. The total is worker time, not wall-clock audit duration.
+Total reported worker time: 82398.3 seconds.
 Per-work elapsed time and skips are recorded in [work_times.csv](work_times.csv).
