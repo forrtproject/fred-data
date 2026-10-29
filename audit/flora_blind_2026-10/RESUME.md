@@ -21,3 +21,7 @@ Parent next steps during runs:
 6. Stop coding +8h, new adjudications +9.5h. At +10h cancel outstanding tasks, finish/checkpoint report, push, draft PR, REMOVE recovery schedule. Schedule ID is in run_log.md. Remove early if audit complete. Discovery via ALL_TOOLS for scheduler update/delete tools.
 
 Never let recurring schedule continue beyond authorized audit. Never claim complete while work remains. Terminal failures after one retry and access failures stay unverified; all 2,818 input rows must appear in results.
+
+Parent integration updates:
+- `scripts/adjudicate.py` implements retained `agy` calls, max4 via process lock, one retry, JSON+source-quote validation and input-signature checkpoints. Invoke with selected file keys after triage; no args processes all unresolved work groups. Collect its retained terminal session before ending a turn, per skill. Check `argon/*.state.json` and `adjudications/*.json`, then rerun compare.py. Never launch a second runner while an earlier nonlocking runner is active.
+- Parent reviewed engine and improved surname-first reference matching (initials and multipart names), dispatched-attempt accounting and compact time report linked to work_times.csv. 26 tests pass. `scripts/tick.js` now cancels future batches that exceed summed paper caps plus180s checkpoint overhead.
