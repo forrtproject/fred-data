@@ -4725,3 +4725,68 @@ Paper-side skips/checkpoints logged 2026-10-29T14:11:35.831425+00:00:
 - Partial/unevaluable row 2121: pval_value_r (not_comparable). Evidence/reasons: extractions/2121.json and results.csv.
 
 - Hourly checkpoint 2026-10-29T14:11:41.096614+00:00: {"checkpointed": 2164, "o_fully_checked": 188, "o_any_stat_checked": 753, "r_fully_checked": 271, "r_any_stat_checked": 1078, "any_field_checked": 1468, "fully_checked_effects": 41}; 227 confirmed field errors pending remaining adjudications and held-case review. All2164 checkpoints valid;22 tests pass; dataset hash unchanged.
+
+- Parent QC 2026-10-29T14:13:50.278448+00:00: expanded only explicit synonymous metric labels (standardized SEM/path/regression beta, explicitly unstandardized B, named Cohen d annotations, partial eta notation, phi, r-squared, named f-squared and IRR). No numerical conversion; partial vs total eta, partial vs ordinary r, standardization-unspecified coefficients and d variants remain distinct.23 tests pass.
+- Rechecked original blind-source filenames after all children completed. One additional URL-keyed text, Nichols (2006), was inspected by title/author/journal/pages and registered as primary original DOI10.1163/156853706776931385; no other unknown original source keys remain.
+
+Paper-side skips/checkpoints logged 2026-10-29T14:14:30.242570+00:00:
+
+- Partial/unevaluable row 398: es_value_r (differ). Evidence/reasons: extractions/398.json and results.csv.
+- Partial/unevaluable row 399: es_value_r (differ). Evidence/reasons: extractions/399.json and results.csv.
+- Partial/unevaluable row 400: es_value_o (differ), es_value_r (differ). Evidence/reasons: extractions/400.json and results.csv.
+- Partial/unevaluable row 401: es_value_r (differ). Evidence/reasons: extractions/401.json and results.csv.
+- Partial/unevaluable row 404: es_value_r (differ). Evidence/reasons: extractions/404.json and results.csv.
+- Partial/unevaluable row 443: es_value_r (differ). Evidence/reasons: extractions/443.json and results.csv.
+- Partial/unevaluable row 678: es_value_r (differ). Evidence/reasons: extractions/678.json and results.csv.
+- Partial/unevaluable row 1049: es_value_o (differ). Evidence/reasons: extractions/1049.json and results.csv.
+- Partial/unevaluable row 1272: es_value_r (differ). Evidence/reasons: extractions/1272.json and results.csv.
+- Partial/unevaluable row 1302: es_value_r (differ). Evidence/reasons: extractions/1302.json and results.csv.
+- Partial/unevaluable row 1303: es_value_r (differ). Evidence/reasons: extractions/1303.json and results.csv.
+- Partial/unevaluable row 1307: es_value_r (differ). Evidence/reasons: extractions/1307.json and results.csv.
+- Partial/unevaluable row 1314: es_value_r (differ). Evidence/reasons: extractions/1314.json and results.csv.
+- Partial/unevaluable row 1317: es_value_r (differ). Evidence/reasons: extractions/1317.json and results.csv.
+- Partial/unevaluable row 1348: es_value_o (differ). Evidence/reasons: extractions/1348.json and results.csv.
+- Partial/unevaluable row 1399: es_value_r (differ). Evidence/reasons: extractions/1399.json and results.csv.
+- Partial/unevaluable row 2039: es_value_r (differ). Evidence/reasons: extractions/2039.json and results.csv.
+- Partial/unevaluable row 2122: es_value_r (differ). Evidence/reasons: extractions/2122.json and results.csv.
+- Partial/unevaluable row 2127: es_value_r (differ). Evidence/reasons: extractions/2127.json and results.csv.
+- Partial/unevaluable row 2131: es_value_r (differ). Evidence/reasons: extractions/2131.json and results.csv.
+
+- Focused Argon review 2026-10-29T14:15:16.613211+00:00: ES233 original is shipped_right. Three comment variants crossed with five readability responses justify df8, N104 after exclusions; absence of inline df/N is not an error. Quote and reasoning validated in adjudications/validated_a3e849a0f2155fac.json; hold cleared, prior false-positive retained in audit trail.
+
+- Focused Argon review 2026-10-29T14:16:50.155329+00:00: ES322 replication remains an error, corrected to F(3,93)=27.62, replacing erroneous denominator df28. Parent checked primary methods (32 retained participants; univariate within-subject analysis of four schedules) and independently reproduced Table1 auxiliary p-values from F(3,93), unlike F(3,28). Full statistic correction now supplied; hold cleared.
+
+- Focused-review queue guard: do not dispatch a new focused call for a held field once a valid focused reply exists; wait for parent inspection. Before this guard,322 was redundantly queued while its first focused response awaited inspection. Verified termination of only its exact-own-key second CLI process341093; first valid response retained. No unrelated process touched.
+- ANOVA auxiliary numerical detail: F(3,93)=1.78 gives p=.15638, agreeing with printed .156. F(3,93)=3.64 gives p=.01560, close to but not exactly printed .015; it is corroboration of design, not exact rounding agreement. The method/design and first auxiliary test establish the inference; no dataset value changed.
+
+- Focused review ES644 original: full corrected statistic X2(1,N=51)=16.3. Parent checked group-level binomial model and group counts (15 two-person groups and12 each of4/8/16 persons:51 groups,366 individuals). The individual headcount is not the analytic group count for this test. Hold cleared; original/replication sources kept distinct.
+
+- Parent bounded correction acquisition 2026-10-29T14:22:13.569996+00:00: retrieved official open-access correction DOI10.1073/pnas.2320273120 (PMC10756190) in under2minutes through EuropePMC API; verified XML DOI/title and explicit relation to original DOI10.1073/pnas.1704032114. It expressly replaces focal chi-square24.3 with21.7. ES779 original therefore shipped_right by direct published correction (obvious version discrepancy); parent override cites correction, prior extraction and both Argon replies retained. No third adjudication call needed, no signed-in browser or paid access used. Hold cleared.
+
+- Parent narrative-verdict QC 2026-10-29T14:23:25.349029+00:00: held reported_success382,383,857,858 for focused review. Their prior quotes may support statistics/direction without establishing the authors own vocabulary verdict. Codebook rechecked: narrative interpretation is required, with no deterministic mapping from p or direction and no definition equating nonsignificance with descriptive only. Require actual author interpretation or undeterminable.
+
+Paper-side skips/checkpoints logged 2026-10-29T14:23:58.820045+00:00:
+
+- Partial/unevaluable row 382: reported_success (differ). Evidence/reasons: extractions/382.json and results.csv.
+- Partial/unevaluable row 383: reported_success (differ). Evidence/reasons: extractions/383.json and results.csv.
+
+- Focused narrative review 2026-10-29T14:27:40.933050+00:00: reported_success382 and383 are undeterminable. Prior descriptive-only corrections improperly inferred a label from nonsignificance; author overall main-effect success does not uniquely establish these within-condition pilot comparisons. Both removed from error counts, latest validated source-grounded reply retained (5cd108f83e7c225e), holds cleared.
+
+- Focused narrative review 2026-10-29T14:29:24.878160+00:00: reported_success857 and858 are undeterminable, not confirmed errors. Source follow-up analyses provide numerical findings without a target-specific author replication verdict; prior successful labels were inferred from direction/significance. Validated focused reply c1505698a150bc6e retained, holds cleared. All held cases now reviewed.
+
+- Narrative QC corroboration: inspected Many Labs3 primary text for reported_success711 and717; discussion expressly says the Elaboration Likelihood and Self-Esteem/Subjective Distance interactions did not replicate, while distinguishing their successful main effects. Retained effect-specific failed corrections; they are not inferred only from nonsignificance.
+
+- Parent flag-confirmation refinement 2026-10-29T14:31:25.187711+00:00: REPORT now counts a diagnostic flag as source-confirmed only if applying already confirmed relevant corrections in memory resolves that exact deterministic check. This also recognises corrected test-statistic df and Pearson analytic n, rather than matching only the p-value field. Added flag_confirmation.csv with every flag and recomputation outcome; no data changes and no automatic error classifications.24 tests pass.
+- Held ES322 ORIGINAL for a focused df review: proposed F=10.76 is incomplete and may merely remove unprinted parameters; must independently establish original-study df, distinct from the already settled replication-side case.
+
+- Export-validation preflight found that legacy parent target-exclusion notes did not meet the machine-verifiable text-quote check. Removed unused row201 resolutions (all three original values are null and remain unverified from their checkpoint); retained its target-mismatch narrative in that checkpoint. For row1273, replaced visual/statistical quotations with an exact primary-text hypothetical-vignette quotation supporting only the target exclusion; no numeric value is certified. Global quote validation remains strict. Prior evidence remains in version history/checkpoints.
+
+- Delivery-failure audit: two invocations of keyae04aacefd32dff9 (110 fields,244513-byte prompt) failed immediately with exit126/Argument list too long and never launched a model. They had incorrectly consumed the substantive retry budget; retained both failure records but exclude only this specifically verified pre-launch OS failure from model-attempt counts. Requeue this review with a stable transport-repair context and prioritise it after focused reviews. Prompts above110000bytes now use a read-only task-file pointer plus explicit adjudications/texts access; smaller prompts retain inline delivery. No model substitution, no extra substantive retry, no relaxed evidence validation. Exact-payload process identity also verifies referenced prompt files remain inside this audit.25 tests pass.
+
+- Focused ES322 original review validated in bc3a3b6ee845891e: full correction F(1,26)=10.76. The original N27 within-subject study explicitly tests linear effects, so this is a single-df contrast; parent independently computed p=.003, matching Table1, rather than the coded omnibus F(3,78). Prior incomplete F=10.76 correction superseded; hold cleared. Distinct replication-side correction remains F(3,93)=27.62.
+
+- Large-batch response checkpointing: the repaired110-field call is streaming valid JSON but may end mid-object at its time limit. Validator now preserves only syntactically complete objects from the beginning of an answer array, then applies the unchanged expected-field, unique-key, location/reason and exact-quote checks. Missing/truncated fields remain failures and consume at most the existing bounded retry. No regex extraction of arbitrary braces, no acceptance of timeout messages or incomplete objects. Cache version bumped to recheck old partial outputs for recoverable complete objects without any new model call.26 tests pass, including braces inside strings and rejection of timeout banners.
+
+- Repaired large batch8eac59ce2936132c completed with all110 items valid as complete JSON; no additional substantive retry needed. Future CLI task records also retain the intended output-file path separately from captured launcher stdout, rather than allowing the latter to overwrite it. Older raw response paths remain deterministically identified by task key.
+
+- Hourly checkpoint 2026-10-29T14:59:43.625574+00:00: {"checkpointed": 2164, "o_fully_checked": 216, "o_any_stat_checked": 772, "r_fully_checked": 362, "r_any_stat_checked": 1155, "any_field_checked": 1550, "fully_checked_effects": 57}; 246 confirmed field errors; 131 paper groups pending bounded adjudication. All2164 checkpoints valid,26 unit checks and full export/evidence accounting preflight pass; dataset hash unchanged. Repaired110-field delivery completed successfully. Parent loop now omits finished extraction polling and reports compact adjudication progress every cycle; four-call ceiling and all deadlines unchanged.

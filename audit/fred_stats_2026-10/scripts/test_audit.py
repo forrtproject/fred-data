@@ -5,7 +5,7 @@ from compare import adjudication_confirms_shipped,comp,source_prefix,original_se
 from schema import validate
 from retries import failure,atomic
 from prepare import locators
-from validate_adjudication import validate_batch
+from validate_adjudication import validate_batch,parse_response
 from protect_enrichment import preserve_completed
 from stop_argon import prompt_key
 class AuditChecks(unittest.TestCase):
@@ -54,6 +54,13 @@ class AuditChecks(unittest.TestCase):
   self.assertEqual(comp('es_value_o','.30',{'value':'.30','metric':'partial eta squared'},{'es_type_o':'etasq (partial)'}),'agree')
   self.assertEqual(comp('es_value_o','.30',{'value':'.30','metric':'d'},{'es_type_o':'r'}),'not_comparable')
   self.assertEqual(comp('es_value_o','.30',{'value':'-.30','metric':'r'},{'es_type_o':'r'}),'differ')
+ def test_equivalent_metric_labels_preserve_substantive_distinctions(self):
+  from compare import metric
+  for alias,canonical in [('β (standardized SEM coefficient)','beta (std)'),('B (unstandardized)','b (unstd)'),('partial η²','etasq (partial)'),('Cohen’s d (author-derived standardized effect size)','d')]:
+   self.assertEqual(metric(alias),canonical)
+  self.assertNotEqual(metric('etasq'),metric('partial eta squared'))
+  self.assertNotEqual(metric('r'),metric('partial r'))
+  self.assertNotEqual(metric('beta (std)'),metric('β (logistic regression coefficient; not explicitly standardised)'))
  def test_failure_schema_rejects_fabricated_value(self):
   x=failure(1,'timeout');validate(x);x['original']['n']['value']='100'
   with self.assertRaises(ValueError):validate(x)
@@ -82,6 +89,11 @@ class AuditChecks(unittest.TestCase):
    base={'audit_id':1,'field':'n_o','verdict':'blind_right','correct_value':'20','location':'p. 1','quote':'There were 20 participants.','source_path':str(source),'reason':'The analytic sample had 20 participants.'}
    bad={**base,'field':'n_r','quote':'Not in the supplied source.'}
    good,failed=validate_batch([base,bad],[{'audit_id':1,'field':'n_o'},{'audit_id':1,'field':'n_r'}]);self.assertEqual(len(good),1);self.assertEqual(len(failed),1);self.assertEqual(good[0]['field'],'n_o')
+ def test_truncated_answer_keeps_only_complete_json_objects(self):
+  a={'audit_id':1,'field':'n_o','reason':'A brace } in a string is not an object boundary.'}
+  text='## Answer\n```json\n['+json.dumps(a)+', {"audit_id":2,"field":"n'
+  parsed,mode=parse_response(text);self.assertEqual(parsed,[a]);self.assertEqual(mode,'complete_object_prefix')
+  with self.assertRaises(json.JSONDecodeError):parse_response('[agy] print timeout after 10m')
  def test_original_secondary_source_is_not_primary_verification(self):
   import hashlib
   row={'doi_o':'10.1/original','doi_r':'10.2/replication'};key=hashlib.sha256(row['doi_r'].encode()).hexdigest()[:24]
@@ -108,6 +120,21 @@ class AuditChecks(unittest.TestCase):
   for preamble in ['Initial instruction','Revised instruction']:
    self.assertEqual(prompt_key(['agy','-p',preamble+'\n\n'+json.dumps(payload),'--add-dir',root]),expected)
   self.assertIsNone(prompt_key(['agy','-p','Other\n\n'+json.dumps(payload),'--add-dir','/unrelated/audit/texts']))
+ def test_large_prompt_file_identity_is_scoped_and_payload_verified(self):
+  import tempfile,hashlib
+  root=Path(__file__).resolve().parents[1];payload=[{'audit_id':999999,'field':'n_o'}];key=hashlib.sha256(json.dumps(payload,sort_keys=True).encode()).hexdigest()[:16]
+  with tempfile.TemporaryDirectory(dir=root/'adjudications') as temp:
+   path=Path(temp)/('prompt_'+key+'.txt');path.write_text('Instruction\n\n'+json.dumps(payload))
+   args=['agy','-p','FRED_AUDIT_PROMPT_FILE: '+str(path)+'\nRead it.','--add-dir',str(root/'texts')]
+   self.assertEqual(prompt_key(args),key)
+   args[2]='FRED_AUDIT_PROMPT_FILE: /unrelated/prompt_'+key+'.txt';self.assertIsNone(prompt_key(args))
+ def test_flag_confirmation_requires_recomputed_resolution(self):
+  from confirm_flags import confirm_flags
+  r={'input_row_index':1,'es_value_o':'t(48)=2.1','es_type_o':'test statistic','n_o':'49','nested_o':'no','pval_tails_o':'2','pval_value_o':'.8','pval_type_o':'e'}
+  flags=[{'input_row_index':'1','flags':'p_consistency_o'}]
+  self.assertEqual(confirm_flags([r],flags,[{'audit_id':1,'field':'es_value_r','correction':'5'}])[0]['confirmation'],'no_relevant_confirmed_correction')
+  self.assertEqual(confirm_flags([r],flags,[{'audit_id':1,'field':'pval_value_o','correction':'.04'}])[0]['confirmation'],'resolved_by_confirmed_correction')
+  self.assertEqual(confirm_flags([r],flags,[{'audit_id':1,'field':'es_value_o','correction':'t(48)=0.254'}])[0]['confirmation'],'resolved_by_confirmed_correction')
  def test_effect_keys_and_complete_exports(self):
   import csv
   b=Path(__file__).resolve().parents[1]

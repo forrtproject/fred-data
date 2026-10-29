@@ -34,8 +34,11 @@ for(const a of queue){
  if(active.some(x=>x.source_path===a.source_path))continue;
  const attempt=old?old.attempt+1:1;
  if(old)await tools.exec_command({cmd:`cp '${a.output}' '${a.output}.attempt1'`,max_output_tokens:100});
- const p=await tools.exec_command({cmd:`agy -p "$(cat '${a.prompt}')" --model "Gemini 4 Argon (High)" --sandbox --add-dir '${B}/texts' --print-timeout 10m > '${a.output}' 2>&1`,yield_time_ms:1000,max_output_tokens:500});
- const record={...a,...p,attempt,started_at:new Date().toISOString()};latest[a.key]=record;states[a.key]={terminal:p.exit_code!==undefined,attempt,exit_code:p.exit_code};active.push(record);await append('adjudication_tasks.jsonl',record);
+ const fileTransport=a.prompt_bytes>110000;
+ const promptArg=fileTransport?`'FRED_AUDIT_PROMPT_FILE: ${a.prompt}
+Read the complete task in that file and execute it exactly. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.'`:`"$(cat '${a.prompt}')"`;
+ const p=await tools.exec_command({cmd:`agy -p ${promptArg} --model "Gemini 4 Argon (High)" --sandbox --add-dir '${B}/texts' ${fileTransport?`--add-dir '${B}/adjudications'`:''} --print-timeout 10m > '${a.output}' 2>&1`,yield_time_ms:1000,max_output_tokens:500});
+ const record={...a,...p,output:a.output,launcher_output:p.output,transport:fileTransport?'read_only_prompt_file':'inline_argument',attempt,started_at:new Date().toISOString()};latest[a.key]=record;states[a.key]={terminal:p.exit_code!==undefined,attempt,exit_code:p.exit_code};active.push(record);await append('adjudication_tasks.jsonl',record);
  for(const item of a.items)await append('disagreement_decisions.jsonl',{...item,classification:'non_obvious',reason:'Not established as rounding, documented direction reversal, known different target, or visible transcription slip; independent adjudication required.',evidence_location:a.source_path,adjudication_key:a.key});
 }
 await write('adjudication_status.json',states);

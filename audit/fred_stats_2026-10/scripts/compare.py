@@ -28,6 +28,39 @@ def quote_ok(e):
 def metric(s):
  s=str(s or '').strip().lower().replace('’',"'")
  aliases={"cohen's d":'d','pearson r':'r','pearson correlation':'r',"hedges g":"hedges' g",'partial eta squared':'etasq (partial)','partial eta-squared':'etasq (partial)','ηp2':'etasq (partial)','eta squared':'etasq','eta-squared':'etasq','η2':'etasq','standardized beta':'beta (std)','standardised beta':'beta (std)','unstandardized b':'b (unstd)','unstandardised b':'b (unstd)','odds ratio':'or'}
+ aliases.update({
+  'b (unstandardized)':'b (unstd)',
+  'b (unstandardized regression coefficient)':'b (unstd)',
+  'unstandardized regression coefficient':'b (unstd)',
+  'unstandardized regression coefficient (estimate)':'b (unstd)',
+  'unstandardized regression coefficient (b)':'b (unstd)',
+  'unstandardized regression coefficient (thousands of dollars)':'b (unstd)',
+  'b (unstandardized, replication_raw_stat)':'b (unstd)',
+  'b (unstandardized regression coefficient; outcome log(price))':'b (unstd)',
+  'β (standardized sem coefficient)':'beta (std)',
+  'β (standardized regression coefficient)':'beta (std)',
+  'standardized regression coefficient':'beta (std)',
+  'standardized regression coefficient β':'beta (std)',
+  'standardized regression coefficient (beta)':'beta (std)',
+  'standardized regression coefficient (author table code b)':'beta (std)',
+  'standardized beta (β)':'beta (std)',
+  'standardized path coefficient (β)':'beta (std)',
+  'partial η²':'etasq (partial)','partial η2':'etasq (partial)',
+  'np2 (partial eta squared)':'etasq (partial)',
+  'ŋ_p² (partial eta squared, as printed)':'etasq (partial)',
+  'partial eta square':'etasq (partial)',
+  'r²':'r-squared','φ':'phi',
+  "cohen's f2":"cohen's f^2", "cohen's f²":"cohen's f^2",
+  "cohen's f squared":"cohen's f^2",'f-squared':"cohen's f^2",
+  'incidence rate ratio (irr)':'irr','odds ratio (or)':'or',
+  "hedges's g":"hedges' g",
+  'η² (printed as eta squared)':'etasq','eta-squared (η²)':'etasq',
+  "cohen's d (author-derived standardized effect size)":'d',
+  "cohen's d (authors' weighted table value)":'d',
+  "cohen's d (author-derived table column rep_d_calc)":'d',
+  "cohen's d (author-supplied table)":'d',
+  "cohen's d (random-effects meta-analysis)":'d',
+ })
  if s.startswith('partial eta squared') or s.startswith('partial eta-squared'):return 'etasq (partial)'
  if s in ['η²','η2','η² (eta squared)']:return 'etasq'
  if s in ['η²p','ηp²','ηp2','η2p']:return 'etasq (partial)'
