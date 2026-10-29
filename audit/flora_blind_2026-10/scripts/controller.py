@@ -18,7 +18,7 @@ def state():
 def validate(p):
  import jsonschema
  c=read(p)
- if not c:return False
+ if not c or c.get('blind_source_warning'):return False
  try:
   if c.get('status') in ['no_text','timeout','error']:
    return isinstance(c.get('work_key'),str) and c['status'] in ['no_text','timeout','error']
@@ -65,7 +65,7 @@ def prepare():
   entry.update(text_path=str(out) if out.exists() else None,output_path=str(R/'codings'/f'{k}.json'),time_cap_seconds=480 if w['row_count']>1 else 180)
   payload.append(entry)
  schema=(R/'coding_schema.json').read_text();book=(R/'codebook.md').read_text()
- prompt='''You are a BLIND paper coding child. Your only task is to code the works below sequentially. Do not open flora.csv, FReD, the FLoRA/FORRT websites or any FORRT dataset. Do not search the repository. Do not read any parent brief, manifest, queue, tasks, results, report, comparison or other coder outputs. Do not delegate further. Do not stage, commit or push. Return only counts and output paths, never paper text. Only write the assigned output paths and their source text paths, plus uniquely named temporary files alongside them. No questions: decide and record uncertainty.
+ prompt='''You are a BLIND paper coding child. Your only task is to code the works below sequentially. Do not open flora.csv, FReD, the FLoRA/FORRT websites or any FORRT dataset. Do not search the repository. Exclude FORRT domains from all web searches (for example -site:forrt.org). If a snippet nevertheless exposes FORRT dataset coding, record blind_source_warning and stop that work for a fresh-child retry; never use those snippets. Do not read any parent brief, manifest, queue, tasks, results, report, comparison or other coder outputs. Do not delegate further. Do not stage, commit or push. Return only counts and output paths, never paper text. Only write the assigned output paths and their source text paths, plus uniquely named temporary files alongside them. No questions: decide and record uncertainty.
 
 Acquisition route: parent-supplied cached text first; otherwise DOI landing page, Unpaywall, OpenAlex best_oa_location, PMC/Europe PMC, OSF API file listing (including DOCX), PsyArXiv/preprints; then download-paper skill open-access chain WITHOUT signed-in Chrome. Use title_r to verify paper identity and boundaries and authors before full-text coding. Abstracts, previews, supplements are not full text. Budget acquisition 90 seconds plus at most 30 seconds for one promising alternative, no repeated 403/challenge/unchanged miss. If unavailable, use OpenAlex/Crossref abstract and label abstract. No abstract => no_text. Entire ordinary work cap 180 seconds, complex cap 480 seconds including acquisition. On cap write timeout with whatever is known. Save extracted text (including references when full text) through a temp file and atomic rename to audit/flora_blind_2026-10/texts/<file_key>.txt. Record actual source URL, UTC retrieved_at, SHA256 of saved bytes, parser, evidence_level. Parent cached text is the first source: inspect its header for provenance, record cache helper as parser if otherwise unavailable.
 

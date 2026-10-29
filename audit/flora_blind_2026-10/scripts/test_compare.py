@@ -326,3 +326,15 @@ class NoAdditionDecisionTests(unittest.TestCase):
         self.assertTrue(c.valid_decision(d,TEXT))
         d['quote']='Invented sentence.'
         self.assertFalse(c.valid_decision(d,TEXT))
+
+
+class BlindingValidityTests(unittest.TestCase):
+    def test_exposed_coding_cannot_enter_primary_comparison(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            (root/'codings').mkdir()
+            data=coding(blind_source_warning='Incidental FORRT search snippet')
+            (root/'codings'/'test.json').write_text(json.dumps(data))
+            _, error, text=c.load_coding(root,'test',data.get('work_key',''),{})
+            self.assertEqual(error,'blinding compromised; coding excluded')
+            self.assertEqual(text,'')

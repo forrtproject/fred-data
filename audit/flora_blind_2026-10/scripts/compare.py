@@ -229,6 +229,8 @@ def load_coding(root, file_key, work_key, schema):
         return {}, error, ''
     if not isinstance(coding, dict):
         return {}, 'malformed coding: expected object', ''
+    if coding.get('blind_source_warning'):
+        return coding, 'blinding compromised; coding excluded', ''
     if coding.get('work_key') != work_key:
         return coding, 'work_key mismatch', ''
     if coding.get('status') != 'done':
@@ -559,6 +561,9 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
         for line in (root / 'tasks.jsonl').read_text().splitlines():
             try: attempted_files.update(json.loads(line).get('files', []))
             except (ValueError, TypeError): pass
+    incidents, _ = read_json(root / 'blinding_incidents.json')
+    for incident in incidents or []:
+        issues.append(f"Blinding exclusion {incident['file_key']}: original coding quarantined; only a fresh-child coding may enter primary results. See blinding_incidents.json.")
     for work_key, keys in grouped.items():
         if len({k['file_key'] for k in keys}) != 1:
             raise ValueError('one work_key has multiple file_keys')
