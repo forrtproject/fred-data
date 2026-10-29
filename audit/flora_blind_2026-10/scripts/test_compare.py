@@ -308,3 +308,13 @@ class CitationSurnameTests(unittest.TestCase):
             self.assertEqual(c.surname(citation), 'bryan')
         self.assertEqual(c.surname('van Dijk J. R., Smith A.'), 'vandijk')
         self.assertEqual(c.surname('van Dijk; Smith'), 'vandijk')
+
+
+class TypeCorrectionTests(unittest.TestCase):
+    def test_reproduction_outcome_after_type_correction(self):
+        ds = [decision(field='type', corrected_value='reproduction'),
+              decision(field='outcome', corrected_value={'outcome_computation': 'computational issues', 'outcome_robustness': 'robustness challenges'})]
+        rs, _, _ = compare(decisions=ds)
+        self.assertEqual(rs[0]['type_final_verdict'], 'error')
+        self.assertEqual(rs[0]['outcome_final_verdict'], 'error')
+        self.assertIn('outcome_computation', rs[0]['suggested_correction'])

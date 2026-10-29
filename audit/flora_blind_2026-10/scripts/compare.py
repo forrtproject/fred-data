@@ -376,7 +376,11 @@ def compare_work(rows, keys, coding, error, text, decisions):
                                'outcome': REPLICATION - UNKNOWN,
                                'outcome_computation': set(COMPUTATION.values()) - UNKNOWN,
                                'outcome_robustness': set(ROBUSTNESS.values()) - UNKNOWN}
-                    if field in allowed and (not isinstance(value, str) or value not in allowed[field]):
+                    changed_to_reproduction = (field == 'outcome' and isinstance(value, dict)
+                        and corrections.get('type') == 'reproduction'
+                        and value.get('outcome_computation') in set(COMPUTATION.values()) - UNKNOWN
+                        and value.get('outcome_robustness') in set(ROBUSTNESS.values()) - UNKNOWN)
+                    if field in allowed and not changed_to_reproduction and (not isinstance(value, str) or value not in allowed[field]):
                         continue
                     shipped = row.get('doi_o') if field == 'original' else row.get(field)
                     if field != 'original' and ((d['verdict'] == 'shipped_right') != (value == shipped)):
