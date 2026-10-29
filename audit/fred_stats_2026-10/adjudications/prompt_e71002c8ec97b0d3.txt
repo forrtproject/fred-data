@@ -1,0 +1,93 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1534,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "14",
+    "shipped_metric": "etasq",
+    "shipped_bound": null,
+    "blind": {
+      "value": "14",
+      "sample_role": "participants in paired hand-area comparison",
+      "exclusions": "One of the 15 recruited participants removed for misunderstanding instructions.",
+      "location": "pp. 1376–1377, Experiment 3 Participants and Results and Discussion",
+      "quote": "Fifteen right-handed (6 female and 9 male) University of Virginia students participated in Experiment 3; One participant’s data were removed from the analysis because he indicated that he misunderstood the instructions; t(13)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/79b10e7ab3ef01f3e145b715.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Linkenauger, S. A., Witt, J. K., Bakdash, J. Z., Stefanucci, J. K., & Proffitt, D. R. (2009). Asymmetrical Body Perception. Psychological Science, 20(11), 1373–1380. https://doi.org/10.1111/j.1467-9280.2009.02447.x",
+      "doi_o": "10.1111/j.1467-9280.2009.02447.x",
+      "study_o": "3",
+      "ref_r": "Collier, E. S., & Lawson, R. (2017). It’s out of my hands! Grasping capacity may not influence perceived object size. Journal of Experimental Psychology: Human Perception and Performance, 43(4), 749–769. https://doi.org/10.1037/xhp0000331",
+      "doi_r": "10.1037/xhp0000331",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "etasq",
+      "es_type_r": "test statistic",
+      "audit_id": 1534,
+      "description": "Perceived length of right versus left hands in right-handed participants.",
+      "locators_o": "p. 1377",
+      "locators_r": "p. 751",
+      "text_paths": {}
+    },
+    "work_key": "10.1037/xhp0000331",
+    "coding_context": {
+      "es_repr": "p. 1377",
+      "description": "right-handed participants perceived their [...] right hands to be longer than their left [...] hands,",
+      "reported_success_quote": "We replicated the finding that right handers overestimate the size and grasping capacity of their right hand relative to their left hand. However, when estimates of object size and grasping capacity were made in separate tasks, objects grasped in the right hand were not\nunderestimated relative to those grasped in the left hand. Further, when grasping capacity was physically\nrestricted, observers appropriately recalibrated their perception of their maximum grasp but estimates of\nobject size were unaffected.",
+      "pval_tails": null,
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1534,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.2",
+    "shipped_metric": "etasq",
+    "shipped_bound": null,
+    "blind": {
+      "value": ".41",
+      "metric": "partial eta-squared (ηp²)",
+      "test_statistic": "t(13) = 3.03",
+      "location": "p. 1377, Experiment 3 Results and Discussion, hand-size accuracy paragraph",
+      "quote": "Participants underestimated the size of their left hand (M = 0.91, SD = 0.19) more than the size of their right hand (M = 0.99, SD = 0.18), t(13) = 3.03, prep = .97, ηp² = .41.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/79b10e7ab3ef01f3e145b715.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Linkenauger, S. A., Witt, J. K., Bakdash, J. Z., Stefanucci, J. K., & Proffitt, D. R. (2009). Asymmetrical Body Perception. Psychological Science, 20(11), 1373–1380. https://doi.org/10.1111/j.1467-9280.2009.02447.x",
+      "doi_o": "10.1111/j.1467-9280.2009.02447.x",
+      "study_o": "3",
+      "ref_r": "Collier, E. S., & Lawson, R. (2017). It’s out of my hands! Grasping capacity may not influence perceived object size. Journal of Experimental Psychology: Human Perception and Performance, 43(4), 749–769. https://doi.org/10.1037/xhp0000331",
+      "doi_r": "10.1037/xhp0000331",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "etasq",
+      "es_type_r": "test statistic",
+      "audit_id": 1534,
+      "description": "Perceived length of right versus left hands in right-handed participants.",
+      "locators_o": "p. 1377",
+      "locators_r": "p. 751",
+      "text_paths": {}
+    },
+    "work_key": "10.1037/xhp0000331",
+    "coding_context": {
+      "es_repr": "p. 1377",
+      "description": "right-handed participants perceived their [...] right hands to be longer than their left [...] hands,",
+      "reported_success_quote": "We replicated the finding that right handers overestimate the size and grasping capacity of their right hand relative to their left hand. However, when estimates of object size and grasping capacity were made in separate tasks, objects grasped in the right hand were not\nunderestimated relative to those grasped in the left hand. Further, when grasping capacity was physically\nrestricted, observers appropriately recalibrated their perception of their maximum grasp but estimates of\nobject size were unaffected.",
+      "pval_tails": null,
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

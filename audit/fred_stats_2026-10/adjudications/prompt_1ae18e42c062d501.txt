@@ -1,0 +1,141 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1515,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "29",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "120",
+      "location": "Accepted manuscript pp. 7–9, Stimuli, Procedure and Experiment 1 main data",
+      "quote": "One hundred and twenty digital photographs of female bodies were used as stimuli in this study.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/043f9da0b943fc633187c6ba.txt",
+      "confident": true,
+      "sample_role": "Stimulus photographs / women depicted, each contributing a mean estimated weight to the OLS regression; 29 female raters are not the regression observation count.",
+      "exclusions": "Potential raters with current or past eating disorders excluded during recruitment. No stimulus exclusions reported; model F(1,118) is consistent with 120 stimulus observations."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Cornelissen, K. K., Gledhill, L. J., Cornelissen, P. L., & Tovée, M. J. (2016). Visual biases in judging body weight. British Journal of Health Psychology, 21(3), 555–569. Portico. https://doi.org/10.1111/bjhp.12185",
+      "doi_o": "10.1111/bjhp.12185",
+      "study_o": "1",
+      "ref_r": "Brokjøb, L. G., Cornelissen, P. L., Gumančík, J., McCarty, K., Tovée, M. J., & Cornelissen, K. K. (2024). Evidence for a specific distortion in perceptual body image in eating disorders: A replication and extension. PLOS ONE, 19(11), e0313619. https://doi.org/10.1371/journal.pone.0313619",
+      "doi_r": "10.1371/journal.pone.0313619",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1515,
+      "description": "Perceptual body image in eating disorders.",
+      "locators_o": "p.5",
+      "locators_r": "p. 12",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/27ef689bc56b0705a30536fc.txt"
+      }
+    },
+    "work_key": "10.1371/journal.pone.0313619",
+    "coding_context": {
+      "es_repr": "p.5",
+      "description": "distortion in perceptual body image in eating disorders",
+      "reported_success_quote": "Low-BMI control participants overestimated their size, while high-BMI controls underestimated their size, exhibiting the expected normal perceptual contraction bias. However, the women with a history of eating disorders showed no evidence of contraction bias.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1515,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.71",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "0.71",
+      "location": "Accepted manuscript p. 10, Experiment 1 main data",
+      "quote": "β1 = 0.71, t = 26.96, p < .0001, CI [0.66 - 0.76]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/043f9da0b943fc633187c6ba.txt",
+      "confident": true,
+      "metric": "β1 (unstandardized regression slope, estimated weight on actual weight)",
+      "test_statistic": "t = 26.96"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Cornelissen, K. K., Gledhill, L. J., Cornelissen, P. L., & Tovée, M. J. (2016). Visual biases in judging body weight. British Journal of Health Psychology, 21(3), 555–569. Portico. https://doi.org/10.1111/bjhp.12185",
+      "doi_o": "10.1111/bjhp.12185",
+      "study_o": "1",
+      "ref_r": "Brokjøb, L. G., Cornelissen, P. L., Gumančík, J., McCarty, K., Tovée, M. J., & Cornelissen, K. K. (2024). Evidence for a specific distortion in perceptual body image in eating disorders: A replication and extension. PLOS ONE, 19(11), e0313619. https://doi.org/10.1371/journal.pone.0313619",
+      "doi_r": "10.1371/journal.pone.0313619",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1515,
+      "description": "Perceptual body image in eating disorders.",
+      "locators_o": "p.5",
+      "locators_r": "p. 12",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/27ef689bc56b0705a30536fc.txt"
+      }
+    },
+    "work_key": "10.1371/journal.pone.0313619",
+    "coding_context": {
+      "es_repr": "p.5",
+      "description": "distortion in perceptual body image in eating disorders",
+      "reported_success_quote": "Low-BMI control participants overestimated their size, while high-BMI controls underestimated their size, exhibiting the expected normal perceptual contraction bias. However, the women with a history of eating disorders showed no evidence of contraction bias.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1515,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.0001",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".0001",
+      "location": "Accepted manuscript p. 10, Experiment 1 main data",
+      "quote": "β1 = 0.71, t = 26.96, p < .0001, CI [0.66 - 0.76]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/043f9da0b943fc633187c6ba.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Cornelissen, K. K., Gledhill, L. J., Cornelissen, P. L., & Tovée, M. J. (2016). Visual biases in judging body weight. British Journal of Health Psychology, 21(3), 555–569. Portico. https://doi.org/10.1111/bjhp.12185",
+      "doi_o": "10.1111/bjhp.12185",
+      "study_o": "1",
+      "ref_r": "Brokjøb, L. G., Cornelissen, P. L., Gumančík, J., McCarty, K., Tovée, M. J., & Cornelissen, K. K. (2024). Evidence for a specific distortion in perceptual body image in eating disorders: A replication and extension. PLOS ONE, 19(11), e0313619. https://doi.org/10.1371/journal.pone.0313619",
+      "doi_r": "10.1371/journal.pone.0313619",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1515,
+      "description": "Perceptual body image in eating disorders.",
+      "locators_o": "p.5",
+      "locators_r": "p. 12",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/27ef689bc56b0705a30536fc.txt"
+      }
+    },
+    "work_key": "10.1371/journal.pone.0313619",
+    "coding_context": {
+      "es_repr": "p.5",
+      "description": "distortion in perceptual body image in eating disorders",
+      "reported_success_quote": "Low-BMI control participants overestimated their size, while high-BMI controls underestimated their size, exhibiting the expected normal perceptual contraction bias. However, the women with a history of eating disorders showed no evidence of contraction bias.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

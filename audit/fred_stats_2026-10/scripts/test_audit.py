@@ -8,7 +8,18 @@ from prepare import locators
 from validate_adjudication import validate_batch,parse_response
 from protect_enrichment import preserve_completed
 from stop_argon import prompt_key
+from completed_argon import ready_reply
 class AuditChecks(unittest.TestCase):
+ def test_only_stable_fully_validated_final_replies_close_cli(self):
+  import tempfile,hashlib,os
+  with tempfile.TemporaryDirectory() as directory:
+   root=Path(directory);(root/'adjudications').mkdir();record={'key':'abc','items':[{'audit_id':1,'field':'n_r'}]}
+   raw=root/'adjudications/raw_abc.txt';raw.write_text('[{"audit_id":1}]');os.utime(raw,(100,100))
+   path=root/'adjudications/validation_abc.json';v={'status':'valid','parse_mode':'complete_json','items':1,'raw_sha256':hashlib.sha256(raw.read_bytes()).hexdigest()};path.write_text(json.dumps(v))
+   self.assertTrue(ready_reply(root,record,131));self.assertFalse(ready_reply(root,record,129))
+   for change in [{'status':'partial'},{'parse_mode':'complete_object_prefix'},{'items':0}]:
+    path.write_text(json.dumps(v|change));self.assertFalse(ready_reply(root,record,131))
+   path.write_text(json.dumps(v));raw.write_text('changed reply');self.assertFalse(ready_reply(root,record,1000))
  def test_printed_rounding(self):
   self.assertEqual(rounding('.010'),(.0095,.0105))
   self.assertTrue(pinterval('.01','l (<)')[1]<pinterval('.01','e (=)')[1])
@@ -73,6 +84,8 @@ class AuditChecks(unittest.TestCase):
   self.assertNotEqual(metric('r'),metric('partial r'))
   self.assertNotEqual(metric('beta (std)'),metric('β (logistic regression coefficient; not explicitly standardised)'))
  def test_es_typography_preserves_metric_sign_and_precision(self):
+  self.assertEqual(comp('es_value_r','t(146) = -0.79',{'value':'–.79','test_statistic':'t(146) = –.79','metric':'test statistic'},{'es_type_r':'test statistic'}),'agree')
+  self.assertEqual(comp('es_value_r','t(146) = 0.79',{'value':'–.79','test_statistic':'t(146) = –.79','metric':'test statistic'},{'es_type_r':'test statistic'}),'differ')
   self.assertEqual(comp('es_value_r','-.068',{'value':'–0.068','metric':'d'},{'es_type_r':'d'}),'agree')
   self.assertEqual(comp('es_value_r','.00005',{'value':'5.46 e-5','metric':'partial eta squared'},{'es_type_r':'etasq (partial)'}),'compatible')
   self.assertEqual(comp('es_value_o','188000000000',{'value':'1.88 · 10¹¹','metric':'OR'},{'es_type_o':'OR'}),'agree')

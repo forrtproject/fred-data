@@ -1,10 +1,12 @@
 # FReD statistics audit
 
-**Interim checkpoint — 2026-10-29T17:01:21.322412+00:00.** 400 confirmed field errors have been identified so far. Paper checking is still in progress; the deterministic screen alone is not verification.
+**Interim checkpoint — 2026-10-29T17:55:02.727936+00:00.** 407 confirmed field errors have been identified so far. Paper checking is still in progress; the deterministic screen alone is not verification.
+
+Confirmed errors affect 314 effect rows. Counts refer to field instances; an original statistic repeated across replication rows can contribute more than once.
 
 The frozen workbook contains 2,164 effects in 432 replication works. Part A screened every effect and flagged 174. 18/185 individual flags are resolved when source-confirmed corrections are applied in memory, affecting 18/174 flagged effects (see `flag_confirmation.csv`). This includes corrected test statistics or analytic n as well as p-values. Separately, 51 flagged effects contain any confirmed field error.
 
-Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 230/2164; all three replication statistics for 466/2164. All seven fields, including author-reported success, are checked for 81/2164. At least one original statistic is evaluable for 813/2164, at least one replication statistic for 1224/2164, and any of the seven fields for 1574/2164. Individual-field coverage is below.
+Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 233/2164; all three replication statistics for 475/2164. All seven fields, including author-reported success, are checked for 81/2164. At least one original statistic is evaluable for 822/2164, at least one replication statistic for 1251/2164, and any of the seven fields for 1587/2164. Individual-field coverage is below.
 
 **Decision to review:** reported success is evaluated for the identified study/outcome. A broad paper-level verdict without a defensible mapping to an individual row remains unverified; the original narrative observation is retained. This conservative scope rule avoids assigning a mixed article outcome to every unidentified component effect.
 
@@ -12,45 +14,45 @@ Confirmed errors include coding omissions only when adjudication establishes the
 
 | Field | Confirmed errors / evaluable | Unverified | Not comparable | All-row error bounds |
 |---|---:|---:|---:|---:|
-| n_o | 30/459 (6.5%) | 1666 | 39 | 1.39%–80.18% |
-| es_value_o | 42/491 (8.6%) | 1471 | 202 | 1.94%–79.25% |
-| pval_value_o | 25/658 (3.8%) | 1503 | 3 | 1.16%–70.75% |
-| n_r | 79/948 (8.3%) | 1146 | 70 | 3.65%–59.84% |
-| es_value_r | 37/710 (5.2%) | 1131 | 323 | 1.71%–68.90% |
-| pval_value_r | 67/956 (7.0%) | 1198 | 10 | 3.10%–58.92% |
-| reported_success | 120/1031 (11.6%) | 1133 | 0 | 5.55%–57.90% |
+| n_o | 28/466 (6.0%) | 1659 | 39 | 1.29%–79.76% |
+| es_value_o | 43/495 (8.7%) | 1467 | 202 | 1.99%–79.11% |
+| pval_value_o | 29/669 (4.3%) | 1492 | 3 | 1.34%–70.43% |
+| n_r | 80/964 (8.3%) | 1130 | 70 | 3.70%–59.15% |
+| es_value_r | 34/723 (4.7%) | 1121 | 320 | 1.57%–68.16% |
+| pval_value_r | 71/982 (7.2%) | 1172 | 10 | 3.28%–57.90% |
+| reported_success | 122/1048 (11.6%) | 1116 | 0 | 5.64%–57.21% |
 
 Provenance-prefix breakdown uses text before the first underscore in `fred_id` (preserving project years); legacy codes without underscores use leading letters, with literal ManyLabs1–6 preserved; `fred_id` is provenance, not an effect key. Each cell gives **errors/evaluable (unverified; not comparable)**. The complete machine-readable rates, denominators and uncertainty bounds are in [field_summary_by_project.csv](field_summary_by_project.csv).
 
 | Project prefix | Original n | Original ES | Original p | Replication n | Replication ES | Replication p | Success |
 |---|---|---|---|---|---|---|---|
-| (missing) | 0/1 (4; 0) | 0/0 (4; 1) | 0/0 (4; 1) | 0/0 (5; 0) | 0/0 (4; 1) | 0/0 (5; 0) | 0/1 (4; 0) |
+| (missing) | 0/1 (4; 0) | 0/0 (4; 1) | 0/0 (4; 1) | 0/0 (5; 0) | 0/0 (4; 1) | 1/1 (4; 0) | 0/1 (4; 0) |
 | (unprefixed) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
 | 0qar | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | 1X9W | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | 2GKO | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | 2lb5 | 0/0 (1; 0) | 0/0 (0; 1) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | 5JE | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| 5Kgq | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| 5Kgq | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | 5KrD | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | 5XEE | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | 7RR2 | 0/0 (8; 0) | 0/1 (7; 0) | 0/1 (7; 0) | 0/0 (8; 0) | 0/0 (7; 1) | 0/1 (7; 0) | 0/1 (7; 0) |
 | 7X54 | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | 88xa | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) |
-| 8w97 | 0/0 (0; 1) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| 8w97 | 0/0 (0; 1) | 0/0 (1; 0) | 1/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | 8wZ0 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | 9OK1 | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
 | AOQj | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | AYQG | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | AgO1 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | AqDO | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| Arb | 0/1 (31; 0) | 0/13 (17; 2) | 0/5 (27; 0) | 0/2 (26; 4) | 0/3 (27; 2) | 0/3 (29; 0) | 0/17 (15; 0) |
+| Arb | 0/4 (28; 0) | 0/16 (14; 2) | 0/8 (24; 0) | 0/6 (22; 4) | 0/3 (27; 2) | 0/6 (26; 0) | 0/18 (14; 0) |
 | AvOr | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | Blxd | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
 | Boyce | 6/102 (174; 4) | 2/112 (129; 39) | 6/151 (129; 0) | 24/186 (94; 0) | 8/130 (109; 41) | 13/163 (117; 0) | 31/156 (124; 0) |
 | Br0x | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | BrGp | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
-| CORE | 2/28 (86; 0) | 3/22 (81; 11) | 2/32 (82; 0) | 8/60 (44; 10) | 7/49 (49; 16) | 11/65 (49; 0) | 8/73 (41; 0) |
+| CORE | 2/28 (86; 0) | 3/22 (81; 11) | 3/33 (81; 0) | 7/62 (42; 10) | 6/49 (49; 16) | 12/68 (46; 0) | 8/74 (40; 0) |
 | Camereretal2016 | 0/0 (18; 0) | 0/0 (18; 0) | 0/0 (18; 0) | 0/0 (18; 0) | 0/2 (3; 13) | 0/15 (3; 0) | 0/0 (18; 0) |
 | Camereretal2018 | 0/2 (15; 4) | 1/4 (11; 6) | 0/9 (12; 0) | 1/21 (0; 0) | 0/17 (0; 4) | 1/21 (0; 0) | 0/6 (15; 0) |
 | D2LY | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
@@ -63,12 +65,12 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | Eb2N | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | FORRT | 0/16 (8; 0) | 0/14 (10; 0) | 0/16 (8; 0) | 0/4 (5; 15) | 0/17 (5; 2) | 0/4 (20; 0) | 0/6 (18; 0) |
 | G1Lr | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
-| GXEW | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| GXEW | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | Holzmeisteretal2024 | 1/10 (16; 0) | 0/8 (14; 4) | 1/14 (11; 1) | 0/26 (0; 0) | 0/26 (0; 0) | 1/26 (0; 0) | 0/26 (0; 0) |
 | JRpA | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
 | Keith | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
 | Kybl | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| LbEB | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| LbEB | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | LmBx | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | LyLd | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | ManyLabs4 | 0/0 (15; 3) | 0/0 (18; 0) | 0/0 (18; 0) | 0/1 (14; 3) | 0/18 (0; 0) | 0/18 (0; 0) | 0/4 (14; 0) |
@@ -84,29 +86,29 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | Ow0 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | Q1dl | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | QllV | 0/0 (1; 0) | 0/0 (0; 1) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| R8RN | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/0 (1; 0) | 0/1 (0; 0) |
+| R8RN | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | R9dv | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| RRR | 0/11 (16; 4) | 0/9 (21; 1) | 0/18 (13; 0) | 5/13 (11; 7) | 1/18 (11; 2) | 1/20 (11; 0) | 0/7 (24; 0) |
+| RRR | 0/11 (16; 4) | 0/9 (21; 1) | 1/19 (12; 0) | 5/13 (11; 7) | 1/18 (11; 2) | 1/20 (11; 0) | 0/7 (24; 0) |
 | RYKv | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/1 (2; 0) |
 | RrOb | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
-| Soto | 2/7 (50; 3) | 0/12 (43; 5) | 2/15 (45; 0) | 0/42 (18; 0) | 6/11 (28; 21) | 11/35 (25; 0) | 0/0 (60; 0) |
+| Soto | 0/5 (52; 3) | 0/12 (43; 5) | 2/15 (45; 0) | 0/42 (18; 0) | 6/11 (28; 21) | 11/35 (25; 0) | 0/0 (60; 0) |
 | VB9K | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | Vj0p | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | VvZX | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
-| WLpV | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
+| WLpV | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 1/1 (0; 0) | 0/0 (1; 0) |
 | Wre | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| XPHI | 0/14 (52; 3) | 1/15 (52; 2) | 0/17 (52; 0) | 2/33 (34; 2) | 0/28 (32; 9) | 0/39 (30; 0) | 0/52 (17; 0) |
+| XPHI | 0/14 (52; 3) | 1/15 (52; 2) | 0/17 (52; 0) | 2/33 (34; 2) | 0/28 (32; 9) | 0/39 (30; 0) | 1/53 (16; 0) |
 | YWep | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | YpZZ | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | aYyR | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| aag9 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| aag9 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | acykd | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| add | 2/37 (125; 2) | 4/46 (100; 18) | 1/39 (125; 0) | 1/39 (115; 10) | 3/35 (113; 16) | 1/52 (112; 0) | 16/54 (110; 0) |
-| additional | 10/65 (286; 0) | 22/67 (242; 42) | 7/114 (236; 1) | 7/113 (238; 0) | 2/42 (259; 50) | 6/107 (244; 0) | 26/175 (176; 0) |
-| av | 0/23 (136; 7) | 4/32 (130; 4) | 2/34 (132; 0) | 4/28 (127; 11) | 0/25 (136; 5) | 0/22 (135; 9) | 4/45 (121; 0) |
+| add | 2/37 (125; 2) | 4/46 (100; 18) | 1/39 (125; 0) | 1/40 (114; 10) | 1/35 (113; 16) | 1/55 (109; 0) | 16/57 (107; 0) |
+| additional | 10/65 (286; 0) | 22/67 (242; 42) | 7/114 (236; 1) | 7/113 (238; 0) | 4/45 (258; 48) | 6/109 (242; 0) | 26/176 (175; 0) |
+| av | 0/28 (131; 7) | 4/32 (130; 4) | 3/39 (127; 0) | 4/32 (123; 11) | 0/26 (135; 5) | 0/30 (127; 9) | 5/53 (113; 0) |
 | bY2A | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | bth | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
-| curatescience | 2/10 (67; 0) | 0/7 (61; 9) | 1/18 (59; 0) | 4/24 (53; 0) | 2/27 (41; 9) | 7/36 (41; 0) | 2/24 (53; 0) |
+| curatescience | 2/10 (67; 0) | 0/7 (61; 9) | 1/18 (59; 0) | 5/25 (52; 0) | 1/28 (41; 8) | 7/36 (41; 0) | 2/24 (53; 0) |
 | curatescience241 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | curatescience244 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | curatescience283 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
@@ -125,17 +127,17 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | curatescience73 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 1/1 (0; 0) | 0/1 (0; 0) | 1/1 (0; 0) | 0/0 (1; 0) |
 | curatescience75 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 1/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | d24p | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| datareplicada | 0/0 (17; 0) | 2/2 (15; 0) | 0/2 (15; 0) | 0/5 (12; 0) | 1/10 (5; 2) | 0/5 (12; 0) | 2/17 (0; 0) |
+| datareplicada | 0/0 (17; 0) | 3/3 (14; 0) | 0/2 (15; 0) | 0/5 (12; 0) | 1/10 (5; 2) | 1/6 (11; 0) | 2/17 (0; 0) |
 | dqv | 0/0 (3; 0) | 0/2 (1; 0) | 0/3 (0; 0) | 0/0 (0; 3) | 0/3 (0; 0) | 3/3 (0; 0) | 0/3 (0; 0) |
 | e | 0/0 (13; 0) | 0/0 (13; 0) | 0/0 (13; 0) | 0/0 (13; 0) | 0/13 (0; 0) | 0/13 (0; 0) | 2/13 (0; 0) |
 | e227 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | e3G7 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| eOQm | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| eg1q | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| eOQm | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| eg1q | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | eg3p | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | exd7 | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | fmd | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 1/1 (0; 0) | 1/1 (0; 0) | 1/1 (0; 0) | 0/0 (1; 0) |
-| gRWz | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) |
+| gRWz | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | gea | 1/1 (0; 0) | 1/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
 | gh | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/3 (0; 0) | 0/3 (0; 0) | 0/3 (0; 0) | 0/3 (0; 0) |
 | is | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/1 (2; 0) | 0/1 (2; 0) | 0/1 (2; 0) | 0/3 (0; 0) |
@@ -145,10 +147,10 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | jcre | 0/0 (71; 0) | 0/0 (71; 0) | 0/0 (71; 0) | 0/54 (17; 0) | 0/6 (17; 48) | 0/6 (65; 0) | 0/45 (26; 0) |
 | kXp8 | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | lJ0w | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| mBL1 | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) |
+| mBL1 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) |
 | mJDj | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | mxyQ | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
-| odonnell | 0/2 (4; 0) | 0/3 (2; 1) | 0/4 (2; 0) | 0/5 (1; 0) | 0/4 (1; 1) | 0/4 (2; 0) | 0/4 (2; 0) |
+| odonnell | 0/2 (4; 0) | 0/3 (2; 1) | 0/4 (2; 0) | 0/5 (1; 0) | 0/4 (1; 1) | 0/5 (1; 0) | 0/4 (2; 0) |
 | osc | 1/14 (85; 0) | 0/14 (79; 6) | 0/14 (85; 0) | 0/25 (73; 1) | 0/15 (80; 4) | 1/21 (78; 0) | 1/50 (49; 0) |
 | plLK | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | q | 0/1 (1; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 2/2 (0; 0) | 2/2 (0; 0) | 1/2 (0; 0) | 0/2 (0; 0) |
@@ -160,7 +162,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | rpq | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | rtn | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | shah | 0/0 (13; 0) | 0/1 (12; 0) | 0/1 (12; 0) | 0/2 (11; 0) | 0/1 (12; 0) | 0/1 (12; 0) | 2/3 (10; 0) |
-| soscisubmission | 2/39 (73; 3) | 0/31 (70; 14) | 2/33 (82; 0) | 13/56 (55; 4) | 3/45 (55; 15) | 4/57 (58; 0) | 12/63 (52; 0) |
+| soscisubmission | 2/39 (73; 3) | 0/31 (70; 14) | 2/33 (82; 0) | 14/59 (52; 4) | 2/45 (55; 15) | 4/59 (56; 0) | 12/64 (51; 0) |
 | soscisubmission1 | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/2 (2; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/0 (4; 0) |
 | soscisubmission2 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
 | soscisubmission3 | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
@@ -180,8 +182,8 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | xszk | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/2 (0; 0) |
 | yAPR | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | yypJ | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| zK2 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| zNEm | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| zK2 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
+| zNEm | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | zb3Y | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
 | zlBL | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | zlm2 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
@@ -189,7 +191,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 
 ## Confirmed errors
 
-25 confirmed errors are blank coded fields for which the primary source supplies the requested statistic. Each entry below gives the proposed correction and source location; full reasons and retained blind observations are in [results.csv](results.csv).
+27 confirmed errors are blank coded fields for which the primary source supplies the requested statistic. Each entry below gives the proposed correction and source location; full reasons and retained blind observations are in [results.csv](results.csv).
 
 - Row 9, `es_value_o`: `0.13` → `0.20`. p. 418 (PDF p. 11), Table 1, Physically attractive (good looks) | Men, Ranked criteria; Gender Empowerment Measure. [Paper](https://doi.org/10.1037/0003-066x.54.6.408).
 - Row 22, `reported_success`: `failed` → `successful`. p. 44 (article p. 9), Section 3 Results; p. 51 (article p. 16), Section 4 Discussion. [Paper](https://doi.org/10.1017/s1930297500008299).
@@ -204,7 +206,9 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 53, `es_value_o`: `0.23` → `0.57`. Printed p. 11 (PDF p. 13), Structural Equation Model; Printed p. 12 (PDF p. 14), Table 2. [Paper](https://doi.org/10.4148/1944-9771.1299).
 - Row 54, `es_value_o`: `0.07` → `-0.27`. Printed p. 11 (PDF p. 13), Structural Equation Model; Printed p. 12 (PDF p. 14), Table 2. [Paper](https://doi.org/10.4148/1944-9771.1299).
 - Row 55, `es_value_o`: `0.07` → `-0.27`. Printed p. 11 (PDF p. 13), Structural Equation Model; Printed p. 12 (PDF p. 14), Table 2. [Paper](https://doi.org/10.4148/1944-9771.1299).
-- Row 57, `pval_value_r`: `0.397` → `0.438`. p. 41, Results; p. 45, Appendix D, Figure 1 caption. [Paper](https://doi.org/10.26443/msurj.v19i1.231). [Primary source](https://www.socscistatistics.com/effectsize/default3.aspx).
+- Row 57, `es_value_r`: `t(91) = 0.85` → `t(69) = –0.34`. p. 41, Results; p. 45, Appendix D, Figure 1. [Paper](https://doi.org/10.26443/msurj.v19i1.231). [Locator URL](https://www.socscistatistics.com/effectsize/default3.aspx).
+- Row 57, `pval_value_r`: `0.397` → `0.438`. p. 41, Results; p. 45, Appendix D, Figure 1 caption. [Paper](https://doi.org/10.26443/msurj.v19i1.231). [Locator URL](https://www.socscistatistics.com/effectsize/default3.aspx).
+- Row 58, `es_value_r`: `t(82) = 0.5` → `t(69) = –0.34`. p. 41, Results; p. 45, Appendix D, Figure 1. [Paper](https://doi.org/10.26443/msurj.v19i1.231).
 - Row 58, `pval_value_r`: `0.618` → `0.438`. p. 41, Results; p. 45, Appendix D, Figure 1. [Paper](https://doi.org/10.26443/msurj.v19i1.231).
 - Row 69, `pval_value_o`: `0.41` → `0.47`. OnlineFirst p. 7, Table 3, Subgroup Analyses, Sample size row, χ²(1), p column. [Paper](https://doi.org/10.3102/0013189x13507104).
 - Row 80, `reported_success`: `mixed` → `failed`. Results (Effect of L-DOPA administration post extinction on extinction memory retrieval, p. 4) and Discussion. [Paper](https://doi.org/10.1038/s41467-024-46936-y).
@@ -234,8 +238,8 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 187, `es_value_o`: `X2(1, N = 40) = 1.4` → `X2(1, N = 14) = 1.400`. Accepted manuscript p. 19, section 4.1 & footnote 9; pp. 24–25, section 4.5. [Paper](https://doi.org/10.1075/resla.17019.loz).
 - Row 187, `pval_value_o`: `0.05` → `> 0.05`. Accepted manuscript p. 19, section 4.1. [Paper](https://doi.org/10.1075/resla.17019.loz).
 - Row 203, `pval_value_o`: `0.05` → `< 0.01`. p. 424, Results, Allocation of Resources, paragraph 2. [Paper](https://doi.org/10.1037/0021-9010.77.4.419).
-- Row 221, `n_o`: `240` → `239`. Journal p. 34, Summary of Treatment Groups; Journal p. 37 (article page 11), Table 5. [Paper](https://doi.org/10.1016/0030-5073(76)90005-2).
-- Row 222, `n_o`: `240` → `239`. Journal p. 34, Summary of Treatment Groups; Journal p. 37 (article page 11), Table 5. [Paper](https://doi.org/10.1016/0030-5073(76)90005-2).
+- Row 221, `n_o`: `240` → `239`. Journal p. 34, Summary of Treatment Groups; Journal p. 37 (article page 11), Table 5. [Paper](https://doi.org/10.1016/0030-5073%2876%2990005-2).
+- Row 222, `n_o`: `240` → `239`. Journal p. 34, Summary of Treatment Groups; Journal p. 37 (article page 11), Table 5. [Paper](https://doi.org/10.1016/0030-5073%2876%2990005-2).
 - Row 226, `n_r`: `754` → `582`. p. 3, Participants; p. 9, Table 7. [Paper](https://doi.org/10.1037/emo0001389).
 - Row 233, `pval_value_o`: `None` → `0.003`. Printed p. 7 (PDF p. 8), Section 7, Method chains and comments. [Paper](https://doi.org/10.1109/tse.2016.2527791).
 - Row 239, `es_value_o`: `F(1, 64) = 2.36` → `F(1, 64) = 42.32`. p. 1040 (PDF p. 8), Results, Manipulation Checks. [Paper](https://doi.org/10.1086/648381).
@@ -263,128 +267,127 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 322, `es_value_o`: `F(3, 78) = 10.76` → `F(1, 26) = 10.76`. Proof p. 5, Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1 row, Motivation column. [Paper](https://doi.org/10.1016/j.cortex.2014.02.013).
 - Row 322, `es_value_r`: `F(3, 28) = 27.62` → `F(3, 93) = 27.62`. Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1 row, Motivation column. [Paper](https://doi.org/10.12688/openreseurope.17749.1).
 - Row 326, `n_r`: `1036` → `1032`. p. 12, Participants; p. 13, Results. [Paper](https://doi.org/10.1073/pnas.2402315121).
-- Row 331, `n_r`: `58` → `55`. Methods Addendum (Post Data Collection) - Actual Sample; Confirmatory analysis (Table 3). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rstudio-pubs-static.s3.amazonaws.com/333287_a1f6ccb88f36405e802c143a248a2206.html).
-- Row 341, `n_r`: `81` → `42`. Methods Addendum, Actual Sample; Results, T-tests. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/okan2018.html).
-- Row 342, `n_r`: `81` → `39`. Methods Addendum, Actual Sample; Results, T-tests. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/okan2018.html).
-- Row 349, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 349, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt and Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 331, `n_r`: `58` → `55`. Methods Addendum (Post Data Collection) - Actual Sample; Confirmatory analysis (Table 3). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rstudio-pubs-static.s3.amazonaws.com/333287_a1f6ccb88f36405e802c143a248a2206.html).
+- Row 341, `n_r`: `81` → `42`. Methods Addendum, Actual Sample; Results, T-tests. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/okan2018.html).
+- Row 342, `n_r`: `81` → `39`. Methods Addendum, Actual Sample; Results, T-tests. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/okan2018.html).
+- Row 349, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 349, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt and Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
 - Row 350, `pval_value_o`: `0.307` → `0.031`. Results, Experiment 1, Table 2. [Paper](https://doi.org/10.1162/jocn_a_00709).
-- Row 350, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 350, `reported_success`: `successful` → `mixed`. Discussion, Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 351, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 351, `reported_success`: `successful` → `mixed`. Discussion, Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 352, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 352, `reported_success`: `successful` → `mixed`. Discussion, Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 353, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 353, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt and Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 354, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 354, `reported_success`: `successful` → `mixed`. Discussion, Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
-- Row 356, `n_r`: `82` → `78`. Confirmatory analysis, condition_counts & crt_first_r; Summary of Rescue Results. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
-- Row 356, `pval_value_r`: `0.2637` → `0.0346`. Confirmatory analysis, crt_first_r. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
-- Row 356, `reported_success`: `failed` → `mixed`. Summary of Rescue Results, Numeric score of replication closeness. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
-- Row 357, `n_r`: `82` → `160`. Confirmatory analysis, Fisher r to z test; Summary of Rescue Results. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
-- Row 357, `reported_success`: `failed` → `mixed`. Summary of Rescue Results, Numeric score of replication closeness. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
+- Row 350, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 350, `reported_success`: `successful` → `mixed`. Discussion, Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 351, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 351, `reported_success`: `successful` → `mixed`. Discussion, Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 352, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 352, `reported_success`: `successful` → `mixed`. Discussion, Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 353, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 353, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt and Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 354, `n_r`: `25` → `21`. Methods Addendum, Actual Sample (PDF p. 5). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 354, `reported_success`: `successful` → `mixed`. Discussion, Commentary (PDF pp. 11–12). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/otto2014.pdf).
+- Row 356, `n_r`: `82` → `78`. Confirmatory analysis, condition_counts & crt_first_r; Summary of Rescue Results. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
+- Row 356, `pval_value_r`: `0.2637` → `0.0346`. Confirmatory analysis, crt_first_r. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
+- Row 356, `reported_success`: `failed` → `mixed`. Summary of Rescue Results, Numeric score of replication closeness. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
+- Row 357, `n_r`: `82` → `160`. Confirmatory analysis, Fisher r to z test; Summary of Rescue Results. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
+- Row 357, `reported_success`: `failed` → `mixed`. Summary of Rescue Results, Numeric score of replication closeness. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rstudio-pubs-static.s3.amazonaws.com/1178341_5e2ac8c976274f5fb6532dee0d9982c6.html).
 - Row 365, `n_o`: `600` → `594`. Accepted manuscript p. 6 (Method) and p. 10 (Figure 1). [Paper](https://doi.org/10.1177/0956797617728270).
 - Row 365, `es_value_o`: `0.34` → `0.58`. Accepted manuscript p. 10 (Results). [Paper](https://doi.org/10.1177/0956797617728270).
 - Row 365, `pval_value_o`: `0.007` → `< .001`. Accepted manuscript p. 10 (Results). [Paper](https://doi.org/10.1177/0956797617728270).
 - Row 367, `pval_value_o`: `0.58` → `< 0.01`. p. 4088 (paper p. 3), Study 7 results. [Paper](https://doi.org/10.1073/pnas.1118373109).
-- Row 380, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ShimaSalehi/155989).
-- Row 380, `es_value_r`: `F(1, 56) = 57.800` → `F(1, 2) = 57.800`. Confirmatory analysis, Main Data analysis: Mixed model ANOVA (lines 294-309). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ShimaSalehi/155989).
+- Row 380, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ShimaSalehi/155989).
+- Row 380, `es_value_r`: `F(1, 56) = 57.800` → `F(1, 2) = 57.800`. Confirmatory analysis, Main Data analysis: Mixed model ANOVA (lines 294-309). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ShimaSalehi/155989).
 - Row 381, `pval_value_o`: `0.84` → `.084`. p. 1754, Study 1 Results. [Paper](https://doi.org/10.1177/0956797615598739).
-- Row 381, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ShimaSalehi/155989).
-- Row 381, `es_value_r`: `F(1, 56) = 0.022` → `F(1, 2) = 0.022`. Confirmatory analysis, Main Data analysis: Mixed model ANOVA (lines 294-298). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ShimaSalehi/155989).
-- Row 381, `reported_success`: `successful` → `failed`. Confirmatory analysis; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ShimaSalehi/155989).
-- Row 384, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ShimaSalehi/155989).
-- Row 384, `reported_success`: `successful` → `failed`. Confirmatory analysis, Follow up data analyses: trait type rating between conditions. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ShimaSalehi/155989).
-- Row 385, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ShimaSalehi/155989).
+- Row 381, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ShimaSalehi/155989).
+- Row 381, `es_value_r`: `F(1, 56) = 0.022` → `F(1, 2) = 0.022`. Confirmatory analysis, Main Data analysis: Mixed model ANOVA (lines 294-298). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ShimaSalehi/155989).
+- Row 381, `reported_success`: `successful` → `failed`. Confirmatory analysis; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ShimaSalehi/155989).
+- Row 384, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ShimaSalehi/155989).
+- Row 384, `reported_success`: `successful` → `failed`. Confirmatory analysis, Follow up data analyses: trait type rating between conditions. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ShimaSalehi/155989).
+- Row 385, `n_r`: `64` → `4`. Pilot Samples; Results, Transforming data from JSON format to dataframe; Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ShimaSalehi/155989).
 - Row 392, `pval_value_o`: `0.003` → `0.001`. p. 29, Section 8.2. [Paper](https://doi.org/10.1016/j.jesp.2018.05.006).
-- Row 398, `es_value_r`: `-0.9943` → `0.8721`. Confirmatory analysis, Ratings of the Ethicality of the Buyer’s Answer, Honest reference, Coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/kagood/final-project-report).
-- Row 399, `es_value_r`: `0.04378` → `-0.4226`. Confirmatory analysis, Ratings of the Ethicality of the Buyer’s Answer, Lie reference, Coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/kagood/final-project-report).
-- Row 400, `es_value_r`: `0.9505` → `1.2947`. Confirmatory analysis, Ratings of the Ethicality of the Buyer’s Answer, Honest reference, Coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/kagood/final-project-report).
-- Row 401, `es_value_r`: `-0.04378` → `0.04378`. Confirmatory analysis, Buyer Ethicality Ratings, Lie reference, Coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/kagood/final-project-report).
-- Row 408, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/cceballos-stanford/544019).
-- Row 409, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/cceballos-stanford/544019).
-- Row 410, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/cceballos-stanford/544019).
+- Row 398, `es_value_r`: `-0.9943` → `0.8721`. Confirmatory analysis, Ratings of the Ethicality of the Buyer’s Answer, Honest reference, Coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/kagood/final-project-report).
+- Row 399, `es_value_r`: `0.04378` → `-0.4226`. Confirmatory analysis, Ratings of the Ethicality of the Buyer’s Answer, Lie reference, Coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/kagood/final-project-report).
+- Row 400, `es_value_r`: `0.9505` → `1.2947`. Confirmatory analysis, Ratings of the Ethicality of the Buyer’s Answer, Honest reference, Coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/kagood/final-project-report).
+- Row 401, `es_value_r`: `-0.04378` → `0.04378`. Confirmatory analysis, Buyer Ethicality Ratings, Lie reference, Coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/kagood/final-project-report).
+- Row 408, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/cceballos-stanford/544019).
+- Row 409, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/cceballos-stanford/544019).
+- Row 410, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/cceballos-stanford/544019).
 - Row 433, `n_o`: `577` → `578`. Studies 1b–1d Results, p. 405 (article p. 4). [Paper](https://doi.org/10.1177/0956797614563958).
 - Row 434, `n_o`: `577` → `578`. Studies 1b–1d Results, p. 405 (article p. 4). [Paper](https://doi.org/10.1177/0956797614563958).
 - Row 435, `n_r`: `90` → `77`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240).
 - Row 442, `n_r`: `17` → `16`. Results, Final replication results, Confirmatory analysis, summary(model_replication). [Paper](https://doi.org/10.1098/rsos.231240).
-- Row 446, `pval_value_r`: `0.001` → `3.625e-05`. Results, Planned Comparisons; paired t-test output for public_noncok vs. public_cok. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/hrlarry/YUIMU-final).
-- Row 460, `es_value_r`: `0.25` → `0.01`. Confirmatory Analysis 3: Mixed Design ANOVA for File B Performance (replication main analysis). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/mkmartykeil/replicationfinal).
-- Row 460, `pval_value_r`: `0.001` → `0.65`. Confirmatory Analysis 3: Mixed Design ANOVA for File B Performance (replication main analysis). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/mkmartykeil/replicationfinal).
-- Row 471, `pval_value_r`: `0.00001654` → `2.832e-05`. Results, Differences between items of different prototypicality status for each adjective (lines 211-225). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/StanfordPsych254/Tribushinina2011/blob/master/writeup/Replication-Report.html).
-- Row 475, `n_r`: `56` → `60`. Confirmatory analysis, summary(model1). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ayl888/695975).
-- Row 476, `n_r`: `56` → `60`. Confirmatory analysis, summary(model1). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ayl888/695975).
-- Row 478, `n_r`: `56` → `60`. Confirmatory analysis, summary(model1). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/ayl888/695975).
-- Row 491, `reported_success`: `mixed` → `failed`. Analysis > Main Analysis; Conclusions. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rstudio-pubs-static.s3.amazonaws.com/155174_48b1633681bb4024b4098ed433d5a80a.html).
-- Row 492, `reported_success`: `mixed` → `failed`. Analysis > Secondary analyses > Accuracy-based analysis; Conclusions. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rstudio-pubs-static.s3.amazonaws.com/155174_48b1633681bb4024b4098ed433d5a80a.html).
-- Row 493, `pval_value_r`: `3.20E-04` → `3.254853668646976e-4`. Primary authors processed_data.csv, line 178 (data row 175), yang2018, column rep_p_calc. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/data/processed_data.csv).
-- Row 502, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/rcatapano/Zaval_replication_report).
-- Row 503, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/rcatapano/Zaval_replication_report).
-- Row 504, `reported_success`: `mixed` → `failed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/rcatapano/Zaval_replication_report).
-- Row 505, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/rcatapano/Zaval_replication_report).
-- Row 506, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/rcatapano/Zaval_replication_report).
-- Row 507, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 508, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 509, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 510, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 511, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 512, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 513, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 446, `pval_value_r`: `0.001` → `3.625e-05`. Results, Planned Comparisons; paired t-test output for public_noncok vs. public_cok. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/hrlarry/YUIMU-final).
+- Row 460, `es_value_r`: `0.25` → `0.01`. Confirmatory Analysis 3: Mixed Design ANOVA for File B Performance (replication main analysis). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/mkmartykeil/replicationfinal).
+- Row 460, `pval_value_r`: `0.001` → `0.65`. Confirmatory Analysis 3: Mixed Design ANOVA for File B Performance (replication main analysis). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/mkmartykeil/replicationfinal).
+- Row 471, `pval_value_r`: `0.00001654` → `2.832e-05`. Results, Differences between items of different prototypicality status for each adjective (lines 211-225). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/StanfordPsych254/Tribushinina2011/blob/master/writeup/Replication-Report.html).
+- Row 475, `n_r`: `56` → `60`. Confirmatory analysis, summary(model1). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ayl888/695975).
+- Row 476, `n_r`: `56` → `60`. Confirmatory analysis, summary(model1). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ayl888/695975).
+- Row 478, `n_r`: `56` → `60`. Confirmatory analysis, summary(model1). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/ayl888/695975).
+- Row 491, `reported_success`: `mixed` → `failed`. Analysis > Main Analysis; Conclusions. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rstudio-pubs-static.s3.amazonaws.com/155174_48b1633681bb4024b4098ed433d5a80a.html).
+- Row 492, `reported_success`: `mixed` → `failed`. Analysis > Secondary analyses > Accuracy-based analysis; Conclusions. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rstudio-pubs-static.s3.amazonaws.com/155174_48b1633681bb4024b4098ed433d5a80a.html).
+- Row 493, `pval_value_r`: `3.20E-04` → `3.254853668646976e-4`. Primary authors processed_data.csv, line 178 (data row 175), yang2018, column rep_p_calc. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/data/processed_data.csv).
+- Row 502, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/rcatapano/Zaval_replication_report).
+- Row 503, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/rcatapano/Zaval_replication_report).
+- Row 504, `reported_success`: `mixed` → `failed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/rcatapano/Zaval_replication_report).
+- Row 505, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/rcatapano/Zaval_replication_report).
+- Row 506, `reported_success`: `mixed` → `successful`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/rcatapano/Zaval_replication_report).
+- Row 507, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 508, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 509, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 510, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 511, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 512, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 513, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
 - Row 514, `es_value_o`: `0.56` → `0.67`. p. 216 (article p. 4), Experiment 1a, Results. [Paper](https://doi.org/10.1177/0956797615617779).
-- Row 514, `es_value_r`: `F(1, 13) = 9.312` → `F(1, 13) = 21.804`. Confirmatory analysis, Both tasks combined, Overall ANOVA, congruency row. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 514, `pval_value_r`: `0.009` → `0.000`. Confirmatory analysis, Both tasks combined, Overall ANOVA, congruency row. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 514, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 515, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 516, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 517, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
-- Row 534, `pval_value_r`: `0.41435` → `0.10256`. Exploratory analyses, glm(hire_rec ~ manipulation + candidate_name + participant_sex + participant_parent) coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/dmetaxak/correll2007).
-- Row 551, `pval_value_r`: `None` → `8.75e-06`. Results, Confirmatory analysis, Fixed effects output. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/franke2016.html).
-- Row 552, `pval_value_r`: `None` → `0.0352`. Results, Confirmatory analysis, Fixed effects output. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/franke2016.html).
-- Row 555, `pval_value_r`: `0.2886814205` → `0.58`. Discussion, Summary of Replication Attempt (final sample, N = 118). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/garciacastro2020.html).
-- Row 557, `pval_value_o`: `0.01548195` → `< 0.01`. p. 26, Experiment 5, Results and Discussion; Table 7A. [Paper](https://doi.org/10.1016/0010-0285(83)90002-6).
-- Row 557, `pval_value_r`: `None` → `0.0001934`. Results, Confirmatory analysis, GTest(contingency_table). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://rpubs.com/Greses88/449388).
-- Row 558, `n_r`: `90` → `72`. Results, Confirmatory Analysis, Main analysis: AUC values (lines 268-272). [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/gong2019.html).
+- Row 514, `es_value_r`: `F(1, 13) = 9.312` → `F(1, 13) = 21.804`. Confirmatory analysis, Both tasks combined, Overall ANOVA, congruency row. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 514, `pval_value_r`: `0.009` → `0.000`. Confirmatory analysis, Both tasks combined, Overall ANOVA, congruency row. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 514, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 515, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 516, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 517, `reported_success`: `successful` → `mixed`. Discussion, Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/zhao2016.html).
+- Row 534, `pval_value_r`: `0.41435` → `0.10256`. Exploratory analyses, glm(hire_rec ~ manipulation + candidate_name + participant_sex + participant_parent) coefficients. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/dmetaxak/correll2007).
+- Row 551, `pval_value_r`: `None` → `8.75e-06`. Results, Confirmatory analysis, Fixed effects output. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/franke2016.html).
+- Row 552, `pval_value_r`: `None` → `0.0352`. Results, Confirmatory analysis, Fixed effects output. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/franke2016.html).
+- Row 555, `pval_value_r`: `0.2886814205` → `0.58`. Discussion, Summary of Replication Attempt (final sample, N = 118). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/garciacastro2020.html).
+- Row 557, `pval_value_o`: `0.01548195` → `< 0.01`. p. 26, Experiment 5, Results and Discussion; Table 7A. [Paper](https://doi.org/10.1016/0010-0285%2883%2990002-6).
+- Row 557, `pval_value_r`: `None` → `0.0001934`. Results, Confirmatory analysis, GTest(contingency_table). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://rpubs.com/Greses88/449388).
+- Row 558, `n_r`: `90` → `72`. Results, Confirmatory Analysis, Main analysis: AUC values (lines 268-272). [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/gong2019.html).
 - Row 559, `n_o`: `29` → `25`. pp. 518–519, §7.1.1 Participants. [Paper](https://doi.org/10.1111/j.1551-6709.2010.01161.x).
-- Row 568, `pval_value_r`: `None` → `0.376`. Results, Confirmatory analysis, rating model table, condition1. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/hopkins2016.html).
+- Row 568, `pval_value_r`: `None` → `0.376`. Results, Confirmatory analysis, rating model table, condition1. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/hopkins2016.html).
 - Row 569, `n_o`: `29` → `28`. Study 3, Method (Participants) and Results and discussion, pp. 2484–2485. [Paper](https://doi.org/10.1177/0956797613494853).
-- Row 569, `n_r`: `60` → `58`. Discussion, Summary of Replication Attempt; Results, Statistical Tests. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/hughes2013.html).
+- Row 569, `n_r`: `60` → `58`. Discussion, Summary of Replication Attempt; Results, Statistical Tests. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/hughes2013.html).
 - Row 577, `n_o`: `457` → `452`. p. 8, Study 4, Method, Subjects. [Paper](https://doi.org/10.1177/0956797616685771).
-- Row 585, `pval_value_r`: `5.75E-04` → `< .0005`. Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/kouchaki2018.html).
-- Row 598, `n_r`: `27` → `25`. Discussion — Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/reports/lloyd2017.html).
-- Row 634, `pval_value_r`: `0.0092` → `< 0.001`. Supplementary Table 3, p. 52 (PDF p. 54), Morewedge et al. (2010) row. [Paper](https://doi.org/10.1038/s41562-018-0399-z). [Primary source](https://osf.io/k2teb).
+- Row 585, `pval_value_r`: `5.75E-04` → `< .0005`. Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/kouchaki2018.html).
+- Row 598, `n_r`: `27` → `25`. Discussion — Summary of Replication Attempt. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/reports/lloyd2017.html).
+- Row 634, `pval_value_r`: `0.0092` → `< 0.001`. Supplementary Table 3, p. 52 (PDF p. 54), Morewedge et al. (2010) row. [Paper](https://doi.org/10.1038/s41562-018-0399-z). [Locator URL](https://osf.io/k2teb).
 - Row 644, `es_value_o`: `X2(1, N = 366) = 16.3` → `X2(1, N = 51) = 16.3`. p. 389, Results (Fig. 1c) and p. 391, Methods. [Paper](https://doi.org/10.1038/nature12774).
-- Row 644, `n_r`: `482` → `65`. Supplementary Table 3, p. 52 (PDF p. 54), Derex et al. (2013) row. [Paper](https://doi.org/10.1038/s41562-018-0399-z). [Primary source](https://osf.io/kchf9).
-- Row 650, `n_r`: `214` → `90`. PDF p. 4, Actual Sample and Differences from pre-data collection methods plan. [Primary source](https://drive.google.com/file/d/1DDCuEgQah24QordxkRGO0EIt6Q681jyL/view).
-- Row 650, `es_value_r`: `F(1, 88) = 2.93` → `F(1, 88) = 0.20`. PDF p. 5, Confirmatory analysis, Moral ratings. [Primary source](https://drive.google.com/file/d/1DDCuEgQah24QordxkRGO0EIt6Q681jyL/view).
-- Row 650, `pval_value_r`: `0.09` → `> .10`. PDF p. 5, Confirmatory analysis, Moral ratings. [Primary source](https://drive.google.com/file/d/1DDCuEgQah24QordxkRGO0EIt6Q681jyL/view).
+- Row 644, `n_r`: `482` → `65`. Supplementary Table 3, p. 52 (PDF p. 54), Derex et al. (2013) row. [Paper](https://doi.org/10.1038/s41562-018-0399-z). [Locator URL](https://osf.io/kchf9).
+- Row 650, `n_r`: `214` → `90`. PDF p. 4, Actual Sample and Differences from pre-data collection methods plan. [Locator URL](https://drive.google.com/file/d/1DDCuEgQah24QordxkRGO0EIt6Q681jyL/view).
+- Row 650, `es_value_r`: `F(1, 88) = 2.93` → `F(1, 88) = 0.20`. PDF p. 5, Confirmatory analysis, Moral ratings. [Locator URL](https://drive.google.com/file/d/1DDCuEgQah24QordxkRGO0EIt6Q681jyL/view).
+- Row 650, `pval_value_r`: `0.09` → `> .10`. PDF p. 5, Confirmatory analysis, Moral ratings. [Locator URL](https://drive.google.com/file/d/1DDCuEgQah24QordxkRGO0EIt6Q681jyL/view).
 - Row 651, `n_r`: `440` → `214`. Study 1, Material and Methods, Participants; Table 1. [Paper](https://doi.org/10.3389/fpsyg.2014.01276).
 - Row 651, `pval_value_r`: `None` → `0.23`. Study 1, Results, paragraph 1; Table 1. [Paper](https://doi.org/10.3389/fpsyg.2014.01276).
 - Row 651, `reported_success`: `successful` → `failed`. Study 1, Results, paragraph 1. [Paper](https://doi.org/10.3389/fpsyg.2014.01276).
-- Row 660, `es_value_r`: `-0.22` → `0.22`. p. 11, Results, Hypothesis 1: Group-Level Ego-Depletion Effect. [Paper](https://doi.org/10.1371/journal.pone.0147770).
 - Row 671, `pval_value_r`: `None` → `.177`. p. 698 (PDF p. 3), Table 1, Current studies, Sample 1 row. [Paper](https://doi.org/10.3758/s13423-013-0549-2).
 - Row 672, `pval_value_r`: `None` → `.139`. p. 698 (PDF p. 3), Table 1, Current studies, Sample 2 row. [Paper](https://doi.org/10.3758/s13423-013-0549-2).
-- Row 678, `n_r`: `5979` → `5942`. Accepted manuscript pp. 24–25, Table 2, Retrospective gambler fallacy row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Primary source](https://osf.io/y36m8).
-- Row 678, `es_value_r`: `0.02` → `0.61`. Accepted manuscript pp. 24–25, Table 2, Retrospective gambler fallacy row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Primary source](https://osf.io/y36m8).
-- Row 678, `pval_value_r`: `0.27` → `<.001`. Accepted manuscript pp. 24–25, Table 2, Retrospective gambler fallacy row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Primary source](https://osf.io/y36m8).
-- Row 693, `pval_value_r`: `0.22` → `0.93`. p. 26 (PDF p. 6), Study 2, Results and Discussion. [Primary source](https://www.jasnh.com/pdf/Vol6-No2.pdf).
+- Row 678, `n_r`: `5979` → `5942`. Accepted manuscript pp. 24–25, Table 2, Retrospective gambler fallacy row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Locator URL](https://osf.io/y36m8).
+- Row 678, `es_value_r`: `0.02` → `0.61`. Accepted manuscript pp. 24–25, Table 2, Retrospective gambler fallacy row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Locator URL](https://osf.io/y36m8).
+- Row 678, `pval_value_r`: `0.27` → `<.001`. Accepted manuscript pp. 24–25, Table 2, Retrospective gambler fallacy row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Locator URL](https://osf.io/y36m8).
+- Row 693, `pval_value_r`: `0.22` → `0.93`. p. 26 (PDF p. 6), Study 2, Results and Discussion. [Locator URL](https://www.jasnh.com/pdf/Vol6-No2.pdf).
 - Row 701, `n_r`: `None` → `100`. Main text, p. 636; Online Supplement, p. 2. [Paper](https://doi.org/10.1177/1745691612463078).
 - Row 703, `n_o`: `80` → `86`. Sciencexpress PDF p. 1, Experiment 1; p. 6, Table 1, Exp. 1 RMET. [Paper](https://doi.org/10.1126/science.1239918).
 - Row 704, `pval_value_o`: `0.3` → `0.04`. Sciencexpress PDF p. 6, Table 1, Exp. 5 RMET, Condition row. [Paper](https://doi.org/10.1126/science.1239918).
 - Row 705, `n_o`: `80` → `86`. Sciencexpress PDF p. 1, Experiment 1; p. 6, Table 1, Exp. 1 RMET. [Paper](https://doi.org/10.1126/science.1239918).
-- Row 706, `n_r`: `2374` → `2285`. manuscript pp. 25–26, section 6. [Paper](https://doi.org/10.1016/j.jesp.2015.10.012). [Primary source](https://osf.io/ct89g/).
-- Row 711, `reported_success`: `mixed` → `failed`. manuscript p. 28, section 8; p. 44. [Paper](https://doi.org/10.1016/j.jesp.2015.10.012). [Primary source](https://osf.io/ct89g/).
+- Row 706, `n_r`: `2374` → `2285`. manuscript pp. 25–26, section 6. [Paper](https://doi.org/10.1016/j.jesp.2015.10.012). [Locator URL](https://osf.io/ct89g/).
+- Row 711, `reported_success`: `mixed` → `failed`. manuscript p. 28, section 8; p. 44. [Paper](https://doi.org/10.1016/j.jesp.2015.10.012). [Locator URL](https://osf.io/ct89g/).
 - Row 715, `pval_value_r`: `0.079` → `0.004`. p. 62 (PDF p. 3), Table 1, Replication 1 row, Interaction effect p column. [Paper](https://doi.org/10.1016/j.jesp.2015.08.005).
 - Row 716, `pval_value_r`: `0.494` → `0.046`. p. 62 (PDF p. 3), Table 2, Replication 1 row, Interaction effect p column. [Paper](https://doi.org/10.1016/j.jesp.2015.08.005).
-- Row 717, `reported_success`: `mixed` → `failed`. manuscript p. 30, section 9; p. 44. [Paper](https://doi.org/10.1016/j.jesp.2015.10.012). [Primary source](https://osf.io/ct89g/).
+- Row 717, `reported_success`: `mixed` → `failed`. manuscript p. 30, section 9; p. 44. [Paper](https://doi.org/10.1016/j.jesp.2015.10.012). [Locator URL](https://osf.io/ct89g/).
 - Row 723, `n_r`: `105` → `219`. p. 2129 (PDF p. 2), Table 1, Current studies / Sample 1 row. [Paper](https://doi.org/10.1177/0956797613486983).
-- Row 725, `n_r`: `6340` → `6333`. Accepted manuscript pp. 24–25, Table 2, Currency Priming row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Primary source](https://osf.io/y36m8).
-- Row 725, `pval_value_r`: `0.44` → `0.83`. Accepted manuscript pp. 24–25, Table 2, Currency Priming row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Primary source](https://osf.io/y36m8).
-- Row 726, `n_r`: `6335` → `6336`. Accepted manuscript pp. 24–25, Table 2, Imagined contact row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Primary source](https://osf.io/y36m8).
-- Row 732, `reported_success`: `successful` → `failed`. Results, paragraph 2 (line 83) and paragraph 6 (line 91). [Primary source](https://datacolada.org/83).
-- Row 737, `pval_value_r`: `None` → `.864`. SPSS_output.docx, Independent Samples Test, attractiveness_avg, Equal variances assumed, Sig. (2-tailed). [Paper](https://doi.org/10.1525/collabra.177). [Primary source](https://osf.io/dqv9y).
-- Row 738, `pval_value_r`: `None` → `.481`. SPSS_output.docx, Independent Samples Test, sex_attraction_avg, Equal variances assumed, Sig. (2-tailed). [Paper](https://doi.org/10.1525/collabra.177). [Primary source](https://osf.io/dqv9y).
-- Row 739, `pval_value_r`: `None` → `.755`. SPSS_output.docx, Independent Samples Test, likeability_avg, Equal variances assumed, Sig. (2-tailed). [Paper](https://doi.org/10.1525/collabra.177). [Primary source](https://osf.io/dqv9y).
+- Row 725, `n_r`: `6340` → `6333`. Accepted manuscript pp. 24–25, Table 2, Currency Priming row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Locator URL](https://osf.io/y36m8).
+- Row 725, `pval_value_r`: `0.44` → `0.83`. Accepted manuscript pp. 24–25, Table 2, Currency Priming row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Locator URL](https://osf.io/y36m8).
+- Row 726, `n_r`: `6335` → `6336`. Accepted manuscript pp. 24–25, Table 2, Imagined contact row. [Paper](https://doi.org/10.1027/1864-9335/a000178). [Locator URL](https://osf.io/y36m8).
+- Row 732, `reported_success`: `successful` → `failed`. Results, paragraph 2 (line 83) and paragraph 6 (line 91). [Locator URL](https://datacolada.org/83).
+- Row 737, `pval_value_r`: `None` → `.864`. SPSS_output.docx, Independent Samples Test, attractiveness_avg, Equal variances assumed, Sig. (2-tailed). [Paper](https://doi.org/10.1525/collabra.177). [Locator URL](https://osf.io/dqv9y).
+- Row 738, `pval_value_r`: `None` → `.481`. SPSS_output.docx, Independent Samples Test, sex_attraction_avg, Equal variances assumed, Sig. (2-tailed). [Paper](https://doi.org/10.1525/collabra.177). [Locator URL](https://osf.io/dqv9y).
+- Row 739, `pval_value_r`: `None` → `.755`. SPSS_output.docx, Independent Samples Test, likeability_avg, Equal variances assumed, Sig. (2-tailed). [Paper](https://doi.org/10.1525/collabra.177). [Locator URL](https://osf.io/dqv9y).
 - Row 746, `reported_success`: `successful` → `failed`. Table 1, P. Intent to kill row, Replicated? column. [Paper](https://doi.org/10.17605/osf.io/e9d3k).
 - Row 748, `reported_success`: `successful` → `failed`. Conclusions, p. 5; Table 1, Causal locus row, Replicated? column. [Paper](https://doi.org/10.17605/osf.io/e9d3k).
 - Row 753, `n_r`: `300` → `303`. p. 10, section 4.2.1; p. 11, section 4.2.3. [Paper](https://doi.org/10.18718/81781.38).
@@ -392,8 +395,8 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 753, `pval_value_r`: `0.383` → `0.809`. p. 11, section 4.2.3 Hypothesis Tests. [Paper](https://doi.org/10.18718/81781.38).
 - Row 759, `n_o`: `735` → `737`. Results, Uncalculating Cooperation Is Used as a Signal; Fig. 2B, p. 8660. [Paper](https://doi.org/10.1073/pnas.1601280113).
 - Row 759, `pval_value_o`: `0.002` → `0.014`. Results, Uncalculating Cooperation Is Used as a Signal; Fig. 2B, p. 8660. [Paper](https://doi.org/10.1073/pnas.1601280113).
-- Row 764, `pval_value_r`: `0.904` → `0.799`. Post-replication report p. 2, Replication results. [Paper](https://doi.org/10.1038/s41562-024-02062-9). [Primary source](https://osf.io/sejyp).
-- Row 854, `es_value_o`: `F(1, 78) = 17.27` → `F(1, 78) = 17.7`. p. 283, Table 1, Supermarket story row. [Paper](https://doi.org/10.1016/0022-1031(77)90049-x).
+- Row 764, `pval_value_r`: `0.904` → `0.799`. Post-replication report p. 2, Replication results. [Paper](https://doi.org/10.1038/s41562-024-02062-9). [Locator URL](https://osf.io/sejyp).
+- Row 854, `es_value_o`: `F(1, 78) = 17.27` → `F(1, 78) = 17.7`. p. 283, Table 1, Supermarket story row. [Paper](https://doi.org/10.1016/0022-1031%2877%2990049-x).
 - Row 856, `pval_value_r`: `0` → `< 3.32e-285`. p. 464, Effect 22, Replication. [Paper](https://doi.org/10.1177/2515245918810225).
 - Row 856, `reported_success`: `mixed` → `successful`. p. 464, Effect 22, Replication. [Paper](https://doi.org/10.1177/2515245918810225).
 - Row 863, `reported_success`: `mixed` → `successful`. p. 461, Effect 17, Replication. [Paper](https://doi.org/10.1177/2515245918810225).
@@ -411,13 +414,13 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 905, `reported_success`: `mixed` → `failed`. Discussion, paragraph 2. [Paper](https://doi.org/10.1073/pnas.2103313118).
 - Row 929, `es_value_o`: `0.85` → `0.085`. PDF p. 6, Experiment 1, Results. [Paper](https://doi.org/10.1093/jcr/ucv049).
 - Row 938, `n_o`: `24` → `14`. p. 362 (PDF p. 10), Experiment 3, Method. [Paper](https://doi.org/10.1037/0278-7393.34.2.353).
-- Row 960, `reported_success`: `successful` → `statistically successful but flawed`. Summary of Replication Attempt, line 62; Commentary, line 67. [Paper](https://doi.org/10.1126/science.aac4716). [Primary source](https://osf.io/gxvd3).
-- Row 1026, `pval_value_r`: `0.19` → `0.22`. p. 4, Confirmatory analysis. [Paper](https://doi.org/10.1126/science.aac4716). [Primary source](https://osf.io/79dey).
-- Row 1037, `n_r`: `182` → `183`. p. 17, sections 5.2.1 and 5.2.3. [Paper](https://doi.org/10.18718/81781.38). [Primary source](https://doi.org/10.31234/osf.io/bgp3m).
-- Row 1037, `es_value_r`: `0.215` → `0.198`. p. 17, section 5.2.3 Hypothesis Tests. [Paper](https://doi.org/10.18718/81781.38). [Primary source](https://doi.org/10.31234/osf.io/bgp3m).
-- Row 1037, `pval_value_r`: `0.925` → `0.908`. p. 17, section 5.2.3 Hypothesis Tests. [Paper](https://doi.org/10.18718/81781.38). [Primary source](https://doi.org/10.31234/osf.io/bgp3m).
-- Row 1038, `n_r`: `182` → `183`. p. 17, sections 5.2.1 and 5.2.3. [Paper](https://doi.org/10.18718/81781.38). [Primary source](https://doi.org/10.31234/osf.io/bgp3m).
-- Row 1038, `es_value_r`: `0.001` → `0.006`. p. 17, section 5.2.3 Hypothesis Tests. [Paper](https://doi.org/10.18718/81781.38). [Primary source](https://doi.org/10.31234/osf.io/bgp3m).
+- Row 960, `reported_success`: `successful` → `statistically successful but flawed`. Summary of Replication Attempt, line 62; Commentary, line 67. [Paper](https://doi.org/10.1126/science.aac4716). [Locator URL](https://osf.io/gxvd3).
+- Row 1026, `pval_value_r`: `0.19` → `0.22`. p. 4, Confirmatory analysis. [Paper](https://doi.org/10.1126/science.aac4716). [Locator URL](https://osf.io/79dey).
+- Row 1037, `n_r`: `182` → `183`. p. 17, sections 5.2.1 and 5.2.3. [Paper](https://doi.org/10.18718/81781.38). [Locator URL](https://doi.org/10.31234/osf.io/bgp3m).
+- Row 1037, `es_value_r`: `0.215` → `0.198`. p. 17, section 5.2.3 Hypothesis Tests. [Paper](https://doi.org/10.18718/81781.38). [Locator URL](https://doi.org/10.31234/osf.io/bgp3m).
+- Row 1037, `pval_value_r`: `0.925` → `0.908`. p. 17, section 5.2.3 Hypothesis Tests. [Paper](https://doi.org/10.18718/81781.38). [Locator URL](https://doi.org/10.31234/osf.io/bgp3m).
+- Row 1038, `n_r`: `182` → `183`. p. 17, sections 5.2.1 and 5.2.3. [Paper](https://doi.org/10.18718/81781.38). [Locator URL](https://doi.org/10.31234/osf.io/bgp3m).
+- Row 1038, `es_value_r`: `0.001` → `0.006`. p. 17, section 5.2.3 Hypothesis Tests. [Paper](https://doi.org/10.18718/81781.38). [Locator URL](https://doi.org/10.31234/osf.io/bgp3m).
 - Row 1042, `reported_success`: `uninformative` → `failed`. General discussion, paragraph 1 (line 938). [Paper](https://doi.org/10.1007/s00213-019-05314-z).
 - Row 1054, `reported_success`: `mixed` → `successful`. Results, Replication, lines 374-390 (PDF pp. 12-13). [Paper](https://doi.org/10.1027/1864-1105/a000334).
 - Row 1057, `reported_success`: `mixed` → `successful`. Results, Replication, lines 374-390 (PDF pp. 12-13). [Paper](https://doi.org/10.1027/1864-1105/a000334).
@@ -426,10 +429,9 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 1070, `n_o`: `34` → `36`. Experiment 2, Method, Participants; Results and discussion (p. 6). [Paper](https://doi.org/10.3758/s13414-020-02150-8).
 - Row 1072, `pval_value_o`: `0.12` → `0.93`. p. 3, Results, No Age Differences in Empathy and Positive Age Differences in Compassion. [Paper](https://doi.org/10.1038/s41598-017-10669-4).
 - Row 1072, `pval_value_r`: `0.145` → `0.780`. p. 7, Results, Social affect: empathy and compassion. [Paper](https://doi.org/10.1098/rsos.210641).
-- Row 1073, `es_value_r`: `1.55` → `-1.55`. p. 7, Results, Social affect: empathy and compassion. [Paper](https://doi.org/10.1098/rsos.210641).
 - Row 1097, `es_value_o`: `t(3411) = 21.5` → `t(3410) = 30.2`. Author manuscript pp. 28–29, Section 9, footnote 10. [Paper](https://doi.org/10.5840/jphil20091061128).
-- Row 1111, `n_r`: `316` → `318`. Results, paragraphs 3-4. [Paper](https://doi.org/10.1007/s13164-018-0400-9). [Primary source](https://osf.io/4ewkh).
-- Row 1137, `n_r`: `127.00` → `129`. PDF p. 2; Results, Data analysis - Target effect. [Paper](https://doi.org/10.1007/s13164-018-0400-9). [Primary source](https://osf.io/juxpq).
+- Row 1111, `n_r`: `316` → `318`. Results, paragraphs 3-4. [Paper](https://doi.org/10.1007/s13164-018-0400-9). [Locator URL](https://osf.io/4ewkh).
+- Row 1137, `n_r`: `127.00` → `129`. PDF p. 2; Results, Data analysis - Target effect. [Paper](https://doi.org/10.1007/s13164-018-0400-9). [Locator URL](https://osf.io/juxpq).
 - Row 1172, `pval_value_r`: `1.33E-42` → `1.32505878875791e-56`. Author primary workbook, Results sheet, row 5, column AU. [Paper](https://doi.org/10.1177/0956797619831612).
 - Row 1173, `pval_value_r`: `3.20E-31` → `3.199850522144975e-45`. Author primary workbook, Results sheet, row 6, column AU. [Paper](https://doi.org/10.1177/0956797619831612).
 - Row 1174, `es_value_r`: `0.57` → `0.4790435067040672`. Author primary workbook, Results sheet, row 4, column AQ. [Paper](https://doi.org/10.1177/0956797619831612).
@@ -450,8 +452,6 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 1280, `n_r`: `65` → `30`. preprint p. 11, Section 5.2.2; pp. 21–23, Section 7.4. [Paper](https://doi.org/10.1017/s026144482000021x).
 - Row 1287, `pval_value_r`: `None` → `4.889658369986202e-47`. OSF Results sheet (https://osf.io/mc3z7), row 21 (ResultsOrder 20), column ReplicationPValue. [Paper](https://doi.org/10.1177/0956797619831612).
 - Row 1288, `pval_value_r`: `None` → `1.3222161668157884e-150`. OSF Results sheet (https://osf.io/mc3z7), row 22 (ResultsOrder 21), column ReplicationPValue. [Paper](https://doi.org/10.1177/0956797619831612).
-- Row 1293, `n_o`: `9131` → `82`. p. 209 (PDF p. 13), Table 6, Extraversion row and Note. [Paper](https://doi.org/10.1037/0033-2909.124.2.197).
-- Row 1294, `n_o`: `7869` → `74`. p. 209 (PDF p. 13), Table 6, Neuroticism row and Note. [Paper](https://doi.org/10.1037/0033-2909.124.2.197).
 - Row 1300, `es_value_r`: `0.25` → `0.22848043525041464`. OSF Results sheet (https://osf.io/mc3z7), row 19 (ResultsOrder 18), column ReplicationEffect (cf. Table 1, p. 13: .23/.25). [Paper](https://doi.org/10.1177/0956797619831612).
 - Row 1300, `pval_value_r`: `None` → `8.331911727997158e-20`. OSF Results sheet (https://osf.io/mc3z7), row 19 (ResultsOrder 18), column ReplicationPValue. [Paper](https://doi.org/10.1177/0956797619831612).
 - Row 1301, `es_value_r`: `-0.35` → `-0.33316177089309484`. OSF Results sheet (https://osf.io/mc3z7), row 20 (ResultsOrder 19), column ReplicationEffect (cf. Table 1, p. 13: .33/.35). [Paper](https://doi.org/10.1177/0956797619831612).
@@ -463,7 +463,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 1307, `es_value_r`: `-0.19` → `-0.17261233227624778`. OSF Results sheet (https://osf.io/mc3z7), row 52 (ResultsOrder 51), column ReplicationEffect (cf. Table 1, p. 13: .17/.19). [Paper](https://doi.org/10.1177/0956797619831612).
 - Row 1307, `pval_value_r`: `None` → `1.1305169117438363e-07`. OSF Results sheet (https://osf.io/mc3z7), row 52 (ResultsOrder 51), column ReplicationPValue. [Paper](https://doi.org/10.1177/0956797619831612).
 - Row 1309, `n_r`: `301` → `303`. p. 10, section 4.2.1; p. 11, section 4.2.3. [Paper](https://doi.org/10.18718/81781.38).
-- Row 1310, `es_value_o`: `t(2) = 4.59` → `t = 4.59`. p. 12 (PDF p. 8), Experiment 2, Section 3.2 Results. [Paper](https://doi.org/10.1023/a:1015044207315).
+- Row 1310, `es_value_o`: `t(2) = 4.59` → `t = 4.59`. p. 12 (PDF p. 8), Experiment 2, Section 3.2 Results. [Paper](https://doi.org/10.1023/a%3A1015044207315).
 - Row 1314, `es_value_r`: `0.19` → `0.45`. p. 1014 (PDF p. 10), Table 6 (and p. 1013, Table 5, Model 2). [Paper](https://doi.org/10.1177/1948550620948973).
 - Row 1317, `n_r`: `2697` → `1479`. p. 19, Participants. [Paper](https://doi.org/10.31219/osf.io/q56rk).
 - Row 1317, `es_value_r`: `1.5` → `1.75`. p. 22, Confirmatory Analysis. [Paper](https://doi.org/10.31219/osf.io/q56rk).
@@ -472,7 +472,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 1326, `n_r`: `270` → `286`. Supplementary Document II, Pre-Study 2, Results and discussion, paragraph 1. [Paper](https://doi.org/10.31219/osf.io/q56rk).
 - Row 1327, `n_r`: `270` → `286`. Supplementary Document II, Pre-Study 2, Results and discussion, paragraph 1. [Paper](https://doi.org/10.31219/osf.io/q56rk).
 - Row 1332, `pval_value_r`: `0.001` → `0.002`. Supplementary Document II, Table S2-2, Extended, GM vs FM. [Paper](https://doi.org/10.31219/osf.io/q56rk).
-- Row 1347, `reported_success`: `failed` → `successful`. p. 5, Perceived Competence. [Paper](https://doi.org/10.1525/collabra.90195). [Primary source](https://drive.google.com/file/d/1zJ3IIX26CyEcHOzgjGdLzzyONBKjM3Eo/view).
+- Row 1347, `reported_success`: `failed` → `successful`. p. 5, Perceived Competence. [Paper](https://doi.org/10.1525/collabra.90195). [Locator URL](https://drive.google.com/file/d/1zJ3IIX26CyEcHOzgjGdLzzyONBKjM3Eo/view).
 - Row 1351, `reported_success`: `mixed` → `successful`. PDF p. 9, Discussion, first paragraph. [Paper](https://doi.org/10.31234/osf.io/dca65).
 - Row 1362, `n_r`: `98` → `100`. Study 2, Method—Participants; Table 1; Table 3. [Paper](https://doi.org/10.31234/osf.io/fmdqe).
 - Row 1363, `n_r`: `98` → `100`. Study 2, Method—Participants; Table 3. [Paper](https://doi.org/10.31234/osf.io/fmdqe).
@@ -484,10 +484,10 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 1369, `n_r`: `100` → `101`. Study 3, Method—Participants; Replication of the American-Independent Conditions of Study 3. [Paper](https://doi.org/10.31234/osf.io/fmdqe).
 - Row 1369, `pval_value_r`: `0.06` → `0.030`. Replication of the American-Independent Conditions of Study 3, Conducted March 2022. [Paper](https://doi.org/10.31234/osf.io/fmdqe).
 - Row 1370, `n_r`: `100` → `101`. Study 3, Method—Participants; Replication of the American-Independent Conditions of Study 3. [Paper](https://doi.org/10.31234/osf.io/fmdqe).
+- Row 1382, `pval_value_o`: `None` → `< .01`. p. 467, Experiment 2. [Paper](https://doi.org/10.1177/0261927x01020004004).
 - Row 1398, `n_r`: `1203` → `387`. p. 5, Table 3, Panel C. [Paper](https://doi.org/10.15626/mp.2021.2932).
-- Row 1399, `n_r`: `1203` → `379`. p. 5, Table 3, Panel C. [Paper](https://doi.org/10.15626/mp.2021.2932).
 - Row 1401, `n_r`: `835` → `817`. p. 2, section 3.2.2; p. 4, Table 2. [Paper](https://doi.org/10.1016/j.jesp.2022.104372).
-- Row 1407, `n_o`: `219` → `12`. p. 11, Results, Exhibit 6. [Paper](https://doi.org/10.1002/(sici)1099-0771(200001/03)13:1<1::aid-bdm333>3.0.co;2-s).
+- Row 1407, `n_o`: `219` → `12`. p. 11, Results, Exhibit 6. [Paper](https://doi.org/10.1002/%28sici%291099-0771%28200001/03%2913%3A1%3C1%3A%3Aaid-bdm333%3E3.0.co%3B2-s).
 - Row 1409, `pval_value_r`: `0.501` → `0.395`. manuscript p. 14 (PDF p. 16), Study 2a, Key Results: Pricing. [Paper](https://doi.org/10.1016/j.jesp.2020.103972).
 - Row 1410, `pval_value_r`: `0.016` → `< 0.001`. manuscript p. 21 (PDF p. 23), Study 3a, Results. [Paper](https://doi.org/10.1016/j.jesp.2020.103972).
 - Row 1414, `n_o`: `40` → `43`. pp. 1220–1221 (PDF pp. 2–3), Experiment 2 Method (Participants) and Table 2. [Paper](https://doi.org/10.1111/j.1467-9280.2008.02227.x).
@@ -500,8 +500,8 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 1502, `pval_value_r`: `0.365` → `< 0.001`. Manuscript p. 16 (PDF p. 17), Results. [Paper](https://doi.org/10.1037/h0101833).
 - Row 1509, `n_o`: `94` → `369`. Section 3.2, pp. 175–176 (PDF pp. 14–15). [Paper](https://doi.org/10.1075/arcl.7.07gri).
 - Row 1510, `n_o`: `94` → `369`. Section 3.2, pp. 175–176 (PDF pp. 14–15). [Paper](https://doi.org/10.1075/arcl.7.07gri).
-- Row 1514, `pval_value_r`: `0.0001` → `0.255`. Results in Detail > Figure 6: Replication Results Table, Condition x Trial0 x Size0 row, p column. [Primary source](https://replications.clearerthinking.org/replication-2022psci33-8).
-- Row 1514, `reported_success`: `uninformative` → `failed`. Overall Ratings > Replicability. [Primary source](https://replications.clearerthinking.org/replication-2022psci33-8).
+- Row 1514, `pval_value_r`: `0.0001` → `0.255`. Results in Detail > Figure 6: Replication Results Table, Condition x Trial0 x Size0 row, p column. [Locator URL](https://replications.clearerthinking.org/replication-2022psci33-8).
+- Row 1514, `reported_success`: `uninformative` → `failed`. Overall Ratings > Replicability. [Locator URL](https://replications.clearerthinking.org/replication-2022psci33-8).
 - Row 1517, `n_r`: `136` → `97`. p. 6, Section 3.1 (H1); p. 5, Section 2.3. [Paper](https://doi.org/10.17645/mac.7807).
 - Row 1517, `pval_value_r`: `0.006` → `0.325`. p. 7, Section 3.1 (H1); p. 8, Table 1. [Paper](https://doi.org/10.17645/mac.7807).
 - Row 1531, `es_value_o`: `0.26` → `0.20`. p. 888, Table 1, Experiment 2. [Paper](https://doi.org/10.1037/a0036477).
@@ -524,10 +524,8 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 1621, `reported_success`: `mixed` → `failed`. p. 638 (PDF p. 1), Abstract; p. 660 (PDF p. 23), Section 5.2 Results. [Paper](https://doi.org/10.1017/s1930297500007774).
 - Row 1622, `reported_success`: `mixed` → `failed`. p. 665 (PDF p. 28), Section 5.3 Discussion. [Paper](https://doi.org/10.1017/s1930297500007774).
 - Row 1629, `reported_success`: `failed` → `successful`. Supplemental Materials, Effect Size Comparisons: Original vs Replication, Study 2. [Paper](https://doi.org/10.1016/j.jesp.2020.104052).
-- Row 1630, `es_value_r`: `-0.04` → `0.04`. Study 2, Results and Discussion, Distinction bias replication results. [Paper](https://doi.org/10.1016/j.jesp.2020.104052).
 - Row 1630, `reported_success`: `failed` → `successful`. Supplemental Materials, Effect Size Comparisons: Original vs Replication, Study 2. [Paper](https://doi.org/10.1016/j.jesp.2020.104052).
 - Row 1631, `reported_success`: `failed` → `successful`. Supplemental Materials, Effect Size Comparisons: Original vs Replication, Study 2. [Paper](https://doi.org/10.1016/j.jesp.2020.104052).
-- Row 1632, `es_value_r`: `-0.01` → `0.02`. Study 2, Results and Discussion, Distinction bias replication results. [Paper](https://doi.org/10.1016/j.jesp.2020.104052).
 - Row 1634, `reported_success`: `failed` → `successful`. Supplemental Materials, Effect Size Comparisons: Original vs Replication, Study 2. [Paper](https://doi.org/10.1016/j.jesp.2020.104052).
 - Row 1644, `reported_success`: `mixed` → `successful`. PDF p. 9, Discussion, first paragraph. [Paper](https://doi.org/10.31234/osf.io/dca65).
 - Row 1660, `reported_success`: `mixed` → `successful`. p. 743, Internal Dynamics among Indicators of Engagement versus Disaffection. [Paper](https://doi.org/10.1002/pits.22027).
@@ -546,55 +544,68 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 1729, `n_r`: `74` → `37`. Abstract; Methods, Participants & Sample size estimation; Table 2. [Paper](https://doi.org/10.1038/s41598-024-63724-2).
 - Row 1730, `n_o`: `51` → `37`. Methods, Participants; Results, Single-trial experiment. [Paper](https://doi.org/10.1038/s41598-022-24919-7).
 - Row 1730, `n_r`: `74` → `37`. Abstract; Methods, Participants & Sample size estimation; Table 2. [Paper](https://doi.org/10.1038/s41598-024-63724-2).
-- Row 1734, `n_r`: `None` → `90`. processed_data.csv line 51 (schnall2008), column replication_N. [Paper](https://doi.org/10.1098/rsos.231240). [Primary source](https://github.com/vboyce/251-254-MA/blob/main/data/processed_data.csv).
-- Row 1741, `n_o`: `157` → `235`. p. 10 (PDF p. 6), Experiment 2, Section 3.1 Method. [Paper](https://doi.org/10.1023/a:1015044207315).
+- Row 1734, `n_r`: `None` → `90`. processed_data.csv line 51 (schnall2008), column replication_N. [Paper](https://doi.org/10.1098/rsos.231240). [Locator URL](https://github.com/vboyce/251-254-MA/blob/main/data/processed_data.csv).
+- Row 1737, `reported_success`: `failed` → `successful`. p. 2, Results, Data analysis - Other effects. [Paper](https://doi.org/10.1007/s13164-018-0400-9). [Locator URL](https://osf.io/fmynh/files/rts9a).
+- Row 1741, `n_o`: `157` → `235`. p. 10 (PDF p. 6), Experiment 2, Section 3.1 Method. [Paper](https://doi.org/10.1023/a%3A1015044207315).
 - Row 1743, `es_value_o`: `0.56` → `0.98`. p. 291 (PDF p. 3), Experiment 1, Results and Discussion. [Paper](https://doi.org/10.1037/0096-3445.136.2.289).
 - Row 1743, `pval_value_o`: `0.105` → `0.006`. p. 291 (PDF p. 3), Experiment 1, Results and Discussion. [Paper](https://doi.org/10.1037/0096-3445.136.2.289).
-- Row 1743, `es_value_r`: `0.04` → `0.02`. p. 40, Table 9a, Thanksgiving Day (Within-subject design). [Primary source](https://osf.io/ns26x).
-- Row 1743, `pval_value_r`: `0.496` → `0.811`. p. 40, Table 9a, Thanksgiving Day (Within-subject design). [Primary source](https://osf.io/ns26x).
-- Row 1743, `reported_success`: `mixed` → `failed`. p. 64, Comparing replication to original findings, DV1: Influence on current mood. [Primary source](https://osf.io/ns26x).
-- Row 1744, `es_value_r`: `0.46` → `0.19`. p. 41, Table 9b, Menstruation. [Primary source](https://osf.io/ns26x).
-- Row 1744, `pval_value_r`: `0.001` → `0.154`. p. 41, Table 9b, Menstruation. [Primary source](https://osf.io/ns26x).
+- Row 1743, `es_value_r`: `0.04` → `0.02`. p. 40, Table 9a, Thanksgiving Day (Within-subject design). [Locator URL](https://osf.io/ns26x).
+- Row 1743, `pval_value_r`: `0.496` → `0.811`. p. 40, Table 9a, Thanksgiving Day (Within-subject design). [Locator URL](https://osf.io/ns26x).
+- Row 1743, `reported_success`: `mixed` → `failed`. p. 64, Comparing replication to original findings, DV1: Influence on current mood. [Locator URL](https://osf.io/ns26x).
+- Row 1744, `es_value_r`: `0.46` → `0.19`. p. 41, Table 9b, Menstruation. [Locator URL](https://osf.io/ns26x).
+- Row 1744, `pval_value_r`: `0.001` → `0.154`. p. 41, Table 9b, Menstruation. [Locator URL](https://osf.io/ns26x).
 - Row 1745, `es_value_o`: `0.24` → `0.66`. p. 292 (PDF p. 4), Experiment 2, Results and Discussion. [Paper](https://doi.org/10.1037/0096-3445.136.2.289).
 - Row 1745, `pval_value_o`: `0.416` → `0.027`. p. 292 (PDF p. 4), Experiment 2, Results and Discussion. [Paper](https://doi.org/10.1037/0096-3445.136.2.289).
-- Row 1745, `es_value_r`: `0.19` → `0.46`. p. 40, Table 9a, Menstruation. [Primary source](https://osf.io/ns26x).
-- Row 1745, `pval_value_r`: `0.154` → `< 0.001`. p. 40, Table 9a, Menstruation. [Primary source](https://osf.io/ns26x).
+- Row 1745, `es_value_r`: `0.19` → `0.46`. p. 40, Table 9a, Menstruation. [Locator URL](https://osf.io/ns26x).
+- Row 1745, `pval_value_r`: `0.154` → `< 0.001`. p. 40, Table 9a, Menstruation. [Locator URL](https://osf.io/ns26x).
 - Row 1748, `reported_success`: `mixed` → `successful`. Published p. 106, PDF p. 5, Results (Stage 2). [Paper](https://doi.org/10.1017/xps.2022.35).
 - Row 1749, `reported_success`: `mixed` → `successful`. Published p. 102, PDF p. 1, Abstract; Published p. 106, PDF p. 5, Results (Stage 2). [Paper](https://doi.org/10.1017/xps.2022.35).
 - Row 1750, `reported_success`: `mixed` → `failed`. Published p. 105, PDF p. 4, Results (Stage 1). [Paper](https://doi.org/10.1017/xps.2022.35).
 - Row 1751, `reported_success`: `mixed` → `failed`. Published p. 106, PDF p. 5, Results (Stage 2). [Paper](https://doi.org/10.1017/xps.2022.35).
+- Row 1752, `pval_value_o`: `0.2` → `< 0.01`. p. 260 (PDF p. 4), Figure 3B caption and Results and Discussion. [Paper](https://doi.org/10.1016/j.cub.2004.01.029).
+- Row 1752, `reported_success`: `failed` → `successful`. Section 3.4.1; Section 4, Discussion. [Paper](https://doi.org/10.1016/j.cortex.2019.03.026).
 - Row 1771, `n_r`: `100` → `95`. p. 6, ERP Data, Footnote 2, and Figure 2A. [Paper](https://doi.org/10.3389/fnhum.2019.00119).
 - Row 1772, `n_r`: `100` → `95`. p. 6, ERP Data, Footnote 2, and Figure 2B. [Paper](https://doi.org/10.3389/fnhum.2019.00119).
 - Row 1797, `reported_success`: `successful` → `failed`. p. 1401 (PDF p. 10), Section 3.1; p. 1406 (PDF p. 15), Table 4. [Paper](https://doi.org/10.1017/s1930297500008470).
 - Row 1798, `reported_success`: `successful` → `failed`. p. 1401 (PDF p. 10), Section 3.1; p. 1406 (PDF p. 15), Table 4. [Paper](https://doi.org/10.1017/s1930297500008470).
 - Row 1825, `es_value_r`: `F(1, 688) = 4.73` → `F(1, 688) = 152.37`. Accepted manuscript printed p. 18, Confirmatory (Pre-Registered) Results, Replication: Decision quality. [Paper](https://doi.org/10.17605/osf.io/knjhu).
 - Row 1825, `pval_value_r`: `0.03` → `< 0.001`. Accepted manuscript printed p. 18, Confirmatory (Pre-Registered) Results, Replication: Decision quality. [Paper](https://doi.org/10.17605/osf.io/knjhu).
+- Row 1837, `pval_value_o`: `None` → `< .03`. p. 613 (PDF p. 4), Experiment 1 Results and Discussion. [Paper](https://doi.org/10.1037/a0020757).
 - Row 1837, `pval_value_r`: `None` → `0.180`. Accepted manuscript p. 18, Section 3.5, Table 6 (Fairness, Replication row). [Paper](https://doi.org/10.1016/j.joep.2022.102509).
 - Row 1866, `n_r`: `446` → `1,020`. accepted manuscript p. 7, Methods (Airbnb data); p. 11, Confirmatory analyses (Table 3, Model 1). [Paper](https://doi.org/10.1016/j.joep.2018.11.004).
 - Row 1866, `reported_success`: `mixed` → `failed`. accepted manuscript p. 16, General Discussion; p. 20, Conclusion. [Paper](https://doi.org/10.1016/j.joep.2018.11.004).
-- Row 1869, `es_value_r`: `-0.24` → `0.24`. author manuscript p. 18 (PDF p. 21), Study 1a Results - Replication. [Paper](https://doi.org/10.1016/j.jesp.2021.104222).
 - Row 1871, `n_r`: `723` → `437`. author manuscript p. 28 (PDF p. 31), Study 1c Methods - Participants. [Paper](https://doi.org/10.1016/j.jesp.2021.104222).
+- Row 1878, `n_r`: `221` → `220`. p. 8, Table 6, Total row; Primary confirmatory analyses. [Paper](https://doi.org/10.1525/collabra.192). [Locator URL](https://osf.io/s2389/).
 - Row 1883, `es_value_o`: `0.45` → `0.05`. p. 28, Experiment 2, Results, Laptop Preferences. [Paper](https://doi.org/10.1093/jcr/ucz028).
 - Row 1884, `es_value_o`: `0.45` → `0.05`. p. 28, Experiment 2, Results, Laptop Preferences. [Paper](https://doi.org/10.1093/jcr/ucz028).
-- Row 1921, `n_r`: `1086` → `319`. p. 38, Table 12 note; p. 39, Table 13 note. [Paper](https://doi.org/10.17605/osf.io/j9mfn). [Primary source](https://osf.io/8mqx5).
-- Row 1922, `n_r`: `1086` → `327`. p. 41, Table 16 note; p. 42, Table 17 note. [Paper](https://doi.org/10.17605/osf.io/j9mfn). [Primary source](https://osf.io/8mqx5).
-- Row 1922, `pval_value_r`: `0.02` → `0.027`. p. 41, Study 3 results; p. 42, Table 17. [Paper](https://doi.org/10.17605/osf.io/j9mfn). [Primary source](https://osf.io/8mqx5).
-- Row 1923, `n_r`: `1086` → `282`. p. 44, Table 20 note; p. 45, Table 21 note. [Paper](https://doi.org/10.17605/osf.io/j9mfn). [Primary source](https://osf.io/8mqx5).
-- Row 1959, `es_value_r`: `0.080` → `0.15`. Replication Results, paragraph 1 (lines 63-67). [Primary source](https://datacolada.org/89).
-- Row 1959, `reported_success`: `mixed` → `uninformative`. Replication Results, concluding section before Author feedback (lines 106, 119). [Primary source](https://datacolada.org/89).
+- Row 1906, `n_r`: `300` → `294`. Appendix 2, RMET-scores, p. 20 (PDF p. 11). [Locator URL](https://www.tijdschriftdepsycholoog.nl/wp-content/uploads/2015/10/Dijkstra-K.-Verkoeijen-P.-Van-Kuijk-I.-Soke-Yee-Chow-Bakker-A.-Zwaan-R.-2015.-Leidt-het-lezen-van-literaire-fictie-tot-meer-emphatie.-De-Psycholoog-10-10-21..pdf).
+- Row 1910, `pval_value_r`: `0.644` → `0.666`. p. 6, Table 2 (Replication with the same conditions as in the target article, 2 × 2 ANOVA, Singularity and identifiability interaction); p. 11, Table 5 (H3 interaction). [Paper](https://doi.org/10.1017/jdm.2024.31).
+- Row 1921, `n_r`: `1086` → `319`. p. 38, Table 12 note; p. 39, Table 13 note. [Paper](https://doi.org/10.17605/osf.io/j9mfn). [Locator URL](https://osf.io/8mqx5).
+- Row 1922, `n_r`: `1086` → `327`. p. 41, Table 16 note; p. 42, Table 17 note. [Paper](https://doi.org/10.17605/osf.io/j9mfn). [Locator URL](https://osf.io/8mqx5).
+- Row 1922, `pval_value_r`: `0.02` → `0.027`. p. 41, Study 3 results; p. 42, Table 17. [Paper](https://doi.org/10.17605/osf.io/j9mfn). [Locator URL](https://osf.io/8mqx5).
+- Row 1923, `n_r`: `1086` → `282`. p. 44, Table 20 note; p. 45, Table 21 note. [Paper](https://doi.org/10.17605/osf.io/j9mfn). [Locator URL](https://osf.io/8mqx5).
+- Row 1959, `es_value_o`: `0.05` → `0.036`. p. 1116, Study 2A, Results and Discussion, The Full Causal Chain (Serial Mediation). [Paper](https://doi.org/10.1093/jcr/ucz031).
+- Row 1959, `es_value_r`: `0.080` → `0.15`. Replication Results, paragraph 1 (lines 63-67). [Locator URL](https://datacolada.org/89).
+- Row 1959, `pval_value_r`: `0.05` → `0.038`. Replication Results, Figure: Original vs. Replication Results: Price-Quality Correlation. [Locator URL](https://datacolada.org/89).
+- Row 1959, `reported_success`: `mixed` → `uninformative`. Replication Results, concluding section before Author feedback (lines 106, 119). [Locator URL](https://datacolada.org/89).
+- Row 1968, `pval_value_r`: `0.887` → `0.649`. p. 4, Experiment 1, Results. [Paper](https://doi.org/10.3389/fpsyg.2015.01221).
 - Row 1973, `reported_success`: `mixed` → `failed`. p. 462, Effect 19, Replication. [Paper](https://doi.org/10.1177/2515245918810225).
 - Row 1987, `n_r`: `3582` → `3549`. p. 467, Section 28. [Paper](https://doi.org/10.1177/2515245918810225).
 - Row 1990, `pval_value_r`: `None` → `< .001`. Preprint p. 17, Results, Paying to know, Between-subject design replication; Table 1, p. 9. [Paper](https://doi.org/10.1016/j.joep.2020.102350).
 - Row 1990, `reported_success`: `mixed` → `successful`. Preprint p. 21, General Discussion, Replications results. [Paper](https://doi.org/10.1016/j.joep.2020.102350).
-- Row 2010, `reported_success`: `successful` → `mixed`. p. 37. [Paper](https://doi.org/10.17605/osf.io/qswe3). [Primary source](https://osf.io/u59ab).
-- Row 2011, `reported_success`: `successful` → `mixed`. p. 38. [Paper](https://doi.org/10.17605/osf.io/qswe3). [Primary source](https://osf.io/u59ab).
-- Row 2012, `pval_value_r`: `None` → `< .001`. p. 30, Table 9; p. 41. [Paper](https://doi.org/10.17605/osf.io/qswe3). [Primary source](https://osf.io/u59ab).
+- Row 2010, `reported_success`: `successful` → `mixed`. p. 37. [Paper](https://doi.org/10.17605/osf.io/qswe3). [Locator URL](https://osf.io/u59ab).
+- Row 2011, `reported_success`: `successful` → `mixed`. p. 38. [Paper](https://doi.org/10.17605/osf.io/qswe3). [Locator URL](https://osf.io/u59ab).
+- Row 2012, `pval_value_r`: `None` → `< .001`. p. 30, Table 9; p. 41. [Paper](https://doi.org/10.17605/osf.io/qswe3). [Locator URL](https://osf.io/u59ab).
 - Row 2026, `reported_success`: `mixed` → `failed`. p. 4, Table 1, Experiment 2, row 6; p. 6, Section 3.3. [Paper](https://doi.org/10.1016/j.joep.2018.12.001).
 - Row 2032, `reported_success`: `failed` → `mixed`. p. 5, Table 1, Experiment 5; p. 6, Section 3.3. [Paper](https://doi.org/10.1016/j.joep.2018.12.001).
+- Row 2122, `pval_value_o`: `0.001380362` → `< .001`. p. 41, Experiment 1, Product evaluations and thoughts, interdependent trendiness planned contrast. [Paper](https://doi.org/10.1509/jmkr.46.1.37).
+- Row 2143, `pval_value_r`: `0.0174` → `0.018`. Replication result, paragraph 21. [Locator URL](https://osf.io/fgdxs).
 
 ## Unverified and skipped work
 
 0 effects have no paper checkpoint yet. A checkpoint with unavailable or insufficient fields is not a verified effect.
+
+81 fields exhausted the allowed adjudication attempts and remain unresolved. The remaining dispatch queue contains 73 fields in 36 source groups; after the dispatch cutoff these remain unverified. Failed or truncated replies establish no error unless an individual complete response passes source validation.
 
 - original: done: 1263 sides.
 - original: locator_insufficient: 265 sides.

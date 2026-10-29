@@ -22,12 +22,30 @@ for(const r of Object.values(latest)){
 await tools.exec_command({cmd:`python3 '${B}/scripts/validate_adjudication.py'`,max_output_tokens:3000});
 const validation=JSON.parse(await read('adjudication_validation.json'));
 for(const v of validation){if(states[v.key]){states[v.key].validation=v.status;states[v.key].validation_error=v.error;}}
+const finished=await tools.exec_command({cmd:`python3 '${B}/scripts/completed_argon.py'`,max_output_tokens:1000});
+if(finished.exit_code!==0)throw Error(finished.output);
+for(const key of JSON.parse(finished.output)){
+ if(states[key]?.terminal)continue;
+ const stopped=await tools.exec_command({cmd:`python3 '${B}/scripts/stop_argon.py' '${key}'`,max_output_tokens:1000});
+ if(stopped.exit_code!==0)throw Error(stopped.output);
+ states[key]={...states[key],terminal:true,completion:'Complete validated final JSON stable for at least30seconds; exact owned CLI exit verified',cleanup:stopped.output};
+}
+// A queue was built before polling. Defer any bundle whose fields just acquired
+// valid answers, even if its key changed with new coding context or regrouping.
+// The next integration cycle keeps those answers and rebuilds remaining siblings.
+const justResolved=new Set();
+for(const v of validation){
+ const record=latest[v.key];if(!record?.items || !['valid','partial'].includes(v.status))continue;
+ const failed=new Set((v.failed_fields??[]).map(x=>`${x.audit_id}:${x.field}`));
+ for(const item of record.items)if(!failed.has(`${item.audit_id}:${item.field}`))justResolved.add(`${!!record.focused_review}:${item.audit_id}:${item.field}`);
+}
 const manifest=JSON.parse(await read('run_manifest.json'));
 const queue=JSON.parse(await read('adjudication_queue.json'));
 let active=Object.values(latest).filter(x=>!states[x.key]?.terminal);
 const exists=async name=>(await tools.exec_command({cmd:`test -f '${B}/${name}'`,max_output_tokens:100})).exit_code===0;
 for(const a of queue){
  if(active.length>=4||Date.now()>=Date.parse(manifest.deadlines.adjudication))break;
+ if(a.items.some(x=>justResolved.has(`${!!a.focused_review}:${x.audit_id}:${x.field}`)))continue;
  if(await exists(`adjudications/validated_${a.key}.json`))continue;
  const old=latest[a.key];
  if(old && (!states[a.key]?.terminal || old.attempt>=2))continue;

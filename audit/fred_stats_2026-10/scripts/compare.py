@@ -68,7 +68,7 @@ def metric(s):
  if re.fullmatch(r'[dr] \(author-derived[^)]*\)',s):return s[0]
  return aliases.get(s,s)
 def parsed_stat(s):
- s=norm(s).replace('²','2').replace('χ','X')
+ s=norm(s).replace('–','-').replace('²','2').replace('χ','X')
  m=re.search(r'(?i)(F|t|z|X2|chi2|G2?)\s*(?:\(\s*([^)]*)\))?\s*=\s*([+-]?(?:\d*\.\d+|\d+\.?\d*))',s)
  if not m:return None
  kind=m[1].lower();kind='g' if kind in ['g','g2'] else 'chi2' if kind in ['x2','chi2'] else kind
