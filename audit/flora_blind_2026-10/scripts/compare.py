@@ -185,7 +185,7 @@ def normalized_quote_text(value, dehyphenate=True):
 
 
 def quote_present(quote, text):
-    """All quoted parts must occur contiguously, allowing Unicode/spacing fixes.
+    """The whole quotation must occur contiguously, allowing Unicode/spacing fixes.
 
     Unlike the pilot's bag-of-shingles heuristic, this never accepts fragments
     scattered throughout a document. No semantic validation is claimed here.
@@ -197,10 +197,9 @@ def quote_present(quote, text):
     # Dehyphenating only the source must not erase that exact literal match.
     modes = (False, True)
     sources = [normalized_quote_text(text, mode) for mode in modes]
-    parts = quote.split(' | ')
-    return all(any(normalized_quote_text(part, mode) and
-                   normalized_quote_text(part, mode) in source
-                   for mode, source in zip(modes, sources)) for part in parts)
+    return any(normalized_quote_text(quote, mode) and
+               normalized_quote_text(quote, mode) in source
+               for mode, source in zip(modes, sources))
 
 
 def outcome_grade(row, target, axis=None):
@@ -498,6 +497,14 @@ def write_csv(path, rows, columns):
         writer.writerows(rows)
 
 
+def applicable_rate_rows(rows, field):
+    if field == 'outcome':
+        return [r for r in rows if r['type'] == 'replication']
+    if field in ('outcome_computation', 'outcome_robustness'):
+        return [r for r in rows if r['type'] == 'reproduction']
+    return rows
+
+
 def rate_line(rows, field):
     counts = collections.Counter(r[field + '_final_verdict'] for r in rows)
     correct, errors, unresolved = (counts[k] for k in ('correct', 'error', 'unverified'))
@@ -507,9 +514,11 @@ def rate_line(rows, field):
     return f'{errors} / {n} ({rate}); {unresolved} unverified; all-row unresolved bounds {bounds} (N={total})'
 
 
-def report(results, missing, works, issues):
-    lines = ['# FLoRA blind audit — provisional', '',
-             'This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. '
+def report(results, missing, works, issues, finalized_at=None):
+    status = (f'Audit finalized at {finalized_at}. Unverified fields remain unresolved within the available evidence and review budget. '
+              if finalized_at else 'This report is provisional until the parent finalizes the audit. ')
+    lines = ['# FLoRA blind audit' + ('' if finalized_at else ' — provisional'), '',
+             status + 'Blind disagreement alone establishes no error. '
              'Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. '
              'Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.', '']
     errors = sum(any(r[k + '_final_verdict'] == 'error' for k in ('type', 'original', 'outcome')) for r in results)
@@ -529,10 +538,11 @@ def report(results, missing, works, issues):
               'Bounds put every unverified row first outside, then inside the error count over all applicable input rows; '
               'they are sensitivity bounds, not binomial confidence intervals. '
               'Confidence is descriptive only. Study status is reported separately and does not change type agreement. '
-              'Axis-specific rates below use rows shipped as reproductions; dependent outcome replacements after a type correction remain in results.csv and the error list.', '',
+              'Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. '
+              'Dependent outcome replacements after a type correction remain in results.csv and the error list.', '',
               '## Confirmed field error rates', '']
     for field in FIELDS:
-        applicable = results if field not in ('outcome_computation', 'outcome_robustness') else [r for r in results if r['type'] == 'reproduction']
+        applicable = applicable_rate_rows(results, field)
         lines.append(f'- {field}: {rate_line(applicable, field)}')
     for group in ('source', 'evidence_level'):
         lines += ['', f'### By {group}', '']
@@ -540,7 +550,7 @@ def report(results, missing, works, issues):
             subset = [r for r in results if r[group] == value]
             lines.append(f'- {value or "(missing)"}:')
             for field in FIELDS:
-                applicable = subset if field not in ('outcome_computation', 'outcome_robustness') else [r for r in subset if r['type'] == 'reproduction']
+                applicable = applicable_rate_rows(subset, field)
                 lines.append(f'  - {field}: {rate_line(applicable, field)}')
     lines += ['', '## Every confirmed input-row error', '', 'Complete quotes, locations, reasons and corrected values are retained in [results.csv](results.csv), keyed by the immutable, zero-based input row index (0–2817).', '']
     for r in results:
@@ -616,6 +626,7 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
     if error or not isinstance(schema, dict):
         raise ValueError('coding_schema.json missing or malformed')
     run_manifest, error = read_json(root / 'run_manifest.json')
+    finalized_at = run_manifest.get('audit_finalized_at') if isinstance(run_manifest, dict) else None
     if not error and isinstance(run_manifest, dict):
         expected = run_manifest.get('input_hashes', {}).get(Path(input_path).name)
         if expected and expected != hashlib.sha256(Path(input_path).read_bytes()).hexdigest():
@@ -697,9 +708,10 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
     write_csv(output / 'missing_rows.csv', missing,
               ['work_key', 'file_key', 'target_index', 'doi', 'title', 'authors', 'year',
                'evidence_level', 'pairing_flags', 'final_verdict', 'resolution', 'evidence', 'blind_target'])
-    (output / 'disagreements.json').write_text(json.dumps({'provisional': True, 'items': disagreements,
+    (output / 'disagreements.json').write_text(json.dumps({'provisional': not bool(finalized_at),
+                                                         'finalized_at': finalized_at, 'items': disagreements,
                                                          'validation_issues': issues}, ensure_ascii=False, indent=2) + '\n')
-    (output / 'REPORT.md').write_text(report(results, missing, works, issues), encoding='utf-8')
+    (output / 'REPORT.md').write_text(report(results, missing, works, issues, finalized_at), encoding='utf-8')
     return {'rows': len(results), 'works': len(works), 'missing_targets': len(missing),
             'disagreements': len(disagreements), 'output_dir': str(output.resolve())}
 

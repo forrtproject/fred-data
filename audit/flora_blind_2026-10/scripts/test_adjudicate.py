@@ -54,6 +54,38 @@ class TransportTests(unittest.TestCase):
 
 
 class RetryTests(unittest.TestCase):
+    def test_final_scope_consumes_only_one_remaining_call_and_cannot_repeat(self):
+        for invalid in (False, True):
+            with self.subTest(invalid=invalid):
+                self.exercise_final_scope(invalid)
+
+    def exercise_final_scope(self, invalid):
+        with tempfile.TemporaryDirectory(prefix='flora-final-scope-') as directory:
+            root = Path(directory)
+            for name in ('texts', 'argon', 'adjudications'):
+                (root / name).mkdir()
+            requested = [{'input_row_index': 0, 'field': 'outcome'}]
+            statepath = root/'argon/file.state.json'
+            statepath.write_text(json.dumps({'status': 'scope_review_pending', 'attempts': 1,
+                                            'scope_requested_fields': requested}))
+            (root/'argon/file.scope_review.input.json').write_text(json.dumps({'requested_fields': requested}))
+            (root/'argon/file.scope_review.prompt.txt').write_text('A final source-scope objection.')
+            (root/'adjudications/file.json').write_text(json.dumps({'decisions': [], 'scope_review': {'parent_objection': 'Retained.'}}))
+            (root/'texts/file.txt').write_text(SOURCE)
+            deadline = datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(hours=1)
+            (root/'run_manifest.json').write_text(json.dumps({'deadlines': {'adjudication': deadline.isoformat()}}))
+            def transport(argv, output, source, fields):
+                self.assertEqual(fields, REQUESTED)
+                self.assertEqual(argv[argv.index('--model')+1], 'Gemini 4 Argon (High)')
+                output.write_text(json.dumps(answer('Not present in source.' if invalid else SOURCE)))
+                return {'returncode': 0, 'closed_after_valid_answer': False, 'timed_out': False}
+            with patch.object(a, 'R', root), patch.object(a, 'run_transport', side_effect=transport) as calls:
+                self.assertEqual(a.final_scope_one('file')['validated'], not invalid)
+                self.assertEqual(a.final_scope_one('file')['status'], 'not_pending_or_exhausted')
+            self.assertEqual(calls.call_count, 1)
+            self.assertEqual(json.loads(statepath.read_text())['attempts'], 2)
+            self.assertEqual(json.loads((root/'adjudications/file.json').read_text())['scope_review']['parent_objection'], 'Retained.')
+
     def test_existing_final_or_pending_work_cannot_dispatch_again(self):
         for status, attempts in [('validated', 1), ('unresolved', 2),
                                  ('scope_review_pending', 1), ('unknown', 2)]:
@@ -67,7 +99,7 @@ class RetryTests(unittest.TestCase):
                 transport.assert_not_called()
                 self.assertIn(result['status'], ['already_final', 'scope_review_pending'])
 
-    def exercise(self, invalid_both=False):
+    def exercise(self, invalid_both=False, resume=False):
         with tempfile.TemporaryDirectory(prefix='flora-review-test-') as directory:
             root = Path(directory)
             for name in ('texts', 'codings', 'argon', 'adjudications'):
@@ -76,6 +108,11 @@ class RetryTests(unittest.TestCase):
             (root / 'run_manifest.json').write_text(json.dumps({'deadlines': {'adjudication': deadline.isoformat()}}))
             (root / 'texts/file.txt').write_text(SOURCE)
             (root / 'codings/file.json').write_text(json.dumps({'work_key': 'work', 'evidence_level': 'full_text'}))
+            if resume:
+                (root/'argon/file.state.json').write_text(json.dumps({
+                    'status': 'running', 'attempts': 1, 'reason': 'Runner terminated during first call.'}))
+                (root/'argon/file.attempt1.txt').write_text('Retained first-attempt output.')
+                (root/'argon/file.prompt.txt').write_text('Retained first-attempt prompt.')
             calls = []
 
             def csv_rows(path):
@@ -86,17 +123,27 @@ class RetryTests(unittest.TestCase):
 
             def transport(argv, output, source, requested):
                 calls.append(argv[2])
+                reserved = json.loads((root/'argon/file.state.json').read_text())
+                self.assertEqual(reserved['status'], 'running')
+                self.assertEqual(reserved['attempts'], 2 if resume else len(calls))
                 output.write_text(json.dumps(answer('A nonexistent quotation.' if invalid_both else SOURCE)))
                 # An otherwise valid reply with an unexplained nonzero exit is still rejected.
-                return {'returncode': 0 if invalid_both or len(calls) == 2 else 7,
+                return {'returncode': 0 if resume or invalid_both or len(calls) == 2 else 7,
                         'timed_out': False, 'closed_after_valid_answer': False}
 
             with patch.object(a, 'R', root), patch.object(a.c, 'read_csv', side_effect=csv_rows), \
                     patch.object(a, 'run_transport', side_effect=transport):
                 result = a.one('file', [{'input_row_index': '0', 'field': 'outcome'}])
-            self.assertEqual(len(calls), 2)
-            self.assertNotIn('RETRY FEEDBACK', calls[0])
-            self.assertIn('RETRY FEEDBACK', calls[1])
+            if resume:
+                self.assertEqual(len(calls), 1)
+                self.assertIn('RETRY FEEDBACK', calls[0])
+                self.assertEqual((root/'argon/file.attempt1.txt').read_text(), 'Retained first-attempt output.')
+                self.assertEqual((root/'argon/file.before_resume.prompt.txt').read_text(), 'Retained first-attempt prompt.')
+                self.assertEqual(result['resume_history'][0]['attempts'], 1)
+            else:
+                self.assertEqual(len(calls), 2)
+                self.assertNotIn('RETRY FEEDBACK', calls[0])
+                self.assertIn('RETRY FEEDBACK', calls[1])
             self.assertEqual(result['attempts'], 2)
             self.assertTrue((root / 'argon/file.retry.prompt.txt').exists())
             return result
@@ -106,6 +153,10 @@ class RetryTests(unittest.TestCase):
 
     def test_two_invalid_replies_remain_unresolved_without_third_call(self):
         self.assertEqual(self.exercise(invalid_both=True)['status'], 'unresolved')
+
+    def test_interrupted_call_resumes_only_remaining_attempt_without_overwrite(self):
+        self.assertEqual(self.exercise(resume=True)['status'], 'validated')
+        self.assertEqual(self.exercise(invalid_both=True, resume=True)['status'], 'unresolved')
 
 
 class SourceViewTests(unittest.TestCase):

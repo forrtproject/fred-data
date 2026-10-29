@@ -1,15 +1,9 @@
 # Parent audit resume
 
-Work only in this worktree on `audit/flora-blind-2026-10`. Do not edit FLoRA, pipelines, main checkout or FReD. Continue unattended without questions.
+At 2026-10-29T17:20:01.150797+00:00, only live model runner is **41129** (03524newgroups+3finalscopes). The three final scopes were collected/accepted. Two NEW scope_review_pending works1c400(task-order targets26/27),e96d(Tolman1164) must run AFTER41129exits in shared max4pool. Current035imported old one(): if interrupted,reconcile consumed calls from attempt1/2files even ifzero-byte before resume.9fedfirstcalltimedout;secondlive;no third.58537firstcalllive.
 
-The only live model runner is terminal **49657**, round032 (24 full-text outcome groups, at most four calls). All older sessions are fully collected. The first 12 responses have been source-inspected; see run_log. For **137a8b84a4506060**, the Jiang outcome is accepted but two omitted-target exclusions are held. Its second/final scope prompt and input are prepared; run only after032 finishes. No third calls, including retries.
+Next034a contains12newgroups+2interrupted033recoveries(10507719f2a93503,b97681c54b8cdc1a each1remaining);run latest one() only,pluspending final scopes in SAME max4executor/globalflock.034b remaining12,then036–043source-triaged queues. No nativecodingtasks remain;2344recordsvalidate,2289usable.
 
-Queues033–041 are prepared and source-triaged. Queue042 is prepared but source triage remains. Each work retains all unresolved fields. Use absolute FLORA_ARGON_SELECTION and FLORA_ARGON_GROUP_LIMIT=24 with scripts/adjudicate.py. Global flock and max4 executor enforce the ceiling. Inspect every scientific decision, not just its schema and quote presence.
+54tests pass. Comparison31395pending,collect. Evidenceverification2977fullycollected:2818ordered,241correctionfields,63missingtargets literalchecked; this was prior snapshot while31395running. FloraSHA256unchanged6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7. Latestpushed d08c24d4at16:39;criticaldurableattempt/reportfixesuncommitted.
 
-Post031 report:185 confirmed-error rows,1791 fully resolved;217 correction fields checked against source quotes,locations and reasons;2818 ordered rows.51 regression tests pass. All2344 coding checkpoints validate;2290 done,2289 usable. No native coding task remains. FLoRA hash is unchanged.
-
-Last pushed checkpoint9a6dec2f at15:39UTC; preparing the next scoped commit now. Stage only explicit audit paths plus .gitignore through stage_checkpoint.py. Never commit source texts or raw model stdout.
-
-Final deadlines are in run_manifest: stop adjudication dispatch18:49:58UTC; finish19:19:58UTC. Two owned schedules remain active; no PR yet. At completion collect/cancel own work, finalize outputs and verify quotes/order/hash, commit/push, open draft PR to main, immediately call native link_pull_request and verify the linked list. Delete BOTH owned schedules and verify absence, then record completed_at and final resume state. Never claim completion while scheduled work remains.
-
-Large OSC source9fed has a verified lossless JSON-chunk view and navigation index. Check every quote belongs to the correct individual report/original. Missing anchors do not justify guessed outcomes. Exhausted cases and source-version limits remain unverified; full history is in run_log.md.
+Onlyauditworktree/branch;noFReD/main/pipeline/florachanges. Stopnewadjudication18:49:58UTC;finish19:19:58UTC. Atcompletioncollect/cancelownwork,finalize outputs via run_manifest.audit_finalized_at,verifyorder/allcorrectionquotes/hash,scopedcommit/push,draftPRmain,nativelink/listverify. DELETEBOTHowned schedules inrun_manifest;verifyabsence,recordcompleted_atandPRURL,commit/pushfinalmetadata. Neverclaimcompletewhileschedulesremain. Exhaustedcasesstayunverified,no3rdcalls.

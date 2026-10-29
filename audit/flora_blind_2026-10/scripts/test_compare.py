@@ -10,6 +10,17 @@ SPEC.loader.exec_module(c)
 
 
 class AdapterTests(unittest.TestCase):
+    def test_outcome_rate_denominators_use_the_shipped_vocabulary(self):
+        rows = [{'type': 'replication', 'outcome_final_verdict': 'error'},
+                {'type': 'reproduction', 'outcome_final_verdict': 'unverified'}]
+        applicable = c.applicable_rate_rows(rows, 'outcome')
+        self.assertEqual(c.rate_line(applicable, 'outcome'),
+                         '1 / 1 (100.0%); 0 unverified; all-row unresolved bounds 100.0%–100.0% (N=1)')
+        for field in ('outcome_computation', 'outcome_robustness'):
+            self.assertEqual(c.applicable_rate_rows(rows, field), [rows[1]])
+        for field in ('type', 'original'):
+            self.assertEqual(c.applicable_rate_rows(rows, field), rows)
+
     @classmethod
     def setUpClass(cls):
         with c.INPUT.open(encoding='utf-8-sig') as f:
@@ -162,7 +173,10 @@ class EvidenceTests(unittest.TestCase):
 
     def test_presence_contiguous_and_all_parts(self):
         self.assertTrue(c.quote_present('The original result was confirmed.', TEXT))
-        self.assertTrue(c.quote_present('Numbers reproduced. | Robustness was not checked.', TEXT))
+        self.assertFalse(c.quote_present('Numbers reproduced. | Robustness was not checked.', TEXT))
+        self.assertFalse(c.quote_present('We replicate Smith 2000. | Numbers reproduced.', TEXT))
+        self.assertTrue(c.quote_present('Numbers reproduced. | Robustness was not checked.',
+                                        'Numbers reproduced. | Robustness was not checked.'))
         self.assertFalse(c.quote_present('We replicate Smith 2000. | Invented claim.', TEXT))
         self.assertFalse(c.quote_present('We replicate Smith 2000. Numbers reproduced.', TEXT))
         self.assertFalse(c.quote_present('', TEXT))
@@ -287,6 +301,11 @@ class CLITests(unittest.TestCase):
             self.assertIn('https://doi.org/10.2/r', report)
             self.assertTrue((root / 'missing_rows.csv').exists())
             self.assertTrue(json.loads((root / 'disagreements.json').read_text())['provisional'])
+            (root / 'run_manifest.json').write_text(json.dumps({'audit_finalized_at': '2026-10-29T19:00:00+00:00'}))
+            c.run(root / 'input.csv', root)
+            self.assertNotIn('provisional', (root / 'REPORT.md').read_text())
+            self.assertIn('2026-10-29T19:00:00+00:00', (root / 'REPORT.md').read_text())
+            self.assertFalse(json.loads((root / 'disagreements.json').read_text())['provisional'])
             (root / 'codings' / 'first.json').write_text(json.dumps(coding(status='timeout')))
             code_failed, error_failed, text_failed = c.load_coding(root, 'first', 'work', json.loads((root / 'coding_schema.json').read_text()))
             self.assertEqual(error_failed, 'timeout')

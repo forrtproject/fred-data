@@ -98,6 +98,62 @@ def source_instruction(fk, textpath, source):
             'When several primary reports are collected together, verify the individual report and original citation: '
             'a quotation from a different report is not evidence for the requested target.')
 
+def final_scope_one(fk):
+    """Use exactly one remaining call for a parent-prepared scope objection.
+
+    The caller owns runner.lock and the shared four-worker executor, so scopes
+    can share that executor with new work instead of leaving slots idle.
+    """
+    statepath = R/'argon'/f'{fk}.state.json'
+    state = c.read_json(statepath)[0] or {}
+    if state.get('status') != 'scope_review_pending' or state.get('attempts') != 1:
+        return {'file_key': fk, 'status': 'not_pending_or_exhausted'}
+    deadline = datetime.datetime.fromisoformat(json.loads((R/'run_manifest.json').read_text())['deadlines']['adjudication'])
+    if datetime.datetime.now(datetime.timezone.utc) >= deadline:
+        return {'file_key': fk, 'status': 'dispatch_deadline'}
+    inputpath = R/'argon'/f'{fk}.scope_review.input.json'
+    payload = json.loads(inputpath.read_text())
+    requested = {decision_key(d) for d in payload['requested_fields']}
+    if not requested or requested != {decision_key(d) for d in state['scope_requested_fields']}:
+        raise ValueError('scope requested fields differ from prepared state')
+    adjudicationpath = R/'adjudications'/f'{fk}.json'
+    obj = json.loads(adjudicationpath.read_text())
+    textpath = R/'texts'/f'{fk}.txt'
+    source = textpath.read_text()
+    prompt = (R/'argon'/f'{fk}.scope_review.prompt.txt').read_text()
+    prompt += '\n\nFor complete source access: ' + source_instruction(fk, textpath, source)
+    (R/'argon'/f'{fk}.scope_review.effective.prompt.txt').write_text(prompt)
+    output = R/'argon'/f'{fk}.scope_review.attempt2.txt'
+    state.update(status='scope_review_running', attempts=2)
+    atomic(statepath, state)
+    start = time.monotonic()
+    metadata = {'file_key': fk, 'substantive_attempt': 2,
+                'prompt_sha256': hashlib.sha256(prompt.encode()).hexdigest(),
+                'source_sha256': hashlib.sha256(textpath.read_bytes()).hexdigest()}
+    try:
+        transport = run_transport(['agy', '-p', prompt, '--model', 'Gemini 4 Argon (High)',
+                                   '--sandbox', '--add-dir', str(R), '--print-timeout', '10m'],
+                                  output, source, requested)
+        metadata['transport'] = transport
+        if transport['returncode'] not in (None, 0) and not transport['closed_after_valid_answer']:
+            raise ValueError('nonzero transport exit')
+        answer = read_response(output, source, requested)
+        obj['decisions'] = [d for d in obj.get('decisions', []) if decision_key(d) not in requested] + answer['decisions']
+        metadata['validated'] = True
+        state['status'] = 'validated'
+    except (ValueError, OSError) as error:
+        metadata.update(validated=False, reason=str(error))
+        state.update(status='unresolved', reason=str(error))
+    metadata.update(elapsed_seconds=time.monotonic()-start,
+                    at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                    response_sha256=hashlib.sha256(output.read_bytes()).hexdigest() if output.exists() else None)
+    obj['scope_review']['final_transport'] = metadata
+    atomic(adjudicationpath, obj)
+    state.update(final_scope_review=metadata, requires_parent_scope_inspection=True)
+    atomic(statepath, state)
+    return metadata
+
+
 def one(fk,items):
  statepath=R/'argon'/f'{fk}.state.json';state=c.read_json(statepath)[0] or {}
  if state.get('status')=='scope_review_pending':return {'file_key':fk,'status':'scope_review_pending'}
@@ -127,11 +183,19 @@ When the source proves that a shipped row cites only a method or background work
 If type is not_a_replication, return its supported type correction. For requested original/outcome fields that have no applicable value, return verdict="undeterminable", corrected_value=null and explain the inapplicability; never pair a non-undeterminable verdict with a null replacement (except missing_row/shipped_right). Do not invent an original or outcome to fill the schema.
 
 INPUTS:\n'''+serialized+'\n\nPut your whole result in your reply; do not create files or run commands.'
- (R/'argon'/f'{fk}.prompt.txt').write_text(prompt)
+ promptpath=R/'argon'/f'{fk}.prompt.txt'
+ if state.get('attempts',0) and promptpath.exists():
+  archive=R/'argon'/f'{fk}.before_resume.prompt.txt'
+  if not archive.exists():archive.write_bytes(promptpath.read_bytes())
+ promptpath.write_text(prompt)
  start=time.monotonic()
  requested={decision_key(x) for x in items}
- attempted=0
- for attempt in range(1,3):
+ attempted=state.get('attempts',0)
+ history=list(state.get('resume_history',[]))
+ if attempted:
+  history.append({k:v for k,v in state.items() if k!='resume_history'})
+ error=state.get('reason','Previous reserved attempt did not complete.')
+ for attempt in range(attempted+1,3):
   if datetime.datetime.now(datetime.timezone.utc)>=deadline:
    error="adjudication dispatch deadline reached";break
   attempted=attempt
@@ -141,16 +205,24 @@ INPUTS:\n'''+serialized+'\n\nPut your whole result in your reply; do not create 
    attempt_prompt+='\n\nRETRY FEEDBACK: The preceding reply failed validation: '+error+'. Return every requested decision again. Copy a different, short, contiguous passage directly from the supplied text if a quotation failed. Do not reconstruct sentences across interleaved PDF columns, omit intervening text, or repair words. Prefer an intact abstract, conclusion, or reference passage where relevant. Unsupported fields remain undeterminable; the evidence standard is unchanged.'
    (R/'argon'/f'{fk}.retry.prompt.txt').write_text(attempt_prompt)
   try:
+   # Reserve before opening the transport so an interrupted runner cannot
+   # restart its call budget or overwrite an earlier attempt's output.
+   attempt_started_at=datetime.datetime.now(datetime.timezone.utc).isoformat()
+   atomic(statepath,{'file_key':fk,'status':'running','attempts':attempt,
+                     'input_sha256':sig,'started_at':attempt_started_at,
+                     'resume_history':history})
    transport=run_transport(['agy','-p',attempt_prompt,'--model','Gemini 4 Argon (High)','--sandbox','--add-dir',str(R),'--print-timeout','10m'],output,text,requested)
    if transport['returncode'] not in (None,0) and not transport['closed_after_valid_answer']:raise ValueError('nonzero exit')
    # Validate the final file again even if it passed before closing our transport.
    obj=read_response(output,text,requested)
    atomic(R/'adjudications'/f'{fk}.json',obj)
-   result={'file_key':fk,'status':'validated','attempts':attempt,'input_sha256':sig,'elapsed_seconds':time.monotonic()-start,'transport_timed_out_after_answer':transport['timed_out'],'closed_transport_after_valid_answer':transport['closed_after_valid_answer'],'transport_returncode':transport['returncode'],'at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+   result={'file_key':fk,'status':'validated','attempts':attempt,'input_sha256':sig,'elapsed_seconds':time.monotonic()-start,'transport_timed_out_after_answer':transport['timed_out'],'closed_transport_after_valid_answer':transport['closed_after_valid_answer'],'transport_returncode':transport['returncode'],'at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'resume_history':history}
    atomic(statepath,result);return result
   except (ValueError,subprocess.TimeoutExpired,OSError) as e:
    error=str(e)
- result={'file_key':fk,'status':'unresolved','attempts':attempted,'input_sha256':sig,'reason':error,'elapsed_seconds':time.monotonic()-start}
+   atomic(statepath,{'file_key':fk,'status':'retry_pending','attempts':attempt,
+                     'input_sha256':sig,'reason':error,'started_at':attempt_started_at,'resume_history':history})
+ result={'file_key':fk,'status':'unresolved','attempts':attempted,'input_sha256':sig,'reason':error,'elapsed_seconds':time.monotonic()-start,'resume_history':history}
  atomic(statepath,result);return result
 if __name__=='__main__':
  lock=(R/'argon'/'runner.lock').open('w')
