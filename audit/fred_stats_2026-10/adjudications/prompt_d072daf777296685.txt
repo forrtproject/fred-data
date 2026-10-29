@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 1408,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "0.85",
+    "shipped_metric": "d",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "0.58",
+      "metric": "d",
+      "test_statistic": "t(1597) = 23.1",
+      "location": "Study 1 Results, Hypothesis 1A (combined samples); Table 5, Combined row",
+      "quote": "the one-sample t-test against μ = 0 for overestimation was t(1597) = 23.1, p < .0001, d = 0.58 [0.53, 0.63].",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e8e9cbe11fc8da6ed3c8233.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Miller, D. T., & Ratner, R. K. (1998). The disparity between the actual and assumed power of self-interest. Journal of Personality and Social Psychology, 74(1), 53–62. https://doi.org/10.1037/0022-3514.74.1.53",
+      "doi_o": "10.1037/0022-3514.74.1.53",
+      "study_o": "1",
+      "ref_r": "Brick, C., Fillon, A., Yeung, S. K., Wang‎, M., Lyu‎, H., Ho‎, J. Y. J., Wong, S. C., & Feldman, G. (2021). Self-interest Is Overestimated: Two Successful Pre-registered Replications and Extensions of Miller and Ratner (1998). Collabra: Psychology, 7(1). https://doi.org/10.1525/collabra.23443",
+      "doi_r": "10.1525/collabra.23443",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1408,
+      "description": "Predicted versus actual changes in others' willingness to donate blood in relation to payment.",
+      "locators_o": "p.2",
+      "locators_r": "p.16",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e8e9cbe11fc8da6ed3c8233.txt"
+      }
+    },
+    "work_key": "10.1525/collabra.23443",
+    "coding_context": {
+      "es_repr": "p.16",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

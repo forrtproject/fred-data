@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 1834,
+    "field": "pval_value_o",
+    "comparison": "differ",
+    "shipped": null,
+    "shipped_metric": "OR",
+    "shipped_bound": null,
+    "blind": {
+      "value": ".001",
+      "location": "p. 125 (PDF p. 10), preliminary comparisons, timing of NOT progress alert",
+      "quote": "p ⬍ .001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "locator": {
+      "ref_o": "Burlingame, G. M., Whitcomb, K. E., Woodland, S. C., Olsen, J. A., Beecher, M., & Gleave, R. (2018). The effects of relationship and progress feedback in group psychotherapy using the Group Questionnaire and Outcome Questionnaire–45: A randomized clinical trial. Psychotherapy, 55(2), 116–131. https://doi.org/10.1037/pst0000133",
+      "doi_o": "10.1037/pst0000133",
+      "study_o": "1",
+      "ref_r": "Alldredge, C., Burlingame, G., Olsen, J., & Van Epps, J. (2020). Outcome Questionnaire-45 (OQ-45) progress alert rates in group versus individual treatment: An archival replication. Group Dynamics: Theory, Research, and Practice, 24(4), 247–260. https://doi.org/10.1037/gdn0000121",
+      "doi_r": "10.1037/gdn0000121",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "audit_id": 1834,
+      "description": "Timing of \"not on track\" alerts among group therapy versus individual therapy participants.",
+      "locators_o": "p. 10",
+      "locators_r": "Table 1",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt"
+      }
+    },
+    "work_key": "10.1037/gdn0000121",
+    "coding_context": {
+      "es_repr": "p. 10, =(0.335/(1-0.335))/(0.18/(1-0.18))",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

@@ -1,11 +1,12 @@
 import unittest,json
 from pathlib import Path
 from consistency import rounding,pinterval,stat_interval
-from compare import comp,source_prefix
+from compare import comp,source_prefix,original_secondary_source,original_primary_evidence,SOURCE_PROVENANCE
 from schema import validate
 from retries import failure,atomic
 from prepare import locators
 from validate_adjudication import validate_batch
+from protect_enrichment import preserve_completed
 class AuditChecks(unittest.TestCase):
  def test_printed_rounding(self):
   self.assertEqual(rounding('.010'),(.0095,.0105))
@@ -64,6 +65,26 @@ class AuditChecks(unittest.TestCase):
    base={'audit_id':1,'field':'n_o','verdict':'blind_right','correct_value':'20','location':'p. 1','quote':'There were 20 participants.','source_path':str(source),'reason':'The analytic sample had 20 participants.'}
    bad={**base,'field':'n_r','quote':'Not in the supplied source.'}
    good,failed=validate_batch([base,bad],[{'audit_id':1,'field':'n_o'},{'audit_id':1,'field':'n_r'}]);self.assertEqual(len(good),1);self.assertEqual(len(failed),1);self.assertEqual(good[0]['field'],'n_o')
+ def test_original_secondary_source_is_not_primary_verification(self):
+  import hashlib
+  row={'doi_o':'10.1/original','doi_r':'10.2/replication'};key=hashlib.sha256(row['doi_r'].encode()).hexdigest()[:24]
+  self.assertTrue(original_secondary_source({'source_path':'/texts/'+key+'_supp.txt'},row))
+  self.assertFalse(original_secondary_source({'source_path':'/texts/'+key+'.txt'},{'doi_o':row['doi_r'],'doi_r':row['doi_r']}))
+ def test_source_provenance_is_relative_to_requested_original(self):
+  from unittest.mock import patch
+  with patch.dict(SOURCE_PROVENANCE,{'/texts/shared.txt':{'work_doi':'10.1/paper'}}):
+   e={'source_path':'/texts/shared.txt'}
+   self.assertFalse(original_secondary_source(e,{'doi_o':'10.1/paper','doi_r':'10.2/rep'}));self.assertTrue(original_primary_evidence(e,{'doi_o':'10.1/paper'}))
+   self.assertTrue(original_secondary_source(e,{'doi_o':'10.3/other','doi_r':'10.1/paper'}));self.assertFalse(original_primary_evidence(e,{'doi_o':'10.3/other'}))
+ def test_locator_revisit_preserves_completed_sides(self):
+  before=failure(1,'initial');before['replication']['status']='locator_insufficient';before['original']['status']='done';before['original']['n']['value']='20';before['reported_success']['status']='done';before['reported_success']['value']='mixed'
+  after=failure(1,'revisit');after['original']['n']['value']='999';after['replication']['status']='done';after['replication']['n']['value']='40';after['reported_success']['value']='failed'
+  merged=preserve_completed(before,after);self.assertEqual(merged['original'],before['original']);self.assertEqual(merged['reported_success'],before['reported_success']);self.assertEqual(merged['replication'],after['replication']);self.assertEqual(after['original']['n']['value'],'999')
+ def test_missing_coded_fields_require_review_when_source_supplies_value(self):
+  self.assertEqual(comp('n_o',None,{'value':'20'},{}),'differ')
+  self.assertEqual(comp('es_value_o',None,{'value':'.2','metric':'r'},{'es_type_o':'r'}),'differ')
+  self.assertEqual(comp('es_value_o',None,{'value':'.2','metric':'r'},{'es_type_o':None}),'not_comparable')
+  self.assertEqual(comp('pval_value_o',None,{'value':'.02','bound':'e'},{'pval_type_o':None}),'differ')
  def test_effect_keys_and_complete_exports(self):
   import csv
   b=Path(__file__).resolve().parents[1]

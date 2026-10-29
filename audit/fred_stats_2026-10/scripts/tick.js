@@ -23,8 +23,11 @@ const elapsed=(Date.now()-Date.parse(manifest.launch_time))/60000;
 let cap=Math.min(10,3+Math.floor(elapsed/4));
 try{const throttle=JSON.parse(await read('throttle.json'));if(Date.now()<Date.parse(throttle.until))cap=Math.min(cap,throttle.cap);}catch{}
 const q=JSON.parse(await read('queue.json'));
+const protection=await tools.exec_command({cmd:`python3 '${B}/scripts/protect_enrichment.py'`,max_output_tokens:1000});if(protection.exit_code!==0)throw Error(protection.output);
 const retryResult=await tools.exec_command({cmd:`python3 '${B}/scripts/retries.py'`,max_output_tokens:1000});if(retryResult.exit_code!==0)throw Error('Retry preparation failed: '+retryResult.output);
 const retryQueue=JSON.parse(await read('retry_queue.json'));
+const enrichmentResult=await tools.exec_command({cmd:`python3 '${B}/scripts/prepare_enrichment.py'`,max_output_tokens:1000});if(enrichmentResult.exit_code!==0)throw Error(enrichmentResult.output);
+const enrichmentQueue=JSON.parse(await read('enrichment_queue.json'));
 for(const r of active){r.large=q.find(x=>x.batch===r.batch)?.large??false;}
 const ins=await read('worker_instructions.txt');
 const existing=new Set(records.filter(r=>r.kind==='extraction').map(r=>r.batch));
@@ -40,14 +43,14 @@ while(active.length<cap && Date.now()<Date.parse(manifest.deadlines.extraction))
   kind='sanitisation';batch=nextSan;ids=[];existingSan.add(batch);
   task=`You are a description sanitiser in a blind audit. Read ONLY ${B}/sanitisation/raw_${batch}.json, which contains only effect_id and description. Write ${B}/sanitisation/clean_${batch}.json, a JSON array of {effect_id,description,locator_insufficient:boolean,inspection_note:string}. Keep constructs, conditions and outcome, and design numbers identifying conditions, doses, durations or scenarios (240-buyer vs 160-buyer stays). Remove observed results, analytic sample sizes, statistical estimates, result directions and success verdicts. Recast directional claims as neutral relationships. Review p <, n =, estimates and replicated/confirms but don't automatically reject legitimate design numbers. Inspect every record semantically. Mark unidentifiable neutral descriptions locator_insufficient. Time limit 10 minutes. Do not open other files, datasets, spreadsheets or repository instructions; do not search the repository; do not delegate further or commit. Return only counts and output paths, never source text.`;
  }else{
-  candidate=candidate??q.find(x=>!existing.has(x.batch)&&!x.large)??q.find(x=>!existing.has(x.batch));
+  candidate=candidate??q.find(x=>!existing.has(x.batch)&&!x.large)??q.find(x=>!existing.has(x.batch))??enrichmentQueue.find(x=>!existing.has(x.batch));
   if(!candidate)break;
   kind='extraction';batch=candidate.batch;ids=candidate.audit_ids;existing.add(batch);
-  task=`${ins}\nAssigned input: ${candidate.input_path}\nAssigned audit_ids: ${ids.join(', ')}.\nThis is ${candidate.large?'a large-project primary-table extraction':'an ordinary work'}. ${candidate.attempt===2?'This is the ONE retry. Read existing assigned checkpoints, preserve completed fields, retry ONLY timeout/error fields. Any failures now remain terminal and unverified.':''} Output only the assigned IDs.`;
+  task=`${ins}\nAssigned input: ${candidate.input_path}\nAssigned audit_ids: ${ids.join(', ')}.\nThis is ${candidate.large?'a large-project primary-table extraction':'an ordinary work'}. ${candidate.enrichment?'This is the ONE locator-enriched revisit. Read existing assigned checkpoints. Revisit ONLY sides previously locator_insufficient for which the new input provides additional page/table locators. Preserve all previously completed fields and author verdicts. Do not retry unchanged paper misses. Old snapshots are parent-archived; do not open parent comparison outputs.':candidate.attempt===2?'This is the ONE retry. Read existing assigned checkpoints, preserve completed fields, retry ONLY timeout/error fields. Any failures now remain terminal and unverified.':''} Output only the assigned IDs.`;
  }
  const result=parse(await tools.mcp__t3_code__delegate_task({clientRequestId:`fred-${kind}-${batch}-${candidate?.attempt===2?'retry1':'v1'}`,mode:'async',isolation:'shared',target:{providerInstanceId:'codex',model:'gpt-6.1-sol',options:{reasoningEffort:'medium'}},title:`${kind} ${batch}`,task}));
  if(result.providerInstanceId!=='codex'||result.model!=='gpt-6.1-sol'||!result.options?.some(v=>v.id==='reasoningEffort'&&v.value==='medium'))throw Error('Dispatch model mismatch');
- const record={kind,batch,attempt:candidate?.attempt??1,audit_ids:ids,large:candidate?.large??false,started_at:new Date().toISOString(),...result};
+ const record={kind,batch,enrichment:candidate?.enrichment??false,attempt:candidate?.attempt??1,audit_ids:ids,large:candidate?.large??false,started_at:new Date().toISOString(),...result};
  await append('tasks.jsonl',record);active.push(record);const ri=retryQueue.findIndex(x=>x.batch===batch);if(ri>=0)retryQueue.splice(ri,1);dispatched.push({kind,batch,ids:ids.length});
 }
 text({active:active.length,cap,dispatched});

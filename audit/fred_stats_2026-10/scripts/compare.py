@@ -3,7 +3,9 @@ from functools import lru_cache
 from pathlib import Path
 from consistency import number,rounding,pinterval
 from schema import validate
+from protect_enrichment import preserve_completed
 B=Path(__file__).resolve().parents[1]
+SOURCE_PROVENANCE=json.loads((B/'source_provenance.json').read_text()) if (B/'source_provenance.json').exists() else {}
 FIELDS=['n_o','es_value_o','pval_value_o','n_r','es_value_r','pval_value_r','reported_success']
 def norm(s):return re.sub(r'\s+',' ',unicodedata.normalize('NFKC',str(s)).replace('−','-').replace('“','"').replace('”','"').replace('’',"'")).strip()
 @lru_cache(maxsize=2048)
@@ -46,7 +48,7 @@ def comp(field,raw,blind,r):
  if field=='reported_success':return 'agree' if val==raw else 'soft' if {val,raw}=={'failed','mixed'} else 'differ'
  if field.startswith('n_'):
   a,b=number(raw),number(val)
-  if a is None or b is None:return 'not_comparable'
+  if a is None or b is None:return 'differ' if raw in [None,''] and b is not None else 'not_comparable'
   return 'agree' if a==b else 'near' if abs(a-b)/max(a,1)<=.05 else 'differ'
  if field.startswith('pval'):
   typ=str(r['pval_type_'+field[-1]] or '').split(' ')[0]
@@ -59,15 +61,17 @@ def comp(field,raw,blind,r):
     if bound in ['l','<'] and not lo<number(value):return 'differ'
     if bound in ['g','>'] and not lo>number(value):return 'differ'
   return 'compatible'
+ if not metric(r['es_type_'+field[-1]]):return 'not_comparable'
  if metric(r['es_type_'+field[-1]])=='test statistic':
   a=parsed_stat(raw);b=parsed_stat(blind.get('test_statistic') or val)
+  if raw in [None,''] and b:return 'differ'
   if not a or not b or a[0]!=b[0]:return 'not_comparable'
   if a[1]!=b[1]:return 'differ'
   if a[3] is not None and b[3] is not None and a[3]!=b[3]:return 'differ'
   return 'agree' if number(a[2])==number(b[2]) else 'compatible' if overlap(rounding(a[2]),rounding(b[2])) else 'differ'
  if metric(r['es_type_'+field[-1]])!=metric(blind['metric']):return 'not_comparable'
  a,b=number(raw),number(val)
- if a is None or b is None:return 'agree' if norm(raw)==norm(val) else 'not_comparable'
+ if a is None or b is None:return 'differ' if raw in [None,''] and b is not None else 'agree' if norm(raw)==norm(val) else 'not_comparable'
  if a*b<0:return 'differ'
  return 'agree' if a==b else 'compatible' if overlap(rounding(raw),rounding(val)) else 'differ'
 def source_prefix(value):
@@ -77,6 +81,19 @@ def source_prefix(value):
  if re.fullmatch(r'(?i)manylabs[1-6]',s):return s
  match=re.match(r'[^\W\d_]+',s,re.UNICODE)
  return match[0] if match else '(unprefixed)'
+def original_secondary_source(e,row):
+ info=SOURCE_PROVENANCE.get(e.get('source_path'))
+ if info:return not (info.get('work_doi') and str(info['work_doi']).lower()==str(row.get('doi_o') or '').lower())
+ doi=str(row.get('doi_r') or '').strip().lower()
+ if not doi or row.get('doi_o')==row.get('doi_r'):return False
+ key=hashlib.sha256(doi.encode()).hexdigest()[:24]
+ return Path(e.get('source_path') or '').name.startswith(key)
+def original_primary_evidence(e,row):
+ path=e.get('source_path') or '';doi=str(row.get('doi_o') or '').strip().lower()
+ if not doi:return False
+ info=SOURCE_PROVENANCE.get(path)
+ if info:return bool(info.get('work_doi') and str(info['work_doi']).lower()==doi)
+ return Path(path).name.startswith(hashlib.sha256(doi.encode()).hexdigest()[:24])
 def main():
  rows=json.loads((B/'parent_rows.json').read_text());results=[];candidates=[];invalid=[];coverage=collections.Counter();counts={f:collections.Counter() for f in FIELDS};projects=collections.defaultdict(lambda:{f:collections.Counter() for f in FIELDS});errors=[]
  adjud={}
@@ -96,6 +113,8 @@ def main():
    try:x=validate(json.loads(path.read_text()));assert x['audit_id']==aid
    except Exception as e:invalid.append({'audit_id':aid,'error':str(e)[:400]});x=None
   if x:
+   archive=B/'before_locator_enrichment'/f'{aid}.json'
+   if archive.exists():x=preserve_completed(json.loads(archive.read_text()),x)
    coverage['checkpointed']+=1
    for side in ['original','replication']:
     if (aid,side) in target_overrides:x[side]['target_match']=target_overrides[(aid,side)]['target_match']
@@ -111,21 +130,28 @@ def main():
     z[f+'_blind_printed_value']=v;z[f+'_blind_printed_metric']=e.get('metric') if e else None;z[f+'_blind_test_statistic']=e.get('test_statistic') if e else None;z[f+'_comparison_basis']='printed es value'
     if e and metric(r['es_type_'+f[-1]])=='test statistic' and parsed_stat(e.get('test_statistic')):
      v=e['test_statistic'];z[f+'_blind_metric']='test statistic';z[f+'_comparison_basis']='separately blind-extracted printed test_statistic (no conversion)'
+   secondary=bool(e and side=='original' and original_secondary_source(e,r))
+   if side:
+    z[f+'_blind_source_path']=e.get('source_path') if e else None;z[f+'_evidence_basis']='replication source only (original unverified)' if secondary else 'paper evidence supplied' if e and e.get('source_path') else 'none'
    comparison='unverified';resolution='unresolved';verdict='unverified';suggestion='';location='';reason=''
-   if x and v is not None and x[side or 'replication']['target_match'] is False:comparison='mismatched_target'
+   if secondary:reason='Original statistic is supported only by a replication paper/table; original primary-source verification remains unavailable.'
+   elif x and v is not None and x[side or 'replication']['target_match'] is False:comparison='mismatched_target'
    elif e and quote_ok(e) and (side is None or x[side]['status']=='done' and x[side]['target_match'] is True):
     comparison=comp(f,raw,e,r)
     if comparison in ['agree','identical','compatible']:
      resolution='agree' if comparison in ['agree','identical'] else 'obvious';verdict='correct';reason='Compatible printed rounding intervals' if comparison=='compatible' else ''
     elif comparison=='not_comparable':verdict='not_comparable'
    elif e and v is not None:reason='Evidence, confidence or target match not validated'
-   if comparison in ['differ','near','soft','mismatched_target']:
+   primary_adjud=bool(secondary and adjud.get((aid,f)) and original_primary_evidence(adjud[(aid,f)],r))
+   if primary_adjud:
+    comparison=comp(f,raw,e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated by Argon'
+   if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud:
     a=adjud.get((aid,f))
     if (aid,f) in holds:a=None
     if a:
      resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=a.get('correct_value','');location=a.get('location','');reason=a.get('reason','')
      if comparison=='mismatched_target':verdict='unverified';reason='Target mismatch remains unresolved; '+reason
-     if verdict=='error':errors.append({'audit_id':aid,'field':f,'shipped':raw,'correction':suggestion,'location':location,'doi':r['doi_r' if side!='original' else 'doi_o'],'primary_source_url':next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('url_r') or '')+' '+str(r.get('es_repr_r') or ''))), '').rstrip('.,;)') if side!='original' else next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('es_repr_o') or ''))), '').rstrip('.,;)'),'reason':reason})
+     if verdict=='error':errors.append({'audit_id':aid,'field':f,'shipped':raw,'error_kind':'coding omission' if raw in [None,''] else 'coded value/annotation','correction':suggestion,'location':location,'doi':r['doi_r' if side!='original' else 'doi_o'],'primary_source_url':next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('url_r') or '')+' '+str(r.get('es_repr_r') or ''))), '').rstrip('.,;)') if side!='original' else next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('es_repr_o') or ''))), '').rstrip('.,;)'),'reason':reason})
     else:candidates.append({'audit_id':aid,'field':f,'comparison':comparison,'shipped':raw,'shipped_metric':r.get('es_type_'+f[-1]) if side else None,'shipped_bound':r.get('pval_type_'+f[-1]) if side else None,'blind':e,'locator':{'study_o':r['study_o'],'study_r':r['study_r'],'description':next((a['description'] for a in json.loads((B/'inputs'/p.name).read_text()) if a['audit_id']==aid), '') if False else 'See assigned blind input'},'work_key':r['work_key']})
    if resolution=='unresolved' and (aid,f) in exhausted:reason=exhausted[(aid,f)]['reason']
    if comparison=='mismatched_target' and resolution=='unresolved':verdict='unverified'
