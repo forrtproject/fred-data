@@ -38,7 +38,8 @@ def parsed_stat(s):
  if not m:return None
  kind=m[1].lower();kind='g' if kind in ['g','g2'] else 'chi2' if kind in ['x2','chi2'] else kind
  dfs=tuple(number(x) for x in (m[2] or '').split(',') if number(x) is not None)
- return kind,dfs,m[3]
+ annotation=re.search(r'(?i)\bN\s*=\s*(\d+)',s)
+ return kind,dfs,m[3],int(annotation[1]) if annotation else None
 def overlap(a,b):return a is not None and b is not None and max(a[0],b[0])<=min(a[1],b[1])
 def comp(field,raw,blind,r):
  val=blind['value']
@@ -62,15 +63,24 @@ def comp(field,raw,blind,r):
   a=parsed_stat(raw);b=parsed_stat(blind.get('test_statistic') or val)
   if not a or not b or a[0]!=b[0]:return 'not_comparable'
   if a[1]!=b[1]:return 'differ'
+  if a[3] is not None and b[3] is not None and a[3]!=b[3]:return 'differ'
   return 'agree' if number(a[2])==number(b[2]) else 'compatible' if overlap(rounding(a[2]),rounding(b[2])) else 'differ'
  if metric(r['es_type_'+field[-1]])!=metric(blind['metric']):return 'not_comparable'
  a,b=number(raw),number(val)
  if a is None or b is None:return 'agree' if norm(raw)==norm(val) else 'not_comparable'
  if a*b<0:return 'differ'
  return 'agree' if a==b else 'compatible' if overlap(rounding(raw),rounding(val)) else 'differ'
+def source_prefix(value):
+ s=str(value or '').strip()
+ if not s:return '(missing)'
+ if '_' in s:return s.split('_',1)[0] or '(unprefixed)'
+ if re.fullmatch(r'(?i)manylabs[1-6]',s):return s
+ match=re.match(r'[^\W\d_]+',s,re.UNICODE)
+ return match[0] if match else '(unprefixed)'
 def main():
  rows=json.loads((B/'parent_rows.json').read_text());results=[];candidates=[];invalid=[];coverage=collections.Counter();counts={f:collections.Counter() for f in FIELDS};projects=collections.defaultdict(lambda:{f:collections.Counter() for f in FIELDS});errors=[]
  adjud={}
+ exhausted={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_exhausted.json').read_text())} if (B/'adjudication_exhausted.json').exists() else {}
  holds={(a['audit_id'],a['field']) for a in json.loads((B/'adjudication_holds.json').read_text())} if (B/'adjudication_holds.json').exists() else set()
  target_overrides={}
  if (B/'target_overrides.json').exists():
@@ -89,7 +99,7 @@ def main():
    coverage['checkpointed']+=1
    for side in ['original','replication']:
     if (aid,side) in target_overrides:x[side]['target_match']=target_overrides[(aid,side)]['target_match']
-  z={'input_row_index':aid,'effect_id':r['effect_id'],'fred_id':r['fred_id']};full=True;side_ok={'o':True,'r':True}
+  z={'input_row_index':aid,'effect_id':r['effect_id'],'fred_id':r['fred_id']};full=True;side_ok={'o':True,'r':True};side_any={'o':False,'r':False};any_field=False
   for f in FIELDS:
    raw=r[f];side=None if f=='reported_success' else ('original' if f[-1]=='o' else 'replication');sub='n' if f.startswith('n_') else 'es' if f.startswith('es_value') else 'p'
    e=None if not x else x[f] if side is None else x[side][sub]
@@ -115,14 +125,20 @@ def main():
     if a:
      resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=a.get('correct_value','');location=a.get('location','');reason=a.get('reason','')
      if comparison=='mismatched_target':verdict='unverified';reason='Target mismatch remains unresolved; '+reason
-     if verdict=='error':errors.append({'audit_id':aid,'field':f,'shipped':raw,'correction':suggestion,'location':location,'doi':r['doi_r' if side!='original' else 'doi_o'],'reason':reason})
+     if verdict=='error':errors.append({'audit_id':aid,'field':f,'shipped':raw,'correction':suggestion,'location':location,'doi':r['doi_r' if side!='original' else 'doi_o'],'primary_source_url':next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('url_r') or '')+' '+str(r.get('es_repr_r') or ''))), '').rstrip('.,;)') if side!='original' else next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('es_repr_o') or ''))), '').rstrip('.,;)'),'reason':reason})
     else:candidates.append({'audit_id':aid,'field':f,'comparison':comparison,'shipped':raw,'shipped_metric':r.get('es_type_'+f[-1]) if side else None,'shipped_bound':r.get('pval_type_'+f[-1]) if side else None,'blind':e,'locator':{'study_o':r['study_o'],'study_r':r['study_r'],'description':next((a['description'] for a in json.loads((B/'inputs'/p.name).read_text()) if a['audit_id']==aid), '') if False else 'See assigned blind input'},'work_key':r['work_key']})
+   if resolution=='unresolved' and (aid,f) in exhausted:reason=exhausted[(aid,f)]['reason']
    if comparison=='mismatched_target' and resolution=='unresolved':verdict='unverified'
+   if verdict in ['correct','error']:
+    any_field=True
+    if side:side_any[f[-1]]=True
    if verdict not in ['correct','error']:full=False
    if side and verdict not in ['correct','error']:side_ok[f[-1]]=False
-   counts[f][verdict]+=1;projects[re.split(r'[_\d]',str(r['fred_id']))[0]][f][verdict]+=1
+   counts[f][verdict]+=1;projects[source_prefix(r['fred_id'])][f][verdict]+=1
    for suffix,value in [('shipped',raw),('blind',v),('comparison',comparison),('resolution',resolution),('final_verdict',verdict),('suggested_correction',suggestion),('location',location),('reason',reason)]:z[f+'_'+suffix]=value
-  for s,ok in side_ok.items():coverage[s+'_fully_checked']+=int(ok)
+  for s,ok in side_ok.items():
+   coverage[s+'_fully_checked']+=int(ok);coverage[s+'_any_stat_checked']+=int(side_any[s])
+  coverage['any_field_checked']+=int(any_field)
   coverage['fully_checked_effects']+=int(full);results.append(z)
  with (B/'results.csv').open('w',encoding='utf-8-sig',newline='') as f:
   w=csv.DictWriter(f,fieldnames=results[0]);w.writeheader();w.writerows(results)

@@ -8,6 +8,11 @@ let states=control.states;
 const latest={};for(const r of records)latest[r.key]=r;
 for(const r of Object.values(latest)){
  if(states[r.key]?.terminal)continue;
+ if(Date.now()-Date.parse(r.started_at)>12*60000){
+  const stopped=await tools.exec_command({cmd:`python3 '${B}/scripts/stop_argon.py' '${r.key}'`,max_output_tokens:1000});
+  if(stopped.exit_code!==0)throw Error(stopped.output);
+  states[r.key]={terminal:true,attempt:r.attempt,validation:'failed',validation_error:'12-minute wall ceiling; '+stopped.output};continue;
+ }
  try{
   const p=await tools.write_stdin({session_id:r.session_id,chars:'',yield_time_ms:1000,max_output_tokens:500});
   states[r.key]={terminal:p.exit_code!==undefined,exit_code:p.exit_code,attempt:r.attempt};

@@ -23,7 +23,7 @@ def stat_interval(value,typ,n,nested,tails):
  for kind,pat in patterns:
   m=re.search(pat,s,re.I)
   if not m:continue
-  vals=list(map(float,m.groups()));a,b=rounding(m.groups()[-1]);a,b=sorted([abs(a),abs(b)]) if kind in ['t','z'] else (a,b)
+  vals=list(map(float,m.groups()));a,b=rounding(m.groups()[-1]);a,b=((0,max(abs(a),abs(b))) if a<=0<=b else tuple(sorted([abs(a),abs(b)]))) if kind in ['t','z'] else (a,b)
   tail=1 if str(tails).startswith('1') else 2
   if kind=='f':fn=lambda q:stats.f.sf(q,vals[0],vals[1])
   elif kind=='chi':fn=lambda q:stats.chi2.sf(q,vals[0])
@@ -31,8 +31,8 @@ def stat_interval(value,typ,n,nested,tails):
   else:fn=lambda q:stats.norm.sf(q)*tail
   return sorted([float(fn(a)),float(fn(b))]),kind+('_tails_assumed_two' if kind in ['t','z'] and tails is None else '')
  # Pearson inference only for non-nested analytic n as defined by codebook.
- if str(typ).lower()=='r' and str(nested).lower()=='no' and number(n) and number(n)>2 and number(value) is not None and abs(number(value))<1:
-  lo,hi=rounding(value); ab=sorted([abs(lo),abs(hi)]);tail=1 if str(tails).startswith('1') else 2
+ if str(typ).lower()=='r' and str(nested).lower()=='no' and number(n) and number(n)>2 and number(value) is not None and abs(number(value))<=1:
+  lo,hi=rounding(value); ab=[0,max(abs(lo),abs(hi))] if lo<=0<=hi else sorted([abs(lo),abs(hi)]);tail=1 if str(tails).startswith('1') else 2
   fn=lambda q:stats.t.sf(min(.999999999999, q)*math.sqrt((number(n)-2)/(1-min(.999999999999,q)**2)),number(n)-2)*tail
   return sorted([float(fn(ab[0])),float(fn(ab[1]))]),'pearson_coded_analytic_n'+('_tails_assumed_two' if tails is None else '')
  return None,'not_applicable'
