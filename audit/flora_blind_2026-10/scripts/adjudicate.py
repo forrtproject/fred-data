@@ -73,12 +73,16 @@ if __name__=='__main__':
   print('Adjudication dispatch deadline passed');sys.exit(0)
  selection=pathlib.Path(os.environ.get('FLORA_ARGON_SELECTION',str(R/'disagreements.json')))
  ds=json.loads(selection.read_text())['items'];grouped={}
+ # Parent-triaged queues can keep the four slots busy despite uneven runtimes.
+ # The executor and global runner lock still enforce the same four-call ceiling.
+ group_limit=max(1,min(24,int(os.environ.get('FLORA_ARGON_GROUP_LIMIT','4'))))
  for d in ds:
   if d.get('resolution') not in ['unresolved',None]:continue
   if len(sys.argv)>1 and d['file_key'] not in sys.argv[1:]:continue
   state=c.read_json(R/'argon'/f"{d['file_key']}.state.json")[0] or {}
   if state.get('status') in ['validated','unresolved']:continue
-  if d['file_key'] not in grouped and len(grouped)>=4:continue
+  if d['file_key'] not in grouped and len(grouped)>=group_limit:continue
   grouped.setdefault(d['file_key'],[]).append(d)
  with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
-  for r in ex.map(lambda args:one(*args),grouped.items()):print(json.dumps(r),flush=True)
+  futures=[ex.submit(one,fk,items) for fk,items in grouped.items()]
+  for future in concurrent.futures.as_completed(futures):print(json.dumps(future.result()),flush=True)
