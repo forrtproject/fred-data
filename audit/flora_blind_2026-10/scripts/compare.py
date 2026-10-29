@@ -7,6 +7,9 @@ Adjudications: <file_key>.json with {"decisions": [{"input_row_index": 0,
 "method": "obvious|argon", "verdict": "shipped_right|blind_right|both_wrong|undeterminable",
 "corrected_value": ..., "quote": "...", "location": "...", "reason": "..."}]}.
 An original decision may specify target_index to resolve a flagged pairing.
+An original correction may use {"action": "remove_row"} when the source proves
+the entry has no tested original; this releases any proposed pair without
+inventing a replacement citation or grading an inapplicable outcome.
 Missing targets use target_index and field='missing_row', with the same evidence.
 Only a validated decision can establish an error. REPORT.md remains provisional.
 """
@@ -315,6 +318,12 @@ def compare_work(rows, keys, coding, error, text, decisions):
     identity_decisions = {}
     for i, key in enumerate(keys):
         d = decision_for(decisions, 'original', text, key['input_row_index']) if not error else None
+        if (d and d.get('verdict') in ('blind_right', 'both_wrong')
+                and d.get('corrected_value') == {'action': 'remove_row'}
+                and 'target_index' not in d):
+            # A methods-only citation can have no replacement original at all.
+            proposed.pop(i, None)
+            continue
         if d and d.get('verdict') != 'undeterminable' and 'target_index' in d:
             j = d['target_index']
             if isinstance(j, int) and not isinstance(j, bool) and 0 <= j < len(targets):
@@ -416,7 +425,10 @@ def compare_work(rows, keys, coding, error, text, decisions):
                     if field != 'original' and ((d['verdict'] == 'shipped_right') != (value == shipped)):
                         continue
                     if field == 'original':
-                        if not isinstance(value, (str, dict)) or (isinstance(value, dict) and not (value.get('doi') or value.get('title'))):
+                        remove_row = (value == {'action': 'remove_row'}
+                                      and d['verdict'] in ('blind_right', 'both_wrong')
+                                      and 'target_index' not in d)
+                        if not remove_row and (not isinstance(value, (str, dict)) or (isinstance(value, dict) and not (value.get('doi') or value.get('title')))):
                             continue
                         corrected_doi = clean_doi(value.get('doi')) if isinstance(value, dict) else clean_doi(value)
                         if d['verdict'] in ('blind_right', 'both_wrong') and corrected_doi and corrected_doi == clean_doi(shipped):
@@ -543,7 +555,8 @@ def report(results, missing, works, issues):
             for field, value in corrections.items():
                 old = r.get('doi_o' if field == 'original' else field, '')
                 if isinstance(value, dict):
-                    value = (value.get('doi') or value.get('title') or
+                    value = ('remove this row (no original finding re-tested)' if value == {'action': 'remove_row'} else
+                             value.get('doi') or value.get('title') or
                              '; '.join(f'{k}: {v}' for k, v in value.items()))
                 label = field.replace('_', ' ')
                 changes.append(f'{label}: {old} → {value}' if old else f'{label}: {value}')
@@ -551,6 +564,9 @@ def report(results, missing, works, issues):
     if not errors:
         lines.append('No input-row errors are confirmed at this checkpoint.')
     version_notes = {
+        '990cdb9f33b9b199': 'Row 891 uses a working-paper DOI for the same study; '
+            '[NBER lists the journal version](https://www.nber.org/papers/w6614). '
+            'Its reproduction outcomes benchmark the cited 2000 publication; numerical equivalence between versions is not assumed.',
         '9dad580b3423aa2b': 'Row 2238 was checked against the verified 2020 working paper; the final 2022 article was not obtained.',
         '0245b18b007f60d7': 'Row 929 was checked against the verified 2015 draft; the final 2017 article was not obtained.',
     }
@@ -558,7 +574,7 @@ def report(results, missing, works, issues):
         r['file_key'] == fk and any(r[k + '_final_verdict'] == 'error' for k in ('type', 'original', 'outcome'))
         for r in results)]
     if limits:
-        lines += ['', 'Source-version limits: ' + ' '.join(limits) +
+        lines += ['', 'Source-version notes and limits: ' + ' '.join(limits) +
                   ' These judgments describe the supplied versions; changes in unseen final versions cannot be ruled out.']
     lines += ['', '## Unmatched blind targets', '']
     for r in missing:

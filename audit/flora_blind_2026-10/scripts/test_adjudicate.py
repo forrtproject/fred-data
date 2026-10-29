@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -105,6 +106,49 @@ class RetryTests(unittest.TestCase):
 
     def test_two_invalid_replies_remain_unresolved_without_third_call(self):
         self.assertEqual(self.exercise(invalid_both=True)['status'], 'unresolved')
+
+
+class SourceViewTests(unittest.TestCase):
+    def fixture(self, root, mode):
+        source = 'Original β\x00 text.\nSecond paragraph.'
+        original = root / 'source.txt'
+        original.write_bytes(source.encode())
+        view = root / 'view.json'
+        view.write_text(json.dumps({'chunks': ['Original β\x00 ', 'text.\nSecond paragraph.']}))
+        metadata = {'format': 'json_chunks', 'view_path': str(view),
+                    'original_sha256': hashlib.sha256(original.read_bytes()).hexdigest(),
+                    'view_sha256': hashlib.sha256(view.read_bytes()).hexdigest(),
+                    'index_path': str(root / 'index.json')}
+        if mode != 'valid':
+            view.write_text(json.dumps({'chunks': ['A changed source.']}))
+            if mode == 'false_roundtrip':
+                metadata['view_sha256'] = hashlib.sha256(view.read_bytes()).hexdigest()
+        (root / 'lossless_source_views.json').write_text(json.dumps({'file': metadata}))
+        return original, source
+
+    def test_lossless_view_preserves_unicode_control_characters_and_spacing(self):
+        with tempfile.TemporaryDirectory(prefix='flora-source-view-') as directory:
+            root = Path(directory)
+            original, source = self.fixture(root, 'valid')
+            before = original.read_bytes()
+            with patch.object(a, 'R', root):
+                instruction = a.source_instruction('file', original, source)
+            self.assertIn('lossless JSON chunk view', instruction)
+            self.assertEqual(original.read_bytes(), before)
+
+    def test_changed_view_hash_is_rejected(self):
+        with tempfile.TemporaryDirectory(prefix='flora-source-view-') as directory:
+            root = Path(directory)
+            original, source = self.fixture(root, 'changed_hash')
+            with patch.object(a, 'R', root), self.assertRaisesRegex(ValueError, 'hash mismatch'):
+                a.source_instruction('file', original, source)
+
+    def test_changed_words_are_rejected_even_with_updated_view_hash(self):
+        with tempfile.TemporaryDirectory(prefix='flora-source-view-') as directory:
+            root = Path(directory)
+            original, source = self.fixture(root, 'false_roundtrip')
+            with patch.object(a, 'R', root), self.assertRaisesRegex(ValueError, 'round-trip'):
+                a.source_instruction('file', original, source)
 
 
 if __name__ == '__main__':

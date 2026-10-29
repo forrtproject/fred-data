@@ -143,6 +143,23 @@ class PairingTests(unittest.TestCase):
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_non_target_removal_releases_pair_without_inventing_an_original(self):
+        d = decision('original', verdict='both_wrong', corrected_value={'action': 'remove_row'})
+        results, missing, _ = compare(decisions=[d])
+        self.assertEqual(results[0]['original_final_verdict'], 'error')
+        self.assertFalse(results[0]['identity_resolved'])
+        self.assertEqual(results[0]['outcome_final_verdict'], 'unverified')
+        self.assertEqual(json.loads(results[0]['suggested_correction'])['original'], {'action': 'remove_row'})
+        self.assertEqual(len(missing), 1)
+
+    def test_non_target_removal_with_invalid_quote_cannot_release_pair(self):
+        d = decision('original', verdict='both_wrong', corrected_value={'action': 'remove_row'},
+                     quote='This does not occur in the source.')
+        results, missing, _ = compare(decisions=[d])
+        self.assertEqual(results[0]['original_final_verdict'], 'correct')
+        self.assertTrue(results[0]['identity_resolved'])
+        self.assertEqual(missing, [])
+
     def test_presence_contiguous_and_all_parts(self):
         self.assertTrue(c.quote_present('The original result was confirmed.', TEXT))
         self.assertTrue(c.quote_present('Numbers reproduced. | Robustness was not checked.', TEXT))
