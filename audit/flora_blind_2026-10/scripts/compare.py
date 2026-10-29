@@ -504,6 +504,8 @@ def report(results, missing, works, issues):
     resolved = sum(r['resolution'] != 'unresolved' for r in results)
     lines += [f'{errors} input rows have at least one confirmed field error; {resolved} / {len(results)} rows are fully resolved. '
               f'{len(missing)} blind targets have no proposed shipped counterpart; these are not errors by default.', '', '## Coverage', '']
+    # Lead with findings; retain the evidence standard immediately after them.
+    lines[2:6] = [lines[4], '', lines[2], '']
     attempted = sum(w['attempted'] for w in works)
     coded = sum(w['coded'] for w in works)
     evidence = collections.Counter(w['evidence_level'] for w in works if w['text_obtained'])
@@ -514,7 +516,8 @@ def report(results, missing, works, issues):
               'Rates use correct + confirmed-error rows as field-specific evaluable denominators. '
               'Bounds put every unverified row first outside, then inside the error count over all applicable input rows; '
               'they are sensitivity bounds, not binomial confidence intervals. '
-              'Confidence is descriptive only. Study status is reported separately and does not change type agreement.', '',
+              'Confidence is descriptive only. Study status is reported separately and does not change type agreement. '
+              'Axis-specific rates below use rows shipped as reproductions; dependent outcome replacements after a type correction remain in results.csv and the error list.', '',
               '## Confirmed field error rates', '']
     for field in FIELDS:
         applicable = results if field not in ('outcome_computation', 'outcome_robustness') else [r for r in results if r['type'] == 'reproduction']

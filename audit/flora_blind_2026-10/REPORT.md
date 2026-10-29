@@ -1,22 +1,22 @@
 # FLoRA blind audit — provisional
 
-This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
+149 input rows have at least one confirmed field error; 1754 / 2818 rows are fully resolved. 813 blind targets have no proposed shipped counterpart; these are not errors by default.
 
-129 input rows have at least one confirmed field error; 1730 / 2818 rows are fully resolved. 813 blind targets have no proposed shipped counterpart; these are not errors by default.
+This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2289 with verified saved text (1710 full text, 579 abstract); 2289 with validated usable coding. Rows fully resolved: 1730 / 2818.
+Works: 2344 total; 2344 attempted; 2289 with verified saved text (1710 full text, 579 abstract); 2289 with validated usable coding. Rows fully resolved: 1754 / 2818.
 
-Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement.
+Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Axis-specific rates below use rows shipped as reproductions; dependent outcome replacements after a type correction remain in results.csv and the error list.
 
 ## Confirmed field error rates
 
 - type: 31 / 2294 (1.4%); 524 unverified; all-row unresolved bounds 1.1%–19.7% (N=2818)
 - original: 14 / 2297 (0.6%); 521 unverified; all-row unresolved bounds 0.5%–19.0% (N=2818)
-- outcome: 108 / 1743 (6.2%); 1075 unverified; all-row unresolved bounds 3.8%–42.0% (N=2818)
-- outcome_computation: 9 / 162 (5.6%); 43 unverified; all-row unresolved bounds 4.4%–25.4% (N=205)
-- outcome_robustness: 3 / 182 (1.6%); 23 unverified; all-row unresolved bounds 1.5%–12.7% (N=205)
+- outcome: 128 / 1767 (7.2%); 1051 unverified; all-row unresolved bounds 4.5%–41.8% (N=2818)
+- outcome_computation: 21 / 176 (11.9%); 29 unverified; all-row unresolved bounds 10.2%–24.4% (N=205)
+- outcome_robustness: 6 / 186 (3.2%); 19 unverified; all-row unresolved bounds 2.9%–12.2% (N=205)
 
 ### By source
 
@@ -41,9 +41,9 @@ Coverage is prioritized and depends on text access. This is not a representative
 - openalex:
   - type: 4 / 219 (1.8%); 47 unverified; all-row unresolved bounds 1.5%–19.2% (N=266)
   - original: 1 / 221 (0.5%); 45 unverified; all-row unresolved bounds 0.4%–17.3% (N=266)
-  - outcome: 4 / 176 (2.3%); 90 unverified; all-row unresolved bounds 1.5%–35.3% (N=266)
-  - outcome_computation: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
-  - outcome_robustness: 0 / 5 (0.0%); 2 unverified; all-row unresolved bounds 0.0%–28.6% (N=7)
+  - outcome: 7 / 179 (3.9%); 87 unverified; all-row unresolved bounds 2.6%–35.3% (N=266)
+  - outcome_computation: 2 / 5 (40.0%); 2 unverified; all-row unresolved bounds 28.6%–57.1% (N=7)
+  - outcome_robustness: 2 / 7 (28.6%); 0 unverified; all-row unresolved bounds 28.6%–28.6% (N=7)
 - openalex_snapshot:
   - type: 1 / 75 (1.3%); 18 unverified; all-row unresolved bounds 1.1%–20.4% (N=93)
   - original: 1 / 76 (1.3%); 17 unverified; all-row unresolved bounds 1.1%–19.4% (N=93)
@@ -53,15 +53,15 @@ Coverage is prioritized and depends on text access. This is not a representative
 - replications:
   - type: 24 / 1151 (2.1%); 302 unverified; all-row unresolved bounds 1.7%–22.4% (N=1453)
   - original: 12 / 1145 (1.0%); 308 unverified; all-row unresolved bounds 0.8%–22.0% (N=1453)
-  - outcome: 81 / 909 (8.9%); 544 unverified; all-row unresolved bounds 5.6%–43.0% (N=1453)
+  - outcome: 87 / 917 (9.5%); 536 unverified; all-row unresolved bounds 6.0%–42.9% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - reproductions:
   - type: 1 / 184 (0.5%); 13 unverified; all-row unresolved bounds 0.5%–7.1% (N=197)
   - original: 0 / 187 (0.0%); 10 unverified; all-row unresolved bounds 0.0%–5.1% (N=197)
-  - outcome: 12 / 154 (7.8%); 43 unverified; all-row unresolved bounds 6.1%–27.9% (N=197)
-  - outcome_computation: 9 / 158 (5.7%); 39 unverified; all-row unresolved bounds 4.6%–24.4% (N=197)
-  - outcome_robustness: 3 / 176 (1.7%); 21 unverified; all-row unresolved bounds 1.5%–12.2% (N=197)
+  - outcome: 23 / 167 (13.8%); 30 unverified; all-row unresolved bounds 11.7%–26.9% (N=197)
+  - outcome_computation: 19 / 170 (11.2%); 27 unverified; all-row unresolved bounds 9.6%–23.4% (N=197)
+  - outcome_robustness: 4 / 178 (2.2%); 19 unverified; all-row unresolved bounds 2.0%–11.7% (N=197)
 
 ### By evidence_level
 
@@ -74,9 +74,9 @@ Coverage is prioritized and depends on text access. This is not a representative
 - full_text:
   - type: 28 / 1914 (1.5%); 256 unverified; all-row unresolved bounds 1.3%–13.1% (N=2170)
   - original: 14 / 1914 (0.7%); 256 unverified; all-row unresolved bounds 0.6%–12.4% (N=2170)
-  - outcome: 103 / 1482 (7.0%); 688 unverified; all-row unresolved bounds 4.7%–36.5% (N=2170)
-  - outcome_computation: 9 / 162 (5.6%); 34 unverified; all-row unresolved bounds 4.6%–21.9% (N=196)
-  - outcome_robustness: 3 / 179 (1.7%); 17 unverified; all-row unresolved bounds 1.5%–10.2% (N=196)
+  - outcome: 123 / 1506 (8.2%); 664 unverified; all-row unresolved bounds 5.7%–36.3% (N=2170)
+  - outcome_computation: 21 / 176 (11.9%); 20 unverified; all-row unresolved bounds 10.7%–20.9% (N=196)
+  - outcome_robustness: 6 / 183 (3.3%); 13 unverified; all-row unresolved bounds 3.1%–9.7% (N=196)
 - none:
   - type: 0 / 0 (not estimable); 53 unverified; all-row unresolved bounds 0.0%–100.0% (N=53)
   - original: 0 / 0 (not estimable); 53 unverified; all-row unresolved bounds 0.0%–100.0% (N=53)
@@ -172,8 +172,14 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 451, [replicating work](https://doi.org/10.1093/alcalc/agag013): type: replication → reproduction; outcome: successful → outcome_computation: cannot_be_determined; outcome_robustness: robustness challenges.
 - Row 452, [replicating work](https://doi.org/10.48550/arxiv.2603.15935): outcome: successful → mixed.
 - Row 453, [replicating work](https://doi.org/10.1016/j.jenvp.2026.102956): outcome: successful → mixed.
+- Row 467, [replicating work](https://doi.org/10.7554/elife.33468): outcome: mixed → failed.
+- Row 471, [replicating work](https://doi.org/10.1037/cdp0000775): outcome: mixed → successful.
+- Row 485, [replicating work](https://doi.org/10.1037/pspa0000121): outcome: mixed → successful.
 - Row 491, [replicating work](https://doi.org/10.7554/elife.73430): outcome: mixed → successful.
 - Row 505, [replicating work](https://doi.org/10.1073/pnas.2103313118): outcome: failed → successful.
+- Row 512, [replicating work](https://doi.org/10.1177/0038040718801760): outcome: failed → mixed.
+- Row 524, [replicating work](https://doi.org/10.2337/db13-1435): outcome: failed → mixed.
+- Row 537, [replicating work](https://doi.org/10.7554/elife.56651): outcome: failed → mixed.
 - Row 736, [replicating work](https://doi.org/10.1017/s0261444818000368): outcome: successful → mixed.
 - Row 823, [replicating work](https://doi.org/10.1016/j.heliyon.2024.e32467): outcome: successful → mixed.
 - Row 833, [replicating work](https://doi.org/10.4054/demres.2025.53.29): type: replication → reproduction.
@@ -212,9 +218,23 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 2166, [replicating work](https://doi.org/10.7275/11867619): type: replication → reproduction; outcome: failed → outcome_computation: computationally reproducible; outcome_robustness: robustness challenges.
 - Row 2170, [replicating work](https://doi.org/10.31235/osf.io/zugae): type: replication → reproduction; outcome: failed → outcome_computation: computational issues; outcome_robustness: robustness challenges.
 - Row 2238, [replicating work](https://doi.org/10.1002/jae.2922): type: replication → reproduction; outcome: failed → outcome_computation: computationally reproducible; outcome_robustness: robustness challenges.
+- Row 2269, [replicating work](https://doi.org/10.1002/jae.2861): outcome robustness: robust.
 - Row 2299, [replicating work](https://doi.org/10.1371/journal.pone.0253023): type: replication → reproduction; outcome: successful → outcome_computation: computational issues; outcome_robustness: robust.
+- Row 2308, [replicating work](https://doi.org/10.1111/nana.12722): outcome computation: computationally reproducible; outcome robustness: robustness challenges.
+- Row 2334, [replicating work](https://doi.org/10.5334/irsp.546): outcome computation: not checked.
 - Row 2418, [replicating work](https://doi.org/10.1017/s0142716414000137): original: 10.1017/s0142716400010845 → 10.1017/S0142716409990014.
 - Row 2429, [replicating work](https://doi.org/10.20381/ruor-28430): type: replication → reproduction; original: 10.7326/0003-4819-127-1-199707010-00007 → Effectiveness of different adjunctive interventions in the management of orthodontically induced white spot lesions: A systematic review of systematic reviews and meta-analyses..
+- Row 2630, [replicating work](https://osf.io/7qv89) (DOI unavailable): outcome computation: computational issues.
+- Row 2632, [replicating work](https://econjwatch.org/file+download/538/findlaysantosmay2012.pdf) (DOI unavailable): outcome computation: computationally reproducible.
+- Row 2633, [replicating work](https://doi.org/10.48550/arxiv.2604.00848): outcome robustness: robust.
+- Row 2651, [replicating work](https://osf.io/a672c/) (DOI unavailable): outcome computation: computationally reproducible.
+- Row 2652, [replicating work](https://github.com/atyho/ottawa-replication-games-2023/blob/main/ho_huynh_rea_replication_report.pdf) (DOI unavailable): outcome computation: computationally reproducible.
+- Row 2654, [replicating work](https://osf.io/xadb6/) (DOI unavailable): outcome computation: computationally reproducible.
+- Row 2655, [replicating work](https://hdl.handle.net/10419/303190) (DOI unavailable): outcome computation: computational issues.
+- Row 2658, [replicating work](https://osf.io/rt48s/) (DOI unavailable): outcome computation: computationally reproducible.
+- Row 2662, [replicating work](https://hdl.handle.net/10419/276960) (DOI unavailable): outcome computation: computationally reproducible.
+- Row 2663, [replicating work](https://hdl.handle.net/10419/268943) (DOI unavailable): outcome computation: computationally reproducible.
+- Row 2665, [replicating work](https://hdl.handle.net/10419/280748) (DOI unavailable): outcome computation: computationally reproducible.
 - Row 2674, [replicating work](https://hdl.handle.net/10419/266385) (DOI unavailable): outcome robustness: robustness challenges.
 - Row 2697, [replicating work](https://osf.io/exb67/) (DOI unavailable): outcome robustness: robust.
 
@@ -240,6 +260,11 @@ Source-version limits: Row 2238 was checked against the verified 2020 working pa
 - Confirmed missing target: [Children's understanding of counting](https://doi.org/10.1016/0010-0277(90)90003-3); work [replicating work](https://doi.org/10.5964/jnc.7029), target 0 (argon).
 - Confirmed missing target: [A chromatin-mediated reversible drug-tolerant state in cancer cell subpopulations](https://doi.org/10.1016/j.cell.2010.02.027); work [replicating work](https://doi.org/10.7554/elife.73430), target 0 (argon).
 - Confirmed missing target: [Senescence surveillance of pre-malignant hepatocytes limits liver cancer development](https://doi.org/10.1038/nature10599); work [replicating work](https://doi.org/10.7554/elife.73430), target 5 (argon).
+- Confirmed missing target: Association of the FOXO3A locus with extreme longevity in a southern Italian centenarian study; work [replicating work](https://doi.org/10.1111/j.1474-9726.2010.00627.x), target 1 (argon).
+- Confirmed missing target: Association of FOXO3A variation with human longevity confirmed in German centenarians; work [replicating work](https://doi.org/10.1111/j.1474-9726.2010.00627.x), target 2 (argon).
+- Confirmed missing target: Genetic association of FOXO1A and FOXO3A with longevity trait in Han Chinese populations; work [replicating work](https://doi.org/10.1111/j.1474-9726.2010.00627.x), target 3 (argon).
+- Confirmed missing target: Association of common genetic variation in the insulin ⁄ IGF1 signaling pathway with human longevity; work [replicating work](https://doi.org/10.1111/j.1474-9726.2010.00627.x), target 4 (argon).
+- Confirmed missing target: [Registered replication report: Strack, Martin, & Stepper (1988).](https://doi.org/10.1177/1745691616674458); work [replicating work](https://doi.org/10.1037/pspa0000121), target 1 (argon).
 - Confirmed missing target: Fernbach; Kan; Lynch (2015); work [replicating work](https://doi.org/10.1073/pnas.2103313118), target 7 (argon).
 - Confirmed missing target: Reframing the ordinary: Imagining time as scarce increases well-being.; work [replicating work](https://doi.org/10.1073/pnas.2103313118), target 9 (argon).
 - Confirmed missing target: Evidence for opportunity cost neglect in the poor.; work [replicating work](https://doi.org/10.1073/pnas.2103313118), target 14 (argon).
@@ -275,7 +300,7 @@ Source-version limits: Row 2238 was checked against the verified 2020 working pa
 - Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 2 (argon).
 - Confirmed missing target: [Classifying the torture experiences of refugees living in the United States](https://doi.org/10.1177/0886260506294999); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 3 (argon).
 - Confirmed missing target: [Nature of torture, PTSD, and somatic symptoms among political ex-prisoners](https://doi.org/10.1002/jts.20541); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 4 (argon).
-687 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+682 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 

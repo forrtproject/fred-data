@@ -75,6 +75,9 @@ def run_transport(argv, output, source, requested, timeout=660, quiet_seconds=2)
                 process.wait()
 
 def one(fk,items):
+ statepath=R/'argon'/f'{fk}.state.json';state=c.read_json(statepath)[0] or {}
+ if state.get('status')=='scope_review_pending':return {'file_key':fk,'status':'scope_review_pending'}
+ if state.get('status') in ['validated','unresolved'] or state.get('attempts',0)>=2:return {'file_key':fk,'status':'already_final'}
  deadline=datetime.datetime.fromisoformat(json.loads((R/'run_manifest.json').read_text())['deadlines']['adjudication'])
  if datetime.datetime.now(datetime.timezone.utc)>=deadline:return {'file_key':fk,'status':'dispatch_deadline'}
  textpath=R/'texts'/f'{fk}.txt'; codingpath=R/'codings'/f'{fk}.json'
@@ -85,8 +88,6 @@ def one(fk,items):
  payload={'shipped_rows':rows,'blind_coding':coding,'review_items':items}
  sig=hashlib.sha256((json.dumps(payload,sort_keys=True)+text).encode()).hexdigest()
  # Final valid adjudication, including undeterminable, is not retried without changed input.
- statepath=R/'argon'/f'{fk}.state.json';state=c.read_json(statepath)[0] or {}
- if state.get('input_sha256')==sig and state.get('status') in ['validated','unresolved']:return {'file_key':fk,'status':'already_final'}
  serialized=json.dumps(payload,ensure_ascii=False,indent=2)
  if len(serialized.encode())>90000:
   payloadpath=R/'argon'/f'{fk}.input.json'
@@ -141,7 +142,7 @@ if __name__=='__main__':
   if d.get('resolution') not in ['unresolved',None]:continue
   if len(sys.argv)>1 and d['file_key'] not in sys.argv[1:]:continue
   state=c.read_json(R/'argon'/f"{d['file_key']}.state.json")[0] or {}
-  if state.get('status') in ['validated','unresolved']:continue
+  if state.get('status') in ['validated','unresolved','scope_review_pending'] or state.get('attempts',0)>=2:continue
   if d['file_key'] not in grouped and len(grouped)>=group_limit:continue
   grouped.setdefault(d['file_key'],[]).append(d)
  with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:

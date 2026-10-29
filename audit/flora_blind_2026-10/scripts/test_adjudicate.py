@@ -53,6 +53,19 @@ class TransportTests(unittest.TestCase):
 
 
 class RetryTests(unittest.TestCase):
+    def test_existing_final_or_pending_work_cannot_dispatch_again(self):
+        for status, attempts in [('validated', 1), ('unresolved', 2),
+                                 ('scope_review_pending', 1), ('unknown', 2)]:
+            with self.subTest(status=status), tempfile.TemporaryDirectory(prefix='flora-resume-test-') as directory:
+                root = Path(directory)
+                (root / 'argon').mkdir()
+                (root / 'argon/file.state.json').write_text(json.dumps({
+                    'status': status, 'attempts': attempts, 'input_sha256': 'prior-input'}))
+                with patch.object(a, 'R', root), patch.object(a, 'run_transport') as transport:
+                    result = a.one('file', [{'input_row_index': '99', 'field': 'type'}])
+                transport.assert_not_called()
+                self.assertIn(result['status'], ['already_final', 'scope_review_pending'])
+
     def exercise(self, invalid_both=False):
         with tempfile.TemporaryDirectory(prefix='flora-review-test-') as directory:
             root = Path(directory)
