@@ -301,8 +301,14 @@ class CLITests(unittest.TestCase):
             self.assertIn('https://doi.org/10.2/r', report)
             self.assertTrue((root / 'missing_rows.csv').exists())
             self.assertTrue(json.loads((root / 'disagreements.json').read_text())['provisional'])
+            (root / 'argon').mkdir()
+            (root / 'argon' / 'first.state.json').write_text(json.dumps({
+                'file_key': 'first', 'status': 'unresolved', 'attempts': 2,
+                'reason': 'An independent target-scope question remains unsettled'}))
             (root / 'run_manifest.json').write_text(json.dumps({'audit_finalized_at': '2026-10-29T19:00:00+00:00'}))
             c.run(root / 'input.csv', root)
+            self.assertEqual(c.read_csv(root / 'results.csv')[0]['outcome_final_verdict'], 'error')
+            self.assertIn('Supported field decisions retained separately remain usable', (root / 'REPORT.md').read_text())
             self.assertNotIn('provisional', (root / 'REPORT.md').read_text())
             self.assertIn('2026-10-29T19:00:00+00:00', (root / 'REPORT.md').read_text())
             self.assertFalse(json.loads((root / 'disagreements.json').read_text())['provisional'])

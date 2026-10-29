@@ -565,7 +565,7 @@ def report(results, missing, works, issues, finalized_at=None):
             for field, value in corrections.items():
                 old = r.get('doi_o' if field == 'original' else field, '')
                 if isinstance(value, dict):
-                    value = ('remove this row (no original finding re-tested)' if value == {'action': 'remove_row'} else
+                    value = ('remove this row' if value == {'action': 'remove_row'} else
                              value.get('doi') or value.get('title') or
                              '; '.join(f'{k}: {v}' for k, v in value.items()))
                 label = field.replace('_', ' ')
@@ -579,9 +579,14 @@ def report(results, missing, works, issues, finalized_at=None):
             'Its reproduction outcomes benchmark the cited 2000 publication; numerical equivalence between versions is not assumed.',
         '9dad580b3423aa2b': 'Row 2238 was checked against the verified 2020 working paper; the final 2022 article was not obtained.',
         '0245b18b007f60d7': 'Row 929 was checked against the verified 2015 draft; the final 2017 article was not obtained.',
+        '00319989aba88467': 'Row 1329 identifies the published journal version of the same empirical paper, '
+            'but the replication explicitly tests its [2018 proceedings version](https://doi.org/10.5465/AMBPP.2018.51). '
+            'Metadata and the source footnote support shared study identity with the '
+            '[journal article](https://doi.org/10.1177/1042258719892987); outcome equivalence across versions is not assumed, '
+            'so that outcome remains unverified.',
     }
     limits = [note for fk, note in version_notes.items() if any(
-        r['file_key'] == fk and any(r[k + '_final_verdict'] == 'error' for k in ('type', 'original', 'outcome'))
+        r['file_key'] == fk and (fk == '00319989aba88467' or any(r[k + '_final_verdict'] == 'error' for k in ('type', 'original', 'outcome')))
         for r in results)]
     if limits:
         lines += ['', 'Source-version notes and limits: ' + ' '.join(limits) +
@@ -653,7 +658,8 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
         state, _ = read_json(state_path)
         if isinstance(state, dict) and state.get('status') == 'unresolved':
             recovered = state.get('partial_recovery', {}).get('recovered_complete_field_objects', 0)
-            issues.append(f"Argon {state.get('file_key', state_path.stem)}: unresolved after {state.get('attempts')} attempts; {state.get('reason', 'failure')}. {recovered} independently valid field decisions recovered; remaining fields stay unverified.")
+            recovery = f'{recovered} complete field decisions recovered from partial replies. ' if recovered else ''
+            issues.append(f"Argon {state.get('file_key', state_path.stem)}: unresolved after {state.get('attempts')} attempts; {state.get('reason', 'failure')}. {recovery}Supported field decisions retained separately remain usable; unresolved fields stay unverified.")
     incidents, _ = read_json(root / 'blinding_incidents.json')
     if incidents:
         affected = len({incident['file_key'] for incident in incidents})

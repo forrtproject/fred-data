@@ -124,6 +124,8 @@ def final_scope_one(fk):
     prompt += '\n\nFor complete source access: ' + source_instruction(fk, textpath, source)
     (R/'argon'/f'{fk}.scope_review.effective.prompt.txt').write_text(prompt)
     output = R/'argon'/f'{fk}.scope_review.attempt2.txt'
+    if datetime.datetime.now(datetime.timezone.utc) >= deadline:
+        return {'file_key': fk, 'status': 'dispatch_deadline'}
     state.update(status='scope_review_running', attempts=2)
     atomic(statepath, state)
     start = time.monotonic()
@@ -179,6 +181,8 @@ def one(fk,items):
 Return exactly a JSON object with decisions array, one object for every listed row/field or target/field. Each decision needs input_row_index (for shipped rows) or target_index (for missing_row), field, method="argon", verdict (shipped_right|blind_right|both_wrong|undeterminable), corrected_value (actual final value, or null for undeterminable), quote (verbatim supporting source passage), location, reason. For original-identity decisions, corrected_value is a DOI string or object with doi/title/authors/year; include target_index only where that blind target matches the row, to resolve ambiguous pairing. Valid field names type, original, outcome, outcome_computation, outcome_robustness, missing_row. A shipped_right corrected_value must equal the shipped value in the comparison vocabulary. For reproductions normalize computation not checked/robustness not checked to not checked. If correcting type to reproduction, return outcome corrected_value as an object with outcome_computation and outcome_robustness, never as a scalar or semicolon string; use cannot_be_determined explicitly on an unsupported axis. For type disagreements also settle outcome if supported; retain unverified if vocabulary depends on an unresolved type. Keep reasons concise, normally one or two sentences, without repeating long background. Use the shortest self-contained contiguous quotation that supports the decision, and never splice passages with ellipses. Do not propose an error without a supporting quote. For insufficient evidence give undeterminable and quote the relevant passage showing what the source does support. Use only actual quote text that occurs in the supplied source. End your response with the answer itself under a heading `## Answer`.
 
 When the source proves that a shipped row cites only a method or background work and has no actual tested original to substitute, an original correction may be {{"action": "remove_row"}}. Never use removal merely because evidence or a counterpart is missing.
+
+A proven redundant duplicate of another shipped replication-original pair may also receive original corrected_value {{"action": "remove_row"}}. Establish the same paper-level pair from the supplied rows and source, identify the retained row, and map its target_index one-to-one. A removed duplicate has no separate applicable outcome: use undeterminable/null for that outcome. An ambiguous pairing alone does not prove duplication.
 
 If type is not_a_replication, return its supported type correction. For requested original/outcome fields that have no applicable value, return verdict="undeterminable", corrected_value=null and explain the inapplicability; never pair a non-undeterminable verdict with a null replacement (except missing_row/shipped_right). Do not invent an original or outcome to fill the schema.
 

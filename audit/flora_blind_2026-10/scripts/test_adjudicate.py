@@ -59,7 +59,10 @@ class RetryTests(unittest.TestCase):
             with self.subTest(invalid=invalid):
                 self.exercise_final_scope(invalid)
 
-    def exercise_final_scope(self, invalid):
+    def test_final_scope_expiring_during_preflight_does_not_consume_call(self):
+        self.exercise_final_scope(False, expire_preflight=True)
+
+    def exercise_final_scope(self, invalid, expire_preflight=False):
         with tempfile.TemporaryDirectory(prefix='flora-final-scope-') as directory:
             root = Path(directory)
             for name in ('texts', 'argon', 'adjudications'):
@@ -80,6 +83,19 @@ class RetryTests(unittest.TestCase):
                 output.write_text(json.dumps(answer('Not present in source.' if invalid else SOURCE)))
                 return {'returncode': 0, 'closed_after_valid_answer': False, 'timed_out': False}
             with patch.object(a, 'R', root), patch.object(a, 'run_transport', side_effect=transport) as calls:
+                if expire_preflight:
+                    times = iter([deadline - datetime.timedelta(seconds=1),
+                                  deadline + datetime.timedelta(seconds=1)])
+                    class Clock(datetime.datetime):
+                        @classmethod
+                        def now(cls, tz=None):
+                            return next(times)
+                    with patch.object(a.datetime, 'datetime', Clock):
+                        self.assertEqual(a.final_scope_one('file')['status'], 'dispatch_deadline')
+                    self.assertEqual(calls.call_count, 0)
+                    self.assertEqual(json.loads(statepath.read_text())['attempts'], 1)
+                    self.assertFalse((root/'argon/file.scope_review.attempt2.txt').exists())
+                    return
                 self.assertEqual(a.final_scope_one('file')['validated'], not invalid)
                 self.assertEqual(a.final_scope_one('file')['status'], 'not_pending_or_exhausted')
             self.assertEqual(calls.call_count, 1)

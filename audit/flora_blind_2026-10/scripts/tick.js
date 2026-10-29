@@ -9,6 +9,10 @@ const cmd=async s=>{
  }
  if(r.exit_code!==0)throw Error(out||('Command not complete; retained session '+r.session_id));return out;
 };
+const manifest=JSON.parse(await cmd('cat '+base+'/run_manifest.json'));
+if(manifest.completed_at){
+ text({completed_at:manifest.completed_at,message:'Audit already complete; no further work dispatched or artifacts changed.'});return;
+}
 const py=async (...args)=>JSON.parse(await cmd('python3 '+base+'/scripts/controller.py '+args.map(q).join(' ')));
 const record=async x=>{await cmd('python3 '+base+'/scripts/controller.py event '+q(JSON.stringify(x)));};
 text(await cmd('python3 '+base+'/scripts/quarantine_warnings.py'));
