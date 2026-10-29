@@ -1,0 +1,196 @@
+{
+  "type": "object",
+  "properties": {
+    "record_type": {
+      "enum": [
+        "replication",
+        "reproduction",
+        "not_a_replication",
+        "unclear"
+      ]
+    },
+    "record_type_quote": {
+      "type": "string"
+    },
+    "study_status": {
+      "enum": [
+        "completed",
+        "prospective"
+      ]
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "authors": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "doi": {
+            "type": "string"
+          },
+          "identified_by": {
+            "enum": [
+              "citation",
+              "description",
+              ""
+            ]
+          },
+          "study_numbers": {
+            "type": "string"
+          },
+          "replication_study_numbers": {
+            "type": "string"
+          },
+          "evidence_quote": {
+            "type": "string"
+          },
+          "outcome": {
+            "enum": [
+              "successful",
+              "failed",
+              "mixed",
+              "descriptive only",
+              "statistically successful but flawed",
+              "uninformative",
+              "cannot_be_determined",
+              ""
+            ]
+          },
+          "outcome_quote": {
+            "type": "string"
+          },
+          "outcome_quote_section": {
+            "type": "string"
+          },
+          "outcome_computation": {
+            "enum": [
+              "computationally reproducible",
+              "computational issues",
+              "technical failure",
+              "not checked",
+              "cannot_be_determined",
+              ""
+            ]
+          },
+          "outcome_computational_quote": {
+            "type": "string"
+          },
+          "outcome_robustness": {
+            "enum": [
+              "robust",
+              "robustness challenges",
+              "not checked",
+              "cannot_be_determined",
+              ""
+            ]
+          },
+          "outcome_robustness_quote": {
+            "type": "string"
+          },
+          "outcome_confident": {
+            "type": "boolean"
+          },
+          "outcome_reasoning": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "authors",
+          "year",
+          "title",
+          "doi",
+          "identified_by",
+          "evidence_quote",
+          "outcome",
+          "outcome_quote",
+          "outcome_quote_section",
+          "outcome_confident"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "outcome": {
+                  "const": ""
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "outcome_computation",
+                "outcome_computational_quote",
+                "outcome_robustness",
+                "outcome_robustness_quote"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "reasoning": {
+      "type": "string"
+    },
+    "work_key": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "done",
+        "timeout",
+        "no_text",
+        "error"
+      ]
+    },
+    "evidence_level": {
+      "enum": [
+        "full_text",
+        "abstract",
+        null
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "retrieved_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "text_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parser": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "record_type",
+    "study_status",
+    "targets",
+    "reasoning",
+    "work_key",
+    "status",
+    "evidence_level",
+    "source_url",
+    "retrieved_at",
+    "text_sha256",
+    "parser"
+  ]
+}
