@@ -8,11 +8,18 @@ def norm(s):
  for prefix in ('https://doi.org/','http://doi.org/','http://dx.doi.org/','https://dx.doi.org/','doi:'):
   if s.startswith(prefix):s=s[len(prefix):]
  return s.strip()
+def first_author(raw):
+ try:
+  authors=json.loads(raw)
+  a=authors[0] if isinstance(authors,list) and authors else {}
+  if isinstance(a,dict):return ' '.join(str(a.get(k) or '') for k in ['family','given']).strip() or str(a.get('literal') or a.get('name') or '')
+ except (ValueError,TypeError):pass
+ return str(raw or '').split(';')[0]
 def dump(p,x):p.write_text(json.dumps(x,indent=2,ensure_ascii=False)+'\n')
 rows=list(csv.DictReader((INPUT/'flora_b48a7d6.csv').open(encoding='utf-8-sig')))
 works={};manifest=[]
 for i,r in enumerate(rows):
- key=norm(r['doi_r']) or norm(r['url_r']) or '|'.join(norm(r[k]) for k in ['title_r','author_r','year_r'])
+ key=norm(r['doi_r']) or norm(r['url_r']) or '|'.join([norm(r['title_r']),norm(first_author(r['author_r'])),norm(r['year_r'])])
  if not key.strip('|'):key='unidentified_row:'+str(i)
  fk=hashlib.sha256(key.encode()).hexdigest()[:16]
  manifest.append({'input_row_index':i,'work_key':key,'file_key':fk})
