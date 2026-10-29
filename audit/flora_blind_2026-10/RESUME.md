@@ -1,9 +1,11 @@
-# Final FLoRA audit checkpoint
+# FLoRA audit complete
 
-The blind audit and adjudication window are closed. No coding or Argon processes remain. The report is final, with unresolved fields retained as unverified. Do not dispatch more work or alter evidence.
+Completed within the authorised ten-hour window. No coding or adjudication processes remain. Both owned FLoRA schedules were deleted and their absence verified; the parallel FReD schedule was not changed. Queued tick.js calls see completed_at and return without mutation.
 
-Final outputs: REPORT.md, results.csv (2818 ordered rows), missing_rows.csv, work_times.csv, review_coverage.json, verification_final.json, and final_counts.json. All2344 coding records validate;2289usablecodings (1710fulltexts,579abstracts).1982inputrowsfullyresolved;328inputrowswithconfirmederrors;107confirmedmissingtargets.427Argon-reviewedworks,508consumedattempts,30workswithunresolvedfields;87preparedworks/102fieldrequestsreceivednocallbeforecutoff. Twoobviousparentdecisionsareseparatefromthoseskips.58testspass;362correctionfieldsand107omittedtargetscheckedagainstliteralprimary-sourcequotes.
+Draft PR: https://github.com/forrtproject/fred-data/pull/156 (base main, head audit/flora-blind-2026-10). Registered with T3 link_pull_request and verified in list_thread_pull_requests.
 
-OriginalFLoRAhashunchanged:6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7. No source texts committed. No data/pipeline/main-checkout/FReD changes.
+Final outputs: REPORT.md, results.csv, missing_rows.csv, work_times.csv, review_coverage.json, verification_final.json, and final_counts.json. All2,344codingrecordsvalidate;2,289usablecodings(1,710fulltext,579abstract).1,982of2,818inputrowsfullyresolved;328inputrowswithconfirmederrors;107confirmedomittedtargets. Unverifiedfieldsremainexplicit,including30reviewedworkswithunresolvedfieldsand87preparedworks/102requestswithoutanArgoncallbeforecutoff. Twoobviousparent-resolvednocallfieldsareexcludedfromthoseskips.427worksreviewedthrough508consumedattempts,max4parallel,max2perwork.
 
-Only final publishing steps remain: commit/push explicit audit paths; create draft PR against main, immediately link_pull_request and verify; delete BOTH owned schedule IDs in run_manifest (never the FReD schedule), verify absence; record completed_at and PR URL; commit/push final metadata. Do not claim completion while owned schedules remain. After completed_at is set, queued tick.js calls return without mutation.
+58testspassed. Finalverificationchecked2,818roworder,2,344codingrecords,362correctionfieldsand107omittedtargetsagainstliteralprimarytext. Fulltextsremainignoredanduncommitted. Originaloutput/flora.csvunchangedSHA256:6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7. No data/pipeline/maincheckout/FReDchanges.
+
+No authorised work remains. Review the draft PR and the report before applying any suggested dataset corrections.
