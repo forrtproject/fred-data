@@ -571,7 +571,7 @@ def report(results, missing, works, issues, finalized_at=None, review_summary=No
     lines = ['# FLoRA blind audit' + ('' if finalized_at else ' — provisional'), '',
              status + 'Blind disagreement alone establishes no error. '
              'Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. '
-             'Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.', '']
+             'The legacy automatic matcher tolerates normalized spacing and removed line-end hyphenation. Parent approval in the active evidence follow-up requires a contiguous literal quotation; a normalized match alone does not authorise integration. Neither check repairs words or mathematical signs.', '']
     errors = sum(any(r[k + '_final_verdict'] == 'error' for k in ('type', 'original', 'outcome')) for r in results)
     resolved = sum(r['resolution'] != 'unresolved' for r in results)
     lines += [f'{errors} input rows have at least one confirmed field error; {resolved} / {len(results)} rows are fully resolved. '
