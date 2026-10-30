@@ -1,16 +1,16 @@
 # FReD statistics audit
 
-**Source follow-up completed — 2026-10-30T00:29:48.017580+00:00.** Current integrated results contain 416 confirmed field errors. Source retrieval alone is not verification; the deterministic screen alone is not verification.
+**Mac source validation in progress — 2026-10-30T10:48:43.490058+00:00.** Current integrated results contain 416 confirmed field errors. New-source disagreements remain unverified until independent review passes.
 
-The original bounded audit finished on 2026-10-29T18:41:45.057314+00:00 with 408 confirmed field errors across 315 rows, 1593 effects with at least one verified field and 81 with all seven. A separately authorised source-acquisition follow-up is recorded in [source_followup/README.md](source_followup/README.md). Current counts below include only integrated, evidence-validated follow-up results; the original deadlines and completion record are unchanged.
+The original bounded audit finished on 2026-10-29T18:41:45.057314+00:00 with 408 confirmed field errors across 315 rows, 1593 effects with at least one verified field and 81 with all seven. A separately authorised source-acquisition follow-up is recorded in [source_followup/README.md](source_followup/README.md). Current counts below include only integrated, evidence-validated follow-up results; the original deadlines and completion record are unchanged. A further separately authorised Mac recovery pass starts from416confirmed errors across322rows and1605effects with any verified field. Its acquisition receipts, protected blind validation batches and independent reviews are in [mac_source_followup/README.md](mac_source_followup/README.md). The completed Linux follow-up and original audit deadlines remain historical; neither schedule was restarted.
 
-The run did not reach the 80% verification goal: even the looser any-field coverage measure is 74.2%; all-seven-field coverage is 3.8%. Access failures, unresolved target identity and unavailable matching metrics remain explicit rather than being counted as verified.
+The run did not reach the 80% verification goal: even the looser any-field coverage measure is 74.3%; all-seven-field coverage is 3.8%. Access failures, unresolved target identity and unavailable matching metrics remain explicit rather than being counted as verified.
 
 Confirmed errors affect 322 effect rows. Counts refer to field instances; an original statistic repeated across replication rows can contribute more than once.
 
 The frozen workbook contains 2,164 effects in 432 replication works. Part A screened every effect and flagged 174. 18/185 individual flags are resolved when source-confirmed corrections are applied in memory, affecting 18/174 flagged effects (see `flag_confirmation.csv`). This includes corrected test statistics or analytic n as well as p-values. Separately, 53 flagged effects contain any confirmed field error.
 
-Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 239/2164; all three replication statistics for 475/2164. All seven fields, including author-reported success, are checked for 82/2164. At least one original statistic is evaluable for 874/2164, at least one replication statistic for 1257/2164, and any of the seven fields for 1605/2164. Individual-field coverage is below.
+Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 247/2164; all three replication statistics for 475/2164. All seven fields, including author-reported success, are checked for 83/2164. At least one original statistic is evaluable for 929/2164, at least one replication statistic for 1257/2164, and any of the seven fields for 1608/2164. Individual-field coverage is below.
 
 **Decision to review:** reported success is evaluated for the identified study/outcome. A broad paper-level verdict without a defensible mapping to an individual row remains unverified; the original narrative observation is retained. This conservative scope rule avoids assigning a mixed article outcome to every unidentified component effect.
 
@@ -18,9 +18,9 @@ Confirmed errors include coding omissions only when adjudication establishes the
 
 | Field | Confirmed errors / evaluable | Unverified | Not comparable | All-row error bounds |
 |---|---:|---:|---:|---:|
-| n_o | 29/490 (5.9%) | 1623 | 51 | 1.34%–78.70% |
-| es_value_o | 46/518 (8.9%) | 1438 | 208 | 2.13%–78.19% |
-| pval_value_o | 32/711 (4.5%) | 1450 | 3 | 1.48%–68.62% |
+| n_o | 29/518 (5.6%) | 1586 | 60 | 1.34%–77.40% |
+| es_value_o | 46/546 (8.4%) | 1382 | 236 | 2.13%–76.89% |
+| pval_value_o | 32/759 (4.2%) | 1401 | 4 | 1.48%–66.40% |
 | n_r | 81/970 (8.4%) | 1124 | 70 | 3.74%–58.92% |
 | es_value_r | 34/725 (4.7%) | 1117 | 322 | 1.57%–68.07% |
 | pval_value_r | 71/983 (7.2%) | 1171 | 10 | 3.28%–57.86% |
@@ -53,7 +53,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | Arb | 0/4 (28; 0) | 0/16 (14; 2) | 0/8 (24; 0) | 0/6 (22; 4) | 0/3 (27; 2) | 0/6 (26; 0) | 0/19 (13; 0) |
 | AvOr | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | Blxd | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
-| Boyce | 6/103 (171; 6) | 2/114 (126; 40) | 6/154 (126; 0) | 24/186 (94; 0) | 8/131 (108; 41) | 13/163 (117; 0) | 31/156 (124; 0) |
+| Boyce | 6/108 (166; 6) | 2/118 (122; 40) | 6/154 (126; 0) | 24/186 (94; 0) | 8/131 (108; 41) | 13/163 (117; 0) | 31/156 (124; 0) |
 | Br0x | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | BrGp | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
 | CORE | 3/41 (71; 2) | 3/22 (81; 11) | 4/45 (69; 0) | 7/62 (42; 10) | 6/50 (48; 16) | 12/69 (45; 0) | 8/75 (39; 0) |
@@ -84,7 +84,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | OKRy | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | OYX0 | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | OeGv | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
-| OpenMKT | 0/21 (80; 0) | 1/26 (62; 13) | 1/37 (64; 0) | 0/71 (30; 0) | 0/61 (20; 20) | 2/78 (23; 0) | 7/48 (53; 0) |
+| OpenMKT | 0/22 (79; 0) | 1/29 (57; 15) | 1/40 (61; 0) | 0/71 (30; 0) | 0/61 (20; 20) | 2/78 (23; 0) | 7/48 (53; 0) |
 | OpenMKT7 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | Ovkm | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | Ow0 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
@@ -95,7 +95,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | RRR | 0/11 (16; 4) | 0/9 (21; 1) | 1/19 (12; 0) | 5/13 (11; 7) | 1/18 (11; 2) | 1/20 (11; 0) | 0/7 (24; 0) |
 | RYKv | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/1 (2; 0) |
 | RrOb | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| Soto | 0/7 (50; 3) | 0/12 (43; 5) | 2/15 (45; 0) | 0/42 (18; 0) | 6/11 (28; 21) | 11/35 (25; 0) | 0/0 (60; 0) |
+| Soto | 0/7 (50; 3) | 0/16 (39; 5) | 2/19 (41; 0) | 0/42 (18; 0) | 6/11 (28; 21) | 11/35 (25; 0) | 0/0 (60; 0) |
 | VB9K | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | Vj0p | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | VvZX | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
@@ -108,11 +108,11 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | aag9 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | acykd | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | add | 2/37 (125; 2) | 4/46 (100; 18) | 1/39 (125; 0) | 1/36 (118; 10) | 1/35 (113; 16) | 1/51 (113; 0) | 16/57 (107; 0) |
-| additional | 10/64 (287; 0) | 22/67 (242; 42) | 7/114 (236; 1) | 8/118 (233; 0) | 4/45 (256; 50) | 6/110 (241; 0) | 27/176 (175; 0) |
-| av | 0/32 (127; 7) | 4/36 (126; 4) | 3/45 (121; 0) | 4/32 (123; 11) | 0/26 (135; 5) | 0/30 (127; 9) | 5/53 (113; 0) |
+| additional | 10/79 (272; 0) | 22/67 (228; 56) | 7/128 (222; 1) | 8/118 (233; 0) | 4/45 (256; 50) | 6/110 (241; 0) | 27/176 (175; 0) |
+| av | 0/32 (118; 16) | 4/45 (117; 4) | 3/53 (112; 1) | 4/32 (123; 11) | 0/26 (135; 5) | 0/30 (127; 9) | 5/53 (113; 0) |
 | bY2A | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | bth | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
-| curatescience | 2/10 (60; 7) | 0/12 (53; 12) | 2/26 (51; 0) | 5/25 (52; 0) | 1/28 (41; 8) | 7/36 (41; 0) | 2/24 (53; 0) |
+| curatescience | 2/12 (58; 7) | 0/14 (51; 12) | 2/28 (49; 0) | 5/25 (52; 0) | 1/28 (41; 8) | 7/36 (41; 0) | 2/24 (53; 0) |
 | curatescience241 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | curatescience244 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | curatescience283 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
@@ -148,7 +148,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | j2yd | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/0 (1; 0) | 0/1 (0; 0) |
 | j8a4p | 0/7 (0; 0) | 0/7 (0; 0) | 0/7 (0; 0) | 0/7 (0; 0) | 0/1 (0; 6) | 0/7 (0; 0) | 0/7 (0; 0) |
 | jLr | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| jcre | 0/0 (71; 0) | 0/0 (71; 0) | 0/0 (71; 0) | 0/54 (17; 0) | 0/6 (17; 48) | 0/6 (65; 0) | 0/45 (26; 0) |
+| jcre | 0/0 (71; 0) | 0/0 (59; 12) | 0/11 (60; 0) | 0/54 (17; 0) | 0/6 (17; 48) | 0/6 (65; 0) | 0/45 (26; 0) |
 | kXp8 | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | lJ0w | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | mBL1 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) |
@@ -167,9 +167,9 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | rtn | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | shah | 0/0 (13; 0) | 0/1 (12; 0) | 0/1 (12; 0) | 0/2 (11; 0) | 0/1 (12; 0) | 0/1 (12; 0) | 2/3 (10; 0) |
 | soscisubmission | 2/41 (71; 3) | 0/31 (70; 14) | 2/33 (82; 0) | 14/59 (52; 4) | 2/45 (55; 15) | 4/60 (55; 0) | 12/64 (51; 0) |
-| soscisubmission1 | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/2 (2; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/0 (4; 0) |
-| soscisubmission2 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
-| soscisubmission3 | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
+| soscisubmission1 | 0/0 (4; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/2 (2; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/0 (4; 0) |
+| soscisubmission2 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
+| soscisubmission3 | 0/4 (0; 0) | 0/4 (0; 0) | 0/4 (0; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
 | soscisubmission34 | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 1/1 (1; 0) | 0/1 (1; 0) | 0/2 (0; 0) | 1/1 (1; 0) |
 | soscisubmission38 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | soscisubmission7 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
@@ -621,9 +621,9 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 103 fields exhausted the allowed adjudication attempts and remain unresolved. The remaining dispatch queue contains 0 fields in 0 source groups; after the dispatch cutoff these remain unverified. Failed or truncated replies establish no error unless an individual complete response passes source validation.
 The separately authorised source follow-up has 0 additional fields awaiting validated adjudication. These remain unverified until their evidence and target identity pass review.
 
-- original: done: 1309 sides.
-- original: locator_insufficient: 279 sides.
-- original: paper_unavailable: 576 sides.
+- original: done: 1391 sides.
+- original: locator_insufficient: 322 sides.
+- original: paper_unavailable: 451 sides.
 - replication: done: 1563 sides.
 - replication: locator_insufficient: 383 sides.
 - replication: paper_unavailable: 218 sides.
@@ -634,9 +634,7 @@ Detailed access/target reasons are retained in the per-effect JSON checkpoints. 
 - 20 sides: Target test could not be examined because full thesis text was not acquired. Title and author verified on institutional landing page; abstract not accepted as full text.
 - 15 sides: Asch (1946), Experiment I: warm versus cold personality lists; Table 2 reports 18 distinct trait-choice outcomes. The supplied generic description and Table 2/page 263 locator do not identify which outcome/test this audit_id targets.
 - 15 sides: Pavlović OSF project 74892, First impression replication study (Asch, 1945, Experiment 1): author-provided First_impression_output.pdf contains multiple separate trait-choice contingency tables and Fisher exact tests. Page 2 contains the preceding generous-trait test results and the beginning of the wise-trait table; the supplied locator does not identify one outcome/test.
-- 15 sides: Original full paper not acquired. Existing terminal shared-cache miss documents DOI/publisher, Unpaywall, OpenAlex and LMU routes; no primary full text. This does not prevent independent examination of the replication.
 - 15 sides: Original primary full text not acquired through permitted open-access routes.
-- 15 sides: Original full primary paper unavailable; shared terminal acquisition record documents failed DOI, Unpaywall, OpenAlex and archive routes. Secondary reproduced estimates in Song are not substituted for the original.
 - 15 sides: Original primary paper unavailable; terminal acquisition miss recorded for DOI 10.1016/j.euroecorev.2004.01.004. Replication-paper reproductions are secondary sources and were not substituted.
 - 14 sides: Replication study 1: second-year police cadets, intervention versus active control, plus exploratory comparisons with senior officers; multiple outcomes and Time, Group/Sample, interaction, and within-group tests in Results. Supplied locator p. 8 and generic gaze-control/visual-attention description do not identify a unique outcome and test.
 - 14 sides: Western university students; Table 2 multiple regressions report PMS and CMM semipartial correlations for multiple moral attitudes. Supplied p. 9 also discusses Table 3 models controlling general perfectionism; predictor, outcome, and model are not uniquely identified.
@@ -645,6 +643,8 @@ Detailed access/target reasons are retained in the per-effect JSON checkpoints. 
 - 12 sides: Verified Haller, Flaherty and Balsvik (2023), DOI 10.18718/81781.29. Newly explicit Table A2 is located on printed p. 23. It reports log annual wage regressions in four specifications for Brazil, Ireland (2005-2010), Ireland (2011-2016), and Norway, with separate coefficient and coefficient-difference tests. The supplied p. 24/Table A2 locator identifies the table but does not identify a country/period, specification column, coefficient, or test; the neutral description is empty and study identifiers are null. No unique target test can be established.
 - 11 sides: Experiment 2 identified, but the repeated generic description does not select uniquely among language-form omnibus, pooled contrast, and individual pairwise tests.
 - 11 sides: Paper and authors supplementary pre-study report available. Supplied https://osf.io/nfskq is a file locator, but download returned HTTP 403; no retry. Neutral description repeated across 11 assigned IDs does not identify lab, pooled vs pairwise contrast, confirmatory vs extended pilot, or test. No mapping inferred from ID order.
+- 11 sides: Full original article not obtained. DOI landing page, Unpaywall, OpenAlex and LMU repository did not supply full paper. Author dissertation includes only an article citation placeholder, not the original paper.
+- 10 sides: Locator does not uniquely distinguish a target contrast/outcome from multiple reported tests; no assignment inferred from input order.
 
 ## Method and limits
 

@@ -28,7 +28,7 @@ def checked_merge(before, after, side, source_path, allow_locator_revisit=False)
                 assert Path(evidence['source_path']).resolve() == Path(source_path).resolve()
                 value = evidence['value'] or evidence.get('test_statistic')
                 if evidence['confident']:
-                    assert quote_ok({**evidence, 'value': value}), ('Unsupported quote', field)
+                    assert quote_ok({**evidence, 'value': value}), ('Unsupported quote', before['audit_id'], field)
         merged[side] = copy.deepcopy(examined)
     verdict = after['reported_success']
     if (side == 'replication' and before['reported_success']['status'] != 'done'
@@ -54,6 +54,7 @@ def main():
     ledger_path = F / 'integration.json'
     ledger = json.loads(ledger_path.read_text()) if ledger_path.exists() else {}
     changed = []
+    blocked = {}
     for batch in queue:
         records = json.loads(Path(batch['input']).read_text())
         for record in records:
@@ -66,8 +67,16 @@ def main():
             dest = B / 'extractions' / f'{aid}.json'
             before = json.loads(dest.read_text())
             source = accepted[batch['source_key']]['text_path']
-            merged = checked_merge(before, after, side, source,
-                                   allow_locator_revisit=batch.get('new_primary_context', False))
+            try:
+                merged = checked_merge(before, after, side, source,
+                                       allow_locator_revisit=batch.get('new_primary_context', False))
+            except AssertionError as error:
+                # Quarantine this record without changing its canonical checkpoint.
+                # Other independently validated records may still be integrated.
+                blocked[ledger_key] = {'audit_id': aid, 'side': side,
+                                      'result_path': str(result_path), 'reason': str(error),
+                                      'canonical_sha256': hashlib.sha256(dest.read_bytes()).hexdigest()}
+                continue
             if merged != before:
                 backup = F / 'before_extractions' / dest.name
                 backup.parent.mkdir(exist_ok=True)
@@ -79,7 +88,9 @@ def main():
                                   'source_key': batch['source_key'],
                                   'result_sha256': hashlib.sha256(result_path.read_bytes()).hexdigest()}
             atomic(ledger_path, ledger)
-    print(json.dumps({'integrated_sides': len(ledger), 'changed_sides': changed}))
+    atomic(F / 'integration_blockers.json', blocked)
+    print(json.dumps({'integrated_sides': len(ledger), 'changed_sides': changed,
+                      'records_blocked_for_parent_evidence_review': len(blocked)}))
 
 
 if __name__ == '__main__':

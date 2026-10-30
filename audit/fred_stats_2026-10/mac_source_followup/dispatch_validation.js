@@ -26,10 +26,10 @@ for(const batch of queue){
  const data=result.structuredContent??JSON.parse(result.content.find(x=>x.type==='text').text);
  if(data.providerInstanceId!=='codex'||data.model!=='gpt-6.1-sol'||!data.options.some(x=>x.id==='reasoningEffort'&&x.value==='medium'))throw Error('Wrong validation provider/model/options');
  const record={...batch,taskId:data.taskId,childThreadId:data.childThreadId,status:data.status,started_at:new Date().toISOString()};
- const written=await tools.exec_command({cmd:'python3 - '+quote(JSON.stringify(record))+" <<'PY'\nimport json,sys\nfrom pathlib import Path\np=Path('audit/fred_stats_2026-10/source_followup/validation_tasks.jsonl')\nwith p.open('a') as f:f.write(json.dumps(json.loads(sys.argv[1]))+'\\n')\nPY",max_output_tokens:300});
+ const written=await tools.exec_command({cmd:'python3 - '+quote(JSON.stringify(record))+" <<'PY'\nimport json,sys\nfrom pathlib import Path\np=Path('audit/fred_stats_2026-10/mac_source_followup/validation_tasks.jsonl')\nwith p.open('a') as f:f.write(json.dumps(json.loads(sys.argv[1]))+'\\n')\nPY",max_output_tokens:300});
  if(written.exit_code!==0)throw Error('Cannot retain delegated validation task');
  statuses[batch.batch]={status:data.status,taskId:data.taskId};launched.push(batch.batch);active++;
 }
-const written=await tools.exec_command({cmd:'python3 - '+quote(JSON.stringify(statuses))+" <<'PY'\nimport json,sys\nfrom pathlib import Path\np=Path('audit/fred_stats_2026-10/source_followup/validation_status.json');p.write_text(json.dumps(json.loads(sys.argv[1]),indent=2)+'\\n')\nPY",max_output_tokens:300});
+const written=await tools.exec_command({cmd:'python3 - '+quote(JSON.stringify(statuses))+" <<'PY'\nimport json,sys\nfrom pathlib import Path\np=Path('audit/fred_stats_2026-10/mac_source_followup/validation_status.json');p.write_text(json.dumps(json.loads(sys.argv[1]),indent=2)+'\\n')\nPY",max_output_tokens:300});
 if(written.exit_code!==0)throw Error('Cannot retain validation statuses');
 text({active_validation_children:active,launched,undispatched:queue.filter(x=>!latest[x.batch]&&!launched.includes(x.batch)).length});
