@@ -2,7 +2,7 @@
 
 # FLoRA blind audit — provisional
 
-465 input rows have at least one confirmed field error; 2372 / 2818 rows are fully resolved. 748 blind targets have no proposed shipped counterpart; these are not errors by default.
+466 input rows have at least one confirmed field error; 2381 / 2818 rows are fully resolved. 743 blind targets have no proposed shipped counterpart; these are not errors by default.
 
 This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
 
@@ -10,7 +10,7 @@ The complete evidence follow-up remains active. Earlier phase completion and cut
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2290 with verified saved text (1729 full text, 561 abstract); 2290 with validated usable coding. Rows fully resolved: 2372 / 2818.
+Works: 2344 total; 2344 attempted; 2290 with verified saved text (1729 full text, 561 abstract); 2290 with validated usable coding. Rows fully resolved: 2381 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. Dependent outcome replacements after a type correction remain in results.csv and the error list.
 
@@ -20,18 +20,18 @@ After the original bounded run, a user-authorised supplemental review covered 10
 
 ## Confirmed field error rates
 
-- type: 38 / 2591 (1.5%); 227 unverified; all-row unresolved bounds 1.3%–9.4% (N=2818)
-- original: 70 / 2547 (2.7%); 271 unverified; all-row unresolved bounds 2.5%–12.1% (N=2818)
-- outcome: 356 / 2203 (16.2%); 410 unverified; all-row unresolved bounds 13.6%–29.3% (N=2613)
+- type: 38 / 2597 (1.5%); 221 unverified; all-row unresolved bounds 1.3%–9.2% (N=2818)
+- original: 70 / 2552 (2.7%); 266 unverified; all-row unresolved bounds 2.5%–11.9% (N=2818)
+- outcome: 357 / 2211 (16.1%); 402 unverified; all-row unresolved bounds 13.7%–29.0% (N=2613)
 - outcome_computation: 30 / 192 (15.6%); 13 unverified; all-row unresolved bounds 14.6%–21.0% (N=205)
 - outcome_robustness: 9 / 197 (4.6%); 8 unverified; all-row unresolved bounds 4.4%–8.3% (N=205)
 
 ### By source
 
 - COS:
-  - type: 1 / 690 (0.1%); 30 unverified; all-row unresolved bounds 0.1%–4.3% (N=720)
-  - original: 6 / 678 (0.9%); 42 unverified; all-row unresolved bounds 0.8%–6.7% (N=720)
-  - outcome: 83 / 638 (13.0%); 82 unverified; all-row unresolved bounds 11.5%–22.9% (N=720)
+  - type: 1 / 691 (0.1%); 29 unverified; all-row unresolved bounds 0.1%–4.2% (N=720)
+  - original: 6 / 679 (0.9%); 41 unverified; all-row unresolved bounds 0.8%–6.5% (N=720)
+  - outcome: 83 / 639 (13.0%); 81 unverified; all-row unresolved bounds 11.5%–22.8% (N=720)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - SCORE:
@@ -47,9 +47,9 @@ After the original bounded run, a user-authorised supplemental review covered 10
   - outcome_computation: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
   - outcome_robustness: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
 - openalex:
-  - type: 4 / 251 (1.6%); 15 unverified; all-row unresolved bounds 1.5%–7.1% (N=266)
-  - original: 11 / 250 (4.4%); 16 unverified; all-row unresolved bounds 4.1%–10.2% (N=266)
-  - outcome: 22 / 222 (9.9%); 37 unverified; all-row unresolved bounds 8.5%–22.8% (N=259)
+  - type: 4 / 253 (1.6%); 13 unverified; all-row unresolved bounds 1.5%–6.4% (N=266)
+  - original: 11 / 252 (4.4%); 14 unverified; all-row unresolved bounds 4.1%–9.4% (N=266)
+  - outcome: 22 / 225 (9.8%); 34 unverified; all-row unresolved bounds 8.5%–21.6% (N=259)
   - outcome_computation: 2 / 5 (40.0%); 2 unverified; all-row unresolved bounds 28.6%–57.1% (N=7)
   - outcome_robustness: 2 / 7 (28.6%); 0 unverified; all-row unresolved bounds 28.6%–28.6% (N=7)
 - openalex_snapshot:
@@ -59,9 +59,9 @@ After the original bounded run, a user-authorised supplemental review covered 10
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - replications:
-  - type: 30 / 1311 (2.3%); 142 unverified; all-row unresolved bounds 2.1%–11.8% (N=1453)
-  - original: 49 / 1280 (3.8%); 173 unverified; all-row unresolved bounds 3.4%–15.3% (N=1453)
-  - outcome: 234 / 1202 (19.5%); 251 unverified; all-row unresolved bounds 16.1%–33.4% (N=1453)
+  - type: 30 / 1314 (2.3%); 139 unverified; all-row unresolved bounds 2.1%–11.6% (N=1453)
+  - original: 49 / 1282 (3.8%); 171 unverified; all-row unresolved bounds 3.4%–15.1% (N=1453)
+  - outcome: 235 / 1206 (19.5%); 247 unverified; all-row unresolved bounds 16.2%–33.2% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - reproductions:
@@ -74,15 +74,15 @@ After the original bounded run, a user-authorised supplemental review covered 10
 ### By evidence_level
 
 - abstract:
-  - type: 7 / 409 (1.7%); 166 unverified; all-row unresolved bounds 1.2%–30.1% (N=575)
-  - original: 1 / 412 (0.2%); 163 unverified; all-row unresolved bounds 0.2%–28.5% (N=575)
-  - outcome: 52 / 329 (15.8%); 239 unverified; all-row unresolved bounds 9.2%–51.2% (N=568)
+  - type: 7 / 414 (1.7%); 161 unverified; all-row unresolved bounds 1.2%–29.2% (N=575)
+  - original: 1 / 417 (0.2%); 158 unverified; all-row unresolved bounds 0.2%–27.7% (N=575)
+  - outcome: 52 / 332 (15.7%); 236 unverified; all-row unresolved bounds 9.2%–50.7% (N=568)
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - full_text:
-  - type: 31 / 2182 (1.4%); 9 unverified; all-row unresolved bounds 1.4%–1.8% (N=2191)
+  - type: 31 / 2183 (1.4%); 8 unverified; all-row unresolved bounds 1.4%–1.8% (N=2191)
   - original: 69 / 2135 (3.2%); 56 unverified; all-row unresolved bounds 3.1%–5.7% (N=2191)
-  - outcome: 304 / 1874 (16.2%); 121 unverified; all-row unresolved bounds 15.2%–21.3% (N=1995)
+  - outcome: 305 / 1879 (16.2%); 116 unverified; all-row unresolved bounds 15.3%–21.1% (N=1995)
   - outcome_computation: 30 / 192 (15.6%); 4 unverified; all-row unresolved bounds 15.3%–17.3% (N=196)
   - outcome_robustness: 9 / 194 (4.6%); 2 unverified; all-row unresolved bounds 4.6%–5.6% (N=196)
 - none:
@@ -101,6 +101,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 17, [replicating work](https://doi.org/10.1080/08993408.2022.2071543): outcome: successful → mixed.
 - Row 18, [replicating work](https://doi.org/10.1038/s41598-025-10331-4): original: 10.1037/a0010932 → Obedience To Authority: An Experimental View.
 - Row 22, [replicating work](https://doi.org/10.1080/10986065.2020.1818467): outcome: successful → mixed.
+- Row 24, [replicating work](https://doi.org/10.5281/zenodo.17715400): outcome: successful → mixed.
 - Row 37, [replicating work](https://doi.org/10.1186/ar3789): outcome: successful → mixed.
 - Row 38, [replicating work](https://doi.org/10.1187/cbe.19-01-0028): outcome: successful → mixed.
 - Row 55, [replicating work](https://doi.org/10.1176/ps.62.4.pss6204_0367): original: 10.1016/j.biopsych.2006.03.040 → 10.1037/a0018915.
@@ -568,9 +569,12 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 
 The [confirmed missing-reference export](confirmed_missing_references.csv) contains only source-supported omissions. [Unresolved candidates](unresolved_missing_candidates.csv) are kept separately; held or unverified references do not enter the confirmed export.
 
+- Confirmed missing target: [Using temporal information to construct, update, and retrieve situation models of narratives.](https://doi.org/10.1037/0278-7393.27.1.67); work [replicating work](https://doi.org/10.17605/osf.io/bu3gm), target 1 (argon).
+- Confirmed missing target: [Three turtles in danger: Spontaneous construction of causally relevant spatial situation models.](https://doi.org/10.1037/0278-7393.30.5.969); work [replicating work](https://doi.org/10.17605/osf.io/bu3gm), target 2 (argon).
 - Confirmed missing target: Conformity and Character; work [replicating work](https://doi.org/10.1371/journal.pone.0294325), target 6 (argon).
 - Confirmed missing target: [The effects of information and social conformity on opinion change](https://doi.org/10.1371/journal.pone.0196600); work [replicating work](https://doi.org/10.1371/journal.pone.0294325), target 7 (argon).
 - Confirmed missing target: [Knowing what to think by knowing who you are: Self-categorisation and the nature of norm formation, conformity and group polarisation](https://doi.org/10.1111/j.2044-8309.1990.tb00892.x); work [replicating work](https://doi.org/10.31820/pt.28.3.7), target 1 (argon).
+- Confirmed missing target: [Genetic imaging of the association of oxytocin receptor gene (OXTR) polymorphisms with positive maternal parenting](https://doi.org/10.3389/fnbeh.2014.00021); work [replicating work](https://doi.org/10.1037/fam0000034), target 1 (argon).
 - Confirmed missing target: Equality of educational opportunity study.; work [replicating work](https://doi.org/10.3102/0013189x20940304), target 0 (obvious).
 - Confirmed missing target: Do Get-Out-the-Vote Calls Reduce Turnout? The Importance of Statistical Methods for Field Experiments.; work [replicating work](https://doi.org/10.1017/s000305540505166x), target 1 (argon).
 - Confirmed missing target: Common variants on 9q22.33 and 14q13.3 predispose to thyroid cancer in European populations.; work [replicating work](https://doi.org/10.1093/carcin/bgw047), target 0 (argon).
@@ -584,10 +588,14 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [Long‐lasting enhancements of memory and hippocampal‐cortical functional connectivity following multiple‐day targeted noninvasive stimulation](https://doi.org/10.1002/hipo.22416); work [replicating work](https://doi.org/10.1002/brb3.1393), target 1 (argon).
 - Confirmed missing target: Replications in Psychology Research; work [replicating work](https://doi.org/10.1075/target.18159.ola), target 0 (argon).
 - Confirmed missing target: [Improvements in problem behavior in a child with autism spectrum diagnosis through synthesized analysis and treatment: A replication in an EIBI home program.](https://doi.org/10.1002/bin.1505); work [replicating work](https://doi.org/10.1007/s43494-020-00015-1), target 0 (obvious).
+- Confirmed missing target: [Association of e-cigarette vaping and progression to heavier patterns of cigarette smoking](https://doi.org/10.1001/jama.2016.14649); work [replicating work](https://doi.org/10.1136/tobaccocontrol-2021-056528), target 1 (argon).
 - Confirmed missing target: [When goals conflict with values: Counterproductive attentional and oculomotor capture by reward-related stimuli.](https://doi.org/10.1037/xge0000037); work [replicating work](https://doi.org/10.3758/s13428-023-02329-5), target 1 (obvious).
 - Confirmed missing target: [From madness to genius: The Openness/Intellect trait domain as a paradoxical simplex](https://doi.org/10.1016/j.jrp.2011.12.003); work [replicating work](https://doi.org/10.1002/per.2176), target 1 (obvious).
 - Confirmed missing target: [Anxiety, depression, traumatic stress and COVID-19-related anxiety in the UK general population during the COVID-19 pandemic.](https://doi.org/10.1192/bjo.2020.109); work [replicating work](https://doi.org/10.3390/jcm10010052), target 0 (argon).
+- Confirmed missing target: [Vision, knowledge, and assertion.](https://doi.org/10.1016/j.concog.2016.01.004); work [replicating work](https://doi.org/10.1177/25152459241267902), target 1 (argon).
+- Confirmed missing target: [Knowledge attributions in iterated fake barn cases.](https://doi.org/10.1093/analys/anx036); work [replicating work](https://doi.org/10.1177/25152459241267902), target 2 (argon).
 - Confirmed missing target: A signature of cosmic-ray increase in AD 774–775 from tree rings in Japan.; work [replicating work](https://doi.org/10.1017/rdc.2024.52), target 1 (obvious).
+- Confirmed missing target: [An Effort to Close Achievement Gaps at Scale through Self-Affirmation.](https://doi.org/10.3102/0162373715581709); work [replicating work](https://doi.org/10.1037/edu0000141), target 1 (argon).
 - Confirmed missing target: Career mobility, job match, and overeducation; work [replicating work](https://doi.org/10.1080/0003684042000229532), target 1 (argon).
 - Confirmed missing target: [Children's understanding of counting](https://doi.org/10.1016/0010-0277(90)90003-3); work [replicating work](https://doi.org/10.5964/jnc.7029), target 0 (argon).
 - Confirmed missing target: Dysregulated Fear Predicts Social Wariness and Social Anxiety Symptoms during Kindergarten; work [replicating work](https://doi.org/10.1111/cdev.12774), target 1 (argon).
@@ -620,6 +628,10 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Teleological generics; work [replicating work](https://doi.org/10.1098/rsos.231240), target 136 (argon).
 - Confirmed missing target: [Revealing hidden gender biases in competence impressions of faces](https://doi.org/10.1177/0956797618813092); work [replicating work](https://doi.org/10.1098/rsos.231240), target 144 (argon).
 - Confirmed missing target: [Functional smiles: Tools for love, sympathy, and war](https://doi.org/10.1177/0956797617706082); work [replicating work](https://doi.org/10.1098/rsos.231240), target 153 (argon).
+- Confirmed missing target: The framing of decisions and the psychology of choice.; work [replicating work](https://doi.org/10.1177/2053168018822174), target 1 (argon).
+- Confirmed missing target: Risk orientations and policy frames.; work [replicating work](https://doi.org/10.1177/2053168018822174), target 2 (argon).
+- Confirmed missing target: Through a glass and darkly: Attitudes toward international trade and the curious effects of issue framing.; work [replicating work](https://doi.org/10.1177/2053168018822174), target 3 (argon).
+- Confirmed missing target: Rumors and health care reform: Experiments in political misinformation.; work [replicating work](https://doi.org/10.1177/2053168018822174), target 4 (argon).
 - Confirmed missing target: Association of the FOXO3A locus with extreme longevity in a southern Italian centenarian study; work [replicating work](https://doi.org/10.1111/j.1474-9726.2010.00627.x), target 1 (argon).
 - Confirmed missing target: Association of FOXO3A variation with human longevity confirmed in German centenarians; work [replicating work](https://doi.org/10.1111/j.1474-9726.2010.00627.x), target 2 (argon).
 - Confirmed missing target: Genetic association of FOXO1A and FOXO3A with longevity trait in Han Chinese populations; work [replicating work](https://doi.org/10.1111/j.1474-9726.2010.00627.x), target 3 (argon).
@@ -636,6 +648,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Habituation and dishabituation to speech and office noise.; work [replicating work](https://doi.org/10.4103/1463-1741.70502), target 0 (argon).
 - Confirmed missing target: Arousal, mood, and the Mozart effect.; work [replicating work](https://doi.org/10.4103/1463-1741.70502), target 2 (argon).
 - Confirmed missing target: [Dissociative masked repetition priming and word frequency effects in lexical decision and episodic recognition tasks.](https://doi.org/10.1016/0749-596x(92)90009-m); work [replicating work](https://doi.org/10.1037/a0028072), target 2 (argon).
+- Confirmed missing target: [Differences between left- and right-handers in approach/avoidance motivation: influence of consistency of handedness measures.](https://doi.org/10.3389/fpsyg.2014.00134); work [replicating work](https://doi.org/10.1080/1357650x.2015.1016530), target 1 (obvious).
 - Confirmed missing target: [Expectations and emotions of Olympic athletes.](https://doi.org/10.1016/j.jesp.2004.09.001); work [replicating work](https://doi.org/10.1037/xge0000992), target 1 (argon).
 - Confirmed missing target: [Machine learning to analyze single-case graphs: A comparison to visual inspection.](https://doi.org/10.1002/jaba.863); work [replicating work](https://doi.org/10.1002/jaba.921), target 1 (obvious).
 - Confirmed missing target: The Assessment of Physiotherapy Practice (APP) is a valid measure of professional competence of physiotherapy students: a cross-sectional study with Rasch analysis.; work [replicating work](https://doi.org/10.1371/journal.pone.0321397), target 1 (argon).
@@ -644,6 +657,8 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Social cognition and the acquisition of self.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 4 (obvious).
 - Confirmed missing target: Development of self-recognition, personal pronoun use, and pretend play during the 2nd year.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 5 (obvious).
 - Confirmed missing target: A longitudinal investigation of self-other discrimination and the emergence of mirror self-recognition.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 6 (obvious).
+- Confirmed missing target: [Phenomenological space-time: toward an experiential relativity.](https://doi.org/10.1126/science.7256273); work [replicating work](https://doi.org/10.1523/eneuro.0332-25.2025), target 1 (argon).
+- Confirmed missing target: [Interrelations between the perception of time and space in large-scale environments.](https://doi.org/10.1007/s00221-014-3848-6); work [replicating work](https://doi.org/10.1523/eneuro.0332-25.2025), target 2 (argon).
 - Confirmed missing target: [Modulation of interhemispheric inhibition by volitional motor activity: an ipsilateral silent period study.](https://doi.org/10.1113/jphysiol.2009.175885); work [replicating work](https://doi.org/10.3389/fnhum.2022.937515), target 1 (argon).
 - Confirmed missing target: Common genetic variation near melatonin receptor MTNR1B contributes to raised plasma glucose and increased risk of type 2 diabetes among Indian Asians and European Caucasians; work [replicating work](https://doi.org/10.1007/s00125-010-2002-7), target 1 (argon).
 - Confirmed missing target: A variant near MTNR1B is associated with increased fasting plasma glucose levels and type 2 diabetes risk; work [replicating work](https://doi.org/10.1007/s00125-010-2002-7), target 2 (argon).
@@ -654,6 +669,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [The effect of state extraversion on four types of affect.](https://doi.org/10.1002/per.738); work [replicating work](https://doi.org/10.1037/a0025169), target 2 (argon).
 - Confirmed missing target: Functional annotation of a novel NFKB1 promoter polymorphism that increases risk for ulcerative colitis.; work [replicating work](https://doi.org/10.1038/sj.gene.6364398), target 1 (argon).
 - Confirmed missing target: Cognitive style and religiosity: The role of conflict detection.; work [replicating work](https://doi.org/10.1371/journal.pone.0138922), target 1 (argon).
+- Confirmed missing target: [The time course of recovery for grammatical class information during lexical processing for syntactic construction](https://doi.org/10.1037/0278-7393.30.3.723); work [replicating work](https://doi.org/10.1080/17470210903377380), target 1 (argon).
 - Confirmed missing target: [Training Japanese listeners to identify English /r/ and /l/. II: The role of phonetic environment and talker variability in learning new perceptual categories](https://doi.org/10.1121/1.408177); work [replicating work](https://doi.org/10.1016/j.jml.2022.104352), target 1 (argon).
 - Confirmed missing target: [How accurate are accuracy-nudge interventions? A preregistered direct replication of Pennycook et al. (2020).](https://doi.org/10.1177/09567976211024535); work [replicating work](https://doi.org/10.1037/tmb0000086), target 1 (argon).
 - Confirmed missing target: [Auditory encoding in visual short-term recall: Effects of noise intensity and spatial location.](https://doi.org/10.1016/s0022-5371(80)90403-x); work [replicating work](https://doi.org/10.1027/1618-3169/a000554), target 0 (argon).
@@ -667,6 +683,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Parents’ beliefs in misinformation about vaccines are strengthened by pro-vaccine campaigns.; work [replicating work](https://doi.org/10.1371/journal.pone.0281140), target 1 (argon).
 - Confirmed missing target: [The Glasgow Sensory Questionnaire: validation of a French language version and refinement of sensory profiles of people with high Autism-Spectrum Quotient](https://doi.org/10.1007/s10803-017-3422-8); work [replicating work](https://doi.org/10.1186/s12888-023-04903-9), target 1 (argon).
 - Confirmed missing target: [Accent, intelligibility, and comprehensibility: Evidence from four L1s.](https://doi.org/10.1017/s0272263197001010); work [replicating work](https://doi.org/10.1111/lang.12451), target 1 (argon).
+- Confirmed missing target: [The development of system justification in the developing world.](https://doi.org/10.1007/s11211-006-0012-x); work [replicating work](https://doi.org/10.1037/a0031751), target 1 (obvious).
 - Confirmed missing target: [Liberals and conservatives rely on different sets of moral foundations](https://doi.org/10.1037/a0015141); work [replicating work](https://doi.org/10.1177/2515245918810225), target 3 (argon).
 - Confirmed missing target: [Cultural preferences for formal versus intuitive reasoning](https://doi.org/10.1207/s15516709cog2605_4); work [replicating work](https://doi.org/10.1177/2515245918810225), target 17 (argon).
 - Confirmed missing target: Intentional action and intending: Recent empirical studies; work [replicating work](https://doi.org/10.1007/s13164-018-0400-9), target 7 (argon).
@@ -713,6 +730,10 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [Leading us unto temptation? No evidence for an asymmetry in automatic associations between goals and temptations.](https://doi.org/10.1525/collabra.31030); work [replicating work](https://doi.org/10.1037/mot0000308), target 1 (obvious).
 - Confirmed missing target: [The Language of Political Aggression](https://doi.org/10.1177/0261927x12460666); work [replicating work](https://doi.org/10.17605/osf.io/r8qp2), target 1 (argon).
 - Confirmed missing target: Job attitudes and employee engagement: Considering the "A-factor".; work [replicating work](https://doi.org/10.1002/hrdq.21464), target 0 (argon).
+- Confirmed missing target: [Large-scale association analysis provides insights into the genetic architecture and pathophysiology of type 2 diabetes](https://doi.org/10.1038/ng.2383); work [replicating work](https://doi.org/10.1371/journal.pone.0126363), target 0 (argon).
+- Confirmed missing target: Mitigation system threat partially mediates the effects of right-wing ideologies on climate change beliefs.; work [replicating work](https://doi.org/10.1371/journal.pone.0246058), target 1 (argon).
+- Confirmed missing target: Positive recency in delayed free recall; work [replicating work](https://doi.org/10.1037/xlm0000491), target 1 (obvious).
+- Confirmed missing target: Recency-sensitive retrieval processes in long-term free recall; work [replicating work](https://doi.org/10.1037/xlm0000491), target 2 (obvious).
 - Confirmed missing target: [Loci associated with ischaemic stroke and its subtypes (SiGN): a genome-wide association study](https://doi.org/10.1016/s1474-4422(15)00338-5); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 0 (argon).
 - Confirmed missing target: [Risk variants for atrial fibrillation on chromosome 4q25 associate with ischemic stroke](https://doi.org/10.1002/ana.21480); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 1 (argon).
 - Confirmed missing target: [Genetic risk factors for ischaemic stroke and its subtypes (the METASTROKE Collaboration): A meta-analysis of genome-wide association studies](https://doi.org/10.1016/s1474-4422(12)70234-x); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 2 (argon).
@@ -725,6 +746,8 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Changes in fat distribution (WHR) and body weight across the menstrual cycle.; work [replicating work](https://doi.org/10.1177/147470491100900306), target 0 (argon).
 - Confirmed missing target: [Two-digit comparison - Decomposed, holistic, or hybrid?](https://doi.org/10.1027/1618-3169.52.3.195); work [replicating work](https://doi.org/10.31234/osf.io/nwg7p), target 1 (obvious).
 - Confirmed missing target: [Choosing the larger versus choosing the smaller: Asymmetries in the size congruity effect.](https://doi.org/10.1037/xlm0000135); work [replicating work](https://doi.org/10.31234/osf.io/nwg7p), target 2 (obvious).
+- Confirmed missing target: [The effect of maturation on performance during repeated sprints with self-selected versus standardized recovery intervals in youth footballers.](https://doi.org/10.1123/pes.2017-0240); work [replicating work](https://doi.org/10.1123/pes.2021-0082), target 1 (argon).
+- Confirmed missing target: Examining the influence of demographic factors on internet users’ information privacy concerns.; work [replicating work](https://doi.org/10.17705/1atrr.00061), target 1 (argon).
 - Confirmed missing target: [Masculine drinking norms and alcohol use in a national sample of NCAA male student-athletes.](https://doi.org/10.1037/men0000436); work [replicating work](https://doi.org/10.1037/men0000497), target 1 (argon).
 - Confirmed missing target: [The effects of torture: Two community studies](https://doi.org/10.1207/s15327949pac1203_1); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 0 (argon).
 - Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 2 (argon).
@@ -733,7 +756,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [Processing of invisible stimuli: Advantage of upright faces and recognizable words in overcoming interocular suppression.](https://doi.org/10.1111/j.1467-9280.2007.01902.x); work [replicating work](https://doi.org/10.1177/0956797619875482), target 1 (argon).
 - Confirmed missing target: Cues of being watched enhance cooperation in a real-world setting.; work https://openalex.org/w2484584964, target 1 (obvious).
 - Confirmed missing target: [Boundaries of cultural influence: Construct activation as a mechanism for cultural differences in social perception.](https://doi.org/10.1177/0022022103034004005); work [replicating work](https://doi.org/10.1111/jpr.12599), target 1 (obvious).
-477 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+450 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
@@ -798,4 +821,4 @@ Elapsed time supplied for 2338 / 2344 works; missing times are not imputed. Time
 Sum of reported final-checkpoint times: 163107.5 seconds.
 Per-work elapsed time and skips are recorded in [work_times.csv](work_times.csv).
 
-Additional primary evidence includes 6 separately recovered individual reports, each independently identity-checked, freshly blindly coded and hash-verified. Their exact texts supplement the collection evidence without changing the base files used by active reviews. Source provenance and parent decisions are in [additional_reports](evidence_followup/additional_reports/parent_decisions.json).
+Additional primary evidence includes 7 separately recovered individual reports, each independently identity-checked, freshly blindly coded and hash-verified. Their exact texts supplement the collection evidence without changing the base files used by active reviews. Source provenance and parent decisions are in [additional_reports](evidence_followup/additional_reports/parent_decisions.json).
