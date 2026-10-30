@@ -12,14 +12,16 @@ from compare import quote_ok
 from schema import validate
 
 
-def checked_merge(before, after, side, source_path):
+def checked_merge(before, after, side, source_path, allow_locator_revisit=False):
     validate(after)
     assert before['audit_id'] == after['audit_id']
     assert side in ('original', 'replication')
-    assert before[side]['status'] == 'paper_unavailable', 'Previously examined side is protected'
+    eligible = before[side]['status'] == 'paper_unavailable'
+    eligible |= allow_locator_revisit and before[side]['status'] == 'locator_insufficient'
+    assert eligible, 'Previously examined side is protected'
     merged = copy.deepcopy(before)
     examined = after[side]
-    if examined['status'] == 'done':
+    if examined['status'] in ('done', 'locator_insufficient'):
         for field in ('n', 'es', 'p'):
             evidence = examined[field]
             if evidence['value'] is not None or evidence.get('test_statistic'):
@@ -64,7 +66,8 @@ def main():
             dest = B / 'extractions' / f'{aid}.json'
             before = json.loads(dest.read_text())
             source = accepted[batch['source_key']]['text_path']
-            merged = checked_merge(before, after, side, source)
+            merged = checked_merge(before, after, side, source,
+                                   allow_locator_revisit=batch.get('new_primary_context', False))
             if merged != before:
                 backup = F / 'before_extractions' / dest.name
                 backup.parent.mkdir(exist_ok=True)

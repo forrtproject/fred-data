@@ -41,11 +41,31 @@ class FollowupIntegrationTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             checked_merge(self.before, self.after, 'original', '/tmp/source.txt')
 
+    @patch('integrate_validation.quote_ok', return_value=True)
+    def test_locator_revisit_requires_explicit_new_context(self, _):
+        self.before['original']['status'] = 'locator_insufficient'
+        with self.assertRaises(AssertionError):
+            checked_merge(self.before, self.after, 'original', '/tmp/source.txt')
+        result = checked_merge(self.before, self.after, 'original', '/tmp/source.txt', True)
+        self.assertEqual(result['original']['n']['value'], '123')
+        self.before['original']['status'] = 'done'
+        with self.assertRaises(AssertionError):
+            checked_merge(self.before, self.after, 'original', '/tmp/source.txt', True)
+
     def test_failed_retry_preserves_existing_failure(self):
         self.after = copy.deepcopy(self.before)
         self.after['original']['status'] = 'timeout'
         result = checked_merge(self.before, self.after, 'original', '/tmp/source.txt')
         self.assertEqual(result, self.before)
+
+    def test_available_source_with_ambiguous_target_refines_status(self):
+        self.after = copy.deepcopy(self.before)
+        self.after['original']['status'] = 'locator_insufficient'
+        self.after['original']['target_description'] = 'Primary paper obtained; outcome unspecified'
+        result = checked_merge(self.before, self.after, 'original', '/tmp/source.txt')
+        self.assertEqual(result['original']['status'], 'locator_insufficient')
+        self.assertEqual(result['replication'], self.before['replication'])
+        self.assertIsNone(result['original']['p']['value'])
 
 
 if __name__ == '__main__':

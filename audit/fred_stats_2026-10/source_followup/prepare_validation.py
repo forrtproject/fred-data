@@ -30,6 +30,10 @@ def main():
             row = dict(inputs[aid])
             row['target_side'] = side
             row['text_paths'] = {side[0]: str(path.absolute())}
+            if proof.get('source_version'):
+                row['source_version_note'] = proof['source_version']
+            if proof.get('source_pdf_path'):
+                row['source_pdf_path'] = proof['source_pdf_path']
             records.append(row)
         for start in range(0, len(records), 15):
             batch = f'{key}_{start:03d}'
