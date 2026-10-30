@@ -22,7 +22,9 @@ def main():
     history=[json.loads(l) for l in history_path.read_text().splitlines() if l] if history_path.exists() else []
     already_dispatched={(x['audit_id'],x['field']) for r in history for x in r['items']}
     previous_reviews=[x for path in (B/'adjudications').glob('validated_maccontfollowup_*.json') for x in json.loads(path.read_text())]
+    prior_all=[x for path in (B/'adjudications').glob('validated_*.json') for x in json.loads(path.read_text())]
     groups = collections.defaultdict(list)
+    accepted_by_path={a['text_path']:a for a in json.loads((F/'accepted_sources.json').read_text()).values()}
     repairs_path = F / 'quote_repairs' / 'repairs.json'
     repairs = json.loads(repairs_path.read_text()) if repairs_path.exists() else []
     for item in json.loads((B / 'disagreements.json').read_text()):
@@ -45,6 +47,11 @@ def main():
             ['n_' + side, 'es_value_' + side, 'es_type_' + side,
              'pval_value_' + side, 'pval_type_' + side]}
         item['locator'] = inputs[item['audit_id']]
+        prior_field=[a for a in prior_all if a['audit_id']==item['audit_id'] and a['field']==item['field']]
+        if prior_field:item['prior_independent_reviews_of_exact_field']=prior_field
+        source=accepted_by_path[path]
+        item['source_version_note']=source['source_version']
+        item['source_identity_and_completeness']=source['identity_completeness_evidence']
         evidence_repairs = [r for r in repairs if r['audit_id'] == item['audit_id']]
         if evidence_repairs:
             item['parent_evidence_review'] = evidence_repairs
