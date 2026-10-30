@@ -1,16 +1,16 @@
 # FReD statistics audit
 
-**Source follow-up in progress — 2026-10-30T00:20:40.280935+00:00.** Current integrated results contain 416 confirmed field errors. Source retrieval alone is not verification; the deterministic screen alone is not verification.
+**Source follow-up completed — 2026-10-30T00:29:48.017580+00:00.** Current integrated results contain 416 confirmed field errors. Source retrieval alone is not verification; the deterministic screen alone is not verification.
 
 The original bounded audit finished on 2026-10-29T18:41:45.057314+00:00 with 408 confirmed field errors across 315 rows, 1593 effects with at least one verified field and 81 with all seven. A separately authorised source-acquisition follow-up is recorded in [source_followup/README.md](source_followup/README.md). Current counts below include only integrated, evidence-validated follow-up results; the original deadlines and completion record are unchanged.
 
-The run did not reach the 80% verification goal: even the looser any-field coverage measure is 74.1%; all-seven-field coverage is 3.8%. Access failures, unresolved target identity and unavailable matching metrics remain explicit rather than being counted as verified.
+The run did not reach the 80% verification goal: even the looser any-field coverage measure is 74.2%; all-seven-field coverage is 3.8%. Access failures, unresolved target identity and unavailable matching metrics remain explicit rather than being counted as verified.
 
 Confirmed errors affect 322 effect rows. Counts refer to field instances; an original statistic repeated across replication rows can contribute more than once.
 
 The frozen workbook contains 2,164 effects in 432 replication works. Part A screened every effect and flagged 174. 18/185 individual flags are resolved when source-confirmed corrections are applied in memory, affecting 18/174 flagged effects (see `flag_confirmation.csv`). This includes corrected test statistics or analytic n as well as p-values. Separately, 53 flagged effects contain any confirmed field error.
 
-Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 239/2164; all three replication statistics for 475/2164. All seven fields, including author-reported success, are checked for 82/2164. At least one original statistic is evaluable for 873/2164, at least one replication statistic for 1256/2164, and any of the seven fields for 1604/2164. Individual-field coverage is below.
+Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 239/2164; all three replication statistics for 475/2164. All seven fields, including author-reported success, are checked for 82/2164. At least one original statistic is evaluable for 874/2164, at least one replication statistic for 1257/2164, and any of the seven fields for 1605/2164. Individual-field coverage is below.
 
 **Decision to review:** reported success is evaluated for the identified study/outcome. A broad paper-level verdict without a defensible mapping to an individual row remains unverified; the original narrative observation is retained. This conservative scope rule avoids assigning a mixed article outcome to every unidentified component effect.
 
@@ -18,11 +18,11 @@ Confirmed errors include coding omissions only when adjudication establishes the
 
 | Field | Confirmed errors / evaluable | Unverified | Not comparable | All-row error bounds |
 |---|---:|---:|---:|---:|
-| n_o | 29/489 (5.9%) | 1624 | 51 | 1.34%–78.74% |
-| es_value_o | 46/518 (8.9%) | 1439 | 207 | 2.13%–78.19% |
-| pval_value_o | 32/710 (4.5%) | 1451 | 3 | 1.48%–68.67% |
+| n_o | 29/490 (5.9%) | 1623 | 51 | 1.34%–78.70% |
+| es_value_o | 46/518 (8.9%) | 1438 | 208 | 2.13%–78.19% |
+| pval_value_o | 32/711 (4.5%) | 1450 | 3 | 1.48%–68.62% |
 | n_r | 81/970 (8.4%) | 1124 | 70 | 3.74%–58.92% |
-| es_value_r | 34/724 (4.7%) | 1118 | 322 | 1.57%–68.11% |
+| es_value_r | 34/725 (4.7%) | 1117 | 322 | 1.57%–68.07% |
 | pval_value_r | 71/983 (7.2%) | 1171 | 10 | 3.28%–57.86% |
 | reported_success | 123/1050 (11.7%) | 1114 | 0 | 5.68%–57.16% |
 
@@ -53,7 +53,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | Arb | 0/4 (28; 0) | 0/16 (14; 2) | 0/8 (24; 0) | 0/6 (22; 4) | 0/3 (27; 2) | 0/6 (26; 0) | 0/19 (13; 0) |
 | AvOr | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | Blxd | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
-| Boyce | 6/102 (172; 6) | 2/114 (127; 39) | 6/153 (127; 0) | 24/186 (94; 0) | 8/130 (109; 41) | 13/163 (117; 0) | 31/156 (124; 0) |
+| Boyce | 6/103 (171; 6) | 2/114 (126; 40) | 6/154 (126; 0) | 24/186 (94; 0) | 8/131 (108; 41) | 13/163 (117; 0) | 31/156 (124; 0) |
 | Br0x | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | BrGp | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
 | CORE | 3/41 (71; 2) | 3/22 (81; 11) | 4/45 (69; 0) | 7/62 (42; 10) | 6/50 (48; 16) | 12/69 (45; 0) | 8/75 (39; 0) |
@@ -621,11 +621,11 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 103 fields exhausted the allowed adjudication attempts and remain unresolved. The remaining dispatch queue contains 0 fields in 0 source groups; after the dispatch cutoff these remain unverified. Failed or truncated replies establish no error unless an individual complete response passes source validation.
 The separately authorised source follow-up has 0 additional fields awaiting validated adjudication. These remain unverified until their evidence and target identity pass review.
 
-- original: done: 1308 sides.
-- original: locator_insufficient: 280 sides.
+- original: done: 1309 sides.
+- original: locator_insufficient: 279 sides.
 - original: paper_unavailable: 576 sides.
-- replication: done: 1562 sides.
-- replication: locator_insufficient: 384 sides.
+- replication: done: 1563 sides.
+- replication: locator_insufficient: 383 sides.
 - replication: paper_unavailable: 218 sides.
 
 Detailed access/target reasons are retained in the per-effect JSON checkpoints. Frequent access/target reasons:

@@ -15,6 +15,7 @@ def main():
     manifest = json.loads((F / 'missing_sources.json').read_text())
     output = F / 'validation_inputs'
     output.mkdir(exist_ok=True)
+    previous = json.loads((F / 'validation_queue.json').read_text()) if (F / 'validation_queue.json').exists() else []
     queue = []
     for source in manifest:
         key = source['key']
@@ -47,6 +48,9 @@ def main():
                           'output': str((F / 'validation_extractions' / batch).absolute()),
                           'audit_ids': [r['audit_id'] for r in records[start:start + 15]],
                           'source_sha256': proof['text_sha256']})
+    # Exact locator variants have separately reviewed immutable inputs. Keep them
+    # across regeneration without silently reopening any completed side.
+    queue.extend(q for q in previous if q.get('new_primary_context'))
     (F / 'validation_queue.json').write_text(json.dumps(queue, indent=2) + '\n')
     print(json.dumps({'accepted_sources': len(accepted), 'batches': len(queue),
                       'target_sides': sum(len(q['audit_ids']) for q in queue)}))
