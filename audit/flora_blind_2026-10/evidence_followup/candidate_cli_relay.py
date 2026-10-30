@@ -425,9 +425,13 @@ class Relay:
                     raise ValueError('invalid missing identity shape/vocabulary')
         return obj
 
-    def run(self, control, owner, workers=1, timeout=660, transport=None):
+    def run(self, control, owner, workers=1, timeout=660, transport=None, max_calls=None):
         if not 1 <= timeout <= 900:
             raise ValueError('timeout must be 1..900 seconds')
+        if max_calls is not None and (type(max_calls) is not int or max_calls < 1):
+            raise ValueError('max_calls must be a positive integer')
+        if max_calls is not None and timeout > 660:
+            raise ValueError('bounded rounds require timeout <=660 seconds')
         snap = self.load()
         if not (self.out / 'prepared.json').exists():
             raise ValueError('parent preparation incomplete')
@@ -435,13 +439,23 @@ class Relay:
             if (self.out / 'progress.json').exists() and (read(self.out / 'progress.json').get('infrastructure_streak', 0) >= 3 or read(self.out / 'progress.json').get('infrastructure_circuit_open')):
                 raise ValueError('infrastructure circuit open; parent diagnosis/new execution required')
             streak = read(self.out / 'progress.json').get('infrastructure_streak', 0) if (self.out / 'progress.json').exists() else 0
+            new_calls = sum(rec.get('owner') == owner for b in snap['bundles']
+                            for rec in self.ledger(b)['attempts']) if max_calls is not None else 0
+            pending = {}
             blocker = None
             last_failure = None
             execution = self.out / ('execution_' + sha(owner.encode())[:20] + '.json')
-            immutable(execution, encoded(dict(owner=owner, workers=workers, snapshot=self.name)))
+            binding = dict(owner=owner, workers=workers, snapshot=self.name)
+            if max_calls is not None:
+                binding['max_calls'] = max_calls
+            immutable(execution, encoded(binding))
             def progress():
-                atomic(self.out / 'progress.json', dict(at=now(), infrastructure_streak=streak,
-                       blocker=blocker, last_failure=last_failure, infrastructure_circuit_open=bool(blocker and blocker.startswith('three consecutive')), statuses={b['review_id']: self.ledger(b)['status'] for b in snap['bundles']}))
+                statuses = {b['review_id']: self.ledger(b)['status'] for b in snap['bundles']}
+                atomic(self.out / 'progress.json', dict(at=now(), owner=owner, new_calls=new_calls,
+                       max_calls=max_calls, snapshot_complete=all(s in TERMINAL for s in statuses.values()),
+                       quantum_complete=bool(max_calls is not None and new_calls >= max_calls and not pending and not blocker),
+                       infrastructure_streak=streak,
+                       blocker=blocker, last_failure=last_failure, infrastructure_circuit_open=bool(blocker and blocker.startswith('three consecutive')), statuses=statuses))
             # A reserved attempt is spent even if the coordinator died before spawning.
             for b in snap['bundles']:
                 ledger = self.ledger(b)
@@ -488,7 +502,7 @@ class Relay:
                         blocker = 'three consecutive infrastructure failures; inspect private raw outputs and transport metadata'
                     if not blocker:
                         for b in snap['bundles']:
-                            if len(pending) >= workers:
+                            if len(pending) >= workers or (max_calls is not None and new_calls >= max_calls):
                                 break
                             if b['review_id'] in {v['review_id'] for v in pending.values()}:
                                 continue
@@ -530,6 +544,7 @@ class Relay:
                                        prompt_sha256=sha(prompt.encode()), raw_path=str(prefix) + '.raw.txt')
                             ledger['attempts'].append(rec)
                             self.save(b, ledger)  # fsync before Popen: never refund uncertain attempts
+                            new_calls += 1
                             pending[pool.submit(self.call, b, snap, rec, prompt, timeout, transport, control, workers, owner)] = b
                     progress()
                     if not pending:
@@ -563,7 +578,12 @@ class Relay:
             for directory in sorted({str(Path(p).parent) for p in snap['files']}):
                 argv += ['--add-dir', directory]
             rec['infrastructure_failure'] = True
-            rc = (transport or cli_transport)(argv, rawpath, timeout)
+            if transport:
+                rc = transport(argv, rawpath, timeout)
+            else:
+                rc = cli_transport(argv, rawpath, timeout,
+                                   validator=lambda: self.validate(rawpath.read_text(errors='replace'), b))
+                rec['transport'] = read(Path(str(rawpath) + '.process.json'))
             rec['returncode'] = rc
             raw = rawpath.read_text(errors='replace')
             self.check(snap)
@@ -667,34 +687,42 @@ PROCESS_LOCK = threading.RLock()
 STOP = threading.Event()
 
 
+# Use the same owned-session lifecycle as the older Argon runner. Scientific
+# validation stays with each caller, including the candidate's exact key checks.
+_transport_spec = importlib.util.spec_from_file_location('cli_owned_transport', ROOT / 'scripts/adjudicate.py')
+_transport = importlib.util.module_from_spec(_transport_spec)
+_transport_spec.loader.exec_module(_transport)
+
+
 def kill_group(process):
-    try:
-        os.killpg(process.pid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
-    process.wait()
+    _transport.cleanup_owned_group(process)
 
 
-def cli_transport(argv, output, timeout):
-    # No shell interpolation, no Run permissions, no API route or model substitution.
-    with output.open('xb') as stream:
+def cli_transport(argv, output, timeout, validator=None, quiet_seconds=2):
+    process = None
+    def retain(child):
+        nonlocal process
+        process = child
         with PROCESS_LOCK:
+            PROCESSES.add(child)
             if STOP.is_set():
                 raise ValueError('coordinator interrupted')
-            process = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=stream,
-                                       stderr=subprocess.STDOUT, start_new_session=True)
-            PROCESSES.add(process)
-        try:
-            atomic(Path(str(output) + '.process.json'), dict(pid=process.pid, status='running', at=now()))
-            try:
-                return process.wait(timeout=timeout)
-            except subprocess.TimeoutExpired:
-                return 124
-        finally:
-            kill_group(process)  # reap descendants even if the CLI parent already exited
+        atomic(Path(str(output) + '.process.json'), dict(pid=child.pid, status='running', at=now()))
+    if STOP.is_set():
+        raise ValueError('coordinator interrupted')
+    try:
+        meta = _transport.owned_transport(argv, output, timeout, validator=validator,
+                                         quiet_seconds=quiet_seconds, on_start=retain,
+                                         log_path=Path(str(output) + '.cli.log'))
+        return 124 if meta['timed_out'] else 0 if meta['closed_after_valid_answer'] else meta['returncode']
+    finally:
+        if process is not None:
             with PROCESS_LOCK:
                 PROCESSES.discard(process)
-            atomic(Path(str(output) + '.process.json'), dict(pid=process.pid, status='reaped', at=now()))
+            path = Path(str(output) + '.process.json')
+            meta = read(path)
+            meta.update(pid=process.pid, status='reaped', at=now())
+            atomic(path, meta)
 
 
 def interrupted(signum, frame):
@@ -715,6 +743,7 @@ def main():
     parser.add_argument('--owner-task-id')
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--timeout', type=int, default=660)
+    parser.add_argument('--max-calls', type=int, help='maximum NEW durable attempts in this execution')
     args = parser.parse_args()
     relay = Relay(name=args.snapshot)
     if args.run:
@@ -722,7 +751,7 @@ def main():
             parser.error('--run requires --control and --owner-task-id')
         signal.signal(signal.SIGTERM, interrupted)
         signal.signal(signal.SIGINT, interrupted)
-        result = relay.run(args.control, args.owner_task_id, args.workers, args.timeout)
+        result = relay.run(args.control, args.owner_task_id, args.workers, args.timeout, max_calls=args.max_calls)
     else:
         result = relay.prepare() if args.prepare else relay.reconcile()
     print(json.dumps(result, indent=2))

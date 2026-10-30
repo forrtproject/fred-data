@@ -18,6 +18,7 @@ async function main(){
    intent ||= {snapshot:'snap',workers:4,round:next,clientRequestId:'round-'+next};
    return pyReply(intent);
   }
+  if(cmd.includes("'field-dispatch'"))return pyReply(null);
   if(cmd.includes("'register'")){events.push('status-register');return pyReply({});}
   if(cmd.includes("'prepare-candidate-review'"))return pyReply(null);
   throw Error('Unexpected mock command '+cmd);
@@ -54,6 +55,49 @@ async function main(){
   }};
  await tick(yieldedTools,()=>{});
  assert.equal(collected,1,'yielded reconciliation must finish before dispatch');
+ // Independent field lifecycle: every tool is an in-memory mock. A missing
+ // mock method fails the test; no T3/tool transport is imported or invoked.
+ let fieldTasks=[],fieldIntent=null,fieldNext=1,fieldCalls=[],fieldEvents=[],lost=true;
+ const fieldTools={exec_command:async({cmd})=>{
+  if(cmd.includes("'plan'"))return pyReply({...plan(),active:fieldTasks.filter(t=>t.status==='running'),slot_cost:fieldTasks.some(t=>t.status==='running')?4:0});
+  if(cmd.includes("'reconcile-candidate-cli'"))return pyReply(null);
+  if(cmd.includes("'candidate-cli-dispatch'"))return pyReply(null);
+  if(cmd.includes("'prepare-candidate-review'"))return pyReply(null);
+  if(cmd.includes("'register'"))return pyReply({});
+  if(cmd.includes("'field-dispatch'")){
+   if(cmd.includes('FIELD-ACTUAL')){
+    fieldEvents.push('register-actual');
+    fieldTasks=[{taskId:'FIELD-ACTUAL',status:'running',lane:'argon_runner',slot_cost:4}];
+    fieldEvents.push('publish-control');fieldIntent=null;fieldNext++;
+    return pyReply({});
+   }
+   if(fieldTasks.some(t=>t.status==='running'))return pyReply(null);
+   fieldIntent ||= {round:fieldNext,workers:1,max_calls:1,snapshot_sha256:'HASH',clientRequestId:'field-round-'+fieldNext};
+   return pyReply(fieldIntent);
+  }
+  throw Error('Unexpected field mock command '+cmd);
+ },mcp__t3_code__delegate_task:async request=>{
+  fieldCalls.push(request);
+  if(lost){lost=false;throw Error('mock field lost response');}
+  return {structuredContent:{taskId:'FIELD-ACTUAL',status:'running',providerInstanceId:'codex',model:'gpt-6.1-sol',options:{reasoningEffort:'medium',serviceTier:'default'}}};
+ },mcp__t3_code__task_status:async({taskId})=>({structuredContent:{taskId,status:'running'}})};
+ await assert.rejects(tick(fieldTools,()=>{}),/mock field lost response/);
+ await tick(fieldTools,()=>{});
+ assert.equal(fieldCalls.length,2);
+ assert.equal(fieldCalls[0].clientRequestId,fieldCalls[1].clientRequestId);
+ assert.equal(fieldCalls[1].target.model,'gpt-6.1-sol');
+ assert.deepEqual(fieldCalls[1].target.options,{reasoningEffort:'medium',serviceTier:'default'});
+ assert.match(fieldCalls[1].task,/range\(60\)/);
+ assert.match(fieldCalls[1].task,/'--workers','1','--max-calls','1','--owner-task-id',r\['taskId'\]/);
+ assert.match(fieldCalls[1].task,/'--control',str\(p\)/);
+ assert.match(fieldCalls[1].task,/retain and collect/);
+ assert.deepEqual(fieldEvents,['register-actual','publish-control']);
+ await tick(fieldTools,()=>{});
+ assert.equal(fieldCalls.length,2,'active field coordinator suppresses duplicate round');
+ fieldTasks[0].status='completed';
+ await tick(fieldTools,()=>{});
+ assert.equal(fieldCalls.length,3);
+ assert.notEqual(fieldCalls[2].clientRequestId,fieldCalls[1].clientRequestId);
  console.log('tick mocked dispatch/retry/identity tests passed');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});

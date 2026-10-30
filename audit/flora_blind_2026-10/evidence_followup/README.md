@@ -1,5 +1,93 @@
 # Full evidence follow-up is active
 
+## Bounded field recovery (active after parent process inspection)
+
+At the end of wave 2, the immutable 271-request field snapshot had 211 validated
+requests, 721 decisions, eight exhausted requests, 52 pending requests, and 242
+spent attempts. Current bounded-round counts are in `argon/progress.json`.
+Wave 2 used one worker and validated ten more requests before SIG15; its origin is
+unestablished and all retained calls drained. Execution termination and
+`progress.finished` do not establish scientific completion. Exhausted requests retain
+their unresolved evidence limits.
+
+The parent inspected the SIG15 termination, retained its original progress receipt,
+verified all 271 immutable request/source/history inputs and all 242 spent reservations,
+and found no live owned process, running reservation or latched circuit. The signal
+sender remains unknown. Bounded one-call rounds are now enabled; the first three
+completed normally with no infrastructure failure. See
+`integration/field_signal_recovery_0000.json`. This is execution recovery, not scientific
+closure. Source/hash, circuit and orphan blockers still require their own parent
+diagnosis; there is no automatic circuit reset.
+
+Parent-owned `state.json` uses this opt-in configuration (absent or disabled means
+no field task is launched):
+
+```json
+"field_dispatch": {
+  "enabled": true,
+  "workers": 1,
+  "max_calls": 1,
+  "next_round": 1
+}
+```
+
+Following explicit diagnosis, the parent enabled the existing
+`scripts/tick_evidence_followup.js` through its documented native tool environment.
+Each tick reconciles exact owned task statuses, then uses `field-dispatch` to persist
+one stable per-round intent. A NEW native `delegate_task` uses Codex
+`gpt-6.1-sol`, medium reasoning and default service tier. Lost delegate responses
+retry the same `clientRequestId`; active coordinators and pending nested runs block a
+new round. Never send to a terminal task's backing child thread.
+
+The controller checks actual finite request statuses, remaining two-attempt budgets,
+unchanged source/input/history hashes, persistent infrastructure health and owned
+processes. It durably registers the actual returned task/model/options before
+publishing `argon/control.json`. The child waits at most 60 seconds for its exact
+round's control. This is the exact bounded command it runs from the project root;
+`FIELD_OWNER_TASK_ID` is read from the published actual reservation, never invented:
+
+```bash
+FIELD_OWNER_TASK_ID="$(python3 -c 'import json; print(json.load(open("audit/flora_blind_2026-10/evidence_followup/argon/control.json"))["reservation"]["taskId"])')"
+python3 audit/flora_blind_2026-10/evidence_followup/run_argon.py \
+  --workers 1 --max-calls 1 --owner-task-id "$FIELD_OWNER_TASK_ID" \
+  --control audit/flora_blind_2026-10/evidence_followup/argon/control.json
+```
+
+`--max-calls N` requires a positive integer, `--workers 1` and a stable
+`--owner-task-id`. It caps durable reservations, including invalid replies, retries
+and interrupted reservations. Same-owner restarts count prior owned reservations;
+the immutable owner binding prevents increasing the cap or changing its snapshot.
+There are no refunds. A capped restart may collect interrupted output without
+spending another call. Terminal requests are skipped. All retained calls/futures
+are collected before normal exit. The runner lock and whole-queue orphan preflight
+prevent overlap with an exact live reserved process group. Launch metadata now
+records its session before waiting; legacy recovery also inspects exact output file
+descriptors. An inaccessible possible owned process fails closed for diagnosis.
+
+Infrastructure streaks persist across rounds through retained attempt histories and
+progress; five consecutive infrastructure failures latch the circuit. A one-call
+round cannot evade that stop. An ordinary quantum boundary has no blocker and is
+not full-snapshot completion. A normal valid reply resets the consecutive streak,
+while an open circuit remains latched.
+
+The field task retains `argon_runner` slot cost four even with one actual worker,
+so the existing candidate guard counts three field calls plus at most one candidate
+call. Active T3 tasks and nested Argon reservations together stay at most nine,
+reserving one of ten slots for validation; total Argon stays at most four. Parent
+candidate `max_workers:1` is unchanged. Exact included model
+`Gemini 4 Argon (High)`, sandbox, 660-second external deadline, CLI
+`--print-timeout 10m`, old two-attempt ceilings, raw replies, partial-result rules,
+source/schema checks and scientific prompts remain unchanged.
+
+Focused verification uses temporary fake state, fake transports and mocked native
+tools; no live model or delegation calls are needed:
+
+```bash
+python3 -B -m unittest discover -s audit/flora_blind_2026-10/evidence_followup -p test_run_argon.py
+python3 -B -m unittest discover -s audit/flora_blind_2026-10/scripts -p test_evidence_followup.py
+node audit/flora_blind_2026-10/scripts/test_tick_evidence_followup.js
+```
+
 The user explicitly renewed the scope after the bounded audit and cheap pilot: review the 421 outstanding full-text rows, recover full text where it could settle other rows, and finish the Luna approach while listing only genuinely missing original references. Earlier completion markers are historical snapshots; they do not close this follow-up.
 
 The finite opening queues cover:

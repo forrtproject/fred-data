@@ -172,9 +172,36 @@ after inspecting raw/metadata and fixing the transport, the parent may archive
 and explicitly clear the progress streak in these relay-owned outputs before a
 NEW execution round. No automatic circuit reset or exhausted-key requeue exists.
 
-The coordinator retains subprocess handles, starts process groups, enforces a
-660-second default outer timeout (`--timeout` accepts 1..900), kills its owned
-process group and reaps its child on timeout, normal return, SIGINT or SIGTERM.
+The coordinator retains subprocess handles and starts each CLI in a new session
+and process group. Both this helper and the older Argon transport use the same
+owned-group cleanup: TERM, bounded grace, KILL for remaining members, and wait
+for the direct child, including after normal exit and interruption. The default
+outer deadline remains 660 seconds (`--timeout` accepts 1..900; bounded rounds
+still cap it at 660), and the CLI print deadline remains 10m.
+
+A live candidate CLI can close early only after unchanged, nonempty output has
+been stable for two seconds and the complete existing candidate validator passes:
+exact keys/schema, values, method and literal primary-source quotations. Output
+is checked for changes during validation. The caller validates again after
+cleanup before publishing any result. Incomplete JSON, a heading or a print
+timeout warning cannot satisfy this gate. No partial salvage or repair is added.
+An intentional validated close returns transport success while retaining the
+actual child return code and `closed_after_valid_answer` in diagnostics; other
+nonzero exits retain their previous failure handling.
+
+Each real CLI attempt gets a unique private `--log-file`, created with mode 0600.
+Candidate logs sit beside private raw files; older Argon logs go under
+`evidence_followup/private/transport_logs/`. These logs are CLI-generated private
+diagnostics, not public artifacts. Process sidecars record only PID/group/session,
+monotonic launch/deadline/first-output/validation/exit-observation/cleanup/reap
+milestones when observed, actual return code, and whether a CLI print warning or
+outer timeout occurred. Candidate attempt metadata includes these diagnostics.
+No prompt, argv, account identifiers or credentials are copied into the sidecar.
+Cleanup signals only the owned group; it never selects processes by name. On this
+Linux box it also waits briefly for group members to stop executing after KILL.
+Only the direct child can be reaped with waitpid; orphan descendants are reaped
+by their adopting OS parent. Descendants that deliberately create a separate
+session/group are outside this group-cleanup contract.
 No nohup or detached launcher is used. Process metadata supports conservative
 recovery: a still-existing group after an interrupted reservation blocks resume
 until parent inspection. SIGKILL/host failure cannot execute cleanup; avoid
@@ -240,3 +267,88 @@ Source/hash blockers and rejected outputs need parent inspection. This helper
 proves mechanical transport/schema consistency, not paper identity, adequacy of
 scientific reasoning, report scope or correctness of a verdict. Parent source
 inspection and scientific integration remain mandatory.
+
+## Bounded execution rounds (opt in)
+
+`--max-calls N` caps **new durable attempts**, including invalid responses and
+retries, rather than successes or bundles. Omit it to retain the original
+unbounded contract. A bounded owner is bound to its limit; restarting that same
+owner counts its already reserved attempts against the limit. Earlier owners'
+reservations are recovered conservatively and remain spent against the immutable
+bundle budget. Use a NEW native execution task for each new round. After reaching
+the cap, the helper collects every retained future and atomically publishes
+`quantum_complete:true`, `snapshot_complete`, `new_calls`, `max_calls`, and
+`owner` in progress before normal exit. A quantum can finish with the finite
+snapshot still incomplete. No hold is released by a quantum.
+
+For a manual parent-reserved one-worker round, append `--workers 1 --max-calls 1`
+to the execution command above. For four workers use `--workers 4 --max-calls 4`
+with a NEW owner and the matching parent reservation. Bounded rounds enforce a timeout at most 660 seconds; keep the default
+660-second per-call timeout. One wave avoids a second sequential call in the same execution;
+it does not guarantee a host deadline when model startup, instruction reading or
+cleanup adds overhead. Do not use detach/nohup, parent timed polls, or
+`t3_thread_send` to extend a round.
+
+The existing native tick supports optional automatic **event-driven** dispatch.
+The parent must first inspect/reconcile exact owned task statuses and finish any
+required diagnosis. No implementation/testing command enables dispatch. To enable
+it explicitly, run this from the repository root (parent only):
+
+```bash
+python3 - <<'PY'
+import sys
+sys.path.insert(0, 'audit/flora_blind_2026-10/scripts')
+import evidence_followup_controller as ctl
+with ctl._candidate_parent_lock():
+    state = ctl.read(ctl.F / 'state.json')
+    assert not state.get('candidate_cli_dispatch'), 'Inspect existing config; preserve next_round/intent'
+    state['candidate_cli_dispatch'] = {
+        'enabled': True,
+        'snapshot': 'candidate-20261030-cli-v1',
+        'max_calls_per_worker': 1,
+        'next_round': 1,
+    }
+    ctl._candidate_atomic(ctl.F / 'state.json', state)
+PY
+```
+
+Then execute the existing `scripts/tick_evidence_followup.js` via the native T3
+`functions.exec` AsyncFunction(tools,text) path, once initially and on ordinary
+completion notifications. This is not a shell-launched model route. The tick
+reconciles only exact owned task IDs and completed immutable CLI outputs before
+planning another round. CLI opt-in suppresses native candidate-review dispatch;
+new candidate arrivals are left for a later separately prepared snapshot. Luna
+work can continue within the same combined ceiling.
+
+The planner persists `candidate_cli_dispatch.intent` before the tool call. Its
+`clientRequestId` contains snapshot and round and must survive lost tool responses;
+retry the tick with that intent intact. Never manually advance `next_round` or
+clear an uncertain intent to force a new delegate. The returned ACTUAL taskId and
+exact Sol `gpt-6.1-sol`, `reasoningEffort:medium`, `serviceTier:default` selection
+are checked and registered in state before atomic control publication. The child
+reads instructions first, waits at most 60 seconds for its exact round's control,
+and invokes the helper with `--workers W --max-calls W` using the control's owner.
+A failure before control publication is recoverable by retrying the same intent;
+a child that timed out waiting requires parent inspection and a NEW round.
+
+An active old `argon_runner` permits W=1 and reserves two slots. After it and the
+current one-worker round are terminal, a NEW round may use up to four workers,
+reserving W+1 slots. Every active state task (including pending nested children),
+metadata infrastructure and known nested Argon workers count. Unknown Argon lanes,
+invalid slot accounting, another active candidate coordinator, a whole terminal
+snapshot, source/snapshot hash changes, orphan process groups and circuit/blocker
+progress prevent new dispatch. Existing blockers require parent diagnosis; this
+path never clears circuits, refunds reservations, requeues exhausted requests,
+prepares a snapshot, changes canonical holds, or integrates scientific decisions.
+Both pinned canonical adjudication holds remain parent-owned until the WHOLE
+snapshot is terminal and parent inspection permits release. Recovery cannot prove
+absence of an unrecorded process in the existing spawn-to-PID-record window;
+external parent inspection remains necessary after ambiguous host loss.
+
+Mocked checks, from the repository root:
+
+```bash
+python3 audit/flora_blind_2026-10/scripts/test_candidate_cli_relay.py
+python3 -m unittest discover -s audit/flora_blind_2026-10/scripts -p test_evidence_followup.py
+node audit/flora_blind_2026-10/scripts/test_tick_evidence_followup.js
+```

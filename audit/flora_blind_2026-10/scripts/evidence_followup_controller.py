@@ -305,6 +305,113 @@ def candidate_cli_dispatch(result=None):
         return intent
 
 
+
+def field_runner():
+    spec = importlib.util.spec_from_file_location('field_recovery_runner', F / 'run_argon.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    # Read ONLY the existing finite snapshot; never prepare or rebuild it here.
+    return module, module.Runner(read(F / 'argon/snapshot.json'), outdir=F / 'argon', workers=1)
+
+
+def field_dispatch(result=None):
+    """Disabled by default. One stable native execution intent per finite call round."""
+    if read(F / 'state.json').get('field_dispatch', {}).get('enabled') is not True:
+        return None
+    with _candidate_parent_lock():
+        state = read(F / 'state.json')
+        config = state.get('field_dispatch', {})
+        if state.get('status') != 'active' or config.get('enabled') is not True:
+            return None
+        if config.get('workers') != 1 or config.get('max_calls') != 1:
+            raise ValueError('field dispatch requires workers:1 and max_calls:1')
+        intent = config.get('intent')
+        module, runner = field_runner()
+        snapshot_hash = module.digest((F / 'argon/snapshot.json').read_bytes())
+        if len(runner.snap['requests']) != 271 or len({e['request_id'] for e in runner.snap['requests']}) != 271:
+            return None
+        if runner.blocker or runner.circuit_open or runner.infra_streak >= 5:
+            return None  # Parent diagnoses SIG15/source/circuit/orphan blockers.
+        work = False
+        try:
+            for entry in runner.snap['requests']:
+                runner.check_hashes(entry, runner.snap['works'][entry['file_key']])
+                path = F / 'argon' / (entry['request_id'] + '.state.json')
+                ledger = json.loads(path.read_text()) if path.exists() else {}
+                status = ledger.get('status', 'pending')
+                if status == 'source_changed' or status not in {'pending', 'running', 'retry_pending', 'validated', 'exhausted'}:
+                    return None
+                if status == 'running':
+                    if not ledger.get('history') or module.reserved_process_live(ledger['history'][-1]):
+                        return None
+                    work = True  # Recover spent reservations, even at the two-attempt ceiling.
+                elif status not in module.TERMINAL and ledger.get('attempts', 0) < 2:
+                    work = True
+        except (ValueError, OSError, KeyError, TypeError):
+            return None
+        if not work:
+            return None  # progress.finished is execution metadata, never scientific completion.
+        active = [t for t in state['tasks'] if t.get('status') in ACTIVE or t.get('hasPendingChildRuns')]
+        own = intent.get('taskId') if intent else None
+        others = [t for t in active if t['taskId'] != own]
+        if any(t.get('lane') == 'argon_runner' for t in others):
+            return None
+        argon = 3  # Keep the old conservative four-slot field reservation.
+        for t in others:
+            lane = t.get('lane', '')
+            if lane == 'candidate_cli':
+                workers = t.get('cli_workers')
+                if type(workers) is not int or workers < 1 or t.get('slot_cost', 0) < workers + 1:
+                    return None
+                argon += workers
+            elif lane == 'argon_native':
+                argon += 1
+            elif 'argon' in lane or 'argon' in str(t.get('model', '')).lower():
+                return None
+        costs = [t.get('slot_cost', 1) for t in others]
+        metadata = state.get('metadata_infrastructure_slots', 0)
+        if any(type(x) is not int or x < 1 for x in costs) or type(metadata) is not int or metadata < 0:
+            return None
+        if argon > 4 or sum(costs) + metadata + 4 > min(10, state.get('max_combined_children_and_infrastructure', 10)) - 1:
+            return None
+        if intent and intent['snapshot_sha256'] != snapshot_hash:
+            raise ValueError('field intent snapshot changed; parent diagnosis required')
+        if result is not None:
+            if not intent or result.get('clientRequestId') != intent['clientRequestId']:
+                raise ValueError('field dispatch intent identity mismatch')
+            options = result.get('options', [])
+            options = options if isinstance(options, dict) else {x['id']: x['value'] for x in options}
+            if (not result.get('taskId') or result.get('providerInstanceId') != 'codex' or
+                    result.get('model') != 'gpt-6.1-sol' or options.get('reasoningEffort') != 'medium' or
+                    options.get('serviceTier') != 'default' or
+                    (own and own != result['taskId'])):
+                raise ValueError('field actual task/model/options mismatch; parent diagnosis required')
+            register(dict(result, lane='argon_runner', cli_workers=1, slot_cost=4))
+            state = read(F / 'state.json')
+            # fsync the actual registration BEFORE exposing the launch reservation.
+            intent['taskId'] = result['taskId']
+            state['field_dispatch']['intent'] = intent
+            _candidate_atomic(F / 'state.json', state)
+            _candidate_atomic(F / 'argon/control.json', dict(drain=False, clientRequestId=intent['clientRequestId'],
+                reservation=dict(taskId=result['taskId'], workers=1, max_calls=1, snapshot_sha256=snapshot_hash,
+                                 model='Gemini 4 Argon (High)', billing='included_subscription')))
+            config = state['field_dispatch']
+            config.update(last_round=intent, next_round=intent['round'] + 1)
+            config.pop('intent', None)
+            _candidate_atomic(F / 'state.json', state)
+            return intent
+        if intent:
+            return intent  # Lost delegate/publication response: SAME request ID.
+        round_number = config.get('next_round', 1)
+        if type(round_number) is not int or round_number < 1:
+            raise ValueError('invalid field next_round')
+        intent = dict(round=round_number, workers=1, max_calls=1, snapshot_sha256=snapshot_hash,
+                      clientRequestId='flora-field-' + snapshot_hash[:20] + '-round-' + str(round_number))
+        config['intent'] = intent
+        _candidate_atomic(F / 'state.json', state)
+        return intent
+
+
 def _candidate_atomic(path, value):
     # Reuse parent publication, then persist both bytes and rename before any
     # delegate/control side effect. Intent recovery must survive host loss.
@@ -419,5 +526,5 @@ def prepare_candidate_review():
 
 if __name__ == '__main__':
     command = sys.argv[1]
-    result = candidate_cli_dispatch(json.loads(sys.argv[2]) if len(sys.argv) > 2 else None) if command == 'candidate-cli-dispatch' else reconcile_candidate_cli() if command == 'reconcile-candidate-cli' else plan() if command == 'plan' else register(json.loads(sys.argv[2])) if command == 'register' else prepare_candidate_review() if command == 'prepare-candidate-review' else validate_candidate_review(sys.argv[2]) if command == 'validate-candidate' else validate_luna(sys.argv[2])
+    result = field_dispatch(json.loads(sys.argv[2]) if len(sys.argv) > 2 else None) if command == 'field-dispatch' else candidate_cli_dispatch(json.loads(sys.argv[2]) if len(sys.argv) > 2 else None) if command == 'candidate-cli-dispatch' else reconcile_candidate_cli() if command == 'reconcile-candidate-cli' else plan() if command == 'plan' else register(json.loads(sys.argv[2])) if command == 'register' else prepare_candidate_review() if command == 'prepare-candidate-review' else validate_candidate_review(sys.argv[2]) if command == 'validate-candidate' else validate_luna(sys.argv[2])
     print(json.dumps(result))

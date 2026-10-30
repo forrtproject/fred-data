@@ -57,6 +57,33 @@ else:
  if(!actual||r.isError)throw Error('Candidate CLI delegation uncertain; retain intent for same-ID retry');
  text(await py('candidate-cli-dispatch',JSON.stringify({...actual,clientRequestId:intent.clientRequestId})));
 }
+// Field rounds use the same intent -> actual registration -> control publication lifecycle.
+const field=await py('field-dispatch');
+if(field){
+ const root='/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/';
+ const control=root+base+'/evidence_followup/argon/control.json';
+ const script=`import json,time,subprocess
+from pathlib import Path
+p=Path(${JSON.stringify(control)})
+for _ in range(60):
+ try:
+  c=json.loads(p.read_text())
+  if c.get('clientRequestId')==${JSON.stringify(field.clientRequestId)}:
+   r=c['reservation']
+   assert r['snapshot_sha256']==${JSON.stringify(field.snapshot_sha256)} and r['workers']==1 and r['max_calls']==1
+   subprocess.run(['python3',${JSON.stringify(root+base+'/evidence_followup/run_argon.py')},'--workers','1','--max-calls','1','--owner-task-id',r['taskId'],'--control',str(p)],check=True)
+   break
+ except (FileNotFoundError,json.JSONDecodeError):
+  pass
+ time.sleep(1)
+else:
+ raise SystemExit('Parent field control not published within 60 seconds; parent diagnosis required')`;
+ const task=`Technical bounded field execution only. Work ONLY in ${root}. FIRST read /home/lukas/.config/agent-instructions/common.md, /home/lukas/.config/agent-instructions/box.md and ${root}${base}/evidence_followup/README.md. Do not delegate, prepare, edit parent state/control/index, canonical adjudications/holds, datasets, Git or schedules. Run this script through python3 -c and retain and collect its subprocess. No detach, model substitution or retries outside the helper. Round ${field.clientRequestId}. Script:\n${script}\nReport the helper result. Execution completion is not scientific completion.`;
+ const r=await tools.mcp__t3_code__delegate_task({clientRequestId:field.clientRequestId,title:'FLoRA field round '+field.round,mode:'async',isolation:'shared',target:{providerInstanceId:'codex',model:'gpt-6.1-sol',options:{reasoningEffort:'medium',serviceTier:'default'}},task});
+ const actual=r.structuredContent;
+ if(!actual||r.isError)throw Error('Field delegation uncertain; retain intent for same-ID retry');
+ text(await py('field-dispatch',JSON.stringify({...actual,clientRequestId:field.clientRequestId})));
+}
 p=await py('plan');
 let slots=p.slot_cost, lunas=p.luna_active;
 for(const entry of p.luna_pending.sort((a,b)=>(a.priority==='new_primary_text'?-1:0)-(b.priority==='new_primary_text'?-1:0))){

@@ -382,3 +382,116 @@ class CandidateCLIDispatch(unittest.TestCase):
                 ctl.candidate_cli_dispatch(dict(self.actual(intent), **overrides))
         self.assertFalse((self.f / 'candidate_cli/control.json').exists())
         self.assertEqual(ctl.read(self.f / 'state.json')['tasks'], [])
+
+
+class FieldDispatchGuards(unittest.TestCase):
+    def setUp(self):
+        from unittest.mock import Mock
+        import types
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.f = Path(self.temp.name)
+        (self.f/'argon').mkdir()
+        (self.f/'candidate_cli').mkdir()
+        (self.f/'argon/snapshot.json').write_text('{"finite":271}')
+        self.state = dict(status='active', tasks=[], field_dispatch=dict(enabled=True, workers=1, max_calls=1))
+        self.save()
+        self.runner = Mock(blocker=None, circuit_open=False, infra_streak=0)
+        self.runner.snap = dict(requests=[dict(request_id='field'+str(n), file_key='work') for n in range(271)], works={'work':{}})
+        self.module = types.SimpleNamespace(digest=lambda raw: hashlib.sha256(raw).hexdigest(),
+            TERMINAL={'validated','exhausted','source_changed'}, reserved_process_live=Mock(return_value=False))
+        patcher = patch.object(ctl, 'F', self.f)
+        patcher.start(); self.addCleanup(patcher.stop)
+        patcher = patch.object(ctl, 'field_runner', return_value=(self.module,self.runner))
+        patcher.start(); self.addCleanup(patcher.stop)
+
+    def save(self):
+        (self.f/'state.json').write_text(json.dumps(self.state))
+
+    def actual(self, intent, **overrides):
+        return dict(dict(taskId='FIELD-ACTUAL', status='running', providerInstanceId='codex', model='gpt-6.1-sol',
+                         options={'reasoningEffort':'medium','serviceTier':'default'}, clientRequestId=intent['clientRequestId']), **overrides)
+
+    def test_opt_in_stable_round_actual_registration_before_control(self):
+        self.state['field_dispatch']['enabled'] = False; self.save()
+        self.assertIsNone(ctl.field_dispatch())
+        self.state['field_dispatch']['enabled'] = True; self.save()
+        intent = ctl.field_dispatch()
+        self.assertEqual(ctl.field_dispatch(), intent)
+        real = ctl.a.atomic
+        def inspect(path, value):
+            if Path(path) == self.f/'argon/control.json':
+                tasks = ctl.read(self.f/'state.json')['tasks']
+                self.assertEqual([(t['taskId'],t['slot_cost'],t['cli_workers']) for t in tasks], [('FIELD-ACTUAL',4,1)])
+            return real(path,value)
+        with patch.object(ctl.a, 'atomic', side_effect=inspect):
+            ctl.field_dispatch(self.actual(intent))
+        control = ctl.read(self.f/'argon/control.json')
+        self.assertEqual(control['reservation']['max_calls'],1)
+        self.assertEqual(control['reservation']['taskId'],'FIELD-ACTUAL')
+        self.assertIsNone(ctl.field_dispatch())
+        self.state = ctl.read(self.f/'state.json')
+        self.state['tasks'][0].update(status='completed', hasPendingChildRuns=True); self.save()
+        self.assertIsNone(ctl.field_dispatch())
+        self.state['tasks'][0]['hasPendingChildRuns'] = False; self.save()
+        next_round = ctl.field_dispatch()
+        self.assertEqual(next_round['round'],2)
+        self.assertNotEqual(next_round['clientRequestId'],intent['clientRequestId'])
+
+    def test_publication_crash_and_wrong_returned_identity(self):
+        intent = ctl.field_dispatch()
+        for changes in [dict(taskId=''),dict(options={}),dict(model='wrong'),dict(clientRequestId='wrong')]:
+            with self.assertRaises(ValueError):
+                ctl.field_dispatch(self.actual(intent,**changes))
+        self.assertFalse((self.f/'argon/control.json').exists())
+        real = ctl.a.atomic
+        def crash(path,value):
+            if Path(path) == self.f/'argon/control.json':
+                raise OSError('mock crash')
+            return real(path,value)
+        with patch.object(ctl.a, 'atomic', side_effect=crash), self.assertRaises(OSError):
+            ctl.field_dispatch(self.actual(intent))
+        retry = ctl.field_dispatch()
+        self.assertEqual(retry['taskId'],'FIELD-ACTUAL')
+        self.assertEqual(retry['clientRequestId'],intent['clientRequestId'])
+        with self.assertRaises(ValueError):
+            ctl.field_dispatch(self.actual(intent,taskId='OTHER'))
+        ctl.field_dispatch(self.actual(intent))
+        self.assertEqual(len(ctl.read(self.f/'state.json')['tasks']),1)
+        self.assertIsNone(ctl.field_dispatch())
+
+    def test_combined_argon_and_duplicate_guards(self):
+        cases = [([],0,True), ([dict(lane='candidate_cli',cli_workers=1,slot_cost=2)],3,True),
+                 ([dict(lane='candidate_cli',cli_workers=1,slot_cost=2)],4,False),
+                 ([dict(lane='candidate_cli',cli_workers=2,slot_cost=3)],0,False),
+                 ([dict(lane='argon_runner',slot_cost=4)],0,False),
+                 ([dict(lane='argon_native',slot_cost=1),dict(lane='argon_native',slot_cost=1)],0,False),
+                 ([dict(lane='unknown_argon',slot_cost=1)],0,False),
+                 ([dict(lane='other',slot_cost=-1)],0,False)]
+        for tasks, metadata, allowed in cases:
+            with self.subTest(tasks=tasks,metadata=metadata):
+                self.state['tasks'] = [dict(t,taskId=str(n),status='running') for n,t in enumerate(tasks)]
+                self.state['metadata_infrastructure_slots'] = metadata
+                self.state['field_dispatch'].pop('intent',None); self.save()
+                self.assertEqual(ctl.field_dispatch() is not None,allowed)
+
+    def test_scientific_status_budgets_and_blockers_ignore_finished(self):
+        ctl.a.atomic(self.f/'argon/progress.json',dict(finished=True))
+        self.assertIsNotNone(ctl.field_dispatch())  # still finite pending work
+        for attr,value in [('blocker','received signal 15'),('circuit_open',True),('infra_streak',5)]:
+            setattr(self.runner,attr,value)
+            self.assertIsNone(ctl.field_dispatch())
+            setattr(self.runner,attr,0 if attr=='infra_streak' else False if attr=='circuit_open' else None)
+        self.runner.check_hashes.side_effect = ValueError('changed source')
+        self.assertIsNone(ctl.field_dispatch())
+        self.runner.check_hashes.side_effect = None
+        for status in ['validated','exhausted','source_changed','retry_pending']:
+            for e in self.runner.snap['requests']:
+                ctl.a.atomic(self.f/'argon'/(e['request_id']+'.state.json'),dict(status=status,attempts=2))
+            self.assertIsNone(ctl.field_dispatch())
+        path = self.f/'argon/field0.state.json'
+        ctl.a.atomic(path,dict(status='running',attempts=2,history=[dict(output_path='owned')]))
+        self.module.reserved_process_live.return_value=True
+        self.assertIsNone(ctl.field_dispatch())
+        self.module.reserved_process_live.return_value=False
+        self.assertIsNotNone(ctl.field_dispatch())  # spent output recovery, no budget refund

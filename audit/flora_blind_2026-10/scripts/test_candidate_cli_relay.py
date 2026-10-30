@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 import unittest
 from unittest.mock import patch
 
@@ -146,6 +147,77 @@ class RelayTest(unittest.TestCase):
         self.assertNotEqual(ledger['attempts'][0]['prompt_sha256'], ledger['attempts'][1]['prompt_sha256'])
         self.run_relay()
         self.assertEqual(len(self.calls), 2)
+
+    def new_owner(self, name, workers=1):
+        self.configure(workers=workers)
+        state = m.read(self.f / 'state.json')
+        state['tasks'][0]['taskId'] = name
+        m.atomic(self.f / 'state.json', state)
+        control = m.read(self.control)
+        control['reservation']['taskId'] = name
+        m.atomic(self.control, control)
+
+    def test_bounded_arguments_reject_invalid_limits_and_long_timeout(self):
+        for limit in (0, -1, True):
+            with self.assertRaisesRegex(ValueError, 'positive integer'):
+                self.run_relay(max_calls=limit)
+        with self.assertRaisesRegex(ValueError, '<=660'):
+            self.run_relay(max_calls=1, timeout=661)
+
+    def test_bounded_invalid_retry_resume_and_same_owner_limit(self):
+        self.add()
+        self.relay.prepare()
+        def invalid(argv, output, timeout):
+            self.calls.append(argv)
+            output.write_text('## Answer\n{}')
+            return 0
+        first = self.relay.run(self.control, 'owner', transport=invalid, max_calls=1)
+        b = self.relay.load()['bundles'][0]
+        raw = Path(self.relay.ledger(b)['attempts'][0]['raw_path'])
+        before = raw.read_bytes()
+        self.assertTrue(first['quantum_complete'])
+        self.assertFalse(first['snapshot_complete'])
+        self.relay.run(self.control, 'owner', transport=invalid, max_calls=1)
+        self.assertEqual(len(self.calls), 1)  # same durable execution cannot spend again
+        self.new_owner('round2')
+        result = self.relay.run(self.control, 'round2', transport=self.transport, max_calls=1)
+        self.assertTrue(result['snapshot_complete'])
+        self.assertEqual(len(self.calls), 2)
+        self.assertIn('STRICT VALIDATION FEEDBACK', self.calls[-1][2])
+        self.assertEqual(raw.read_bytes(), before)
+        self.assertEqual(len(self.relay.ledger(b)['attempts']), 2)
+
+    def test_bounded_recovery_does_not_refund_old_interrupted_attempt(self):
+        self.add()
+        self.relay.prepare()
+        b = self.relay.load()['bundles'][0]
+        raw = self.f / 'private/old.raw'
+        raw.write_text('interrupted original bytes')
+        self.relay.save(b, dict(status='pending', attempts=[dict(
+            attempt=1, status='reserved', owner='old', raw_path=str(raw))]))
+        self.run_relay(max_calls=1)
+        self.assertEqual(len(self.calls), 1)
+        self.assertEqual(len(self.relay.ledger(b)['attempts']), 2)
+        self.assertEqual(raw.read_text(), 'interrupted original bytes')
+
+    def test_bounded_four_workers_all_collected_without_retry(self):
+        for n in range(5):
+            self.add(str(n), fields=[dict(field='type', input_row_index=str(6*n+i)) for i in range(6)])
+        self.relay.prepare()
+        self.configure(workers=4)
+        barrier = threading.Barrier(4, timeout=5)
+        def invalid(argv, output, timeout):
+            barrier.wait()
+            self.calls.append(argv)
+            output.write_text('## Answer\n{}')
+            return 0
+        result = self.relay.run(self.control, 'owner', workers=4, transport=invalid, max_calls=4)
+        self.assertEqual(len(self.calls), 4)
+        ledgers = [self.relay.ledger(b) for b in self.relay.load()['bundles']]
+        self.assertEqual(sum(len(x['attempts']) for x in ledgers), 4)
+        self.assertTrue(all(r['status'] == 'finished' for x in ledgers for r in x['attempts']))
+        self.assertTrue(result['quantum_complete'])
+        self.assertFalse(result['snapshot_complete'])
 
     def test_existing_repository_relative_history_and_index_paths(self):
         work = self.history_request()
@@ -635,6 +707,81 @@ class RelayTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'process group still exists'):
                 self.run_relay()
         self.assertEqual(self.calls, [])
+
+    def test_strict_valid_stable_answer_closes_hung_cli_only(self):
+        self.add()
+        self.relay.prepare()
+        b = self.relay.load()['bundles'][0]
+        good = self.response(b)
+        wrong_quote = json.loads(json.dumps(good))
+        wrong_quote['decisions'][0]['quote'] = 'Not in primary source.'
+        duplicate = json.loads(json.dumps(good))
+        duplicate['decisions'] *= 2
+        cases = [('valid', '## Answer\n' + json.dumps(good), True),
+                 ('quote', '## Answer\n' + json.dumps(wrong_quote), False),
+                 ('duplicate', '## Answer\n' + json.dumps(duplicate), False),
+                 ('incomplete', '## Answer\n{"review_id":', False),
+                 ('warning', '[agy] print timeout after 10m0s with turn in progress; returning partial output', False)]
+        for name, raw, valid in cases:
+            with self.subTest(name=name):
+                output = self.f / ('private/' + name + '.raw')
+                argv = [sys.executable, '-c', 'import time; print(' + repr(raw) + ',flush=True); time.sleep(30)']
+                rc = m.cli_transport(argv, output, .3, quiet_seconds=.03,
+                                     validator=lambda: self.relay.validate(output.read_text(), b))
+                self.assertEqual(rc, 0 if valid else 124)
+                meta = m.read(Path(str(output) + '.process.json'))
+                self.assertEqual(meta['closed_after_valid_answer'], valid)
+                self.assertEqual(meta['status'], 'reaped')
+                self.assertEqual(output.read_text(), raw + '\n')
+                self.assertFalse(m.PROCESSES)
+
+    def test_candidate_interrupt_cleans_owned_group_and_preserves_unrelated(self):
+        output = self.f / 'private/interrupted.raw'
+        unrelated = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'])
+        self.addCleanup(lambda: (unrelated.kill(), unrelated.wait()))
+        original_sleep = time.sleep
+        def once(seconds):
+            if output.exists() and output.stat().st_size:
+                m._transport.time.sleep = original_sleep
+                m.interrupted(signal.SIGINT, None)
+            original_sleep(seconds)
+        argv = [sys.executable, '-c', 'import time; print("ready",flush=True); time.sleep(30)']
+        try:
+            with patch.object(m._transport.time, 'sleep', side_effect=once), self.assertRaises(KeyboardInterrupt):
+                m.cli_transport(argv, output, 2)
+            self.assertFalse(m.PROCESSES)
+            self.assertIsNone(unrelated.poll())
+            meta = m.read(Path(str(output) + '.process.json'))
+            self.assertEqual(meta['status'], 'reaped')
+            with self.assertRaises(ProcessLookupError):
+                os.kill(meta['pid'], 0)
+        finally:
+            m.STOP.clear()
+
+    def test_changing_output_cannot_pass_stability_gate(self):
+        self.add()
+        self.relay.prepare()
+        b = self.relay.load()['bundles'][0]
+        raw = '## Answer\n' + json.dumps(self.response(b))
+        output = self.f / 'private/changing.raw'
+        argv = [sys.executable, '-c', 'import time; print(' + repr(raw) + ',flush=True); time.sleep(.06); print("trailing warning",flush=True); time.sleep(30)']
+        rc = m.cli_transport(argv, output, .4, quiet_seconds=.15,
+                             validator=lambda: self.relay.validate(output.read_text(), b))
+        self.assertEqual(rc, 124)
+        self.assertFalse(m.read(Path(str(output) + '.process.json'))['closed_after_valid_answer'])
+
+    def test_private_log_flag_with_local_fake_agy(self):
+        fake = self.root / 'agy'
+        fake.write_text('#!' + sys.executable + '\nimport sys\nfrom pathlib import Path\n'
+                        'p=Path(sys.argv[sys.argv.index("--log-file")+1])\n'
+                        'assert p.stat().st_mode & 0o777 == 0o600\n'
+                        'p.write_text("local fixture only")\nprint("fixture")\n')
+        fake.chmod(0o700)
+        output = self.f / 'private/log.raw'
+        self.assertEqual(m.cli_transport([str(fake)], output, 2), 0)
+        meta = m.read(Path(str(output) + '.process.json'))
+        self.assertEqual(Path(meta['cli_log_path']).read_text(), 'local fixture only')
+        self.assertEqual(Path(meta['cli_log_path']).stat().st_mode & 0o777, 0o600)
 
     def test_real_process_lifecycle_mock_cli_timeout(self):
         # The subprocess is a local Python fixture, never agy/a model.

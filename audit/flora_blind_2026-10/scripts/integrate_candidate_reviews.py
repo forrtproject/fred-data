@@ -11,6 +11,23 @@ R = Path(__file__).resolve().parents[1]
 F = R / 'evidence_followup'
 
 
+def mark_parent_coverage(entry, records, inspected_keys, fields=False):
+    """A partial parent approval must not close other requests in its envelope."""
+    def key(d):
+        return ((d['file_key'], str(d['input_row_index']), d['field']) if fields
+                else (d['file_key'], d['target_index']))
+    expected = {key(x['decision']) for x in records
+                if x['decision'].get('request_id') == entry['request_id']}
+    if not expected:
+        raise ValueError('No validated keys for parent request ' + entry['request_id'])
+    covered = expected & inspected_keys
+    pending = expected - covered
+    entry['parent_inspected_keys'] = [list(k) for k in sorted(covered, key=str)]
+    entry['parent_pending_keys'] = [list(k) for k in sorted(pending, key=str)]
+    entry['status'] = ('expert_review_complete_pending_parent' if pending
+                       else 'parent_inspected_integrated')
+
+
 def integrate():
     inspected = json.loads((F / 'candidate_reviews/parent_inspection.json').read_text())['reviews']
     merged = []
@@ -72,7 +89,9 @@ def integrate():
             merged.append(approval_key(decision))
         for entry in index:
             if entry.get('review_id') == rid:
-                entry['status'] = 'parent_inspected_integrated'
+                # Explicitly superseded keys retain their parent inspection;
+                # unapproved keys still require their own scientific disposition.
+                mark_parent_coverage(entry, validation['records'], approved | superseded, fields)
     a.atomic(F / 'candidate_requests/index.json', index)
     return {'approved_rechecks_or_additions': len(merged)}
 

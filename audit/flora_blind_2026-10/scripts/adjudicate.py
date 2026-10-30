@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Parent-controlled Argon adjudication, <=4 parallel calls; validated JSON only."""
-import concurrent.futures,csv,datetime,hashlib,importlib.util,json,pathlib,subprocess,sys,time,fcntl,os
+import concurrent.futures,csv,datetime,hashlib,importlib.util,json,pathlib,subprocess,sys,time,fcntl,os,signal,tempfile
 R=pathlib.Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('compare',R/'scripts/compare.py');c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c)
 def atomic(p,v):
@@ -37,50 +37,133 @@ def read_response(output, source, requested, require_heading=False):
         raise ValueError('not all requested fields returned')
     return obj
 
-def run_transport(argv, output, source, requested, timeout=660, quiet_seconds=2):
-    """Reap only our CLI; close a hung transport after its final answer validates."""
+def cleanup_owned_group(process, grace=0.3):
+    """Signal only the session/group created for this retained child; reap it."""
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+    except ProcessLookupError:
+        pass
+    # The leader may have exited while a descendant ignores SIGTERM. Always
+    # escalate the owned group, including on the normal-return path.
+    until = time.monotonic() + grace
+    while time.monotonic() < until:
+        process.poll()
+        try:
+            os.killpg(process.pid, 0)
+        except ProcessLookupError:
+            break
+        time.sleep(0.02)
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    process.wait()
+    # SIGKILL delivery is asynchronous for grandchildren. Wait for owned group
+    # members to stop executing; only their actual parent can waitpid/reap them.
+    until = time.monotonic() + 1
+    while time.monotonic() < until:
+        live = False
+        for entry in pathlib.Path('/proc').iterdir():
+            if not entry.name.isdigit():
+                continue
+            try:
+                fields = (entry / 'stat').read_text().rsplit(')', 1)[1].split()
+                if int(fields[2]) == process.pid and fields[0] != 'Z':
+                    live = True
+                    break
+            except (OSError, ValueError, IndexError):
+                continue
+        if not live:
+            break
+        time.sleep(0.02)
+
+
+def owned_transport(argv, output, timeout, validator=None, quiet_seconds=2,
+                    on_start=None, log_path=None, reserved_output=False):
+    """Retain a private session through cleanup, with monotonic diagnostics."""
     started = time.monotonic()
+    meta = dict(returncode=None, timed_out=False, closed_after_valid_answer=False,
+                launch_monotonic=started, deadline_monotonic=started + timeout)
+    argv = list(argv)
+    if pathlib.Path(argv[0]).name == 'agy':
+        if log_path is None:
+            private = R / 'evidence_followup/private/transport_logs'
+            private.mkdir(parents=True, exist_ok=True, mode=0o700)
+            fd, name = tempfile.mkstemp(prefix=output.name + '.', suffix='.cli.log', dir=private)
+            os.close(fd)
+            log_path = pathlib.Path(name)
+        else:
+            fd = os.open(log_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            os.close(fd)
+        argv += ['--log-file', str(log_path)]
+        meta['cli_log_path'] = str(log_path)
     marker = checked = None
     stable_since = started
-    with output.open('w') as stream:
-        process = subprocess.Popen(argv, stdout=stream, stderr=subprocess.STDOUT)
-        try:
+    process = None
+    try:
+        # run_argon durably reserves an empty raw file before dispatch. Open
+        # without truncation, and reject nonempty history in either lane.
+        flags = os.O_WRONLY | os.O_CREAT | (0 if reserved_output else os.O_EXCL)
+        fd = os.open(output, flags, 0o600)
+        with os.fdopen(fd, 'wb') as stream:
+            if os.fstat(stream.fileno()).st_size:
+                raise ValueError('refusing to overwrite an old attempt')
+            os.chmod(output, 0o600)
+            process = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=stream,
+                                       stderr=subprocess.STDOUT, start_new_session=True)
+            meta.update(pid=process.pid, pgid=process.pid, session_id=process.pid)
+            if on_start:
+                on_start(process)
             while True:
                 rc = process.poll()
-                if rc is not None:
-                    return {'returncode': rc, 'timed_out': False, 'closed_after_valid_answer': False}
-                now = time.monotonic()
-                if now - started >= timeout:
-                    process.kill()
-                    process.wait()
-                    return {'returncode': None, 'timed_out': True, 'closed_after_valid_answer': False}
+                stamp = time.monotonic()
                 stat = output.stat()
                 current = (stat.st_size, stat.st_mtime_ns)
+                if stat.st_size:
+                    meta.setdefault('first_output_monotonic', stamp)
                 if current != marker:
-                    marker, stable_since = current, now
-                if stat.st_size and checked != marker and now - stable_since >= quiet_seconds:
+                    marker, stable_since = current, stamp
+                if rc is not None:
+                    meta.update(returncode=rc, exit_observed_monotonic=stamp)
+                    break
+                if stamp >= meta['deadline_monotonic']:
+                    meta.update(timed_out=True, outer_timeout_monotonic=stamp)
+                    break
+                if validator and stat.st_size and checked != marker and stamp - stable_since >= quiet_seconds:
                     checked = marker
                     try:
-                        read_response(output, source, requested, require_heading=True)
-                    except (ValueError, OSError):
+                        validator()
+                    except (ValueError, OSError, TypeError, KeyError):
                         pass
                     else:
-                        rc = process.poll()
-                        if rc is not None:
-                            return {'returncode': rc, 'timed_out': False, 'closed_after_valid_answer': False}
-                        process.terminate()
-                        try:
-                            process.wait(timeout=3)
-                        except subprocess.TimeoutExpired:
-                            process.kill()
-                            process.wait()
-                        return {'returncode': process.returncode, 'timed_out': False,
-                                'closed_after_valid_answer': True}
-                time.sleep(0.2)
-        finally:
-            if process.poll() is None:
-                process.kill()
-                process.wait()
+                        # Reject any write racing validation; validate again after
+                        # cleanup at the caller before publishing a result.
+                        after = output.stat()
+                        if (after.st_size, after.st_mtime_ns) == marker:
+                            meta.update(closed_after_valid_answer=True,
+                                        final_validation_monotonic=time.monotonic())
+                            break
+                time.sleep(0.05)
+    except (KeyboardInterrupt, SystemExit):
+        meta['interrupted_monotonic'] = time.monotonic()
+        raise
+    finally:
+        if process is not None:
+            meta['cleanup_started_monotonic'] = time.monotonic()
+            cleanup_owned_group(process)
+            meta.update(process_returncode=process.returncode,
+                        reaped_monotonic=time.monotonic())
+            if meta['closed_after_valid_answer']:
+                meta['returncode'] = process.returncode
+            meta['cli_print_timeout_warning'] = '[agy] print timeout' in output.read_text(errors='replace')
+            atomic(pathlib.Path(str(output) + '.process.json'), meta)
+    return meta
+
+
+def run_transport(argv, output, source, requested, timeout=660, quiet_seconds=2):
+    return owned_transport(argv, output, timeout,
+                           validator=lambda: read_response(output, source, requested, require_heading=True),
+                           quiet_seconds=quiet_seconds, reserved_output=True)
 
 def source_instruction(fk, textpath, source):
     metadata = (c.read_json(R/'lossless_source_views.json')[0] or {}).get(fk, {})

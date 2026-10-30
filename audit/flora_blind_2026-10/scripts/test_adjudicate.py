@@ -2,6 +2,10 @@ import datetime
 import hashlib
 import importlib.util
 import json
+import os
+import signal
+import subprocess
+import time
 from pathlib import Path
 import sys
 import tempfile
@@ -51,6 +55,58 @@ class TransportTests(unittest.TestCase):
         meta, _ = self.run_fixture(answer(), heading=False)
         self.assertFalse(meta['closed_after_valid_answer'])
         self.assertTrue(meta['timed_out'])
+
+
+    def test_owned_descendant_cleanup_all_exit_paths_and_unrelated_survives(self):
+        unrelated = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(30)'])
+        self.addCleanup(lambda: (unrelated.kill(), unrelated.wait()))
+        for mode in ('normal', 'valid', 'timeout', 'interrupt'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                pidfile = root / 'child.pid'
+                # Both owned processes ignore TERM, forcing the bounded kill path.
+                child = 'import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(30)'
+                code = ('import subprocess,sys,time,signal; from pathlib import Path; '
+                        'signal.signal(signal.SIGTERM,signal.SIG_IGN); '
+                        'p=subprocess.Popen([sys.executable,"-c",' + repr(child) + ']); '
+                        'Path(' + repr(str(pidfile)) + ').write_text(str(p.pid)); '
+                        'print(' + repr('## Answer\n' + json.dumps(answer()) if mode == 'valid' else 'incomplete {') + ',flush=True); '
+                        + ('' if mode == 'normal' else 'time.sleep(30)'))
+                output = root / 'raw'
+                original_sleep = time.sleep
+                if mode == 'interrupt':
+                    # Patch only the polling sleep, allowing cleanup to finish.
+                    def once(seconds):
+                        if pidfile.exists():
+                            a.time.sleep = original_sleep
+                            raise KeyboardInterrupt
+                        original_sleep(seconds)
+                    with patch.object(a.time, 'sleep', side_effect=once), self.assertRaises(KeyboardInterrupt):
+                        a.run_transport([sys.executable, '-c', code], output, SOURCE, REQUESTED,
+                                        timeout=.4, quiet_seconds=.05)
+                else:
+                    meta = a.run_transport([sys.executable, '-c', code], output, SOURCE, REQUESTED,
+                                           timeout=.4, quiet_seconds=.05)
+                    self.assertEqual(meta['closed_after_valid_answer'], mode == 'valid')
+                    self.assertEqual(meta['timed_out'], mode == 'timeout')
+                child_pid = int(pidfile.read_text())
+                stat = Path('/proc') / str(child_pid) / 'stat'
+                self.assertTrue(not stat.exists() or stat.read_text().split()[2] == 'Z')
+                self.assertIsNone(unrelated.poll())
+                diag = json.loads(Path(str(output) + '.process.json').read_text())
+                self.assertGreaterEqual(diag['reaped_monotonic'], diag['launch_monotonic'])
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(diag['pid'], 0)
+
+    def test_incomplete_json_and_print_warning_reach_outer_deadline(self):
+        for raw in ('## Answer\n{"decisions":[', '[agy] print timeout after 10m0s with turn in progress; returning partial output'):
+            with self.subTest(raw=raw), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / 'raw'
+                command = [sys.executable, '-c', 'import time; print(' + repr(raw) + ',flush=True); time.sleep(30)']
+                meta = a.run_transport(command, output, SOURCE, REQUESTED, timeout=.2, quiet_seconds=.02)
+                self.assertTrue(meta['timed_out'])
+                self.assertFalse(meta['closed_after_valid_answer'])
+                self.assertEqual(meta['cli_print_timeout_warning'], raw.startswith('[agy]'))
 
 
 class RetryTests(unittest.TestCase):
