@@ -1,24 +1,35 @@
-# Mac source recovery: batch 1 validation
+# Mac source recovery and targeted validation
 
-The first Mac transfer supplied **34 independently source-reviewed full articles**. Fresh blind checking added **203 verified field instances**, including **17 confirmed errors**, relative to the pre-Mac audit. Current totals are **433 confirmed errors across 335 effect rows**.
+The Mac pass recovered **58 full articles**. Fresh blind validation added **244 verified field instances**, including **17 confirmed errors**, relative to the pre-Mac audit. The integrated audit now contains **433 confirmed errors across 335 effect rows**.
 
-Any field is verified for **1621/2,164 effects (74.9%)**, compared with 1,605 before this pass. All seven fields are verified for **86/2,164**, compared with 82 before this pass. The 80% goal remains unmet. Field counts include repeated original statistics across replication rows and do not estimate a representative error rate for FReD.
+Any field is verified for **1625/2,164 effects (75.1%)**, compared with 1,605 before the Mac pass. All seven fields are verified for **89/2,164**, compared with 82 before this pass. The 80% verification goal remains unmet. Repeated original statistics across replication rows count as separate field instances; these results do not estimate a representative error rate for FReD.
 
-## Acquisition and evidence
+## Acquisition and private evidence
 
-The Mac pass uses real Chrome, Apple Events JavaScript, and signed-in Birkbeck EBSCO/publisher access. The acquisition pass ended at 10:44 UTC on 30 October 2026, within its separate 11:53 UTC ceiling. It recovered 58 full articles after assessing 100 source groups; 42 assessed groups remained unresolved and 137 were not attempted after the active routes stopped. This report covers only private batch 01. The additional 24 articles in batch 02 are entering separate blind validation; source acceptance alone establishes no audit-field verification.
+The separately authorised Mac pass used real Chrome, Apple Events JavaScript, and signed-in Birkbeck EBSCO/publisher access. Acquisition stopped at 10:44 UTC on 30 October 2026, within its 11:53 UTC ceiling. It assessed 100 source groups: 58 yielded full articles and 42 remained unresolved. Another 137 groups were not attempted after the finite routes stopped. The pass skipped 18 full-article groups recovered earlier on Linux. One incomplete preview was rejected and six stale browser-DOM route observations were marked invalid. No paid API or model spend was incurred.
 
-All 102 PDF, text, and neutral-input hashes were checked on receipt. Parent checks independently verified actual PDF page counts and freshly parsed PDF title/header and reference sections, retaining the Mac’s visual identity/completeness evidence and source-version labels. Croninger et al.’s article retains an ARTICLE IN PRESS header despite its full journal pagination, so equivalence to any later revision was not assumed.
+Parent checks independently verified PDF page counts, freshly parsed title/header and reference sections, and exact transferred PDF/text/neutral-input hashes, retaining the Mac visual identity/completeness evidence. The Croninger article retains an ARTICLE IN PRESS header despite full journal pagination; equivalence to a later revision was not assumed. Source acceptance alone establishes no audit-field verification.
 
-The private batch archive contains 104 files, including the two manifests. A direct remote content check found 104 matches and zero differences. All 34 canonical evidence-text hashes also match acceptance records, and the private cloud upload queue was empty when checked. Original Mac and box artifacts remain available; full texts are excluded from Git.
+The private archives contain **394 files**: 104 in batch 01 and 290 in batch 02. Direct remote content checks found zero differences. All 58 canonical evidence-text hashes match accepted-source records. Original Mac and box artifacts remain available. Full texts are excluded from Git.
 
-## Blind validation and independent review
+## Blind checks and independent review
 
-The parent filtered the transferred neutral targets against current checkpoints, retaining only still-paper_unavailable sides. **38 fresh T3 Codex gpt-6.1-sol medium batches** examined **188 distinct target sides**. Final checkpoint statuses are **127 done** and **61 locator-insufficient**. A done status can contain missing fields or a target mismatch; field verification requires the separate evidence, target, sample, metric, and bound checks.
+**63 fresh T3 Codex gpt-6.1-sol medium batches** examined **212 distinct previously paper-unavailable target sides**, with 213 side attempts including one target-selection recheck. Checkpoints ended with **145 done** and **67 locator-insufficient** sides. A done checkpoint can retain missing fields or a target mismatch; field verification separately requires matching evidence, target, analytic sample, metric, and p-value bound.
 
-**18 independent Gemini 4 Argon (High) calls** reviewed **77 field disagreements** through the Antigravity CLI. Complete responses were collected and passed strict exact-source quotation checks. Parent quote-only repairs are recorded separately and retain the original worker output or raw review plus its hash; no numeric value, verdict, or target was changed by a quotation repair. PDF citations were mapped only to their hash-verified canonical text from the same accepted PDF.
+**23 independent Gemini 4 Argon (High) calls** completed **87 field reviews** through the Antigravity CLI. Complete replies were collected and passed strict exact-source quotation checks. Evidence-only repairs retain original worker outputs or hash-bound raw replies. They preserve numerical values, metrics, targets, bounds, and verdicts. Exact PDF citations were mapped only to canonical text from the same hash-verified PDF.
 
-The nested country-panel sample-size disagreements remain unverified: 12 country clusters, 324 nominal country-years, and the usable post-lag regression sample are different quantities. Repeated neutral locators that do not distinguish accountability contrasts, conflicting study/page metadata, and missing identity-integration targets also remain unverified. Retrieval and numerical agreement did not resolve these ambiguities. Printed metrics were retained without conversions, and author-reported success was not inferred from significance.
+Unresolved country-panel sample sizes remain unverified: 12 country clusters, 324 nominal country-years, and usable post-lag regression observations are different quantities. Neutral locators that cannot distinguish study/outcome contrasts remain unresolved. Retrieval and numerical agreement did not establish target identity. Printed metrics were retained without conversions, and author-reported success was not inferred from significance.
+
+## Gains by transfer batch
+
+| Transfer | Full articles | Target sides | Newly verified fields | New confirmed errors |
+|---|---:|---:|---:|---:|
+| Batch 01 | 34 | 188 | 203 | 17 |
+| Batch 02 | 24 | 24 | 41 | 0 |
+
+The immutable [batch 01 report](batch_01_REPORT.md), [summary](batch_01_summary.json), and [field changes](batch_01_field_changes.csv) retain the first published checkpoint. Cumulative accounting is in [summary.json](summary.json) and [field_changes.csv](field_changes.csv); the incremental batch 02 files are [batch_02_summary.json](batch_02_summary.json) and [batch_02_field_changes.csv](batch_02_field_changes.csv).
+
+The final cross-field check found that row 1961’s initial blind extraction selected a paired comparison rather than the coded heart-attack MANOVA. A fresh neutral primary-context extraction and a new independent review addressed that objection. The original output and superseded proposal remain retained; recruitment counts and condition sizes are not automatically analytic N.
 
 ## Confirmed changes
 
@@ -42,12 +53,10 @@ The nested country-panel sample-size disagreements remain unverified: 12 country
 | 1788 | n_o | 62 | 44 |
 | 1789 | n_o | 62 | 44 |
 
-Row indices exclude the worksheet header. Exact evidence locations, resolutions, and all newly verified field instances are in [batch_01_field_changes.csv](batch_01_field_changes.csv); machine-readable accounting is in [batch_01_summary.json](batch_01_summary.json).
+Row indices exclude the worksheet header. Exact evidence locations, resolutions, and all newly verified fields are retained in the cumulative field-change export and canonical checkpoints.
 
-## Preservation and remaining work
+## Preservation and checks
 
-All 416 pre-Mac confirmed errors and every pre-Mac verified field verdict/correction remain intact. Existing completed sides and author verdicts were protected during integration. The original audit completion marker, run manifest/deadlines, six scope holds, and completed Linux follow-up records remain unchanged. The shipped workbook and pipeline were not edited. Workbook SHA256 remains `59545e3fc0c2979d97507097526319ec8c275aae3ac40c0d1a6d327492079e6b`.
+All 416 pre-Mac confirmed errors and every pre-Mac verified verdict/correction remain intact. Existing completed sides and author verdicts were protected during integration. The original completion marker, run manifest/deadlines, six scope holds, and completed Linux follow-up records remain unchanged. The shipped workbook and pipeline were not edited. Workbook SHA256 remains `59545e3fc0c2979d97507097526319ec8c275aae3ac40c0d1a6d327492079e6b`.
 
-Validation includes44 regression tests (33 original, seven protected-integration checks, and four quotation-gap safeguards), all 2,164 checkpoint schemas and export totals, exact retained evidence, baseline preservation assertions, and private content-hash verification.
-
-Mac acquisition is complete; do not restart it. The verified batch 02 transfer is being deduplicated against [accepted_sources.json](accepted_sources.json), filtered to eligible still-unavailable sides, and validated through fresh blind batches. Neither historical schedule should be restarted.
+Checks cover 44 regression tests, all 2,164 checkpoint schemas and export totals, exact retained adjudication evidence, baseline preservation assertions, transfer hashes, and private archive content. Acquisition and validation are complete. Historical schedules remain disabled; no deadline was restarted or extended.

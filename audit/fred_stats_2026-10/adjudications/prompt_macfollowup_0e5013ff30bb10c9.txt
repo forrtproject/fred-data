@@ -1,0 +1,292 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1961,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "190",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "25",
+      "location": "Published p. 507 (PDF p. 6), Table 2, Average student column superscript b and sample-size footnote b.",
+      "quote": "n = 25 for Group A, 37 for Group B.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b8bbb8aa45063df2f4a06896.txt",
+      "confident": true,
+      "sample_role": "Participants in Study 2 Group A assigned to the average-student comparison condition; Table 2 condition-specific sample.",
+      "exclusions": "No target-test exclusions stated; the table supplies the condition n rather than a separate missing-data accounting."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Perloff, L. S., & Fetzer, B. K. (1986). Self–other judgments and perceived vulnerability to victimization. Journal of Personality and Social Psychology, 50(3), 502–510. https://doi.org/10.1037/0022-3514.50.3.502",
+      "doi_o": "10.1037/0022-3514.50.3.502",
+      "study_o": "2",
+      "ref_r": "Hongye, L., & Feldman, G. (2020). Revisiting Illusion of Invulnerability effect: Replication and extension of Perloff and Fetzer (1986).",
+      "doi_r": null,
+      "url_r": "https://docs.google.com/document/d/1hW5moEcdB-U0Ud-MNOB5iYSkeQL60SqVekufodODxDQ/edit?tab=t.0",
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1961,
+      "description": "Comparison of perceived personal heart-attack likelihood with perceived heart-attack likelihood for an average person.",
+      "locators_o": "p.5",
+      "locators_r": "p.49; Table 10",
+      "text_paths": {}
+    },
+    "work_key": "https://docs.google.com/document/d/1hW5moEcdB-U0Ud-MNOB5iYSkeQL60SqVekufodODxDQ/edit?tab=t.0",
+    "coding_context": {
+      "es_repr": "p.5",
+      "description": "people tend to underestimate their likelihood to experience heart attack in relation to an average person’ likelihood",
+      "reported_success_quote": "The current replication partly replicated the original studies.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "full_original_coding": {
+        "study_o": "2",
+        "n_o": "190",
+        "es_value_o": "F(14, 146) = 2.09",
+        "es_type_o": "test statistic",
+        "es_repr_o": "p.5",
+        "pval_value_o": "0.02",
+        "pval_type_o": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "nested_o": "no",
+        "description": "people tend to underestimate their likelihood to experience heart attack in relation to an average person’ likelihood"
+      }
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1961,
+        "batch": "mac02_b8bbb8aa45063df2f4a06896_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac02_b8bbb8aa45063df2f4a06896_original_000/1961.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T11:49:50.284216+00:00"
+      },
+      {
+        "audit_id": 1961,
+        "batch": "mac02_b8bbb8aa45063df2f4a06896_original_000",
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac02_b8bbb8aa45063df2f4a06896_original_000/1961.json",
+        "repair": "Exact canonical spacing/hyphenation retained; explicit ellipsis marks omitted interleaved column text. No value, metric, target, bound or confidence changed.",
+        "reviewed_at": "2026-10-30T11:50:14.685688+00:00"
+      }
+    ],
+    "prior_reviews": [
+      {
+        "audit_id": 1961,
+        "field": "es_value_r",
+        "verdict": "shipped_right",
+        "correct_value": "F(3, 580) = 14.58",
+        "correct_metric": "test statistic",
+        "location": "Table 10, Heart attack / Likelihood row; cache lines 1050-1073",
+        "quote": "Likelihood\n\tF(3, 580) = 14.58[b]\n\t<.001***",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5919e4286b3cb6354df4e6ab.txt",
+        "reason": "The target locator (p. 49; Table 10) and original Study 2 test statistic (F(2, 80) = 6.71 in Table 22) identify the univariate ANOVA on heart-attack likelihood difference scores across comparison targets, where F(3, 580) = 14.58 is reported. The blind extraction pulled the paired t-test within the average-person condition from Table 11 (a mismatched target).",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 1961,
+        "field": "pval_value_r",
+        "verdict": "shipped_right",
+        "correct_value": "< 0.001",
+        "location": "Table 10, Heart attack / Likelihood row; cache lines 1050-1073",
+        "quote": "Likelihood\n\tF(3, 580) = 14.58[b]\n\t<.001***",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5919e4286b3cb6354df4e6ab.txt",
+        "reason": "In Table 10, the p-value for the heart-attack likelihood ANOVA (F(3, 580) = 14.58) is reported as <.001***, matching the shipped value and bound.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 1961,
+        "field": "reported_success",
+        "verdict": "shipped_right",
+        "correct_value": "mixed",
+        "location": "Abstract and Results (Self-other comparison across different comparison targets); cache lines 283, 1245-1247",
+        "quote": "The current replication partly replicated the original studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5919e4286b3cb6354df4e6ab.txt",
+        "reason": "Although the omnibus target-effect ANOVA and average-person comparison on heart-attack likelihood were significant, the post-hoc target pattern across comparison targets failed to replicate the optimistic bias in the 'one of your friends' condition from Study 2, leading the authors to conclude that the target effect was only partly supported.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 1961,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "25",
+        "location": "Published p. 507 (PDF p. 6), Table 2, Average student column and footnote b",
+        "quote": "n = 25 for Group A, 37 for Group B.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b8bbb8aa45063df2f4a06896.txt",
+        "reason": "The shipped value of 190 is the total Study 2 sample across both event groups and all three between-subjects target conditions (including 107 Group B participants who never rated heart attack). The critical within-participant t test comparing perceived personal versus average-student heart-attack likelihood in Group A is based on the Group A average-student condition (n = 25).",
+        "resolution": "argon"
+      }
+    ],
+    "unresolved_parent_objection": "Final cross-field check: original coded F(14,146) and p<.02 identify the heart-attack MANOVA printed on PDFp5, not the condition-specific paired t test selected blindly. Prior replication review mentions a univariate ANOVA, which also differs from that original MANOVA. Reassess all three ORIGINAL fields independently using the exact printed target, sample units, missingness/df; do not adopt either prior review as authoritative. Group A recruitment and the target analytic sample may differ. If the exact analytic n is not established, retain undeterminable rather than replace190 by a condition or whole-group count. Do not change existing completed replication verdicts. Explicitly resolve the prior n=25 proposal."
+  },
+  {
+    "audit_id": 1961,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "F(14, 146) = 2.09",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": null,
+      "location": "Published p. 506 (PDF p. 5), Results, paragraph beginning “Pairwise”; p. 507, Table 2, Group A, Likelihood of heart attack, Average student column.",
+      "quote": "Pairwise t tests were performed in order to determine whether self-other difference scores were significantly different from zero.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b8bbb8aa45063df2f4a06896.txt",
+      "confident": false,
+      "metric": "t",
+      "test_statistic": null
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Perloff, L. S., & Fetzer, B. K. (1986). Self–other judgments and perceived vulnerability to victimization. Journal of Personality and Social Psychology, 50(3), 502–510. https://doi.org/10.1037/0022-3514.50.3.502",
+      "doi_o": "10.1037/0022-3514.50.3.502",
+      "study_o": "2",
+      "ref_r": "Hongye, L., & Feldman, G. (2020). Revisiting Illusion of Invulnerability effect: Replication and extension of Perloff and Fetzer (1986).",
+      "doi_r": null,
+      "url_r": "https://docs.google.com/document/d/1hW5moEcdB-U0Ud-MNOB5iYSkeQL60SqVekufodODxDQ/edit?tab=t.0",
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1961,
+      "description": "Comparison of perceived personal heart-attack likelihood with perceived heart-attack likelihood for an average person.",
+      "locators_o": "p.5",
+      "locators_r": "p.49; Table 10",
+      "text_paths": {}
+    },
+    "work_key": "https://docs.google.com/document/d/1hW5moEcdB-U0Ud-MNOB5iYSkeQL60SqVekufodODxDQ/edit?tab=t.0",
+    "coding_context": {
+      "es_repr": "p.5",
+      "description": "people tend to underestimate their likelihood to experience heart attack in relation to an average person’ likelihood",
+      "reported_success_quote": "The current replication partly replicated the original studies.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "full_original_coding": {
+        "study_o": "2",
+        "n_o": "190",
+        "es_value_o": "F(14, 146) = 2.09",
+        "es_type_o": "test statistic",
+        "es_repr_o": "p.5",
+        "pval_value_o": "0.02",
+        "pval_type_o": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "nested_o": "no",
+        "description": "people tend to underestimate their likelihood to experience heart attack in relation to an average person’ likelihood"
+      }
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1961,
+        "batch": "mac02_b8bbb8aa45063df2f4a06896_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac02_b8bbb8aa45063df2f4a06896_original_000/1961.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T11:49:50.284216+00:00"
+      },
+      {
+        "audit_id": 1961,
+        "batch": "mac02_b8bbb8aa45063df2f4a06896_original_000",
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac02_b8bbb8aa45063df2f4a06896_original_000/1961.json",
+        "repair": "Exact canonical spacing/hyphenation retained; explicit ellipsis marks omitted interleaved column text. No value, metric, target, bound or confidence changed.",
+        "reviewed_at": "2026-10-30T11:50:14.685688+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 1961,
+    "field": "pval_value_o",
+    "comparison": "differ",
+    "shipped": "0.02",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".01",
+      "location": "Published p. 507 (PDF p. 6), Table 2, Group A, Likelihood of heart attack, Average student column: mean −1.20 with two asterisks; significance footnote.",
+      "quote": "**p<.01.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b8bbb8aa45063df2f4a06896.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Perloff, L. S., & Fetzer, B. K. (1986). Self–other judgments and perceived vulnerability to victimization. Journal of Personality and Social Psychology, 50(3), 502–510. https://doi.org/10.1037/0022-3514.50.3.502",
+      "doi_o": "10.1037/0022-3514.50.3.502",
+      "study_o": "2",
+      "ref_r": "Hongye, L., & Feldman, G. (2020). Revisiting Illusion of Invulnerability effect: Replication and extension of Perloff and Fetzer (1986).",
+      "doi_r": null,
+      "url_r": "https://docs.google.com/document/d/1hW5moEcdB-U0Ud-MNOB5iYSkeQL60SqVekufodODxDQ/edit?tab=t.0",
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1961,
+      "description": "Comparison of perceived personal heart-attack likelihood with perceived heart-attack likelihood for an average person.",
+      "locators_o": "p.5",
+      "locators_r": "p.49; Table 10",
+      "text_paths": {}
+    },
+    "work_key": "https://docs.google.com/document/d/1hW5moEcdB-U0Ud-MNOB5iYSkeQL60SqVekufodODxDQ/edit?tab=t.0",
+    "coding_context": {
+      "es_repr": "p.5",
+      "description": "people tend to underestimate their likelihood to experience heart attack in relation to an average person’ likelihood",
+      "reported_success_quote": "The current replication partly replicated the original studies.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "full_original_coding": {
+        "study_o": "2",
+        "n_o": "190",
+        "es_value_o": "F(14, 146) = 2.09",
+        "es_type_o": "test statistic",
+        "es_repr_o": "p.5",
+        "pval_value_o": "0.02",
+        "pval_type_o": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "nested_o": "no",
+        "description": "people tend to underestimate their likelihood to experience heart attack in relation to an average person’ likelihood"
+      }
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1961,
+        "batch": "mac02_b8bbb8aa45063df2f4a06896_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac02_b8bbb8aa45063df2f4a06896_original_000/1961.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T11:49:50.284216+00:00"
+      },
+      {
+        "audit_id": 1961,
+        "batch": "mac02_b8bbb8aa45063df2f4a06896_original_000",
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac02_b8bbb8aa45063df2f4a06896_original_000/1961.json",
+        "repair": "Exact canonical spacing/hyphenation retained; explicit ellipsis marks omitted interleaved column text. No value, metric, target, bound or confidence changed.",
+        "reviewed_at": "2026-10-30T11:50:14.685688+00:00"
+      }
+    ]
+  }
+]
+
+This is a new independent review round with new cross-field context and an unresolved target objection. Return exact primary-source quotes. Put the whole result in your reply; do not write files or run commands. End with ## Answer.

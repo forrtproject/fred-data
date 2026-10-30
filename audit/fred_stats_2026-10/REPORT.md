@@ -1,16 +1,16 @@
 # FReD statistics audit
 
-**Mac source validation in progress — 2026-10-30T11:19:26.916546+00:00.** Current integrated results contain 433 confirmed field errors. New-source disagreements remain unverified until independent review passes.
+**Mac source validation completed — 2026-10-30T12:07:50.805162+00:00.** Current integrated results contain 433 confirmed field errors. New-source disagreements remain unverified until independent review passes.
 
-The original bounded audit finished on 2026-10-29T18:41:45.057314+00:00 with 408 confirmed field errors across 315 rows, 1593 effects with at least one verified field and 81 with all seven. A separately authorised source-acquisition follow-up is recorded in [source_followup/README.md](source_followup/README.md). Current counts below include only integrated, evidence-validated follow-up results; the original deadlines and completion record are unchanged. A further separately authorised Mac recovery pass starts from416confirmed errors across322rows and1605effects with any verified field. Its acquisition receipts, protected blind validation batches and independent reviews are in [mac_source_followup/README.md](mac_source_followup/README.md). The completed Linux follow-up and original audit deadlines remain historical; neither schedule was restarted.
+The original bounded audit finished on 2026-10-29T18:41:45.057314+00:00 with 408 confirmed field errors across 315 rows, 1593 effects with at least one verified field and 81 with all seven. A separately authorised source-acquisition follow-up is recorded in [source_followup/README.md](source_followup/README.md). Current counts below include only integrated, evidence-validated follow-up results; the original deadlines and completion record are unchanged. A further separately authorised Mac recovery pass starts from 416 confirmed errors across 322 rows and 1,605 effects with any verified field. Its acquisition receipts, protected blind validation batches and independent reviews are in [mac_source_followup/README.md](mac_source_followup/README.md). The completed Linux follow-up and original audit deadlines remain historical; neither schedule was restarted. The Mac pass recovered 58 full articles; its integrated checks added 244 verified field instances, including 17 confirmed errors, relative to the pre-Mac checkpoint. See [Mac recovery findings](mac_source_followup/REPORT.md).
 
-The run did not reach the 80% verification goal: even the looser any-field coverage measure is 74.9%; all-seven-field coverage is 4.0%. Access failures, unresolved target identity and unavailable matching metrics remain explicit rather than being counted as verified.
+The run did not reach the 80% verification goal: even the looser any-field coverage measure is 75.1%; all-seven-field coverage is 4.1%. Access failures, unresolved target identity and unavailable matching metrics remain explicit rather than being counted as verified.
 
 Confirmed errors affect 335 effect rows. Counts refer to field instances; an original statistic repeated across replication rows can contribute more than once.
 
 The frozen workbook contains 2,164 effects in 432 replication works. Part A screened every effect and flagged 174. 18/185 individual flags are resolved when source-confirmed corrections are applied in memory, affecting 18/174 flagged effects (see `flag_confirmation.csv`). This includes corrected test statistics or analytic n as well as p-values. Separately, 54 flagged effects contain any confirmed field error.
 
-Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 254/2164; all three replication statistics for 478/2164. All seven fields, including author-reported success, are checked for 86/2164. At least one original statistic is evaluable for 973/2164, at least one replication statistic for 1265/2164, and any of the seven fields for 1621/2164. Individual-field coverage is below.
+Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 263/2164; all three replication statistics for 478/2164. All seven fields, including author-reported success, are checked for 89/2164. At least one original statistic is evaluable for 991/2164, at least one replication statistic for 1265/2164, and any of the seven fields for 1625/2164. Individual-field coverage is below.
 
 **Decision to review:** reported success is evaluated for the identified study/outcome. A broad paper-level verdict without a defensible mapping to an individual row remains unverified; the original narrative observation is retained. This conservative scope rule avoids assigning a mixed article outcome to every unidentified component effect.
 
@@ -18,9 +18,9 @@ Confirmed errors include coding omissions only when adjudication establishes the
 
 | Field | Confirmed errors / evaluable | Unverified | Not comparable | All-row error bounds |
 |---|---:|---:|---:|---:|
-| n_o | 35/539 (6.5%) | 1564 | 61 | 1.62%–76.71% |
-| es_value_o | 47/562 (8.4%) | 1330 | 272 | 2.17%–76.20% |
-| pval_value_o | 34/797 (4.3%) | 1363 | 4 | 1.57%–64.74% |
+| n_o | 35/554 (6.3%) | 1548 | 62 | 1.62%–76.02% |
+| es_value_o | 47/573 (8.2%) | 1316 | 275 | 2.17%–75.69% |
+| pval_value_o | 34/812 (4.2%) | 1348 | 4 | 1.57%–64.05% |
 | n_r | 83/975 (8.5%) | 1119 | 70 | 3.84%–58.78% |
 | es_value_r | 35/730 (4.8%) | 1110 | 324 | 1.62%–67.88% |
 | pval_value_r | 73/990 (7.4%) | 1164 | 10 | 3.37%–57.62% |
@@ -53,10 +53,10 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | Arb | 0/5 (27; 0) | 0/16 (13; 3) | 0/9 (23; 0) | 0/6 (22; 4) | 0/3 (27; 2) | 0/6 (26; 0) | 0/19 (13; 0) |
 | AvOr | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | Blxd | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 0/0 (2; 0) |
-| Boyce | 7/109 (165; 6) | 3/120 (120; 40) | 6/155 (125; 0) | 24/186 (94; 0) | 8/131 (108; 41) | 13/163 (117; 0) | 31/156 (124; 0) |
+| Boyce | 7/110 (164; 6) | 3/120 (120; 40) | 6/156 (124; 0) | 24/186 (94; 0) | 8/131 (108; 41) | 13/163 (117; 0) | 31/156 (124; 0) |
 | Br0x | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | BrGp | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
-| CORE | 3/41 (71; 2) | 3/22 (81; 11) | 4/45 (69; 0) | 7/62 (42; 10) | 6/50 (48; 16) | 12/69 (45; 0) | 8/75 (39; 0) |
+| CORE | 3/42 (70; 2) | 3/24 (79; 11) | 4/47 (67; 0) | 7/62 (42; 10) | 6/50 (48; 16) | 12/69 (45; 0) | 8/75 (39; 0) |
 | Camereretal2016 | 0/0 (18; 0) | 0/0 (18; 0) | 0/0 (18; 0) | 0/0 (18; 0) | 0/2 (3; 13) | 0/15 (3; 0) | 0/0 (18; 0) |
 | Camereretal2018 | 0/2 (15; 4) | 1/4 (11; 6) | 0/9 (12; 0) | 1/21 (0; 0) | 0/17 (0; 4) | 1/21 (0; 0) | 0/6 (15; 0) |
 | D2LY | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
@@ -78,7 +78,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | LmBx | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | LyLd | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | ManyLabs4 | 0/0 (15; 3) | 0/0 (18; 0) | 0/0 (18; 0) | 0/1 (14; 3) | 0/18 (0; 0) | 0/18 (0; 0) | 0/4 (14; 0) |
-| ManyLabs5 | 0/9 (11; 0) | 0/12 (8; 0) | 0/12 (8; 0) | 0/20 (0; 0) | 0/20 (0; 0) | 0/14 (6; 0) | 0/10 (10; 0) |
+| ManyLabs5 | 0/10 (10; 0) | 0/12 (7; 1) | 0/13 (7; 0) | 0/20 (0; 0) | 0/20 (0; 0) | 0/14 (6; 0) | 0/10 (10; 0) |
 | Manylabs2 | 1/16 (16; 6) | 1/23 (8; 7) | 0/29 (9; 0) | 2/29 (9; 0) | 0/38 (0; 0) | 1/31 (7; 0) | 5/28 (10; 0) |
 | N8pB | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | OKRy | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
@@ -108,7 +108,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | aag9 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | acykd | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | add | 2/37 (125; 2) | 4/46 (100; 18) | 1/39 (125; 0) | 1/36 (118; 10) | 1/35 (113; 16) | 1/51 (113; 0) | 16/57 (107; 0) |
-| additional | 10/83 (268; 0) | 22/69 (222; 60) | 9/133 (217; 1) | 8/120 (231; 0) | 4/46 (253; 52) | 7/113 (238; 0) | 29/181 (170; 0) |
+| additional | 10/83 (268; 0) | 22/69 (221; 61) | 9/134 (216; 1) | 8/120 (231; 0) | 4/46 (253; 52) | 7/113 (238; 0) | 29/181 (170; 0) |
 | av | 2/34 (116; 16) | 4/47 (115; 4) | 3/56 (109; 1) | 5/33 (122; 11) | 0/27 (134; 5) | 0/31 (126; 9) | 5/54 (112; 0) |
 | bY2A | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | bth | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
@@ -155,7 +155,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | mJDj | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | mxyQ | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | odonnell | 0/2 (4; 0) | 0/3 (2; 1) | 0/4 (2; 0) | 0/5 (1; 0) | 0/4 (1; 1) | 0/5 (1; 0) | 0/4 (2; 0) |
-| osc | 2/18 (80; 1) | 1/20 (71; 8) | 1/20 (79; 0) | 0/25 (73; 1) | 0/15 (80; 4) | 1/21 (78; 0) | 1/50 (49; 0) |
+| osc | 2/29 (68; 2) | 1/28 (62; 9) | 1/29 (70; 0) | 0/25 (73; 1) | 0/15 (80; 4) | 1/21 (78; 0) | 1/50 (49; 0) |
 | plLK | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | q | 0/1 (1; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 2/2 (0; 0) | 2/2 (0; 0) | 1/2 (0; 0) | 0/2 (0; 0) |
 | q8xv | 0/1 (2; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/1 (2; 0) | 0/0 (2; 1) | 0/1 (2; 0) | 0/1 (2; 0) |
@@ -166,7 +166,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | rpq | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | rtn | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | shah | 0/0 (13; 0) | 0/1 (12; 0) | 0/1 (12; 0) | 0/2 (11; 0) | 0/1 (12; 0) | 0/1 (12; 0) | 2/3 (10; 0) |
-| soscisubmission | 2/41 (71; 3) | 0/31 (70; 14) | 2/33 (82; 0) | 14/60 (51; 4) | 2/46 (54; 15) | 4/61 (54; 0) | 13/65 (50; 0) |
+| soscisubmission | 2/42 (70; 3) | 0/32 (69; 14) | 2/34 (81; 0) | 14/60 (51; 4) | 2/46 (54; 15) | 4/61 (54; 0) | 13/65 (50; 0) |
 | soscisubmission1 | 0/0 (4; 0) | 0/4 (0; 0) | 0/4 (0; 0) | 0/2 (2; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/0 (4; 0) |
 | soscisubmission2 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) |
 | soscisubmission3 | 0/4 (0; 0) | 0/4 (0; 0) | 0/4 (0; 0) | 0/1 (3; 0) | 0/1 (3; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
@@ -638,9 +638,9 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 103 fields exhausted the allowed adjudication attempts and remain unresolved. The remaining dispatch queue contains 0 fields in 0 source groups; after the dispatch cutoff these remain unverified. Failed or truncated replies establish no error unless an individual complete response passes source validation.
 The separately authorised source follow-up has 0 additional fields awaiting validated adjudication. These remain unverified until their evidence and target identity pass review.
 
-- original: done: 1427 sides.
-- original: locator_insufficient: 340 sides.
-- original: paper_unavailable: 397 sides.
+- original: done: 1445 sides.
+- original: locator_insufficient: 346 sides.
+- original: paper_unavailable: 373 sides.
 - replication: done: 1572 sides.
 - replication: locator_insufficient: 383 sides.
 - replication: paper_unavailable: 209 sides.

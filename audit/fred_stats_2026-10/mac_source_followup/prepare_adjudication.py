@@ -38,6 +38,12 @@ def main():
             'reported_success_quote': row.get('reported_success_quote'),
             'pval_tails': row['pval_tails_' + side], 'nested': row['nested_' + side],
             'analytic_n_definition': 'sample used for the critical test after exclusions; distinguish counting units'}
+        # Reviewers are unblinded. Co-fields can distinguish a MANOVA from a
+        # similarly described paired comparison; they never go to extractors.
+        item['coding_context']['coded_statistics_for_target_selection'] = {
+            name: row.get(name) for name in
+            ['n_' + side, 'es_value_' + side, 'es_type_' + side,
+             'pval_value_' + side, 'pval_type_' + side]}
         item['locator'] = inputs[item['audit_id']]
         evidence_repairs = [r for r in repairs if r['audit_id'] == item['audit_id']]
         if evidence_repairs:
