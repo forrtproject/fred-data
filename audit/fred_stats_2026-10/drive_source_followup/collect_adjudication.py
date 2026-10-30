@@ -7,6 +7,7 @@ F=Path(__file__).resolve().parent
 B=F.parent
 sys.path.insert(0,str(B/'scripts'))
 from validate_adjudication import parse_response, validate_batch
+from compare import quote_ok
 
 
 def main():
@@ -25,6 +26,17 @@ def main():
         item=next(r for r in data if (r['audit_id'],r['field'])==(repair['audit_id'],repair['field']))
         assert item['quote']==repair['original_quote']
         item['quote']=repair['repaired_quote']
+    metadata_path=F/'adjudication_metadata_repairs.json'
+    metadata=json.loads(metadata_path.read_text()) if metadata_path.exists() else []
+    for repair in [r for r in metadata if r['key']==key]:
+        assert repair['raw_sha256']==hashlib.sha256(out.read_bytes()).hexdigest()
+        item=next(r for r in data if (r['audit_id'],r['field'])==(repair['audit_id'],repair['field']))
+        assert repair['metadata_field']=='correct_metric'
+        assert item.get('correct_metric') is None
+        assert repair['literal_review_statement'] in item['reason']
+        assert quote_ok({**repair['primary_evidence'],'value':'metric identity','confident':True})
+        item['correct_metric']=repair['value']
+        item['parent_metadata_note']=repair['reason']
     good,failed=validate_batch(data,payload)
     assert not failed, failed
     assert len(good)==len(record['items'])

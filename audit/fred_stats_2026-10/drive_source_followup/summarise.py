@@ -67,6 +67,7 @@ def main():
                'current_confirmed_errors': len(progress['confirmed_errors']),
                'current_error_rows': len({e['audit_id'] for e in progress['confirmed_errors']}),
                'coverage': progress['coverage'], 'baseline_verified_fields_preserved': True,
+               'all_six_numeric_fields_verified_rows': sum(all(r[field + '_final_verdict'] in ('correct', 'error') for field in FIELDS[:-1]) for r in new),
                'baseline_completed_sides_and_verdicts_preserved': True, 'original_deadlines_and_completion_preserved': True}
     (F / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
     print(json.dumps({k: v for k, v in summary.items() if k != 'new_errors'}))

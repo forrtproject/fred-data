@@ -7,7 +7,7 @@ from compare import quote_ok
 from repair_quote_gaps import proposed_quote
 
 def main():
- status_path=F/'review_round_03_queue_status.json';transport=json.loads(status_path.read_text());collected=json.loads((F/'adjudication_status.json').read_text());history={r['key']:r for r in [json.loads(l) for l in (F/'adjudication_tasks.jsonl').read_text().splitlines() if l]};rp=F/'adjudication_evidence_repairs.json';repairs=json.loads(rp.read_text());failures={};good=[]
+ status_path=F/(sys.argv[1] if len(sys.argv)>1 else 'review_round_03_queue_status.json');transport=json.loads(status_path.read_text());collected=json.loads((F/'adjudication_status.json').read_text());history={r['key']:r for r in [json.loads(l) for l in (F/'adjudication_tasks.jsonl').read_text().splitlines() if l]};rp=F/'adjudication_evidence_repairs.json';repairs=json.loads(rp.read_text());failures={};good=[]
  for key,t in transport.items():
   if not t.get('terminal') or not t.get('complete_reply_candidate') or collected.get(key,{}).get('validation')=='valid':continue
   out=Path(history[key]['output']);data,mode=parse_response(out.read_text());assert mode=='complete_json'

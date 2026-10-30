@@ -1,24 +1,24 @@
 # Drive source follow-up
 
-**Validation in progress — comparison checkpoint 2026-10-30T18:13:29.241108+00:00.** The Drive pass has added **525 verified field instances**, including **31 confirmed errors**, relative to the completed441-error baseline. Current integrated results contain **472 errors across 367 rows**.
+**Completed — comparison checkpoint 2026-10-30T19:17:29.466000+00:00.** The Drive pass has added **594 verified field instances**, including **52 confirmed errors**, relative to the completed 441-error baseline. Current integrated results contain **493 errors across 381 rows**.
 
-Any field is verified for 1,742/2,164 effects (80.5%); all seven for 104/2,164. Repeated original statistics count as separate field instances; these are not representative error-rate estimates.
+Any field is verified for 1,765/2,164 effects (81.6%); all six numeric fields for 147/2,164 (6.8%); all seven for 112/2,164 (5.2%). Complete-effect verification remains below the 80% goal. Repeated original statistics count as separate field instances; these are not representative error-rate estimates.
 
 ## Source coverage and exceptions
 
-The newly authorised Drive check recovered **129 exact complete primary sources** from136 previously unrecovered groups, bringing exact source coverage to **248/255 groups**. Copies comprise111 published articles,12 manuscripts/preprints/proofs, five theses/dissertations, and one primary unpublished report. These counts establish source identity/completeness, not verified statistics. All sources were independently hash-checked against the transferred mapping, with fresh PDF page/header/endmatter checks;72 automated content flags received separate primary-content review, including rendered scans.
+The newly authorised Drive check recovered **129 exact complete primary sources** from 136 previously unrecovered groups, bringing exact source coverage to **248/255 initially missing source groups**. Copies comprise 111 published articles, 12 manuscripts/preprints/proofs, five theses/dissertations, and one primary unpublished report. These counts establish source identity/completeness, not verified statistics. All sources were independently hash-checked against the transferred mapping, with fresh PDF page/header/endmatter checks; 72 automated content flags received separate primary-content review, including rendered scans.
 
-The seven exact-version exceptions remain separate: the complete1979 Srull/Wyer original has not been accepted as the requested2004 reprint; one matching Drive file is provider-blocked as abusive; Ritov/Zamir was not located; the Chan/Feldman Google Doc is inaccessible; and no primary replication manuscripts were located for three COS records. No filenames alone establish acceptance; no provider block was bypassed. See exceptions.json.
+The seven exact-version exceptions remain separate: the complete 1979 Srull/Wyer original has not been accepted as the requested 2004 reprint; one matching Drive file is provider-blocked as abusive; Ritov/Zamir was not located; the Chan/Feldman Google Doc is inaccessible; and no primary replication manuscripts were located for three COS records. No filenames alone establish acceptance; no provider block was bypassed. See exceptions.json.
 
-Manuscripts retain their own pagination and version labels. The undated Ferrell primary report establishes data collection in2013, while its requested citation year2014 is not printed independently; main report PDF1–5 and primary author tables PDF6–9 are labelled separately. The related1979 article is held for edition review, with no silent substitution.
+Manuscripts retain their own pagination and version labels. The undated Ferrell primary report establishes data collection in 2013, while its requested citation year 2014 is not printed independently; main report PDF 1–5 and primary author tables PDF 6–9 are labelled separately. The related 1979 article is held for edition review, with no silent substitution.
 
-The authoritative mapping SHA256 is29c160b7952005f0214ed1437d5dcd5dee48cb667bab701f177a161dd5f998cf. Primary artifacts and browser/Drive metadata remain private. The private archive check found zero differences across818 files (817 payload objects in the provider receipt plus the retained archive manifest), with two external mapping/receipt objects independently rehashed. Original handoff texts/PDFs remain unchanged. A labelled parent visual transcription of a missing diagram is retained as a canonical-text derivative, with separate source/render/derivative hashes.
+The authoritative mapping SHA256 is 29c160b7952005f0214ed1437d5dcd5dee48cb667bab701f177a161dd5f998cf. Primary PDFs, handoff archives, and browser/Drive metadata remain private; the rendered-page publication incident is described below. The private archive check found zero differences across 818 files (817 payload objects in the provider receipt plus the retained archive manifest), with two external mapping/receipt objects independently rehashed. Original handoff texts/PDFs remain unchanged. A labelled parent visual transcription of a missing diagram is retained as a canonical-text derivative, with separate source/render/derivative hashes.
 
 ## Blind validation and independent review
 
-The current-status filter leaves **495 previously paper-unavailable sides** from497 neutral sides; two already examined sides stay protected. There are140 source/side/chunk batches. **140 batches** have completed in **42 fresh native Codex jobs**, with at most three validators and the requested gpt-6.1-sol medium model/effort. Small source batches share bounded neutral jobs while retaining separate inputs/outputs. T3 MCP delegation is unavailable in this runtime; the native fallback and exact task IDs are recorded explicitly.
+The current-status filter leaves **495 previously paper-unavailable sides** from 497 neutral sides; two already examined sides stay protected. There are 140 source/side/chunk batches. **140 batches** have completed in **42 fresh native Codex jobs**, with at most three validators and the requested gpt-6.1-sol medium model/effort. Small source batches share bounded neutral jobs while retaining separate inputs/outputs. T3 MCP delegation is unavailable in this runtime; the native fallback and exact task IDs are recorded explicitly.
 
-At this comparison checkpoint, 495 sides are integrated. 47 valid independent Argon replies cover 181 field reviews; 61 calls have been attempted. Nonobvious disagreements receive Gemini4 Argon(High) reviews with the original brief, coding context, source versions, previous findings, and unresolved objections. One stalled eight-field request was stopped by exact-owned prompt/process identity at12minutes and retried once as two smaller requests; no answer or error verdict is inferred from a timeout.
+At this comparison checkpoint, 495 sides are integrated. 67 valid independent Argon replies cover 245 field reviews; 80 calls have been attempted. Nonobvious disagreements receive Gemini 4 Argon (High) reviews with the original brief, coding context, source versions, previous findings, and unresolved objections. One stalled eight-field request was stopped by exact-owned prompt/process identity at 12 minutes and retried once as two smaller requests; no answer or error verdict is inferred from a timeout.
 
 Extractors receive only neutral targets and named primary sources. Parent checks require full schema, exact source quotations, requested metric and same-test p-bound, uniquely identified study/outcome/sample/test, and explicit analytic counting units/exclusions. No metric conversion, numerical-coincidence target matching, row-order assignment, or significance-derived narrative success. Source-only acceptance never increments field verification. Unsupported quotes are quarantined until resolved; quote-only repairs preserve originals and do not change values, targets, metrics, bounds, or verdicts.
 
@@ -28,6 +28,10 @@ Completed sides/author verdicts and every previously verified verdict/correction
 
 | Row | Field | Shipped | Correction |
 |---:|---|---|---|
+| 68 | reported_success | mixed | successful |
+| 69 | reported_success | mixed | successful |
+| 70 | reported_success | mixed | successful |
+| 71 | reported_success | mixed | failed |
 | 147 | es_value_o | 0.79 | 0.66 |
 | 147 | es_value_r | 0.76 | 0.62 |
 | 158 | n_o | 908 | 905 |
@@ -39,14 +43,27 @@ Completed sides/author verdicts and every previously verified verdict/correction
 | 169 | n_o | 908 | 905 |
 | 170 | n_o | 908 | 905 |
 | 171 | n_o | 908 | 905 |
+| 172 | n_o | 908 | 905 |
+| 179 | n_o | 1110 | 1106 |
 | 179 | n_r | (blank) | 343 |
 | 179 | reported_success | mixed | successful |
+| 233 | n_r | 106 | 66 |
+| 234 | n_r | 106 | 66 |
+| 235 | n_r | 106 | 54 |
+| 235 | reported_success | failed | successful |
+| 686 | n_o | 104 | 103 |
+| 687 | n_o | 104 | 103 |
+| 688 | n_o | 104 | 103 |
+| 689 | n_o | 104 | 103 |
+| 696 | n_r | 57 | 58 |
+| 988 | n_o | 154 | 153 |
+| 1039 | reported_success | mixed | failed |
+| 1356 | n_r | 40 | 38 |
+| 1501 | n_o | 63 | 48 |
 | 1537 | reported_success | mixed | successful |
 | 1538 | reported_success | mixed | successful |
 | 1539 | reported_success | mixed | failed |
 | 1540 | reported_success | mixed | successful |
-| 1552 | n_r | 55 | 57 |
-| 1553 | n_r | 55 | 57 |
 | 1577 | n_r | (blank) | 20 |
 | 1647 | pval_value_r | 0.1 | .000 |
 | 1648 | pval_value_r | 0.1 | .000 |
@@ -59,8 +76,14 @@ Completed sides/author verdicts and every previously verified verdict/correction
 | 1654 | reported_success | successful | failed |
 | 1656 | reported_success | failed | successful |
 | 1658 | es_value_r | X2(1, N = 167) = 3.481 | X2(2, N = 167) = 3.481 |
+| 1667 | reported_success | successful | failed |
+| 1748 | n_o | 368 | 377 |
+| 1749 | n_o | 368 | 377 |
+| 1786 | reported_success | successful | failed |
 
 ## Remaining limits and verification checks
+
+All 225 distinct requested adjudication fields have complete validated reviews. There are no new Drive disagreements awaiting dispatch. Uncertain target or sample mappings remain unverified. All validation and review workers are terminal.
 
 A complete source can still lack a uniquely identified target. In particular, 76 replication sides in the operational-flexibility re-examination have practice/outcome labels that do not establish a one-to-one mapping to the supplied original targets. The primary article describes modified measures and programmes. Neither row order nor a similar coefficient establishes the requested comparison; those observations remain unverified. Other unresolved cases distinguish subgroups, repeated observations, participant counts, alternative models, and broad article conclusions. Corrections retain the printed metric, precision, and p-bound; a table display of p = .000 is a rounded display rather than a claim that the probability is literally zero.
 
@@ -68,6 +91,6 @@ Headless Argon read mode denied the commands needed to inspect primary PDFs. A c
 
 All 495 integrated blind outputs have matching final hashes and distinct assigned sides, with no integration blockers. The applicable suite contains 46 passing checks: 33 original audit checks, four quote-repair checks, seven integration-protection checks pinned to the pre-pass fixture, and two narrative-scope checks. The historical Linux integration test file remains unchanged; its seven fixtures read a live row that source recovery has since updated, so the equivalent Drive tests use the frozen pre-pass record.
 
-Exact locations and reasons are in [field_changes.csv](field_changes.csv), with accounting in [summary.json](summary.json), task/status ledgers, original blind outputs, review prompts/replies, and protected integration records. Historical completion files and all previously verified verdicts and corrections are checked against the frozen pre-Drive baseline. The workbook remains unchanged.
+Exact locations and reasons are in [field_changes.csv](field_changes.csv); [correction_details.csv](correction_details.csv) retains explicit corrected metrics, p-bounds, and evidence, with accounting in [summary.json](summary.json), task/status ledgers, original blind outputs, review prompts/replies, and protected integration records. Historical completion files and all previously verified verdicts and corrections are checked against the frozen pre-Drive baseline. The workbook remains unchanged.
 
 Publication incident: 50 rendered primary-source pages were inadvertently included in two public checkpoint commits. Both owned commits were rebuilt without the images, the cleaned branch and PR head were verified, and all 50 renders were retained and independently checked in private storage. Primary PDFs and credentials were never uploaded. Ignore rules and a publication check now reject source media from the audit index and owned history. Deletion of GitHub caches or unreachable old objects has not been established. Details are retained in private_history_cleanup.json and private_render_retention.json.
