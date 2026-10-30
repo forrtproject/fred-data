@@ -1,8 +1,8 @@
 # Drive source follow-up
 
-**Validation in progress — comparison checkpoint 2026-10-30T15:58:47.180968+00:00.** The Drive pass has added **321 verified field instances**, including **2 confirmed errors**, relative to the completed441-error baseline. Current integrated results contain **443 errors across 341 rows**.
+**Validation in progress — comparison checkpoint 2026-10-30T18:13:29.241108+00:00.** The Drive pass has added **525 verified field instances**, including **31 confirmed errors**, relative to the completed441-error baseline. Current integrated results contain **472 errors across 367 rows**.
 
-Any field is verified for 1,691/2,164 effects (78.1%); all seven for 101/2,164. Repeated original statistics count as separate field instances; these are not representative error-rate estimates.
+Any field is verified for 1,742/2,164 effects (80.5%); all seven for 104/2,164. Repeated original statistics count as separate field instances; these are not representative error-rate estimates.
 
 ## Source coverage and exceptions
 
@@ -16,9 +16,9 @@ The authoritative mapping SHA256 is29c160b7952005f0214ed1437d5dcd5dee48cb667bab7
 
 ## Blind validation and independent review
 
-The current-status filter leaves **495 previously paper-unavailable sides** from497 neutral sides; two already examined sides stay protected. There are140 source/side/chunk batches. **74 batches** have completed in **28 fresh native Codex jobs**, with at most three validators and the requested gpt-6.1-sol medium model/effort. Small source batches share bounded neutral jobs while retaining separate inputs/outputs. T3 MCP delegation is unavailable in this runtime; the native fallback and exact task IDs are recorded explicitly.
+The current-status filter leaves **495 previously paper-unavailable sides** from497 neutral sides; two already examined sides stay protected. There are140 source/side/chunk batches. **140 batches** have completed in **42 fresh native Codex jobs**, with at most three validators and the requested gpt-6.1-sol medium model/effort. Small source batches share bounded neutral jobs while retaining separate inputs/outputs. T3 MCP delegation is unavailable in this runtime; the native fallback and exact task IDs are recorded explicitly.
 
-At this comparison checkpoint, 267 sides are integrated. 5 valid independent Argon replies cover 37 field reviews; 9 calls have been attempted. Nonobvious disagreements receive Gemini4 Argon(High) reviews with the original brief, coding context, source versions, previous findings, and unresolved objections. One stalled eight-field request was stopped by exact-owned prompt/process identity at12minutes and retried once as two smaller requests; no answer or error verdict is inferred from a timeout.
+At this comparison checkpoint, 495 sides are integrated. 47 valid independent Argon replies cover 181 field reviews; 61 calls have been attempted. Nonobvious disagreements receive Gemini4 Argon(High) reviews with the original brief, coding context, source versions, previous findings, and unresolved objections. One stalled eight-field request was stopped by exact-owned prompt/process identity at12minutes and retried once as two smaller requests; no answer or error verdict is inferred from a timeout.
 
 Extractors receive only neutral targets and named primary sources. Parent checks require full schema, exact source quotations, requested metric and same-test p-bound, uniquely identified study/outcome/sample/test, and explicit analytic counting units/exclusions. No metric conversion, numerical-coincidence target matching, row-order assignment, or significance-derived narrative success. Source-only acceptance never increments field verification. Unsupported quotes are quarantined until resolved; quote-only repairs preserve originals and do not change values, targets, metrics, bounds, or verdicts.
 
@@ -30,5 +30,44 @@ Completed sides/author verdicts and every previously verified verdict/correction
 |---:|---|---|---|
 | 147 | es_value_o | 0.79 | 0.66 |
 | 147 | es_value_r | 0.76 | 0.62 |
+| 158 | n_o | 908 | 905 |
+| 160 | n_o | 908 | 905 |
+| 162 | n_o | 908 | 905 |
+| 164 | n_o | 908 | 905 |
+| 166 | n_o | 908 | 905 |
+| 168 | n_o | 908 | 905 |
+| 169 | n_o | 908 | 905 |
+| 170 | n_o | 908 | 905 |
+| 171 | n_o | 908 | 905 |
+| 179 | n_r | (blank) | 343 |
+| 179 | reported_success | mixed | successful |
+| 1537 | reported_success | mixed | successful |
+| 1538 | reported_success | mixed | successful |
+| 1539 | reported_success | mixed | failed |
+| 1540 | reported_success | mixed | successful |
+| 1552 | n_r | 55 | 57 |
+| 1553 | n_r | 55 | 57 |
+| 1577 | n_r | (blank) | 20 |
+| 1647 | pval_value_r | 0.1 | .000 |
+| 1648 | pval_value_r | 0.1 | .000 |
+| 1649 | pval_value_r | 0.1 | .000 |
+| 1650 | pval_value_r | 0.1 | .000 |
+| 1651 | pval_value_r | 0.1 | .000 |
+| 1653 | n_r | 6 | 3 |
+| 1653 | reported_success | successful | failed |
+| 1654 | n_r | 6 | 3 |
+| 1654 | reported_success | successful | failed |
+| 1656 | reported_success | failed | successful |
+| 1658 | es_value_r | X2(1, N = 167) = 3.481 | X2(2, N = 167) = 3.481 |
 
-Exact locations and reasons are in [field_changes.csv](field_changes.csv), with accounting in [summary.json](summary.json), task/status ledgers, original blind outputs, review prompts/replies, and protected integration records.
+## Remaining limits and verification checks
+
+A complete source can still lack a uniquely identified target. In particular, 76 replication sides in the operational-flexibility re-examination have practice/outcome labels that do not establish a one-to-one mapping to the supplied original targets. The primary article describes modified measures and programmes. Neither row order nor a similar coefficient establishes the requested comparison; those observations remain unverified. Other unresolved cases distinguish subgroups, repeated observations, participant counts, alternative models, and broad article conclusions. Corrections retain the printed metric, precision, and p-bound; a table display of p = .000 is a rounded display rather than a claim that the probability is literally zero.
+
+Headless Argon read mode denied the commands needed to inspect primary PDFs. A controlled comparison reproduced that denial and confirmed that the same read-only PDF command works with command permission. Corrected requests permit only named-source reading and target-page rendering into an owned private cache. They run two clients at a time, retain raw replies and process identities, have a 12-minute process limit, and stop queued launches after two consecutive infrastructure or incomplete replies. Incomplete JSON is rejected for this follow-up; timeouts do not establish scientific disagreements.
+
+All 495 integrated blind outputs have matching final hashes and distinct assigned sides, with no integration blockers. The applicable suite contains 46 passing checks: 33 original audit checks, four quote-repair checks, seven integration-protection checks pinned to the pre-pass fixture, and two narrative-scope checks. The historical Linux integration test file remains unchanged; its seven fixtures read a live row that source recovery has since updated, so the equivalent Drive tests use the frozen pre-pass record.
+
+Exact locations and reasons are in [field_changes.csv](field_changes.csv), with accounting in [summary.json](summary.json), task/status ledgers, original blind outputs, review prompts/replies, and protected integration records. Historical completion files and all previously verified verdicts and corrections are checked against the frozen pre-Drive baseline. The workbook remains unchanged.
+
+Publication incident: 50 rendered primary-source pages were inadvertently included in two public checkpoint commits. Both owned commits were rebuilt without the images, the cleaned branch and PR head were verified, and all 50 renders were retained and independently checked in private storage. Primary PDFs and credentials were never uploaded. Ignore rules and a publication check now reject source media from the audit index and owned history. Deletion of GitHub caches or unreachable old objects has not been established. Details are retained in private_history_cleanup.json and private_render_retention.json.
