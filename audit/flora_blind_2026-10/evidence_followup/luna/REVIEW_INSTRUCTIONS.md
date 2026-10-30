@@ -51,6 +51,12 @@ are allowed when inapplicable or evidence is unavailable, but likely_omission ne
 both a retest quote and an identity quote. represented needs source-backed identity,
 not a bare title-similarity assertion. Do not determine replication outcome here.
 
+Return the EXACT assigned (file_key,target_index) set from works[].candidates[],
+once each and with NO extra targets. Other sibling targets in the coding are
+context for duplicate checks, not additional assignments. Before atomic output,
+actually compare the output key set with the assignment key set and assert equal
+set and equal cardinality. Do not add an interesting unassigned target yourself.
+
 Before writing a checkpoint, actually run a local membership check for EVERY
 nonempty omission_quote, identity_quote and duplicate_quote: quote in the exact
 decoded saved source string, with length<=2000. Extract the substring from that

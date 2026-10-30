@@ -184,7 +184,9 @@ def plan():
     index = read(F / 'luna/index.json')
     return {'status': state['status'], 'active': active,
             'slot_cost': sum(x.get('slot_cost', 1) for x in active),
-            'luna_limit': state.get('max_parallel_luna', 3),
+            'luna_limit': min(state.get('max_parallel_luna', 3), 2)
+                if any(x.get('lane') == 'additional_acquisition' for x in active)
+                else state.get('max_parallel_luna', 3),
             'additional_infrastructure_slots': state.get('metadata_infrastructure_slots', 0),
             'luna_active': sum(x.get('lane') == 'luna' for x in active),
             'luna_pending': [x for x in index if x['status'] == 'pending'],

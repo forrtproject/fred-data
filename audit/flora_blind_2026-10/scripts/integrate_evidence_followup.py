@@ -26,6 +26,11 @@ def integrate():
         resultpath = F / 'argon' / (rid + '.result.json')
         result = json.loads(resultpath.read_text())
         expected = {tuple(x) for x in inspection['approved_keys']}
+        superseded = {tuple(x) for x in inspection.get('superseded_keys', [])}
+        assert superseded <= expected
+        if superseded:
+            assert inspection.get('supersession_reason'), 'New evidence supersession needs provenance'
+        expected -= superseded
         decisions = [x for x in result['decisions'] if a.decision_key(x) in expected]
         assert len(decisions) == len(expected) and len({a.decision_key(x) for x in decisions}) == len(expected)
         sourcepath = Path(snapshot['works'][request['file_key']]['source_path'])

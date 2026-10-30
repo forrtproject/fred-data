@@ -22,6 +22,11 @@ def integrate():
         validation = json.loads((F / 'candidate_reviews' / (rid + '.validation.json')).read_text())
         assert validation['valid_envelope']
         approved = {tuple(x) for x in inspection['approved_keys']}
+        superseded = {tuple(x) for x in inspection.get('superseded_keys', [])}
+        assert superseded <= approved
+        if superseded:
+            assert inspection.get('supersession_reason'), 'New evidence supersession needs provenance'
+        approved -= superseded
         fields = inspection.get('review_kind') == 'fields'
         def approval_key(d):
             return (d['file_key'], str(d['input_row_index']), d['field']) if fields else (d['file_key'], d['target_index'])

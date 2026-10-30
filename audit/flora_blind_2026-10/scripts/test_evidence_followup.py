@@ -1,5 +1,6 @@
 """Guard failures that could incorrectly add/exclude missing originals."""
 import json
+import hashlib
 from pathlib import Path
 import tempfile
 import unittest
@@ -9,6 +10,82 @@ import evidence_followup_controller as ctl
 import compare as comparison
 from promote_followup_sources import target_mapping
 from check_project_endpoints import endpoint
+
+
+class AdditionalPrimaryReportGuards(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        (self.root / 'texts').mkdir()
+        (self.root / 'texts/abc.txt').write_text('Frozen base source.')
+        private = self.root / 'evidence_followup/private'
+        private.mkdir(parents=True)
+        self.source = private / 'report.txt'
+        self.source.write_text('An independently recovered primary report.')
+        self.code = private / 'code.json'
+        self.code.write_text(json.dumps(dict(work_key='work', status='done',
+            text_sha256=hashlib.sha256(self.source.read_bytes()).hexdigest(), evidence_level='full_text')))
+        self.item = dict(collection_file_key='abc', report_id='one', work_key='work',
+            status='approved_for_comparison', text_path=str(self.source),
+            text_sha256=hashlib.sha256(self.source.read_bytes()).hexdigest(),
+            blind_coding_path=str(self.code), blind_coding_sha256=hashlib.sha256(self.code.read_bytes()).hexdigest(),
+            source_url='https://example.org/primary')
+        self.registry = self.root / 'evidence_followup/additional_reports/approved_sources.json'
+        self.registry.parent.mkdir()
+        self.save_registry()
+
+    def save_registry(self):
+        self.registry.write_text(json.dumps({'reports': [self.item]}))
+
+    def test_verified_supplement_preserves_frozen_source_and_exact_report_text(self):
+        base = self.root / 'texts/abc.txt'
+        before = base.read_bytes()
+        combined = comparison.primary_text(self.root, 'abc', 'work')
+        self.assertTrue(combined.startswith(before.decode()))
+        self.assertTrue(combined.endswith(self.source.read_text()))
+        self.assertEqual(base.read_bytes(), before)
+
+    def test_changed_primary_source_or_blind_coding_is_rejected(self):
+        for path in (self.source, self.code):
+            with self.subTest(path=path.name):
+                before = path.read_bytes()
+                path.write_bytes(before + b' ')
+                with self.assertRaises(AssertionError):
+                    comparison.primary_text(self.root, 'abc', 'work')
+                path.write_bytes(before)
+
+    def test_wrong_work_and_source_outside_private_directory_are_rejected(self):
+        with self.assertRaises(AssertionError):
+            comparison.primary_text(self.root, 'abc', 'other-work')
+        self.item['text_path'] = str(self.root / 'texts/abc.txt')
+        self.save_registry()
+        with self.assertRaises(AssertionError):
+            comparison.primary_text(self.root, 'abc', 'work')
+
+    def test_old_approved_review_cannot_replay_over_changed_primary_evidence(self):
+        import integrate_candidate_reviews as integrator
+        followup = self.root / 'evidence_followup'
+        reviews = followup / 'candidate_reviews'
+        reviews.mkdir()
+        requests = followup / 'candidate_requests'
+        requests.mkdir()
+        (requests / 'index.json').write_text('[]')
+        (reviews / 'parent_inspection.json').write_text(json.dumps({'reviews': {'old': {
+            'status': 'approved', 'reason': 'Prior source limit was inspected.',
+            'approved_keys': [['abc', '1', 'outcome']],
+            'superseded_keys': [['abc', '1', 'outcome']],
+            'supersession_reason': 'New complete report resolves the earlier source gap.',
+            'review_kind': 'fields'}}}))
+        (reviews / 'old.validation.json').write_text(json.dumps({'valid_envelope': True, 'records': []}))
+        adjs = self.root / 'adjudications'
+        adjs.mkdir()
+        newer = adjs / 'abc.json'
+        newer.write_text('{"decisions": [{"field": "outcome", "new_primary_evidence": true}]}')
+        before = newer.read_bytes()
+        with patch.object(integrator, 'R', self.root), patch.object(integrator, 'F', followup):
+            self.assertEqual(integrator.integrate()['approved_rechecks_or_additions'], 0)
+        self.assertEqual(newer.read_bytes(), before)
 
 
 class OmissionEvidenceGuards(unittest.TestCase):
@@ -72,6 +149,19 @@ class OmissionEvidenceGuards(unittest.TestCase):
             {'lane': 'argon_runner', 'status': 'running', 'slot_cost': 4},
             {'lane': 'argon_native', 'status': 'running', 'slot_cost': 1}]}))
         self.assertIsNone(ctl.prepare_candidate_review())
+
+    def test_additional_acquisition_reserves_capacity_and_luna_restores_after_completion(self):
+        state = {'status': 'active', 'max_parallel_luna': 3, 'tasks': [
+            {'lane': 'additional_acquisition', 'status': 'running', 'slot_cost': 2}]}
+        path = self.f / 'state.json'
+        path.write_text(json.dumps(state))
+        with patch.object(ctl, 'reconcile_files'):
+            self.assertEqual(ctl.plan()['luna_limit'], 2)
+            self.assertEqual(ctl.plan()['slot_cost'], 2)
+            state['tasks'][0]['status'] = 'completed'
+            path.write_text(json.dumps(state))
+            self.assertEqual(ctl.plan()['luna_limit'], 3)
+            self.assertEqual(ctl.plan()['slot_cost'], 0)
 
     def test_source_upgrade_cannot_silently_drop_an_identified_original(self):
         with self.assertRaises(ValueError):

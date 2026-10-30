@@ -46,3 +46,11 @@ Read only assigned paths; do not read datasets, unrelated queues, FReD, pipeline
 or main checkout. Do not delegate, use Git or modify authoritative files. Write
 only the assigned result and adjacent temporary file by atomic rename. Return
 counts and output path only. The parent independently checks all final decisions.
+
+Before saving, check every decision contains the exact keys method="argon",
+reason and location; a rationale key is not a substitute. Check each original's
+actual author list, title and tested experiment against its report. In a previous
+invalid reply, Last-Place Aversion's six-person allocation experiment was confused
+with another estate-tax survey, Huck/Seltzer/Wallace with Huck/Luenser/Tyran, and
+Kirchler's Thar She Bursts with Hussam's Thar She Blows. Such identity substitutions
+invalidate a judgment even when a generic stock sentence is a literal quote.

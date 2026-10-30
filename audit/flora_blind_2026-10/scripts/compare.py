@@ -270,7 +270,44 @@ def load_coding(root, file_key, work_key, schema):
         return coding, 'saved text hash mismatch', ''
     if coding.get('evidence_level') not in {'abstract', 'full_text'}:
         return coding, 'missing evidence level', ''
-    return coding, '', raw.decode('utf-8-sig', errors='replace')
+    return coding, '', primary_text(root, file_key, work_key, raw.decode('utf-8-sig', errors='replace'))
+
+
+def primary_text(root, file_key, work_key, base=None):
+    """Read approved additional primary reports without changing frozen base files.
+
+    Base blind coding/source hashes and in-flight relay inputs stay immutable.
+    Additional documents have independent parent verification and fresh blinded
+    coding; their exact bytes and work identity are checked before comparison.
+    """
+    if base is None:
+        base = (root / 'texts' / (file_key + '.txt')).read_bytes().decode('utf-8-sig', errors='replace')
+    registry = root / 'evidence_followup/additional_reports/approved_sources.json'
+    if not registry.exists():
+        return base
+    value = json.loads(registry.read_text())
+    parts = [base]
+    seen = set()
+    private = (root / 'evidence_followup/private').resolve()
+    for item in value['reports']:
+        if item['collection_file_key'] != file_key or item['status'] != 'approved_for_comparison':
+            continue
+        assert item['work_key'] == work_key, 'Additional source belongs to another work'
+        assert item['report_id'] not in seen, 'Duplicate supplemental report'
+        seen.add(item['report_id'])
+        path = Path(item['text_path']).resolve()
+        codepath = Path(item['blind_coding_path']).resolve()
+        assert path.is_relative_to(private) and codepath.is_relative_to(private), 'Unapproved source location'
+        raw = path.read_bytes()
+        coderaw = codepath.read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == item['text_sha256'], 'Additional source hash changed'
+        assert hashlib.sha256(coderaw).hexdigest() == item['blind_coding_sha256'], 'Fresh blind coding hash changed'
+        code = json.loads(coderaw)
+        assert code['work_key'] == work_key and code['status'] == 'done'
+        assert code['text_sha256'] == item['text_sha256'] and code['evidence_level'] == 'full_text'
+        parts.append('\n\nVERIFIED ADDITIONAL PRIMARY REPORT: ' + item['report_id'] +
+                     '\nSOURCE URL: ' + item['source_url'] + '\n' + raw.decode('utf-8-sig', errors='replace'))
+    return ''.join(parts)
 
 
 def valid_decision(decision, text):
@@ -790,6 +827,16 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
                        'not final follow-up counts. All outstanding full-text fields, primary-source recovery '
                        'and exhaustive omission checks are in progress. See '
                        '[evidence_followup/README.md](evidence_followup/README.md) and its live queues.\n\n' + report_text)
+        registry = root / 'evidence_followup/additional_reports/approved_sources.json'
+        if registry.exists():
+            approved_reports = [x for x in json.loads(registry.read_text())['reports']
+                                if x['status'] == 'approved_for_comparison']
+            report_text += ('\nAdditional primary evidence includes ' + str(len(approved_reports)) +
+                            ' separately recovered individual reports, each independently identity-checked, '
+                            'freshly blindly coded and hash-verified. Their exact texts supplement the '
+                            'collection evidence without changing the base files used by active reviews. '
+                            'Source provenance and parent decisions are in '
+                            '[additional_reports](evidence_followup/additional_reports/parent_decisions.json).\n')
     (output / 'REPORT.md').write_text(report_text, encoding='utf-8')
     return {'rows': len(results), 'works': len(works), 'missing_targets': len(missing),
             'disagreements': len(disagreements), 'output_dir': str(output.resolve())}

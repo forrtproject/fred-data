@@ -45,3 +45,24 @@ Parent review of conflicting original-reference judgments uses integration/revie
 The current confirmed_missing_references.csv contains only integrated, source-supported omissions; unresolved_missing_candidates.csv is separate. Both remain provisional until the exhaustive recheck finishes. Root final_counts.json and prior phase completion metadata are historical; current live counts are in integration/progress.json and run_manifest.evidence_followup.latest_integrated_counts. Refresh remaining_fields.csv using scripts/refresh_followup_progress.py after compare.py. Do not rebuild the running relay snapshot.
 
 Before approval, inspect each exact request key and immutable expert result, full original-specific primary context, whole-author message, literal quote and all shipped identities. Source validators provide independent context checks, not final scientific verdicts. Parent inspection files record both approved keys and withheld scope objections. Native field reviews use the same validation/integrator with review_kind=fields and approved_keys=[file_key,string input_row_index,field]; candidate approvals use [file_key,target_index].
+
+Six additional individual primary reports were recovered after collection-level
+source gaps were identified: Paxton2012, OSC Janssen2008Study1, Huck/Seltzer/Wallace2011,
+Kuziemko2014Experiment2, Kessler/Roth2012 and Duffy/Puzzello2014. The parent verified
+identity/completeness and a NEW blind Sol child coded all six. Their private text
+and coding hashes are registered in additional_reports/approved_sources.json.
+compare.primary_text appends only approved, hash-checked exact reports while the
+233 base sources in the active relay snapshot remain byte-for-byte unchanged.
+Four outcome gaps were resolved from explicit whole-author judgments; two existing
+decisions were corroborated. No extra missing pair was created. Prior raw reviews
+and approval keys remain intact; superseded_keys prevents replay of an older
+undeterminable judgment over genuinely new primary evidence. Parent provenance is
+additional_reports/parent_decisions.json. verify_integration also checks each of
+these six fresh schemas, hashes, literal quotes and report-specific decisions.
+
+All140Luna packets have now been processed, including source replacements/additions.
+One six-target packet exhausted its two attempts without usable literal quotes;
+its synthetic needs_more_evidence checkpoint is technical triage, not scientific
+closure. Every candidate remains subject to source/identity adjudication. Independent
+source-context validators process finite nonoverlapping sets of completed Argon
+field replies; all model and validation tasks count toward the combined ceiling.
