@@ -6,7 +6,7 @@ Any field is verified for **1621/2,164 effects (74.9%)**, compared with 1,605 be
 
 ## Acquisition and evidence
 
-The Mac pass uses real Chrome, Apple Events JavaScript, and signed-in Birkbeck EBSCO/publisher access. It is separate from both completed Linux runs and has its own acquisition deadline of 30 October 2026, 11:53 UTC. This report covers private batch 01 only. Later Mac batches and the acquisition end state must be reported separately; batch 01 completion does not imply that all remaining sources have been recovered.
+The Mac pass uses real Chrome, Apple Events JavaScript, and signed-in Birkbeck EBSCO/publisher access. The acquisition pass ended at 10:44 UTC on 30 October 2026, within its separate 11:53 UTC ceiling. It recovered 58 full articles after assessing 100 source groups; 42 assessed groups remained unresolved and 137 were not attempted after the active routes stopped. This report covers only private batch 01. The additional 24 articles in batch 02 are entering separate blind validation; source acceptance alone establishes no audit-field verification.
 
 All 102 PDF, text, and neutral-input hashes were checked on receipt. Parent checks independently verified actual PDF page counts and freshly parsed PDF title/header and reference sections, retaining the Mac’s visual identity/completeness evidence and source-version labels. Croninger et al.’s article retains an ARTICLE IN PRESS header despite its full journal pagination, so equivalence to any later revision was not assumed.
 
@@ -50,4 +50,4 @@ All 416 pre-Mac confirmed errors and every pre-Mac verified field verdict/correc
 
 Validation includes44 regression tests (33 original, seven protected-integration checks, and four quotation-gap safeguards), all 2,164 checkpoint schemas and export totals, exact retained evidence, baseline preservation assertions, and private content-hash verification.
 
-The Mac acquisition thread may continue until its separate 11:53 UTC deadline. Future verified transfers should be deduplicated against [accepted_sources.json](accepted_sources.json), filtered to eligible still-unavailable sides, and validated through fresh blind batches. Neither historical schedule should be restarted.
+Mac acquisition is complete; do not restart it. The verified batch 02 transfer is being deduplicated against [accepted_sources.json](accepted_sources.json), filtered to eligible still-unavailable sides, and validated through fresh blind batches. Neither historical schedule should be restarted.

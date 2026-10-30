@@ -54,7 +54,7 @@ def main():
     errors = [c for c in gained if c['after'] == 'error']
     summary = {'updated_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
                'baseline_commit': BASE, 'attempted_source_groups': len(accepted),
-               'initial_unavailable_sides': 188, 'accepted_full_article_artifacts': sum(not v.get('source_kind') for v in accepted.values()),
+               'initial_unavailable_sides': sum(len(q['audit_ids']) for q in json.loads((F/'validation_queue.json').read_text())), 'accepted_full_article_artifacts': sum(not v.get('source_kind') for v in accepted.values()),
                'accepted_primary_supplements': sum(v.get('source_kind') == 'primary_supplement' for v in accepted.values()),
                'accepted_primary_author_tables': sum(v.get('source_kind') == 'primary_author_table' for v in accepted.values()),
                'validation_batches': len(json.loads((F / 'validation_queue.json').read_text())),
