@@ -379,50 +379,86 @@ class Relay:
         c = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(c)
         sources = {}
+        errors = []
         for d in decisions:
-            w = assignments[decision_key(d)]
+            key = decision_key(d)
+            w = assignments[key]
             path = w['source_path']
             if path not in sources:
                 sources[path] = Path(path).read_bytes().decode('utf-8')
-            if d.get('quote') and d['quote'] not in sources[path]:
-                raise ValueError('nonliteral primary quote for key ' + repr(decision_key(d)) +
-                                 '; reread exact source ' + path +
-                                 ' and copy a contiguous literal passage, preserving whitespace and line breaks')
-            if (d.get('request_id') != w['request_id'] or d.get('method') != 'argon' or
-                    'corrected_value' not in d or
-                    not all(isinstance(d.get(k), str) and d[k].strip() for k in ('reason', 'location')) or
-                    not c.valid_decision(d, sources[path]) or
-                    not d.get('quote') or d['quote'] not in sources[path]):
-                raise ValueError('invalid schema/method/reason/location/literal primary quote')
-            field, value = d['field'], d['corrected_value']
-            if d['verdict'] == 'undeterminable' or (field == 'missing_row' and d['verdict'] == 'shipped_right'):
+            problems = []
+            quote = d.get('quote')
+            if not isinstance(quote, str) or not quote.strip():
+                problems.append('quote requires a nonempty string')
+            elif quote not in sources[path]:
+                problems.append('nonliteral primary quote; copy a contiguous literal passage, '
+                                'preserving whitespace and line breaks')
+            if isinstance(quote, str) and len(quote) > 6000:
+                problems.append('quote exceeds 6000 characters')
+            if d.get('request_id') != w['request_id']:
+                problems.append('request_id must match the assigned request')
+            if d.get('method') != 'argon':
+                problems.append('method must be "argon"')
+            verdict = d.get('verdict')
+            if verdict not in ('shipped_right', 'blind_right', 'both_wrong', 'undeterminable'):
+                problems.append('verdict must be one of: shipped_right, blind_right, both_wrong, undeterminable')
+            for component in ('reason', 'location'):
+                if not isinstance(d.get(component), str) or not d[component].strip():
+                    problems.append(component + ' requires a nonempty string')
+            field, value = d['field'], d.get('corrected_value')
+            if 'corrected_value' not in d:
+                problems.append('schema requires corrected_value')
+            elif verdict == 'undeterminable' or (field == 'missing_row' and verdict == 'shipped_right'):
                 if value is not None:
-                    raise ValueError('requires null')
-                continue
-            if value is None:
-                raise ValueError('resolved field requires value')
-            if field == 'type' and value not in ('replication', 'reproduction', 'not_a_replication'):
-                raise ValueError('invalid type vocabulary')
-            if field == 'outcome':
-                if isinstance(value, dict):
-                    if (set(value) != {'outcome_computation', 'outcome_robustness'} or
-                            value['outcome_computation'] not in set(c.COMPUTATION.values()) or
-                            value['outcome_robustness'] not in set(c.ROBUSTNESS.values()) or
-                            set(value.values()) == {'not checked'}):
-                        raise ValueError('invalid reproduction axes')
-                elif not isinstance(value, str) or value not in c.REPLICATION:
-                    raise ValueError('invalid outcome vocabulary')
-            if field in ('outcome_computation', 'outcome_robustness'):
-                allowed = c.COMPUTATION if field == 'outcome_computation' else c.ROBUSTNESS
-                if not isinstance(value, str) or value not in set(allowed.values()):
-                    raise ValueError('invalid axis vocabulary')
-            if field == 'original' and (not isinstance(value, (str, dict)) or not value):
-                raise ValueError('invalid original value')
-            if field == 'missing_row':
-                if (not isinstance(value, dict) or value.get('record_type') not in ('replication', 'reproduction') or
-                        value.get('outcome') != 'cannot_be_determined' or
-                        not all(value.get(k) for k in ('authors', 'year', 'title'))):
-                    raise ValueError('invalid missing identity shape/vocabulary')
+                    problems.append('corrected_value requires null for this verdict')
+            elif value is None:
+                problems.append('resolved field requires value')
+            else:
+                if value in ('', {}, []):
+                    problems.append('resolved field requires a nonempty corrected_value')
+                if field == 'type' and value not in ('replication', 'reproduction', 'not_a_replication'):
+                    problems.append('invalid type vocabulary; allowed values: replication, reproduction, not_a_replication')
+                if field == 'outcome':
+                    if isinstance(value, dict):
+                        if set(value) != {'outcome_computation', 'outcome_robustness'}:
+                            problems.append('reproduction axes require exactly outcome_computation and outcome_robustness')
+                        for axis, allowed in (('outcome_computation', c.COMPUTATION),
+                                              ('outcome_robustness', c.ROBUSTNESS)):
+                            if not isinstance(value.get(axis), str) or value[axis] not in set(allowed.values()):
+                                problems.append(axis + ' has invalid axis vocabulary; allowed values: ' +
+                                                ', '.join(sorted(set(allowed.values()))))
+                        if value and all(v == 'not checked' for v in value.values()):
+                            problems.append('invalid reproduction axes; both axes cannot be "not checked"')
+                    elif not isinstance(value, str) or value not in c.REPLICATION:
+                        problems.append('invalid outcome vocabulary; allowed values: ' + ', '.join(sorted(c.REPLICATION)))
+                if field in ('outcome_computation', 'outcome_robustness'):
+                    allowed = c.COMPUTATION if field == 'outcome_computation' else c.ROBUSTNESS
+                    if not isinstance(value, str) or value not in set(allowed.values()):
+                        problems.append('invalid axis vocabulary; allowed values: ' + ', '.join(sorted(set(allowed.values()))))
+                if field == 'original' and (not isinstance(value, (str, dict)) or not value):
+                    problems.append('invalid original value; requires a nonempty string or object')
+                if field == 'missing_row':
+                    if not isinstance(value, dict):
+                        problems.append('missing identity requires an object with record_type, outcome, authors, year, title')
+                    else:
+                        if value.get('record_type') not in ('replication', 'reproduction'):
+                            problems.append('invalid missing identity record_type; allowed values: replication, reproduction')
+                        if value.get('outcome') != 'cannot_be_determined':
+                            problems.append('invalid missing identity outcome; allowed value: cannot_be_determined')
+                        missing = [k for k in ('authors', 'year', 'title') if not value.get(k)]
+                        if missing:
+                            problems.append('missing required identity components (must be nonempty): ' + ', '.join(missing))
+            # Retain the comparison validator's constraints as a final compatibility guard.
+            # Malformed values must not prevent diagnostics for the remaining allocated keys.
+            try:
+                valid = c.valid_decision(d, sources[path])
+            except (TypeError, ValueError):
+                valid = False
+            if not valid and not problems:
+                problems.append('invalid decision schema/literal primary quote')
+            errors.extend('key ' + repr(key) + ': ' + problem for problem in problems)
+        if errors:
+            raise ValueError('\n'.join(errors))
         return obj
 
     def run(self, control, owner, workers=1, timeout=660, transport=None, max_calls=None):

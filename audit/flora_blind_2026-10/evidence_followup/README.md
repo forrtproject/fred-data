@@ -1,5 +1,9 @@
 # Full evidence follow-up is active
 
+Current verified snapshot (2026-10-30T19:35:42.730235+00:00): **458 rows with confirmed errors; 2,326 of 2,818 rows fully resolved; 137 genuinely absent original-reference pairs**. The separate unresolved export contains 526 candidates. Unresolved evidence covers 176 full-text, 264 abstract/partial and 52 no-text rows; 1,016 applicable fields remain unverified. Every accepted correction/reference quotation passed literal-source checks; the source dataset hash is unchanged.
+
+The original field queue is 237/271 validated, with eight exhausted and 26 pending requests; scientific dispositions are inspected separately. The finite 114-bundle candidate snapshot has 13 validated, three exhausted and 98 pending bundles. Late/scoped questions remain outside that immutable snapshot for a new finite round. Two bounded model lanes, one source validator and the owned recovery schedule are active. The relay now reports all keyed mechanical errors together; 140 script tests, 23 field-runner tests and mocked JavaScript lifecycle tests passed, without changing acceptance requirements or any spent attempt. See RESUME.md and durable state/progress files. This is an interim checkpoint.
+
 ## Bounded field recovery (active after parent process inspection)
 
 At the end of wave 2, the immutable 271-request field snapshot had 211 validated
@@ -160,12 +164,12 @@ field replies; all model and validation tasks count toward the combined ceiling.
 
 The native candidate transport is paused after repeated harness failures. The finite CLI candidate snapshot freezes114bundles/421requests; its exact task, worker reservation and attempt budgets live in state.json and candidate_cli/control.json. Parent reconciliation can collect completed bundles during execution. Permitted retries receive keyed mechanical feedback; raw replies and earlier budgets remain unchanged. See candidate_cli/README.md and RESUME.md for the active round and two pinned integration paths.
 
-The parent independently recorded128new literal primary quotations for legacy decisions whose scientific passage and verdict are unchanged. Seventy-five further quotation/context cases, plus one newly exposed target, are temporarily withheld from confirmed exports while source proof is inspected. They remain in the unresolved export or row-field queue with canonical histories preserved. The supporting/objection labels of a technical source inspector never decide scientific correctness. Final verification rejects nonliteral accepted corrections or missing-reference quotations.
+The parent independently recorded128new literal primary quotations for legacy decisions whose scientific passage and verdict are unchanged. The initial inspection temporarily withheld75further quotation/context cases plus one newly exposed target. Current pending scope/proof holds are41after independent parent inspection; their durable dispositions are in integration/strict_literal_parent_pending_0000.json. They remain in the unresolved export or row-field queue with canonical histories preserved. The supporting/objection labels of a technical source inspector never decide scientific correctness. Final verification rejects nonliteral accepted corrections or missing-reference quotations.
 
 A complete primary publisher abstract was recovered where the old saved abstract was empty. Fresh blinded coding and hash/schema/literal checks support that source upgrade at abstract level; it is not full text. Sixty-one other recovered abstracts add no information. Two report/version identity conflicts remain explicit rather than being silently substituted. See integration/abstract_delta_parent_dispositions.json.
 
 
-## Bounded recovery and source integration checkpoint
+## Historical transport and integration checkpoint (17:40 UTC)
 
 The first field relay stopped with201of271requests validated;711decisions retained,8exhausted,1retry pending and61unattempted. Its run termination is not scientific closure. Candidate transport is temporarily circuit-blocked after repeated local print/process timeouts. Diagnosis establishes incomplete turns and lifecycle issues without an established quota/auth failure. A technical child is repairing exact owned-process cleanup and strict complete-answer collection; no deadlines, models or spent budgets are changed. Parent sets max_workers:1 before any diagnosed restart. Bounded native dispatch retains durable one-call rounds and exact task registration; see RESUME.md for current tasks and remaining evidence checks.
 

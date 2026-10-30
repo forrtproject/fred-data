@@ -135,7 +135,7 @@ class RelayTest(unittest.TestCase):
                     'A contiguous literal primary quote.', 'A contiguous  literal primary quote.'))
             else:
                 self.assertIn('STRICT VALIDATION FEEDBACK', argv[2])
-                self.assertIn('nonliteral primary quote for key', argv[2])
+                self.assertIn('nonliteral primary quote', argv[2])
                 self.assertIn('Previous raw reply (read only)', argv[2])
             return result
         self.relay.run(self.control, 'owner', transport=transport)
@@ -522,6 +522,121 @@ class RelayTest(unittest.TestCase):
         obj['decisions'][0].update(verdict='blind_right', corrected_value={'title': 'incomplete'})
         with self.assertRaises(ValueError):
             self.relay.validate('## Answer\n' + json.dumps(obj), b)
+
+    def test_quote_and_empty_identity_title_reported_for_same_key(self):
+        self.add(fields=[dict(field='missing_row', target_index=3)])
+        self.relay.prepare()
+        b = self.relay.load()['bundles'][0]
+        obj = self.response(b)
+        obj['decisions'][0].update(
+            verdict='blind_right', quote='A contiguous  literal primary quote.',
+            corrected_value=dict(record_type='replication', outcome='cannot_be_determined',
+                                 authors='Fixture author', year=2000, title=''))
+        before = json.dumps(obj)
+        with self.assertRaises(ValueError) as caught:
+            self.relay.validate('## Answer\n' + before, b)
+        lines = str(caught.exception).splitlines()
+        self.assertEqual(len(lines), 2)
+        self.assertTrue(all(line.startswith("key ('file', '', 3, 'missing_row'): ") for line in lines))
+        self.assertIn('nonliteral primary quote', lines[0])
+        self.assertIn('missing required identity components (must be nonempty): title', lines[1])
+        self.assertNotIn(obj['decisions'][0]['quote'], str(caught.exception))
+        self.assertEqual(json.dumps(obj), before)
+
+    def test_all_allocated_keys_and_independent_checks_reported(self):
+        self.add(fields=[dict(field='missing_row', target_index=3),
+                         dict(field='type', input_row_index='1'),
+                         dict(field='outcome', input_row_index='2'),
+                         dict(field='outcome_computation', input_row_index='3'),
+                         dict(field='outcome_robustness', input_row_index='4'),
+                         dict(field='original', input_row_index='5')])
+        self.relay.prepare()
+        b = self.relay.load()['bundles'][0]
+        obj = self.response(b)
+        decisions = obj['decisions']
+        decisions[0].update(verdict='blind_right', quote='Not literal.',
+                            corrected_value=dict(record_type='unknown', outcome='unknown', title=''))
+        decisions[1].update(method='wrong', request_id='wrong', reason='', location='',
+                            verdict='unknown', corrected_value='unknown', quote=['wrong shape'])
+        decisions[2]['corrected_value'] = dict(outcome_computation=[], outcome_robustness='unknown', extra=True)
+        decisions[3].update(verdict='undeterminable', corrected_value='not null')
+        del decisions[4]['corrected_value']
+        decisions[5]['corrected_value'] = []
+        raw = '## Answer\n' + json.dumps(obj)
+        with self.assertRaises(ValueError) as caught:
+            self.relay.validate(raw, b)
+        message = str(caught.exception)
+        for d in decisions:
+            self.assertIn('key ' + repr(m.decision_key(d)) + ': ', message)
+        for expected in ('nonliteral primary quote', 'authors, year, title',
+                         'allowed values: replication, reproduction',
+                         'allowed value: cannot_be_determined', 'method must', 'request_id must',
+                         'reason requires', 'location requires', 'verdict must', 'invalid type vocabulary',
+                         'quote requires', 'require exactly', 'outcome_computation has invalid axis vocabulary',
+                         'outcome_robustness has invalid axis vocabulary', 'requires null',
+                         'schema requires corrected_value', 'invalid original value'):
+            self.assertIn(expected, message)
+        with self.assertRaises(ValueError) as repeated:
+            self.relay.validate(raw, b)
+        self.assertEqual(str(repeated.exception), message)
+
+    def test_aggregated_feedback_reaches_ordinary_retry_without_changing_base(self):
+        self.add(fields=[dict(field='missing_row', target_index=3)])
+        self.relay.prepare()
+        b = self.relay.load()['bundles'][0]
+        frozen = (m.encoded(b['envelope']), b['prompt'])
+        def transport(argv, output, timeout):
+            rc = self.transport(argv, output, timeout)
+            if len(self.calls) == 1:
+                obj = self.response(b)
+                obj['decisions'][0].update(
+                    verdict='blind_right', quote='Not literal.',
+                    corrected_value=dict(record_type='replication', outcome='cannot_be_determined',
+                                         authors='Fixture author', year=2000, title=''))
+                output.write_text('## Answer\n' + json.dumps(obj))
+            else:
+                self.assertIn('nonliteral primary quote', argv[2])
+                self.assertIn('missing required identity components (must be nonempty): title', argv[2])
+            return rc
+        self.relay.run(self.control, 'owner', transport=transport)
+        ledger = self.relay.ledger(b)
+        self.assertEqual(len(ledger['attempts']), 2)
+        self.assertEqual(ledger['status'], 'validated')
+        self.assertEqual((m.encoded(self.relay.load()['bundles'][0]['envelope']),
+                          self.relay.load()['bundles'][0]['prompt']), frozen)
+
+    def test_accepted_values_return_raw_parsed_object_unchanged(self):
+        self.add(fields=[dict(field='missing_row', target_index=3),
+                         dict(field='original', input_row_index='1'),
+                         dict(field='outcome', input_row_index='2')])
+        self.relay.prepare()
+        b = self.relay.load()['bundles'][0]
+        for original in ('  fixture  ', {'action': 'remove_row'}, {'extra': ['fixture']}):
+            obj = self.response(b)
+            obj['decisions'][0].update(verdict='blind_right', corrected_value=dict(
+                record_type='reproduction', outcome='cannot_be_determined',
+                authors=['Fixture author'], year=2000, title='  ', extra=True))
+            obj['decisions'][1].update(corrected_value=original, extra=['preserved'])
+            obj['decisions'][2]['corrected_value'] = dict(
+                outcome_computation='not checked', outcome_robustness='robust')
+            raw = json.dumps(obj)
+            self.assertEqual(self.relay.validate('## Answer\n' + raw, b), obj)
+            self.assertEqual(json.dumps(obj), raw)
+
+    def test_additional_rejections_remain_rejected(self):
+        self.add(fields=[dict(field='outcome', input_row_index='1')])
+        self.relay.prepare()
+        b = self.relay.load()['bundles'][0]
+        for changes in (dict(quote=' '), dict(quote=42), dict(quote='x' * 6001),
+                        dict(verdict=[]), dict(reason=42), dict(location=True),
+                        dict(corrected_value=None), dict(corrected_value={}),
+                        dict(corrected_value=dict(outcome_computation='not checked', outcome_robustness='not checked')),
+                        dict(corrected_value=dict(outcome_computation='technical failure')),
+                        dict(corrected_value=dict(outcome_computation={}, outcome_robustness=[]))):
+            obj = self.response(b)
+            obj['decisions'][0].update(changes)
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                self.relay.validate('## Answer\n' + json.dumps(obj), b)
 
     def test_full_source_hash_change_blocks(self):
         self.add()
