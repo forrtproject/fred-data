@@ -1,16 +1,16 @@
 # FReD statistics audit
 
-**Mac continuation batch checked — 2026-10-30T12:57:53.744508+00:00.** Current integrated results contain 440 confirmed field errors. Retrieval alone is not verification.
+**Mac continuation completed — 2026-10-30T13:41:02.367057+00:00.** Current integrated results contain 441 confirmed field errors. Retrieval alone is not verification.
 
-The original bounded audit finished on 2026-10-29T18:41:45.057314+00:00 with 408 confirmed field errors across 315 rows, 1593 effects with at least one verified field and 81 with all seven. A separately authorised source-acquisition follow-up is recorded in [source_followup/README.md](source_followup/README.md). Current counts below include only integrated, evidence-validated follow-up results; the original deadlines and completion record are unchanged. A further separately authorised Mac recovery pass starts from 416 confirmed errors across 322 rows and 1,605 effects with any verified field. Its acquisition receipts, protected blind validation batches and independent reviews are in [mac_source_followup/README.md](mac_source_followup/README.md). The completed Linux follow-up and original audit deadlines remain historical; neither schedule was restarted. The Mac pass recovered 58 full articles; its integrated checks added 244 verified field instances, including 17 confirmed errors, relative to the pre-Mac checkpoint. See [Mac recovery findings](mac_source_followup/REPORT.md). A separately authorised Mac continuation starts from 433 confirmed errors. Its received 21 primary texts added 93 verified field instances, including 7 confirmed errors. Acquisition status is active; the new acquisition window is 12:03:33–13:43:33 UTC on 30 October 2026. See [continuation findings](mac_continuation_followup/REPORT.md).
+The original bounded audit finished on 2026-10-29T18:41:45.057314+00:00 with 408 confirmed field errors across 315 rows, 1593 effects with at least one verified field and 81 with all seven. A separately authorised source-acquisition follow-up is recorded in [source_followup/README.md](source_followup/README.md). Current counts below include only integrated, evidence-validated follow-up results; the original deadlines and completion record are unchanged. A further separately authorised Mac recovery pass starts from 416 confirmed errors across 322 rows and 1,605 effects with any verified field. Its acquisition receipts, protected blind validation batches and independent reviews are in [mac_source_followup/README.md](mac_source_followup/README.md). The completed Linux follow-up and original audit deadlines remain historical; neither schedule was restarted. The Mac pass recovered 58 full articles; its integrated checks added 244 verified field instances, including 17 confirmed errors, relative to the pre-Mac checkpoint. See [Mac recovery findings](mac_source_followup/REPORT.md). A separately authorised Mac continuation starts from 433 confirmed errors. Its received 43 primary texts added 126 verified field instances, including 8 confirmed errors. Acquisition status is complete; acquisition ended at 12:40:14 UTC on 30 October 2026 after all 137 remaining groups were assessed (43 recovered, 94 unrecovered). See [continuation findings](mac_continuation_followup/REPORT.md).
 
-The run did not reach the 80% verification goal: even the looser any-field coverage measure is 75.7%; all-seven-field coverage is 4.3%. Access failures, unresolved target identity and unavailable matching metrics remain explicit rather than being counted as verified.
+The run did not reach the 80% verification goal: even the looser any-field coverage measure is 76.1%; all-seven-field coverage is 4.4%. Access failures, unresolved target identity and unavailable matching metrics remain explicit rather than being counted as verified.
 
-Confirmed errors affect 339 effect rows. Counts refer to field instances; an original statistic repeated across replication rows can contribute more than once.
+Confirmed errors affect 340 effect rows. Counts refer to field instances; an original statistic repeated across replication rows can contribute more than once.
 
 The frozen workbook contains 2,164 effects in 432 replication works. Part A screened every effect and flagged 174. 18/185 individual flags are resolved when source-confirmed corrections are applied in memory, affecting 18/174 flagged effects (see `flag_confirmation.csv`). This includes corrected test statistics or analytic n as well as p-values. Separately, 54 flagged effects contain any confirmed field error.
 
-Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 281/2164; all three replication statistics for 478/2164. All seven fields, including author-reported success, are checked for 94/2164. At least one original statistic is evaluable for 1025/2164, at least one replication statistic for 1270/2164, and any of the seven fields for 1639/2164. Individual-field coverage is below.
+Paper checkpoints exist for 2164/2164 effects. All three original statistics are evaluable for 286/2164; all three replication statistics for 478/2164. All seven fields, including author-reported success, are checked for 95/2164. At least one original statistic is evaluable for 1040/2164, at least one replication statistic for 1270/2164, and any of the seven fields for 1646/2164. Individual-field coverage is below.
 
 **Decision to review:** reported success is evaluated for the identified study/outcome. A broad paper-level verdict without a defensible mapping to an individual row remains unverified; the original narrative observation is retained. This conservative scope rule avoids assigning a mixed article outcome to every unidentified component effect.
 
@@ -18,9 +18,9 @@ Confirmed errors include coding omissions only when adjudication establishes the
 
 | Field | Confirmed errors / evaluable | Unverified | Not comparable | All-row error bounds |
 |---|---:|---:|---:|---:|
-| n_o | 37/585 (6.3%) | 1516 | 63 | 1.71%–74.68% |
-| es_value_o | 48/592 (8.1%) | 1285 | 287 | 2.22%–74.86% |
-| pval_value_o | 36/843 (4.3%) | 1317 | 4 | 1.66%–62.71% |
+| n_o | 38/595 (6.4%) | 1506 | 63 | 1.76%–74.26% |
+| es_value_o | 48/603 (8.0%) | 1271 | 290 | 2.22%–74.35% |
+| pval_value_o | 36/855 (4.2%) | 1305 | 4 | 1.66%–62.15% |
 | n_r | 83/976 (8.5%) | 1118 | 70 | 3.84%–58.73% |
 | es_value_r | 36/733 (4.9%) | 1106 | 325 | 1.66%–67.79% |
 | pval_value_r | 74/995 (7.4%) | 1159 | 10 | 3.42%–57.44% |
@@ -56,7 +56,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | Boyce | 7/110 (164; 6) | 3/120 (120; 40) | 6/156 (124; 0) | 24/186 (94; 0) | 8/131 (108; 41) | 13/163 (117; 0) | 31/156 (124; 0) |
 | Br0x | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | BrGp | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) | 0/0 (4; 0) |
-| CORE | 3/42 (70; 2) | 3/24 (79; 11) | 4/47 (67; 0) | 7/62 (42; 10) | 6/50 (48; 16) | 12/69 (45; 0) | 8/75 (39; 0) |
+| CORE | 3/42 (70; 2) | 3/25 (78; 11) | 4/48 (66; 0) | 7/62 (42; 10) | 6/50 (48; 16) | 12/69 (45; 0) | 8/75 (39; 0) |
 | Camereretal2016 | 0/0 (18; 0) | 0/0 (18; 0) | 0/0 (18; 0) | 0/0 (18; 0) | 0/2 (3; 13) | 0/15 (3; 0) | 0/0 (18; 0) |
 | Camereretal2018 | 0/2 (15; 4) | 1/4 (11; 6) | 0/9 (12; 0) | 1/21 (0; 0) | 0/17 (0; 4) | 1/21 (0; 0) | 0/6 (15; 0) |
 | D2LY | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
@@ -79,18 +79,18 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | LyLd | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | ManyLabs4 | 0/0 (15; 3) | 0/0 (18; 0) | 0/0 (18; 0) | 0/1 (14; 3) | 0/18 (0; 0) | 0/18 (0; 0) | 0/4 (14; 0) |
 | ManyLabs5 | 0/10 (10; 0) | 0/12 (7; 1) | 0/13 (7; 0) | 0/20 (0; 0) | 0/20 (0; 0) | 0/14 (6; 0) | 0/10 (10; 0) |
-| Manylabs2 | 1/16 (16; 6) | 1/23 (8; 7) | 0/29 (9; 0) | 2/29 (9; 0) | 0/38 (0; 0) | 1/31 (7; 0) | 5/28 (10; 0) |
+| Manylabs2 | 1/17 (15; 6) | 1/23 (8; 7) | 0/30 (8; 0) | 2/29 (9; 0) | 0/38 (0; 0) | 1/31 (7; 0) | 5/28 (10; 0) |
 | N8pB | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | OKRy | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | OYX0 | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
 | OeGv | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) |
-| OpenMKT | 2/35 (66; 0) | 2/37 (46; 18) | 2/50 (51; 0) | 0/71 (30; 0) | 0/61 (20; 20) | 2/78 (23; 0) | 7/48 (53; 0) |
+| OpenMKT | 2/35 (66; 0) | 2/38 (45; 18) | 2/51 (50; 0) | 0/71 (30; 0) | 0/61 (20; 20) | 2/78 (23; 0) | 7/48 (53; 0) |
 | OpenMKT7 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | Ovkm | 0/1 (0; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | Ow0 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | Q1dl | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | QllV | 0/0 (1; 0) | 0/0 (0; 1) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| R8RN | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
+| R8RN | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | R9dv | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
 | RRR | 0/11 (16; 4) | 0/9 (21; 1) | 1/19 (12; 0) | 5/13 (11; 7) | 1/18 (11; 2) | 1/20 (11; 0) | 0/7 (24; 0) |
 | RYKv | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/1 (2; 0) |
@@ -111,7 +111,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | additional | 10/83 (268; 0) | 22/69 (221; 61) | 9/134 (216; 1) | 8/121 (230; 0) | 4/46 (252; 53) | 7/114 (237; 0) | 29/182 (169; 0) |
 | av | 2/38 (112; 16) | 4/49 (111; 6) | 3/60 (105; 1) | 5/33 (122; 11) | 0/27 (134; 5) | 0/31 (126; 9) | 5/54 (112; 0) |
 | bY2A | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) |
-| bth | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
+| bth | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | curatescience | 2/14 (56; 7) | 0/14 (49; 14) | 2/30 (47; 0) | 6/26 (51; 0) | 2/30 (39; 8) | 8/38 (39; 0) | 2/24 (53; 0) |
 | curatescience241 | 0/1 (0; 0) | 0/0 (0; 1) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | curatescience244 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
@@ -131,7 +131,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | curatescience73 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 1/1 (0; 0) | 0/1 (0; 0) | 1/1 (0; 0) | 0/0 (1; 0) |
 | curatescience75 | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 1/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
 | d24p | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) | 0/1 (0; 0) |
-| datareplicada | 0/5 (12; 0) | 3/6 (9; 2) | 0/7 (10; 0) | 0/5 (12; 0) | 1/10 (5; 2) | 1/6 (11; 0) | 2/17 (0; 0) |
+| datareplicada | 0/6 (11; 0) | 3/9 (6; 2) | 0/10 (7; 0) | 0/5 (12; 0) | 1/10 (5; 2) | 1/6 (11; 0) | 2/17 (0; 0) |
 | dqv | 0/0 (3; 0) | 0/2 (1; 0) | 0/3 (0; 0) | 0/0 (0; 3) | 0/3 (0; 0) | 3/3 (0; 0) | 0/3 (0; 0) |
 | e | 0/0 (13; 0) | 0/0 (13; 0) | 0/0 (13; 0) | 0/0 (13; 0) | 0/13 (0; 0) | 0/13 (0; 0) | 2/13 (0; 0) |
 | e227 | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
@@ -155,7 +155,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 | mJDj | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | mxyQ | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/1 (0; 0) |
 | odonnell | 0/2 (4; 0) | 0/3 (2; 1) | 0/4 (2; 0) | 0/5 (1; 0) | 0/4 (1; 1) | 0/5 (1; 0) | 0/4 (2; 0) |
-| osc | 2/30 (67; 2) | 1/28 (62; 9) | 1/29 (70; 0) | 0/25 (73; 1) | 0/15 (80; 4) | 1/21 (78; 0) | 1/50 (49; 0) |
+| osc | 3/36 (61; 2) | 1/33 (55; 11) | 1/33 (66; 0) | 0/25 (73; 1) | 0/15 (80; 4) | 1/21 (78; 0) | 1/50 (49; 0) |
 | plLK | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) | 0/0 (1; 0) |
 | q | 0/1 (1; 0) | 0/0 (2; 0) | 0/0 (2; 0) | 2/2 (0; 0) | 2/2 (0; 0) | 1/2 (0; 0) | 0/2 (0; 0) |
 | q8xv | 0/1 (2; 0) | 0/0 (3; 0) | 0/0 (3; 0) | 0/1 (2; 0) | 0/0 (2; 1) | 0/1 (2; 0) | 0/1 (2; 0) |
@@ -439,6 +439,7 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 - Row 932, `n_o`: `194` → `179`. p. 229 (PDF p. 7), Study 2, Results and Discussion, first paragraph. [Paper](https://doi.org/10.1086/669476).
 - Row 938, `n_o`: `24` → `14`. p. 362 (PDF p. 10), Experiment 3, Method. [Paper](https://doi.org/10.1037/0278-7393.34.2.353).
 - Row 944, `es_value_o`: `0.26` → `0.326`. Results, paragraph 2. [Paper](https://doi.org/10.1111/j.1467-9280.2008.02092.x).
+- Row 952, `n_o`: `115` → `120`. p. 257 (PDF p. 3), Method—Participants; p. 258 (PDF p. 4), Results—Apartment Choice and Table 1. [Paper](https://doi.org/10.1111/j.1467-9280.2008.02077.x).
 - Row 960, `reported_success`: `successful` → `statistically successful but flawed`. Summary of Replication Attempt, line 62; Commentary, line 67. [Paper](https://doi.org/10.1126/science.aac4716). [Locator URL](https://osf.io/gxvd3).
 - Row 970, `pval_value_o`: `0.001` → `0.010`. p. 408 (PDF p. 4), Results, top of right column. [Paper](https://doi.org/10.1111/j.1467-9280.2008.02100.x).
 - Row 987, `n_o`: `18` → `33`. Published pp. 308–309 (PDF pp. 7–8), Experiment 3, Method—Participants and Results. [Paper](https://doi.org/10.1037/0278-7393.34.2.302).
@@ -645,9 +646,9 @@ Provenance-prefix breakdown uses text before the first underscore in `fred_id` (
 103 fields exhausted the allowed adjudication attempts and remain unresolved. The remaining dispatch queue contains 0 fields in 0 source groups; after the dispatch cutoff these remain unverified. Failed or truncated replies establish no error unless an individual complete response passes source validation.
 The separately authorised source follow-up has 0 additional fields awaiting validated adjudication. These remain unverified until their evidence and target identity pass review.
 
-- original: done: 1481 sides.
-- original: locator_insufficient: 353 sides.
-- original: paper_unavailable: 330 sides.
+- original: done: 1497 sides.
+- original: locator_insufficient: 359 sides.
+- original: paper_unavailable: 308 sides.
 - replication: done: 1577 sides.
 - replication: locator_insufficient: 389 sides.
 - replication: paper_unavailable: 198 sides.
@@ -667,8 +668,8 @@ Detailed access/target reasons are retained in the per-effect JSON checkpoints. 
 - 11 sides: Paper and authors supplementary pre-study report available. Supplied https://osf.io/nfskq is a file locator, but download returned HTTP 403; no retry. Neutral description repeated across 11 assigned IDs does not identify lab, pooled vs pairwise contrast, confirmatory vs extended pilot, or test. No mapping inferred from ID order.
 - 10 sides: Locator does not uniquely distinguish a target contrast/outcome from multiple reported tests; no assignment inferred from input order.
 - 10 sides: The identified 2014 primary replication article contains four replication samples: Study 1 online and laboratory, and Study 2 online and laboratory. Study 1 has perceived-brightness tests for two distinct samples. Study 2 has estimated-watts and three product-preference tests for each of two samples. The supplied neutral description, null replication study identifier, and page-only locator do not uniquely identify a sample and test.
-- 10 sides: Original primary full text not acquired through permitted open-access routes.
 - 10 sides: Original study 1: senior police officers, individual video-based intervention versus active control; multiple outcomes and Time, Group, Time × Group, and within-group tests in Results. Supplied locator p. 10 and generic gaze-control/visual-attention description do not identify a unique outcome and test.
+- 9 sides: Original full text unavailable after publisher 403, Unpaywall/OpenAlex no OA copy, and title/DOI searches. Replication full paper title and DOI verified. Replication effect and p refer to the same Figure 4 path, not the factorial main effects in Table 1. Figure 4 significance marks use the p. 785 caption legend; the Figure 4 caption itself describes the separate factorial analysis. Author success verdict is paper-level and supported by the results statement that core relationships were significant and in the predicted direction. The original coefficients reproduced in replication Figure 1 were not substituted for primary original-paper extraction. Input study_r label is not independently numbered in the paper; city and test supplied in the neutral description identify the target.
 
 ## Method and limits
 

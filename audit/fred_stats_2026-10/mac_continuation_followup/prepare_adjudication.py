@@ -67,6 +67,7 @@ def main():
         text += ('\n\nThese fields come from a newly retrieved primary source. Do not infer target identity '
                  'from numerical coincidence. If only an author manuscript is available, explicitly '
                  'consider version differences before calling the published coding wrong. '
+                 'Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. '
                  'End your response with the answer itself under a heading ## Answer. '
                  'Put your whole result in your reply; do not create files or run commands.\n')
         if prompt.exists():
