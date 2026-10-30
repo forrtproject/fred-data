@@ -2,7 +2,7 @@
 
 # FLoRA blind audit — provisional
 
-458 input rows have at least one confirmed field error; 2326 / 2818 rows are fully resolved. 767 blind targets have no proposed shipped counterpart; these are not errors by default.
+461 input rows have at least one confirmed field error; 2361 / 2818 rows are fully resolved. 753 blind targets have no proposed shipped counterpart; these are not errors by default.
 
 This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
 
@@ -10,7 +10,7 @@ The complete evidence follow-up remains active. Earlier phase completion and cut
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2290 with verified saved text (1729 full text, 561 abstract); 2290 with validated usable coding. Rows fully resolved: 2326 / 2818.
+Works: 2344 total; 2344 attempted; 2290 with verified saved text (1729 full text, 561 abstract); 2290 with validated usable coding. Rows fully resolved: 2361 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. Dependent outcome replacements after a type correction remain in results.csv and the error list.
 
@@ -20,22 +20,22 @@ After the original bounded run, a user-authorised supplemental review covered 10
 
 ## Confirmed field error rates
 
-- type: 38 / 2562 (1.5%); 256 unverified; all-row unresolved bounds 1.3%–10.4% (N=2818)
-- original: 69 / 2527 (2.7%); 291 unverified; all-row unresolved bounds 2.4%–12.8% (N=2818)
-- outcome: 351 / 2167 (16.2%); 446 unverified; all-row unresolved bounds 13.4%–30.5% (N=2613)
-- outcome_computation: 30 / 191 (15.7%); 14 unverified; all-row unresolved bounds 14.6%–21.5% (N=205)
-- outcome_robustness: 8 / 196 (4.1%); 9 unverified; all-row unresolved bounds 3.9%–8.3% (N=205)
+- type: 38 / 2584 (1.5%); 234 unverified; all-row unresolved bounds 1.3%–9.7% (N=2818)
+- original: 69 / 2542 (2.7%); 276 unverified; all-row unresolved bounds 2.4%–12.2% (N=2818)
+- outcome: 353 / 2194 (16.1%); 419 unverified; all-row unresolved bounds 13.5%–29.5% (N=2613)
+- outcome_computation: 30 / 192 (15.6%); 13 unverified; all-row unresolved bounds 14.6%–21.0% (N=205)
+- outcome_robustness: 9 / 197 (4.6%); 8 unverified; all-row unresolved bounds 4.4%–8.3% (N=205)
 
 ### By source
 
 - COS:
-  - type: 1 / 685 (0.1%); 35 unverified; all-row unresolved bounds 0.1%–5.0% (N=720)
-  - original: 6 / 675 (0.9%); 45 unverified; all-row unresolved bounds 0.8%–7.1% (N=720)
-  - outcome: 82 / 634 (12.9%); 86 unverified; all-row unresolved bounds 11.4%–23.3% (N=720)
+  - type: 1 / 690 (0.1%); 30 unverified; all-row unresolved bounds 0.1%–4.3% (N=720)
+  - original: 6 / 678 (0.9%); 42 unverified; all-row unresolved bounds 0.8%–6.7% (N=720)
+  - outcome: 83 / 638 (13.0%); 82 unverified; all-row unresolved bounds 11.5%–22.9% (N=720)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - SCORE:
-  - type: 0 / 61 (0.0%); 27 unverified; all-row unresolved bounds 0.0%–30.7% (N=88)
+  - type: 0 / 62 (0.0%); 26 unverified; all-row unresolved bounds 0.0%–29.5% (N=88)
   - original: 0 / 62 (0.0%); 26 unverified; all-row unresolved bounds 0.0%–29.5% (N=88)
   - outcome: 7 / 61 (11.5%); 27 unverified; all-row unresolved bounds 8.0%–38.6% (N=88)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
@@ -47,44 +47,44 @@ After the original bounded run, a user-authorised supplemental review covered 10
   - outcome_computation: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
   - outcome_robustness: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
 - openalex:
-  - type: 4 / 249 (1.6%); 17 unverified; all-row unresolved bounds 1.5%–7.9% (N=266)
-  - original: 11 / 249 (4.4%); 17 unverified; all-row unresolved bounds 4.1%–10.5% (N=266)
-  - outcome: 22 / 219 (10.0%); 40 unverified; all-row unresolved bounds 8.5%–23.9% (N=259)
+  - type: 4 / 250 (1.6%); 16 unverified; all-row unresolved bounds 1.5%–7.5% (N=266)
+  - original: 11 / 250 (4.4%); 16 unverified; all-row unresolved bounds 4.1%–10.2% (N=266)
+  - outcome: 22 / 222 (9.9%); 37 unverified; all-row unresolved bounds 8.5%–22.8% (N=259)
   - outcome_computation: 2 / 5 (40.0%); 2 unverified; all-row unresolved bounds 28.6%–57.1% (N=7)
   - outcome_robustness: 2 / 7 (28.6%); 0 unverified; all-row unresolved bounds 28.6%–28.6% (N=7)
 - openalex_snapshot:
-  - type: 2 / 80 (2.5%); 13 unverified; all-row unresolved bounds 2.2%–16.1% (N=93)
-  - original: 2 / 80 (2.5%); 13 unverified; all-row unresolved bounds 2.2%–16.1% (N=93)
-  - outcome: 10 / 73 (13.7%); 20 unverified; all-row unresolved bounds 10.8%–32.3% (N=93)
+  - type: 2 / 84 (2.4%); 9 unverified; all-row unresolved bounds 2.2%–11.8% (N=93)
+  - original: 2 / 83 (2.4%); 10 unverified; all-row unresolved bounds 2.2%–12.9% (N=93)
+  - outcome: 10 / 79 (12.7%); 14 unverified; all-row unresolved bounds 10.8%–25.8% (N=93)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - replications:
-  - type: 30 / 1296 (2.3%); 157 unverified; all-row unresolved bounds 2.1%–12.9% (N=1453)
-  - original: 48 / 1268 (3.8%); 185 unverified; all-row unresolved bounds 3.3%–16.0% (N=1453)
-  - outcome: 230 / 1180 (19.5%); 273 unverified; all-row unresolved bounds 15.8%–34.6% (N=1453)
+  - type: 30 / 1306 (2.3%); 147 unverified; all-row unresolved bounds 2.1%–12.2% (N=1453)
+  - original: 48 / 1276 (3.8%); 177 unverified; all-row unresolved bounds 3.3%–15.5% (N=1453)
+  - outcome: 231 / 1194 (19.3%); 259 unverified; all-row unresolved bounds 15.9%–33.7% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - reproductions:
-  - type: 1 / 190 (0.5%); 7 unverified; all-row unresolved bounds 0.5%–4.1% (N=197)
+  - type: 1 / 191 (0.5%); 6 unverified; all-row unresolved bounds 0.5%–3.6% (N=197)
   - original: 2 / 192 (1.0%); 5 unverified; all-row unresolved bounds 1.0%–3.6% (N=197)
   - outcome: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
-  - outcome_computation: 28 / 185 (15.1%); 12 unverified; all-row unresolved bounds 14.2%–20.3% (N=197)
-  - outcome_robustness: 6 / 188 (3.2%); 9 unverified; all-row unresolved bounds 3.0%–7.6% (N=197)
+  - outcome_computation: 28 / 186 (15.1%); 11 unverified; all-row unresolved bounds 14.2%–19.8% (N=197)
+  - outcome_robustness: 7 / 189 (3.7%); 8 unverified; all-row unresolved bounds 3.6%–7.6% (N=197)
 
 ### By evidence_level
 
 - abstract:
-  - type: 7 / 390 (1.8%); 185 unverified; all-row unresolved bounds 1.2%–33.4% (N=575)
-  - original: 0 / 393 (0.0%); 182 unverified; all-row unresolved bounds 0.0%–31.7% (N=575)
-  - outcome: 52 / 314 (16.6%); 254 unverified; all-row unresolved bounds 9.2%–53.9% (N=568)
+  - type: 7 / 404 (1.7%); 171 unverified; all-row unresolved bounds 1.2%–31.0% (N=575)
+  - original: 0 / 407 (0.0%); 168 unverified; all-row unresolved bounds 0.0%–29.2% (N=575)
+  - outcome: 52 / 325 (16.0%); 243 unverified; all-row unresolved bounds 9.2%–51.9% (N=568)
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - full_text:
-  - type: 31 / 2172 (1.4%); 19 unverified; all-row unresolved bounds 1.4%–2.3% (N=2191)
-  - original: 69 / 2134 (3.2%); 57 unverified; all-row unresolved bounds 3.1%–5.8% (N=2191)
-  - outcome: 299 / 1853 (16.1%); 142 unverified; all-row unresolved bounds 15.0%–22.1% (N=1995)
-  - outcome_computation: 30 / 191 (15.7%); 5 unverified; all-row unresolved bounds 15.3%–17.9% (N=196)
-  - outcome_robustness: 8 / 193 (4.1%); 3 unverified; all-row unresolved bounds 4.1%–5.6% (N=196)
+  - type: 31 / 2180 (1.4%); 11 unverified; all-row unresolved bounds 1.4%–1.9% (N=2191)
+  - original: 69 / 2135 (3.2%); 56 unverified; all-row unresolved bounds 3.1%–5.7% (N=2191)
+  - outcome: 301 / 1869 (16.1%); 126 unverified; all-row unresolved bounds 15.1%–21.4% (N=1995)
+  - outcome_computation: 30 / 192 (15.6%); 4 unverified; all-row unresolved bounds 15.3%–17.3% (N=196)
+  - outcome_robustness: 9 / 194 (4.6%); 2 unverified; all-row unresolved bounds 4.6%–5.6% (N=196)
 - none:
   - type: 0 / 0 (not estimable); 52 unverified; all-row unresolved bounds 0.0%–100.0% (N=52)
   - original: 0 / 0 (not estimable); 52 unverified; all-row unresolved bounds 0.0%–100.0% (N=52)
@@ -317,6 +317,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 957, [replicating work](https://doi.org/10.1002/smj.3252): outcome: mixed → failed.
 - Row 971, [replicating work](https://doi.org/10.1038/s41598-022-23411-6): outcome: mixed → successful.
 - Row 972, [replicating work](https://doi.org/10.1016/j.jml.2022.104352): outcome: mixed → failed.
+- Row 977, [replicating work](https://doi.org/10.1027/1618-3169/a000554): outcome: mixed → successful.
 - Row 986, [replicating work](https://doi.org/10.1136/bmjopen-2024-093080): outcome: mixed → successful.
 - Row 996, [replicating work](https://doi.org/10.48550/arxiv.2303.08577): type: replication → reproduction.
 - Row 1002, [replicating work](https://doi.org/10.1002/pu.30211): type: replication → not_a_replication.
@@ -368,6 +369,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 1328, [replicating work](https://doi.org/10.1016/j.jfbs.2011.07.003): outcome: successful → mixed.
 - Row 1332, [replicating work](https://doi.org/10.1016/j.jbvi.2022.e00342): outcome: mixed → successful.
 - Row 1334, [replicating work](https://doi.org/10.23668/psycharchives.22555): outcome: mixed → successful.
+- Row 1345, [replicating work](https://doi.org/10.5281/zenodo.17705056): outcome robustness: robustness challenges.
 - Row 1347, [replicating work](https://doi.org/10.31234/osf.io/weu9m_v1): outcome computation: computationally reproducible.
 - Row 1351, [replicating work](https://doi.org/10.17605/osf.io/fpuh3): outcome computation: computationally reproducible.
 - Row 1366, [replicating work](https://doi.org/10.17605/osf.io/x9pd3): outcome computation: computationally reproducible.
@@ -400,6 +402,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 1614, [replicating work](https://doi.org/10.1111/bjso.12217): outcome: mixed → successful.
 - Row 1617, [replicating work](https://doi.org/10.1126/science.aac4716): outcome: failed → mixed.
 - Row 1626, [replicating work](https://doi.org/10.1126/science.aac4716): outcome: failed → uninformative.
+- Row 1635, [replicating work](https://doi.org/10.1126/science.aac4716): outcome: failed → mixed.
 - Row 1638, [replicating work](https://doi.org/10.1126/science.aac4716): outcome: successful → mixed.
 - Row 1639, [replicating work](https://doi.org/10.1126/science.aac4716): original: 10.1037/0022-3514.94.3.545 → 10.1037/0022-3514.94.1.60.
 - Row 1642, [replicating work](https://doi.org/10.1126/science.aac4716): outcome: failed → mixed.
@@ -622,6 +625,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Fernbach; Kan; Lynch (2015); work [replicating work](https://doi.org/10.1073/pnas.2103313118), target 7 (argon).
 - Confirmed missing target: Reframing the ordinary: Imagining time as scarce increases well-being.; work [replicating work](https://doi.org/10.1073/pnas.2103313118), target 9 (argon).
 - Confirmed missing target: Evidence for opportunity cost neglect in the poor.; work [replicating work](https://doi.org/10.1073/pnas.2103313118), target 14 (argon).
+- Confirmed missing target: [Reconsidering evidence of moral contagion in online social networks](https://doi.org/10.1038/s41562-021-01133-5); work [replicating work](https://doi.org/10.1093/pnasnexus/pgaf327), target 1 (argon).
 - Confirmed missing target: Eco-Friendliness in the Brand Experience of High-Tech Products.; work [replicating work](https://doi.org/10.3390/su9071286), target 1 (argon).
 - Confirmed missing target: Revisiting the Impacts of Teachers.; work [replicating work](https://doi.org/10.3386/w20657), target 1 (argon).
 - Confirmed missing target: Now you see it, now you don’t: On turning semantic interference into facilitation in a Stroop-like task.; work [replicating work](https://doi.org/10.1037/a0019128), target 1 (argon).
@@ -633,6 +637,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Development of self-recognition in the infant.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 3 (obvious).
 - Confirmed missing target: Social cognition and the acquisition of self.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 4 (obvious).
 - Confirmed missing target: Development of self-recognition, personal pronoun use, and pretend play during the 2nd year.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 5 (obvious).
+- Confirmed missing target: A longitudinal investigation of self-other discrimination and the emergence of mirror self-recognition.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 6 (obvious).
 - Confirmed missing target: [Modulation of interhemispheric inhibition by volitional motor activity: an ipsilateral silent period study.](https://doi.org/10.1113/jphysiol.2009.175885); work [replicating work](https://doi.org/10.3389/fnhum.2022.937515), target 1 (argon).
 - Confirmed missing target: [The causal effects of extraversion on positive affect and neuroticism on negative affect: Manipulating state extraversion and state neuroticism in an experimental approach.](https://doi.org/10.1016/j.jrp.2005.05.003); work [replicating work](https://doi.org/10.1037/a0025169), target 1 (argon).
 - Confirmed missing target: [The effect of state extraversion on four types of affect.](https://doi.org/10.1002/per.738); work [replicating work](https://doi.org/10.1037/a0025169), target 2 (argon).
@@ -643,6 +648,9 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [Auditory encoding in visual short-term recall: Effects of noise intensity and spatial location.](https://doi.org/10.1016/s0022-5371(80)90403-x); work [replicating work](https://doi.org/10.1027/1618-3169/a000554), target 0 (argon).
 - Confirmed missing target: [Is level irrelevant in „irrelevant speech“? Effects of loudness, signal-to-noise ratio, and binaural unmasking.](https://doi.org/10.1037/0096-1523.24.5.1406); work [replicating work](https://doi.org/10.1027/1618-3169/a000554), target 1 (argon).
 - Confirmed missing target: [The impact of background speech varying in intelligibility: Effects on cognitive performance and perceived disturbance.](https://doi.org/10.1080/00140130701745925); work [replicating work](https://doi.org/10.1027/1618-3169/a000554), target 2 (argon).
+- Confirmed missing target: [Distinct neural contributions to metacognition for detecting, but not discriminating visual stimuli.](https://doi.org/10.7554/elife.53900); work [replicating work](https://doi.org/10.1098/rsos.221091), target 0 (argon).
+- Confirmed missing target: [Do individual differences in lexical reliance reflect states or traits?](https://doi.org/10.1016/j.cognition.2022.105320); work [replicating work](https://doi.org/10.1121/10.0042222), target 1 (argon).
+- Confirmed missing target: [Two decades of terror management theory: a meta-analysis of mortality salience research](https://doi.org/10.1177/1088868309352321); work [replicating work](https://doi.org/10.1098/rsos.191114), target 1 (argon).
 - Confirmed missing target: [Horses (Equus caballus) select the greater of two quantities in small numerical contrasts](https://doi.org/10.1007/s10071-009-0225-0); work [replicating work](https://doi.org/10.3389/fpsyg.2012.00504), target 1 (argon).
 - Confirmed missing target: [Differences in Landsat-Based Trend Analyses in Drylands due to the Choice of Vegetation Estimate.](https://doi.org/10.1016/j.rse.2011.01.021); work [replicating work](https://doi.org/10.3390/rs14030597), target 1 (argon).
 - Confirmed missing target: Parents’ beliefs in misinformation about vaccines are strengthened by pro-vaccine campaigns.; work [replicating work](https://doi.org/10.1371/journal.pone.0281140), target 1 (argon).
@@ -653,6 +661,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Intentional action and intending: Recent empirical studies; work [replicating work](https://doi.org/10.1007/s13164-018-0400-9), target 7 (argon).
 - Confirmed missing target: Is incompatibilism intuitive?; work [replicating work](https://doi.org/10.1007/s13164-018-0400-9), target 9 (argon).
 - Confirmed missing target: Moral responsibility and determinism: The cognitive science of folk intuitions; work [replicating work](https://doi.org/10.1007/s13164-018-0400-9), target 13 (argon).
+- Confirmed missing target: [Do chinese readers obtain preview benefit from word n+2? Evidence from eye movements.](https://doi.org/10.1037/a0013554); work [replicating work](https://doi.org/10.1080/23273798.2016.1197954), target 0 (argon).
 - Confirmed missing target: De Fruyt, Van De Wiele, & Van Heeringen (2000); work [replicating work](https://doi.org/10.1016/j.jesp.2015.10.012), target 3 (obvious).
 - Confirmed missing target: Moral credentials and the expression of prejudice.; work [replicating work](https://doi.org/10.1016/j.jesp.2015.10.012), target 9 (obvious).
 - Confirmed missing target: Some participants may be better than others: Sustained attention and motivation are higher early in semester.; work [replicating work](https://doi.org/10.1016/j.jesp.2015.10.012), target 10 (obvious).
@@ -666,12 +675,17 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: The model minority? Not on Airbnb.com: A hedonic pricing model to quantify racial bias against Asian Americans.; work [replicating work](https://doi.org/10.1016/j.joep.2018.11.004), target 3 (argon).
 - Confirmed missing target: [Seeking subjective dominance in multidimensional space: An explanation of the asymmetric dominance effect.](https://doi.org/10.1006/obhd.1995.1075); work [replicating work](https://doi.org/10.1080/23743603.2021.1878340), target 0 (argon).
 - Confirmed missing target: Counterfactual thinking and victim compensation: A test of norm theory.; work [replicating work](https://doi.org/10.1080/02699931.2018.1504747), target 1 (argon).
+- Confirmed missing target: [Effects of a voluntary summer reading intervention on reading achievement: Results from a randomized field trial.](https://doi.org/10.3102/01623737028004335); work [replicating work](https://doi.org/10.1002/rrq.62), target 0 (obvious).
 - Confirmed missing target: Eighteen-month-old infants show false belief understanding in an active helping paradigm.; work [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004), target 0 (argon).
 - Confirmed missing target: Do 15-month-old infants understand false beliefs?; work [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004), target 2 (argon).
 - Confirmed missing target: Can an agent’s false belief be corrected by an appropriate communication? Psychological reasoning in 18-month-old infants.; work [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004), target 3 (argon).
 - Confirmed missing target: Early theory of mind competencies: do infants understand others’ beliefs?; work [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004), target 4 (argon).
 - Confirmed missing target: [When Efortful Thinking Influences Judgmental Anchoring: Differential Effects of Forewarning and Incentives on Self-generated and Externally Provided Anchors](https://doi.org/10.1002/bdm.495); work [replicating work](https://doi.org/10.18718/81781.38), target 1 (argon).
 - Confirmed missing target: [Where will the triangle look for it? Attributing false beliefs to a geometric shape at 17 months](https://doi.org/10.1111/j.2044-835x.2011.02046.x); work [replicating work](https://doi.org/10.1080/15248372.2018.1544140), target 1 (argon).
+- Confirmed missing target: Eye movements reveal sustained implicit processing of others’ mental states.; work [replicating work](https://doi.org/10.1177/0956797617747090), target 0 (argon).
+- Confirmed missing target: Where will the triangle look for it? Attributing false beliefs to a geometric shape at 17 months.; work [replicating work](https://doi.org/10.1177/0956797617747090), target 1 (argon).
+- Confirmed missing target: Attributing false beliefs about object identity reveals a signature blind spot in humans’ efficient mind-reading system.; work [replicating work](https://doi.org/10.1177/0956797617747090), target 2 (argon).
+- Confirmed missing target: Mindblind eyes: An absence of spontaneous theory of mind in Asperger syndrome.; work [replicating work](https://doi.org/10.1177/0956797617747090), target 4 (argon).
 - Confirmed missing target: [Taking a hands-on approach: Apparent grasping ability scales the perception of object size.](https://doi.org/10.1037/a0024248); work [replicating work](https://doi.org/10.1037/xhp0000331), target 1 (argon).
 - Confirmed missing target: The retrospective gambler’s fallacy: Unlikely events, constructing the past, and multiple universes.; work [replicating work](https://doi.org/10.1371/journal.pone.0172636), target 1 (obvious).
 - Confirmed missing target: [Intertrial target-feature changes do not lead to more distraction by singletons: Target uncertainty does.](https://doi.org/10.1016/j.visres.2008.02.021); work [replicating work](https://doi.org/10.1037/xhp0000180), target 1 (argon).
@@ -681,6 +695,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [A direct and conceptual replication of post-loss speeding when gambling.](https://doi.org/10.1098/rsos.200090); work [replicating work](https://doi.org/10.1080/14459795.2022.2135227), target 1 (argon).
 - Confirmed missing target: Gender-Biased Breastfeeding in Egypt: Examining the Fertility Preference Hypotheses of Jayachandran and Kuziemko (2011).; work [replicating work](https://doi.org/10.1086/695137), target 1 (argon).
 - Confirmed missing target: [Kin recognition and the perceived facial similarity of children](https://doi.org/10.1167/6.10.4); work [replicating work](https://doi.org/10.1167/jov.20.6.18), target 0 (argon).
+- Confirmed missing target: (); work [replicating work](https://doi.org/10.1080/10826084.2016.1267222), target 1 (obvious).
 - Confirmed missing target: [Leading us unto temptation? No evidence for an asymmetry in automatic associations between goals and temptations.](https://doi.org/10.1525/collabra.31030); work [replicating work](https://doi.org/10.1037/mot0000308), target 1 (obvious).
 - Confirmed missing target: [The Language of Political Aggression](https://doi.org/10.1177/0261927x12460666); work [replicating work](https://doi.org/10.17605/osf.io/r8qp2), target 1 (argon).
 - Confirmed missing target: Job attitudes and employee engagement: Considering the "A-factor".; work [replicating work](https://doi.org/10.1002/hrdq.21464), target 0 (argon).
@@ -691,14 +706,19 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [Ischemic stroke is associated with the ABO locus: the EuroCLOT study](https://doi.org/10.1002/ana.23838); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 5 (argon).
 - Confirmed missing target: [Meta-analysis in more than 17,900 cases of ischemic stroke reveals a novel association at 12q24.12](https://doi.org/10.1212/wnl.0000000000000707); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 6 (argon).
 - Confirmed missing target: [A sequence variant in ZFHX3 on 16q22 associates with atrial fibrillation and ischemic stroke](https://doi.org/10.1038/ng.417); work [replicating work](https://doi.org/10.1038/s41598-017-07404-4), target 7 (argon).
+- Confirmed missing target: [Symmetry lasts longer than random, but only for brief presentations](https://doi.org/10.1177/2041669516676824); work [replicating work](https://doi.org/10.1101/2020.08.20.258871), target 0 (argon).
+- Confirmed missing target: [Does preference for abstract patterns relate to information processing and perceived duration?](https://doi.org/10.1177/2041669515604436); work [replicating work](https://doi.org/10.1101/2020.08.20.258871), target 1 (argon).
+- Confirmed missing target: [Two-digit comparison - Decomposed, holistic, or hybrid?](https://doi.org/10.1027/1618-3169.52.3.195); work [replicating work](https://doi.org/10.31234/osf.io/nwg7p), target 1 (obvious).
+- Confirmed missing target: [Choosing the larger versus choosing the smaller: Asymmetries in the size congruity effect.](https://doi.org/10.1037/xlm0000135); work [replicating work](https://doi.org/10.31234/osf.io/nwg7p), target 2 (obvious).
 - Confirmed missing target: [Masculine drinking norms and alcohol use in a national sample of NCAA male student-athletes.](https://doi.org/10.1037/men0000436); work [replicating work](https://doi.org/10.1037/men0000497), target 1 (argon).
 - Confirmed missing target: [The effects of torture: Two community studies](https://doi.org/10.1207/s15327949pac1203_1); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 0 (argon).
 - Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 2 (argon).
 - Confirmed missing target: [Classifying the torture experiences of refugees living in the United States](https://doi.org/10.1177/0886260506294999); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 3 (argon).
 - Confirmed missing target: [Nature of torture, PTSD, and somatic symptoms among political ex-prisoners](https://doi.org/10.1002/jts.20541); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 4 (argon).
+- Confirmed missing target: [Processing of invisible stimuli: Advantage of upright faces and recognizable words in overcoming interocular suppression.](https://doi.org/10.1111/j.1467-9280.2007.01902.x); work [replicating work](https://doi.org/10.1177/0956797619875482), target 1 (argon).
 - Confirmed missing target: Cues of being watched enhance cooperation in a real-world setting.; work https://openalex.org/w2484584964, target 1 (obvious).
 - Confirmed missing target: [Boundaries of cultural influence: Construct activation as a mechanism for cultural differences in social perception.](https://doi.org/10.1177/0022022103034004005); work [replicating work](https://doi.org/10.1111/jpr.12599), target 1 (obvious).
-526 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+496 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
@@ -744,11 +764,9 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - 64f4b67e38b73791: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
 - 231f73b5c88dfdf3: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
 - 9b3c6d39a871d365: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
-- 3531eb735322f77d: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
 - 22ff3d21c62fefc0: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
 - 965e85b4453e9075: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
 - ae68ba4fff8a705e: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
-- 03263a7c5c7d8646: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
 - 2050e50097e7846c: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
 - b99fe2c5d5675e4b: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
 - d004173d837cb2ee: Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.
