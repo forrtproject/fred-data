@@ -1,0 +1,1362 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 823,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 823,
+      "description": "Relationship between merit goods and private consumption (Column 2, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.12; Table 3",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "Merit goods complement private consumption (Column 2, Table 5).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 823,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/823.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ],
+    "prior_independent_reviews_of_same_source": [
+      {
+        "audit_id": 793,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1385, Table 5, Eq. 2; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "After excluding Belgium, the nested dynamic panel has N = 12 country clusters (blind) over T = 27 years, giving 324 balanced-panel country-year observations (shipped), whereas the exact usable country-year count after first-differencing and lags in Table 5, Eq. 2 is unprinted in the primary paper (the replication infers 300). Because the intended counting unit and exact post-lag regression sample size are unidentified in the original text, n_o is undeterminable.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 794,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1386, Table 5 (continued), Panel (1), Eq. 2; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the income-augmented specification in Table 5(1), Eq. 2, blind reports the cluster count (N = 12 countries) and shipped reports the raw balanced-panel country-year product (12 x 27 = 324), while the primary paper omits the usable post-differencing/lag observation count.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 795,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1385, Table 5, Eq. 3; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For Table 5, Eq. 3, the primary text identifies N = 12 country clusters (blind) and T = 27 years (324 total country-years, shipped), but neither fixes the intended nested counting unit nor prints the effective regression observation count after differencing and instrument lags.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 796,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1386, Table 5 (continued), Panel (1), Eq. 3; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the income-augmented model in Table 5(1), Eq. 3, N = 12 represents country clusters (blind) and 324 represents total balanced-panel country-years (shipped), while the exact post-lag estimation sample is not reported in the original paper.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 797,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1385, Table 5, Eq. 6; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For Table 5, Eq. 6, the country cluster count (N = 12, blind) and total balanced-panel country-year count (12 x 27 = 324, shipped) reflect different panel levels, and the primary article does not print the exact usable observation count after differencing and lags.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 798,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1386, Table 5 (continued), Panel (1), Eq. 6; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the income-augmented specification in Table 5(1), Eq. 6, blind gives the 12 country panels and shipped gives the 324 balanced-panel country-years, with the actual post-lag GMM observation count unreported in the original study.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 799,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1385, Table 5, Eq. 2; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the working-age population share coefficient in Table 5, Eq. 2, N = 12 denotes country clusters (blind) and 324 denotes balanced-panel country-years (shipped), while the usable country-year sample size after differencing and lags is not printed in the primary source.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 800,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1387, Table 5 (continued), Panel (1), Eq. 2; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the working-age population share coefficient in Table 5(1), Eq. 2, blind captures the 12 country clusters and shipped captures the 324 total country-years, while the primary paper does not report the effective observation count after differencing and lags.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 801,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1385, Table 5, Eq. 3; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the working-age population share coefficient in Table 5, Eq. 3, the nested design has 12 country clusters (blind) and 324 balanced-panel country-years (shipped), and the exact post-lag regression observation count is omitted from the primary paper.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 802,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1387, Table 5 (continued), Panel (1), Eq. 3; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the working-age population share coefficient in Table 5(1), Eq. 3, N = 12 is the country cluster count (blind) and 324 is the raw balanced-panel country-year count (shipped), with the usable post-lag estimation sample unreported in the original article.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 803,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1385, Table 5, Eq. 6; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the working-age population share coefficient in Table 5, Eq. 6, blind reports N = 12 country clusters and shipped reports 324 balanced-panel country-years, while the primary paper does not state the usable country-year count after differencing and lags.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 804,
+        "field": "n_o",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "p. 1384, Section 4; p. 1387, Table 5 (continued), Panel (1), Eq. 6; p. 1396, Data Appendix",
+        "quote": "To obtain a balanced panel, we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+        "reason": "For the working-age population share coefficient in Table 5(1), Eq. 6, the country cluster count (N = 12, blind) and balanced-panel country-year count (324, shipped) represent distinct panel units, and the exact post-lag estimation sample is not printed in the original paper.",
+        "resolution": "argon"
+      }
+    ]
+  },
+  {
+    "audit_id": 824,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 824,
+      "description": "Relationship between merit goods and private consumption (Column 2, Table 5, augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.15; Table 6",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Merit goods complement private consumption (Column 2, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 824,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/824.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 825,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 825,
+      "description": "Relationship between government education and health (merit goods) and private consumption (Column 3, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.13; Table 4",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "Education and health government (merit goods) complement private consumption (Column 3, Table 5).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 825,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/825.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 826,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 826,
+      "description": "Relationship between government education and health (merit goods) and private consumption (Column 3, Table 5, augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.16; Table 7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Education and health government (merit goods) complement private consumption (Column 3, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 826,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/826.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 827,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 827,
+      "description": "Relationship between merit goods and private consumption (Column 6, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.14; Table 5",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "Merit goods complement private consumption (Column 6, Table 5)",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 827,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/827.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 828,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 828,
+      "description": "Relationship between merit goods and private consumption (Column 6, Table 5, augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.17; Table 8",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Merit goods complement private consumption (Column 6, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 828,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/828.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 829,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 829,
+      "description": "Relationship between merit goods and private consumption in past periods (Column 2, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.12; Table 3",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "Merit goods complement private consumption in the past periods (Column 2, Table 5).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 829,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/829.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 830,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 830,
+      "description": "Relationship between merit goods and private consumption in past periods (Column 2, Table 5, augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.15; Table 6",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Merit goods complement private consumption in the past periods (Column 2, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 830,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/830.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 831,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 831,
+      "description": "Relationship between government education and health (merit goods) and private consumption in past periods (Column 3, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.13; Table 4",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "Education and health government (merit goods) complement private consumption in past periods (Column 3, Table 5).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 832,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 832,
+      "description": "Relationship between government education and health (merit goods) and private consumption in past periods (Column 3, Table 5, augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.16; Table 7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Education and health government (merit goods) complement private consumption in past periods (Column 3, Table 5, augmented by disposable income)",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 832,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/832.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 833,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 833,
+      "description": "Relationship between merit goods and private consumption in past periods (Column 6, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.14; Table 5",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "Merit goods complement private consumption in the past periods (Column 6, Table 5).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 833,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/833.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 834,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 834,
+      "description": "Relationship between merit goods and private consumption in past periods (Column 6, Table 5 augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.17; Table 8",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Merit goods complement private consumption in the past periods (Column 6, Table 5 augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 834,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_015/834.json",
+        "repair": "Parent checked Table5significance legend on printedp1387. Replaced worker-inserted semicolon joining the cell value to the nonadjacent shared table legend with an explicit ellipsis; decoded newline escape. Extracted value, bound and target unchanged."
+      }
+    ]
+  },
+  {
+    "audit_id": 835,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 835,
+      "description": "Relationship between the after-tax real interest rate and consumption (Column 2, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.12; Table 3",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "After tax real interest rate influence the consumption (Column 2, Table 5).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 836,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 836,
+      "description": "Relationship between the after-tax real interest rate and consumption (Column 2, Table 5, augmented by disposable income).",
+      "locators_o": "p.21; Table 5",
+      "locators_r": "p.15; Table 6",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.21/ Table 5 (continued)",
+      "description": "After tax real interest rate influence the consumption (Column 2, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 837,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the balanced dynamic panel; not participants or a printed count of usable country-year observations for this equation. Source panel covers 1970–1996 (T = 27); post-lag equation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Differencing/instrument lags are specified, but equation-specific usable observation losses are not enumerated.",
+      "location": "Data Appendix, p.1396 (PDF p.30), paragraph beginning “Data used for regressions”; Section 4, p.1384 (PDF p.18).",
+      "quote": "we removed from our sam-\nple Belgium for which only four data were available, yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 837,
+      "description": "Relationship between the after-tax real interest rate and consumption (Column 3, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.13; Table 4",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "After tax real interest rate influence the consumption (Column 3, Table 5).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 838,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 838,
+      "description": "Relationship between the after-tax real interest rate and consumption (Column 3, Table 5, augmented by disposable income).",
+      "locators_o": "p.21; Table 5",
+      "locators_r": "p.16; Table 7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.21/ Table 5 (continued)",
+      "description": "After tax real interest rate influence the consumption (Column 3, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 839,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 839,
+      "description": "Relationship between the after-tax real interest rate and consumption (Column 6, Table 5).",
+      "locators_o": "p.19; Table 5",
+      "locators_r": "p.14; Table 5",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.19/ Table 5",
+      "description": "After tax real interest rate influence the consumption (Column 6, Table 5).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 839,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_030/839.json",
+        "repair": "Marked the omission between the target Table5cell and its common significance legend with an explicit ellipsis. No numeric value, target, bound, or confidence changed."
+      }
+    ]
+  },
+  {
+    "audit_id": 840,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 840,
+      "description": "Relationship between the after-tax real interest rate and consumption (Column 6, Table 5, augmented by disposable income).",
+      "locators_o": "p.21; Table 5",
+      "locators_r": "p.17; Table 8",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.21/ Table 5 (continued)",
+      "description": "After tax real interest rate influence the consumption (Column 6, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 841,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 841,
+      "description": "Relationship between disposable income and consumption, examining transient income effects relative to the permanent income model (Column 2, Table 5, augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.15; Table 6",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Disposable income captures some transient income effect but is not sustained enough to provide a convincing alternative to the permanent income model (Column 2, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 841,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_030/841.json",
+        "repair": "Marked the omission between the target Table5cell and its common significance legend with an explicit ellipsis. No numeric value, target, bound, or confidence changed."
+      }
+    ]
+  },
+  {
+    "audit_id": 842,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 842,
+      "description": "Relationship between disposable income and consumption, examining transient income effects relative to the permanent income model (Column 3, Table 5, augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.16; Table 7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Disposable income captures some transient income effect but is not sustained enough to provide a convincing alternative to the permanent income model (Column 3, Table 5, augmented by disposable income)",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 843,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 843,
+      "description": "Relationship between disposable income and consumption, examining transient income effects relative to the permanent income model (Column 6, Table 5 augmented by disposable income).",
+      "locators_o": "p.20; Table 5",
+      "locators_r": "p.17; Table 8",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.20/ Table 5 (continued)",
+      "description": "Disposable income captures some transient income effect but is not sustained enough to provide a convincing alternative to the permanent income model (Column 6, Table 5 augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 844,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 844,
+      "description": "Relationship between disposable income and consumption, examining transient income effects relative to the permanent income model in past periods (Column 2, Table 5, augmented by disposable income).",
+      "locators_o": "p.21; Table 5",
+      "locators_r": "p.15; Table 6",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.21/ Table 5 (continued)",
+      "description": "Disposable income captures some transient income effect but is not sustained enough to provide a convincing alternative to the permanent income model in past periods (Column 2, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 845,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 845,
+      "description": "Relationship between disposable income and consumption, examining transient income effects relative to the permanent income model in past periods (Column 3, Table 5, augmented by disposable income).",
+      "locators_o": "p.21; Table 5",
+      "locators_r": "p.16; Table 7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.21/ Table 5 (continued)",
+      "description": "Disposable income captures some transient income effect but is not sustained enough to provide a convincing alternative to the permanent income model in past periods (Column 3, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 845,
+        "fields": [
+          "p"
+        ],
+        "original_output": "audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_21ae3ca30ea09cd7c1aecb17_original_030/845.json",
+        "repair": "Marked the omission between the target Table5cell and its common significance legend with an explicit ellipsis. No numeric value, target, bound, or confidence changed."
+      }
+    ]
+  },
+  {
+    "audit_id": 846,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "324",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": "12",
+      "sample_role": "Countries in the regression panel, not country-year observations; T = 27 is the reported panel time dimension. The estimation-specific observation count is not printed.",
+      "exclusions": "Belgium removed because only four data were available. Any further observation loss from differencing/lags is not enumerated for this specification.",
+      "location": "Published article, Data Appendix, \"Data used for regressions\", journal p. 1396 (PDF p. 30); dynamic panel description p. 1384 (PDF p. 18).",
+      "quote": "yielding a 12 country sample\nranging from 1970 to 1996 (T = 27).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_21ae3ca30ea09cd7c1aecb17.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fiorito, R., & Kollintzas, T. (2004). Public goods, merit goods, and the relation between private and government consumption. European Economic Review, 48(6), 1367–1398. https://doi.org/10.1016/j.euroecorev.2004.01.004",
+      "doi_o": "10.1016/j.euroecorev.2004.01.004",
+      "study_o": "1",
+      "ref_r": "Song, Z. (2022). The Relationship between Government and Private Consumption. A Replication Study of Fiorito &amp; Kollintzas (European Economic Review, 2004). <i>Journal of Comments and Replications in Economics</i>, 2022–2021. https://doi.org/10.18718/81781.23",
+      "doi_r": "10.18718/81781.23",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 846,
+      "description": "Relationship between disposable income and consumption, examining transient income effects relative to the permanent income model in past periods (Column 6, Table 5, augmented by disposable income).",
+      "locators_o": "p.21; Table 5",
+      "locators_r": "p.17; Table 8",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f9e8343d395efbfc4f90158a.txt"
+      }
+    },
+    "work_key": "10.18718/81781.23",
+    "coding_context": {
+      "es_repr": "p.21/ Table 5 (continued)",
+      "description": "Disposable income captures some transient income effect, but is not sustained enough to provide a convincing alternative to the permanent income model in past periods (Column 6, Table 5, augmented by disposable income).",
+      "reported_success_quote": "My replication confirmed their finding that merit\ngoods and private consumption are complements. On the other hand, I did not find support for\ntheir conclusion that public goods and private consumption are substitutes.",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

@@ -16,7 +16,15 @@ def main():
     out=Path(record['output']);prompt=Path(record['prompt']).read_text()
     assert out.stat().st_size>0,'No response yet'
     start=prompt.index('\n\n[')+2;payload=json.JSONDecoder().raw_decode(prompt[start:])[0]
-    data,mode=parse_response(out.read_text());good,failed=validate_batch(data,payload)
+    data,mode=parse_response(out.read_text())
+    repairs_path=F/'adjudication_evidence_repairs.json'
+    repairs=json.loads(repairs_path.read_text()) if repairs_path.exists() else []
+    for repair in [r for r in repairs if r['key']==key]:
+        assert repair['raw_sha256']==hashlib.sha256(out.read_bytes()).hexdigest()
+        item=next(r for r in data if (r['audit_id'],r['field'])==(repair['audit_id'],repair['field']))
+        assert item['quote']==repair['original_quote']
+        item['quote']=repair['repaired_quote']
+    good,failed=validate_batch(data,payload)
     assert not failed, failed
     assert len(good)==len(record['items'])
     (B/'adjudications'/f'validated_{key}.json').write_text(json.dumps(good,ensure_ascii=False,indent=2)+'\n')
