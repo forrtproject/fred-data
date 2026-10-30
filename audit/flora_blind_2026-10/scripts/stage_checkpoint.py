@@ -11,7 +11,19 @@ def check(v,path):
    check(x,path)
  elif isinstance(v,list):
   for x in v:check(x,path)
-paths=[pathlib.Path('.gitignore')]+[p for p in R.iterdir() if p.is_file()]+list((R/'scripts').glob('*.py'))+[R/'scripts/tick.js']+list((R/'batches').glob('*.json'))+list((R/'batches').glob('*.txt'))+list((R/'adjudications').glob('*.json'))+list((R/'quarantine').glob('*.json'))+list((R/'argon').glob('*.prompt.txt'))+list((R/'argon').glob('*.state.json'))+list((R/'argon').glob('*.input.json'))
+paths=[pathlib.Path('.gitignore')]+[p for p in R.iterdir() if p.is_file()]+list((R/'scripts').glob('*.py'))+list((R/'scripts').glob('*.js'))+list((R/'batches').glob('*.json'))+list((R/'batches').glob('*.txt'))+list((R/'adjudications').glob('*.json'))+list((R/'quarantine').glob('*.json'))+list((R/'argon').glob('*.prompt.txt'))+list((R/'argon').glob('*.state.json'))+list((R/'argon').glob('*.input.json'))
+followup=R/'evidence_followup'
+if followup.exists():
+ for name in subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard','--',str(followup)],text=True).splitlines():
+  p=pathlib.Path(name)
+  if not p.exists():continue
+  if '/private/' in p.as_posix() or '/snapshot/' in p.as_posix():raise SystemExit('Private source/snapshot in public staging set: '+str(p))
+  raw=p.read_text(errors='replace')
+  if re.search(r'[?&](api_key|access_token|x-amz-signature|signature|token)=',raw,re.I):raise SystemExit('Ephemeral credential/query token in public metadata: '+str(p))
+  if p.suffix=='.jsonl':
+   for line in raw.splitlines():
+    if line.strip():check(json.loads(line),str(p))
+  paths.append(p)
 skipped=[]
 for p in (R/'codings').glob('*.json'):
  if not re.fullmatch('[0-9a-f]{16}',p.stem):continue

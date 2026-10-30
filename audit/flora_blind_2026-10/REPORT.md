@@ -2,13 +2,13 @@
 
 # FLoRA blind audit — provisional
 
-418 input rows have at least one confirmed field error; 2194 / 2818 rows are fully resolved. 811 blind targets have no proposed shipped counterpart; these are not errors by default.
+419 input rows have at least one confirmed field error; 2195 / 2818 rows are fully resolved. 810 blind targets have no proposed shipped counterpart; these are not errors by default.
 
 This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2289 with verified saved text (1729 full text, 560 abstract); 2289 with validated usable coding. Rows fully resolved: 2194 / 2818.
+Works: 2344 total; 2344 attempted; 2289 with verified saved text (1729 full text, 560 abstract); 2289 with validated usable coding. Rows fully resolved: 2195 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. Dependent outcome replacements after a type correction remain in results.csv and the error list.
 
@@ -18,18 +18,18 @@ After the original bounded run, a user-authorised supplemental review covered 10
 
 ## Confirmed field error rates
 
-- type: 37 / 2388 (1.5%); 430 unverified; all-row unresolved bounds 1.3%–16.6% (N=2818)
-- original: 31 / 2387 (1.3%); 431 unverified; all-row unresolved bounds 1.1%–16.4% (N=2818)
-- outcome: 345 / 2025 (17.0%); 588 unverified; all-row unresolved bounds 13.2%–35.7% (N=2613)
+- type: 37 / 2389 (1.5%); 429 unverified; all-row unresolved bounds 1.3%–16.5% (N=2818)
+- original: 32 / 2388 (1.3%); 430 unverified; all-row unresolved bounds 1.1%–16.4% (N=2818)
+- outcome: 345 / 2026 (17.0%); 587 unverified; all-row unresolved bounds 13.2%–35.7% (N=2613)
 - outcome_computation: 30 / 186 (16.1%); 19 unverified; all-row unresolved bounds 14.6%–23.9% (N=205)
 - outcome_robustness: 8 / 189 (4.2%); 16 unverified; all-row unresolved bounds 3.9%–11.7% (N=205)
 
 ### By source
 
 - COS:
-  - type: 1 / 650 (0.2%); 70 unverified; all-row unresolved bounds 0.1%–9.9% (N=720)
-  - original: 3 / 648 (0.5%); 72 unverified; all-row unresolved bounds 0.4%–10.4% (N=720)
-  - outcome: 76 / 593 (12.8%); 127 unverified; all-row unresolved bounds 10.6%–28.2% (N=720)
+  - type: 1 / 651 (0.2%); 69 unverified; all-row unresolved bounds 0.1%–9.7% (N=720)
+  - original: 4 / 649 (0.6%); 71 unverified; all-row unresolved bounds 0.6%–10.4% (N=720)
+  - outcome: 76 / 594 (12.8%); 126 unverified; all-row unresolved bounds 10.6%–28.1% (N=720)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - SCORE:
@@ -78,9 +78,9 @@ After the original bounded run, a user-authorised supplemental review covered 10
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - full_text:
-  - type: 30 / 2002 (1.5%); 189 unverified; all-row unresolved bounds 1.4%–10.0% (N=2191)
-  - original: 31 / 1999 (1.6%); 192 unverified; all-row unresolved bounds 1.4%–10.2% (N=2191)
-  - outcome: 292 / 1712 (17.1%); 283 unverified; all-row unresolved bounds 14.6%–28.8% (N=1995)
+  - type: 30 / 2003 (1.5%); 188 unverified; all-row unresolved bounds 1.4%–9.9% (N=2191)
+  - original: 32 / 2000 (1.6%); 191 unverified; all-row unresolved bounds 1.5%–10.2% (N=2191)
+  - outcome: 292 / 1713 (17.0%); 282 unverified; all-row unresolved bounds 14.6%–28.8% (N=1995)
   - outcome_computation: 30 / 186 (16.1%); 10 unverified; all-row unresolved bounds 15.3%–20.4% (N=196)
   - outcome_robustness: 8 / 186 (4.3%); 10 unverified; all-row unresolved bounds 4.1%–9.2% (N=196)
 - none:
@@ -394,6 +394,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 1813, [replicating work](https://doi.org/10.1002/rrq.62): outcome: mixed → failed.
 - Row 1836, [replicating work](https://doi.org/10.1073/pnas.2103313118): outcome: mixed → failed.
 - Row 1844, [replicating work](https://doi.org/10.1525/collabra.68054): outcome: successful → mixed.
+- Row 1847, [replicating work](https://doi.org/10.1111/psyp.12825): original: 10.1093/scan/nsw175 → 10.1111/psyp.12583.
 - Row 1865, [replicating work](https://doi.org/10.1016/j.cogdev.2017.10.004): outcome: mixed → successful.
 - Row 1868, [replicating work](https://doi.org/10.1016/j.dcn.2017.12.003): outcome: successful → mixed.
 - Row 1871, [replicating work](https://doi.org/10.18718/81781.38): outcome: mixed → failed.
@@ -629,7 +630,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 2 (argon).
 - Confirmed missing target: [Classifying the torture experiences of refugees living in the United States](https://doi.org/10.1177/0886260506294999); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 3 (argon).
 - Confirmed missing target: [Nature of torture, PTSD, and somatic symptoms among political ex-prisoners](https://doi.org/10.1002/jts.20541); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 4 (argon).
-608 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+607 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
