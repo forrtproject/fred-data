@@ -546,12 +546,25 @@ def report(results, missing, works, issues, finalized_at=None, review_summary=No
         lines[position:position] = [
             f'Cross-model review used {review_summary["call_attempts_consumed"]} call attempts across '
             f'{review_summary["workgroups_with_calls"]} works. '
-            f'{review_summary["unresolved_workgroups"]} reviewed works retain unresolved fields; '
-            'separately supported fields remain usable. '
+            f'{review_summary["unresolved_workgroups"]} works ended without a fully validated review reply; '
+            'separately supported fields remain usable. Validated replies may also return undeterminable fields. '
             f'{review_summary["prepared_workgroups_without_call"]} prepared works '
             f'({review_summary["prepared_fields_without_call"]} distinct field requests) received no call '
             'before the review cutoff. These requests establish no error. '
             'Other unverified fields also include missing text, ambiguous identity and insufficient evidence.', '']
+    if review_summary and review_summary.get('supplemental', {}).get('integrated_verdicts'):
+        phase = review_summary['supplemental']
+        position = lines.index('## Confirmed field error rates')
+        integrated = phase.get('integrated_verdicts', {})
+        resolved = integrated.get('correct', 0) + integrated.get('error', 0)
+        lines[position:position] = [
+            f'After the original bounded run, a user-authorised supplemental review covered '
+            f'{phase["requests_reviewed"]} deferred field requests across {phase["works_reviewed"]} works '
+            f'using {phase["call_attempts_consumed"]} additional Argon attempts. '
+            f'{resolved} requests have a substantive integrated verdict; '
+            f'{integrated.get("unverified", 0)} remain unverified after review. '
+            'No coding acquisition was restarted and the original run history is preserved in run_manifest.json. '
+            'Source inspection additionally excluded one coding whose saved source contained an empty abstract and references only.', '']
     for field in FIELDS:
         applicable = applicable_rate_rows(results, field)
         lines.append(f'- {field}: {rate_line(applicable, field)}')
