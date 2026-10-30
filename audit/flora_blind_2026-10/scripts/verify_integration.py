@@ -86,6 +86,8 @@ def verify():
     assert before == [hashlib.sha256(p.read_bytes()).hexdigest() for p in paths], 'Deliverables changed during verification'
     if manifest.get('evidence_followup', {}).get('status') == 'complete':
         assert not nonliteral_evidence, ('Final evidence follow-up requires literal accepted quotations', nonliteral_evidence)
+        holds = json.loads((root / 'evidence_followup/integration/review_holds.json').read_text())
+        assert not any(h.get('status') == 'pending' for h in holds['holds']), 'Parent source-proof or scientific scope holds remain pending'
     return {'rows': len(rows), 'validated_codings': len(codings),
             'validated_additional_report_codings': supplementary_codings,
             'source_checked_correction_fields': correction_fields,

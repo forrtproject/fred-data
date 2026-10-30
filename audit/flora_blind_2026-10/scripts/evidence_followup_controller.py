@@ -3,6 +3,8 @@
 import collections
 import datetime
 import json
+import importlib.util
+import os
 from pathlib import Path
 import sys
 
@@ -177,6 +179,165 @@ def validate_candidate_review(rid):
             'mechanically_valid': sum(x['mechanically_valid'] for x in checked), 'parent_inspection_pending': True}
 
 
+def candidate_relay(snapshot):
+    spec = importlib.util.spec_from_file_location('candidate_cli_relay', R / 'evidence_followup/candidate_cli_relay.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.Relay(R, snapshot)
+
+
+def candidate_cli_dispatch(result=None):
+    """Parent-only intent/commit; delegate_task itself belongs to the native tick.
+
+    The existing parent lock serializes intent writes and publication. A lost tool
+    response is retried with the SAME clientRequestId, never a new round.
+    """
+    if read(F / 'state.json').get('candidate_cli_dispatch', {}).get('enabled') is not True:
+        return None
+    with _candidate_parent_lock():
+        state = read(F / 'state.json')
+        config = state.get('candidate_cli_dispatch', {})
+        if state.get('status') != 'active' or config.get('enabled') is not True:
+            return None
+        snapshot = config['snapshot']
+        relay = candidate_relay(snapshot)
+        intent = config.get('intent')
+        if result is not None:
+            if not intent or result.get('clientRequestId') != intent['clientRequestId']:
+                raise ValueError('dispatch intent identity mismatch')
+            options = result.get('options', [])
+            options = options if isinstance(options, dict) else {x['id']: x['value'] for x in options}
+            if (not result.get('taskId') or result.get('providerInstanceId') != 'codex' or
+                    result.get('model') != 'gpt-6.1-sol' or
+                    options.get('reasoningEffort') != 'medium' or options.get('serviceTier') != 'default'):
+                raise ValueError('candidate CLI actual task/model/options mismatch; parent diagnosis required')
+            if intent.get('taskId') and intent['taskId'] != result['taskId']:
+                raise ValueError('dispatch returned different actual taskId')
+            workers = intent['workers']
+            # Register ACTUAL returned identity durably BEFORE publishing control.
+            register(dict(result, lane='candidate_cli', cli_snapshot=snapshot,
+                          cli_workers=workers, slot_cost=workers + 1))
+            state = read(F / 'state.json')
+            intent['taskId'] = result['taskId']
+            state['candidate_cli_dispatch']['intent'] = intent
+            _candidate_atomic(F / 'state.json', state)
+            _candidate_atomic(F / 'candidate_cli/control.json', dict(drain=False, clientRequestId=intent['clientRequestId'], reservation=dict(
+                taskId=result['taskId'], snapshot=snapshot, workers=workers,
+                model='Gemini 4 Argon (High)', billing='included_subscription')))
+            config = state['candidate_cli_dispatch']
+            config['last_round'] = intent
+            config['next_round'] = intent['round'] + 1
+            config.pop('intent', None)
+            _candidate_atomic(F / 'state.json', state)
+            return intent
+        if intent:
+            if intent['snapshot'] != snapshot:
+                raise ValueError('pending dispatch intent snapshot changed; parent diagnosis required')
+            return intent
+        active = [t for t in state['tasks'] if t.get('status') in ACTIVE or t.get('hasPendingChildRuns')]
+        if any(t.get('lane') == 'candidate_cli' for t in active):
+            return None
+        progress = read(relay.out / 'progress.json', {})
+        if progress.get('blocker') or progress.get('infrastructure_circuit_open') or progress.get('infrastructure_streak', 0) >= 3:
+            return None  # Includes drain, source, reservation and orphan blockers: parent diagnoses.
+        try:
+            snap = relay.load()
+            if not (relay.out / 'prepared.json').exists():
+                return None
+            relay.check(snap)
+        except (ValueError, OSError):
+            return None  # Immutable source/snapshot blockers require parent diagnosis.
+        work = False
+        for bundle in snap['bundles']:
+            ledger = relay.ledger(bundle)
+            if ledger['status'] == 'source_changed':
+                return None
+            if ledger['status'] not in {'validated', 'exhausted'} and (
+                    bundle.get('baseline', 0) + len(ledger['attempts']) < 2 or
+                    any(x['status'] == 'reserved' for x in ledger['attempts'])):
+                work = True  # Includes spent reservations needing conservative recovery.
+            for attempt in ledger['attempts']:
+                if attempt['status'] != 'reserved':
+                    continue
+                process = read(Path(attempt['raw_path'] + '.process.json'), {})
+                if process.get('status') == 'running':
+                    try:
+                        os.killpg(process['pid'], 0)
+                    except ProcessLookupError:
+                        pass
+                    else:
+                        return None
+        if not work:
+            return None
+        argon = 0
+        old = False
+        for t in active:
+            lane = t.get('lane', '')
+            if lane == 'argon_runner':
+                if t.get('slot_cost', 0) < 4:
+                    return None
+                old = True
+                argon += 3
+            elif lane == 'argon_native':
+                argon += 1
+            elif 'argon' in lane or 'argon' in str(t.get('model', '')).lower():
+                return None
+        costs = [t.get('slot_cost', 1) for t in active]
+        metadata = state.get('metadata_infrastructure_slots', 0)
+        if any(type(x) is not int or x < 1 for x in costs) or type(metadata) is not int or metadata < 0:
+            return None
+        available = min(10, state.get('max_combined_children_and_infrastructure', 10)) - 1 - sum(costs) - metadata
+        worker_limit = config.get('max_workers', 4)
+        if type(worker_limit) is not int or not 1 <= worker_limit <= 4:
+            raise ValueError('candidate CLI max_workers must be 1..4')
+        workers = min(worker_limit, 1 if old else 4, 4 - argon, available - 1)
+        if workers < 1:
+            return None
+        if config.get('max_calls_per_worker') != 1:
+            raise ValueError('bounded dispatch requires max_calls_per_worker:1')
+        round_number = config.get('next_round', 1)
+        if type(round_number) is not int or round_number < 1:
+            raise ValueError('invalid candidate CLI next_round')
+        intent = dict(round=round_number, snapshot=snapshot, workers=workers,
+                      clientRequestId='flora-candidate-cli-' + snapshot + '-round-' + str(round_number))
+        config['intent'] = intent
+        _candidate_atomic(F / 'state.json', state)
+        return intent
+
+
+def _candidate_atomic(path, value):
+    # Reuse parent publication, then persist both bytes and rename before any
+    # delegate/control side effect. Intent recovery must survive host loss.
+    a.atomic(path, value)
+    with Path(path).open('rb') as stream:
+        os.fsync(stream.fileno())
+    fd = os.open(Path(path).parent, os.O_DIRECTORY)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
+def _candidate_parent_lock():
+    # Same serialization domain as parent snapshot preparation/reconciliation.
+    import contextlib
+    import fcntl
+    @contextlib.contextmanager
+    def locked():
+        with (F / 'candidate_cli/parent.lock').open('a') as stream:
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            yield
+    return locked()
+
+
+def reconcile_candidate_cli():
+    state = read(F / 'state.json')
+    config = state.get('candidate_cli_dispatch', {})
+    if config.get('enabled') is not True:
+        return None
+    return candidate_relay(config['snapshot']).reconcile()
+
+
 def plan():
     reconcile_files()
     state = read(F / 'state.json')
@@ -188,6 +349,7 @@ def plan():
                 if any(x.get('lane') == 'additional_acquisition' for x in active)
                 else state.get('max_parallel_luna', 3),
             'additional_infrastructure_slots': state.get('metadata_infrastructure_slots', 0),
+            'combined_ceiling': min(10, state.get('max_combined_children_and_infrastructure', 10)),
             'luna_active': sum(x.get('lane') == 'luna' for x in active),
             'luna_pending': [x for x in index if x['status'] == 'pending'],
             'luna_completed': sum(x.get('validated', False) for x in index),
@@ -196,7 +358,7 @@ def plan():
 
 def prepare_candidate_review():
     state = read(F / 'state.json')
-    if state.get('native_argon_dispatch_paused'):
+    if state.get('native_argon_dispatch_paused') or state.get('candidate_cli_dispatch', {}).get('enabled') is True:
         return None
     active = [x for x in state['tasks'] if x['status'] in ACTIVE or x.get('hasPendingChildRuns')]
     relays = any(x.get('lane') == 'argon_runner' for x in active)
@@ -257,5 +419,5 @@ def prepare_candidate_review():
 
 if __name__ == '__main__':
     command = sys.argv[1]
-    result = plan() if command == 'plan' else register(json.loads(sys.argv[2])) if command == 'register' else prepare_candidate_review() if command == 'prepare-candidate-review' else validate_candidate_review(sys.argv[2]) if command == 'validate-candidate' else validate_luna(sys.argv[2])
+    result = candidate_cli_dispatch(json.loads(sys.argv[2]) if len(sys.argv) > 2 else None) if command == 'candidate-cli-dispatch' else reconcile_candidate_cli() if command == 'reconcile-candidate-cli' else plan() if command == 'plan' else register(json.loads(sys.argv[2])) if command == 'register' else prepare_candidate_review() if command == 'prepare-candidate-review' else validate_candidate_review(sys.argv[2]) if command == 'validate-candidate' else validate_luna(sys.argv[2])
     print(json.dumps(result))

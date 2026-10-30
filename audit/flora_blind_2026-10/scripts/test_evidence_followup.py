@@ -236,3 +236,149 @@ class OmissionEvidenceGuards(unittest.TestCase):
         decisions[1]['input_row_index'] = 3
         resultpath.write_text(json.dumps({'decisions': decisions}))
         self.assertFalse(ctl.validate_candidate_review('review_0000')['valid_envelope'])
+
+
+class CandidateCLIDispatch(unittest.TestCase):
+    def setUp(self):
+        from unittest.mock import Mock
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.f = Path(self.temp.name)
+        (self.f / 'candidate_cli/snap').mkdir(parents=True)
+        self.out = self.f / 'candidate_cli/snap'
+        (self.out / 'prepared.json').write_text('{}')
+        self.state = dict(status='active', tasks=[], candidate_cli_dispatch=dict(
+            enabled=True, snapshot='snap', max_calls_per_worker=1, next_round=1))
+        self.relay = Mock(out=self.out)
+        self.relay.load.return_value = {'bundles': [{'review_id': 'b'}]}
+        self.relay.ledger.return_value = dict(status='pending', attempts=[])
+        self.addCleanup(patch.stopall)
+        patch.object(ctl, 'F', self.f).start()
+        patch.object(ctl, 'candidate_relay', return_value=self.relay).start()
+        self.save()
+
+    def save(self):
+        ctl.a.atomic(self.f / 'state.json', self.state)
+
+    def actual(self, intent):
+        return dict(clientRequestId=intent['clientRequestId'], taskId='ACTUAL-task-123',
+                    status='running', providerInstanceId='codex', model='gpt-6.1-sol',
+                    options=[dict(id='reasoningEffort', value='medium'), dict(id='serviceTier', value='default')])
+
+    def test_parent_reduced_worker_limit(self):
+        self.state['candidate_cli_dispatch']['max_workers'] = 1
+        self.save()
+        self.assertEqual(ctl.candidate_cli_dispatch()['workers'], 1)
+
+    def test_invalid_parent_worker_limit(self):
+        for invalid in [0, 5, True, '1']:
+            self.state['candidate_cli_dispatch']['max_workers'] = invalid
+            self.save()
+            with self.assertRaisesRegex(ValueError, 'max_workers'):
+                ctl.candidate_cli_dispatch()
+
+    def test_opt_in_and_actual_identity_publication(self):
+        self.state['candidate_cli_dispatch']['enabled'] = False
+        self.save()
+        self.assertIsNone(ctl.candidate_cli_dispatch())
+        self.state['candidate_cli_dispatch']['enabled'] = True
+        self.save()
+        intent = ctl.candidate_cli_dispatch()
+        self.assertEqual(intent['workers'], 4)
+        self.assertEqual(ctl.candidate_cli_dispatch(), intent)  # lost tool response retries SAME ID
+        real = ctl.a.atomic
+        def inspect(path, obj):
+            if Path(path).name == 'control.json':
+                registered = ctl.read(self.f / 'state.json')['tasks']
+                self.assertEqual(registered[0]['taskId'], 'ACTUAL-task-123')
+                self.assertEqual(registered[0]['slot_cost'], 5)
+            return real(path, obj)
+        with patch.object(ctl.a, 'atomic', side_effect=inspect):
+            ctl.candidate_cli_dispatch(self.actual(intent))
+        control = ctl.read(self.f / 'candidate_cli/control.json')
+        self.assertEqual(control['reservation']['taskId'], 'ACTUAL-task-123')
+        self.assertEqual(control['clientRequestId'], intent['clientRequestId'])
+        self.assertIsNone(ctl.candidate_cli_dispatch())  # active coordinator blocks next notification
+        state = ctl.read(self.f / 'state.json')
+        state['tasks'][0]['status'] = 'completed'
+        ctl.a.atomic(self.f / 'state.json', state)
+        next_intent = ctl.candidate_cli_dispatch()
+        self.assertEqual(next_intent['round'], 2)
+        self.assertNotEqual(next_intent['clientRequestId'], intent['clientRequestId'])
+
+    def test_old_relay_ending_does_not_escalate_running_quantum(self):
+        self.state['tasks'] = [dict(taskId='old', lane='argon_runner', status='running', slot_cost=4)]
+        self.save()
+        intent = ctl.candidate_cli_dispatch()
+        self.assertEqual(intent['workers'], 1)
+        ctl.candidate_cli_dispatch(self.actual(intent))
+        state = ctl.read(self.f / 'state.json')
+        state['tasks'][0]['status'] = 'completed'
+        ctl.a.atomic(self.f / 'state.json', state)
+        self.assertIsNone(ctl.candidate_cli_dispatch())
+        state['tasks'][1]['status'] = 'completed'
+        ctl.a.atomic(self.f / 'state.json', state)
+        self.assertEqual(ctl.candidate_cli_dispatch()['workers'], 4)
+
+    def test_publication_crash_recovery_uses_same_intent_actual_task(self):
+        intent = ctl.candidate_cli_dispatch()
+        real = ctl.a.atomic
+        def fail_control(path, obj):
+            if Path(path).name == 'control.json':
+                raise OSError('mock crash before control publication')
+            return real(path, obj)
+        with patch.object(ctl.a, 'atomic', side_effect=fail_control):
+            with self.assertRaises(OSError):
+                ctl.candidate_cli_dispatch(self.actual(intent))
+        recovered = ctl.candidate_cli_dispatch()
+        self.assertEqual(recovered['clientRequestId'], intent['clientRequestId'])
+        self.assertEqual(recovered['taskId'], 'ACTUAL-task-123')
+        ctl.candidate_cli_dispatch(self.actual(intent))
+        self.assertEqual(len(ctl.read(self.f / 'state.json')['tasks']), 1)
+        self.assertIsNone(ctl.candidate_cli_dispatch())
+
+    def test_ceilings_and_unknown_lanes_fail_closed(self):
+        cases = [
+            ([dict(lane='argon_runner', slot_cost=4)], 0, 1),
+            ([], 0, 4),
+            ([dict(lane='luna', slot_cost=4)], 0, 4),
+            ([dict(lane='luna', slot_cost=4)], 1, 3),
+            ([dict(lane='luna', slot_cost=7)], 1, None),
+            ([dict(lane='argon_runner', slot_cost=4), dict(lane='argon_native', slot_cost=1)], 0, None),
+            ([dict(lane='unknown_argon', slot_cost=1)], 0, None),
+            ([dict(lane='other', model='Gemini 4 Argon (High)', slot_cost=1)], 0, None),
+            ([dict(lane='candidate_cli', slot_cost=2)], 0, None),
+            ([dict(lane='other', slot_cost=-1)], 0, None),
+        ]
+        for tasks, metadata, expected in cases:
+            with self.subTest(tasks=tasks, metadata=metadata):
+                self.state['tasks'] = [dict(t, taskId=str(n), status='running') for n, t in enumerate(tasks)]
+                self.state['metadata_infrastructure_slots'] = metadata
+                self.save()
+                result = ctl.candidate_cli_dispatch()
+                self.assertEqual(result['workers'] if result else None, expected)
+
+    def test_terminal_blockers_and_pending_children(self):
+        for progress in [dict(blocker='invalid reservation'), dict(blocker='orphan process'),
+                         dict(infrastructure_streak=3), dict(infrastructure_circuit_open=True)]:
+            ctl.a.atomic(self.out / 'progress.json', progress)
+            self.assertIsNone(ctl.candidate_cli_dispatch())
+        (self.out / 'progress.json').unlink()
+        self.relay.check.side_effect = ValueError('changed input/source hash')
+        self.assertIsNone(ctl.candidate_cli_dispatch())
+        self.relay.check.side_effect = None
+        for status in ['validated', 'exhausted', 'source_changed']:
+            self.relay.ledger.return_value = dict(status=status, attempts=[])
+            self.assertIsNone(ctl.candidate_cli_dispatch())
+        self.relay.ledger.return_value = dict(status='pending', attempts=[])
+        self.state['tasks'] = [dict(taskId='nested', lane='candidate_cli', status='completed', hasPendingChildRuns=True, slot_cost=2)]
+        self.save()
+        self.assertIsNone(ctl.candidate_cli_dispatch())
+
+    def test_wrong_actual_identity_or_options_never_publish(self):
+        intent = ctl.candidate_cli_dispatch()
+        for overrides in [dict(taskId=''), dict(model='wrong'), dict(options=[]), dict(clientRequestId='wrong')]:
+            with self.assertRaises(ValueError):
+                ctl.candidate_cli_dispatch(dict(self.actual(intent), **overrides))
+        self.assertFalse((self.f / 'candidate_cli/control.json').exists())
+        self.assertEqual(ctl.read(self.f / 'state.json')['tasks'], [])
