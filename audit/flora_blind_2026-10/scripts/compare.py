@@ -564,7 +564,8 @@ def rate_line(rows, field):
     return f'{errors} / {n} ({rate}); {unresolved} unverified; all-row unresolved bounds {bounds} (N={total})'
 
 
-def report(results, missing, works, issues, finalized_at=None, review_summary=None):
+def report(results, missing, works, issues, finalized_at=None, review_summary=None, followup=None):
+    followup_active = isinstance(followup, dict) and followup.get('status') == 'active'
     status = (f'Audit finalized at {finalized_at}. Unverified fields remain unresolved within the available evidence and review budget. '
               if finalized_at else 'This report is provisional until the parent finalizes the audit. ')
     lines = ['# FLoRA blind audit' + ('' if finalized_at else ' — provisional'), '',
@@ -577,6 +578,13 @@ def report(results, missing, works, issues, finalized_at=None, review_summary=No
               f'{len(missing)} blind targets have no proposed shipped counterpart; these are not errors by default.', '', '## Coverage', '']
     # Lead with findings; retain the evidence standard immediately after them.
     lines[2:6] = [lines[4], '', lines[2], '']
+    if followup_active:
+        lines[6:6] = ['The complete evidence follow-up remains active. Earlier phase completion and cutoff figures below are historical. '
+                      'New scientific decisions require contiguous literal primary-source quotations. Legacy accepted quotations are being '
+                      'checked against exact saved source passages; context objections remain subject to review. '
+                      'Candidate rechecks, field reviews and owned recovery work still remain. See '
+                      '[evidence_followup/README.md](evidence_followup/README.md) and '
+                      '[current progress](evidence_followup/integration/progress.json).', '']
     attempted = sum(w['attempted'] for w in works)
     coded = sum(w['coded'] for w in works)
     evidence = collections.Counter(w['evidence_level'] for w in works if w['text_obtained'])
@@ -615,7 +623,7 @@ def report(results, missing, works, issues, finalized_at=None, review_summary=No
             f'{integrated.get("unverified", 0)} remain unverified after review. '
             'No coding acquisition was restarted and the original run history is preserved in run_manifest.json. '
             'Source inspection additionally excluded one coding whose saved source contained an empty abstract and references only.', '']
-    if review_summary and review_summary.get('completion_pass', {}).get('completed_at'):
+    if not followup_active and review_summary and review_summary.get('completion_pass', {}).get('completed_at'):
         phase = review_summary['completion_pass']
         position = lines.index('## Confirmed field error rates')
         lines[position:position] = [
@@ -821,7 +829,8 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
     review_summary = dict(run_manifest.get('review_summary', {})) if isinstance(run_manifest, dict) else None
     if followup_active and review_summary:
         review_summary.pop('completion_pass', None)  # that closed pilot is historical
-    report_text = report(results, missing, works, issues, finalized_at, review_summary)
+    report_text = report(results, missing, works, issues, finalized_at, review_summary,
+                         run_manifest.get('evidence_followup') if isinstance(run_manifest, dict) else None)
     if followup_active:
         report_text = ('> **Full evidence follow-up is active.** These are the latest integrated results, '
                        'not final follow-up counts. All outstanding full-text fields, primary-source recovery '

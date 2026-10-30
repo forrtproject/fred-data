@@ -66,3 +66,12 @@ its synthetic needs_more_evidence checkpoint is technical triage, not scientific
 closure. Every candidate remains subject to source/identity adjudication. Independent
 source-context validators process finite nonoverlapping sets of completed Argon
 field replies; all model and validation tasks count toward the combined ceiling.
+
+
+## Literal source proof and current transport
+
+The native candidate transport is paused after repeated harness failures. The finite CLI candidate snapshot freezes114bundles/421requests; its exact task, worker reservation and attempt budgets live in state.json and candidate_cli/control.json. Parent reconciliation can collect completed bundles during execution. Permitted retries receive keyed mechanical feedback; raw replies and earlier budgets remain unchanged. See candidate_cli/README.md and RESUME.md for the active round and two pinned integration paths.
+
+The parent independently recorded128new literal primary quotations for legacy decisions whose scientific passage and verdict are unchanged. Seventy-five further quotation/context cases, plus one newly exposed target, are temporarily withheld from confirmed exports while source proof is inspected. They remain in the unresolved export or row-field queue with canonical histories preserved. The supporting/objection labels of a technical source inspector never decide scientific correctness. Final verification rejects nonliteral accepted corrections or missing-reference quotations.
+
+A complete primary publisher abstract was recovered where the old saved abstract was empty. Fresh blinded coding and hash/schema/literal checks support that source upgrade at abstract level; it is not full text. Sixty-one other recovered abstracts add no information. Two report/version identity conflicts remain explicit rather than being silently substituted. See integration/abstract_delta_parent_dispositions.json.

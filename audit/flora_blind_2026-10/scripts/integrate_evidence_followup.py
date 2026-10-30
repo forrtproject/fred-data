@@ -36,7 +36,7 @@ def integrate():
         sourcepath = Path(snapshot['works'][request['file_key']]['source_path'])
         source = sourcepath.read_text()
         assert hashlib.sha256(sourcepath.read_bytes()).hexdigest() == snapshot['works'][request['file_key']]['source_sha256']
-        assert all(c.valid_decision(d, source) for d in decisions)
+        assert all(c.valid_decision(d, source) and d['quote'] in source for d in decisions)
         target = R / 'adjudications' / (request['file_key'] + '.json')
         obj = c.read_json(target)[0] or {'decisions': []}
         archive = F / 'integration/prior_adjudications' / target.name

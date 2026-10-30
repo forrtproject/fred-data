@@ -121,6 +121,18 @@ class OmissionEvidenceGuards(unittest.TestCase):
         item.update(changes)
         self.output.write_text(json.dumps({'records': [item]}))
 
+    def test_paused_native_transport_cannot_reserve_more_requests(self):
+        (self.f / 'state.json').write_text(json.dumps({'tasks': [], 'native_argon_dispatch_paused': True}))
+        self.assertIsNone(ctl.prepare_candidate_review())
+        self.assertFalse((self.f / 'candidate_reviews').exists())
+
+    def test_native_dispatch_preserves_one_combined_validation_slot(self):
+        (self.f / 'state.json').write_text(json.dumps({'tasks': [
+            {'lane': 'other', 'status': 'running', 'slot_cost': 9}],
+            'max_combined_children_and_infrastructure': 10}))
+        self.assertIsNone(ctl.prepare_candidate_review())
+        self.assertFalse((self.f / 'candidate_reviews').exists())
+
     def test_invented_or_repaired_quote_cannot_pass_mechanical_evidence_gate(self):
         self.result(identity_quote='Smith (2001), A repaired empirical finding.')
         result = ctl.validate_luna('luna_0000')
@@ -217,6 +229,10 @@ class OmissionEvidenceGuards(unittest.TestCase):
         result = ctl.validate_candidate_review('review_0000')
         self.assertEqual(result['decisions'], 2)
         self.assertEqual(result['mechanically_valid'], 2)
+        decisions[0]['quote'] = 'We  replicated Smith (2001).'
+        resultpath.write_text(json.dumps({'decisions': decisions}))
+        self.assertEqual(ctl.validate_candidate_review('review_0000')['mechanically_valid'], 1)
+        decisions[0]['quote'] = 'We replicated Smith (2001).'
         decisions[1]['input_row_index'] = 3
         resultpath.write_text(json.dumps({'decisions': decisions}))
         self.assertFalse(ctl.validate_candidate_review('review_0000')['valid_envelope'])

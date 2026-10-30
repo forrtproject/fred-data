@@ -100,7 +100,7 @@ def validate_luna(bid):
                 errors.append('not all shipped rows checked')
             for field in ('omission_quote', 'identity_quote', 'duplicate_quote'):
                 quote = item.get(field, '')
-                if quote and (not isinstance(quote, str) or len(quote) > 2000 or not c.quote_present(quote, source)):
+                if quote and (not isinstance(quote, str) or len(quote) > 2000 or quote not in source):
                     errors.append(field + ' is not a valid literal quote')
             if item.get('disposition') == 'likely_omission' and not (item.get('omission_quote') and item.get('identity_quote')):
                 errors.append('positive missing retest/identity quotation')
@@ -165,7 +165,7 @@ def validate_candidate_review(rid):
             if decision['file_key'] != work['file_key'] or a.decision_key(decision) not in requested_keys:
                 continue
             checked.append({'decision': decision,
-                'mechanically_valid': c.valid_decision(decision, source),
+                'mechanically_valid': c.valid_decision(decision, source) and decision['quote'] in source,
                 'source_sha256': __import__('hashlib').sha256(Path(work['source_path']).read_bytes()).hexdigest()})
     a.atomic(outdir / (rid + '.validation.json'), {'review_id': rid, 'valid_envelope': True,
              'parent_inspection_pending': True, 'records': checked})
@@ -196,12 +196,14 @@ def plan():
 
 def prepare_candidate_review():
     state = read(F / 'state.json')
+    if state.get('native_argon_dispatch_paused'):
+        return None
     active = [x for x in state['tasks'] if x['status'] in ACTIVE or x.get('hasPendingChildRuns')]
     relays = any(x.get('lane') == 'argon_runner' for x in active)
     limit = 1 if relays else 4
     if sum(x.get('lane') == 'argon_native' for x in active) >= limit:
         return None
-    if sum(x.get('slot_cost', 1) for x in active) + state.get('metadata_infrastructure_slots', 0) >= 10:
+    if sum(x.get('slot_cost', 1) for x in active) + state.get('metadata_infrastructure_slots', 0) >= state.get('max_combined_children_and_infrastructure', 10) - 1:
         return None
     indexpath = F / 'candidate_requests/index.json'
     index = read(indexpath, [])

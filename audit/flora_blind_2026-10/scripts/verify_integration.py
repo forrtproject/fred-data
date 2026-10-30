@@ -19,6 +19,7 @@ def verify():
     rows = compare.read_csv(paths[0])
     assert [int(r['input_row_index']) for r in rows] == list(range(manifest['rows']))
     correction_fields = 0
+    nonliteral_evidence = []
     for row in rows:
         evidence = json.loads(row['correction_evidence'])
         for field in json.loads(row['suggested_correction']):
@@ -26,6 +27,8 @@ def verify():
             source = compare.primary_text(root, row['file_key'], row['work_key'])
             assert item['reason'] and item['location'], (row['input_row_index'], field)
             assert compare.quote_present(item['quote'], source), (row['input_row_index'], field)
+            if item['quote'] not in source:
+                nonliteral_evidence.append([row['file_key'], row['input_row_index'], field])
             correction_fields += 1
     confirmed_missing = 0
     missing_rows = compare.read_csv(paths[1])
@@ -37,6 +40,8 @@ def verify():
         item = json.loads(row['evidence'])
         source = compare.primary_text(root, row['file_key'], row['work_key'])
         assert compare.valid_decision(item, source) and item['reason'] and item['location']
+        if item['quote'] not in source:
+            nonliteral_evidence.append([row['file_key'], row['target_index'], 'missing_row'])
         confirmed_missing += 1
     codings = [p for p in (root / 'codings').glob('*.json')
                if re.fullmatch(r'[0-9a-f]{16}', p.stem)]
@@ -79,10 +84,13 @@ def verify():
             assert state.get('status') not in ('running', 'retry_pending', 'scope_review_running', 'scope_review_pending'), path.name
             assert not state.get('requires_parent_scope_inspection'), path.name
     assert before == [hashlib.sha256(p.read_bytes()).hexdigest() for p in paths], 'Deliverables changed during verification'
+    if manifest.get('evidence_followup', {}).get('status') == 'complete':
+        assert not nonliteral_evidence, ('Final evidence follow-up requires literal accepted quotations', nonliteral_evidence)
     return {'rows': len(rows), 'validated_codings': len(codings),
             'validated_additional_report_codings': supplementary_codings,
             'source_checked_correction_fields': correction_fields,
             'source_checked_missing_targets': confirmed_missing, 'flora_sha256': data_hash,
+            'legacy_nonliteral_accepted_evidence_remaining': len(nonliteral_evidence),
             'deliverable_sha256': dict(zip([p.name for p in paths], before))}
 
 
