@@ -293,6 +293,19 @@ def load_decisions(root, file_key):
         return [], error if error != 'unattempted' else ''
     if not isinstance(value, dict) or not isinstance(value.get('decisions'), list):
         return [], 'invalid adjudication envelope (expected decisions list)'
+    holds_path = root / 'evidence_followup' / 'integration' / 'review_holds.json'
+    if holds_path.exists():
+        holds, hold_error = read_json(holds_path)
+        if hold_error or not isinstance(holds, dict) or not isinstance(holds.get('holds'), list):
+            raise ValueError('Malformed parent review hold file')
+        pending = [h for h in holds['holds'] if h.get('file_key') == file_key and h.get('status') == 'pending']
+        def held(d):
+            return any(h.get('field') == d.get('field') and
+                       (h.get('target_index') == d.get('target_index') if d.get('field') == 'missing_row'
+                        else str(h.get('input_row_index')) == str(d.get('input_row_index')))
+                       for h in pending)
+        if pending:
+            return [d for d in value['decisions'] if not held(d)], 'Parent source-scope recheck pending; held decisions preserved but withheld from confirmed exports.'
     return value['decisions'], ''
 
 
@@ -633,7 +646,9 @@ def report(results, missing, works, issues, finalized_at=None, review_summary=No
     if limits:
         lines += ['', 'Source-version notes and limits: ' + ' '.join(limits) +
                   ' These judgments describe the supplied versions; changes in unseen final versions cannot be ruled out.']
-    lines += ['', '## Unmatched blind targets', '']
+    lines += ['', '## Unmatched blind targets', '',
+              'The [confirmed missing-reference export](confirmed_missing_references.csv) contains only source-supported omissions. '
+              '[Unresolved candidates](unresolved_missing_candidates.csv) are kept separately; held or unverified references do not enter the confirmed export.', '']
     for r in missing:
         if r['final_verdict'] == 'error':
             doi = clean_doi(r['doi'])
@@ -756,9 +771,13 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
     # Preserve all-row output even when no coding is present.
     columns = list(results[0]) if results else ['input_row_index', 'work_key', 'file_key']
     write_csv(output / 'results.csv', results, columns)
-    write_csv(output / 'missing_rows.csv', missing,
-              ['work_key', 'file_key', 'target_index', 'doi', 'title', 'authors', 'year',
-               'evidence_level', 'pairing_flags', 'final_verdict', 'resolution', 'evidence', 'blind_target'])
+    missing_columns = ['work_key', 'file_key', 'target_index', 'doi', 'title', 'authors', 'year',
+                       'evidence_level', 'pairing_flags', 'final_verdict', 'resolution', 'evidence', 'blind_target']
+    write_csv(output / 'missing_rows.csv', missing, missing_columns)
+    write_csv(output / 'confirmed_missing_references.csv',
+              [r for r in missing if r['final_verdict'] == 'error'], missing_columns)
+    write_csv(output / 'unresolved_missing_candidates.csv',
+              [r for r in missing if r['final_verdict'] == 'unverified'], missing_columns)
     (output / 'disagreements.json').write_text(json.dumps({'provisional': not bool(finalized_at),
                                                          'finalized_at': finalized_at, 'items': disagreements,
                                                          'validation_issues': issues}, ensure_ascii=False, indent=2) + '\n')

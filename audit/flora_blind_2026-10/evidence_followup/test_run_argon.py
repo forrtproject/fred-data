@@ -137,6 +137,21 @@ class RelayTests(unittest.TestCase):
         self.assertTrue(runner.stop.is_set())
         self.assertEqual(runner.active, 0)
 
+    def test_exhausted_zero_valid_objects_has_explicit_partial_result(self):
+        def transport(argv, output, source, requested, timeout):
+            output.write_text('synthetic unavailable model')
+            return dict(returncode=1, timed_out=False, closed_after_valid_answer=False)
+        runner, entry = self.fixture_runner(transport)
+        runner.one(entry)
+        state = json.loads((self.root/'test_request.state.json').read_text())
+        result = json.loads((self.root/'test_request.result.json').read_text())
+        self.assertEqual(state['status'], 'exhausted')
+        self.assertEqual(state['attempts'], 2)
+        self.assertTrue(result['partial'])
+        self.assertEqual(result['decisions'], [])
+        self.assertEqual(result['provenance']['attempt'], 2)
+        self.assertTrue((self.root/'test_request.attempt1.result.json').exists())
+
     def test_changed_source_prevents_dispatch(self):
         def transport(*args, **kwargs):
             self.fail('changed source must never dispatch')

@@ -429,9 +429,8 @@ class Runner:
             except (ValueError, TypeError):
                 pass
         parts = partial_response(output, source, requested)
-        if parts:
-            self.save_result(state, rec, parts, True, source, output)
-            rec['independently_valid_partial_count'] = len(parts)
+        self.save_result(state, rec, parts, True, source, output)
+        rec['independently_valid_partial_count'] = len(parts)
 
     def run(self):
         pending = iter(self.snap['requests'])

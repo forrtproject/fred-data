@@ -13,7 +13,8 @@ import controller
 def verify():
     root = Path(__file__).resolve().parents[1]
     manifest = json.loads((root / 'run_manifest.json').read_text())
-    paths = [root / 'results.csv', root / 'missing_rows.csv']
+    paths = [root / 'results.csv', root / 'missing_rows.csv',
+             root / 'confirmed_missing_references.csv', root / 'unresolved_missing_candidates.csv']
     before = [hashlib.sha256(p.read_bytes()).hexdigest() for p in paths]
     rows = compare.read_csv(paths[0])
     assert [int(r['input_row_index']) for r in rows] == list(range(manifest['rows']))
@@ -27,7 +28,10 @@ def verify():
             assert compare.quote_present(item['quote'], source), (row['input_row_index'], field)
             correction_fields += 1
     confirmed_missing = 0
-    for row in compare.read_csv(paths[1]):
+    missing_rows = compare.read_csv(paths[1])
+    assert compare.read_csv(paths[2]) == [r for r in missing_rows if r['final_verdict'] == 'error'], 'Confirmed-only reference export differs'
+    assert compare.read_csv(paths[3]) == [r for r in missing_rows if r['final_verdict'] == 'unverified'], 'Unresolved candidate export differs'
+    for row in missing_rows:
         if row['final_verdict'] != 'error':
             continue
         item = json.loads(row['evidence'])

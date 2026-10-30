@@ -141,30 +141,31 @@ def validate_candidate_review(rid):
     outdir = F / 'candidate_reviews'
     payload = read(outdir / (rid + '.input.json'))
     result = read(outdir / (rid + '.result.json'))
-    expected = {(w['file_key'], x['target_index'])
+    expected = {(w['file_key'], a.decision_key(x))
                 for w in payload['requests'] for x in w['requested_fields']}
     entries = read(F / 'candidate_requests/index.json')
     selected_ids = {w['request_id'] for w in payload['requests']}
     malformed = not isinstance(result, dict) or not isinstance(result.get('decisions'), list)
     if not malformed:
-        keys = [(d.get('file_key'), d.get('target_index')) for d in result['decisions']]
+        keys = [(d.get('file_key'), a.decision_key(d)) for d in result['decisions']]
         malformed = set(keys) != expected or len(keys) != len(expected)
     if malformed:
         for item in entries:
             if item['request_id'] in selected_ids:
                 item.update(status='pending' if item.get('review_attempts', 1) < 2 else 'review_failed_terminal',
                             prior_review_id=rid,
-                            review_objection='Earlier expert did not return a complete valid envelope. Read previous result if it exists; independently return every requested target.')
+                            review_objection='Earlier expert did not return a complete valid envelope. Read previous result if it exists; independently return every requested field.')
         a.atomic(F / 'candidate_requests/index.json', entries)
         return {'review_id': rid, 'valid_envelope': False, 'requires_parent_attention': True}
     checked = []
     for work in payload['requests']:
         source = Path(work['source_path']).read_text()
+        requested_keys = {a.decision_key(x) for x in work['requested_fields']}
         for decision in result['decisions']:
-            if decision['file_key'] != work['file_key']:
+            if decision['file_key'] != work['file_key'] or a.decision_key(decision) not in requested_keys:
                 continue
             checked.append({'decision': decision,
-                'mechanically_valid': decision.get('field') == 'missing_row' and c.valid_decision(decision, source),
+                'mechanically_valid': c.valid_decision(decision, source),
                 'source_sha256': __import__('hashlib').sha256(Path(work['source_path']).read_bytes()).hexdigest()})
     a.atomic(outdir / (rid + '.validation.json'), {'review_id': rid, 'valid_envelope': True,
              'parent_inspection_pending': True, 'records': checked})
@@ -213,8 +214,11 @@ def prepare_candidate_review():
         if coding.get('evidence_level') != 'full_text' and not acquisition_finished:
             continue  # allow acquisition to finish before adjudicating abstract limits
         prior_positive = any(x.get('previous_final_verdict') == 'error' for x in payload['requested_fields'])
-        pending.append(((coding.get('evidence_level') != 'full_text', not prior_positive), entry, payload))
+        priority = 0 if entry.get('priority') == 'parent_scope_objection' else 1 if entry.get('review_kind') == 'fields' else 2
+        pending.append(((priority, coding.get('evidence_level') != 'full_text', not prior_positive), entry, payload))
     for _, entry, payload in sorted(pending, key=lambda x: (x[0], x[1]['request_id'])):
+        if selected and entry.get('review_kind', 'candidates') != selected[0][0].get('review_kind', 'candidates'):
+            continue
         if count + entry['field_count'] > 6:
             continue
         if entry.get('prior_review_id'):
@@ -231,17 +235,20 @@ def prepare_candidate_review():
     rid = 'review_' + str(len(list(outdir.glob('*.input.json')))).zfill(4)
     inputpath = outdir / (rid + '.input.json')
     outputpath = outdir / (rid + '.result.json')
-    a.atomic(inputpath, {'review_id': rid, 'requests': [x[1] for x in selected],
+    kind = selected[0][0].get('review_kind', 'candidates')
+    instructions = 'FIELD_REVIEW_INSTRUCTIONS.md' if kind == 'fields' else 'REVIEW_INSTRUCTIONS.md'
+    a.atomic(inputpath, {'review_id': rid, 'review_kind': kind, 'requests': [x[1] for x in selected],
         'codebook_path': str(R / 'codebook.md'),
         'metadata_path': str(F / 'bibliography_metadata.json'),
-        'instructions_path': str(F / 'candidate_reviews/REVIEW_INSTRUCTIONS.md')})
+        'instructions_path': str(F / 'candidate_reviews' / instructions)})
     for entry, _ in selected:
         entry.update(status='review_prepared', review_id=rid,
                      review_attempts=entry.get('review_attempts', 0) + 1)
     a.atomic(indexpath, index)
     return {'review_id': rid, 'input_path': str(inputpath.resolve()),
             'output_path': str(outputpath.resolve()), 'candidates': count,
-            'request_ids': [x[0]['request_id'] for x in selected]}
+            'request_ids': [x[0]['request_id'] for x in selected], 'review_kind': kind,
+            'instructions_path': str((F / 'candidate_reviews' / instructions).resolve())}
 
 
 if __name__ == '__main__':

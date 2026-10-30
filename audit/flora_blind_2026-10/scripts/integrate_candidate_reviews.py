@@ -22,8 +22,11 @@ def integrate():
         validation = json.loads((F / 'candidate_reviews' / (rid + '.validation.json')).read_text())
         assert validation['valid_envelope']
         approved = {tuple(x) for x in inspection['approved_keys']}
+        fields = inspection.get('review_kind') == 'fields'
+        def approval_key(d):
+            return (d['file_key'], str(d['input_row_index']), d['field']) if fields else (d['file_key'], d['target_index'])
         selected = [x for x in validation['records']
-                    if (x['decision']['file_key'], x['decision']['target_index']) in approved]
+                    if approval_key(x['decision']) in approved]
         assert len(selected) == len(approved)
         for item in selected:
             decision = item['decision']
@@ -36,7 +39,7 @@ def integrate():
             obj = c.read_json(target)[0] or {'decisions': []}
             old = [x for x in obj['decisions'] if a.decision_key(x) == a.decision_key(decision)]
             assert len(old) <= 1
-            retain = (old and old[0]['verdict'] in ('blind_right', 'both_wrong')
+            retain = (not fields and old and old[0]['verdict'] in ('blind_right', 'both_wrong')
                       and decision['verdict'] in ('blind_right', 'both_wrong'))
             # Identity rechecks do not downgrade an independently verified outcome.
             if retain:
@@ -54,14 +57,14 @@ def integrate():
                 obj['decisions'] = [x for x in obj['decisions'] if a.decision_key(x) != a.decision_key(decision)]
                 obj['decisions'].append(decision)
             history = obj.setdefault('evidence_followup_candidate_rechecks', [])
-            entry = {'review_id': rid, 'target_index': decision['target_index'],
+            entry = {'review_id': rid, 'decision_key': list(a.decision_key(decision)),
                      'decision_path': 'evidence_followup/candidate_reviews/' + rid + '.result.json',
                      'prior_outcome_preserved': bool(retain),
                      'parent_inspection': 'evidence_followup/candidate_reviews/parent_inspection.json'}
             if entry not in history:
                 history.append(entry)
             a.atomic(target, obj)
-            merged.append((fk, decision['target_index']))
+            merged.append(approval_key(decision))
         for entry in index:
             if entry.get('review_id') == rid:
                 entry['status'] = 'parent_inspected_integrated'

@@ -6,6 +6,9 @@ import unittest
 from unittest.mock import patch
 
 import evidence_followup_controller as ctl
+import compare as comparison
+from promote_followup_sources import target_mapping
+from check_project_endpoints import endpoint
 
 
 class OmissionEvidenceGuards(unittest.TestCase):
@@ -69,3 +72,61 @@ class OmissionEvidenceGuards(unittest.TestCase):
             {'lane': 'argon_runner', 'status': 'running', 'slot_cost': 4},
             {'lane': 'argon_native', 'status': 'running', 'slot_cost': 1}]}))
         self.assertIsNone(ctl.prepare_candidate_review())
+
+    def test_source_upgrade_cannot_silently_drop_an_identified_original(self):
+        with self.assertRaises(ValueError):
+            target_mapping({'targets': [{'title': 'A specific missing original'}]},
+                           {'targets': [{'title': 'Another finding'}]})
+
+    def test_source_upgrade_maps_reference_punctuation_without_losing_identity(self):
+        result = target_mapping({'targets': [{'title': 'A specific missing original.'}]},
+                                {'targets': [{'title': 'A specific missing original'}]})
+        self.assertEqual(result[0]['new_target_index'], 0)
+
+    def test_fractional_author_ratings_do_not_become_categorical_outcomes(self):
+        self.assertIsNone(endpoint({'adjudicated_replication_code': '0.5',
+            'replicated_instructor_code': '0', 'replicated_report_code': '0'}))
+        self.assertIsNone(endpoint({'adjudicated_replication_code': 'NA',
+            'replicated_instructor_code': '0', 'replicated_report_code': '1'}))
+        self.assertEqual(endpoint({'adjudicated_replication_code': '1',
+            'replicated_instructor_code': '0.5', 'replicated_report_code': '0'}), 'successful')
+
+    def test_scope_hold_withholds_export_without_destroying_prior_outcome(self):
+        adjs = self.root / 'adjudications'
+        adjs.mkdir()
+        decision = {'field': 'missing_row', 'target_index': 1,
+                    'verdict': 'blind_right', 'corrected_value': {'outcome': 'successful'}}
+        p = adjs / 'abc.json'
+        p.write_text(json.dumps({'decisions': [decision]}))
+        before = p.read_bytes()
+        holds = self.root / 'evidence_followup/integration/review_holds.json'
+        holds.parent.mkdir(parents=True)
+        h = {'file_key': 'abc', 'field': 'missing_row', 'target_index': 1, 'status': 'pending'}
+        holds.write_text(json.dumps({'holds': [h]}))
+        self.assertEqual(comparison.load_decisions(self.root, 'abc')[0], [])
+        h['status'] = 'resolved'
+        holds.write_text(json.dumps({'holds': [h]}))
+        self.assertEqual(comparison.load_decisions(self.root, 'abc')[0], [decision])
+        self.assertEqual(p.read_bytes(), before)
+
+    def test_native_fields_for_same_source_are_validated_once_and_wrong_row_is_rejected(self):
+        out = self.f / 'candidate_reviews'
+        out.mkdir()
+        requests = [{'request_id': f'r{i}', 'file_key': 'abc', 'source_path': str(self.source),
+                     'requested_fields': [{'input_row_index': i, 'field': 'outcome'}]} for i in [1, 2]]
+        (out / 'review_0000.input.json').write_text(json.dumps({'requests': requests}))
+        index = self.f / 'candidate_requests/index.json'
+        index.parent.mkdir()
+        index.write_text(json.dumps([{'request_id': f'r{i}', 'review_attempts': 1} for i in [1, 2]]))
+        decisions = [{'request_id': f'r{i}', 'file_key': 'abc', 'input_row_index': i,
+                      'field': 'outcome', 'method': 'argon', 'verdict': 'shipped_right',
+                      'corrected_value': 'failed', 'quote': 'We replicated Smith (2001).',
+                      'location': 'Results', 'reason': 'Primary author main message.'} for i in [1, 2]]
+        resultpath = out / 'review_0000.result.json'
+        resultpath.write_text(json.dumps({'decisions': decisions}))
+        result = ctl.validate_candidate_review('review_0000')
+        self.assertEqual(result['decisions'], 2)
+        self.assertEqual(result['mechanically_valid'], 2)
+        decisions[1]['input_row_index'] = 3
+        resultpath.write_text(json.dumps({'decisions': decisions}))
+        self.assertFalse(ctl.validate_candidate_review('review_0000')['valid_envelope'])

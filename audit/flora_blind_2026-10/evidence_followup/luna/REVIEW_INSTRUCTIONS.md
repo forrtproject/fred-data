@@ -23,6 +23,11 @@ a missing original. A follow-up wave of the same intervention may require an exp
 scope decision (the HIV 2007/2010 example); read prior objections, don't just repeat
 the earlier model's preferred label. Never manufacture a bibliographic identifier.
 
+A supplied prior-adjudication or prior-state path may not exist when that work has
+not previously been adjudicated. Check existence; record "no prior adjudication"
+and continue with the supplied primary evidence. Do not stop or ask for a file in
+that situation. Existing prior files and explicit objections must still be read.
+
 Use one disposition:
 - likely_omission: the source directly retests a specific published empirical finding,
   its original identity is established, and no shipped row represents that original
@@ -45,6 +50,16 @@ OCR, mathematical-sign replacement, or word correction. Empty quotation fields
 are allowed when inapplicable or evidence is unavailable, but likely_omission needs
 both a retest quote and an identity quote. represented needs source-backed identity,
 not a bare title-similarity assertion. Do not determine replication outcome here.
+
+Before writing a checkpoint, actually run a local membership check for EVERY
+nonempty omission_quote, identity_quote and duplicate_quote: quote in the exact
+decoded saved source string, with length<=2000. Extract the substring from that
+string when needed; don't manually reconstruct line breaks or spacing. If a quote
+fails, reread for an intact passage or mark the evidence gap honestly. Never put
+your reasoning, "not found", a status label or a statement about the shipped rows
+in a quote field. In particular duplicate_quote must be empty unless the primary
+source itself supplies a literal passage demonstrating same-work equivalence.
+This check establishes literal evidence only, not a scientific verdict.
 
 Spend up to 10 minutes per batch, at most 90 seconds per ordinary candidate.
 For a large collected source, use the supplied lossless view/index and inspect the
