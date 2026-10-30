@@ -18,10 +18,16 @@ def main():
     rows = json.loads((B / 'parent_rows.json').read_text())
     inputs = {r['audit_id']: r for p in (B / 'inputs').glob('*.json')
               for r in json.loads(p.read_text())}
+    history_path=F/'adjudication_tasks.jsonl'
+    history=[json.loads(l) for l in history_path.read_text().splitlines() if l] if history_path.exists() else []
+    already_dispatched={(x['audit_id'],x['field']) for r in history for x in r['items']}
+    previous_reviews=[x for path in (B/'adjudications').glob('validated_macfollowup_*.json') for x in json.loads(path.read_text())]
     groups = collections.defaultdict(list)
     repairs_path = F / 'quote_repairs' / 'repairs.json'
     repairs = json.loads(repairs_path.read_text()) if repairs_path.exists() else []
     for item in json.loads((B / 'disagreements.json').read_text()):
+        if (item['audit_id'],item['field']) in already_dispatched:
+            continue
         path = item.get('blind', {}).get('source_path', '')
         if not Path(path).name.startswith('followup_mac_'):
             continue
@@ -39,6 +45,8 @@ def main():
         groups[path].append(item)
     queue = []
     for source, items in sorted(groups.items()):
+        prior=[x for x in previous_reviews if x['source_path']==source]
+        if prior:items[0]['prior_independent_reviews_of_same_source']=prior
         key = 'macfollowup_' + hashlib.sha256(json.dumps(items, sort_keys=True).encode()).hexdigest()[:16]
         prompt = B / 'adjudications' / f'prompt_{key}.txt'
         output = B / 'adjudications' / f'raw_{key}.txt'
