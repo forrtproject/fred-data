@@ -1,12 +1,14 @@
-# FLoRA blind audit
+> **Full evidence follow-up is active.** These are the latest integrated results, not final follow-up counts. All outstanding full-text fields, primary-source recovery and exhaustive omission checks are in progress. See [evidence_followup/README.md](evidence_followup/README.md) and its live queues.
 
-401 input rows have at least one confirmed field error; 2061 / 2818 rows are fully resolved. 807 blind targets have no proposed shipped counterpart; these are not errors by default.
+# FLoRA blind audit — provisional
 
-Audit finalized at 2026-10-30T12:10:54.857962+00:00. Unverified fields remain unresolved within the available evidence and review budget. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
+401 input rows have at least one confirmed field error; 2068 / 2818 rows are fully resolved. 809 blind targets have no proposed shipped counterpart; these are not errors by default.
+
+This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2288 with verified saved text (1710 full text, 578 abstract); 2288 with validated usable coding. Rows fully resolved: 2061 / 2818.
+Works: 2344 total; 2344 attempted; 2288 with verified saved text (1712 full text, 576 abstract); 2288 with validated usable coding. Rows fully resolved: 2068 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. Dependent outcome replacements after a type correction remain in results.csv and the error list.
 
@@ -14,13 +16,11 @@ Cross-model review used 622 call attempts across 514 works. 31 works ended witho
 
 After the original bounded run, a user-authorised supplemental review covered 102 deferred field requests across 87 works using 114 additional Argon attempts. 91 requests have a substantive integrated verdict; 11 remain unverified after review. No coding acquisition was restarted and the original run history is preserved in run_manifest.json. Source inspection additionally excluded one coding whose saved source contained an empty abstract and references only.
 
-A final cheap omission pilot used 3 Luna tasks for 9 candidates. Parent inspection verified all 9 source quotations and confirmed 6 additional omissions; 3 pilot cases require publication-level deduplication or renewed expert interpretation. One background classification was overturned by explicit replication results in the source. Luna labels were not accepted without parent source review. Outcomes for the additional targets were not adjudicated. Wider candidate triage is deferred because it still requires substantial source and identity checking. See [completion_pass/README.md](completion_pass/README.md) and its field and candidate disposition tables. Main field verdicts and shipped-type denominators are preserved; conditionally inapplicable fields are identified separately. No model work or audit schedules remain active.
-
 ## Confirmed field error rates
 
 - type: 37 / 2357 (1.6%); 461 unverified; all-row unresolved bounds 1.3%–17.7% (N=2818)
 - original: 30 / 2360 (1.3%); 458 unverified; all-row unresolved bounds 1.1%–17.3% (N=2818)
-- outcome: 329 / 1890 (17.4%); 723 unverified; all-row unresolved bounds 12.6%–40.3% (N=2613)
+- outcome: 329 / 1897 (17.3%); 716 unverified; all-row unresolved bounds 12.6%–40.0% (N=2613)
 - outcome_computation: 30 / 186 (16.1%); 19 unverified; all-row unresolved bounds 14.6%–23.9% (N=205)
 - outcome_robustness: 8 / 189 (4.2%); 16 unverified; all-row unresolved bounds 3.9%–11.7% (N=205)
 
@@ -29,7 +29,7 @@ A final cheap omission pilot used 3 Luna tasks for 9 candidates. Parent inspecti
 - COS:
   - type: 1 / 628 (0.2%); 92 unverified; all-row unresolved bounds 0.1%–12.9% (N=720)
   - original: 2 / 630 (0.3%); 90 unverified; all-row unresolved bounds 0.3%–12.8% (N=720)
-  - outcome: 60 / 468 (12.8%); 252 unverified; all-row unresolved bounds 8.3%–43.3% (N=720)
+  - outcome: 60 / 474 (12.7%); 246 unverified; all-row unresolved bounds 8.3%–42.5% (N=720)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - SCORE:
@@ -59,7 +59,7 @@ A final cheap omission pilot used 3 Luna tasks for 9 candidates. Parent inspecti
 - replications:
   - type: 29 / 1185 (2.4%); 268 unverified; all-row unresolved bounds 2.0%–20.4% (N=1453)
   - original: 23 / 1178 (2.0%); 275 unverified; all-row unresolved bounds 1.6%–20.5% (N=1453)
-  - outcome: 229 / 1092 (21.0%); 361 unverified; all-row unresolved bounds 15.8%–40.6% (N=1453)
+  - outcome: 229 / 1093 (21.0%); 360 unverified; all-row unresolved bounds 15.8%–40.5% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - reproductions:
@@ -72,15 +72,15 @@ A final cheap omission pilot used 3 Luna tasks for 9 candidates. Parent inspecti
 ### By evidence_level
 
 - abstract:
-  - type: 7 / 391 (1.8%); 204 unverified; all-row unresolved bounds 1.2%–35.5% (N=595)
-  - original: 0 / 393 (0.0%); 202 unverified; all-row unresolved bounds 0.0%–33.9% (N=595)
-  - outcome: 53 / 314 (16.9%); 274 unverified; all-row unresolved bounds 9.0%–55.6% (N=588)
+  - type: 7 / 390 (1.8%); 203 unverified; all-row unresolved bounds 1.2%–35.4% (N=593)
+  - original: 0 / 392 (0.0%); 201 unverified; all-row unresolved bounds 0.0%–33.9% (N=593)
+  - outcome: 53 / 314 (16.9%); 272 unverified; all-row unresolved bounds 9.0%–55.5% (N=586)
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - full_text:
-  - type: 30 / 1966 (1.5%); 204 unverified; all-row unresolved bounds 1.4%–10.8% (N=2170)
-  - original: 30 / 1967 (1.5%); 203 unverified; all-row unresolved bounds 1.4%–10.7% (N=2170)
-  - outcome: 276 / 1576 (17.5%); 398 unverified; all-row unresolved bounds 14.0%–34.1% (N=1974)
+  - type: 30 / 1967 (1.5%); 205 unverified; all-row unresolved bounds 1.4%–10.8% (N=2172)
+  - original: 30 / 1968 (1.5%); 204 unverified; all-row unresolved bounds 1.4%–10.8% (N=2172)
+  - outcome: 276 / 1583 (17.4%); 393 unverified; all-row unresolved bounds 14.0%–33.9% (N=1976)
   - outcome_computation: 30 / 186 (16.1%); 10 unverified; all-row unresolved bounds 15.3%–20.4% (N=196)
   - outcome_robustness: 8 / 186 (4.3%); 10 unverified; all-row unresolved bounds 4.1%–9.2% (N=196)
 - none:
@@ -613,7 +613,7 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 - Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 2 (argon).
 - Confirmed missing target: [Classifying the torture experiences of refugees living in the United States](https://doi.org/10.1177/0886260506294999); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 3 (argon).
 - Confirmed missing target: [Nature of torture, PTSD, and somatic symptoms among political ex-prisoners](https://doi.org/10.1002/jts.20541); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 4 (argon).
-603 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+605 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
@@ -661,5 +661,5 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 
 Elapsed time supplied for 2340 / 2344 works; missing times are not imputed. Times describe final saved checkpoints and exclude earlier failed or excluded attempts; this is worker time, not wall-clock audit duration.
 1 reported timing correction(s) are applied from [timing_corrections.json](timing_corrections.json); the original checkpoint times and correction bases remain in work_times.csv. Clock bounds are reported as bounds, not exact measurements.
-Sum of reported final-checkpoint times: 164198.3 seconds.
+Sum of reported final-checkpoint times: 164213.9 seconds.
 Per-work elapsed time and skips are recorded in [work_times.csv](work_times.csv).

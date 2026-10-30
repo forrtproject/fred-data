@@ -674,6 +674,9 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
         raise ValueError('coding_schema.json missing or malformed')
     run_manifest, error = read_json(root / 'run_manifest.json')
     finalized_at = run_manifest.get('audit_finalized_at') if isinstance(run_manifest, dict) else None
+    followup_active = isinstance(run_manifest, dict) and run_manifest.get('evidence_followup', {}).get('status') == 'active'
+    if followup_active:
+        finalized_at = None
     if not error and isinstance(run_manifest, dict):
         expected = run_manifest.get('input_hashes', {}).get(Path(input_path).name)
         if expected and expected != hashlib.sha256(Path(input_path).read_bytes()).hexdigest():
@@ -759,8 +762,16 @@ def run(input_path=INPUT, audit_dir=ROOT, output_dir=None):
     (output / 'disagreements.json').write_text(json.dumps({'provisional': not bool(finalized_at),
                                                          'finalized_at': finalized_at, 'items': disagreements,
                                                          'validation_issues': issues}, ensure_ascii=False, indent=2) + '\n')
-    (output / 'REPORT.md').write_text(report(results, missing, works, issues, finalized_at,
-                                            run_manifest.get('review_summary') if isinstance(run_manifest, dict) else None), encoding='utf-8')
+    review_summary = dict(run_manifest.get('review_summary', {})) if isinstance(run_manifest, dict) else None
+    if followup_active and review_summary:
+        review_summary.pop('completion_pass', None)  # that closed pilot is historical
+    report_text = report(results, missing, works, issues, finalized_at, review_summary)
+    if followup_active:
+        report_text = ('> **Full evidence follow-up is active.** These are the latest integrated results, '
+                       'not final follow-up counts. All outstanding full-text fields, primary-source recovery '
+                       'and exhaustive omission checks are in progress. See '
+                       '[evidence_followup/README.md](evidence_followup/README.md) and its live queues.\n\n' + report_text)
+    (output / 'REPORT.md').write_text(report_text, encoding='utf-8')
     return {'rows': len(results), 'works': len(works), 'missing_targets': len(missing),
             'disagreements': len(disagreements), 'output_dir': str(output.resolve())}
 

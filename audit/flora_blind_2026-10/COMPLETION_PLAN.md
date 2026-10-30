@@ -1,3 +1,5 @@
+> **Reopened for complete evidence review.** The user has renewed the full-text/source and exhaustive omission work. The previous closing dispositions below are historical; current queues and actual progress are in evidence_followup/README.md and state.json.
+
 # Deferred evidence work after completion
 
 The audit handoff is complete with documented evidence deferrals. A final nine-candidate Luna pilot and parent source inspection confirmed six further omitted targets. Wider candidate triage was deferred because it still needs substantial publication-level source checking; see completion_pass/README.md and the exhaustive field/candidate disposition tables. No model work or audit schedules remain active.
