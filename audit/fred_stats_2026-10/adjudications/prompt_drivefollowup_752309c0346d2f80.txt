@@ -1,0 +1,332 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1839,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "94",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "357",
+      "sample_role": "Repeated-measure observations in the IQ model, as printed in Table 3; not a count of independent children.",
+      "exclusions": "Study enrolled 94 children (48 EIBI,46 SAU). Intention-to-treat analyses use available longitudinal data. Two EIBI children lost to follow-up; five SAU families declined Year 3 testing. Outcome-specific counts retained exactly as Table 3 prints them.",
+      "location": "Online-first proof p.15 (PDF p.15), Table 3, Observations row, IQ column",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1839,
+      "description": "IQ in the early intensive behavioral treatment group versus the comparison group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/0145445518786463",
+    "coding_context": {
+      "es_repr": "p. 15",
+      "description": "with treatment, the early intensive behavioral treatment group obtained significantly higher IQ ... than did the comparison group",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "94",
+        "es_value_r": "0.364",
+        "es_type_r": "b (unstd)",
+        "pval_value_r": "0.01",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately",
+    "blind_extraction_notes": "Original: printed F retained as requested test statistic. Table footnote extraction renders the less-than symbol as G; normalized to <. Replication: no full text acquired; abstract-only evidence not used for extraction.\nSource follow-up: Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Rendered primary Table 3 and outcome narrative inspected. Selects the authors’ explicitly tested between-group difference in improvement (time × treatment), not the treatment intercept. N retains printed observation unit; participant analytic N is not separately printed per model. Significance is bounded by the printed star legend, not exact p.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1840,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "88",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "333",
+      "sample_role": "Repeated-measure observations in the NVIQ model, as printed in Table 3; not a count of independent children.",
+      "exclusions": "Study enrolled 94 children (48 EIBI,46 SAU). Intention-to-treat analyses use available longitudinal data. Two EIBI children lost to follow-up; five SAU families declined Year 3 testing. Outcome-specific counts retained exactly as Table 3 prints them.",
+      "location": "Online-first proof p.15 (PDF p.15), Table 3, Observations row, NVIQ column",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1840,
+      "description": "Language comprehension and nonverbal skill across groups.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/0145445518786463",
+    "coding_context": {
+      "es_repr": "p. 15",
+      "description": "No difference between groups was found in either language comprehension ... or nonverbal skill",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "88",
+        "es_value_r": "0.233",
+        "es_type_r": "b (unstd)",
+        "pval_value_r": "0.05",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately",
+    "blind_extraction_notes": "Locator p. S150 and description jointly identify two distinct tests, so single-test n/es/p fields left null. Table 2 prints language comprehension F 3.82 with EIBT n 21 and comparison n 19; narrative p. S152 prints p = .06. Merrill-Palmer prints ns with EIBT n 21 and comparison n 16; numeric F and p not printed. Values were not merged across tests. Replication full text unavailable.\nSource follow-up: Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Rendered primary Table 3 and outcome narrative inspected. Selects the authors’ explicitly tested between-group difference in improvement (time × treatment), not the treatment intercept. N retains printed observation unit; participant analytic N is not separately printed per model. Significance is bounded by the printed star legend, not exact p. Locator description also mentions language comprehension; this source labels its corresponding outcome NVIQ/nonverbal IQ and has no separate language-comprehension outcome here. Table 3 prints interaction b=0.233 whereas p.16 narrative says 0.234 and 3.168 per year; retained the requested p.15 table value without correction.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1841,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "91",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "333",
+      "sample_role": "Repeated-measure observations in the VABS Composite model, as printed in Table 3; not a count of independent children.",
+      "exclusions": "Study enrolled 94 children (48 EIBI,46 SAU). Intention-to-treat analyses use available longitudinal data. Two EIBI children lost to follow-up; five SAU families declined Year 3 testing. Outcome-specific counts retained exactly as Table 3 prints them.",
+      "location": "Online-first proof p.15 (PDF p.15), Table 3, Observations row, VABS Composite column",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1841,
+      "description": "Adaptive behavior scores in the early intensive behavioral treatment group versus the comparison group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/0145445518786463",
+    "coding_context": {
+      "es_repr": "p. 15",
+      "description": "with treatment, the early intensive behavioral treatment group obtained significantly higher ... adaptive behavior scores than did the comparison group",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "91",
+        "es_value_r": "0.454",
+        "es_type_r": "b (unstd)",
+        "pval_value_r": "0.01",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately",
+    "blind_extraction_notes": "Original: printed F retained as requested test statistic. Table footnote extraction renders the less-than symbol as G; normalized to <. Replication: no full text acquired; abstract-only evidence not used for extraction.\nSource follow-up: Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Rendered primary Table 3 and outcome narrative inspected. Selects the authors’ explicitly tested between-group difference in improvement (time × treatment), not the treatment intercept. N retains printed observation unit; participant analytic N is not separately printed per model. Significance is bounded by the printed star legend, not exact p. Table 3 prints 333 observations for Composite; retained without reconciling against the available n values in Table 2.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1842,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "90",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "354",
+      "sample_role": "Repeated-measure observations in the VABS Communication model, as printed in Table 3; not a count of independent children.",
+      "exclusions": "Study enrolled 94 children (48 EIBI,46 SAU). Intention-to-treat analyses use available longitudinal data. Two EIBI children lost to follow-up; five SAU families declined Year 3 testing. Outcome-specific counts retained exactly as Table 3 prints them.",
+      "location": "Online-first proof p.15 (PDF p.15), Table 3, Observations row, VABS Communication column",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1842,
+      "description": "Communication scores in children receiving early intensive behavioral treatment (EIBT) versus the control group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/0145445518786463",
+    "coding_context": {
+      "es_repr": "p. 15",
+      "description": "Children in the EIBT group achieved significantly higher communication scores compared to the control group.",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "90",
+        "es_value_r": "0.511",
+        "es_type_r": "b (unstd)",
+        "pval_value_r": "0.01",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately",
+    "blind_extraction_notes": "Original: printed F retained as requested test statistic. Table footnote extraction renders the less-than symbol as G; normalized to <. Replication: no full text acquired; abstract-only evidence not used for extraction.\nSource follow-up: Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Rendered primary Table 3 and outcome narrative inspected. Selects the authors’ explicitly tested between-group difference in improvement (time × treatment), not the treatment intercept. N retains printed observation unit; participant analytic N is not separately printed per model. Significance is bounded by the printed star legend, not exact p. Table 3 prints b=0.511 with CI [0.211,0.558], duplicated from Daily living; retained printed coefficient without correcting the interval.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1843,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "90",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "354",
+      "sample_role": "Repeated-measure observations in the VABS Daily living model, as printed in Table 3; not a count of independent children.",
+      "exclusions": "Study enrolled 94 children (48 EIBI,46 SAU). Intention-to-treat analyses use available longitudinal data. Two EIBI children lost to follow-up; five SAU families declined Year 3 testing. Outcome-specific counts retained exactly as Table 3 prints them.",
+      "location": "Online-first proof p.15 (PDF p.15), Table 3, Observations row, VABS Daily living column",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1843,
+      "description": "Daily living skills in the EIBT group versus the comparison group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/0145445518786463",
+    "coding_context": {
+      "es_repr": "p. 15",
+      "description": "The EIBT group demonstrated significantly better daily living skills than the comparison group.",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "90",
+        "es_value_r": "0.384",
+        "es_type_r": "b (unstd)",
+        "pval_value_r": "0.01",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately",
+    "blind_extraction_notes": "Original: printed F retained as requested test statistic. Table footnote extraction renders the less-than symbol as G; normalized to <. Replication: no full text acquired; abstract-only evidence not used for extraction.\nSource follow-up: Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Rendered primary Table 3 and outcome narrative inspected. Selects the authors’ explicitly tested between-group difference in improvement (time × treatment), not the treatment intercept. N retains printed observation unit; participant analytic N is not separately printed per model. Significance is bounded by the printed star legend, not exact p.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1844,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "90",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "354",
+      "sample_role": "Repeated-measure observations in the VABS Socialization model, as printed in Table 3; not a count of independent children.",
+      "exclusions": "Study enrolled 94 children (48 EIBI,46 SAU). Intention-to-treat analyses use available longitudinal data. Two EIBI children lost to follow-up; five SAU families declined Year 3 testing. Outcome-specific counts retained exactly as Table 3 prints them.",
+      "location": "Online-first proof p.15 (PDF p.15), Table 3, Observations row, VABS Socialization column",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1844,
+      "description": "Socialization scores in the EIBT group versus the comparison group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/0145445518786463",
+    "coding_context": {
+      "es_repr": "p. 15",
+      "description": "There was a positive trend indicating the EIBT group had higher socialization scores than the comparison group.",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "90",
+        "es_value_r": "0.276",
+        "es_type_r": "b (unstd)",
+        "pval_value_r": "0.01",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately",
+    "blind_extraction_notes": "Original: printed F retained as requested test statistic. Table footnote extraction renders the less-than symbol as G; normalized to <. Replication: no full text acquired; abstract-only evidence not used for extraction. Original exact p = .05 from narrative on p. S152 preferred to the broader p < .10 table footnote for the same socialization test.\nSource follow-up: Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Rendered primary Table 3 and outcome narrative inspected. Selects the authors’ explicitly tested between-group difference in improvement (time × treatment), not the treatment intercept. N retains printed observation unit; participant analytic N is not separately printed per model. Significance is bounded by the printed star legend, not exact p.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Waters,Amerine Dickens,Thurston,Lu,Smith. PDF has24pages; published range=3-26; source endmatter checked in model review. Methods-related material pages[1, 4, 5, 6, 7, 10, 11, 12]; results-related material pages[2, 3, 11, 12, 16, 18, 19, 20]; references atPDFpages[20]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. Inspect the primary PDF for flagged glyph/sign discrepancies: PDF text extraction can drop minus signs. Do not reverse signs from the parsed text alone when the worker flagged visual disagreement. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

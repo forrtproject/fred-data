@@ -1,0 +1,332 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1748,
+    "field": "n_o",
+    "comparison": "near",
+    "shipped": "368",
+    "shipped_metric": "etasq (partial)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "377",
+      "location": "Online-first p. 6, Study 2 Sample; p. 9 Table 1",
+      "quote": "Test subjects included N = 377 students of psychology (n = 236) and politics (n = … 141) at the FernUniversität in Hagen",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e4b0a9936efb9afbcf1d7282.txt",
+      "confident": true,
+      "sample_role": "Study 2 analytic student participants; Table 1 cells sum to the stated 377.",
+      "exclusions": "Analysis excludes self-reported cheating (n = 9) and interrupted experimental sessions; 377 aligns with Table 1 and model df, so 9 is not subtracted again."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Ihme, T. A., & Tausendpfund, M. (2017). Gender Differences in Political Knowledge: Bringing Situation Back In. Journal of Experimental Political Science, 5(1), 39–55. https://doi.org/10.1017/xps.2017.21",
+      "doi_o": "10.1017/xps.2017.21",
+      "study_o": "2",
+      "ref_r": "Azevedo, F., Micheli, L., & Bolesta, D. S. (2023). Does Stereotype Threat Contribute to the Political Knowledge Gender Gap? A Preregistered Replication Study of Ihme and Tausendpfund (2018). Journal of Experimental Political Science, 11(1), 102–113. https://doi.org/10.1017/xps.2022.35",
+      "doi_r": "10.1017/xps.2022.35",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 1748,
+      "description": "Relationship between stereotype activation and political knowledge test performance.",
+      "locators_o": "p. 9",
+      "locators_r": "p. 5",
+      "text_paths": {}
+    },
+    "work_key": "10.1017/xps.2022.35",
+    "coding_context": {
+      "es_repr": "p. 9",
+      "description": "The activation of the stereotype does not influences the participants’ results on a political knowledge test by itself",
+      "reported_success_quote": "While we successfully replicated the gender gap in political knowledge – such that male participants performed better than female participants – both the first (N = 671) and second stage (N = 831) of the replication of the stereotype activation effect were unsuccessful.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "368",
+        "es_value_o": "0.01",
+        "es_type_o": "etasq (partial)",
+        "pval_value_o": "0.86",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof; observed pagination1–17, final issue39–55",
+    "blind_extraction_notes": "Original full text unavailable under terminal cache miss texts/e4b0a9936efb9afbcf1d7282.miss: publisher access-only content and no Unpaywall/OpenAlex open-access location. Original statistics not substituted from replication summaries. Acquired replication publisher PDF title and DOI verified. Identical descriptions for 1750 and 1751 are distinguished by their supplied page locators: p.4 is Stage 1; p.5 is pooled Stage 2. Success verdict is specific to the authors’ stated agreement with the original null main effect of stereotype activation, rather than the focal interaction replication.\nSource follow-up: Source version: Publisher online-first article/proof; observed pagination1–17, final issue39–55; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Target page rendered and visually checked; canonical TXT cited.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e4b0a9936efb9afbcf1d7282_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1749,
+    "field": "n_o",
+    "comparison": "near",
+    "shipped": "368",
+    "shipped_metric": "etasq (partial)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "377",
+      "location": "Online-first p. 6, Study 2 Sample; p. 9 Table 1",
+      "quote": "Test subjects included N = 377 students of psychology (n = 236) and politics (n = … 141) at the FernUniversität in Hagen",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e4b0a9936efb9afbcf1d7282.txt",
+      "confident": true,
+      "sample_role": "Study 2 analytic student participants; Table 1 cells sum to the stated 377.",
+      "exclusions": "Analysis excludes self-reported cheating (n = 9) and interrupted experimental sessions; 377 aligns with Table 1 and model df, so 9 is not subtracted again."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Ihme, T. A., & Tausendpfund, M. (2017). Gender Differences in Political Knowledge: Bringing Situation Back In. Journal of Experimental Political Science, 5(1), 39–55. https://doi.org/10.1017/xps.2017.21",
+      "doi_o": "10.1017/xps.2017.21",
+      "study_o": "2",
+      "ref_r": "Azevedo, F., Micheli, L., & Bolesta, D. S. (2023). Does Stereotype Threat Contribute to the Political Knowledge Gender Gap? A Preregistered Replication Study of Ihme and Tausendpfund (2018). Journal of Experimental Political Science, 11(1), 102–113. https://doi.org/10.1017/xps.2022.35",
+      "doi_r": "10.1017/xps.2022.35",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 1749,
+      "description": "Political knowledge scores among men versus women.",
+      "locators_o": "p. 9",
+      "locators_r": "p. 5",
+      "text_paths": {}
+    },
+    "work_key": "10.1017/xps.2022.35",
+    "coding_context": {
+      "es_repr": "p. 9",
+      "description": "Men generally scored higher than women on the political knowledge",
+      "reported_success_quote": "While we successfully replicated the gender gap in political knowledge – such that male participants performed better than female participants – both the first (N = 671) and second stage (N = 831) of the replication of the stereotype activation effect were unsuccessful.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "368",
+        "es_value_o": "0.06",
+        "es_type_o": "etasq (partial)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof; observed pagination1–17, final issue39–55",
+    "blind_extraction_notes": "Original full text unavailable under terminal cache miss texts/e4b0a9936efb9afbcf1d7282.miss: publisher access-only content and no Unpaywall/OpenAlex open-access location. Original statistics not substituted from replication summaries. Acquired replication publisher PDF title and DOI verified. Identical descriptions for 1750 and 1751 are distinguished by their supplied page locators: p.4 is Stage 1; p.5 is pooled Stage 2.\nSource follow-up: Source version: Publisher online-first article/proof; observed pagination1–17, final issue39–55; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Target page rendered and visually checked; canonical TXT cited. Extracted initially reported gender main effect. The subsequent political-interest-adjusted result is F(1,364) = 19.23, p < 0.001, η² = 0.05; locator does not explicitly request adjustment.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e4b0a9936efb9afbcf1d7282_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1750,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "368",
+    "shipped_metric": "etasq (partial)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "377",
+      "location": "Online-first p. 6, Study 2 Sample; p. 9 Table 1",
+      "quote": "Test subjects included N = 377 students of psychology (n = 236) and politics (n = … 141) at the FernUniversität in Hagen",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e4b0a9936efb9afbcf1d7282.txt",
+      "confident": true,
+      "sample_role": "Study 2 analytic student participants; Table 1 cells sum to the stated 377.",
+      "exclusions": "Analysis excludes self-reported cheating (n = 9) and interrupted experimental sessions; 377 aligns with Table 1 and model df, so 9 is not subtracted again."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Ihme, T. A., & Tausendpfund, M. (2017). Gender Differences in Political Knowledge: Bringing Situation Back In. Journal of Experimental Political Science, 5(1), 39–55. https://doi.org/10.1017/xps.2017.21",
+      "doi_o": "10.1017/xps.2017.21",
+      "study_o": "2",
+      "ref_r": "Azevedo, F., Micheli, L., & Bolesta, D. S. (2023). Does Stereotype Threat Contribute to the Political Knowledge Gender Gap? A Preregistered Replication Study of Ihme and Tausendpfund (2018). Journal of Experimental Political Science, 11(1), 102–113. https://doi.org/10.1017/xps.2022.35",
+      "doi_r": "10.1017/xps.2022.35",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 1750,
+      "description": "Political knowledge test scores among male versus female participants with no stereotype activation, stereotype activation by a gender question, or stereotype activation by a gender-difference statement.",
+      "locators_o": "p. 9",
+      "locators_r": "p. 4",
+      "text_paths": {}
+    },
+    "work_key": "10.1017/xps.2022.35",
+    "coding_context": {
+      "es_repr": "p. 9",
+      "description": "The mean test scores did not differ between male and female participants in the stereotype not activated condition but differed in the stereotype activated by a gender question condition and a stereotype activated by a gender difference statement) (for smaller replication sample)",
+      "reported_success_quote": "While we successfully replicated the gender gap in political knowledge – such that male participants performed better than female participants – both the first (N = 671) and second stage (N = 831) of the replication of the stereotype activation effect were unsuccessful.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "368",
+        "es_value_o": "0.03",
+        "es_type_o": "etasq (partial)",
+        "pval_value_o": "0.003",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof; observed pagination1–17, final issue39–55",
+    "blind_extraction_notes": "Original full text unavailable under terminal cache miss texts/e4b0a9936efb9afbcf1d7282.miss: publisher access-only content and no Unpaywall/OpenAlex open-access location. Original statistics not substituted from replication summaries. Acquired replication publisher PDF title and DOI verified. Identical descriptions for 1750 and 1751 are distinguished by their supplied page locators: p.4 is Stage 1; p.5 is pooled Stage 2.\nSource follow-up: Source version: Publisher online-first article/proof; observed pagination1–17, final issue39–55; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Target page rendered and visually checked; canonical TXT cited. Identical locators/descriptions for audit IDs 1750 and 1751 do not establish which model each targets. Both print η² = 0.03; unadjusted F(2,365) = 5.80, p = 0.003; adjusted F(2,364) = 6.17, p = 0.002. Shared effect size retained; p left null pending parent target disambiguation.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e4b0a9936efb9afbcf1d7282_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1750,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.03",
+    "shipped_metric": "etasq (partial)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.03",
+      "location": "Online-first p. 9, Political Knowledge, both unadjusted and adjusted activation × gender interactions",
+      "quote": "as a signiﬁcant interaction of stereotype activation and gender (F(2,365) = 5.80, … p = 0.003, η² = 0.03).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e4b0a9936efb9afbcf1d7282.txt",
+      "confident": true,
+      "metric": "η² (printed without partial qualifier)",
+      "test_statistic": null
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Ihme, T. A., & Tausendpfund, M. (2017). Gender Differences in Political Knowledge: Bringing Situation Back In. Journal of Experimental Political Science, 5(1), 39–55. https://doi.org/10.1017/xps.2017.21",
+      "doi_o": "10.1017/xps.2017.21",
+      "study_o": "2",
+      "ref_r": "Azevedo, F., Micheli, L., & Bolesta, D. S. (2023). Does Stereotype Threat Contribute to the Political Knowledge Gender Gap? A Preregistered Replication Study of Ihme and Tausendpfund (2018). Journal of Experimental Political Science, 11(1), 102–113. https://doi.org/10.1017/xps.2022.35",
+      "doi_r": "10.1017/xps.2022.35",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 1750,
+      "description": "Political knowledge test scores among male versus female participants with no stereotype activation, stereotype activation by a gender question, or stereotype activation by a gender-difference statement.",
+      "locators_o": "p. 9",
+      "locators_r": "p. 4",
+      "text_paths": {}
+    },
+    "work_key": "10.1017/xps.2022.35",
+    "coding_context": {
+      "es_repr": "p. 9",
+      "description": "The mean test scores did not differ between male and female participants in the stereotype not activated condition but differed in the stereotype activated by a gender question condition and a stereotype activated by a gender difference statement) (for smaller replication sample)",
+      "reported_success_quote": "While we successfully replicated the gender gap in political knowledge – such that male participants performed better than female participants – both the first (N = 671) and second stage (N = 831) of the replication of the stereotype activation effect were unsuccessful.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "368",
+        "es_value_o": "0.03",
+        "es_type_o": "etasq (partial)",
+        "pval_value_o": "0.003",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof; observed pagination1–17, final issue39–55",
+    "blind_extraction_notes": "Original full text unavailable under terminal cache miss texts/e4b0a9936efb9afbcf1d7282.miss: publisher access-only content and no Unpaywall/OpenAlex open-access location. Original statistics not substituted from replication summaries. Acquired replication publisher PDF title and DOI verified. Identical descriptions for 1750 and 1751 are distinguished by their supplied page locators: p.4 is Stage 1; p.5 is pooled Stage 2.\nSource follow-up: Source version: Publisher online-first article/proof; observed pagination1–17, final issue39–55; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Target page rendered and visually checked; canonical TXT cited. Identical locators/descriptions for audit IDs 1750 and 1751 do not establish which model each targets. Both print η² = 0.03; unadjusted F(2,365) = 5.80, p = 0.003; adjusted F(2,364) = 6.17, p = 0.002. Shared effect size retained; p left null pending parent target disambiguation.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e4b0a9936efb9afbcf1d7282_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1751,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "368",
+    "shipped_metric": "etasq (partial)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "377",
+      "location": "Online-first p. 6, Study 2 Sample; p. 9 Table 1",
+      "quote": "Test subjects included N = 377 students of psychology (n = 236) and politics (n = … 141) at the FernUniversität in Hagen",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e4b0a9936efb9afbcf1d7282.txt",
+      "confident": true,
+      "sample_role": "Study 2 analytic student participants; Table 1 cells sum to the stated 377.",
+      "exclusions": "Analysis excludes self-reported cheating (n = 9) and interrupted experimental sessions; 377 aligns with Table 1 and model df, so 9 is not subtracted again."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Ihme, T. A., & Tausendpfund, M. (2017). Gender Differences in Political Knowledge: Bringing Situation Back In. Journal of Experimental Political Science, 5(1), 39–55. https://doi.org/10.1017/xps.2017.21",
+      "doi_o": "10.1017/xps.2017.21",
+      "study_o": "2",
+      "ref_r": "Azevedo, F., Micheli, L., & Bolesta, D. S. (2023). Does Stereotype Threat Contribute to the Political Knowledge Gender Gap? A Preregistered Replication Study of Ihme and Tausendpfund (2018). Journal of Experimental Political Science, 11(1), 102–113. https://doi.org/10.1017/xps.2022.35",
+      "doi_r": "10.1017/xps.2022.35",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 1751,
+      "description": "Political knowledge test scores among male versus female participants with no stereotype activation, stereotype activation by a gender question, or stereotype activation by a gender-difference statement.",
+      "locators_o": "p. 9",
+      "locators_r": "p. 5",
+      "text_paths": {}
+    },
+    "work_key": "10.1017/xps.2022.35",
+    "coding_context": {
+      "es_repr": "p. 9",
+      "description": "The mean test scores did not differ between male and female participants in the stereotype not activated condition but differed in the stereotype activated by a gender question condition and a stereotype activated by a gender difference statement) (for bigger replication sample)",
+      "reported_success_quote": "While we successfully replicated the gender gap in political knowledge – such that male participants performed better than female participants – both the first (N = 671) and second stage (N = 831) of the replication of the stereotype activation effect were unsuccessful.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "368",
+        "es_value_o": "0.03",
+        "es_type_o": "etasq (partial)",
+        "pval_value_o": "0.003",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof; observed pagination1–17, final issue39–55",
+    "blind_extraction_notes": "Original full text unavailable under terminal cache miss texts/e4b0a9936efb9afbcf1d7282.miss: publisher access-only content and no Unpaywall/OpenAlex open-access location. Original statistics not substituted from replication summaries. Acquired replication publisher PDF title and DOI verified. Identical descriptions for 1750 and 1751 are distinguished by their supplied page locators: p.4 is Stage 1; p.5 is pooled Stage 2.\nSource follow-up: Source version: Publisher online-first article/proof; observed pagination1–17, final issue39–55; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Target page rendered and visually checked; canonical TXT cited. Identical locators/descriptions for audit IDs 1750 and 1751 do not establish which model each targets. Both print η² = 0.03; unadjusted F(2,365) = 5.80, p = 0.003; adjusted F(2,364) = 6.17, p = 0.002. Shared effect size retained; p left null pending parent target disambiguation.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e4b0a9936efb9afbcf1d7282_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1751,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.03",
+    "shipped_metric": "etasq (partial)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.03",
+      "location": "Online-first p. 9, Political Knowledge, both unadjusted and adjusted activation × gender interactions",
+      "quote": "as a signiﬁcant interaction of stereotype activation and gender (F(2,365) = 5.80, … p = 0.003, η² = 0.03).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e4b0a9936efb9afbcf1d7282.txt",
+      "confident": true,
+      "metric": "η² (printed without partial qualifier)",
+      "test_statistic": null
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Ihme, T. A., & Tausendpfund, M. (2017). Gender Differences in Political Knowledge: Bringing Situation Back In. Journal of Experimental Political Science, 5(1), 39–55. https://doi.org/10.1017/xps.2017.21",
+      "doi_o": "10.1017/xps.2017.21",
+      "study_o": "2",
+      "ref_r": "Azevedo, F., Micheli, L., & Bolesta, D. S. (2023). Does Stereotype Threat Contribute to the Political Knowledge Gender Gap? A Preregistered Replication Study of Ihme and Tausendpfund (2018). Journal of Experimental Political Science, 11(1), 102–113. https://doi.org/10.1017/xps.2022.35",
+      "doi_r": "10.1017/xps.2022.35",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 1751,
+      "description": "Political knowledge test scores among male versus female participants with no stereotype activation, stereotype activation by a gender question, or stereotype activation by a gender-difference statement.",
+      "locators_o": "p. 9",
+      "locators_r": "p. 5",
+      "text_paths": {}
+    },
+    "work_key": "10.1017/xps.2022.35",
+    "coding_context": {
+      "es_repr": "p. 9",
+      "description": "The mean test scores did not differ between male and female participants in the stereotype not activated condition but differed in the stereotype activated by a gender question condition and a stereotype activated by a gender difference statement) (for bigger replication sample)",
+      "reported_success_quote": "While we successfully replicated the gender gap in political knowledge – such that male participants performed better than female participants – both the first (N = 671) and second stage (N = 831) of the replication of the stereotype activation effect were unsuccessful.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "368",
+        "es_value_o": "0.03",
+        "es_type_o": "etasq (partial)",
+        "pval_value_o": "0.003",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Publisher online-first article/proof; observed pagination1–17, final issue39–55",
+    "blind_extraction_notes": "Original full text unavailable under terminal cache miss texts/e4b0a9936efb9afbcf1d7282.miss: publisher access-only content and no Unpaywall/OpenAlex open-access location. Original statistics not substituted from replication summaries. Acquired replication publisher PDF title and DOI verified. Identical descriptions for 1750 and 1751 are distinguished by their supplied page locators: p.4 is Stage 1; p.5 is pooled Stage 2.\nSource follow-up: Source version: Publisher online-first article/proof; observed pagination1–17, final issue39–55; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Target page rendered and visually checked; canonical TXT cited. Identical locators/descriptions for audit IDs 1750 and 1751 do not establish which model each targets. Both print η² = 0.03; unadjusted F(2,365) = 5.80, p = 0.003; adjusted F(2,364) = 6.17, p = 0.002. Shared effect size retained; p left null pending parent target disambiguation.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e4b0a9936efb9afbcf1d7282_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Ihme,Tausendpfund. PDF has17pages; published range=39-55; source endmatter checked in model review. Methods-related material pages[4, 5, 6, 7, 8, 9, 10, 11]; results-related material pages[1, 2, 4, 5, 6, 8, 12]; references atPDFpages[14]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. Inspect the primary PDF for flagged glyph/sign discrepancies: PDF text extraction can drop minus signs. Do not reverse signs from the parsed text alone when the worker flagged visual disagreement. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

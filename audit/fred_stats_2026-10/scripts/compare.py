@@ -116,7 +116,8 @@ def comp(field,raw,blind,r):
  if a is None or b is None:return 'differ' if raw in [None,''] and b is not None else 'agree' if norm(raw)==norm(val) else 'not_comparable'
  if a*b<0:return 'differ'
  return 'agree' if a==b else 'compatible' if overlap(rounding(raw),rounding(val)) else 'differ'
-def narrative_scope_unknown(x):
+def narrative_scope_unknown(x,field_override=None):
+ if field_override and field_override.get('target_match') is False:return True
  if not x or x['replication']['status']!='locator_insufficient':return False
  text=str(x.get('notes',''))+' '+str(x['reported_success'].get('location',''))
  return bool(re.search(r'(?i)\b(?:paper[ -]level|overall narrative|overall paper)\b',text))
@@ -204,7 +205,7 @@ def main():
     z[f+'_blind_printed_value']=v;z[f+'_blind_printed_metric']=e.get('metric') if e else None;z[f+'_blind_test_statistic']=e.get('test_statistic') if e else None;z[f+'_comparison_basis']='printed es value'
     if e and metric(r['es_type_'+f[-1]])=='test statistic' and parsed_stat(e.get('test_statistic')):
      v=e['test_statistic'];z[f+'_blind_metric']='test statistic';z[f+'_comparison_basis']='separately blind-extracted printed test_statistic (no conversion)'
-   broad_success=bool(f=='reported_success' and narrative_scope_unknown(x))
+   broad_success=bool(f=='reported_success' and narrative_scope_unknown(x,field_overrides.get((aid,f))))
    matched_target=field_target_match(x,f,field_overrides) if x else None
    z[f+'_target_basis']=field_overrides.get((aid,f),{}).get('reason','')
    if f=='reported_success':z[f+'_scope_note']='Worker reports a broad paper narrative while the individual effect remains unidentified.' if broad_success else ''
