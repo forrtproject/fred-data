@@ -23,11 +23,13 @@ def main():
     already_dispatched={(x['audit_id'],x['field']) for r in history for x in r['items']}
     previous_reviews=[x for path in (B/'adjudications').glob('validated_drivefollowup_*.json') for x in json.loads(path.read_text())]
     prior_all=[x for path in (B/'adjudications').glob('validated_*.json') for x in json.loads(path.read_text())]
+    scope_flags={(r['audit_id'],r['field']) for r in json.loads((F/'narrative_scope_flags.json').read_text())}
     groups = collections.defaultdict(list)
     accepted_by_path={alias:a for a in json.loads((F/'accepted_sources.json').read_text()).values() for alias in {a['text_path'],str(Path(a['text_path']).resolve())}}
     repairs_path = F / 'quote_repairs' / 'repairs.json'
     repairs = json.loads(repairs_path.read_text()) if repairs_path.exists() else []
     for item in json.loads((B / 'disagreements.json').read_text()):
+        if (item['audit_id'],item['field']) in scope_flags:continue
         if (item['audit_id'],item['field']) in already_dispatched:
             continue
         path = item.get('blind', {}).get('source_path', '')

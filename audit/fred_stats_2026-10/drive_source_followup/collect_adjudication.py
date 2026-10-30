@@ -17,6 +17,7 @@ def main():
     assert out.stat().st_size>0,'No response yet'
     start=prompt.index('\n\n[')+2;payload=json.JSONDecoder().raw_decode(prompt[start:])[0]
     data,mode=parse_response(out.read_text())
+    assert mode=='complete_json','Incomplete reply cannot be validated'
     repairs_path=F/'adjudication_evidence_repairs.json'
     repairs=json.loads(repairs_path.read_text()) if repairs_path.exists() else []
     for repair in [r for r in repairs if r['key']==key]:
