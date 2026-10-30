@@ -1,8 +1,8 @@
 # Full evidence follow-up is active
 
-Current verified snapshot (2026-10-30T20:19:31.787640+00:00): **461 rows with confirmed errors; 2,361 of 2,818 rows fully resolved; 154 genuinely absent original-reference pairs**. The separate unresolved export contains 496 candidates. Unresolved evidence covers 152 full-text, 253 abstract/partial and 52 no-text rows; 950 applicable fields remain unverified. All accepted quotations passed literal-source checks; the dataset hash is unchanged.
+Current verified snapshot (2026-10-30T20:46:14.581357+00:00): **465 rows with confirmed errors; 2,372 of 2,818 rows fully resolved; 165 source-confirmed genuinely absent pairs**. The separate unresolved export contains 477 candidates. Unresolved evidence covers 145 full-text, 249 abstract/partial and 52 no-text rows; 929 applicable fields remain unverified. All accepted quotations passed literal-source checks; the dataset hash is unchanged.
 
-The original field queue is 247/271 validated, with 9 exhausted requests and 15 pending; scientific dispositions are tracked separately, including parent source resolution of exhausted transport cases. The finite 114-bundle candidate snapshot has 20 validated, 3 exhausted and 91 pending bundles. Outside it, 40 late/scoped requests cover 58 keys and require a NEW finite round after v1 ends. Both bounded review lanes and a six-item original-reference source check remain active, reserving seven combined slots. The recovery schedule remains active. This is an interim checkpoint.
+The initial field queue is 254/271 validated, with 9 exhausted, 1 retry-pending and 7 unattempted requests. Scientific dispositions are tracked separately. The finite 114-bundle candidate snapshot has 24 validated, 3 exhausted and 87 pending bundles. Outside it, 45 late/scoped requests cover 64 keys and require a NEW finite round after v1 ends. Both bounded review lanes and the recovery schedule remain active. This is an interim checkpoint.
 
 ## Bounded field recovery (active after parent process inspection)
 
