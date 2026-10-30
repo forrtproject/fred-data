@@ -565,6 +565,24 @@ def report(results, missing, works, issues, finalized_at=None, review_summary=No
             f'{integrated.get("unverified", 0)} remain unverified after review. '
             'No coding acquisition was restarted and the original run history is preserved in run_manifest.json. '
             'Source inspection additionally excluded one coding whose saved source contained an empty abstract and references only.', '']
+    if review_summary and review_summary.get('completion_pass', {}).get('completed_at'):
+        phase = review_summary['completion_pass']
+        position = lines.index('## Confirmed field error rates')
+        lines[position:position] = [
+            f'A final cheap omission pilot used {phase["pilot_tasks"]} Luna tasks for '
+            f'{phase["pilot_candidates"]} candidates. Parent inspection verified all '
+            f'{phase["literal_quotes_verified"]} source quotations and confirmed '
+            f'{phase["confirmed_additional_omissions"]} additional omissions; '
+            f'{phase["pilot_candidates_deferred"]} pilot cases require publication-level '
+            'deduplication or renewed expert interpretation. One background classification '
+            'was overturned by explicit replication results in the source. Luna labels '
+            'were not accepted without parent source review. Outcomes for the additional '
+            'targets were not adjudicated. Wider candidate triage is deferred because '
+            'it still requires substantial source and identity checking. See '
+            '[completion_pass/README.md](completion_pass/README.md) and its field and '
+            'candidate disposition tables. Main field verdicts and shipped-type '
+            'denominators are preserved; conditionally inapplicable fields are identified '
+            'separately. No model work or audit schedules remain active.', '']
     for field in FIELDS:
         applicable = applicable_rate_rows(results, field)
         lines.append(f'- {field}: {rate_line(applicable, field)}')

@@ -2,7 +2,7 @@
 
 401 input rows have at least one confirmed field error; 2061 / 2818 rows are fully resolved. 807 blind targets have no proposed shipped counterpart; these are not errors by default.
 
-Audit finalized at 2026-10-29T23:56:15.101291+00:00. Unverified fields remain unresolved within the available evidence and review budget. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
+Audit finalized at 2026-10-30T12:10:54.857962+00:00. Unverified fields remain unresolved within the available evidence and review budget. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. Quotation checks accept literal text with normalized spacing or the same text with line-end hyphenation removed; they do not repair words or mathematical signs.
 
 ## Coverage
 
@@ -13,6 +13,8 @@ Coverage is prioritized and depends on text access. This is not a representative
 Cross-model review used 622 call attempts across 514 works. 31 works ended without a fully validated review reply; separately supported fields remain usable. Validated replies may also return undeterminable fields. 0 prepared works (0 distinct field requests) received no call before the review cutoff. These requests establish no error. Other unverified fields also include missing text, ambiguous identity and insufficient evidence.
 
 After the original bounded run, a user-authorised supplemental review covered 102 deferred field requests across 87 works using 114 additional Argon attempts. 91 requests have a substantive integrated verdict; 11 remain unverified after review. No coding acquisition was restarted and the original run history is preserved in run_manifest.json. Source inspection additionally excluded one coding whose saved source contained an empty abstract and references only.
+
+A final cheap omission pilot used 3 Luna tasks for 9 candidates. Parent inspection verified all 9 source quotations and confirmed 6 additional omissions; 3 pilot cases require publication-level deduplication or renewed expert interpretation. One background classification was overturned by explicit replication results in the source. Luna labels were not accepted without parent source review. Outcomes for the additional targets were not adjudicated. Wider candidate triage is deferred because it still requires substantial source and identity checking. See [completion_pass/README.md](completion_pass/README.md) and its field and candidate disposition tables. Main field verdicts and shipped-type denominators are preserved; conditionally inapplicable fields are identified separately. No model work or audit schedules remain active.
 
 ## Confirmed field error rates
 
@@ -501,6 +503,7 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 - Confirmed missing target: Conformity and Character; work [replicating work](https://doi.org/10.1371/journal.pone.0294325), target 6 (argon).
 - Confirmed missing target: [The effects of information and social conformity on opinion change](https://doi.org/10.1371/journal.pone.0196600); work [replicating work](https://doi.org/10.1371/journal.pone.0294325), target 7 (argon).
 - Confirmed missing target: [Knowing what to think by knowing who you are: Self-categorisation and the nature of norm formation, conformity and group polarisation](https://doi.org/10.1111/j.2044-8309.1990.tb00892.x); work [replicating work](https://doi.org/10.31820/pt.28.3.7), target 1 (argon).
+- Confirmed missing target: Equality of educational opportunity study.; work [replicating work](https://doi.org/10.3102/0013189x20940304), target 0 (obvious).
 - Confirmed missing target: Do Get-Out-the-Vote Calls Reduce Turnout? The Importance of Statistical Methods for Field Experiments.; work [replicating work](https://doi.org/10.1017/s000305540505166x), target 1 (argon).
 - Confirmed missing target: Common variants on 9q22.33 and 14q13.3 predispose to thyroid cancer in European populations.; work [replicating work](https://doi.org/10.1093/carcin/bgw047), target 0 (argon).
 - Confirmed missing target: The FOXE1 locus is a major genetic determinant for radiation-related thyroid carcinoma in Chernobyl.; work [replicating work](https://doi.org/10.1093/carcin/bgw047), target 1 (argon).
@@ -511,7 +514,10 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 - Confirmed missing target: Common single nucleotide polymorphisms in genes related to immune function and risk of papillary thyroid cancer.; work [replicating work](https://doi.org/10.1093/carcin/bgw047), target 9 (argon).
 - Confirmed missing target: [Enhancing interest and performance with a utility value intervention.](https://doi.org/10.1037/a0019506); work [replicating work](https://doi.org/10.1037/edu0000146), target 1 (argon).
 - Confirmed missing target: Replications in Psychology Research; work [replicating work](https://doi.org/10.1075/target.18159.ola), target 0 (argon).
+- Confirmed missing target: [Improvements in problem behavior in a child with autism spectrum diagnosis through synthesized analysis and treatment: A replication in an EIBI home program.](https://doi.org/10.1002/bin.1505); work [replicating work](https://doi.org/10.1007/s43494-020-00015-1), target 0 (obvious).
+- Confirmed missing target: [When goals conflict with values: Counterproductive attentional and oculomotor capture by reward-related stimuli.](https://doi.org/10.1037/xge0000037); work [replicating work](https://doi.org/10.3758/s13428-023-02329-5), target 1 (obvious).
 - Confirmed missing target: [Anxiety, depression, traumatic stress and COVID-19-related anxiety in the UK general population during the COVID-19 pandemic.](https://doi.org/10.1192/bjo.2020.109); work [replicating work](https://doi.org/10.3390/jcm10010052), target 0 (argon).
+- Confirmed missing target: A signature of cosmic-ray increase in AD 774–775 from tree rings in Japan.; work [replicating work](https://doi.org/10.1017/rdc.2024.52), target 1 (obvious).
 - Confirmed missing target: Career mobility, job match, and overeducation; work [replicating work](https://doi.org/10.1080/0003684042000229532), target 1 (argon).
 - Confirmed missing target: [Children's understanding of counting](https://doi.org/10.1016/0010-0277(90)90003-3); work [replicating work](https://doi.org/10.5964/jnc.7029), target 0 (argon).
 - Confirmed missing target: Dysregulated Fear Predicts Social Wariness and Social Anxiety Symptoms during Kindergarten; work [replicating work](https://doi.org/10.1111/cdev.12774), target 1 (argon).
@@ -530,6 +536,8 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 - Confirmed missing target: Relations between physicians’ behaviors and analogue patients’ satisfaction, recall and impressions; work [replicating work](https://doi.org/10.1097/00005650-199204000-00001), target 1 (argon).
 - Confirmed missing target: [Lexical acquisition and the modular lexicon.](https://doi.org/10.1080/01690968508402073); work [replicating work](https://doi.org/10.1037/a0028072), target 1 (argon).
 - Confirmed missing target: [Dissociative masked repetition priming and word frequency effects in lexical decision and episodic recognition tasks.](https://doi.org/10.1016/0749-596x(92)90009-m); work [replicating work](https://doi.org/10.1037/a0028072), target 2 (argon).
+- Confirmed missing target: [Machine learning to analyze single-case graphs: A comparison to visual inspection.](https://doi.org/10.1002/jaba.863); work [replicating work](https://doi.org/10.1002/jaba.921), target 1 (obvious).
+- Confirmed missing target: [Commitment to the profession of ELT and an organization: A profile of expat faculty in South Korea.](https://doi.org/10.1177/1362168820938814); work [replicating work](https://doi.org/10.1017/s0261444825100992), target 1 (obvious).
 - Confirmed missing target: Self-awareness and other-awareness II: Mirror self-recognition, social contingency awareness, and synchronic imitation.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 1 (argon).
 - Confirmed missing target: Self-awareness in human and chimpanzee infants: What is measured and what is meant by the mark and mirror test?; work [replicating work](https://doi.org/10.1177/0022022110381114), target 2 (argon).
 - Confirmed missing target: Development of self-recognition in the infant.; work [replicating work](https://doi.org/10.1177/0022022110381114), target 3 (argon).
@@ -605,7 +613,7 @@ Source-version notes and limits: Row 891 uses a working-paper DOI for the same s
 - Confirmed missing target: [A multivariate contextual analysis of torture and cruel, inhuman, and degrading treatments: Implications for an evidence-based definition of torture](https://doi.org/10.1037/a0015681); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 2 (argon).
 - Confirmed missing target: [Classifying the torture experiences of refugees living in the United States](https://doi.org/10.1177/0886260506294999); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 3 (argon).
 - Confirmed missing target: [Nature of torture, PTSD, and somatic symptoms among political ex-prisoners](https://doi.org/10.1002/jts.20541); work [replicating work](https://doi.org/10.4236/psych.2013.45067), target 4 (argon).
-609 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+603 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
