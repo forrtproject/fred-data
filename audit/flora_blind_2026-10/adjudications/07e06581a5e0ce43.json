@@ -1,0 +1,107 @@
+{
+  "decisions": [
+    {
+      "input_row_index": 784,
+      "field": "type",
+      "method": "argon",
+      "verdict": "both_wrong",
+      "corrected_value": "reproduction",
+      "quote": "Then, apart from the first RQ of the original study that aims to obtain the dataset, we used the dataset msr4flakiness (available lab package) to replicate the study for the remaining questions. As such, RQ1.1 , RQ1.2 , and RQ1.3 are same ones investigated previously, but now using the framework Scikit-learn and applying three additional algorithms, successfully employed for processing text.",
+      "location": "Section 4 Replication Study Setup, p. 5",
+      "reason": "Although the paper uses the software-engineering term 'replication', its substantive re-test of Pinto et al.'s analytical research questions (RQ2, RQ3, and RQ4, mapped to RQ1.1, RQ1.2, and RQ1.3 in Tables 1-3) re-analyzes the original study's own dataset (msr4flakiness) using Weka and Scikit-learn with three additional classifiers. RQ2 is an extension that applies the models trained on msr4flakiness to a positive-only external set (iDFlakies, which contains no non-flaky tests and cannot re-run the original binary classification experiment). Under the codebook, re-analyzing the original study's own dataset is a reproduction."
+    },
+    {
+      "input_row_index": 784,
+      "field": "outcome",
+      "method": "argon",
+      "verdict": "both_wrong",
+      "corrected_value": {
+        "outcome_computation": "computationally reproducible",
+        "outcome_robustness": "robust"
+      },
+      "quote": "To do so, we first replicate most parts of the previous study of Pinto et al. (MSR 2020). This replication was extended by using a different ML Python platform (Scikit-learn) and adding different learning algorithms in the analyses. Then, we validated the performance of trained models using datasets with other flaky tests and from different projects. We successfully replicated the results of Pinto et al. (2020), with minor differences using Scikit-learn; different algorithms had performance similar to the ones used previously.",
+      "location": "Abstract, p. 1",
+      "reason": "Because the primary workflow re-testing Pinto et al. (2020) is a reproduction on the original msr4flakiness dataset, the outcome must be coded on the two reproduction axes rather than a scalar replication verdict. On the original dataset, re-running Weka recovered the original results (computationally reproducible) and re-analyzing with Scikit-learn and three additional classifiers confirmed all original findings across classifier performance, feature ablations, and top vocabulary features (robust). Fresh-sample cross-project transfer in RQ2 does not belong on the original-data robustness axis."
+    },
+    {
+      "input_row_index": 784,
+      "field": "outcome_computation",
+      "method": "argon",
+      "verdict": "both_wrong",
+      "corrected_value": "computationally reproducible",
+      "quote": "As a result of this dependent replication, apart from RQ1, which is not directly related to the goal of our study, we obtained the same results of the original study for all questions. These results are not presented and discussed in the present paper but they are in our replication package. In this way, as a result of this first step we ensure that we are interpreting well and adopting the same procedure of original study.",
+      "location": "Section 4 Replication Study Setup, p. 6",
+      "reason": "In the first step of RQ1, the authors re-ran the original Weka workflow on the original msr4flakiness dataset and obtained the same results as the original study for all questions."
+    },
+    {
+      "input_row_index": 784,
+      "field": "outcome_robustness",
+      "method": "argon",
+      "verdict": "both_wrong",
+      "corrected_value": "robust",
+      "quote": "Answer to RQ1.1 : The classifiers performed very well, similarly to the original study. The difference of the results due to machine learning frameworks is small. The additional classifiers obtained results similar to the ones investigated previously. LR presented the best recall value.",
+      "location": "Section 5.1.1, p. 7",
+      "reason": "In re-analyses of the original msr4flakiness dataset using an alternative ML platform (Scikit-learn) and three additional classifiers (Logistic Regression, Perceptron, and LDA) across classifier evaluation (RQ1.1), feature preprocessing ablations (RQ1.2), and information-gain feature ranking (RQ1.3), the original findings remained supported. Per the codebook, RQ2's out-of-sample tests on new datasets do not belong on Axis 2."
+    }
+  ],
+  "scope_review": {
+    "prior_decisions": [
+      {
+        "input_row_index": 784,
+        "field": "outcome",
+        "method": "argon",
+        "verdict": "blind_right",
+        "corrected_value": "mixed",
+        "quote": "The results obtained in this work demonstrated that the proposal to create a vocabulary of flaky tests by the authors of the original study has a process of extracting characteristics, training is replicable and extensible, thus reducing possible bias added by researchers, process and software. The results obtained during the intra- and inter-project tests demonstrated that the defined vocabulary does not have the level of generalization sufficient to predict flaky tests with the same performance obtained during the tests of the classifiers. We observed that the context of a given project has a major impact on the vocabulary of flaky tests; this may hinder the adoption of code identifiers to predict test flakiness.",
+        "location": "Section 8 Conclusions, p. 12",
+        "reason": "The shipped quote refers only to the first part of the study (RQ1), which re-analyzed the original dataset with Weka and Scikit-learn, whereas the second part of the replication (RQ2) tested the original vocabulary approach on new intra- and inter-project flaky test datasets and found low recall and poor generalization. Because the close re-analysis succeeded while the extended new-sample replication failed to maintain predictive performance, the overall replication outcome is mixed."
+      }
+    ],
+    "prior_state": {
+      "file_key": "07e06581a5e0ce43",
+      "status": "validated",
+      "attempts": 1,
+      "input_sha256": "5a9be261d3c0ba78fdfc45f398cc6585d7a142e2538b422cb34aeb8a33b7f4b0",
+      "elapsed_seconds": 90.95606941590086,
+      "transport_timed_out_after_answer": false,
+      "closed_transport_after_valid_answer": false,
+      "transport_returncode": 0,
+      "at": "2026-10-29T16:40:04.340338+00:00"
+    },
+    "parent_objection": "The firstreview aggregates original-dataset re-analysis RQ1success and new-project-data RQ2generalizationfailure into scalar mixed while type remains replication. Codebook requires resolving actual data workflow first, then judging original-data axes separately from new-sample replication. RQ1 reruns same dataset withWeka/Scikit-learn;RQ2usesnewintra/inter-projectdatasets. A hybrid may be classifiedbyitsprimaryscientificworkflow,but do not pool original-data numerical recovery with freshsampleperformance into a scalar verdict without settlingtype. Inspect plan/title/centralclaims and choose supported recordtype. If reproduction,judge computational recovery and originaldata robustness only; if replication,judge originalfinding against newprojectresults only. Incidental program reruns versus substantive reproduction must be distinguished. No guessing on unsupported axis. SecondandFINALcall,nothird.",
+    "requested_fields": [
+      {
+        "input_row_index": 784,
+        "field": "type"
+      },
+      {
+        "input_row_index": 784,
+        "field": "outcome"
+      },
+      {
+        "input_row_index": 784,
+        "field": "outcome_computation"
+      },
+      {
+        "input_row_index": 784,
+        "field": "outcome_robustness"
+      }
+    ],
+    "prepared_at": "2026-10-29T16:41:10.737672+00:00",
+    "final_transport": {
+      "file_key": "07e06581a5e0ce43",
+      "substantive_attempt": 2,
+      "prompt_sha256": "acc5a736541b138fda9781e4b0facfc316c680a064ddb1696082f737109c4b45",
+      "source_sha256": "48cb59a6716cab87009974fd50d204998fc99ef98fcc4f891a3cfd76a8db64bf",
+      "transport": {
+        "returncode": 0,
+        "timed_out": false,
+        "closed_after_valid_answer": false
+      },
+      "validated": true,
+      "elapsed_seconds": 431.5387765681371,
+      "at": "2026-10-29T16:49:24.095651+00:00",
+      "response_sha256": "0834d6580e8ade59a90679e6bab5aedbe7a06c41ef96da956834486ce28e0e0d"
+    }
+  }
+}

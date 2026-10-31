@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+"""Build proposal files and a local review app; never apply scientific changes."""
+import csv,hashlib,json
+from urllib.parse import urlsplit
+from collections import Counter
+from pathlib import Path
+B=Path(__file__).resolve().parents[1]; O=B/'handoff';O.mkdir(exist_ok=True)
+def read(n):
+ with (B/n).open(encoding='utf-8-sig') as f:return list(csv.DictReader(f))
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def save(n,x):(O/n).write_text(json.dumps(x,ensure_ascii=False,indent=2)+'\n')
+source=Path('/home/lukas/audit_inputs_2026-10/flora_b48a7d6.csv')
+with source.open(encoding='utf-8-sig') as f:frozen=list(csv.DictReader(f))
+fixes=[];cases=[]
+for r in read('results.csv'):
+ i=int(r['input_row_index']); changes=json.loads(r['suggested_correction']); evidence=json.loads(r['correction_evidence'])
+ if changes:fixes.append(dict(id=f'fix:{i}',input_row_index=i,work_key=r['work_key'],file_key=r['file_key'],expected_before=frozen[i],proposed_changes=changes,evidence=json.loads(json.dumps(evidence)),status='proposed_not_applied',signoff='pending'))
+ if r['resolution']!='unresolved':continue
+ fields=['type','original']+(['outcome_computation','outcome_robustness'] if r['type']=='reproduction' else ['outcome'])
+ fields=[f for f in fields if r[f+'_final_verdict']=='unverified']
+ route='Substantive source or coding review'
+ if changes.get('original')=={'action':'remove_row'}:route='Row removal already proposed'
+ elif changes.get('type',r['type'])=='not_a_replication':route='Check field applicability'
+ elif r['study_status']=='prospective':route='Plan with no reported results'
+ cases.append(dict(id=f'row:{i}',kind='existing row',row=i,work=r['work_key'],file_key=r['file_key'],title=frozen[i].get('title_r') or r['work_key'],level=r['evidence_level'],route=route,fields=fields,changes=changes,evidence=evidence,signoff='pending_final_Sol_review',triage_is_verdict=False))
+adds=[]
+for r in read('confirmed_missing_references.csv'):
+ adds.append(dict(id=f"add:{r['file_key']}:{r['target_index']}",operation='propose_add_pair',work_key=r['work_key'],file_key=r['file_key'],target_index=int(r['target_index']),original={k:r[k] for k in ['doi','title','authors','year']},evidence=json.loads(r['evidence']),blind_target=json.loads(r['blind_target']),status='proposed_not_applied',signoff='pending'))
+for r in read('unresolved_missing_candidates.csv'):
+ cases.append(dict(id=f"missing:{r['file_key']}:{r['target_index']}",kind='possible missing pair',row=None,work=r['work_key'],file_key=r['file_key'],title=r['title'] or r['work_key'],level=r['evidence_level'],route='Verify missing-pair identity',fields=['missing_row'],changes={},evidence={'missing_row':json.loads(r['evidence'])},signoff='pending_final_Sol_review'))
+ft=[c for c in cases if c['kind']=='existing row' and c['level']=='full_text']
+assert len(ft)==109 and len({c['id'] for c in cases})==len(cases)
+m=dict(status='proposal_only_no_new_scientific_verdicts',baseline_sha256=sha(source),input_sha256={n:sha(B/n) for n in ['results.csv','confirmed_missing_references.csv','unresolved_missing_candidates.csv']},existing_row_proposals=len(fixes),field_proposals=sum(len(x['proposed_changes']) for x in fixes),pair_additions=len(adds),review_cases=len(cases),fulltext_rows=len(ft),fulltext_works=len({c['file_key'] for c in ft}),fulltext_triage=dict(Counter(c['route'] for c in ft)),applied_changes=0)
+# Final source-backed signoff is independent of old comparison/export uncertainty.
+review_file=O/'sol_review_decisions.json'
+reviewed=json.loads(review_file.read_text())['decisions'] if review_file.exists() else []
+by_id={d['case_id']:d for d in reviewed}
+# Keep earlier correction proposals reviewable even when the historical export
+# considered their row resolved. Their existing source adjudication is preserved;
+# adding them to the interface does not invent a new final Sol signoff.
+historical_review_cases=len(cases)
+case_ids={c['id'] for c in cases}
+for f in fixes:
+ i=f['input_row_index'];cid=f'row:{i}'
+ if cid in case_ids:continue
+ before=frozen[i]
+ cases.append(dict(id=cid,kind='earlier correction proposal',row=i,work=f['work_key'],file_key=f['file_key'],title=before.get('title_r') or f['work_key'],level='prior_source_adjudication',route='Review correction proposal',fields=list(f['proposed_changes']),changes=f['proposed_changes'],evidence=f['evidence'],signoff='prior_source_adjudicated_proposal',triage_is_verdict=False))
+m['historical_unresolved_review_cases']=historical_review_cases
+m['review_cases']=len(cases)
+for c in cases:
+ if c['id'] in by_id:
+  d=by_id[c['id']];c['signoff']=d['audit_status']
+  c['changes']=json.loads(json.dumps(c['changes']))
+  if d.get('withdraw_earlier_proposals'):
+   c['route']='Earlier removal withdrawn after source review';c['withdrawn_proposals']=d['withdraw_earlier_proposals'];c['changes']={f:v for f,v in c['changes'].items() if f not in d['withdraw_earlier_proposals']}
+  for field,value in d['fields'].items():
+   if value['disposition']=='correction_supported':c['changes'][field]=value['proposed_value']
+  c['final_review_summary']={f:{'disposition':v['disposition'],'confirmed_value':v.get('confirmed_value'),'proposed_value':v.get('proposed_value'),'application_dependency':d.get('application_hold'),'policy_choice':v.get('missing_evidence_or_policy_choice') if v['disposition']=='policy_decision_required' else None} for f,v in d['fields'].items()}
+  c['final_review_reference']='sol_review_decisions.json'
+  urls=[]
+  for value in d['fields'].values():
+   for proof in value.get('proofs',[]):
+    path=Path(proof['source_path']);meta=path.parent/'metadata.json'
+    if path.name=='article.txt' and path.parent.name.startswith('sanitized_') and meta.exists():
+     url=json.loads(meta.read_text()).get('source_url','')
+     if urlsplit(url).scheme=='https' and not urlsplit(url).query:urls.append(url)
+  c['primary_evidence_urls']=list(dict.fromkeys(urls))
+  for f,v in d['fields'].items():
+   proof=v['proofs'][0]
+   c['evidence'][f]={'quote':proof['quote'],'location':proof.get('section','Primary source')+'; character '+str(proof['character_start']),'reason':v['rationale'],'method':'Final GPT-6.1 Sol source review'}
+missing_review_file=O/'missing_pair_review_decisions.json'
+missing_reviews=json.loads(missing_review_file.read_text())['decisions'] if missing_review_file.exists() else []
+missing_by_id={d['case_id']:d for d in missing_reviews}
+for c in cases:
+ if c['kind']=='possible missing pair':c['missing_pair_unresolved']=c['id'] not in missing_by_id or missing_by_id[c['id']]['verdict']=='reviewed_unknown'
+ if c['id'] in missing_by_id:
+  d=missing_by_id[c['id']];c['signoff']='final_Sol_missing_pair_reviewed';c['final_review_reference']='missing_pair_review_decisions.json';c['route']='Source verified: '+d['verdict'].replace('_',' ')
+  c['final_review_summary']={'missing_row':{'disposition':d['verdict'],'confirmed_value':d['identity'],'proposed_value':None,'policy_choice':None}}
+  c['evidence']['missing_row']={'quote':'','location':'Complete three-source review; proof locators in missing_pair_review_decisions.json','reason':d['rationale'],'method':'Final GPT-6.1 Sol source review'}
+# Only fields with explicit final source-backed correction approval enter this file.
+approved=[]
+for d in reviewed:
+ for field,v in d['fields'].items():
+  if v['disposition']=='correction_supported' and field in d.get('approved_for_application_fields',[]):
+   assert v.get('proposed_value') is not None
+   approved.append(dict(id=f"approved:{d['input_row_index']}:{field}",input_row_index=d['input_row_index'],file_key=d['file_key'],field=field,expected_before=frozen[d['input_row_index']],proposed_value=v['proposed_value'],rationale=v['rationale'],proofs=v['proofs'],status='source_approved_not_applied',scope='Only this field; other proposed changes in the row require their own signoff'))
+save('approved_fixes.json',dict(baseline_sha256=sha(source),status='source_approved_not_applied',changes=approved,withdraw_prior_proposals=[{'input_row_index':d['input_row_index'],'withdraw':d['withdraw_earlier_proposals']} for d in reviewed if d.get('withdraw_earlier_proposals')]))
+review_required=[]
+for d in reviewed:
+ uncertain={f:v for f,v in d['fields'].items() if v['disposition'] in ['reviewed_unknown','source_needed','policy_decision_required'] or (v['disposition']=='correction_supported' and f not in d.get('approved_for_application_fields',[]))}
+ if uncertain or d.get('application_hold'):
+  review_required.append(dict(case_id=d['case_id'],input_row_index=d['input_row_index'],fields=uncertain,application_hold=d.get('application_hold'),status='review_required_no_automatic_change'))
+save('review_required.json',dict(baseline_sha256=sha(source),scope='Final Sol source-review evidence limits, policy choices and unapproved conditional corrections. Earlier proposals remain separately reviewable in the app.',cases=review_required,canonical_changes_applied=False))
+required_ids={d['case_id'] for d in review_required}
+for c in cases:c['requires_review']=c['id'] in required_ids
+m['source_approved_fix_fields']=len(approved)
+m['final_Sol_reviewed_missing_candidates']=len(missing_reviews)
+m['new_source_verified_missing_pairs']=sum(d['verdict']=='genuinely_missing' and not d.get('already_in_earlier_missing_export') for d in missing_reviews)
+m['final_Sol_reviewed_fulltext_rows']=sum(c['id'] in by_id for c in ft)
+m['remaining_fulltext_rows']=len(ft)-m['final_Sol_reviewed_fulltext_rows']
+m['final_review_required_rows']=len(review_required)
+m['source_verified_evidence_replacements']=len(json.loads((O/'evidence_provenance_fixes.json').read_text())['changes']) if (O/'evidence_provenance_fixes.json').exists() else 0
+m['status']='final_source_review_complete_proposals_not_applied' if m['final_Sol_reviewed_fulltext_rows']==109 else 'final_source_review_active_proposals_not_applied'
+save('fix_proposals.json',dict(baseline_sha256=sha(source),existing_rows=fixes,add_pairs=adds));save('review_queue.json',cases);save('fulltext_109_inventory.json',ft);save('manifest.json',m)
+html=r'''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FLoRA decision review</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctext y=%2726%27 font-size=%2727%27%3E🔎%3C/text%3E%3C/svg%3E"><style>
+:root{font-family:Calibri,"Segoe UI",sans-serif;color:#203246;background:white}*{box-sizing:border-box}body{margin:0}main{max-width:1100px;margin:auto;padding:20px}h1{font-size:27px;margin:0 0 10px}h2{font-size:21px}p{line-height:1.5;max-width:76ch}.muted,small{color:#526274}.controls{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}input,select,textarea,button{font:inherit;padding:9px;border:1px solid #9cabb9;border-radius:5px;background:white;color:inherit}input{flex:1;min-width:160px}button{cursor:pointer}button:hover{background:#eaf2ff}:focus-visible{outline:3px solid #437fca;outline-offset:2px}.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px}nav{max-height:580px;overflow:auto;border:1px solid #c9d3de;border-radius:6px}nav button{width:100%;text-align:left;border:0;border-bottom:1px solid #dae1e8;border-radius:0;padding:12px}nav small{display:block;margin-top:5px}nav button[aria-current=true]{background:#dfedff;border-left:5px solid #184d8b}.tag{display:inline-block;background:#e7f0fd;padding:6px 9px;border-radius:4px;margin-right:8px}blockquote{border-left:3px solid #87a8ce;padding-left:14px;margin:14px 0;white-space:pre-wrap;line-height:1.5}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1f4f8;padding:12px}.field{border-top:1px solid #c9d3de;margin-top:20px;padding-top:8px}textarea{width:100%;min-height:90px;margin:10px 0}.actions{display:flex;flex-wrap:wrap;gap:8px}.review{padding:16px;background:#f2f6fc;border-radius:6px;margin-top:24px}a{color:#184d8b;overflow-wrap:anywhere}#notice{color:#715015}@media(max-width:650px){.layout{grid-template-columns:1fr}nav{max-height:180px}main{padding:12px}}
+</style><main><h1>FLoRA decision review</h1><p class="muted">Explore field decisions, supporting evidence, and correction proposals. Recording a review does not change FLoRA.</p><p><a href="correction_proposals.json">All correction proposals</a> · <a href="evidence_provenance_fixes.json">Evidence corrections</a> · <a href="review_required.json">Evidence limits and decisions</a> · <a href="confirmed_missing_pairs.csv">Confirmed missing pairs</a> · <a href="unresolved_missing_pairs.csv">Unresolved candidates</a></p><div class="controls"><select id="scope" aria-label="Case group"><option value="all">All review cases</option><option value="fixes">Correction proposals</option><option value="decisions">Evidence limits and decisions</option><option value="missing">Possible missing pairs</option></select><input id="search" type="search" aria-label="Search cases" placeholder="Search row, DOI, title or reason"><button id="export">Export decisions</button><label>Load complete evidence <input id="load" type="file" accept=".json" aria-label="Load review_queue.json"></label></div><p id="count"></p><p id="notice" role="status"></p><div class="layout"><nav id="list" aria-label="Review cases"></nav><article id="detail" aria-live="polite"></article></div></main><script>
+let cases=/*flora-cases-start*/__DATA__/*flora-cases-end*/;const $=id=>document.getElementById(id);const storageKey='flora-review-'+__HASH__;let decisions={};try{decisions=JSON.parse(localStorage.getItem(storageKey)||'{}')}catch(e){$('notice').textContent='Storage unavailable. Export decisions before closing.'}let selected=null;
+function el(tag,text,parent){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(parent)parent.append(n);return n}
+function render(){const q=$('search').value.toLowerCase(),scope=$('scope').value;const shown=cases.filter(c=>(scope==='all'||(scope==='missing'?c.kind==='possible missing pair'&&c.missing_pair_unresolved:scope==='fixes'?Object.keys(c.changes).length>0:scope==='decisions'?c.requires_review:c.kind==='existing row'&&c.level==='full_text'))&&JSON.stringify(c).toLowerCase().includes(q));if(!shown.some(c=>c.id===selected))selected=shown[0]?.id;$('count').textContent=shown.length+' cases shown; '+Object.keys(decisions).length+' local decisions recorded.';$('list').replaceChildren();for(const c of shown){const b=el('button',(c.row!==null?'Row '+c.row+' — ':'')+c.title,$('list'));b.setAttribute('aria-current',c.id===selected);el('small',(c.signoff==='final_Sol_reviewed'?'Sol reviewed · ':'')+c.route+(decisions[c.id]?' · '+decisions[c.id].decision:''),b);b.onclick=()=>{selected=c.id;render()}}detail()}
+function detail(){const a=$('detail');a.replaceChildren();const c=cases.find(x=>x.id===selected);if(!c){el('p','No cases match.',a);return}el('h2',c.title,a);el('span',c.level,a).className='tag';el('span',c.route,a).className='tag';el('p','Fields reviewed: '+c.fields.join(', '),a);if(c.final_review_summary){el('h3','Source review',a);for(const [field,d]of Object.entries(c.final_review_summary)){el('p',field.replaceAll('_',' ')+': '+d.disposition.replaceAll('_',' '),a);const v=d.confirmed_value??d.proposed_value??null;el('p',v&&typeof v==='object'?(v.action?JSON.stringify(v):[v.authors,v.year,v.title,v.doi].filter(Boolean).join(' · ')):v===null?(d.disposition==='not_applicable'?'Not applicable':'No single value established'):String(v),a);if(d.application_dependency)el('p','Application dependency: '+d.application_dependency,a);if(d.policy_choice){el('p',d.policy_choice.policy_question||d.policy_choice.decision||d.policy_choice.decision_required||d.policy_choice.policy_choice||d.policy_choice.decision_needed||d.policy_choice.choice||'Policy decision required',a);for(const k of ['why_material','parent_action','option_A','option_B','if_observations_qualify','if_observations_do_not_qualify','reviewer_recommendation','dependencies'])if(d.policy_choice[k])el('p',d.policy_choice[k],a);if(Array.isArray(d.policy_choice.options))for(const option of d.policy_choice.options)el('p',[option.scope,option.value,option.reason].filter(Boolean).join(' — '),a)}}el('p','Complete proofs and scope are retained in '+(c.final_review_reference||'sol_review_decisions.json')+'. FLoRA remains unchanged.',a)}if(c.work.startsWith('10.')){const link=el('a','Open replicating work',a);link.href='https://doi.org/'+encodeURI(c.work);link.target='_blank';link.rel='noopener'}for(const url of c.primary_evidence_urls||[]){const p=el('p',undefined,a);const link=el('a','Open verified primary report',p);link.href=url;link.target='_blank';link.rel='noopener'}el('p','File: '+c.file_key,a).className='muted';if(c.withdrawn_proposals){el('h3','Superseded earlier proposal',a);el('pre',JSON.stringify(c.withdrawn_proposals,null,2),a);el('p','The final source review withdraws this earlier proposal. Its original record remains preserved.',a)}if(Object.keys(c.changes).length){el('h3','Correction proposal',a);el('pre',JSON.stringify(c.changes,null,2),a)}for(const f of c.fields){const panel=el('section',undefined,a);panel.className='field';el('h3',f,panel);const e=c.evidence[f];if(!e){el('p','The earlier export contains no supporting explanation for this field. Source review is required before deciding.',panel);continue}if(e.quote)el('blockquote',e.quote,panel);if(e.location)el('p',e.location,panel).className='muted';el('p',e.reason||'No reason recorded in this export.',panel)}const extra=Object.entries(c.evidence).filter(([f])=>!c.fields.includes(f));if(extra.length){const d=el('details',undefined,a);el('summary','Other existing field evidence',d);for(const [f,e]of extra){el('h3',f,d);el('p',e.reason||'',d);if(e.quote)el('blockquote',e.quote,d)}}const box=el('section',undefined,a);box.className='review';el('h3','Record review',box);el('p','A reviewed evidence limit is a completed audit judgment, not a substantive outcome. Add the source, rule, or proposed replacement value to your notes.',box);const t=el('textarea',undefined,box);t.setAttribute('aria-label','Review notes');t.value=decisions[c.id]?.notes||'';const actions=el('div',undefined,box);actions.className='actions';for(const label of ['Retain evidence limit','Needs source','Propose correction','Resolve applicability']){el('button',label,actions).onclick=()=>{if(!t.value.trim()){t.focus();$('notice').textContent='Add a reason before recording a decision.';return}decisions[c.id]={case_id:c.id,decision:label,notes:t.value,recorded_at:new Date().toISOString(),applied:false};try{localStorage.setItem(storageKey,JSON.stringify(decisions))}catch(e){$('notice').textContent='Storage unavailable. Export now.'}render()}}if(decisions[c.id])el('p','Recorded: '+decisions[c.id].decision,box)}
+async function loadCompleteEvidence(text){const hash=await reviewHash(text);if(hash!==__QUEUEHASH__)throw Error('This file does not match the current handoff. Reload the page and try again.');const loaded=JSON.parse(text);if(loaded.length!==cases.length)throw Error('Case count mismatch');cases=loaded;$('notice').textContent='Complete evidence loaded and hash verified.';render()}
+$('load').onchange=async e=>{try{await loadCompleteEvidence(await e.target.files[0].text())}catch(error){$('notice').textContent=error.message}};
+if(location.protocol==='http:'||location.protocol==='https:'){fetch('review_queue.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Complete evidence could not be loaded.');return r.text()}).then(loadCompleteEvidence).catch(e=>$('notice').textContent=e.message)};
+$('scope').onchange=render;$('search').oninput=render;$('export').onclick=()=>{const u=URL.createObjectURL(new Blob([JSON.stringify({schema_version:1,input_hash:__HASH__,decisions:Object.values(decisions),canonical_changes_applied:false},null,2)],{type:'application/json'}));const a=el('a');a.href=u;a.download='flora-review-decisions.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};if(new Set(cases.map(c=>c.id)).size!==cases.length)throw Error('Duplicate cases');render();console.log('Validated '+cases.length+' unique cases, including 109 full-text rows.');
+</script></html>'''
+display=json.loads(json.dumps(cases))
+for c in display:
+ c['evidence']={f:{k:e.get(k,'') for k in ['quote','location','reason']} for f,e in c['evidence'].items()}
+ for e in c['evidence'].values():
+  for k in ['reason','quote']:
+   if isinstance(e.get(k),str) and len(e[k])>260:e[k]=e[k][:260]+' [Display excerpt; complete evidence is retained in review_queue.json.]'
+html=html.replace('let cases=/*flora-cases-start*/__DATA__/*flora-cases-end*/;', (O/'review_sha256.js').read_text()+'\nlet cases=/*flora-cases-start*/__DATA__/*flora-cases-end*/;')
+html=html.replace('__DATA__',json.dumps(display,ensure_ascii=False).replace('<','\\u003c')).replace('__HASH__',json.dumps(m['input_sha256']['results.csv'])).replace('__QUEUEHASH__',json.dumps(sha(O/'review_queue.json')))
+(O/'review.html').write_text(html)
+print(json.dumps(m,indent=2))
