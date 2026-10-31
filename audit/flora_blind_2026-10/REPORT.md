@@ -1,28 +1,32 @@
-> **Full evidence follow-up is active.** These are the latest integrated results, not final follow-up counts. All outstanding full-text fields, primary-source recovery and exhaustive omission checks are in progress. See [evidence_followup/README.md](evidence_followup/README.md) and its live queues.
+# FLoRA blind audit — evidence follow-up complete
 
-# FLoRA blind audit — provisional
+The user-authorised evidence follow-up is complete. **500 input rows have confirmed field errors; 2,436 of 2,818 rows are fully resolved.** The export contains **441 source-confirmed genuinely absent replication/reproduction–original pairs**. A separate list retains **127 unresolved candidates** with actual source, citation, report-family or finding-correspondence limits. Different DOI/year metadata alone never establishes an omitted reference.
 
-499 input rows have at least one confirmed field error; 2433 / 2818 rows are fully resolved. 715 blind targets have no proposed shipped counterpart; these are not errors by default.
+The complete opening scope is accounted for: 716 omission keys, including 113 prior omissions rechecked; 793 saved-full-text fields in 271 requests; 339 acquisition works; and all 421 opening unresolved full-text rows. Every opening omission key has a parent source disposition or documented actual limit, with no missing canonical decisions or proof keys. All 793 initial fields have valid current source proofs. The 421-row inventory validates 1,084 literal Unicode/UTF-8 passages: 869 row-field and 215 same-work candidate decisions. It has no missing paths or capture drift. Conditional inapplicability, duplicate-row removal and actual evidence limits remain distinct. New source questions have separate bounded ledgers; old attempts, invalid replies, contrary opinions and sources remain preserved.
 
-This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. The legacy automatic matcher tolerates normalized spacing and removed line-end hyphenation. Parent approval in the active evidence follow-up requires a contiguous literal quotation; a normalized match alone does not authorise integration. Neither check repairs words or mathematical signs.
+**382 row records retain unresolved values:** 109 have saved full text, 221 have abstract/partial evidence, and 52 lack usable text. The conservative export retains 777 unverified applicable fields. Completion of the follow-up does not make ambiguous or unavailable scientific values determinate. Of the 793 initial field decisions, 71 retain undeterminable values, including conditionally inapplicable cases. Per-row adjudications explain each disposition.
 
-The complete evidence follow-up remains active. Earlier phase completion and cutoff figures below are historical. New scientific decisions require contiguous literal primary-source quotations. Legacy accepted quotations are being checked against exact saved source passages; context objections remain subject to review. Candidate rechecks, field reviews and owned recovery work still remain. See [evidence_followup/README.md](evidence_followup/README.md) and [current progress](evidence_followup/integration/progress.json).
+Validation passed: 88 tests; 2,344 base coding schemas and 97 registered source/coding envelopes; 545 correction-field and 441 missing-pair source checks; literal quotations; known DOI/report aliases; zero same-work duplicate or represented-pair overlaps; and the unchanged original FLoRA SHA-256. The exact recovery schedule was deleted and independently verified absent. All 562 owned task records are terminal, with no pending nested runs or matching owned local processes. Vendor-side cancellation of three historical CLI generations remains independently unobservable; no remote cancellation is claimed.
+
+Deliverables: [results.csv](results.csv), [confirmed missing references](confirmed_missing_references.csv), [unresolved candidates](unresolved_missing_candidates.csv), and [follow-up accounting](evidence_followup/README.md). Verification: [integrity](evidence_followup/integration/final_0310_integrity.json), [pair deduplication](evidence_followup/integration/final_0310_alias_pair_dedup.json), [793-field coverage](evidence_followup/integration/final_initial793_0312.parent.json), and [schedule removal](evidence_followup/integration/recovery_schedule_removed_0315.json). This audit proposes corrections; it does not modify shipped FLoRA data or downstream pipelines.
+
+The tables below describe the final integrated export. Original bounded-run execution metrics are historical and exclude the subsequent complete evidence follow-up.
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2291 with verified saved text (1731 full text, 560 abstract); 2291 with validated usable coding. Rows fully resolved: 2433 / 2818.
+Works: 2344 total; 2344 attempted; 2291 with verified saved text (1731 full text, 560 abstract); 2291 with validated usable coding. Rows fully resolved: 2436 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. Dependent outcome replacements after a type correction remain in results.csv and the error list.
 
-Cross-model review used 622 call attempts across 514 works. 31 works ended without a fully validated review reply; separately supported fields remain usable. Validated replies may also return undeterminable fields. 0 prepared works (0 distinct field requests) received no call before the review cutoff. These requests establish no error. Other unverified fields also include missing text, ambiguous identity and insufficient evidence.
+The original bounded cross-model review used 622 call attempts across 514 works. 31 works ended without a fully validated review reply; separately supported fields remain usable. Validated replies may also return undeterminable fields. 0 prepared works (0 distinct field requests) received no call before the review cutoff. These requests establish no error. Other unverified fields also include missing text, ambiguous identity and insufficient evidence.
 
-After the original bounded run, a user-authorised supplemental review covered 102 deferred field requests across 87 works using 114 additional Argon attempts. 91 requests have a substantive integrated verdict; 11 remain unverified after review. No coding acquisition was restarted and the original run history is preserved in run_manifest.json. Source inspection additionally excluded one coding whose saved source contained an empty abstract and references only.
+In the historical supplemental phase after the original bounded run, a user-authorised review covered 102 deferred field requests across 87 works using 114 additional Argon attempts. 91 requests have a substantive integrated verdict; 11 remain unverified after review. No coding acquisition was restarted and the original run history is preserved in run_manifest.json. Source inspection additionally excluded one coding whose saved source contained an empty abstract and references only.
 
 ## Confirmed field error rates
 
-- type: 35 / 2627 (1.3%); 191 unverified; all-row unresolved bounds 1.2%–8.0% (N=2818)
-- original: 89 / 2596 (3.4%); 222 unverified; all-row unresolved bounds 3.2%–11.0% (N=2818)
-- outcome: 378 / 2263 (16.7%); 350 unverified; all-row unresolved bounds 14.5%–27.9% (N=2613)
+- type: 35 / 2628 (1.3%); 190 unverified; all-row unresolved bounds 1.2%–8.0% (N=2818)
+- original: 88 / 2598 (3.4%); 220 unverified; all-row unresolved bounds 3.1%–10.9% (N=2818)
+- outcome: 381 / 2266 (16.8%); 347 unverified; all-row unresolved bounds 14.6%–27.9% (N=2613)
 - outcome_computation: 31 / 193 (16.1%); 12 unverified; all-row unresolved bounds 15.1%–21.0% (N=205)
 - outcome_robustness: 9 / 197 (4.6%); 8 unverified; all-row unresolved bounds 4.4%–8.3% (N=205)
 
@@ -47,21 +51,21 @@ After the original bounded run, a user-authorised supplemental review covered 10
   - outcome_computation: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
   - outcome_robustness: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
 - openalex:
-  - type: 4 / 256 (1.6%); 10 unverified; all-row unresolved bounds 1.5%–5.3% (N=266)
+  - type: 4 / 257 (1.6%); 9 unverified; all-row unresolved bounds 1.5%–4.9% (N=266)
   - original: 14 / 256 (5.5%); 10 unverified; all-row unresolved bounds 5.3%–9.0% (N=266)
-  - outcome: 27 / 232 (11.6%); 27 unverified; all-row unresolved bounds 10.4%–20.8% (N=259)
+  - outcome: 28 / 232 (12.1%); 27 unverified; all-row unresolved bounds 10.8%–21.2% (N=259)
   - outcome_computation: 2 / 5 (40.0%); 2 unverified; all-row unresolved bounds 28.6%–57.1% (N=7)
   - outcome_robustness: 2 / 7 (28.6%); 0 unverified; all-row unresolved bounds 28.6%–28.6% (N=7)
 - openalex_snapshot:
   - type: 2 / 86 (2.3%); 7 unverified; all-row unresolved bounds 2.2%–9.7% (N=93)
-  - original: 3 / 86 (3.5%); 7 unverified; all-row unresolved bounds 3.2%–10.8% (N=93)
-  - outcome: 11 / 81 (13.6%); 12 unverified; all-row unresolved bounds 11.8%–24.7% (N=93)
+  - original: 2 / 86 (2.3%); 7 unverified; all-row unresolved bounds 2.2%–9.7% (N=93)
+  - outcome: 11 / 82 (13.4%); 11 unverified; all-row unresolved bounds 11.8%–23.7% (N=93)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - replications:
   - type: 27 / 1336 (2.0%); 117 unverified; all-row unresolved bounds 1.9%–9.9% (N=1453)
-  - original: 64 / 1316 (4.9%); 137 unverified; all-row unresolved bounds 4.4%–13.8% (N=1453)
-  - outcome: 246 / 1243 (19.8%); 210 unverified; all-row unresolved bounds 16.9%–31.4% (N=1453)
+  - original: 64 / 1318 (4.9%); 135 unverified; all-row unresolved bounds 4.4%–13.7% (N=1453)
+  - outcome: 248 / 1245 (19.9%); 208 unverified; all-row unresolved bounds 17.1%–31.4% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - reproductions:
@@ -80,9 +84,9 @@ After the original bounded run, a user-authorised supplemental review covered 10
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - full_text:
-  - type: 28 / 2186 (1.3%); 6 unverified; all-row unresolved bounds 1.3%–1.6% (N=2192)
-  - original: 85 / 2149 (4.0%); 43 unverified; all-row unresolved bounds 3.9%–5.8% (N=2192)
-  - outcome: 324 / 1907 (17.0%); 89 unverified; all-row unresolved bounds 16.2%–20.7% (N=1996)
+  - type: 28 / 2187 (1.3%); 5 unverified; all-row unresolved bounds 1.3%–1.5% (N=2192)
+  - original: 84 / 2151 (3.9%); 41 unverified; all-row unresolved bounds 3.8%–5.7% (N=2192)
+  - outcome: 327 / 1910 (17.1%); 86 unverified; all-row unresolved bounds 16.4%–20.7% (N=1996)
   - outcome_computation: 31 / 193 (16.1%); 3 unverified; all-row unresolved bounds 15.8%–17.3% (N=196)
   - outcome_robustness: 9 / 194 (4.6%); 2 unverified; all-row unresolved bounds 4.6%–5.6% (N=196)
 - none:
@@ -109,6 +113,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 56, [replicating work](https://doi.org/10.1371/journal.pone.0016144): outcome: successful → mixed.
 - Row 65, [replicating work](https://doi.org/10.1080/02619768.2014.882308): outcome: successful → mixed.
 - Row 67, [replicating work](https://doi.org/10.1017/s0142716414000137): outcome: successful → failed.
+- Row 75, [replicating work](https://doi.org/10.1080/10584609.2014.914612): outcome: mixed → successful.
 - Row 76, [replicating work](https://doi.org/10.3389/fpsyg.2015.01755): outcome: successful → mixed.
 - Row 77, [replicating work](https://doi.org/10.1080/16506073.2015.1015163): outcome: successful → mixed.
 - Row 84, [replicating work](https://doi.org/10.1093/carcin/bgw047): outcome: successful → failed.
@@ -151,7 +156,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 216, [replicating work](https://doi.org/10.1038/tpj.2008.6): outcome: mixed → successful.
 - Row 219, [replicating work](https://doi.org/10.1504/ejim.2010.031281): outcome: mixed → successful.
 - Row 224, [replicating work](https://doi.org/10.1080/00224545.2012.706242): outcome: mixed → successful.
-- Row 225, [replicating work](https://doi.org/10.3389/fnins.2012.00115): type: replication → reproduction.
+- Row 225, [replicating work](https://doi.org/10.3389/fnins.2012.00115): type: replication → reproduction; outcome: mixed → outcome_computation: not checked; outcome_robustness: robustness challenges.
 - Row 229, [replicating work](https://doi.org/10.1103/physrevstper.10.010110): type: replication → not_a_replication.
 - Row 233, [replicating work](https://doi.org/10.1177/1049731515597477): outcome: mixed → successful.
 - Row 234, [replicating work](https://doi.org/10.1186/s13195-015-0154-x): outcome: mixed → successful.
@@ -536,6 +541,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 2409, [replicating work](https://doi.org/10.1002/smj.2568): outcome: mixed → successful.
 - Row 2410, [replicating work](https://doi.org/10.1095/biolreprod.112.106377): outcome: mixed → failed.
 - Row 2412, [replicating work](https://doi.org/10.1038/s41598-017-07404-4): outcome: mixed → failed.
+- Row 2422, [replicating work](https://doi.org/10.26686/wgtn.17143838): outcome: successful → mixed.
 - Row 2425, [replicating work](https://doi.org/10.31234/osf.io/gupxn): original: 10.17605/osf.io/hw3v6 → Interinstitutional variation in emerging adulthood: Does selectivity matter?.
 - Row 2429, [replicating work](https://doi.org/10.20381/ruor-28430): type: replication → reproduction; original: 10.7326/0003-4819-127-1-199707010-00007 → remove this row.
 - Row 2445, [replicating work](https://doi.org/10.25810/spvf-m355): outcome: successful → statistically successful but flawed.
@@ -544,7 +550,6 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 2456, [replicating work](https://doi.org/10.26686/wgtn.17143838.v1): original: 10.1111/j.1467-9922.2012.00730.x → remove this row.
 - Row 2463, [replicating work](https://doi.org/10.1037/xhp0000483): outcome: successful → mixed.
 - Row 2477, [replicating work](https://doi.org/10.1007/s11292-017-9305-3): outcome: successful → mixed.
-- Row 2494, [replicating work](https://doi.org/10.1177/25152459251401177): original: 10.1037/0096-3445.135.4.641 → remove this row.
 - Row 2497, [replicating work](https://doi.org/10.31274/psllt.17573): outcome: mixed → successful.
 - Row 2501, [replicating work](https://doi.org/10.7554/elife.91498): outcome: successful → mixed.
 - Row 2504, [replicating work](https://doi.org/10.1038/s41598-017-07404-4): outcome: mixed → failed.
@@ -645,6 +650,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: A semantic mismatch effect on serial recall: Evidence for interlexical processing of irrelevant speech.; work [replicating work](https://doi.org/10.1037/xlm0000874), target 4 (argon).
 - Confirmed missing target: [When goals conflict with values: Counterproductive attentional and oculomotor capture by reward-related stimuli.](https://doi.org/10.1037/xge0000037); work [replicating work](https://doi.org/10.3758/s13428-023-02329-5), target 1 (obvious).
 - Confirmed missing target: [Construal levels and moral judgment: Some complications](https://doi.org/10.1017/s1930297500006343); work [replicating work](https://doi.org/10.1027/1864-9335/a000188), target 1 (obvious).
+- Confirmed missing target: No association between CALHM1 variation and risk of Alzheimer disease.; work [replicating work](https://doi.org/10.3233/jad-2010-1357), target 2 (argon).
 - Confirmed missing target: [Meta-analysis Confirms CR1, CLU, and PICALM as Alzheimer Disease Risk Loci and Reveals Interactions With APOE Genotypes](https://doi.org/10.1001/archneurol.2010.201); work [replicating work](https://doi.org/10.3233/jad-2011-101932), target 1 (argon).
 - Confirmed missing target: [From madness to genius: The Openness/Intellect trait domain as a paradoxical simplex](https://doi.org/10.1016/j.jrp.2011.12.003); work [replicating work](https://doi.org/10.1002/per.2176), target 1 (obvious).
 - Confirmed missing target: [Anxiety, depression, traumatic stress and COVID-19-related anxiety in the UK general population during the COVID-19 pandemic.](https://doi.org/10.1192/bjo.2020.109); work [replicating work](https://doi.org/10.3390/jcm10010052), target 0 (argon).
@@ -714,6 +720,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Reframing the ordinary: Imagining time as scarce increases well-being.; work [replicating work](https://doi.org/10.1073/pnas.2103313118), target 9 (argon).
 - Confirmed missing target: Evidence for opportunity cost neglect in the poor.; work [replicating work](https://doi.org/10.1073/pnas.2103313118), target 14 (argon).
 - Confirmed missing target: Gender and Philosophical Intuition; work [replicating work](https://doi.org/10.1080/09515089.2014.893288), target 0 (argon).
+- Confirmed missing target: [Why does psychological distance influence construal level? The role of processing mode.](https://doi.org/10.1093/jcr/ucw045); work [replicating work](https://doi.org/10.1177/25152459251401177), target 2 (argon).
 - Confirmed missing target: [Reconsidering evidence of moral contagion in online social networks](https://doi.org/10.1038/s41562-021-01133-5); work [replicating work](https://doi.org/10.1093/pnasnexus/pgaf327), target 1 (argon).
 - Confirmed missing target: Eco-Friendliness in the Brand Experience of High-Tech Products.; work [replicating work](https://doi.org/10.3390/su9071286), target 1 (argon).
 - Confirmed missing target: Revisiting the Impacts of Teachers.; work [replicating work](https://doi.org/10.3386/w20657), target 1 (argon).
@@ -956,6 +963,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [Does preference for abstract patterns relate to information processing and perceived duration?](https://doi.org/10.1177/2041669515604436); work [replicating work](https://doi.org/10.1101/2020.08.20.258871), target 1 (argon).
 - Confirmed missing target: Partner choice, relationship satisfaction, and oral contraception: The congruency hypothesis.; work [replicating work](https://doi.org/10.1016/j.evolhumbehav.2018.02.008), target 1 (argon).
 - Confirmed missing target: The association between discontinuing hormonal contraceptives and wives' marital satisfaction depends on husbands' facial attractiveness.; work [replicating work](https://doi.org/10.1016/j.evolhumbehav.2018.02.008), target 2 (argon).
+- Confirmed missing target: Second language lexical acquisition: A study of the development of collocational knowledge; work [replicating work](https://doi.org/10.26686/wgtn.17143838), target 1 (argon).
 - Confirmed missing target: [Perceptions of the transition to adulthood among Chinese and American emerging adults.](https://doi.org/10.1177/0165025406062128); work [replicating work](https://doi.org/10.31234/osf.io/gupxn), target 1 (argon).
 - Confirmed missing target: “If you want me to treat you like an adult, start acting like one!” Comparing the criteria that emerging adults and their parents have for adulthood.; work [replicating work](https://doi.org/10.31234/osf.io/gupxn), target 2 (argon).
 - Confirmed missing target: [Involuntary attentional capture is determined by task set: evidence from event-related brain potentials.](https://doi.org/10.1162/jocn.2008.20099); work [replicating work](https://doi.org/10.3389/fpsyg.2016.00630), target 1 (argon).
@@ -1040,7 +1048,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Cues of being watched enhance cooperation in a real-world setting.; work https://openalex.org/w2484584964, target 1 (obvious).
 - Confirmed missing target: [Boundaries of cultural influence: Construct activation as a mechanism for cultural differences in social perception.](https://doi.org/10.1177/0022022103034004005); work [replicating work](https://doi.org/10.1111/jpr.12599), target 1 (obvious).
 - Confirmed missing target: [Can uniform color color aggression? Quasi-experimental evidence from professional ice hockey](https://doi.org/10.1177/1948550611418535); work [replicating work](https://doi.org/10.1525/collabra.163080), target 1 (argon).
-125 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+127 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
@@ -1082,9 +1090,9 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 
 ## Time per work
 
-Elapsed time supplied for 2336 / 2344 works; missing times are not imputed. Times describe final saved checkpoints and exclude earlier failed or excluded attempts; this is worker time, not wall-clock audit duration.
+Elapsed time supplied for 2334 / 2344 works; missing times are not imputed. Times describe final saved checkpoints and exclude earlier failed or excluded attempts; this is worker time, not wall-clock audit duration.
 1 reported timing correction(s) are applied from [timing_corrections.json](timing_corrections.json); the original checkpoint times and correction bases remain in work_times.csv. Clock bounds are reported as bounds, not exact measurements.
-Sum of reported final-checkpoint times: 162990.5 seconds.
+Sum of reported final-checkpoint times: 162707.5 seconds.
 Per-work elapsed time and skips are recorded in [work_times.csv](work_times.csv).
 
 Additional primary evidence includes 97 separately recovered individual reports, each independently identity-checked, freshly blindly coded and hash-verified. Their exact texts supplement the collection evidence without changing the base files used by active reviews. Source provenance and parent decisions are in [additional_reports](evidence_followup/additional_reports/parent_decisions.json).
