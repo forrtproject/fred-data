@@ -1,4 +1,12 @@
-# FLoRA blind audit — evidence follow-up complete
+# FLoRA blind audit and final source review
+
+The additional GPT-6.1 Sol source review is complete for **all 109 previously unresolved saved-full-text rows across 71 works**. Assigned fields are settled in **80 rows**; **21 retain documented evidence limits**, and **8 require coding-policy choices**. Four correction bundles also have application dependencies. The handoff separates **14 newly approved field corrections**, **14 primary-evidence quotation/provenance replacements**, and **33 review-required cases**. No dataset or canonical export changes were applied.
+
+Use the [private review app](http://100.121.34.85:8876/review.html), [handoff and claim limits](handoff/README.md), [complete final field decisions](handoff/sol_review_decisions.json), and [completion receipt](evidence_followup/integration/final_sol_closure_20261031.json). The final pass validates 24 fresh sanitized source packets, 25 targets and 71 nonempty literal quote fields. All 88 regression tests and 533 handoff quotation checks passed. All 120 owned final-stage tasks are terminal, with no pending children/questions or audit worker processes. The private review server remains available for the user; the exact recovery schedule is absent.
+
+The figures below describe the **unchanged historical integrated export**, before this separate final-review sidecar. Its 109 full-text uncertainty flags are historical export flags, not unread final-review work. The 221 partial/abstract records and 52 without usable text remain evidence limits on any claim about verification of the entire dataset.
+
+## Historical integrated evidence follow-up
 
 The user-authorised evidence follow-up is complete. **500 input rows have confirmed field errors; 2,436 of 2,818 rows are fully resolved.** The export contains **441 source-confirmed genuinely absent replication/reproduction–original pairs**. A separate list retains **127 unresolved candidates** with actual source, citation, report-family or finding-correspondence limits. Different DOI/year metadata alone never establishes an omitted reference.
 

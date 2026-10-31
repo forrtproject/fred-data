@@ -1,4 +1,4 @@
-> **New final Sol review is active.** The completed follow-up below is historical coverage, not a claim that all scientific values are settled. The user requested a final source-by-source closure and a fixes/review interface. Current status and decisions are in [handoff](../handoff/README.md) and [progress](../handoff/sol_closure_progress.json). Historical dispatch and recovery schedules remain closed.
+> **Final Sol source review is complete for all 109 previously unresolved saved-full-text rows.** Assigned fields are settled in 80 rows; 21 retain specific evidence limits and 8 require policy decisions. Four correction bundles have application dependencies. The handoff separates 14 newly approved field corrections and 14 primary-evidence updates from 33 review-required cases. No dataset changes were applied. See [handoff](../handoff/README.md), [completion receipt](integration/final_sol_closure_20261031.json), and [progress](../handoff/sol_closure_progress.json). The historical completion and old dispatch/schedules below remain unchanged.
 
 # Complete evidence follow-up
 
