@@ -2,7 +2,7 @@
 
 # FLoRA blind audit — provisional
 
-482 input rows have at least one confirmed field error; 2412 / 2818 rows are fully resolved. 718 blind targets have no proposed shipped counterpart; these are not errors by default.
+485 input rows have at least one confirmed field error; 2413 / 2818 rows are fully resolved. 718 blind targets have no proposed shipped counterpart; these are not errors by default.
 
 This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. The legacy automatic matcher tolerates normalized spacing and removed line-end hyphenation. Parent approval in the active evidence follow-up requires a contiguous literal quotation; a normalized match alone does not authorise integration. Neither check repairs words or mathematical signs.
 
@@ -10,7 +10,7 @@ The complete evidence follow-up remains active. Earlier phase completion and cut
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2290 with verified saved text (1730 full text, 560 abstract); 2290 with validated usable coding. Rows fully resolved: 2412 / 2818.
+Works: 2344 total; 2344 attempted; 2290 with verified saved text (1730 full text, 560 abstract); 2290 with validated usable coding. Rows fully resolved: 2413 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. Dependent outcome replacements after a type correction remain in results.csv and the error list.
 
@@ -21,8 +21,8 @@ After the original bounded run, a user-authorised supplemental review covered 10
 ## Confirmed field error rates
 
 - type: 38 / 2624 (1.4%); 194 unverified; all-row unresolved bounds 1.3%–8.2% (N=2818)
-- original: 75 / 2582 (2.9%); 236 unverified; all-row unresolved bounds 2.7%–11.0% (N=2818)
-- outcome: 368 / 2243 (16.4%); 370 unverified; all-row unresolved bounds 14.1%–28.2% (N=2613)
+- original: 77 / 2586 (3.0%); 232 unverified; all-row unresolved bounds 2.7%–11.0% (N=2818)
+- outcome: 369 / 2244 (16.4%); 369 unverified; all-row unresolved bounds 14.1%–28.2% (N=2613)
 - outcome_computation: 30 / 192 (15.6%); 13 unverified; all-row unresolved bounds 14.6%–21.0% (N=205)
 - outcome_robustness: 9 / 197 (4.6%); 8 unverified; all-row unresolved bounds 4.4%–8.3% (N=205)
 
@@ -49,7 +49,7 @@ After the original bounded run, a user-authorised supplemental review covered 10
 - openalex:
   - type: 4 / 256 (1.6%); 10 unverified; all-row unresolved bounds 1.5%–5.3% (N=266)
   - original: 11 / 255 (4.3%); 11 unverified; all-row unresolved bounds 4.1%–8.3% (N=266)
-  - outcome: 24 / 229 (10.5%); 30 unverified; all-row unresolved bounds 9.3%–20.8% (N=259)
+  - outcome: 25 / 230 (10.9%); 29 unverified; all-row unresolved bounds 9.7%–20.8% (N=259)
   - outcome_computation: 2 / 5 (40.0%); 2 unverified; all-row unresolved bounds 28.6%–57.1% (N=7)
   - outcome_robustness: 2 / 7 (28.6%); 0 unverified; all-row unresolved bounds 28.6%–28.6% (N=7)
 - openalex_snapshot:
@@ -60,7 +60,7 @@ After the original bounded run, a user-authorised supplemental review covered 10
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - replications:
   - type: 30 / 1334 (2.2%); 119 unverified; all-row unresolved bounds 2.1%–10.3% (N=1453)
-  - original: 54 / 1305 (4.1%); 148 unverified; all-row unresolved bounds 3.7%–13.9% (N=1453)
+  - original: 56 / 1309 (4.3%); 144 unverified; all-row unresolved bounds 3.9%–13.8% (N=1453)
   - outcome: 240 / 1229 (19.5%); 224 unverified; all-row unresolved bounds 16.5%–31.9% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
@@ -75,14 +75,14 @@ After the original bounded run, a user-authorised supplemental review covered 10
 
 - abstract:
   - type: 7 / 438 (1.6%); 136 unverified; all-row unresolved bounds 1.2%–24.9% (N=574)
-  - original: 2 / 441 (0.5%); 133 unverified; all-row unresolved bounds 0.3%–23.5% (N=574)
+  - original: 2 / 444 (0.5%); 130 unverified; all-row unresolved bounds 0.3%–23.0% (N=574)
   - outcome: 53 / 353 (15.0%); 214 unverified; all-row unresolved bounds 9.3%–47.1% (N=567)
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - full_text:
   - type: 31 / 2186 (1.4%); 6 unverified; all-row unresolved bounds 1.4%–1.7% (N=2192)
-  - original: 73 / 2141 (3.4%); 51 unverified; all-row unresolved bounds 3.3%–5.7% (N=2192)
-  - outcome: 315 / 1890 (16.7%); 106 unverified; all-row unresolved bounds 15.8%–21.1% (N=1996)
+  - original: 75 / 2142 (3.5%); 50 unverified; all-row unresolved bounds 3.4%–5.7% (N=2192)
+  - outcome: 316 / 1891 (16.7%); 105 unverified; all-row unresolved bounds 15.8%–21.1% (N=1996)
   - outcome_computation: 30 / 192 (15.6%); 4 unverified; all-row unresolved bounds 15.3%–17.3% (N=196)
   - outcome_robustness: 9 / 194 (4.6%); 2 unverified; all-row unresolved bounds 4.6%–5.6% (N=196)
 - none:
@@ -193,6 +193,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 387, [replicating work](https://doi.org/10.1002/hbm.25386): original: 10.1093/schbul/sby016.348 → 10.1001/jamapsychiatry.2018.2467; outcome: successful → mixed.
 - Row 403, [replicating work](https://doi.org/10.1109/tse.2012.46): outcome: successful → mixed.
 - Row 405, [replicating work](https://doi.org/10.1037/pspp0000104): original: 10.1111/j.1467-6494.2012.00807.x → Religiosity, self-esteem, and psychological adjustment: On the cross-cultural specificity of the benefits of religiosity..
+- Row 410, [replicating work](https://doi.org/10.1177/1470595814521600): original: 10.1080/00208825.1980.11656300 → Culture’s Consequences: International Differences in Work-Related Values..
 - Row 412, [replicating work](https://doi.org/10.1002/aur.1474): original: 10.1007/s10803-014-2080-3 → 10.1007/s10803-012-1719-1.
 - Row 416, [replicating work](https://doi.org/10.7554/elife.26030): outcome: successful → mixed.
 - Row 418, [replicating work](https://doi.org/10.1111/cdev.12774): original: 10.1016/j.dcn.2015.09.007 → 10.1037/a0023227.
@@ -319,6 +320,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 930, [replicating work](https://doi.org/10.1007/s40881-017-0041-2): original: 10.2139/ssrn.2152623 → 10.1287/mnsc.2015.2177.
 - Row 932, [replicating work](https://doi.org/10.1111/jssr.12578): outcome: mixed → successful.
 - Row 936, [replicating work](https://doi.org/10.1525/collabra.168): outcome: mixed → successful.
+- Row 937, [replicating work](https://doi.org/10.1371/journal.pone.0193787): original: 10.1111/gbb.12129 → Implicit and explicit behavioral tendencies in male and female depression..
 - Row 939, [replicating work](https://doi.org/10.1017/s0033291719002770): outcome: mixed → successful.
 - Row 941, [replicating work](https://doi.org/10.1017/s0261444819000296): outcome: mixed → successful.
 - Row 942, [replicating work](https://doi.org/10.1007/s10648-019-09468-2): outcome: mixed → failed.
@@ -500,6 +502,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 2269, [replicating work](https://doi.org/10.1002/jae.2861): outcome robustness: robust.
 - Row 2274, [replicating work](https://doi.org/10.1098/rsos.250669): outcome: mixed → successful.
 - Row 2285, [replicating work](https://doi.org/10.1167/jov.20.6.18): outcome: successful → mixed.
+- Row 2288, [replicating work](https://doi.org/10.3389/fpsyg.2016.01013): outcome: successful → mixed.
 - Row 2292, [replicating work](https://doi.org/10.1037/a0030530): outcome: mixed → statistically successful but flawed.
 - Row 2299, [replicating work](https://doi.org/10.1371/journal.pone.0253023): type: replication → reproduction; outcome: successful → outcome_computation: computational issues; outcome_robustness: robust.
 - Row 2308, [replicating work](https://doi.org/10.1111/nana.12722): outcome computation: computationally reproducible; outcome robustness: robustness challenges.
@@ -966,7 +969,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Cues of being watched enhance cooperation in a real-world setting.; work https://openalex.org/w2484584964, target 1 (obvious).
 - Confirmed missing target: [Boundaries of cultural influence: Construct activation as a mechanism for cultural differences in social perception.](https://doi.org/10.1177/0022022103034004005); work [replicating work](https://doi.org/10.1111/jpr.12599), target 1 (obvious).
 - Confirmed missing target: [Can uniform color color aggression? Quasi-experimental evidence from professional ice hockey](https://doi.org/10.1177/1948550611418535); work [replicating work](https://doi.org/10.1525/collabra.163080), target 1 (argon).
-217 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+213 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
@@ -1031,4 +1034,4 @@ Elapsed time supplied for 2337 / 2344 works; missing times are not imputed. Time
 Sum of reported final-checkpoint times: 163047.5 seconds.
 Per-work elapsed time and skips are recorded in [work_times.csv](work_times.csv).
 
-Additional primary evidence includes 92 separately recovered individual reports, each independently identity-checked, freshly blindly coded and hash-verified. Their exact texts supplement the collection evidence without changing the base files used by active reviews. Source provenance and parent decisions are in [additional_reports](evidence_followup/additional_reports/parent_decisions.json).
+Additional primary evidence includes 93 separately recovered individual reports, each independently identity-checked, freshly blindly coded and hash-verified. Their exact texts supplement the collection evidence without changing the base files used by active reviews. Source provenance and parent decisions are in [additional_reports](evidence_followup/additional_reports/parent_decisions.json).
