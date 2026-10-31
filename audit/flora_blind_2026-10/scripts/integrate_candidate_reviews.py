@@ -50,12 +50,34 @@ def integrate():
         selected = [x for x in validation['records']
                     if approval_key(x['decision']) in approved]
         assert len(selected) == len(approved)
+        if selected:
+            payload = json.loads((F / 'candidate_reviews' / (rid + '.input.json')).read_text())
         for item in selected:
-            decision = item['decision']
+            decision = dict(item['decision'])
             fk = decision['file_key']
-            sourcepath = R / 'texts' / (fk + '.txt')
-            source = sourcepath.read_bytes().decode('utf-8')
-            assert hashlib.sha256(sourcepath.read_bytes()).hexdigest() == item['source_sha256']
+            requests = [w for w in payload['requests']
+                        if w['request_id'] == decision['request_id'] and w['file_key'] == fk]
+            assert len(requests) == 1, 'Decision needs one matching immutable input request'
+            request = requests[0]
+            assert a.decision_key(decision) in {a.decision_key(x) for x in request['requested_fields']}, 'Unrequested decision key'
+            sourcepath = Path(request['source_path']).resolve()
+            raw = sourcepath.read_bytes()
+            source = raw.decode('utf-8')
+            sourcehash = hashlib.sha256(raw).hexdigest()
+            assert sourcehash == item['source_sha256']
+            if sourcepath != (R / 'texts' / (fk + '.txt')).resolve():
+                registry = F / 'additional_reports/approved_sources.json'
+                assert registry.exists(), 'Unregistered review source'
+                reports = [report for report in json.loads(registry.read_text())['reports']
+                           if report['status'] == 'approved_for_comparison'
+                           and report['collection_file_key'] == fk
+                           and report['work_key'] == request['work_key']
+                           and Path(report['text_path']).resolve() == sourcepath
+                           and report['text_sha256'] == sourcehash]
+                assert len(reports) == 1, 'Review source needs one exact approved report'
+                # Reuse all private-path, work, raw-hash and fresh blind-code guards.
+                c.primary_text(R, fk, request['work_key'])
+                decision.update(source_report_id=reports[0]['report_id'], source_text_sha256=sourcehash)
             assert item['mechanically_valid'] and c.valid_decision(decision, source) and decision['quote'] in source
             target = R / 'adjudications' / (fk + '.json')
             obj = c.read_json(target)[0] or {'decisions': []}

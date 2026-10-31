@@ -10,6 +10,37 @@ import compare
 import controller
 
 
+def verify_additional_reports(root):
+    """Check registered blind codings and adjudications against exact source bytes."""
+    additional = root / 'evidence_followup/additional_reports/approved_sources.json'
+    supplementary_codings = 0
+    if additional.exists():
+        import jsonschema
+        schema = json.loads((root / 'coding_schema.json').read_text())
+        for item in json.loads(additional.read_text())['reports']:
+            if item['status'] != 'approved_for_comparison':
+                continue
+            code = json.loads(Path(item['blind_coding_path']).read_text())
+            jsonschema.validate(code, schema)
+            compare.primary_text(root, item['collection_file_key'], item['work_key'])
+            text = Path(item['text_path']).read_bytes().decode('utf-8')
+            for target in code['targets']:
+                for key in ('evidence_quote', 'outcome_quote', 'outcome_computational_quote', 'outcome_robustness_quote'):
+                    assert not target.get(key) or target[key] in text, (item['report_id'], key)
+            supplementary_codings += 1
+        approved_reports = {x['report_id']: x for x in json.loads(additional.read_text())['reports']
+                            if x['status'] == 'approved_for_comparison'}
+        for path in (root / 'adjudications').glob('*.json'):
+            for decision in json.loads(path.read_text()).get('decisions', []):
+                if not decision.get('source_report_id'):
+                    continue
+                report = approved_reports[decision['source_report_id']]
+                assert path.stem == report['collection_file_key'], 'Supplement from wrong collection'
+                assert decision['source_text_sha256'] == report['text_sha256']
+                assert decision['quote'] in Path(report['text_path']).read_bytes().decode('utf-8'), (path.name, decision['source_report_id'])
+    return supplementary_codings
+
+
 def verify():
     root = Path(__file__).resolve().parents[1]
     manifest = json.loads((root / 'run_manifest.json').read_text())
@@ -47,32 +78,7 @@ def verify():
                if re.fullmatch(r'[0-9a-f]{16}', p.stem)]
     assert len(codings) == manifest['works']
     assert all(controller.validate(p) for p in codings), 'Invalid coding checkpoint'
-    additional = root / 'evidence_followup/additional_reports/approved_sources.json'
-    supplementary_codings = 0
-    if additional.exists():
-        import jsonschema
-        schema = json.loads((root / 'coding_schema.json').read_text())
-        for item in json.loads(additional.read_text())['reports']:
-            if item['status'] != 'approved_for_comparison':
-                continue
-            code = json.loads(Path(item['blind_coding_path']).read_text())
-            jsonschema.validate(code, schema)
-            compare.primary_text(root, item['collection_file_key'], item['work_key'])
-            text = Path(item['text_path']).read_text()
-            for target in code['targets']:
-                for key in ('evidence_quote', 'outcome_quote', 'outcome_computational_quote', 'outcome_robustness_quote'):
-                    assert not target.get(key) or target[key] in text, (item['report_id'], key)
-            supplementary_codings += 1
-        approved_reports = {x['report_id']: x for x in json.loads(additional.read_text())['reports']
-                            if x['status'] == 'approved_for_comparison'}
-        for path in (root / 'adjudications').glob('*.json'):
-            for decision in json.loads(path.read_text()).get('decisions', []):
-                if not decision.get('source_report_id'):
-                    continue
-                report = approved_reports[decision['source_report_id']]
-                assert path.stem == report['collection_file_key'], 'Supplement from wrong collection'
-                assert decision['source_text_sha256'] == report['text_sha256']
-                assert decision['quote'] in Path(report['text_path']).read_text(), (path.name, decision['source_report_id'])
+    supplementary_codings = verify_additional_reports(root)
     dataset = root.parents[1] / 'output/flora.csv'
     data_hash = hashlib.sha256(dataset.read_bytes()).hexdigest()
     assert data_hash == manifest['output_flora_sha256'], 'FLoRA changed'

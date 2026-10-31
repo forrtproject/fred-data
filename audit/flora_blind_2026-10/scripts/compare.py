@@ -304,8 +304,11 @@ def primary_text(root, file_key, work_key, base=None):
         assert hashlib.sha256(coderaw).hexdigest() == item['blind_coding_sha256'], 'Fresh blind coding hash changed'
         code = json.loads(coderaw)
         assert code['work_key'] == work_key and code['status'] == 'done'
-        assert code['text_sha256'] == item['text_sha256'] and code['evidence_level'] == 'full_text'
-        parts.append('\n\nVERIFIED ADDITIONAL PRIMARY REPORT: ' + item['report_id'] +
+        level = item.get('evidence_level', 'full_text')
+        assert level in {'abstract', 'full_text'}, 'Invalid additional evidence level'
+        assert code['text_sha256'] == item['text_sha256'] and code['evidence_level'] == level
+        label = 'PRIMARY REPORT' if level == 'full_text' else 'PRIMARY EVIDENCE'
+        parts.append('\n\nVERIFIED ADDITIONAL ' + label + ': ' + item['report_id'] +
                      '\nSOURCE URL: ' + item['source_url'] + '\n' + raw.decode('utf-8-sig', errors='replace'))
     return ''.join(parts)
 

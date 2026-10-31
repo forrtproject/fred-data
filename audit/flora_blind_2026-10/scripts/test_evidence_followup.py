@@ -88,6 +88,195 @@ class AdditionalPrimaryReportGuards(unittest.TestCase):
         self.assertEqual(newer.read_bytes(), before)
 
 
+class RegisteredReviewSources(unittest.TestCase):
+    save_registry = AdditionalPrimaryReportGuards.save_registry
+
+    def setUp(self):
+        AdditionalPrimaryReportGuards.setUp(self)
+        import integrate_candidate_reviews as integrator
+        self.integrator = integrator
+        self.followup = self.root / 'evidence_followup'
+        for folder in ('candidate_reviews', 'candidate_requests', 'integration'):
+            (self.followup / folder).mkdir()
+        (self.root / 'adjudications').mkdir()
+        (self.root / 'codings').mkdir()
+        self.basecode = self.root / 'codings/abc.json'
+        self.basecode.write_text(json.dumps(dict(work_key='work', evidence_level='abstract',
+            targets=[{'index': i} for i in range(89)])))
+        self.source.write_bytes(b'Primary first line.\r\nPrimary second line.\r\n')
+        self.set_level('abstract')
+        self.decision = dict(request_id='fresh', file_key='abc', input_row_index=17,
+            field='outcome', method='argon', verdict='blind_right', corrected_value='successful',
+            quote='Primary first line.\r\nPrimary second line.', location='Abstract',
+            reason='Parent inspected primary evidence.')
+        self.request = dict(request_id='fresh', file_key='abc', work_key='work',
+            source_path=str(self.source), requested_fields=[dict(input_row_index=17, field='outcome')])
+        self.write_review('input', dict(requests=[dict(self.request, request_id='old',
+            source_path=str(self.root / 'texts/abc.txt')), self.request]))
+        self.write_review('result', dict(decisions=[self.decision]))
+        (self.followup / 'candidate_reviews/parent_inspection.json').write_text(json.dumps(
+            dict(reviews=dict(review=dict(status='approved', review_kind='fields',
+                reason='Parent approved.', approved_keys=[['abc', '17', 'outcome']])))))
+        (self.followup / 'candidate_requests/index.json').write_text(json.dumps([
+            dict(request_id='fresh', review_id='review', review_attempts=2)]))
+        self.addCleanup(patch.stopall)
+        for module in (ctl, integrator):
+            patch.object(module, 'R', self.root).start()
+            patch.object(module, 'F', self.followup).start()
+
+    def set_level(self, level):
+        self.item['evidence_level'] = level
+        code = dict(work_key='work', status='done', evidence_level=level,
+            text_sha256=hashlib.sha256(self.source.read_bytes()).hexdigest(),
+            targets=[dict(evidence_quote='Primary first line.\r\nPrimary second line.')])
+        self.code.write_text(json.dumps(code))
+        self.item.update(text_sha256=code['text_sha256'],
+            blind_coding_sha256=hashlib.sha256(self.code.read_bytes()).hexdigest())
+        self.save_registry()
+
+    def write_review(self, suffix, value):
+        (self.followup / ('candidate_reviews/review.' + suffix + '.json')).write_text(json.dumps(value))
+
+    def receipt(self):
+        self.write_review('validation', dict(valid_envelope=True, records=[dict(
+            decision=self.decision, mechanically_valid=True,
+            source_sha256=hashlib.sha256(self.source.read_bytes()).hexdigest())]))
+
+    def test_registered_partial_validates_integrates_and_compares_without_changing_base(self):
+        # Validate through the real controller, then integrate through the registry guard.
+        # Different row keys keep both source requests distinct in the controller envelope.
+        old = dict(self.request, request_id='old', source_path=str(self.root / 'texts/abc.txt'),
+            requested_fields=[dict(input_row_index=18, field='outcome')])
+        old_decision = dict(self.decision, request_id='old', input_row_index=18,
+            quote='Frozen base source.')
+        self.write_review('input', dict(requests=[old, self.request]))
+        self.write_review('result', dict(decisions=[old_decision, self.decision]))
+        frozen = {p: p.read_bytes() for p in (self.basecode, self.root / 'texts/abc.txt',
+            self.code, self.source, self.registry)}
+        raw_result = (self.followup / 'candidate_reviews/review.result.json').read_bytes()
+        self.assertEqual(ctl.validate_candidate_review('review')['mechanically_valid'], 2)
+        receipt = (self.followup / 'candidate_reviews/review.validation.json').read_bytes()
+        self.assertEqual(self.integrator.integrate()['approved_rechecks_or_additions'], 1)
+        actual = json.loads((self.root / 'adjudications/abc.json').read_text())['decisions'][0]
+        self.assertEqual(actual['source_report_id'], 'one')
+        self.assertEqual(actual['source_text_sha256'], self.item['text_sha256'])
+        combined = comparison.primary_text(self.root, 'abc', 'work')
+        self.assertIn('VERIFIED ADDITIONAL PRIMARY EVIDENCE:', combined)
+        self.assertIn(actual['quote'], combined)
+        self.assertTrue(comparison.valid_decision(actual, combined))
+        self.assertEqual(json.loads(self.code.read_text())['evidence_level'], 'abstract')
+        self.assertEqual(len(json.loads(self.basecode.read_text())['targets']), 89)
+        for path, before in frozen.items():
+            self.assertEqual(path.read_bytes(), before)
+        self.assertEqual((self.followup / 'candidate_reviews/review.result.json').read_bytes(), raw_result)
+        self.assertEqual((self.followup / 'candidate_reviews/review.validation.json').read_bytes(), receipt)
+
+    def test_integrator_rejects_unregistered_wrong_work_changed_source_and_code(self):
+        for fault in ('unregistered', 'wrong_work', 'source', 'code', 'unrequested', 'wrong_request', 'duplicate'):
+            with self.subTest(fault=fault):
+                self.set_level('full_text')
+                original = {p: p.read_bytes() for p in (self.registry, self.source, self.code)}
+                request = dict(self.request)
+                if fault == 'unregistered':
+                    self.registry.write_text('{"reports": []}')
+                elif fault == 'wrong_work':
+                    request['work_key'] = 'other-work'
+                elif fault in ('source', 'code'):
+                    path = self.source if fault == 'source' else self.code
+                    path.write_bytes(path.read_bytes() + b' ')
+                elif fault == 'unrequested':
+                    request['requested_fields'] = [dict(input_row_index=19, field='outcome')]
+                elif fault == 'wrong_request':
+                    request['request_id'] = 'other'
+                self.write_review('input', dict(requests=[request] * (2 if fault == 'duplicate' else 1)))
+                self.receipt()  # Even a receipt with the current source hash cannot bypass the registry.
+                with self.assertRaises(AssertionError):
+                    self.integrator.integrate()
+                self.assertFalse((self.root / 'adjudications/abc.json').exists())
+                for path, before in original.items():
+                    path.write_bytes(before)
+
+    def test_integrator_rejects_lf_repair_of_crlf_quote(self):
+        self.set_level('full_text')
+        self.decision['quote'] = self.decision['quote'].replace('\r\n', '\n')
+        self.receipt()
+        with self.assertRaises(AssertionError):
+            self.integrator.integrate()
+
+    def test_fresh_code_must_still_be_done_and_bound_to_work_and_source(self):
+        for field, value in (('work_key', 'other-work'), ('status', 'pending'),
+                             ('text_sha256', '0' * 64), ('evidence_level', 'full_text')):
+            with self.subTest(field=field):
+                self.set_level('abstract')
+                code = json.loads(self.code.read_text())
+                code[field] = value
+                self.code.write_text(json.dumps(code))
+                self.item['blind_coding_sha256'] = hashlib.sha256(self.code.read_bytes()).hexdigest()
+                self.save_registry()
+                self.receipt()
+                with self.assertRaises(AssertionError):
+                    self.integrator.integrate()
+
+    def test_registry_does_not_bypass_validation_receipt_source_hash(self):
+        self.receipt()
+        path = self.followup / 'candidate_reviews/review.validation.json'
+        receipt = json.loads(path.read_text())
+        receipt['records'][0]['source_sha256'] = '0' * 64
+        path.write_text(json.dumps(receipt))
+        with self.assertRaises(AssertionError):
+            self.integrator.integrate()
+
+    def test_registry_level_must_be_allowed_and_match_fresh_code(self):
+        for level in ('abstract', 'unknown'):
+            self.set_level('full_text')
+            self.item['evidence_level'] = level
+            self.save_registry()
+            with self.assertRaises(AssertionError):
+                comparison.primary_text(self.root, 'abc', 'work')
+
+    def test_missing_registry_level_preserves_legacy_full_text(self):
+        self.set_level('full_text')
+        del self.item['evidence_level']
+        self.save_registry()
+        self.receipt()
+        self.assertEqual(self.integrator.integrate()['approved_rechecks_or_additions'], 1)
+
+    def test_verifier_checks_partial_crlf_and_rejects_lf_quotes(self):
+        import verify_integration as verifier
+        (self.root / 'coding_schema.json').write_text(json.dumps(dict(type='object',
+            required=['work_key', 'status', 'evidence_level', 'targets'])))
+        self.assertEqual(verifier.verify_additional_reports(self.root), 1)
+        decision = dict(self.decision, source_report_id='one', source_text_sha256=self.item['text_sha256'])
+        path = self.root / 'adjudications/abc.json'
+        path.write_text(json.dumps(dict(decisions=[decision])))
+        self.assertEqual(verifier.verify_additional_reports(self.root), 1)
+        decision['quote'] = decision['quote'].replace('\r\n', '\n')
+        path.write_text(json.dumps(dict(decisions=[decision])))
+        with self.assertRaises(AssertionError):
+            verifier.verify_additional_reports(self.root)
+        path.unlink()
+        code = json.loads(self.code.read_text())
+        code['targets'][0]['evidence_quote'] = code['targets'][0]['evidence_quote'].replace('\r\n', '\n')
+        self.code.write_text(json.dumps(code))
+        self.item['blind_coding_sha256'] = hashlib.sha256(self.code.read_bytes()).hexdigest()
+        self.save_registry()
+        with self.assertRaises(AssertionError):
+            verifier.verify_additional_reports(self.root)
+
+    def test_verifier_retains_schema_validation(self):
+        import jsonschema
+        import verify_integration as verifier
+        (self.root / 'coding_schema.json').write_text(json.dumps(dict(type='object',
+            required=['targets'], properties=dict(targets=dict(type='array')))))
+        code = json.loads(self.code.read_text())
+        code['targets'] = 'invalid target list'
+        self.code.write_text(json.dumps(code))
+        self.item['blind_coding_sha256'] = hashlib.sha256(self.code.read_bytes()).hexdigest()
+        self.save_registry()
+        with self.assertRaises(jsonschema.ValidationError):
+            verifier.verify_additional_reports(self.root)
+
+
 class OmissionEvidenceGuards(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
