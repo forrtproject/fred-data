@@ -395,6 +395,30 @@ class TypeCorrectionTests(unittest.TestCase):
 
 
 class NoAdditionDecisionTests(unittest.TestCase):
+    def test_confirmed_missing_identity_uses_adjudication_and_preserves_blind_proposal(self):
+        proposed = target('10.9/proposal', title='Older candidate', authors='Jones', year='1984')
+        corrected = {'authors': 'Taylor', 'year': '2015', 'title': 'The actual original',
+                     'record_type': 'replication', 'outcome': 'cannot_be_determined'}
+        d = decision(field='missing_row', target_index=1, verdict='both_wrong', corrected_value=corrected)
+        d.pop('input_row_index')
+        code = coding(targets=[target(), proposed])
+        _, missing, _ = compare(code=code, decisions=[d])
+        self.assertEqual(len(missing), 1)
+        self.assertEqual({k: missing[0][k] for k in ('authors', 'year', 'title', 'doi')},
+                         {'authors': 'Taylor', 'year': '2015', 'title': 'The actual original', 'doi': ''})
+        self.assertEqual(json.loads(missing[0]['blind_target']), proposed)
+        self.assertEqual(code['targets'][1], proposed)
+
+    def test_unverified_or_nonliteral_missing_correction_does_not_replace_identity(self):
+        proposed = target('10.9/proposal', title='Older candidate', authors='Jones', year='1984')
+        for verdict, quote in [('undeterminable', TEXT), ('both_wrong', 'Invented quotation')]:
+            d = decision(field='missing_row', target_index=1, verdict=verdict, quote=quote,
+                         corrected_value={'title': 'Unverified replacement'})
+            d.pop('input_row_index')
+            _, missing, _ = compare(code=coding(targets=[target(), proposed]), decisions=[d])
+            self.assertEqual(missing[0]['title'], 'Older candidate')
+            self.assertEqual(missing[0]['doi'], '10.9/proposal')
+
     def test_no_addition_requires_evidence_but_no_replacement_value(self):
         d=decision(field='missing_row', verdict='shipped_right', corrected_value='')
         self.assertTrue(c.valid_decision(d,TEXT))

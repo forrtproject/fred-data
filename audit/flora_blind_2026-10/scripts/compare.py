@@ -528,9 +528,14 @@ def compare_work(rows, keys, coding, error, text, decisions):
         if j in used:
             continue
         d = decision_for(decisions, 'missing_row', text, target_index=j)
+        identity = target
+        if (d and d.get('verdict') in ('blind_right', 'both_wrong')
+                and isinstance(d.get('corrected_value'), dict)):
+            # Export the source-adjudicated identity; retain the blind proposal below.
+            identity = d['corrected_value']
         missing.append({'work_key': keys[0]['work_key'], 'file_key': keys[0]['file_key'],
-                        'target_index': j, 'doi': target.get('doi', ''), 'title': target.get('title', ''),
-                        'authors': target.get('authors', ''), 'year': target.get('year', ''),
+                        'target_index': j, 'doi': identity.get('doi', ''), 'title': identity.get('title', ''),
+                        'authors': identity.get('authors', ''), 'year': identity.get('year', ''),
                         'evidence_level': coding.get('evidence_level', ''),
                         'pairing_flags': '; '.join(sorted(tf.get(j, set()))),
                         'final_verdict': verdict(d) if d else 'unverified',
