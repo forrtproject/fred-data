@@ -87,6 +87,9 @@ for (i, field), item in proposals.items():
         item['application_hold'] = 'Resolve this row’s coding-policy choice before applying its correction bundle.'
     elif d.get('application_hold'):
         item['application_hold'] = d['application_hold']
+    item['audit_provenance_status'] = item['status']
+    item['status'] = ('decision_required' if item.get('application_hold') or
+                      item['status'] == 'conditional_review_required' else 'evidence_checked_proposal')
     before = item['expected_before']
     item['expected_before_full_record_sha256'] = hashlib.sha256(
         json.dumps(before, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
@@ -101,6 +104,7 @@ assert len(withdrawn) == 1 and withdrawn[0]['input_row_index'] == 462
 save_json('correction_proposals.json', dict(baseline_sha256=initial['baseline_sha256'],
           status='proposal_only_no_dataset_changes', field_count=len(proposals),
           row_count=len({i for i, field in proposals}),
+          explanation='Every proposal has supporting audit evidence. Decision-required entries have a policy or application hold. All entries remain proposals; none changes the dataset automatically.',
           changes=[proposals[k] for k in sorted(proposals)], withdrawn_proposals=withdrawn))
 
 missing = read_csv(B / 'confirmed_missing_references.csv')
@@ -129,8 +133,7 @@ save_csv('unresolved_missing_pairs.csv', unresolved, list(unresolved[0]))
 summary = dict(status='complete_audit_with_documented_limits', input_rows=2818,
                input_works=2344, determined_row_reviews=2516, evidence_limit_rows=294,
                policy_decision_rows=8, correction_proposal_fields=563, correction_proposal_rows=516,
-               conditional_correction_fields=sum(bool(x.get('application_hold')) or x['status']=='conditional_review_required' for x in proposals.values()),
-               explicitly_source_approved_fields=14,
+               conditional_correction_fields=sum(x['status']=='decision_required' for x in proposals.values()),
                evidence_provenance_updates=14, review_required_rows=33,
                application_dependency_rows=4, confirmed_missing_pairs=442,
                unresolved_missing_candidates=124, all_assigned_fulltext_reviews_complete=True,
@@ -156,7 +159,7 @@ We audited the frozen FLoRA snapshot of **2,818 rows representing 2,344 works** 
 | Source-confirmed missing study–original pairs | 442 |
 | Unresolved possible missing pairs | 124 |
 
-The row categories sum to all 2,818 input rows. “Determined” includes fields that become inapplicable when a source-supported removal or type correction is applied; it does not mean the proposed dataset changes have been applied. Seven field proposals have a policy or application hold. Four row bundles require coordination of identity changes, duplicate removal, or retained-attempt evidence. Fourteen fields carry explicit source-approval for application, and 14 primary-report quotation/provenance replacements are supplied separately. All proposals retain their evidence, approval state, and application dependencies.
+The row categories sum to all 2,818 input rows. “Determined” includes fields that become inapplicable when a source-supported removal or type correction is applied; it does not mean the proposed dataset changes have been applied. Every correction proposal has supporting audit evidence. Seven field proposals have a policy or application hold; four row bundles require coordination of identity changes, duplicate removal, or retained-attempt evidence. Fourteen primary-report quotation/provenance replacements are supplied separately. All proposals retain their evidence and application dependencies, and none is applied automatically.
 
 The principal problems were incorrect allocation of findings to originals and incorrect interpretation of outcomes. For example, a results-blind ManyLabs5 manuscript had concealed an available completed report supporting a successful replication. Several student records used collection ratings or quotations from another project instead of the actual individual report. Checks also prevented unnecessary corrections: a title variant in a reference list was a miscitation, and online versus print publication years did not establish a different original.
 
@@ -178,9 +181,9 @@ This is a completed audit within the documented source and codebook limits. It i
 
 ## Review and downloads
 
-- [Review app](http://100.121.34.85:8876/review.html): correction proposals, evidence, policy alternatives, and notes/export without dataset mutation.
+- [Review app](https://lukas-reports.lukas-wallrich.workers.dev/flora-audit-2026-10/): correction proposals, evidence, policy alternatives, and notes/export without dataset mutation.
 - [Audit overview](handoff/audit_overview.json) and [all input-row dispositions](handoff/audit_rows.csv).
-- [Combined correction proposals](handoff/correction_proposals.json), [explicitly source-approved fields](handoff/approved_fixes.json), and [primary evidence replacements](handoff/evidence_provenance_fixes.json).
+- [Correction proposals](handoff/correction_proposals.json) and [primary evidence replacements](handoff/evidence_provenance_fixes.json).
 - [Confirmed missing pairs](handoff/confirmed_missing_pairs.csv) and [unresolved candidates](handoff/unresolved_missing_pairs.csv).
 - [Cases requiring review](handoff/review_required.json) and [field-level source decisions](handoff/sol_review_decisions.json).
 
@@ -188,9 +191,9 @@ The source exports and execution ledgers remain available for provenance. The [d
 
 ## Validation
 
-Validation passed 88 regression tests, 533 raw handoff quotation checks, fresh-source schema and metadata checks, source hashes, baseline preconditions, and pair deduplication. All 109 saved-full-text review cases are complete. The 24 fresh-source packets contain 25 targets and 71 nonempty literal quote fields. The frozen FLoRA SHA-256 is `6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7`.
+Validation passed 88 regression tests, 533 raw handoff quotation checks, source schema and metadata checks, source hashes, baseline preconditions, and pair deduplication. The frozen FLoRA SHA-256 is `6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7`.
 
-All owned model tasks are terminal; no audit workers or recovery schedule remain active. The private review server is retained for the user. Full acquired reports and private access details remain outside Git. Verification and preservation receipts are linked from the [audit handoff](handoff/README.md).
+All owned model tasks are terminal; no audit workers or recovery schedule remain active. The review app is published on Cloudflare. Full acquired reports and private access details are excluded from the public app. Verification and preservation receipts are linked from the [audit handoff](handoff/README.md).
 '''
 (B / 'REPORT.md').write_text(report)
 print(json.dumps(summary, indent=2))

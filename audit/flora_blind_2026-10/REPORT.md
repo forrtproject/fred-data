@@ -13,7 +13,7 @@ We audited the frozen FLoRA snapshot of **2,818 rows representing 2,344 works** 
 | Source-confirmed missing study–original pairs | 442 |
 | Unresolved possible missing pairs | 124 |
 
-The row categories sum to all 2,818 input rows. “Determined” includes fields that become inapplicable when a source-supported removal or type correction is applied; it does not mean the proposed dataset changes have been applied. Seven field proposals have a policy or application hold. Four row bundles require coordination of identity changes, duplicate removal, or retained-attempt evidence. Fourteen fields carry explicit source-approval for application, and 14 primary-report quotation/provenance replacements are supplied separately. All proposals retain their evidence, approval state, and application dependencies.
+The row categories sum to all 2,818 input rows. “Determined” includes fields that become inapplicable when a source-supported removal or type correction is applied; it does not mean the proposed dataset changes have been applied. Every correction proposal has supporting audit evidence. Seven field proposals have a policy or application hold; four row bundles require coordination of identity changes, duplicate removal, or retained-attempt evidence. Fourteen primary-report quotation/provenance replacements are supplied separately. All proposals retain their evidence and application dependencies, and none is applied automatically.
 
 The principal problems were incorrect allocation of findings to originals and incorrect interpretation of outcomes. For example, a results-blind ManyLabs5 manuscript had concealed an available completed report supporting a successful replication. Several student records used collection ratings or quotations from another project instead of the actual individual report. Checks also prevented unnecessary corrections: a title variant in a reference list was a miscitation, and online versus print publication years did not establish a different original.
 
@@ -35,9 +35,9 @@ This is a completed audit within the documented source and codebook limits. It i
 
 ## Review and downloads
 
-- [Review app](http://100.121.34.85:8876/review.html): correction proposals, evidence, policy alternatives, and notes/export without dataset mutation.
+- [Review app](https://lukas-reports.lukas-wallrich.workers.dev/flora-audit-2026-10/): correction proposals, evidence, policy alternatives, and notes/export without dataset mutation.
 - [Audit overview](handoff/audit_overview.json) and [all input-row dispositions](handoff/audit_rows.csv).
-- [Combined correction proposals](handoff/correction_proposals.json), [explicitly source-approved fields](handoff/approved_fixes.json), and [primary evidence replacements](handoff/evidence_provenance_fixes.json).
+- [Correction proposals](handoff/correction_proposals.json) and [primary evidence replacements](handoff/evidence_provenance_fixes.json).
 - [Confirmed missing pairs](handoff/confirmed_missing_pairs.csv) and [unresolved candidates](handoff/unresolved_missing_pairs.csv).
 - [Cases requiring review](handoff/review_required.json) and [field-level source decisions](handoff/sol_review_decisions.json).
 
@@ -45,6 +45,6 @@ The source exports and execution ledgers remain available for provenance. The [d
 
 ## Validation
 
-Validation passed 88 regression tests, 533 raw handoff quotation checks, fresh-source schema and metadata checks, source hashes, baseline preconditions, and pair deduplication. All 109 saved-full-text review cases are complete. The 24 fresh-source packets contain 25 targets and 71 nonempty literal quote fields. The frozen FLoRA SHA-256 is `6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7`.
+Validation passed 88 regression tests, 533 raw handoff quotation checks, source schema and metadata checks, source hashes, baseline preconditions, and pair deduplication. The frozen FLoRA SHA-256 is `6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7`.
 
-All owned model tasks are terminal; no audit workers or recovery schedule remain active. The private review server is retained for the user. Full acquired reports and private access details remain outside Git. Verification and preservation receipts are linked from the [audit handoff](handoff/README.md).
+All owned model tasks are terminal; no audit workers or recovery schedule remain active. The review app is published on Cloudflare. Full acquired reports and private access details are excluded from the public app. Verification and preservation receipts are linked from the [audit handoff](handoff/README.md).
