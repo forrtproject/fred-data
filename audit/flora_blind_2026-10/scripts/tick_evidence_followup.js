@@ -35,7 +35,7 @@ if(intent){
  const root='/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/';
  const control=root+base+'/evidence_followup/candidate_cli/control.json';
  // Bounded child-side wait closes the delegate-return -> parent-publication race.
- const script=`import json,time,subprocess
+ const script=`import json,time,os
 from pathlib import Path
 p=Path(${JSON.stringify(control)})
 for _ in range(60):
@@ -44,14 +44,14 @@ for _ in range(60):
   if c.get('clientRequestId')==${JSON.stringify(intent.clientRequestId)}:
    r=c['reservation']
    assert r['snapshot']==${JSON.stringify(intent.snapshot)} and r['workers']==${intent.workers}
-   subprocess.run(['python3',${JSON.stringify(root+base+'/evidence_followup/candidate_cli_relay.py')},'--run','--snapshot',r['snapshot'],'--control',str(p),'--owner-task-id',r['taskId'],'--workers',str(r['workers']),'--max-calls',str(r['workers'])],check=True)
+   os.execvp('python3', ['python3',${JSON.stringify(root+base+'/evidence_followup/candidate_cli_relay.py')},'--run','--snapshot',r['snapshot'],'--control',str(p),'--owner-task-id',r['taskId'],'--workers',str(r['workers']),'--max-calls',str(r['workers'])])
    break
  except (FileNotFoundError,json.JSONDecodeError):
   pass
  time.sleep(1)
 else:
  raise SystemExit('Parent control not published within 60 seconds; parent diagnosis required')`;
- const task=`Technical CLI transport execution only. Work ONLY in ${root}. FIRST read /home/lukas/.config/agent-instructions/common.md, /home/lukas/.config/agent-instructions/box.md, and ${root}${base}/evidence_followup/candidate_cli/README.md. Do not delegate, prepare, reconcile, edit parent state/control/index, canonical adjudications/holds, datasets, Git or schedules. Run this bounded script through the terminal with python3 -c (retain and collect its process); no detach, model substitution, retries outside the helper or parent polling. Exact round ${intent.clientRequestId}. Script:\n${script}\nReport the helper result and exit normally. The whole snapshot may remain incomplete; preserve all holds.`;
+ const task=`Technical CLI transport execution only. Work ONLY in ${root}. FIRST read /home/lukas/.config/agent-instructions/common.md, /home/lukas/.config/agent-instructions/box.md, and ${root}${base}/evidence_followup/candidate_cli/README.md. Do not delegate, prepare, reconcile, edit parent state/control/index, canonical adjudications/holds, datasets, Git or schedules. Run this bounded script through the terminal with exec python3 -c (retain and collect its process); replace the waiting shell so signals reach the helper. No detach, model substitution, retries outside the helper or parent polling. Exact round ${intent.clientRequestId}. Script:\n${script}\nReport the helper result and exit normally. The whole snapshot may remain incomplete; preserve all holds.`;
  const r=await tools.mcp__t3_code__delegate_task({clientRequestId:intent.clientRequestId,title:'FLoRA CLI '+intent.snapshot+' round '+intent.round,mode:'async',isolation:'shared',target:{providerInstanceId:'codex',model:'gpt-6.1-sol',options:{reasoningEffort:'medium',serviceTier:'default'}},task});
  const actual=r.structuredContent;
  if(!actual||r.isError)throw Error('Candidate CLI delegation uncertain; retain intent for same-ID retry');
