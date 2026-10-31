@@ -37,12 +37,21 @@ def refresh():
     manifest = json.loads((R / 'run_manifest.json').read_text())
     assert manifest['evidence_followup']['status'] == 'active'
     manifest['evidence_followup']['latest_integrated_counts'] = counts
+    promotions = json.loads((F / 'integration/source_promotions.json').read_text())['promotions']
+    promoted_levels = collections.Counter(item['new_evidence_level'] for item in promotions)
+    verified_sources = json.loads((F / 'acquisition/parent_verification.json').read_text())['works']
+    source_statuses = collections.Counter(item['status'] for item in verified_sources.values())
     manifest['evidence_followup']['source_checks'] = {
-        'verified_full_text': 19, 'verified_primary_abstract': 1, 'rejected_source_hits': 2,
-        'partial_source_assessment_complete': 201}
+        'verified_full_text': promoted_levels['full_text'],
+        'verified_primary_abstract': promoted_levels['abstract'],
+        'rejected_source_hits': sum(n for status, n in source_statuses.items()
+                                    if status.startswith('rejected_')),
+        'opening_acquisition_parent_verification': dict(source_statuses),
+        'partial_source_assessment_complete': 201,
+        'count_basis': 'Parent-verified source promotion ledger; supplemental evidence counted separately.'}
     a.atomic(R / 'run_manifest.json', manifest)
 
-    promoted = {x['file_key'] for x in json.loads((F / 'integration/source_promotions.json').read_text())['promotions']}
+    promoted = {x['file_key'] for x in promotions}
     originals = [c.adapt_row(x) for x in c.read_csv(c.INPUT)]
     conditional = {(x['input_row_index'], x['field']) for x in c.read_csv(R / 'completion_pass/field_dispositions.csv')
                    if x['disposition'] == 'conditionally_inapplicable'}
