@@ -161,7 +161,7 @@ def validate_candidate_review(rid):
         return {'review_id': rid, 'valid_envelope': False, 'requires_parent_attention': True}
     checked = []
     for work in payload['requests']:
-        source = Path(work['source_path']).read_text()
+        source = Path(work['source_path']).read_bytes().decode('utf-8')
         requested_keys = {a.decision_key(x) for x in work['requested_fields']}
         for decision in result['decisions']:
             if decision['file_key'] != work['file_key'] or a.decision_key(decision) not in requested_keys:

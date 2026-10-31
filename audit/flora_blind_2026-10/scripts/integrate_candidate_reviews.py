@@ -54,7 +54,7 @@ def integrate():
             decision = item['decision']
             fk = decision['file_key']
             sourcepath = R / 'texts' / (fk + '.txt')
-            source = sourcepath.read_text()
+            source = sourcepath.read_bytes().decode('utf-8')
             assert hashlib.sha256(sourcepath.read_bytes()).hexdigest() == item['source_sha256']
             assert item['mechanically_valid'] and c.valid_decision(decision, source) and decision['quote'] in source
             target = R / 'adjudications' / (fk + '.json')
