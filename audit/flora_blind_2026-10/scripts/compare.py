@@ -362,6 +362,24 @@ def verdict(decision):
             'undeterminable': 'unverified'}[decision['verdict']]
 
 
+def original_decision_value(decision):
+    """Decode alias-only retain-identity metadata after the source gates.
+
+    Mixed objects already have a canonical citation and may preserve shipped
+    metadata alongside it. Keep those untouched; never combine the two records.
+    This does not validate a decision, infer an outcome, or repair a model reply.
+    """
+    value = decision.get('corrected_value') if decision else None
+    if not isinstance(value, dict) or decision.get('verdict') != 'shipped_right':
+        return value
+    canonical = ('doi', 'title', 'authors', 'year')
+    if any(key in value for key in canonical):
+        return value
+    aliases = {'doi_o': 'doi', 'title_o': 'title',
+               'authors_o': 'authors', 'year_o': 'year'}
+    return {aliases.get(key, key): item for key, item in value.items()}
+
+
 def compare_work(rows, keys, coding, error, text, decisions):
     targets = coding.get('targets', []) if not error else []
     pairs, rf, tf = pair_originals(rows, targets)
@@ -399,7 +417,7 @@ def compare_work(rows, keys, coding, error, text, decisions):
         identity_d = decision_for(decisions, 'original', text, key['input_row_index']) if not error else None
         adjudicated_identity = (i in identity_decisions and counts[identity_decisions[i][0]] == 1)
         identity = bool(pair) and (not flags or adjudicated_identity)
-        identity_value = identity_d.get('corrected_value') if identity_d else None
+        identity_value = original_decision_value(identity_d)
         identity_doi = clean_doi(identity_value.get('doi')) if isinstance(identity_value, dict) else clean_doi(identity_value)
         source_identity = bool(identity_d and identity_d.get('target_index') is None
                                and identity_d.get('verdict') == 'shipped_right'
@@ -459,7 +477,7 @@ def compare_work(rows, keys, coding, error, text, decisions):
                     continue
                 if field == 'original' and d.get('target_index') is not None and not adjudicated_identity:
                     continue
-                value = d.get('corrected_value')
+                value = original_decision_value(d) if field == 'original' else d.get('corrected_value')
                 if d['verdict'] != 'undeterminable':
                     allowed = {'type': {'replication', 'reproduction', 'not_a_replication'},
                                'outcome': REPLICATION - UNKNOWN,

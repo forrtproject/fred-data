@@ -472,6 +472,41 @@ class SourceIdentityAdjudicationTests(unittest.TestCase):
         self.assertEqual(rs[0]['outcome_final_verdict'], 'unverified')
 
 
+class RetainedIdentityAliasTests(unittest.TestCase):
+    def test_source_supported_aliases_decode_without_mutating_decision(self):
+        d = decision('original', verdict='shipped_right',
+                     corrected_value={'doi_o': '10.1/a', 'title_o': 'The original experiment'})
+        before = json.dumps(d, sort_keys=True)
+        results, _, _ = compare(code=coding([]), decisions=[d])
+        self.assertEqual(results[0]['original_final_verdict'], 'correct')
+        self.assertEqual(results[0]['identity_resolution_method'], 'source_adjudication')
+        self.assertEqual(results[0]['outcome_final_verdict'], 'unverified')
+        self.assertEqual(json.dumps(d, sort_keys=True), before)
+
+    def test_aliases_do_not_bypass_literal_proof(self):
+        d = decision('original', verdict='shipped_right', quote='Invented citation proof.',
+                     corrected_value={'doi_o': '10.1/a'})
+        results, _, _ = compare(code=coding([]), decisions=[d])
+        self.assertEqual(results[0]['original_final_verdict'], 'unverified')
+        self.assertFalse(results[0]['identity_resolved'])
+
+    def test_mixed_metadata_keeps_the_canonical_citation_without_merging(self):
+        value = {'doi': '10.1/a', 'title_o': 'Preserved shipped title'}
+        d = decision('original', verdict='shipped_right', corrected_value=value)
+        self.assertEqual(c.original_decision_value(d), value)
+        self.assertNotIn('title', c.original_decision_value(d))
+        results, _, _ = compare(code=coding([]), decisions=[d])
+        self.assertEqual(results[0]['original_final_verdict'], 'correct')
+        self.assertEqual(json.loads(results[0]['suggested_correction']), {})
+
+    def test_alias_only_correction_is_not_repaired(self):
+        d = decision('original', verdict='both_wrong',
+                     corrected_value={'doi_o': '10.1/b'})
+        results, _, _ = compare(code=coding([]), decisions=[d])
+        self.assertEqual(results[0]['original_final_verdict'], 'unverified')
+        self.assertEqual(json.loads(results[0]['suggested_correction']), {})
+
+
 class TargetIdentityWarningTests(unittest.TestCase):
     def test_target_warning_blocks_automatic_agreement_without_excluding_source(self):
         rs, _, _ = compare(code=coding([target(identity_warning='Conflicting original references')]))

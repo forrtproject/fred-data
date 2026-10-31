@@ -1,3 +1,5 @@
+> **New final Sol review is active.** The completed follow-up below is historical coverage, not a claim that all scientific values are settled. The user requested a final source-by-source closure and a fixes/review interface. Current status and decisions are in [handoff](../handoff/README.md) and [progress](../handoff/sol_closure_progress.json). Historical dispatch and recovery schedules remain closed.
+
 # Complete evidence follow-up
 
 The user-authorised follow-up is complete. Final exports contain **500 rows with confirmed errors, 2,436 of 2,818 rows fully resolved, 441 genuinely absent pairs, and 127 unresolved candidates**. Remaining uncertainty is preserved: 109 saved-full-text rows, 221 abstract/partial rows and 52 without usable text; 777 applicable fields remain unverified. See [the report](../REPORT.md), [confirmed pairs](../confirmed_missing_references.csv), [unresolved candidates](../unresolved_missing_candidates.csv), and [completion receipt](integration/final_followup_completion_0316.json).
