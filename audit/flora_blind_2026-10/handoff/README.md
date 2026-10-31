@@ -1,39 +1,31 @@
-# Fixes and final source review
+# FLoRA audit handoff
 
-All **109 previously unresolved saved-full-text rows across 71 works** received complete, scoped GPT-6.1 Sol source reviews. The assigned fields are settled in **80 rows**; **21 rows retain specific evidence limits**, and **8 require coding-policy decisions**. Four correction bundles have explicit application dependencies. Completed audit work and a recoverable scientific value are recorded separately. No dataset changes have been applied.
+The [full audit report](../REPORT.md) and [machine-readable overview](audit_overview.json) present the complete findings. The audit covers 2,818 input rows from 2,344 works. It gives determined field dispositions for 2,516 row reviews, retains specific evidence limits for 294, and identifies 8 coding-policy cases. Determined dispositions include conditional inapplicability after supported identity/type corrections; no dataset changes have been applied.
 
-The earlier audit used Sol blind coding and cross-model source adjudication. This additional pass checks the previously unresolved full-text fields; it does not claim that every field in all 2,818 rows received another full-source Sol adjudication. The historical export still has 221 partial/abstract rows and 52 without usable text. Those source limits must remain attached to any whole-dataset audit claim.
+## Review and downloads
 
-- [Source-approved fixes](approved_fixes.json): 14 newly approved field corrections, exact frozen before-records and literal proofs. Conditional corrections are excluded.
-- [Evidence replacements](evidence_provenance_fixes.json): 14 independently verified primary-report quotation/provenance updates. These are separate from scientific field changes. Existing project attempts and numerical disagreements are retained.
-- [Review-required cases](review_required.json): explicit evidence gaps, policy alternatives and correction dependencies, with no forced replacement value.
-- [Earlier proposals](fix_proposals.json): the unchanged 545 source-adjudicated field proposals across 500 rows and 441 proposed missing pairs. These retain their earlier evidence and require application review; they are not all automatically approved by this additional pass.
-- [New missing-pair addendum](confirmed_missing_pairs_addendum.json): one newly source-confirmed absent pair, DeWitt (2016). No outcome is inferred. The four Lucid pairs already in the earlier export are not added twice; the separate GSS identity remains uncertain.
-- [Complete field decisions](sol_review_decisions.json), [missing-pair decisions](missing_pair_review_decisions.json), [progress and task accounting](sol_closure_progress.json), and [input hashes/counts](manifest.json).
+- [Correction proposals](correction_proposals.json): 563 field proposals across 516 rows, with evidence, exact frozen before-records, approval state, and dependencies. Seven field proposals have a policy or application hold; four row bundles require coordinated application. One superseded removal is explicitly withdrawn.
+- [Source-approved subset](approved_fixes.json): 14 fields with explicit application signoff. Other source-adjudicated proposals retain their prior approval state and do not become automatically approved by being combined.
+- [Evidence updates](evidence_provenance_fixes.json): 14 literal primary-report quotation/provenance replacements, distinct from scientific field changes.
+- [Confirmed missing pairs](confirmed_missing_pairs.csv): 442 genuinely absent study–original pairs, with no outcome inferred from missing-pair identity alone.
+- [Unresolved missing candidates](unresolved_missing_pairs.csv): 124 candidates with remaining source, identity, or finding-correspondence limits.
+- [All input rows](audit_rows.csv): one current audit-status record for every input row.
+- [Review-required cases](review_required.json): 33 cases covering evidence limits, policy choices, and application dependencies.
 
-## Why saved full text did not settle every value
+The private [review app](http://100.121.34.85:8876/review.html) links the combined downloads and supports searching the evidence, reviewing concrete policy alternatives, and saving/exporting notes. It verifies the complete queue SHA-256. Notes remain in browser storage and never edit FLoRA. Only the handoff directory is served; acquired reports and private access details remain outside Git.
 
-Some saved files were registrations, masked manuscripts, incomplete collection extracts, or reports without the specific comparison needed by the codebook. The final pass recovered actual results-bearing versions for the ManyLabs5 Crosby, Young–Saxe and cooperation projects; individual student narratives; original reports; supplements; and posted Ku outputs. Each new empirical source was independently identified, then coded by a fresh sanitized Sol child before a separate informed comparison. Reviewers were not reused as blind coders.
+## Interpretation and application
 
-Other complete sources still omit a needed result or empirical target. For example, the Flanker project publishes an omnibus effect but not the original-specific pairwise contrasts; the Sanders exploratory histogram does not establish recovery of the original central numerical estimates. Actual public source locations were checked. The colour study attributes an experiment to a review that contains no matching experiment. These are documented reporting or identity limits, not unfinished reading. Source contradictions, unavailable component narratives, and all previous opinions remain preserved.
+All 109 saved-full-text cases assigned to complete source review have been reviewed. Eighty have settled assigned fields, 21 retain scientific evidence limits, and 8 need coding-policy decisions. Across the complete dataset, the additional 221 partial/abstract records and 52 records without usable text remain evidence limits. A completed audit does not establish a value the available evidence cannot support.
 
-Policy choices concern the unit of the tested claim, hybrid replication/reproduction workflows, published anecdotal findings, the authors’ “inconclusive” category, or discovery-inclusive pooled evidence. Each has concrete alternatives in the review app. The Nakano SNP proposal was held after a separate Argon High objection review; neither the negative nor positive author framing was discarded.
+Apply a correction only after resolving its approval state and dependencies and checking its exact frozen before-record. Preserve both replication attempts when merging the OSC duplicate, retain source history for original replacements, and apply dependent outcomes only to their intended original. The combined files do not change the codebook or silently resolve policy choices.
 
-Primary metadata checks also prevented unnecessary fixes: the correct Margulieux title retains “expository text,” despite a miscitation in the current reference; Lane’s 2011 online/2012 print dates do not require a year correction. Different DOI, year or title wording alone does not establish a missing reference.
+The original exports, all model/source decisions, and contradictory evidence remain preserved. The combined view removes superseded proposals and reconciles completed decisions without overwriting those records. Detailed verification is in the [completion receipt](../evidence_followup/integration/final_sol_closure_20261031.json), [private-archive receipt](../evidence_followup/integration/final_sol_private_archive_20261031.json), and source decision files linked from the review app.
 
-## Review and application
-
-Open the private app at **http://100.121.34.85:8876/review.html**. It shows the 109-row pass, earlier correction proposals, evidence limits and policy decisions. Verified primary-report links are supplied where available. Complete queue loading verifies SHA-256. Notes stay in browser storage; **Export decisions** saves them without changing FLoRA. Only the handoff directory is served; private acquired reports and access tokens are not exposed.
-
-Apply only explicit approved fields against their exact frozen before-records. Reconcile original replacements, removals and retained-row evidence before applying dependent outcomes. In particular, preserve both replication attempts when merging the OSC duplicate; do not apply conditional outcomes to the wrong original or duplicate row. The original proposal file and all earlier attempts remain unchanged.
-
-A defensible claim is: **FLoRA was blind-coded by GPT-6.1 Sol under the stated codebook; all previously unresolved saved-full-text fields received complete Sol source review, with cross-model adjudication where needed. Supported corrections, evidence limits and human decisions are separately documented.** This does not mean every field is known, every correction has been applied, or every record has a complete primary report.
-
-Regenerate and validate from the repository root:
+Rebuild the presentation from the repository root:
 
 ```bash
 python3 audit/flora_blind_2026-10/scripts/build_review_handoff.py
+python3 audit/flora_blind_2026-10/scripts/build_audit_report.py
 python3 audit/flora_blind_2026-10/scripts/validate_review_handoff.py
 ```
-
-The validator checks exact assigned-row coverage, raw hash/Unicode/UTF-8 proofs, baseline preconditions, explicit correction approval, quotation updates and newly introduced pair duplicates. The 88 comparison/follow-up/literal-source regression tests passed. The narrow metadata-format export dry run remains in [its receipt](metadata_format_fix_dryrun.json); it applied no dataset or canonical export changes.
