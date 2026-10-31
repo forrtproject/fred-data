@@ -1,0 +1,73 @@
+name: Sync flora.csv from flora-validation
+
+# output/flora.csv is no longer produced here. It is copied from the FLoRA
+# release that forrtproject/flora-validation publishes after its nightly sync
+# (about 03:10 UTC), so this repository serves the same file as the website.
+# The superseded R pipeline in pipelines/flora/ is not run.
+
+on:
+  schedule:
+    - cron: '0 5 * * *'   # daily at 05:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-flora:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Download flora.csv from flora-validation
+        run: |
+          set -euo pipefail
+          url="https://raw.githubusercontent.com/forrtproject/flora-validation/main/output/flora.csv"
+          curl -fsSL --retry 3 "$url" -o /tmp/flora.csv
+          # Refuse to overwrite with a truncated or malformed file
+          header=$(head -1 /tmp/flora.csv)
+          for col in doi_o doi_r type; do
+            grep -q "\"$col\"" <<<"$header" || { echo "Missing column $col"; exit 1; }
+          done
+          rows=$(python3 -c "import csv,sys; print(sum(1 for _ in csv.reader(open(sys.argv[1], encoding='utf-8-sig'))) - 1)" /tmp/flora.csv)
+          echo "Downloaded $rows rows"
+          [ "$rows" -ge 1000 ] || { echo "Too few rows ($rows)"; exit 1; }
+          cp /tmp/flora.csv output/flora.csv
+
+      - name: Set up R
+        id: setup-r
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Cache R packages
+        uses: actions/cache@v5
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-R${{ steps.setup-r.outputs.installed-r-version }}-flora-sync1
+          restore-keys: ${{ runner.os }}-R${{ steps.setup-r.outputs.installed-r-version }}-flora-sync
+
+      - name: Install R dependencies
+        run: |
+          Rscript -e '
+            pkgs <- c("ggplot2", "patchwork")
+            install.packages(pkgs[!pkgs %in% rownames(installed.packages())])
+            missing <- pkgs[!pkgs %in% rownames(installed.packages())]
+            if (length(missing)) stop("Failed to install: ", paste(missing, collapse = ", "))
+          '
+
+      - name: Update README with flora chart data
+        run: |
+          Rscript R/update_readme_log.R \
+            "output/flora.csv" \
+            "README.md"
+
+      - name: Auto-commit flora output
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "Sync flora.csv from flora-validation [automated]"
+          file_pattern: "output/flora.csv output/flora_history.png README.md"

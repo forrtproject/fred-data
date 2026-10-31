@@ -1,5 +1,10 @@
 # FORRT Replication Database (FReD) — Data Processing & API
 
+> [!IMPORTANT]
+> **The FLoRA pipeline now lives in [flora-validation](https://github.com/forrtproject/flora-validation).** The FLoRA code in this repository (`pipelines/flora/` and its helpers) is superseded and no longer run; do not extend it. Make FLoRA changes, and report FLoRA data issues, in flora-validation.
+>
+> `output/flora.csv` is still kept here and stays identical to the [release published by flora-validation](https://github.com/forrtproject/flora-validation/blob/main/output/flora.csv): the [Sync flora.csv](.github/workflows/sync-flora.yml) workflow copies it daily. Effect-level FReD processing (`pipelines/fred/`) continues in this repository.
+
 This repository contains the complete data processing pipeline for the **FORRT Replication Database (FReD)** and **FLoRA** datasets, plus the backend API for the Zotero Replication Checker plugin.
 
 ## 📋 Table of Contents
@@ -167,6 +172,8 @@ quarto render pipelines/fred/prepare_fred.qmd
 ```
 
 ### FLoRA Pipeline (Paper-level: Replications + Reproductions)
+
+> **Superseded.** This section documents the historical pipeline. The current `output/flora.csv` is copied from [flora-validation](https://github.com/forrtproject/flora-validation).
 
 **File**: `pipelines/flora/prepare_flora.qmd`
 
@@ -435,10 +442,10 @@ For API issues:
 
 ## 📊 Flora Dataset Update Log
 
-This chart is automatically updated after each pipeline run, showing the size of `output/flora.csv` over time.
+This chart is automatically updated after each daily sync from flora-validation, showing the size of `output/flora.csv` over time.
 
 <!-- FLORA_UPDATE_LOG_START -->
-> **Latest (2026-10-31):** Total = 2,821 | Replications = 2,616 | Reproductions = 205
+> **Latest (2026-10-31):** Total = 2,850 | Replications = 2,628 | Reproductions = 222
 
 ![FLoRA dataset size over time](output/flora_history.png)
 
@@ -446,7 +453,7 @@ This chart is automatically updated after each pipeline run, showing the size of
 
 | Date | Total | Replications | Reproductions |
 |------|------:|-------------:|--------------:|
-| 2026-10-31 | 2821 | 2616 | 205 |
+| 2026-10-31 | 2850 | 2628 | 222 |
 | 2026-10-30 | 2818 | 2613 | 205 |
 | 2026-10-28 | 2818 | 2613 | 205 |
 | 2026-10-27 | 2787 | 2582 | 205 |
