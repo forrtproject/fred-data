@@ -1,0 +1,94 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "8104b26e30b5f525",
+    "audit_id": 1069,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Thürmer, J. L., & McCrea, S. M. (2018). Beyond motivated reasoning: Hostile reactions to critical comments from the outgroup. Motivation Science, 4(4), 333–346. https://doi.org/10.1037/mot0000097",
+      "doi_o": "10.1037/mot0000097",
+      "study_o": "3",
+      "ref_r": "Thürmer, J. L., & McCrea, S. M. (2021). Disentangling the intergroup sensitivity effect: Defending the ingroup or enforcing general norms? European Journal of Social Psychology, 51(7), 1061–1072. Portico. https://doi.org/10.1002/ejsp.2748",
+      "doi_r": "10.1002/ejsp.2748",
+      "url_r": null,
+      "study_r": null,
+      "description": "Costly punishment in response to outgroup versus ingroup members making the same criticism of the group.",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "locators_o": "p. 7",
+      "locators_r": "p.6",
+      "audit_id": 1069,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f973ea0ffc4f9a871d6e6c9c.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "740",
+      "sample_role": "Participants in the two mutually exclusive final ingroup-target groups in the Table 5 classic ISE independent-samples comparison.",
+      "exclusions": "Nine manipulation-check exclusions reported; full analysis N = 1,459. Printed completions and exclusions do not reconcile arithmetically; final Table 5 groups used.",
+      "location": "Table 5, p. 7, Ingroup target (classic ISE), n row; section 4.1 Participant exclusions, canonical text line 232.",
+      "quote": "Ingroup target (classic ISE) Outgroup target (bystander ISE) ... Ingroup Outgroup t df p d 95% CI ... n 337 403 357 362 ... we only excluded nine participants who failed the manipulation checks on the commenter origin and/or comment target (see above), leaving N = 1,459 for analysis.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f973ea0ffc4f9a871d6e6c9c.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1069,
+      "field": "n_r",
+      "code": "extracted_documented_n_sum",
+      "reason": "Requested d identifies Table 5 classic ISE pairwise comparison, whose explicitly labeled mutually exclusive final ingroup-target groups contain 337 and 403 participants. Full four-condition registered-model N = 1,459 is distinct. No supplied PDF available for layout verification.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f973ea0ffc4f9a871d6e6c9c.txt",
+      "location": "Table 5, p. 7, Ingroup target (classic ISE), n row; section 4.1 Participant exclusions.",
+      "quote": "Ingroup target (classic ISE) Outgroup target (bystander ISE) ... Ingroup Outgroup t df p d 95% CI ... n 337 403 357 362",
+      "calculation": "337 + 403 = 740 participants. Full-model N = 1,459 is separately printed, not substituted for pairwise N."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Classic ISE: bonus assigned to US versus Singapore commenters criticizing the US. Table 5 independent-samples comparison prints requested Cohen d.",
+    "worker_notes": "Only n_r assigned; all other fields are placeholders. Arithmetic: 337 + 403 = 740, using Table 5 final ingroup-source and outgroup-source groups under Ingroup target (classic ISE). Requested d identifies this pairwise comparison (printed d = 0.342, t = 4.667, df = 732.41, p < .001; context only). Distinguish registered four-condition Contrast 1, which reports t(1,455) = -4.503, r = .117 and full-model N = 1,459. The remaining Table 5 groups, 357 and 362, concern the bystander ISE and are not included. Source reports 1,508 completions, nine exclusions and final N = 1,459 without reconciling these counts; no recruitment-based N derived. Canonical text contains interleaved unrelated nonviolence material, but running title disentangling the intergroup sensitivity effect and DOI 10.1002/ejsp.2748 identify assigned source. No PDF path supplied; visual PDF inspection unavailable.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f973ea0ffc4f9a871d6e6c9c.txt",
+    "shipped": "740",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "We investigated the hypothesis that group members would reject outgroup criticism (as compared to the same criticism from the ingroup) using costly punishment",
+      "es_repr_o": "p. 7",
+      "es_repr_r": "p.6",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Classic ISE studies were largely underpowered, used inconsequential self‐reports, and no study has observed behavioural responses of bystanders versus ingroup members. [...] a high‐powered and pre‐registered 2 (Source: same‐group vs. outgroup) × 2 (Target: ingroup vs. uninvolved outgroup) experiment revealed a classic ISE and an even larger bystander ISE in self‐reports and behaviour, favouring a norm account."
+    },
+    "prior_adjudication": {
+      "audit_id": 1069,
+      "field": "n_r",
+      "verdict": "shipped_right",
+      "correct_value": "740",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": false,
+      "location": "Table 5, p. 7 (canonical text line 131); Section 4.1 Participant exclusions, p. 6 (canonical text line 232)",
+      "quote": "Ingroup target (classic ISE) Outgroup target (bystander ISE) Ingroup Outgroup t df p d 95% CI ... Behavioral Measure Bonus assigned 8.285 (3.301) 7.097 (3.618) 4.667 732.41 <.001 0.342 [0.195; 0.489] ... n 337 403 357 362 ... leaving N = 1,459 for analysis.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f973ea0ffc4f9a871d6e6c9c.txt",
+      "reason": "The requested Cohen's d replication effect for costly punishment of outgroup versus ingroup criticism targeting the ingroup (classic ISE) corresponds to the Table 5 independent-samples comparison on bonus assigned (d = 0.342, t(732.41) = 4.667, p < .001), whose two mutually exclusive ingroup-target cells contain n = 337 and n = 403 participants (337 + 403 = 740; distinct from full four-condition N = 1,459).",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/8104b26e30b5f525. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_8104b26e30b5f525_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

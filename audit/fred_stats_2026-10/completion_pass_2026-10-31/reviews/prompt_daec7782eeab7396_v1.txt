@@ -1,0 +1,872 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1426,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (inventory management) and simplicity (lean management) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 6",
+      "audit_id": 1426,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.363",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, inventory management outcome column, Lean management systems predictor row",
+      "quote": "Inventory management ... Coefficient ... Lean management systems ... 0.363 ... - 0.0001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1426,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.363; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p < 0.0001; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, inventory management outcome column, Lean management systems predictor row",
+      "quote": "Inventory management ... Coefficient ... Lean management systems ... 0.363 ... - 0.0001",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of inventory management on simplicity and discipline factors; predictor Lean management systems.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p < 0.0001 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.363",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (inventory management) is significantly dependent on simplicity (lean management) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 6",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1427,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (product cycle time) and simplicity (lean management) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 6",
+      "audit_id": 1427,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.409",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, product cycle time outcome column, Lean management systems predictor row",
+      "quote": "Product cycle time ... Coefficient ... Lean management systems ... 0.409 ... - 0.0001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1427,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.409; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p < 0.0001; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, product cycle time outcome column, Lean management systems predictor row",
+      "quote": "Product cycle time ... Coefficient ... Lean management systems ... 0.409 ... - 0.0001",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of product cycle time on simplicity and discipline factors; predictor Lean management systems.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p < 0.0001 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.409",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (Product cycle time) is significantly dependent on simplicity (lean management) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 6",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1428,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (product cycle time) and simplicity (lean attitude) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 6",
+      "audit_id": 1428,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.241",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, product cycle time outcome column, Lean attitude predictor row",
+      "quote": "Product cycle time ... Coefficient ... Lean attitude ... 0.241 ... 0.0009",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1428,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.241; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0009; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, product cycle time outcome column, Lean attitude predictor row",
+      "quote": "Product cycle time ... Coefficient ... Lean attitude ... 0.241 ... 0.0009",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of product cycle time on simplicity and discipline factors; predictor Lean attitude.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0009 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.241",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (Product cycle time) is significantly dependent on simplicity (lean attitude) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 6",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1429,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (new product introduction) and simplicity (lean management) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 6",
+      "audit_id": 1429,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.089",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Lean management system predictor row",
+      "quote": "New product introduction ... Coefficient ... Lean management system ... 0.089 ... 0.0997",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1429,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.089; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0997; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Lean management system predictor row",
+      "quote": "New product introduction ... Coefficient ... Lean management system ... 0.089 ... 0.0997",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of new product introduction on simplicity and discipline factors; predictor Lean management system.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0997 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.089",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (New product itroduction) is significantly dependent on simplicity (lean management) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 6",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1430,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (new product introduction) and simplicity (lean attitude) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 6",
+      "audit_id": 1430,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.205",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Lean attitude predictor row",
+      "quote": "New product introduction ... Coefficient ... Lean attitude ... 0.205 ... 0.0002",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1430,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.205; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0002; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Lean attitude predictor row",
+      "quote": "New product introduction ... Coefficient ... Lean attitude ... 0.205 ... 0.0002",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of new product introduction on simplicity and discipline factors; predictor Lean attitude.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0002 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.205",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (New product introduction) is significantly dependent on simplicity (lean attitude) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 6",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1431,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (customer delivery time) and simplicity (lean management) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 6",
+      "audit_id": 1431,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.21",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, customer delivery time outcome column, Lean management system predictor row",
+      "quote": "Customer delivery time ... Coefficient ... Lean management system ... 0.21 ... 0.0015",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1431,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.21; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0015; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, customer delivery time outcome column, Lean management system predictor row",
+      "quote": "Customer delivery time ... Coefficient ... Lean management system ... 0.21 ... 0.0015",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of customer delivery time on simplicity and discipline factors; predictor Lean management system.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0015 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.21",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (Customer delivery time) is significantly dependent on simplicity (lean management) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 6",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1432,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (inventory management) and discipline (strategic processes) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 7",
+      "audit_id": 1432,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.126",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, inventory management outcome column, Strategic processes predictor row",
+      "quote": "Inventory management ... Coefficient ... Strategic processes ... 0.126 ... 0.0214",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1432,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.126; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0214; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, inventory management outcome column, Strategic processes predictor row",
+      "quote": "Inventory management ... Coefficient ... Strategic processes ... 0.126 ... 0.0214",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of inventory management on simplicity and discipline factors; predictor Strategic processes.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0214 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.126",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (inventory management) is significantly dependent on discipline (strategic processes) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 7",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1433,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (product cycle time) and discipline (process capability) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 7",
+      "audit_id": 1433,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.201",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, product cycle time outcome column, Process capability predictor row",
+      "quote": "Product cycle time ... Coefficient ... Process capability ... 0.201 ... 0.0041",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1433,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.201; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0041; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, product cycle time outcome column, Process capability predictor row",
+      "quote": "Product cycle time ... Coefficient ... Process capability ... 0.201 ... 0.0041",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of product cycle time on simplicity and discipline factors; predictor Process capability.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0041 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.201",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (product cycle time) is significantly dependent on discipline (Process capability) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 7",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1434,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (new product introduction) and discipline (waste) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 7",
+      "audit_id": 1434,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.115",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Waste predictor row",
+      "quote": "New product introduction ... Coefficient ... Waste ... 0.115 ... 0.0263",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1434,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.115; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0263; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Waste predictor row",
+      "quote": "New product introduction ... Coefficient ... Waste ... 0.115 ... 0.0263",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of new product introduction on simplicity and discipline factors; predictor Waste.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0263 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.115",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (new product introduction) is significantly dependent on discipline (waste) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 7",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1435,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (new product introduction) and discipline (process capability) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 7",
+      "audit_id": 1435,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.242",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Process capability predictor row",
+      "quote": "New product introduction ... Coefficient ... Process capability ... 0.242 ... - 0.0001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1435,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.242; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p < 0.0001; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Process capability predictor row",
+      "quote": "New product introduction ... Coefficient ... Process capability ... 0.242 ... - 0.0001",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of new product introduction on simplicity and discipline factors; predictor Process capability.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p < 0.0001 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.242",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (new product introduction) is significantly dependent on discipline (process capability) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 7",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1436,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (new product introduction) and discipline (strategic processes) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 7",
+      "audit_id": 1436,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.14",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Strategic processes predictor row",
+      "quote": "New product introduction ... Coefficient ... Strategic processes ... 0.14 ... 0.0082",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1436,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.14; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0082; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Strategic processes predictor row",
+      "quote": "New product introduction ... Coefficient ... Strategic processes ... 0.14 ... 0.0082",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of new product introduction on simplicity and discipline factors; predictor Strategic processes.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0082 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.14",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (new product introduction) is significantly dependent on discipline (strategic processes) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 7",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "daec7782eeab7396",
+    "audit_id": 1437,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Collins, R. S., Cordon, C., & Julien, D. (1998). An empirical test of the rigid flexibility model. Journal of Operations Management, 16(2–3), 133–146. Portico. https://doi.org/10.1016/s0272-6963(97)00033-8",
+      "doi_o": "10.1016/s0272-6963(97)00033-8",
+      "study_o": null,
+      "ref_r": "da Silveira, G. J. C. (2005). Effects of simplicity and discipline on operational flexibility: An empirical reexamination of the rigid flexibility model. Journal of Operations Management, 24(6), 932–947. Portico. https://doi.org/10.1016/j.jom.2005.11.004",
+      "doi_r": "10.1016/j.jom.2005.11.004",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between flexibility (new product introduction) and discipline (quality management processes) in the overall sample.",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 6; Table 4",
+      "locators_r": "p. 9; Table 7",
+      "audit_id": 1437,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/e914bbe5b4856abc163a8dd9_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "0.124",
+      "metric": "Coefficient (regression; standardisation not specified)",
+      "test_statistic": null,
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Quality management processes predictor row",
+      "quote": "New product introduction ... Coefficient ... Quality management processes ... 0.124 ... 0.0258",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1437,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome and predictor labels identify the target Table 4 cell. Extracted printed regression Coefficient 0.124; standardisation is not specified, so requested beta (std) identity is not asserted. Same-test p = 0.0258; p retained in notes because unassigned. PDF column and row layout visually confirmed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+      "location": "Printed p. 138 (PDF p. 6), Table 4, overall-sample regression, new product introduction outcome column, Quality management processes predictor row",
+      "quote": "New product introduction ... Coefficient ... Quality management processes ... 0.124 ... 0.0258",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Collins, Cordon & Julien (1998), overall-sample multiple regression of new product introduction on simplicity and discipline factors; predictor Quality management processes.",
+    "worker_notes": "Only es_value_o is assigned. Other side/fields are placeholders. Table 4 prints the metric as Coefficient; the inspected regression methods, Table 4, and discussion do not explicitly identify these as standardised beta coefficients. Retained printed coefficient without conversion or asserting standardisation. Same-test p = 0.0258 is printed in the adjoining P-value cell (PDF visually checked; canonical text renders the less-than glyph as a hyphen). The supplied locator p. 6 is PDF p. 6 / printed p. 138. No analytic N was extracted or derived.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_e914bbe5b4856abc163a8dd9.txt",
+    "shipped": "0.124",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Flexibility (new product introduction) is significantly dependent on discipline (quality management processes) in the total sample size",
+      "es_repr_o": "p. 6/ Table 4",
+      "es_repr_r": "p. 9/ Table 7",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The results provide empirical validation to the rigid flexibility model in an international manufacturing context."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/daec7782eeab7396. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_daec7782eeab7396_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

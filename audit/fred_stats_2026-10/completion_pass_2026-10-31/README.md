@@ -1,0 +1,7 @@
+# Source-grouped completion pass, 31 October 2026
+
+Separately authorised by Lukas’s “go” after the source-grouped proposal. Baseline: 493 confirmed errors in 381 rows; 6,411 verified field instances; 112 fully verified rows. Historical deadlines, completion files and source-acquisition passes remain unchanged.
+
+Repair integration/evidence-processing defects first; then run a purposefully mixed 24-source pilot, checking all unfinished fields for the assigned rows together. Preserve previously verified fields, maintain blind extraction, independently adjudicate substantive disagreements, and record specific reasons for unresolved fields. Retain literal evidence validation. No new source acquisition, paid API calls, shipped dataset/pipeline/main checkout/FLoRA edits. Parent owns integration, Git, report and correction exports. Target six extraction and two review slots, never more than ten combined children. Measure pilot gains and time before useful continuation; do not equate terminal tasks with verified fields.
+
+Latest checkpoint: 55 additional scoped verifications, all 6,411 baseline verified decisions unchanged, 125 complete rows (baseline 112), 497 confirmed errors. This is an active internal checkpoint, not a completed pass or refreshed public release. The next batches retain whole source-side groups, prioritise rows one field short, and exclude already attempted source sides.

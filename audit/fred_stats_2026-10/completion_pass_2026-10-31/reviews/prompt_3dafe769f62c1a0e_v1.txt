@@ -1,0 +1,154 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "3dafe769f62c1a0e",
+    "audit_id": 931,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Chae, B., & Hoegg, J. (2013). The Future Looks “Right”: Effects of the Horizontal Location of Advertising Images on Product Attitude. Journal of Consumer Research, 40(2), 223–238. https://doi.org/10.1086/669476",
+      "doi_o": "10.1086/669476",
+      "study_o": "2",
+      "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+      "doi_r": "10.3389/fcomm.2022.1048896",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "description": "Main effect of the desirable attribute.",
+      "locators_o": "p.7",
+      "locators_r": "p.7",
+      "audit_id": 931,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_35948f966df56031b0f564b1.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/35948f966df56031b0f564b1_ebsco_verified_navigation.pdf",
+      "source_version_note": "Published article supplied by licensed EBSCO service; includes JSTOR provenance footer"
+    },
+    "blind": {
+      "value": "< 1",
+      "metric": "F",
+      "test_statistic": "F < 1",
+      "location": "PDF p. 7 / printed p. 229, Study 2, Results and Discussion",
+      "quote": "ANOVA indicated no main effects (F values ! ... 1) but did reveal an interaction",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_35948f966df56031b0f564b1.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 931,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Both named ANOVA main effects are explicitly reported together as F values < 1. Retained the printed F bound; no exact statistic inferred.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_35948f966df56031b0f564b1.txt",
+      "location": "PDF p. 7 / printed p. 229, Study 2, Results and Discussion",
+      "quote": "ANOVA indicated no main effects (F values ! ... 1) but did reveal an interaction",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 2, product-attitude ANOVA, main effect of desirable attribute.",
+    "worker_notes": "Only assigned unfinished fields completed; other null fields and replication/success are unassigned placeholders. Target PDF pages 6–7 inspected. Canonical ! is the printed less-than sign, confirmed in PDF. Both ANOVA main effects are reported jointly as F values < 1; no exact F or associated p is printed. Table 1 gives a separate mediated-moderation regression on antique/modern conditions; its t statistics are not these ANOVA main effects.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_35948f966df56031b0f564b1.txt",
+    "shipped": "F < 1",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Main effect of the desirable attribute",
+      "es_repr_o": "p.7",
+      "es_repr_r": "p.7 (F2,732 = 7.952, p < 0.001, η2p = 0.021)",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "pval_type_o": "g (>)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "3dafe769f62c1a0e",
+    "audit_id": 932,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Chae, B., & Hoegg, J. (2013). The Future Looks “Right”: Effects of the Horizontal Location of Advertising Images on Product Attitude. Journal of Consumer Research, 40(2), 223–238. https://doi.org/10.1086/669476",
+      "doi_o": "10.1086/669476",
+      "study_o": "2",
+      "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+      "doi_r": "10.3389/fcomm.2022.1048896",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "description": "Main effect of position.",
+      "locators_o": "p.7",
+      "locators_r": "p.7",
+      "audit_id": 932,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_35948f966df56031b0f564b1.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/35948f966df56031b0f564b1_ebsco_verified_navigation.pdf",
+      "source_version_note": "Published article supplied by licensed EBSCO service; includes JSTOR provenance footer"
+    },
+    "blind": {
+      "value": "< 1",
+      "metric": "F",
+      "test_statistic": "F < 1",
+      "location": "PDF p. 7 / printed p. 229, Study 2, Results and Discussion",
+      "quote": "ANOVA indicated no main effects (F values ! ... 1) but did reveal an interaction",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_35948f966df56031b0f564b1.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 932,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Both named ANOVA main effects are explicitly reported together as F values < 1. Retained the printed F bound; no exact statistic inferred.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_35948f966df56031b0f564b1.txt",
+      "location": "PDF p. 7 / printed p. 229, Study 2, Results and Discussion",
+      "quote": "ANOVA indicated no main effects (F values ! ... 1) but did reveal an interaction",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 2, product-attitude ANOVA, main effect of position.",
+    "worker_notes": "Only assigned unfinished fields completed; other null fields and replication/success are unassigned placeholders. Target PDF pages 6–7 inspected. Canonical ! is the printed less-than sign, confirmed in PDF. Both ANOVA main effects are reported jointly as F values < 1; no exact F or associated p is printed. Table 1 gives a separate mediated-moderation regression on antique/modern conditions; its t statistics are not these ANOVA main effects.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_35948f966df56031b0f564b1.txt",
+    "shipped": "F < 1",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Main effect of the position",
+      "es_repr_o": "p.7",
+      "es_repr_r": "p.7 (F1,732 = 1.093, p = 0.296, η2p = 0.002).",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "pval_type_o": "g (>)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/3dafe769f62c1a0e. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_3dafe769f62c1a0e_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

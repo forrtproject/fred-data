@@ -3,7 +3,6 @@ from functools import lru_cache
 from pathlib import Path
 from consistency import number,analytic_n,rounding,pinterval,p_parts
 from schema import validate
-from protect_enrichment import preserve_completed
 B=Path(__file__).resolve().parents[1]
 SOURCE_PROVENANCE=json.loads((B/'source_provenance.json').read_text()) if (B/'source_provenance.json').exists() else {}
 FIELDS=['n_o','es_value_o','pval_value_o','n_r','es_value_r','pval_value_r','reported_success']
@@ -154,7 +153,7 @@ def original_primary_evidence(e,row):
  info=SOURCE_PROVENANCE.get(path)
  if info:return bool(info.get('work_doi') and str(info['work_doi']).lower()==doi)
  return Path(path).name.startswith(hashlib.sha256(doi.encode()).hexdigest()[:24])
-def load_adjudications(root):
+def load_adjudications(root, exclude_prefixes=()):
  """Review precedence follows recorded rounds, never mutable file mtimes."""
  tasks={}
  history=root/'adjudication_tasks.jsonl'
@@ -167,13 +166,29 @@ def load_adjudications(root):
   return bool(a.get('focused_review')),a.get('started_at',''),a.get('attempt',0),key
  decisions={}
  for path in sorted((root/'adjudications').glob('validated_*.json'),key=priority):
+  if path.name.startswith(exclude_prefixes):continue
   for a in json.loads(path.read_text()):decisions[(a['audit_id'],a['field'])]=a
  return decisions
+def load_checkpoint(root,aid):
+ """Load canonical evidence; enrichment protection runs when checkpoints are written."""
+ path=root/'extractions'/f'{aid}.json'
+ if not path.exists():return None
+ x=validate(json.loads(path.read_text()));assert x['audit_id']==aid
+ return x
+def combine_obvious(decisions,obvious):
+ decisions=dict(decisions)
+ for a in obvious:
+  key=(a['audit_id'],a['field'])
+  if decisions.get(key,{}).get('replaces_unverified') is True:continue
+  decisions[key]=a
+ return decisions
+
 def main():
  rows=json.loads((B/'parent_rows.json').read_text());results=[];candidates=[];invalid=[];coverage=collections.Counter();counts={f:collections.Counter() for f in FIELDS};projects=collections.defaultdict(lambda:{f:collections.Counter() for f in FIELDS});errors=[]
  adjud=load_adjudications(B)
  exhausted={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_exhausted.json').read_text())} if (B/'adjudication_exhausted.json').exists() else {}
  holds={(a['audit_id'],a['field']) for a in json.loads((B/'adjudication_holds.json').read_text())} if (B/'adjudication_holds.json').exists() else set()
+ completion_pending={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_holds.json').read_text()) if a.get('completion_pass') in ['2026-10-31-pending','2026-10-31-unresolved']} if (B/'adjudication_holds.json').exists() else set()
  target_overrides={};field_overrides={}
  if (B/'target_overrides.json').exists():
   overrides=json.loads((B/'target_overrides.json').read_text())
@@ -181,15 +196,12 @@ def main():
   field_overrides={(a['audit_id'],a['field']):a for a in overrides if a.get('field')}
  obvious_path=B/'obvious_resolutions.json'
  if obvious_path.exists():
-  for a in json.loads(obvious_path.read_text()):adjud[(a['audit_id'],a['field'])]=a
+  adjud=combine_obvious(adjud,json.loads(obvious_path.read_text()))
  for r in rows:
-  aid=r['input_row_index'];path=B/'extractions'/f'{aid}.json';x=None
-  if path.exists():
-   try:x=validate(json.loads(path.read_text()));assert x['audit_id']==aid
-   except Exception as e:invalid.append({'audit_id':aid,'error':str(e)[:400]});x=None
+  aid=r['input_row_index'];x=None
+  try:x=load_checkpoint(B,aid)
+  except Exception as e:invalid.append({'audit_id':aid,'error':str(e)[:400]});x=None
   if x:
-   archive=B/'before_locator_enrichment'/f'{aid}.json'
-   if archive.exists():x=preserve_completed(json.loads(archive.read_text()),x)
    coverage['checkpointed']+=1
    for side in ['original','replication']:
     if (aid,side) in target_overrides:x[side]['target_match']=target_overrides[(aid,side)]['target_match']
@@ -213,7 +225,8 @@ def main():
    if side:
     z[f+'_blind_source_path']=e.get('source_path') if e else None;z[f+'_evidence_basis']='replication source only (original unverified)' if secondary else 'paper evidence supplied' if e and e.get('source_path') else 'none'
    comparison='unverified';resolution='unresolved';verdict='unverified';suggestion='';location='';reason=''
-   if secondary:reason='Original statistic is supported only by a replication paper/table; original primary-source verification remains unavailable.'
+   if (aid,f) in completion_pending:reason=completion_pending[(aid,f)].get('parent_response') or 'Source-grouped completion is awaiting independent review; field remains unverified.'
+   elif secondary:reason='Original statistic is supported only by a replication paper/table; original primary-source verification remains unavailable.'
    elif broad_success and v is not None:comparison='mismatched_target';reason='Only broad paper-level narrative is identified; no individual-effect verdict established.'
    elif x and v is not None and (matched_target is False or side is not None and matched_target is None and quote_ok({**e,'value':v,'confident':True})):comparison='mismatched_target'
    elif e and quote_ok({**e,'value':v}) and (side is None or x[side]['status']=='done' and matched_target is True):

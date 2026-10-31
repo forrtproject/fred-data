@@ -1,0 +1,224 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "183af7a7fac74867",
+    "audit_id": 737,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Elliot, A. J., Niesta Kayser, D., Greitemeyer, T., Lichtenfeld, S., Gramzow, R. H., Maier, M. A., & Liu, H. (2010). Red, rank, and romance in women viewing men. Journal of Experimental Psychology: General, 139(3), 399–417. https://doi.org/10.1037/a0019689",
+      "doi_o": "10.1037/a0019689",
+      "study_o": "3",
+      "ref_r": "Wagge, J. R., Baciu, C., Banas, K., Nadler, J. T., Schwarz, S., Weisberg, Y., IJzerman, H., Legate, N., & Grahe, J. (2019). A Demonstration of the Collaborative Replication and Education Project: Replication Attempts of the Red-Romance Effect. Collabra: Psychology, 5(1). https://doi.org/10.1525/collabra.177",
+      "doi_r": "10.1525/collabra.177",
+      "url_r": null,
+      "study_r": "3",
+      "description": "Red and attractiveness perceptions.",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "locators_o": "p. 7",
+      "locators_r": "https://osf.io/dqv9y",
+      "audit_id": 737,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "39",
+      "sample_role": "Analytic cases in the mutually exclusive Red and Grey groups for the named independent-samples comparison; observational unit not specified in this output.",
+      "exclusions": "Not documented in the supplied SPSS output; these are outcome-specific cases in Group Statistics, not a recruitment total.",
+      "location": "SPSS_output.docx, Group Statistics, attractiveness_avg, Condition / N columns (Red and Grey)",
+      "quote": "attractiveness_avg\nRed\n20 ... Grey\n19",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 737,
+      "field": "n_r",
+      "code": "extracted_documented_n_sum",
+      "reason": "Outcome label directly identifies the target in the primary output at the assigned OSF locator. Group Statistics supplies N for the two mutually exclusive conditions in the independent-samples test. Exclusions and observational unit are not documented.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+      "location": "SPSS_output.docx, Group Statistics, attractiveness_avg, Condition / N columns (Red and Grey)",
+      "quote": "attractiveness_avg\nRed\n20 ... Grey\n19",
+      "calculation": "Red N 20 + Grey N 19 = analytic N 39 for attractiveness_avg; no recruitment total or df used."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "OSF dqv9y / Data, results and SPSS files / SPSS_output.docx: independent Red-versus-Grey comparison of attractiveness_avg; matched by supplied OSF locator and outcome name.",
+    "worker_notes": "Only assigned unfinished field n_r examined. Original side, effect size, p, and reported_success are unassigned placeholders. Source identity is the primary SPSS output named under OSF dqv9y, the supplied replication locator; not the full Wagge et al. article. Analytic N derivation: Red 20 + Grey 19 = 39, using the explicit independent comparison groups for attractiveness_avg. Exclusions and observational unit are not documented. No N inferred from degrees of freedom. No PDF supplied.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+    "shipped": "28",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "effect of red on attractiveness perceptions",
+      "es_repr_o": "p. 7",
+      "es_repr_r": "https://osf.io/dqv9y",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": null,
+      "pval_tails_o": "2 (two)",
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Results of this meta-analysis showed no effect of red on attractiveness ratings for either perceived attractiveness (mean ratings difference = –0.07, 95% CI [–0.31, 0.16]) or sexual\nattractiveness (mean ratings difference = –0.06, 95% CI [–0.36, 0.24]); this null result held with and\nwithout Elliot et al.’s (2010) data included in analyses."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "183af7a7fac74867",
+    "audit_id": 738,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Elliot, A. J., Niesta Kayser, D., Greitemeyer, T., Lichtenfeld, S., Gramzow, R. H., Maier, M. A., & Liu, H. (2010). Red, rank, and romance in women viewing men. Journal of Experimental Psychology: General, 139(3), 399–417. https://doi.org/10.1037/a0019689",
+      "doi_o": "10.1037/a0019689",
+      "study_o": "3",
+      "ref_r": "Wagge, J. R., Baciu, C., Banas, K., Nadler, J. T., Schwarz, S., Weisberg, Y., IJzerman, H., Legate, N., & Grahe, J. (2019). A Demonstration of the Collaborative Replication and Education Project: Replication Attempts of the Red-Romance Effect. Collabra: Psychology, 5(1). https://doi.org/10.1525/collabra.177",
+      "doi_r": "10.1525/collabra.177",
+      "url_r": null,
+      "study_r": "3",
+      "description": "Red and sexual attraction.",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "locators_o": "p. 7",
+      "locators_r": "https://osf.io/dqv9y",
+      "audit_id": 738,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "39",
+      "sample_role": "Analytic cases in the mutually exclusive Red and Grey groups for the named independent-samples comparison; observational unit not specified in this output.",
+      "exclusions": "Not documented in the supplied SPSS output; these are outcome-specific cases in Group Statistics, not a recruitment total.",
+      "location": "SPSS_output.docx, Group Statistics, sex_attraction_avg, Condition / N columns (Red and Grey)",
+      "quote": "sex_attraction_avg\nRed\n20 ... Grey\n19",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 738,
+      "field": "n_r",
+      "code": "extracted_documented_n_sum",
+      "reason": "Outcome label directly identifies the target in the primary output at the assigned OSF locator. Group Statistics supplies N for the two mutually exclusive conditions in the independent-samples test. Exclusions and observational unit are not documented.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+      "location": "SPSS_output.docx, Group Statistics, sex_attraction_avg, Condition / N columns (Red and Grey)",
+      "quote": "sex_attraction_avg\nRed\n20 ... Grey\n19",
+      "calculation": "Red N 20 + Grey N 19 = analytic N 39 for sex_attraction_avg; no recruitment total or df used."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "OSF dqv9y / Data, results and SPSS files / SPSS_output.docx: independent Red-versus-Grey comparison of sex_attraction_avg; matched by supplied OSF locator and outcome name.",
+    "worker_notes": "Only assigned unfinished field n_r examined. Original side, effect size, p, and reported_success are unassigned placeholders. Source identity is the primary SPSS output named under OSF dqv9y, the supplied replication locator; not the full Wagge et al. article. Analytic N derivation: Red 20 + Grey 19 = 39, using the explicit independent comparison groups for sex_attraction_avg. Exclusions and observational unit are not documented. No N inferred from degrees of freedom. No PDF supplied.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+    "shipped": "28",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "effect of red on sexual attraction",
+      "es_repr_o": "p. 7",
+      "es_repr_r": "https://osf.io/dqv9y",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": null,
+      "pval_tails_o": "2 (two)",
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Results of this meta-analysis showed no effect of red on attractiveness ratings for either perceived attractiveness (mean ratings difference = –0.07, 95% CI [–0.31, 0.16]) or sexual\nattractiveness (mean ratings difference = –0.06, 95% CI [–0.36, 0.24]); this null result held with and\nwithout Elliot et al.’s (2010) data included in analyses."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "183af7a7fac74867",
+    "audit_id": 739,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Elliot, A. J., Niesta Kayser, D., Greitemeyer, T., Lichtenfeld, S., Gramzow, R. H., Maier, M. A., & Liu, H. (2010). Red, rank, and romance in women viewing men. Journal of Experimental Psychology: General, 139(3), 399–417. https://doi.org/10.1037/a0019689",
+      "doi_o": "10.1037/a0019689",
+      "study_o": "3",
+      "ref_r": "Wagge, J. R., Baciu, C., Banas, K., Nadler, J. T., Schwarz, S., Weisberg, Y., IJzerman, H., Legate, N., & Grahe, J. (2019). A Demonstration of the Collaborative Replication and Education Project: Replication Attempts of the Red-Romance Effect. Collabra: Psychology, 5(1). https://doi.org/10.1525/collabra.177",
+      "doi_r": "10.1525/collabra.177",
+      "url_r": null,
+      "study_r": "3",
+      "description": "Red and overall likability judgments.",
+      "es_type_o": null,
+      "es_type_r": "d",
+      "locators_o": "p. 7",
+      "locators_r": "https://osf.io/dqv9y",
+      "audit_id": 739,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "39",
+      "sample_role": "Analytic cases in the mutually exclusive Red and Grey groups for the named independent-samples comparison; observational unit not specified in this output.",
+      "exclusions": "Not documented in the supplied SPSS output; these are outcome-specific cases in Group Statistics, not a recruitment total.",
+      "location": "SPSS_output.docx, Group Statistics, likeability_avg, Condition / N columns (Red and Grey)",
+      "quote": "likeability_avg\nRed\n20 ... Grey\n19",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 739,
+      "field": "n_r",
+      "code": "extracted_documented_n_sum",
+      "reason": "Outcome label directly identifies the target in the primary output at the assigned OSF locator. Group Statistics supplies N for the two mutually exclusive conditions in the independent-samples test. Exclusions and observational unit are not documented.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+      "location": "SPSS_output.docx, Group Statistics, likeability_avg, Condition / N columns (Red and Grey)",
+      "quote": "likeability_avg\nRed\n20 ... Grey\n19",
+      "calculation": "Red N 20 + Grey N 19 = analytic N 39 for likeability_avg; no recruitment total or df used."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "OSF dqv9y / Data, results and SPSS files / SPSS_output.docx: independent Red-versus-Grey comparison of likeability_avg; matched by supplied OSF locator and outcome name.",
+    "worker_notes": "Only assigned unfinished field n_r examined. Original side, effect size, p, and reported_success are unassigned placeholders. Source identity is the primary SPSS output named under OSF dqv9y, the supplied replication locator; not the full Wagge et al. article. Analytic N derivation: Red 20 + Grey 19 = 39, using the explicit independent comparison groups for likeability_avg. Exclusions and observational unit are not documented. No N inferred from degrees of freedom. No PDF supplied.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86e28a788191f15dab5759a4.txt",
+    "shipped": "28",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "effect of red on overall likability judgements",
+      "es_repr_o": "p. 7",
+      "es_repr_r": "https://osf.io/dqv9y",
+      "es_type_o": null,
+      "es_type_r": "d",
+      "pval_type_o": "g (>)",
+      "pval_type_r": null,
+      "pval_tails_o": "2 (two)",
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Results of this meta-analysis showed no effect of red on attractiveness ratings for either perceived attractiveness (mean ratings difference = –0.07, 95% CI [–0.31, 0.16]) or sexual\nattractiveness (mean ratings difference = –0.06, 95% CI [–0.36, 0.24]); this null result held with and\nwithout Elliot et al.’s (2010) data included in analyses."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/183af7a7fac74867. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_183af7a7fac74867_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
