@@ -1,0 +1,152 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "6abb538f592fce67",
+    "audit_id": 59,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Johnston, W., Dolan, K., Reid, N., Coughlan, G. F., & Caulfield, B. (2018). Investigating the effects of maximal anaerobic fatigue on dynamic postural control using the Y-Balance Test. Journal of Science and Medicine in Sport, 21(1), 103–108. https://doi.org/10.1016/j.jsams.2017.06.007",
+      "doi_o": "10.1016/j.jsams.2017.06.007",
+      "study_o": "1",
+      "ref_r": "Byrne, C., Murphy, J., & Warne, J. P. (2024). Replication study: Investigating the effects of maximal anaerobic fatigue on dynamic postural control using the Y-Balance Test. Journal of Science and Medicine in Sport, 27(12), 869–874. https://doi.org/10.1016/j.jsams.2024.07.018",
+      "doi_r": "10.1016/j.jsams.2024.07.018",
+      "url_r": null,
+      "study_r": "1",
+      "description": "Investigating the effects of maximal anaerobic fatigue on dynamic postural control with Y Balance test by comparing pre-fatigue and post-fatigue (0, 10, 20 min) in anterior direction",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq",
+      "locators_o": "p.3",
+      "locators_r": "p.4",
+      "audit_id": 59,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_d13d5b64343f565c168ff0d4.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "0.159",
+      "metric": "partial eta squared (η2p)",
+      "test_statistic": "F1.82, 69.03 = 7.16",
+      "location": "Article p. 4 (journal p. 872), section 3.1 Primary study outcomes, anterior reach direction ANOVA; metric defined in section 2.5, journal p. 871.",
+      "quote": "changes in anterior reach direction over time (F1.82, 69.03 = 7.16, p = ... 0.002, η2p = 0.159).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_d13d5b64343f565c168ff0d4.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 59,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Direction and four-time-point omnibus repeated-measures ANOVA are identified in sections 2.5 and 3.1. Partial eta squared is explicitly defined in section 2.5; retained as printed despite requested etasq label. No conversion. No PDF supplied.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_d13d5b64343f565c168ff0d4.txt",
+      "location": "Article p. 4 (journal p. 872), section 3.1 Primary study outcomes, anterior reach direction ANOVA; metric defined in section 2.5, journal p. 871.",
+      "quote": "ported as partial eta squared (η2p). ... changes in anterior reach direction over time (F1.82, 69.03 = 7.16, p = ... 0.002, η2p = 0.159).",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Byrne, Murphy & Warne (2024), study 1: maximal anaerobic fatigue effect on limb-length-normalised anterior Y-Balance Test reach distance across pre03 (0 min pre-fatigue), post01 (0 min), post02 (10 min), and post03 (20 min), repeated-measures ANOVA.",
+    "worker_notes": "Only unfinished field es_value_r is assigned. All other fields are unassigned placeholders. Printed metric is partial eta squared, not converted to eta squared: section 2.5 (journal p. 871) states \"ported as partial eta squared (η2p).\". ES evidence preserves the p value from the same omnibus ANOVA; no pairwise comparison or original-study statistic was substituted. Source PDF path is null in assigned input, so no PDF inspection or rendering was possible. Canonical text title and authors match the supplied replication reference.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_d13d5b64343f565c168ff0d4.txt",
+    "shipped": "0.159",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Investigating the effects of maximal anaerobic fatigue on dynamic postural control with Y Balance test by comparing pre-fatigue and post-fatigue (0, 10, 20 min) in anterior direction",
+      "es_repr_o": "p.3",
+      "es_repr_r": "p.4",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "no",
+      "reported_success_quote": "Overall, we replicated the original study findings for the effect of maximal anaerobic fatigue on anterior reach distance in a Y-Balance Test."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "6abb538f592fce67",
+    "audit_id": 60,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Johnston, W., Dolan, K., Reid, N., Coughlan, G. F., & Caulfield, B. (2018). Investigating the effects of maximal anaerobic fatigue on dynamic postural control using the Y-Balance Test. Journal of Science and Medicine in Sport, 21(1), 103–108. https://doi.org/10.1016/j.jsams.2017.06.007",
+      "doi_o": "10.1016/j.jsams.2017.06.007",
+      "study_o": "1",
+      "ref_r": "Byrne, C., Murphy, J., & Warne, J. P. (2024). Replication study: Investigating the effects of maximal anaerobic fatigue on dynamic postural control using the Y-Balance Test. Journal of Science and Medicine in Sport, 27(12), 869–874. https://doi.org/10.1016/j.jsams.2024.07.018",
+      "doi_r": "10.1016/j.jsams.2024.07.018",
+      "url_r": null,
+      "study_r": "1",
+      "description": "Investigating the effects of maximal anaerobic fatigue on dynamic postural control with Y Balance test by comparing pre-fatigue and post-fatigue (0, 10, 20 min) in posterolateral direction",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq",
+      "locators_o": "p. 3",
+      "locators_r": "p.4",
+      "audit_id": 60,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_d13d5b64343f565c168ff0d4.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "0.054",
+      "metric": "partial eta squared (η2p)",
+      "test_statistic": "F 2.32, 88.15 = 2.19",
+      "location": "Article p. 4 (journal p. 872), section 3.1 Primary study outcomes, posterolateral reach direction ANOVA; metric defined in section 2.5, journal p. 871.",
+      "quote": "niﬁcant changes in posterolateral reach direction over time ... (F 2.32, 88.15 = 2.19, p = 0.11, η 2p = 0.054).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_d13d5b64343f565c168ff0d4.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 60,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Direction and four-time-point omnibus repeated-measures ANOVA are identified in sections 2.5 and 3.1. Partial eta squared is explicitly defined in section 2.5; retained as printed despite requested etasq label. No conversion. No PDF supplied.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_d13d5b64343f565c168ff0d4.txt",
+      "location": "Article p. 4 (journal p. 872), section 3.1 Primary study outcomes, posterolateral reach direction ANOVA; metric defined in section 2.5, journal p. 871.",
+      "quote": "ported as partial eta squared (η2p). ... niﬁcant changes in posterolateral reach direction over time ... (F 2.32, 88.15 = 2.19, p = 0.11, η 2p = 0.054).",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Byrne, Murphy & Warne (2024), study 1: maximal anaerobic fatigue effect on limb-length-normalised posterolateral Y-Balance Test reach distance across pre03 (0 min pre-fatigue), post01 (0 min), post02 (10 min), and post03 (20 min), repeated-measures ANOVA.",
+    "worker_notes": "Only unfinished field es_value_r is assigned. All other fields are unassigned placeholders. Printed metric is partial eta squared, not converted to eta squared: section 2.5 (journal p. 871) states \"ported as partial eta squared (η2p).\". ES evidence preserves the p value from the same omnibus ANOVA; no pairwise comparison or original-study statistic was substituted. Source PDF path is null in assigned input, so no PDF inspection or rendering was possible. Canonical text title and authors match the supplied replication reference.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_d13d5b64343f565c168ff0d4.txt",
+    "shipped": "0.054",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Investigating the effects of maximal anaerobic fatigue on dynamic postural control with Y Balance test by comparing pre-fatigue and post-fatigue (0, 10, 20 min) in posterolateral direction",
+      "es_repr_o": "p. 3",
+      "es_repr_r": "p.4",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": "1 (one)",
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "no",
+      "reported_success_quote": "Overall, we replicated the original study findings for the effect of maximal anaerobic fatigue on anterior reach distance in a Y-Balance Test."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/6abb538f592fce67. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_6abb538f592fce67_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

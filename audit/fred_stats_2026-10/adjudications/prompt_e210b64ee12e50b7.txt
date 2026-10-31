@@ -1,0 +1,46 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 2122,
+    "field": "pval_value_o",
+    "comparison": "differ",
+    "shipped": "0.001380362",
+    "shipped_metric": "Cohen's f^2",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".001",
+      "bound": "l",
+      "location": "p. 41, Product evaluations and thoughts, interdependent trendiness planned contrast",
+      "quote": "trendy (F = 13.57, p < .001)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e3d8d02cf1fcc765a183bee2.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Zhu, R. (Juliet), & Meyers-Levy, J. (2009). The Influence of Self-View on Context Effects: How Display Fixtures Can Affect Product Evaluations. Journal of Marketing Research, 46(1), 37–45. https://doi.org/10.1509/jmkr.46.1.37",
+      "doi_o": "10.1509/jmkr.46.1.37",
+      "study_o": null,
+      "ref_r": "Baskin, E., Tyner, A. H., Miske, O., & Loomas, Z. (2025, November 18). Zhu_JournMarketRes_2009_8w97 - Baskin - New Data Replication - gz2m. Retrieved from osf.io/sw67c",
+      "doi_r": null,
+      "url_r": "https://osf.io/b9rcg",
+      "study_r": null,
+      "es_type_o": "Cohen's f^2",
+      "es_type_r": "Cohen's f^2",
+      "audit_id": 2122,
+      "description": null,
+      "locators_o": "",
+      "locators_r": "",
+      "text_paths": {}
+    },
+    "work_key": "https://osf.io/b9rcg",
+    "coding_context": {
+      "es_repr": null,
+      "pval_tails": "2",
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

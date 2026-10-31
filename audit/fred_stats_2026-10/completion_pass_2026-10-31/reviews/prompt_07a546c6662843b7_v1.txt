@@ -1,0 +1,263 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "07a546c6662843b7",
+    "audit_id": 188,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Onwuegbuzie, A. J., Bailey, P., & Daley, C. E. (2000). The Validation of Three Scales Measuring Anxiety at Different Stages of the Foreign Language Learning Process: The Input Anxiety Scale, the Processing Anxiety Scale, and the Output Anxiety Scale. Language Learning, 50(1), 87–117. Portico. https://doi.org/10.1111/0023-8333.00112",
+      "doi_o": "10.1111/0023-8333.00112",
+      "study_o": "1",
+      "ref_r": "Piniel, K. (2024). The Input, Process, and Output Anxiety Scales: An Approximate Replication Study. Investigating Foreign Language Anxiety, 49–71. https://doi.org/10.1007/978-3-031-55844-3_4",
+      "doi_r": "10.1007/978-3-031-55844-3_4",
+      "url_r": "https://doi.org/10.1007/978-3-031-55844-3_4",
+      "study_r": "1",
+      "description": "Relationships of Input, Process, and Output Anxiety Scales with general language learning anxiety.",
+      "es_type_o": "be",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 99",
+      "locators_r": "p. 63",
+      "audit_id": 188,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/safe-version-followup/private_source/6b0931c1fac7d238d367b14a_chapter.pdf",
+      "source_version_note": "Published book chapter, extracted from user-supplied replacement full-book PDF"
+    },
+    "blind": {
+      "value": "successful",
+      "location": "p. 63, section 4.5.3, interpretation following regression results",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more\nsignificant effect on general language anxiety than anxiety experienced at the output\nstage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000)\nfindings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 188,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Authors explicitly describe the regression pattern as consistent with the initial study. Successful is a vocabulary mapping of this shared narrative verdict; individual predictor correspondence remains unresolved.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "location": "p. 63, section 4.5.3, regression interpretation",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more\nsignificant effect on general language anxiety than anxiety experienced at the output\nstage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000)\nfindings.",
+      "calculation": null
+    },
+    "worker_target_match": null,
+    "worker_target_description": "Piniel (2024), study 1, p. 63: regression predicting FLCAS general classroom anxiety from IAS, PAS and OAS. Assigned description does not specify which predictor coefficient; all three remain candidates.",
+    "worker_notes": "Original side is an unassigned placeholder, not assessed. No mapping from audit ID or row order to predictors was attempted. Printed p. 63 candidates: input β = 0.18, t = 2.42, p < 0.05; process β = 0.43, t = 5.32, p < 0.01; output β = 0.31, t = 4.31, p < 0.01. Coefficients are labelled beta/β; this paragraph does not explicitly identify their standardisation, so requested standardized-metric identity is not assumed. The omnibus model prints adjusted R2 = 0.62, F(3,129) = 73.90, p < 0.01; these are not substituted for a predictor coefficient. Recruitment/current-study N = 134 is explicitly reported, also for factor analyses/correlations, but is not explicitly the analytic N of the p. 63 regression. No N derived from degrees of freedom or unrelated group counts. Reported success is the authors’ shared narrative comparison for this regression, not a resolved audit-row-to-predictor mapping. PDF printed p. 63 visually checked against canonical text.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+    "shipped": "mixed",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "Input, Process, and Output Anxiety Scales predict general language learning anxiety",
+      "es_repr_o": "99",
+      "es_repr_r": "p. 63",
+      "es_type_o": "be",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "In both the initial as well as the replication study, evidence showed\nthat language learners experience significantly higher levels of output anxiety than\ninput or process anxiety; nonetheless, these three types of anxiety were found to be\nlinked to the general concept of language anxiety to different degrees, with process\nanxiety depicting the strongest association according to the results of data analysis\nin the initial and the replication study.\nAlthough the scales could be characterized as reliable, their componential struc-\nture was found to be not without flaws. Some of the same items of the scales were\nlabelled as problematic in the Hungarian version of the scales as well as in the English\nversion. As such, it can be said that these issues are inherent to the items rather than\nto their translated versions and thus warrant reconsideration."
+    },
+    "prior_adjudication": {
+      "audit_id": 188,
+      "field": "reported_success",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "effect_specific_verdict_confirmed": false,
+      "location": "p. 63, §4.5.3; p. 67, §4.6 (chapter PDF pp. 15, 19)",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more significant effect on general language anxiety than anxiety experienced at the output stage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000) findings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "reason": "Neutral locator information does not distinguish which of the three regression predictors belongs to audit_id 188, and the chapter's broader mixed conclusion on p. 67 (\"Although the scales could be characterized as reliable, their componential structure was found to be not without flaws.\") concerns psychometric item and factor structure rather than an effect-specific regression verdict.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "07a546c6662843b7",
+    "audit_id": 1957,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Onwuegbuzie, A. J., Bailey, P., & Daley, C. E. (2000). The Validation of Three Scales Measuring Anxiety at Different Stages of the Foreign Language Learning Process: The Input Anxiety Scale, the Processing Anxiety Scale, and the Output Anxiety Scale. Language Learning, 50(1), 87–117. Portico. https://doi.org/10.1111/0023-8333.00112",
+      "doi_o": "10.1111/0023-8333.00112",
+      "study_o": "1",
+      "ref_r": "Piniel, K. (2024). The Input, Process, and Output Anxiety Scales: An Approximate Replication Study. Investigating Foreign Language Anxiety, 49–71. https://doi.org/10.1007/978-3-031-55844-3_4",
+      "doi_r": "10.1007/978-3-031-55844-3_4",
+      "url_r": "https://doi.org/10.1007/978-3-031-55844-3_4",
+      "study_r": "1",
+      "description": "Relationship between Input, Process and Output Anxiety Scales and general language learning anxiety.",
+      "es_type_o": "be",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 99",
+      "locators_r": "p. 63",
+      "audit_id": 1957,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/safe-version-followup/private_source/6b0931c1fac7d238d367b14a_chapter.pdf",
+      "source_version_note": "Published book chapter, extracted from user-supplied replacement full-book PDF"
+    },
+    "blind": {
+      "value": "successful",
+      "location": "p. 63, section 4.5.3, interpretation following regression results",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more\nsignificant effect on general language anxiety than anxiety experienced at the output\nstage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000)\nfindings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 1957,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Authors explicitly describe the regression pattern as consistent with the initial study. Successful is a vocabulary mapping of this shared narrative verdict; individual predictor correspondence remains unresolved.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "location": "p. 63, section 4.5.3, regression interpretation",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more\nsignificant effect on general language anxiety than anxiety experienced at the output\nstage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000)\nfindings.",
+      "calculation": null
+    },
+    "worker_target_match": null,
+    "worker_target_description": "Piniel (2024), study 1, p. 63: regression predicting FLCAS general classroom anxiety from IAS, PAS and OAS. Assigned description does not specify which predictor coefficient; all three remain candidates.",
+    "worker_notes": "Original side is an unassigned placeholder, not assessed. No mapping from audit ID or row order to predictors was attempted. Printed p. 63 candidates: input β = 0.18, t = 2.42, p < 0.05; process β = 0.43, t = 5.32, p < 0.01; output β = 0.31, t = 4.31, p < 0.01. Coefficients are labelled beta/β; this paragraph does not explicitly identify their standardisation, so requested standardized-metric identity is not assumed. The omnibus model prints adjusted R2 = 0.62, F(3,129) = 73.90, p < 0.01; these are not substituted for a predictor coefficient. Recruitment/current-study N = 134 is explicitly reported, also for factor analyses/correlations, but is not explicitly the analytic N of the p. 63 regression. No N derived from degrees of freedom or unrelated group counts. Reported success is the authors’ shared narrative comparison for this regression, not a resolved audit-row-to-predictor mapping. PDF printed p. 63 visually checked against canonical text.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+    "shipped": "mixed",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "Input, Process, and Output Anxiety Scales predict general language learning anxiety",
+      "es_repr_o": "99",
+      "es_repr_r": "p. 63",
+      "es_type_o": "be",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "In both the initial as well as the replication study, evidence showed\nthat language learners experience significantly higher levels of output anxiety than\ninput or process anxiety; nonetheless, these three types of anxiety were found to be\nlinked to the general concept of language anxiety to different degrees, with process\nanxiety depicting the strongest association according to the results of data analysis\nin the initial and the replication study.\nAlthough the scales could be characterized as reliable, their componential struc-\nture was found to be not without flaws. Some of the same items of the scales were\nlabelled as problematic in the Hungarian version of the scales as well as in the English\nversion. As such, it can be said that these issues are inherent to the items rather than\nto their translated versions and thus warrant reconsideration."
+    },
+    "prior_adjudication": {
+      "audit_id": 1957,
+      "field": "reported_success",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "effect_specific_verdict_confirmed": false,
+      "location": "p. 63, §4.5.3; p. 67, §4.6 (chapter PDF pp. 15, 19)",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more significant effect on general language anxiety than anxiety experienced at the output stage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000) findings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "reason": "Neutral locator information does not identify which regression predictor belongs to audit_id 1957, and the global mixed summary in §4.6 reflects flaws in the scales' componential factor structure rather than an effect-specific regression failure.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "07a546c6662843b7",
+    "audit_id": 1958,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Onwuegbuzie, A. J., Bailey, P., & Daley, C. E. (2000). The Validation of Three Scales Measuring Anxiety at Different Stages of the Foreign Language Learning Process: The Input Anxiety Scale, the Processing Anxiety Scale, and the Output Anxiety Scale. Language Learning, 50(1), 87–117. Portico. https://doi.org/10.1111/0023-8333.00112",
+      "doi_o": "10.1111/0023-8333.00112",
+      "study_o": "1",
+      "ref_r": "Piniel, K. (2024). The Input, Process, and Output Anxiety Scales: An Approximate Replication Study. Investigating Foreign Language Anxiety, 49–71. https://doi.org/10.1007/978-3-031-55844-3_4",
+      "doi_r": "10.1007/978-3-031-55844-3_4",
+      "url_r": "https://doi.org/10.1007/978-3-031-55844-3_4",
+      "study_r": "1",
+      "description": "Relationship between Input, Process and Output Anxiety Scales and general language learning anxiety.",
+      "es_type_o": "be",
+      "es_type_r": "beta (std)",
+      "locators_o": "p. 99",
+      "locators_r": "p. 63",
+      "audit_id": 1958,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/safe-version-followup/private_source/6b0931c1fac7d238d367b14a_chapter.pdf",
+      "source_version_note": "Published book chapter, extracted from user-supplied replacement full-book PDF"
+    },
+    "blind": {
+      "value": "successful",
+      "location": "p. 63, section 4.5.3, interpretation following regression results",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more\nsignificant effect on general language anxiety than anxiety experienced at the output\nstage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000)\nfindings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 1958,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Authors explicitly describe the regression pattern as consistent with the initial study. Successful is a vocabulary mapping of this shared narrative verdict; individual predictor correspondence remains unresolved.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "location": "p. 63, section 4.5.3, regression interpretation",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more\nsignificant effect on general language anxiety than anxiety experienced at the output\nstage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000)\nfindings.",
+      "calculation": null
+    },
+    "worker_target_match": null,
+    "worker_target_description": "Piniel (2024), study 1, p. 63: regression predicting FLCAS general classroom anxiety from IAS, PAS and OAS. Assigned description does not specify which predictor coefficient; all three remain candidates.",
+    "worker_notes": "Original side is an unassigned placeholder, not assessed. No mapping from audit ID or row order to predictors was attempted. Printed p. 63 candidates: input β = 0.18, t = 2.42, p < 0.05; process β = 0.43, t = 5.32, p < 0.01; output β = 0.31, t = 4.31, p < 0.01. Coefficients are labelled beta/β; this paragraph does not explicitly identify their standardisation, so requested standardized-metric identity is not assumed. The omnibus model prints adjusted R2 = 0.62, F(3,129) = 73.90, p < 0.01; these are not substituted for a predictor coefficient. Recruitment/current-study N = 134 is explicitly reported, also for factor analyses/correlations, but is not explicitly the analytic N of the p. 63 regression. No N derived from degrees of freedom or unrelated group counts. Reported success is the authors’ shared narrative comparison for this regression, not a resolved audit-row-to-predictor mapping. PDF printed p. 63 visually checked against canonical text.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+    "shipped": "mixed",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "Input, Process, and Output Anxiety Scales predict general language learning anxiety",
+      "es_repr_o": "99",
+      "es_repr_r": "p. 63",
+      "es_type_o": "be",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "In both the initial as well as the replication study, evidence showed\nthat language learners experience significantly higher levels of output anxiety than\ninput or process anxiety; nonetheless, these three types of anxiety were found to be\nlinked to the general concept of language anxiety to different degrees, with process\nanxiety depicting the strongest association according to the results of data analysis\nin the initial and the replication study.\nAlthough the scales could be characterized as reliable, their componential struc-\nture was found to be not without flaws. Some of the same items of the scales were\nlabelled as problematic in the Hungarian version of the scales as well as in the English\nversion. As such, it can be said that these issues are inherent to the items rather than\nto their translated versions and thus warrant reconsideration."
+    },
+    "prior_adjudication": {
+      "audit_id": 1958,
+      "field": "reported_success",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "effect_specific_verdict_confirmed": false,
+      "location": "p. 63, §4.5.3; p. 67, §4.6 (chapter PDF pp. 15, 19)",
+      "quote": "These results suggest that anxiety experienced at the processing stage has a more significant effect on general language anxiety than anxiety experienced at the output stage of language learning, which is also consistent with Onwuegbuzie et al.’s (2000) findings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_safe_6b0931c1fac7d238d367b14a.txt",
+      "reason": "Neutral locator information does not uniquely identify which predictor belongs to audit_id 1958, and the paper's mixed conclusion in §4.6 applies to the scales' componential structure rather than an identified individual regression predictor.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/07a546c6662843b7. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_07a546c6662843b7_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

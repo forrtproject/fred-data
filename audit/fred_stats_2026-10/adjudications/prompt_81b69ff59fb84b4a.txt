@@ -1,0 +1,165 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1638,
+    "field": "n_r",
+    "comparison": "mismatched_target",
+    "shipped": "7",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "7",
+      "location": "p. 2, Materials and methods—Participants; p. 4, Results—Reaction Times",
+      "quote": "Seven participants (six females and one male, aged 20–25) took part in this experiment.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/154e3f63ebfd27c412957756.txt",
+      "confident": true,
+      "sample_role": "Participants in the repeated-measures reaction-time ANOVA; seven participants described, with participant count corroborated by F(2,12).",
+      "exclusions": "RTs over 1000 ms and below 100 ms excluded: 16 misses and 146 anticipated responses out of 2100 responses; no participant exclusion reported."
+    },
+    "locator": {
+      "ref_o": "Kreegipuu, K., Murd, C., & Allik, J. (2006). Detection of colour changes in a moving object. Vision Research, 46(11), 1848–1855. https://doi.org/10.1016/j.visres.2005.11.013",
+      "doi_o": "10.1016/j.visres.2005.11.013",
+      "study_o": "2",
+      "ref_r": "Murd, C., Kreegipuu, K., Kuldkepp, N., Raidvee, A., Tamm, M., & Allik, J. (2014). Visual evoked potentials to change in coloration of a moving bar. Frontiers in Human Neuroscience, 8. https://doi.org/10.3389/fnhum.2014.00019",
+      "doi_r": "10.3389/fnhum.2014.00019",
+      "url_r": null,
+      "study_r": "Experiment 2",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1638,
+      "description": "Relationship between stimulus velocity and reaction time for detecting colour changes.",
+      "locators_o": "p. 4",
+      "locators_r": "p. 4",
+      "text_paths": {}
+    },
+    "work_key": "10.3389/fnhum.2014.00019",
+    "coding_context": {
+      "es_repr": "p. 4",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1638,
+    "field": "es_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "F(18, 108) = 1.7",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "71.52",
+      "location": "p. 4, Results—Reaction Times, velocity main effect",
+      "quote": "F\n(2,12) = 71.52,\np\n< 0.00001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/154e3f63ebfd27c412957756.txt",
+      "confident": true,
+      "metric": "F",
+      "test_statistic": "F(2,12) = 71.52"
+    },
+    "locator": {
+      "ref_o": "Kreegipuu, K., Murd, C., & Allik, J. (2006). Detection of colour changes in a moving object. Vision Research, 46(11), 1848–1855. https://doi.org/10.1016/j.visres.2005.11.013",
+      "doi_o": "10.1016/j.visres.2005.11.013",
+      "study_o": "2",
+      "ref_r": "Murd, C., Kreegipuu, K., Kuldkepp, N., Raidvee, A., Tamm, M., & Allik, J. (2014). Visual evoked potentials to change in coloration of a moving bar. Frontiers in Human Neuroscience, 8. https://doi.org/10.3389/fnhum.2014.00019",
+      "doi_r": "10.3389/fnhum.2014.00019",
+      "url_r": null,
+      "study_r": "Experiment 2",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1638,
+      "description": "Relationship between stimulus velocity and reaction time for detecting colour changes.",
+      "locators_o": "p. 4",
+      "locators_r": "p. 4",
+      "text_paths": {}
+    },
+    "work_key": "10.3389/fnhum.2014.00019",
+    "coding_context": {
+      "es_repr": "p. 4",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1638,
+    "field": "pval_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.051",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "0.00001",
+      "location": "p. 4, Results—Reaction Times, same velocity main effect",
+      "quote": "F\n(2,12) = 71.52,\np\n< 0.00001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/154e3f63ebfd27c412957756.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "locator": {
+      "ref_o": "Kreegipuu, K., Murd, C., & Allik, J. (2006). Detection of colour changes in a moving object. Vision Research, 46(11), 1848–1855. https://doi.org/10.1016/j.visres.2005.11.013",
+      "doi_o": "10.1016/j.visres.2005.11.013",
+      "study_o": "2",
+      "ref_r": "Murd, C., Kreegipuu, K., Kuldkepp, N., Raidvee, A., Tamm, M., & Allik, J. (2014). Visual evoked potentials to change in coloration of a moving bar. Frontiers in Human Neuroscience, 8. https://doi.org/10.3389/fnhum.2014.00019",
+      "doi_r": "10.3389/fnhum.2014.00019",
+      "url_r": null,
+      "study_r": "Experiment 2",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1638,
+      "description": "Relationship between stimulus velocity and reaction time for detecting colour changes.",
+      "locators_o": "p. 4",
+      "locators_r": "p. 4",
+      "text_paths": {}
+    },
+    "work_key": "10.3389/fnhum.2014.00019",
+    "coding_context": {
+      "es_repr": "p. 4",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1638,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 1, Abstract (behavioral replication overall)",
+      "quote": "Psychophysical results replicate the findings from the previous study showing decreased RTs to coloration changes with increase of velocity of the color changing stimulus.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/154e3f63ebfd27c412957756.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Kreegipuu, K., Murd, C., & Allik, J. (2006). Detection of colour changes in a moving object. Vision Research, 46(11), 1848–1855. https://doi.org/10.1016/j.visres.2005.11.013",
+      "doi_o": "10.1016/j.visres.2005.11.013",
+      "study_o": "2",
+      "ref_r": "Murd, C., Kreegipuu, K., Kuldkepp, N., Raidvee, A., Tamm, M., & Allik, J. (2014). Visual evoked potentials to change in coloration of a moving bar. Frontiers in Human Neuroscience, 8. https://doi.org/10.3389/fnhum.2014.00019",
+      "doi_r": "10.3389/fnhum.2014.00019",
+      "url_r": null,
+      "study_r": "Experiment 2",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1638,
+      "description": "Relationship between stimulus velocity and reaction time for detecting colour changes.",
+      "locators_o": "p. 4",
+      "locators_r": "p. 4",
+      "text_paths": {}
+    },
+    "work_key": "10.3389/fnhum.2014.00019",
+    "coding_context": {
+      "es_repr": "p. 4",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

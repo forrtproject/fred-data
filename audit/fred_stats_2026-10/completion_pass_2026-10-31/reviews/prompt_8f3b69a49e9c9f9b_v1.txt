@@ -1,0 +1,707 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 1,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender Empowerment Measure and gender differences in emphasis on a potential spouse's earning capacity (ranking data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 1,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "-0.64",
+      "metric": "mixed-model estimate (sex effect coded; GII standardized at country level)",
+      "test_statistic": "t = -2.09",
+      "location": "Results, Table 1, good earning capacity / GII / ranking; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "good earning capacity | GII | ranking | -0.64 | -2.09 | .06",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Printed Table 1 interaction estimate; predictor standardization is documented, so no unstandardized-b identity is assumed. GII is the authors’ replacement for GEM, a known measure mismatch; target_match=false.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, good earning capacity / GII / ranking; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "good earning capacity | GII | ranking | -0.64 | -2.09 | .06",
+      "calculation": ""
+    },
+    "worker_target_match": false,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for good earning capacity, ranking task, GII, controlling for Galton’s problem. Requested GEM is not measured; source explicitly substitutes GII.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. Known measure discrepancy: values are the explicitly identified GII replacement, not GEM estimates; target_match=false. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "0.64",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "As the Gender Empowerment Measure increased in value, the tendency decreased for women to place greater emphasis than men on a potential spouse's earning capacity (ranking data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": {
+      "audit_id": 1,
+      "field": "es_value_r",
+      "verdict": "blind_right",
+      "correct_value": "-0.64",
+      "location": "Results, Table 1, row 6 (good earning capacity / GII / ranking)",
+      "quote": "good earning capacity | GII | ranking | -0.64 | -2.09 | .06",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "reason": "Table 1 reports an unstandardized interaction estimate of -0.64 for good earning capacity (GII, ranking); shipped reversed the sign (likely to invert GII so higher values reflect greater equality).",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 4,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender Empowerment Measure and gender differences in emphasis on a potential spouse's domestic skills (ranking data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 4,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "0.08",
+      "metric": "mixed-model estimate (sex effect coded; GII standardized at country level)",
+      "test_statistic": "t = 0.35",
+      "location": "Results, Table 1, domestic skills / GII / ranking; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GII | ranking | 0.08 | 0.35 | .73",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 4,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Printed Table 1 interaction estimate; predictor standardization is documented, so no unstandardized-b identity is assumed. GII is the authors’ replacement for GEM, a known measure mismatch; target_match=false.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, domestic skills / GII / ranking; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GII | ranking | 0.08 | 0.35 | .73",
+      "calculation": ""
+    },
+    "worker_target_match": false,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for domestic skills, ranking task, GII, controlling for Galton’s problem. Requested GEM is not measured; source explicitly substitutes GII.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. Known measure discrepancy: values are the explicitly identified GII replacement, not GEM estimates; target_match=false. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "-0.08",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "As the Gender Empowerment Measure increased, the tendency decreased for men to place greater emphasis than women on a potential spouse's domestic skills (ranking data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": {
+      "audit_id": 4,
+      "field": "es_value_r",
+      "verdict": "blind_right",
+      "correct_value": "0.08",
+      "location": "Results, Table 1, row 10 (domestic skills / GII / ranking)",
+      "quote": "domestic skills | GII | ranking | 0.08 | 0.35 | .73",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "reason": "Table 1 reports an interaction estimate of 0.08 for domestic skills (GII, ranking); shipped reversed the sign.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 16,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender-Related Development Index and gender differences in emphasis on a potential spouse's earning capacity (ranking data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 16,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "0.24",
+      "metric": "mixed-model estimate (sex effect coded; GDI standardized at country level)",
+      "test_statistic": "t = 0.56",
+      "location": "Results, Table 1, good earning capacity / GDI / ranking; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "good earning capacity | GDI | ranking | 0.24 | 0.56 | .58",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 16,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Printed Table 1 interaction estimate; predictor standardization is documented, so no unstandardized-b identity is assumed. Source GDI naming differs from the historical index name; the chosen measure and interaction are identified explicitly.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, good earning capacity / GDI / ranking; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "good earning capacity | GDI | ranking | 0.24 | 0.56 | .58",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for good earning capacity, ranking task, GDI, controlling for Galton’s problem. Source calls its index Gender Development Index (GDI), selected for similarity to the earlier Gender-related Development Index.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "0.24",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "As the Gender-Related Development Index increased in value, the tendency decreased for women to place greater emphasis than men on a potential spouse's earning capacity (ranking data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 24,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender-Related Development Index and gender differences in emphasis on a potential spouse's domestic skills (ranking data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 24,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "-0.27",
+      "metric": "mixed-model estimate (sex effect coded; GDI standardized at country level)",
+      "test_statistic": "t = -0.68",
+      "location": "Results, Table 1, domestic skills / GDI / ranking; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GDI | ranking | -0.27 | -0.68 | .50",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 24,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Printed Table 1 interaction estimate; predictor standardization is documented, so no unstandardized-b identity is assumed. Source GDI naming differs from the historical index name; the chosen measure and interaction are identified explicitly.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, domestic skills / GDI / ranking; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GDI | ranking | -0.27 | -0.68 | .50",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for domestic skills, ranking task, GDI, controlling for Galton’s problem. Source calls its index Gender Development Index (GDI), selected for similarity to the earlier Gender-related Development Index.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "-0.27",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "As the Gender-Related Development Index increased, the tendency decreased for men to place greater emphasis than women on a potential spouse's domestic skills (ranking data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 34,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender Empowerment Measure and gender differences in emphasis on a potential spouse's earning capacity (rating data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 34,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "-0.11",
+      "metric": "mixed-model estimate (sex effect coded; GII standardized at country level)",
+      "test_statistic": "t = -1.33",
+      "location": "Results, Table 1, good earning capacity / GII / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "good earning capacity | GII | rating | -0.11 | -1.33 | .19",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 34,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Printed Table 1 interaction estimate; predictor standardization is documented, so no unstandardized-b identity is assumed. GII is the authors’ replacement for GEM, a known measure mismatch; target_match=false.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, good earning capacity / GII / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "good earning capacity | GII | rating | -0.11 | -1.33 | .19",
+      "calculation": ""
+    },
+    "worker_target_match": false,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for good earning capacity, rating task, GII, controlling for Galton’s problem. Requested GEM is not measured; source explicitly substitutes GII.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. Known measure discrepancy: values are the explicitly identified GII replacement, not GEM estimates; target_match=false. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "0.11",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "As the Gender Empowerment Measure increased in value, the tendency decreased for women to place greater emphasis than men on a potential spouse's earning capacity (rating data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": {
+      "audit_id": 34,
+      "field": "es_value_r",
+      "verdict": "blind_right",
+      "correct_value": "-0.11",
+      "location": "Results, Table 1, row 5 (good earning capacity / GII / rating)",
+      "quote": "good earning capacity | GII | rating | -0.11 | -1.33 | .19",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "reason": "Table 1 reports an interaction estimate of -0.11 for good earning capacity (GII, rating); shipped reversed the sign.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 46,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender-Related Development Index and gender differences in emphasis on a potential spouse's earning capacity (rating data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 46,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "0.04",
+      "metric": "mixed-model estimate (sex effect coded; GDI standardized at country level)",
+      "test_statistic": "t = 0.31",
+      "location": "Results, Table 1, good earning capacity / GDI / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "good earning capacity | GDI | rating | 0.04 | 0.31 | .76",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 46,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Printed Table 1 interaction estimate; predictor standardization is documented, so no unstandardized-b identity is assumed. Source GDI naming differs from the historical index name; the chosen measure and interaction are identified explicitly.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, good earning capacity / GDI / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "good earning capacity | GDI | rating | 0.04 | 0.31 | .76",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for good earning capacity, rating task, GDI, controlling for Galton’s problem. Source calls its index Gender Development Index (GDI), selected for similarity to the earlier Gender-related Development Index.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "0.04",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "As the Gender-Related Development Index increased in value, the tendency decreased for women to place greater emphasis than men on a potential spouse's earning capacity (rating data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "g (>)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 47,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender-Related Development Index and gender differences in emphasis on a potential spouse's domestic skills (rating data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 47,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "-0.05",
+      "metric": "mixed-model estimate (sex effect coded; GDI standardized at country level)",
+      "test_statistic": "t = -0.36",
+      "location": "Results, Table 1, domestic skills / GDI / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GDI | rating | -0.05 | -0.36 | .73",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 47,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Printed Table 1 interaction estimate; predictor standardization is documented, so no unstandardized-b identity is assumed. Source GDI naming differs from the historical index name; the chosen measure and interaction are identified explicitly.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, domestic skills / GDI / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GDI | rating | -0.05 | -0.36 | .73",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for domestic skills, rating task, GDI, controlling for Galton’s problem. Source calls its index Gender Development Index (GDI), selected for similarity to the earlier Gender-related Development Index.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "-0.05",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "As the Gender-Related Development Index increased, the tendency decreased for men to place greater emphasis than women on a potential spouse's domestic skills (rating data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 40,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender Empowerment Measure and gender differences in emphasis on a potential spouse's domestic skills (rating data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 40,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r",
+        "pval_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "0.14",
+      "metric": "mixed-model estimate (sex effect coded; GII standardized at country level)",
+      "test_statistic": "t = 1.73",
+      "location": "Results, Table 1, domestic skills / GII / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GII | rating | 0.14 | 1.73 | .10",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 40,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Printed Table 1 interaction estimate; predictor standardization is documented, so no unstandardized-b identity is assumed. GII is the authors’ replacement for GEM, a known measure mismatch; target_match=false.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, domestic skills / GII / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GII | rating | 0.14 | 1.73 | .10",
+      "calculation": ""
+    },
+    "worker_target_match": false,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for domestic skills, rating task, GII, controlling for Galton’s problem. Requested GEM is not measured; source explicitly substitutes GII.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. Known measure discrepancy: values are the explicitly identified GII replacement, not GEM estimates; target_match=false. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "-0.14",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "As the Gender Empowerment Measure increased, the tendency decreased for men to place greater emphasis than women on a potential spouse's domestic skills (rating data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": {
+      "audit_id": 40,
+      "field": "es_value_r",
+      "verdict": "blind_right",
+      "correct_value": "0.14",
+      "location": "Results, Table 1, row 9 (domestic skills / GII / rating)",
+      "quote": "domestic skills | GII | rating | 0.14 | 1.73 | .10",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "reason": "Table 1 reports an interaction estimate of 0.14 for domestic skills (GII, rating); shipped reversed the sign.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8f3b69a49e9c9f9b",
+    "audit_id": 40,
+    "field": "pval_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Eagly, A. H., & Wood, W. (1999). The origins of sex differences in human behavior: Evolved dispositions versus social roles. American Psychologist, 54(6), 408–423. https://doi.org/10.1037/0003-066x.54.6.408",
+      "doi_o": "10.1037/0003-066x.54.6.408",
+      "study_o": null,
+      "ref_r": "Zhang, L., Lee, A. J., DeBruine, L. M., & Jones, B. C. (2018). Are sex differences in preferences for physical attractiveness and good earning capacity in potential mates smaller in countries with greater gender equality? https://doi.org/10.31234/osf.io/mtsx8",
+      "doi_r": "10.31234/osf.io/mtsx8",
+      "url_r": null,
+      "study_r": null,
+      "description": "Relationship between the Gender Empowerment Measure and gender differences in emphasis on a potential spouse's domestic skills (rating data).",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 11; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 40,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r",
+        "pval_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": ".10",
+      "bound": "e",
+      "location": "Results, Table 1, domestic skills / GII / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GII | rating | 0.14 | 1.73 | .10",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 40,
+      "field": "pval_value_r",
+      "code": "extracted_printed",
+      "reason": "Exact printed p for the same Table 1 GII-by-sex interaction as the estimate; GII replaces requested GEM, so target_match=false.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "location": "Results, Table 1, domestic skills / GII / rating; Methods, Gender equality measures and Analysis (canonical text has no page markers)",
+      "quote": "domestic skills | GII | rating | 0.14 | 1.73 | .10",
+      "calculation": ""
+    },
+    "worker_target_match": false,
+    "worker_target_description": "Zhang et al., gender-equality-by-participant-sex interaction for domestic skills, rating task, GII, controlling for Galton’s problem. Requested GEM is not measured; source explicitly substitutes GII.",
+    "worker_notes": "Only requested unfinished fields are assessed; all unassigned fields and original side are placeholders. No PDF was supplied; layout could be checked only in canonical text. Participant age was standardized at the participant-level and both Gender Inequality Index (GII) and Gender Development Index (GDI) were standardized at the country-level prior to analyses. These measures were chosen because of their similarity to the Gender Empowerment Measure and Gender-related Development Index used in Eagly and Wood (1999). Printed estimate retained without conversion; requested b (unstd) is not a printed metric label. The predictor standardization is explicitly documented. Table 1 identifies the controlled interaction, rather than the alternative model omitting world region. Known measure discrepancy: values are the explicitly identified GII replacement, not GEM estimates; target_match=false. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+    "shipped": "0.09",
+    "comparison": "compatible",
+    "coding_context": {
+      "description": "As the Gender Empowerment Measure increased, the tendency decreased for men to place greater emphasis than women on a potential spouse's domestic skills (rating data)",
+      "es_repr_o": "p. 11, Table 1",
+      "es_repr_r": "p. 4, Table 1",
+      "es_type_o": "r",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Here we attempted to replicate previously reported links between sex differences in mate preferences and country-level measures of gender inequality [...]. Although women preferred mates with good earning capacity more than men did and men preferred physically attractive mates more than women did, we found little evidence that these sex differences were smaller in countries with greater gender equality. Although one analysis suggested that the sex difference in preferences for good earning capacity was smaller in countries with greater gender equality, this effect was not significant when controlling for Galton’s problem or when correcting for multiple comparisons. Collectively, these results provide little support for the social roles account of sex differences in mate preferences."
+    },
+    "prior_adjudication": {
+      "audit_id": 40,
+      "field": "pval_value_r",
+      "verdict": "blind_right",
+      "correct_value": "0.10",
+      "location": "Results, Table 1, row 9 (domestic skills / GII / rating)",
+      "quote": "domestic skills | GII | rating | 0.14 | 1.73 | .10",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4756c3922e15579b4b0a8e87.txt",
+      "reason": "Table 1 reports p = .10 (0.10) for domestic skills (GII, rating), not 0.09.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/8f3b69a49e9c9f9b. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_8f3b69a49e9c9f9b_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

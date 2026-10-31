@@ -1,0 +1,154 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "5b62e833f7ca2d2d",
+    "audit_id": 466,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Tarampi, M. R., Heydari, N., & Hegarty, M. (2016). A Tale of Two Types of Perspective Taking. Psychological Science, 27(11), 1507–1516. https://doi.org/10.1177/0956797616667459",
+      "doi_o": "10.1177/0956797616667459",
+      "study_o": "1",
+      "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+      "doi_r": "10.1098/rsos.231240",
+      "url_r": "https://rpubs.com/chuqihu8/pilot",
+      "study_r": "1",
+      "description": "Relationship between condition and spatial-orientation test performance by sex.",
+      "es_type_o": "etasq",
+      "es_type_r": "test statistic",
+      "locators_o": "p. 5",
+      "locators_r": "https://rpubs.com/chuqihu8/pilot",
+      "audit_id": 466,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/76d6cd1e9905c2b0826db6b6.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "135",
+      "sample_role": "Participants in the final Experiment 1 sex × condition ANOVA; 65 males and 70 females, mutually exclusive final sex groups.",
+      "exclusions": "Four of 139 recruited undergraduates excluded for scoring below chance on the spatial-orientation test.",
+      "location": "p. 1508 (PDF p. 2), Experiment 1 Method—Participants; p. 1511 (PDF p. 5), Results—spatial-orientation ANOVA.",
+      "quote": "Four participants ... were excluded from analyses because they scored below ... chance on the spatial-orientation test. ... 65 males (32 in the social condition and 33 ... in the spatial condition) and 70 females (34 in the social ... condition and 36 in the spatial condition).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/76d6cd1e9905c2b0826db6b6.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 466,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "The explicitly remaining, mutually exclusive sex groups constitute the Experiment 1 factorial analysis sample after the stated spatial-orientation exclusions.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/76d6cd1e9905c2b0826db6b6.txt",
+      "location": "p. 1508 (PDF p. 2), Experiment 1 Method—Participants; p. 1511 (PDF p. 5), Results—spatial-orientation ANOVA.",
+      "quote": "Four participants ... were excluded from analyses because they scored below ... chance on the spatial-orientation test. ... 65 males (32 in the social condition and 33 ... in the spatial condition) and 70 females (34 in the social ... condition and 36 in the spatial condition).",
+      "calculation": "65 + 70 = 135 participants; final cells 32 + 33 + 34 + 36 = 135. Four below-chance exclusions already removed; no df-based inference."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 1, spatial-orientation test, sex × social/spatial condition interaction in the 2 × 2 between-subjects ANOVA.",
+    "worker_notes": "Document identity verified from title, authors and DOI 10.1177/0956797616667459 in supplied canonical text. No PDF was supplied. Only assigned unfinished fields examined; other fields/sides are placeholders. Analytic N derivation: 65 + 70 = 135 final participants (equivalently, 32 + 33 + 34 + 36 = 135 across the four sex/condition cells); four below-chance exclusions already removed from these final groups. N is not derived from degrees of freedom. The printed metric is partial eta-squared, not unspecified eta-squared. Interaction p < .001 is printed with this same F, retained in evidence only because p is unassigned.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/76d6cd1e9905c2b0826db6b6.txt",
+    "shipped": "139",
+    "comparison": "near",
+    "coding_context": {
+      "description": "The effect of condition on spatial-orientation test performance varies significantly by sex",
+      "es_repr_o": "p. 5",
+      "es_repr_r": "https://rpubs.com/chuqihu8/pilot",
+      "es_type_o": "etasq",
+      "es_type_r": "test statistic",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "subjective replication success: 0"
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "5b62e833f7ca2d2d",
+    "audit_id": 466,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Tarampi, M. R., Heydari, N., & Hegarty, M. (2016). A Tale of Two Types of Perspective Taking. Psychological Science, 27(11), 1507–1516. https://doi.org/10.1177/0956797616667459",
+      "doi_o": "10.1177/0956797616667459",
+      "study_o": "1",
+      "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+      "doi_r": "10.1098/rsos.231240",
+      "url_r": "https://rpubs.com/chuqihu8/pilot",
+      "study_r": "1",
+      "description": "Relationship between condition and spatial-orientation test performance by sex.",
+      "es_type_o": "etasq",
+      "es_type_r": "test statistic",
+      "locators_o": "p. 5",
+      "locators_r": "https://rpubs.com/chuqihu8/pilot",
+      "audit_id": 466,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/76d6cd1e9905c2b0826db6b6.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": ".10",
+      "metric": "partial eta-squared (ηp2 as printed in canonical text)",
+      "test_statistic": "F(1, 131) = 14.18",
+      "location": "p. 1511 (PDF p. 5), Experiment 1 Results—spatial-orientation sex × condition interaction.",
+      "quote": "was a statistically significant interaction between sex and ... condition, F(1, 131) = 14.18, p < .001, ηp2 = .10.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/76d6cd1e9905c2b0826db6b6.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 466,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "The sex × condition interaction is identified by the by-sex condition description. Preserve the printed partial eta-squared metric.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/76d6cd1e9905c2b0826db6b6.txt",
+      "location": "p. 1511 (PDF p. 5), Experiment 1 Results—spatial-orientation sex × condition interaction.",
+      "quote": "was a statistically significant interaction between sex and ... condition, F(1, 131) = 14.18, p < .001, ηp2 = .10.",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 1, spatial-orientation test, sex × social/spatial condition interaction in the 2 × 2 between-subjects ANOVA.",
+    "worker_notes": "Document identity verified from title, authors and DOI 10.1177/0956797616667459 in supplied canonical text. No PDF was supplied. Only assigned unfinished fields examined; other fields/sides are placeholders. Analytic N derivation: 65 + 70 = 135 final participants (equivalently, 32 + 33 + 34 + 36 = 135 across the four sex/condition cells); four below-chance exclusions already removed from these final groups. N is not derived from degrees of freedom. The printed metric is partial eta-squared, not unspecified eta-squared. Interaction p < .001 is printed with this same F, retained in evidence only because p is unassigned.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/76d6cd1e9905c2b0826db6b6.txt",
+    "shipped": "0.1",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "The effect of condition on spatial-orientation test performance varies significantly by sex",
+      "es_repr_o": "p. 5",
+      "es_repr_r": "https://rpubs.com/chuqihu8/pilot",
+      "es_type_o": "etasq",
+      "es_type_r": "test statistic",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "subjective replication success: 0"
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/5b62e833f7ca2d2d. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_5b62e833f7ca2d2d_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

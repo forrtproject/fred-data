@@ -1,0 +1,180 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "39f6eb1580487b9f",
+    "audit_id": 429,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Brady, T. F., Konkle, T., Alvarez, G. A., & Oliva, A. (2013). Real-world objects are not represented as bound units: Independent forgetting of different object details from visual memory. Journal of Experimental Psychology: General, 142(3), 791–808. https://doi.org/10.1037/a0029649",
+      "doi_o": "10.1037/a0029649",
+      "study_o": "2",
+      "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+      "doi_r": "10.1098/rsos.231240",
+      "url_r": "https://osf.io/p5hvr",
+      "study_r": "1",
+      "description": "Dependence of state on exemplar compared with short-delay conditions.",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "locators_o": "p. 9",
+      "locators_r": "p. 7",
+      "audit_id": 429,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Advance article proof dated2012 with placeholder volume/page information; final citation2013. Preserve version, do not assume differences prove final published coding wrong"
+    },
+    "blind": {
+      "value": "28",
+      "sample_role": "Participants in the mutually exclusive short-delay (15) and long-delay (13) final analytic groups for the Experiment 2 between-delay comparison.",
+      "exclusions": "Two long-delay participants excluded for unsatisfactory size-judgment cover-task performance; 30 recruited, 28 in final analysis.",
+      "location": "2012 advance proof p. 7, Experiment 2 Results opening paragraph; target comparison on proof p. 8.",
+      "quote": "Two participants were excluded from the long-delay condition ... for failing to perform the size judgment cover task satisfactorily. ... Thus, 15 participants from the short-delay condition and 13 par- ... ticipants from the long-delay condition were entered into the final ... analysis.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 429,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "Experiment 2 Results explicitly identifies final analytic groups of 15 short-delay and 13 long-delay participants after excluding two long-delay participants. The outcome-specific between-delay comparison is identified by its verbal label, not input order. Both mutually exclusive final groups enter this target comparison.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt",
+      "location": "2012 advance proof p. 7, Experiment 2 Results opening paragraph; p. 8, dependence comparison paragraph (final-publication locator supplied as p. 9).",
+      "quote": "Two participants were excluded from the long-delay condition ... for failing to perform the size judgment cover task satisfactorily. ... Thus, 15 participants from the short-delay condition and 13 par- ... ticipants from the long-delay condition were entered into the final ... analysis.",
+      "calculation": "15 (short-delay final participants) + 13 (long-delay final participants) = 28 participants; two long-delay exclusions already reflected in 13."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 2: dependence of state on exemplar, long-delay versus short-delay final analytic participant groups; outcome-specific comparison explicitly labelled in Results (proof p. 8).",
+    "worker_notes": "Assigned field only: n_o. Analytic N calculated from explicitly identified final, mutually exclusive delay groups: 15 + 13 = 28. Not inferred from degrees of freedom or recruitment total. Target comparison evidence (canonical OCR; ordered fragments): state ... given exemplar, t(26) ! 1.99, p ! .057, d ! 0.75. Source is the supplied 2012 advance article proof, whereas the reference is the final 2013 publication. The supplied locator p. 9 differs from this proof: final analytic groups appear on p. 7 and the identified comparisons on p. 8. No source PDF supplied; no rendering possible. Unassigned effect-size, p, replication and success fields are placeholders.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt",
+    "shipped": "28",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "Dependence of state on exemplar is reduced compared to short-delay conditions, though not significantly",
+      "es_repr_o": "p. 9",
+      "es_repr_r": "p. 7",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": "e (=)",
+      "pval_type_r": null,
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "subjective replication success rating 0"
+    },
+    "prior_adjudication": {
+      "audit_id": 429,
+      "field": "n_o",
+      "verdict": "shipped_right",
+      "correct_value": "28",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": false,
+      "location": "Experiment 2 Results, p. 7 (analytic sample) and p. 8 (between-delay state-given-exemplar comparison) in 2012 advance proof",
+      "quote": "Thus, 15 participants from the short-delay condition and 13 par- ... ticipants from the long-delay condition were entered into the final ... analysis. ... state ... given exemplar, t(26) ! 1.99, p ! .057, d ! 0.75",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt",
+      "reason": "In Experiment 2, after excluding 2 long-delay participants, the between-subjects comparison of state-given-exemplar dependence across delay conditions includes 15 short-delay and 13 long-delay participants (15 + 13 = 28).",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "39f6eb1580487b9f",
+    "audit_id": 430,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Brady, T. F., Konkle, T., Alvarez, G. A., & Oliva, A. (2013). Real-world objects are not represented as bound units: Independent forgetting of different object details from visual memory. Journal of Experimental Psychology: General, 142(3), 791–808. https://doi.org/10.1037/a0029649",
+      "doi_o": "10.1037/a0029649",
+      "study_o": "2",
+      "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+      "doi_r": "10.1098/rsos.231240",
+      "url_r": "https://osf.io/p5hvr",
+      "study_r": "1",
+      "description": "Dependence of exemplar on state compared with short-delay conditions.",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "locators_o": "p. 9",
+      "locators_r": "p. 7",
+      "audit_id": 430,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Advance article proof dated2012 with placeholder volume/page information; final citation2013. Preserve version, do not assume differences prove final published coding wrong"
+    },
+    "blind": {
+      "value": "28",
+      "sample_role": "Participants in the mutually exclusive short-delay (15) and long-delay (13) final analytic groups for the Experiment 2 between-delay comparison.",
+      "exclusions": "Two long-delay participants excluded for unsatisfactory size-judgment cover-task performance; 30 recruited, 28 in final analysis.",
+      "location": "2012 advance proof p. 7, Experiment 2 Results opening paragraph; target comparison on proof p. 8.",
+      "quote": "Two participants were excluded from the long-delay condition ... for failing to perform the size judgment cover task satisfactorily. ... Thus, 15 participants from the short-delay condition and 13 par- ... ticipants from the long-delay condition were entered into the final ... analysis.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 430,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "Experiment 2 Results explicitly identifies final analytic groups of 15 short-delay and 13 long-delay participants after excluding two long-delay participants. The outcome-specific between-delay comparison is identified by its verbal label, not input order. Both mutually exclusive final groups enter this target comparison.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt",
+      "location": "2012 advance proof p. 7, Experiment 2 Results opening paragraph; p. 8, dependence comparison paragraph (final-publication locator supplied as p. 9).",
+      "quote": "Two participants were excluded from the long-delay condition ... for failing to perform the size judgment cover task satisfactorily. ... Thus, 15 participants from the short-delay condition and 13 par- ... ticipants from the long-delay condition were entered into the final ... analysis.",
+      "calculation": "15 (short-delay final participants) + 13 (long-delay final participants) = 28 participants; two long-delay exclusions already reflected in 13."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 2: dependence of exemplar on state, long-delay versus short-delay final analytic participant groups; outcome-specific comparison explicitly labelled in Results (proof p. 8).",
+    "worker_notes": "Assigned field only: n_o. Analytic N calculated from explicitly identified final, mutually exclusive delay groups: 15 + 13 = 28. Not inferred from degrees of freedom or recruitment total. Target comparison evidence (canonical OCR; ordered fragments): exemplar given ... state, t(26) ! 2.06, p ! .05, d ! 0.78. Source is the supplied 2012 advance article proof, whereas the reference is the final 2013 publication. The supplied locator p. 9 differs from this proof: final analytic groups appear on p. 7 and the identified comparisons on p. 8. No source PDF supplied; no rendering possible. Unassigned effect-size, p, replication and success fields are placeholders.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt",
+    "shipped": "28",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "Dependence of exemplar on state is significantly reduced compared to short-delay conditions",
+      "es_repr_o": "p. 9",
+      "es_repr_r": "p. 7",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": "e (=)",
+      "pval_type_r": null,
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "subjective replication success rating 0"
+    },
+    "prior_adjudication": {
+      "audit_id": 430,
+      "field": "n_o",
+      "verdict": "shipped_right",
+      "correct_value": "28",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": false,
+      "location": "Experiment 2 Results, p. 7 (analytic sample) and p. 8 (between-delay exemplar-given-state comparison) in 2012 advance proof",
+      "quote": "Thus, 15 participants from the short-delay condition and 13 par- ... ticipants from the long-delay condition were entered into the final ... analysis. ... exemplar given ... state, t(26) ! 2.06, p ! .05, d ! 0.78.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_551627d86ec869e8b027f90d.txt",
+      "reason": "In Experiment 2, the between-subjects comparison of exemplar-given-state dependence across short-delay (n = 15) and long-delay (n = 13 after 2 exclusions) groups has a total analytic sample of 15 + 13 = 28 participants.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/39f6eb1580487b9f. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_39f6eb1580487b9f_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

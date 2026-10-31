@@ -1,0 +1,220 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1537,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p.187 Discussion",
+      "quote": "The results indicated that those in the wooden sphere and tile groups,\nas well as across all three groups collectively, judged the items as “good”\nin accordance to the predictions of V. A. Lefebvre’s mathematical model",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_29cbe0ff7f624a59c2cba9be.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Anderson, J. A., & Grice, J. W. (2009). Replicating a Simple Study of Asymmetry in Human Cognition. Perceptual and Motor Skills, 109(2), 577–580. https://doi.org/10.2466/pms.109.2.577-580",
+      "doi_o": "10.2466/pms.109.2.577-580",
+      "study_o": null,
+      "ref_r": "Anderson, J. A., Ramirez, D., & Stephenson, D. (2012). Asymmetry in Human Cognition: Further Replication and Extension. Perceptual and Motor Skills, 114(1), 185–188. https://doi.org/10.2466/20.22.pms.114.1.185-188",
+      "doi_r": "10.2466/20.22.pms.114.1.185-188",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "etasq",
+      "es_type_r": "etasq",
+      "audit_id": 1537,
+      "description": "Classification of stimuli as good or bad in the replication using tiles.",
+      "locators_o": "p. 578; p. 2",
+      "locators_r": "p. 187; p. 3",
+      "text_paths": {}
+    },
+    "work_key": "10.2466/20.22.pms.114.1.185-188",
+    "coding_context": {
+      "es_repr": "p. 187/ p. 3",
+      "description": "individuals should identify the stimuli as “good” for 61.8% of the choices and “bad” for 38.2% of the choices (replication of original study with tiles)",
+      "reported_success_quote": "However, it should be noted that while the model does appear to be supported in the aggregate, a view of the individual data reveals less than clear support. [...]. When viewed together, these results suggest that the internal mechanism governing evaluations as posited by the model is either not robust or dependent upon other psychogenic factors.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "34",
+        "es_value_r": "0.06",
+        "es_type_r": "etasq",
+        "pval_value_r": "0.14",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Full primary source unavailable within bounded acquisition. DOI landing page returned HTTP 403 challenge (not retried); Unpaywall best_oa_location was null; OpenAlex best_oa_location was null and locations supplied no full text; Europe PMC identified the matching title but reported no PMC text or PDF. Targeted open-web searches including OSF and PsyArXiv found no full source. ResearchGate exposed only a first-page publisher preview, not the requested results page; preview and abstract values were not used. Supplied target: Classification of stimuli as good or bad in the replication using tiles. Original locator: p. 578; p. 2 Replication locator: p. 187; p. 3. No narrative verdict inferred from abstracts or third-party citations.\nSource follow-up: Rendered PDF p.187 checked. Narrative additionally cautions that individual data give less clear support; success records the authors’ target-group verdict. Pooled n=85 is explicitly printed in the sample-size test and agrees with listed group sizes.\nSource follow-up: Original source only. The separate model-predicted-value test is t25 = 0.12, p = .907; η2 = .001; it is not the chance comparison extracted here. Target numerics verified on rendered primary PDF p. 2.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/29cbe0ff7f624a59c2cba9be_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=0.88, author surnames found=Anderson,Ramirez,Stephenson. PDF has5pages; published range=185-188; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4]; results-related material pages[1, 3, 4]; references atPDFpages[4]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1538,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p.187 Discussion",
+      "quote": "The results indicated that those in the wooden sphere and tile groups,\nas well as across all three groups collectively, judged the items as “good”\nin accordance to the predictions of V. A. Lefebvre’s mathematical model",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_29cbe0ff7f624a59c2cba9be.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Anderson, J. A., & Grice, J. W. (2009). Replicating a Simple Study of Asymmetry in Human Cognition. Perceptual and Motor Skills, 109(2), 577–580. https://doi.org/10.2466/pms.109.2.577-580",
+      "doi_o": "10.2466/pms.109.2.577-580",
+      "study_o": null,
+      "ref_r": "Anderson, J. A., Ramirez, D., & Stephenson, D. (2012). Asymmetry in Human Cognition: Further Replication and Extension. Perceptual and Motor Skills, 114(1), 185–188. https://doi.org/10.2466/20.22.pms.114.1.185-188",
+      "doi_r": "10.2466/20.22.pms.114.1.185-188",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "etasq",
+      "es_type_r": "etasq",
+      "audit_id": 1538,
+      "description": "Classification of stimuli as good or bad in the replication using spheres.",
+      "locators_o": "p. 578; p. 2",
+      "locators_r": "p. 187; p. 3",
+      "text_paths": {}
+    },
+    "work_key": "10.2466/20.22.pms.114.1.185-188",
+    "coding_context": {
+      "es_repr": "p. 187/ p. 3",
+      "description": "individuals should identify the stimuli as “good” for 61.8% of the choices and “bad” for 38.2% of the choices (replication of original study with spheres)",
+      "reported_success_quote": "However, it should be noted that while the model does appear to be supported in the aggregate, a view of the individual data reveals less than clear support. [...]. When viewed together, these results suggest that the internal mechanism governing evaluations as posited by the model is either not robust or dependent upon other psychogenic factors.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "26",
+        "es_value_r": "0.05",
+        "es_type_r": "etasq",
+        "pval_value_r": "0.26",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Full primary source unavailable within bounded acquisition. DOI landing page returned HTTP 403 challenge (not retried); Unpaywall best_oa_location was null; OpenAlex best_oa_location was null and locations supplied no full text; Europe PMC identified the matching title but reported no PMC text or PDF. Targeted open-web searches including OSF and PsyArXiv found no full source. ResearchGate exposed only a first-page publisher preview, not the requested results page; preview and abstract values were not used. Supplied target: Classification of stimuli as good or bad in the replication using spheres. Original locator: p. 578; p. 2 Replication locator: p. 187; p. 3. No narrative verdict inferred from abstracts or third-party citations.\nSource follow-up: Rendered PDF p.187 checked. Narrative additionally cautions that individual data give less clear support; success records the authors’ target-group verdict. Pooled n=85 is explicitly printed in the sample-size test and agrees with listed group sizes.\nSource follow-up: Original source only. The separate model-predicted-value test is t25 = 0.12, p = .907; η2 = .001; it is not the chance comparison extracted here. Target numerics verified on rendered primary PDF p. 2.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/29cbe0ff7f624a59c2cba9be_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=0.88, author surnames found=Anderson,Ramirez,Stephenson. PDF has5pages; published range=185-188; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4]; results-related material pages[1, 3, 4]; references atPDFpages[4]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1539,
+    "field": "reported_success",
+    "comparison": "soft",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "failed",
+      "location": "pp.187–188 Discussion",
+      "quote": "Furthermore, those in the bean group did\nnot show the asymmetry as predicted, in contrast to previous findings",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_29cbe0ff7f624a59c2cba9be.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Anderson, J. A., & Grice, J. W. (2009). Replicating a Simple Study of Asymmetry in Human Cognition. Perceptual and Motor Skills, 109(2), 577–580. https://doi.org/10.2466/pms.109.2.577-580",
+      "doi_o": "10.2466/pms.109.2.577-580",
+      "study_o": null,
+      "ref_r": "Anderson, J. A., Ramirez, D., & Stephenson, D. (2012). Asymmetry in Human Cognition: Further Replication and Extension. Perceptual and Motor Skills, 114(1), 185–188. https://doi.org/10.2466/20.22.pms.114.1.185-188",
+      "doi_r": "10.2466/20.22.pms.114.1.185-188",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "etasq",
+      "es_type_r": "etasq",
+      "audit_id": 1539,
+      "description": "Classification of stimuli as good or bad in the replication using beans.",
+      "locators_o": "p. 578; p. 2",
+      "locators_r": "p. 187; p. 3",
+      "text_paths": {}
+    },
+    "work_key": "10.2466/20.22.pms.114.1.185-188",
+    "coding_context": {
+      "es_repr": "p. 187/ p. 3",
+      "description": "individuals should identify the stimuli as “good” for 61.8% of the choices and “bad” for 38.2% of the choices (replication of original study with beans)",
+      "reported_success_quote": "However, it should be noted that while the model does appear to be supported in the aggregate, a view of the individual data reveals less than clear support. [...]. When viewed together, these results suggest that the internal mechanism governing evaluations as posited by the model is either not robust or dependent upon other psychogenic factors.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "25",
+        "es_value_r": "0.15",
+        "es_type_r": "etasq",
+        "pval_value_r": "0.05",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Full primary source unavailable within bounded acquisition. DOI landing page returned HTTP 403 challenge (not retried); Unpaywall best_oa_location was null; OpenAlex best_oa_location was null and locations supplied no full text; Europe PMC identified the matching title but reported no PMC text or PDF. Targeted open-web searches including OSF and PsyArXiv found no full source. ResearchGate exposed only a first-page publisher preview, not the requested results page; preview and abstract values were not used. Supplied target: Classification of stimuli as good or bad in the replication using beans. Original locator: p. 578; p. 2 Replication locator: p. 187; p. 3. No narrative verdict inferred from abstracts or third-party citations.\nSource follow-up: Rendered PDF p.187 checked. Narrative additionally cautions that individual data give less clear support; success records the authors’ target-group verdict. Pooled n=85 is explicitly printed in the sample-size test and agrees with listed group sizes.\nSource follow-up: Original source only. The separate model-predicted-value test is t25 = 0.12, p = .907; η2 = .001; it is not the chance comparison extracted here. Target numerics verified on rendered primary PDF p. 2.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/29cbe0ff7f624a59c2cba9be_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=0.88, author surnames found=Anderson,Ramirez,Stephenson. PDF has5pages; published range=185-188; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4]; results-related material pages[1, 3, 4]; references atPDFpages[4]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 1540,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p.187 Discussion",
+      "quote": "The results indicated that those in the wooden sphere and tile groups,\nas well as across all three groups collectively, judged the items as “good”\nin accordance to the predictions of V. A. Lefebvre’s mathematical model",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_29cbe0ff7f624a59c2cba9be.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Anderson, J. A., & Grice, J. W. (2009). Replicating a Simple Study of Asymmetry in Human Cognition. Perceptual and Motor Skills, 109(2), 577–580. https://doi.org/10.2466/pms.109.2.577-580",
+      "doi_o": "10.2466/pms.109.2.577-580",
+      "study_o": null,
+      "ref_r": "Anderson, J. A., Ramirez, D., & Stephenson, D. (2012). Asymmetry in Human Cognition: Further Replication and Extension. Perceptual and Motor Skills, 114(1), 185–188. https://doi.org/10.2466/20.22.pms.114.1.185-188",
+      "doi_r": "10.2466/20.22.pms.114.1.185-188",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "etasq",
+      "es_type_r": "etasq",
+      "audit_id": 1540,
+      "description": "Classification of stimuli as good or bad in the pooled replication.",
+      "locators_o": "p. 578; p. 2",
+      "locators_r": "p. 187; p. 3",
+      "text_paths": {}
+    },
+    "work_key": "10.2466/20.22.pms.114.1.185-188",
+    "coding_context": {
+      "es_repr": "p. 187/ p. 3",
+      "description": "Individuals should identify the stimuli as “good” for 61.8% of the choices and “bad” for 38.2% of the choices (replication of original study, pooled)",
+      "reported_success_quote": "However, it should be noted that while the model does appear to be supported in the aggregate, a view of the individual data reveals less than clear support. [...]. When viewed together, these results suggest that the internal mechanism governing evaluations as posited by the model is either not robust or dependent upon other psychogenic factors.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "85",
+        "es_value_r": "0.01",
+        "es_type_r": "etasq",
+        "pval_value_r": "0.43",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Full primary source unavailable within bounded acquisition. DOI landing page returned HTTP 403 challenge (not retried); Unpaywall best_oa_location was null; OpenAlex best_oa_location was null and locations supplied no full text; Europe PMC identified the matching title but reported no PMC text or PDF. Targeted open-web searches including OSF and PsyArXiv found no full source. ResearchGate exposed only a first-page publisher preview, not the requested results page; preview and abstract values were not used. Supplied target: Classification of stimuli as good or bad in the pooled replication. Original locator: p. 578; p. 2 Replication locator: p. 187; p. 3. No narrative verdict inferred from abstracts or third-party citations.\nSource follow-up: Rendered PDF p.187 checked. Narrative additionally cautions that individual data give less clear support; success records the authors’ target-group verdict. Pooled n=85 is explicitly printed in the sample-size test and agrees with listed group sizes.\nSource follow-up: Original source only. The separate model-predicted-value test is t25 = 0.12, p = .907; η2 = .001; it is not the chance comparison extracted here. Target numerics verified on rendered primary PDF p. 2.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/29cbe0ff7f624a59c2cba9be_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=0.88, author surnames found=Anderson,Ramirez,Stephenson. PDF has5pages; published range=185-188; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4]; results-related material pages[1, 3, 4]; references atPDFpages[4]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. Inspect the primary PDF for flagged glyph/sign discrepancies: PDF text extraction can drop minus signs. Do not reverse signs from the parsed text alone when the worker flagged visual disagreement. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

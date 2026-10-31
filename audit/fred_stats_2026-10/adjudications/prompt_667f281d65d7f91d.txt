@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1876,
+    "field": "reported_success",
+    "comparison": "soft",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "failed",
+      "location": "Entire Sample, introductory paragraph; verdict on pre-registered sample",
+      "quote": "Our pre-registered sample did not replicate the original finding.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8fbd70c41ba0b436aed95588.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Hamlin, J. K., & Wynn, K. (2011). Young infants prefer prosocial to antisocial others. Cognitive Development, 26(1), 30–39. https://doi.org/10.1016/j.cogdev.2010.09.001",
+      "doi_o": "10.1016/j.cogdev.2010.09.001",
+      "study_o": null,
+      "ref_r": "Sitch, M. J. (2018). Do infants prefer prosocial others? A direct replication of Hamlin &amp; Wynn (2011). <i>University of British Columbia</i>. https://doi.org/10.14288/1.0372317",
+      "doi_r": "10.14288/1.0372317",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1876,
+      "description": "Infants’ preferences between individuals acting prosocially versus antisocially toward unrelated third parties.",
+      "locators_o": "p.5",
+      "locators_r": "p. 26",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b1831295735fed57719229be.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8fbd70c41ba0b436aed95588.txt"
+      }
+    },
+    "work_key": "10.14288/1.0372317",
+    "coding_context": {
+      "es_repr": "p. 26, =((2*18) - 32)^2 / 32",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

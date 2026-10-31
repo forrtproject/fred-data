@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 57,
+    "field": "pval_value_r",
+    "comparison": "differ",
+    "shipped": "0.397",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.438",
+      "bound": "e",
+      "location": "p. 41, Results; p. 45, Appendix D, Figure 1 caption",
+      "quote": "significantly different t(69) = –0.34, p = 0.438.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2717360fa0b63bb99fd33870.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Stellar, J. E., Gordon, A., Anderson, C. L., Piff, P. K., McNeil, G. D., & Keltner, D. (2018). Awe and humility. Journal of Personality and Social Psychology, 114(2), 258–269. https://doi.org/10.1037/pspi0000109",
+      "doi_o": "10.1037/pspi0000109",
+      "study_o": "3",
+      "ref_r": "Bertrand, A., Kimmel, J., Duhamel, S., Puel, H., Schifano, A., & Wood, É. (2024). Replication Study to Evaluate the Effects of Awe on Humility. McGill Science Undergraduate Research Journal, 19(1), 39–45. https://doi.org/10.26443/msurj.v19i1.231",
+      "doi_r": "10.26443/msurj.v19i1.231",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 57,
+      "description": "Relationship between awe and humility.",
+      "locators_o": "p. 263",
+      "locators_r": "p. 41; Appendix D; https://www.socscistatistics.com/effectsize/default3.aspx.",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0178eb90058c8e44098efb5b.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2717360fa0b63bb99fd33870.txt"
+      }
+    },
+    "work_key": "10.26443/msurj.v19i1.231",
+    "coding_context": {
+      "es_repr": "p. 41: \"The analyses showed that participants in the awe and the neutral conditiondid not significantly differ in their balance between strengths and weak-nesses disclosed (i.e., their humility score,t(69) = –0.34,p= 0.438); see Ap-pendix D for more information. This contradicts the original study, wherea significant difference was found,t(84) = 2.38,p= 0.02\", Appendix D: \"Humility scores in the awe condition (M= 0.16,SD= 0.16) when compared to the neutral condition (M= 0.17,SD= 0.16) were notsignificantly differentt(69) = –0.34,p= 0.438\" https://www.socscistatistics.com/effectsize/default3.aspx. I assumed both groups were of equal size, i.e. had 70/2 = 35 participants.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

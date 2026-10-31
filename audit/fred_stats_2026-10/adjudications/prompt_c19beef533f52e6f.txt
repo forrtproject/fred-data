@@ -1,0 +1,119 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1399,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "1203",
+    "shipped_metric": "hedges' g",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "387",
+      "location": "p. 5, Table 3, Panel C, Safety row",
+      "quote": "Safety 387 0.5% 2.6% 1.8% 16.3% 25.3% 38.5% 17.3%",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "confident": true,
+      "sample_role": "Participants with safety responses in the Likert-scale condition, analytic sample for the one-sample t-test.",
+      "exclusions": "Participants (n = 84) without a driver’s license were filtered out (p. 3). No additional exclusions for this condition are documented; 1,203 is the overall sample across response scales, not this analytic n."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Svenson, O. (1981). Are we all less risky and more skillful than our fellow drivers? Acta Psychologica, 47(2), 143–148. https://doi.org/10.1016/0001-6918(81)90005-6",
+      "doi_o": "10.1016/0001-6918(81)90005-6",
+      "study_o": "1",
+      "ref_r": "Koppel, L., Andersson, D., Tinghög, G., Västfjäll, D., & Feldman, G. (2023). We are all less risky and more skillful than our fellow drivers: Successful replication and extension of Svenson (1981)‎. Meta-Psychology, 7. https://doi.org/10.15626/mp.2021.2932",
+      "doi_r": "10.15626/mp.2021.2932",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "audit_id": 1399,
+      "description": "Comparison of perceived driving safety for oneself versus average drivers.",
+      "locators_o": "p.3",
+      "locators_r": "p.4; Table 5",
+      "text_paths": {}
+    },
+    "work_key": "10.15626/mp.2021.2932",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1399,
+      "field": "n_r",
+      "verdict": "both_wrong",
+      "correct_value": "379",
+      "location": "p. 5, Table 3, Panel C",
+      "quote": "Skill    379 0.0% 1.3%",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "reason": "Per coding_context.es_repr, this row codes the Likert-scale driving skill test (t(378) = 23.13, g = 1.19), for which the analytic sample size is 379; shipped reported the total study N (1,203) and blind extracted the safety analytic n (387) due to the duplicate locator description.",
+      "resolution": "argon"
+    },
+    "parent_response": "The raw description names driving SAFETY and repeats1398. The unblinded es_repr lists numbers matching driving SKILL but does not name skill; choosing skill because those numeric results match coded values is circular target identification. This is a metadata conflict like a named outcome versus another test record. The page/Table5 reference may cover both outcomes; establish a nonnumeric, row-specific source/locator basis for skill rather than numeric coincidence. Source original es_repr uses percentile medians but no explicit outcome label. Reconcile safety description vs skill test. If neither target uniquely identified, mark undeterminable and retain both candidate outcomes; do not certify shipped ES or propose a uniquely corrected n from matching numeric strings. P<.001 appears for both, but distinguish shared value from independently established target identity.",
+    "coding_context": {
+      "es_repr": "p.4 M = 5.28 (SD = 1.08), t(378) = 23.13, p < .001, g = 1.19, 95% CI [1.06, 1.32] (see Table 5).",
+      "description": "people think that they drive more safely than average drivers",
+      "reported_success_quote": "Thus, our findings are consistent with the original findings by Svenson\n(1981).",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1399,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "1.19",
+    "shipped_metric": "hedges' g",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "1.39",
+      "location": "p. 6, Table 5, Safety row; also p. 4, Results",
+      "quote": "Safety 27.38 386 <.001 1.50 [1.40, 1.61] 1.39 [1.25, 1.53]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "confident": true,
+      "metric": "Hedges’s g",
+      "test_statistic": "t(386) = 27.38 (Table 5); p. 4 text instead prints t(386) = 27.28."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Svenson, O. (1981). Are we all less risky and more skillful than our fellow drivers? Acta Psychologica, 47(2), 143–148. https://doi.org/10.1016/0001-6918(81)90005-6",
+      "doi_o": "10.1016/0001-6918(81)90005-6",
+      "study_o": "1",
+      "ref_r": "Koppel, L., Andersson, D., Tinghög, G., Västfjäll, D., & Feldman, G. (2023). We are all less risky and more skillful than our fellow drivers: Successful replication and extension of Svenson (1981)‎. Meta-Psychology, 7. https://doi.org/10.15626/mp.2021.2932",
+      "doi_r": "10.15626/mp.2021.2932",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "audit_id": 1399,
+      "description": "Comparison of perceived driving safety for oneself versus average drivers.",
+      "locators_o": "p.3",
+      "locators_r": "p.4; Table 5",
+      "text_paths": {}
+    },
+    "work_key": "10.15626/mp.2021.2932",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1399,
+      "field": "es_value_r",
+      "verdict": "shipped_right",
+      "correct_value": "1.19",
+      "location": "p. 4, Results; p. 6, Table 5",
+      "quote": "t(378) = 23.13, p < .001, g = 1.19, 95% CI",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "reason": "As documented in coding_context.es_repr, this row represents the Likert-scale driving skill comparison (g = 1.19), whereas the blind extraction pulled the driving safety effect size (g = 1.39) because the locator description repeated safety.",
+      "resolution": "argon"
+    },
+    "parent_response": "The raw description names driving SAFETY and repeats1398. The unblinded es_repr lists numbers matching driving SKILL but does not name skill; choosing skill because those numeric results match coded values is circular target identification. This is a metadata conflict like a named outcome versus another test record. The page/Table5 reference may cover both outcomes; establish a nonnumeric, row-specific source/locator basis for skill rather than numeric coincidence. Source original es_repr uses percentile medians but no explicit outcome label. Reconcile safety description vs skill test. If neither target uniquely identified, mark undeterminable and retain both candidate outcomes; do not certify shipped ES or propose a uniquely corrected n from matching numeric strings. P<.001 appears for both, but distinguish shared value from independently established target identity.",
+    "coding_context": {
+      "es_repr": "p.4 M = 5.28 (SD = 1.08), t(378) = 23.13, p < .001, g = 1.19, 95% CI [1.06, 1.32] (see Table 5).",
+      "description": "people think that they drive more safely than average drivers",
+      "reported_success_quote": "Thus, our findings are consistent with the original findings by Svenson\n(1981).",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

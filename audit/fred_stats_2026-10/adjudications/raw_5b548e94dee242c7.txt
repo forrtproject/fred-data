@@ -1,0 +1,48 @@
+I have reviewed the replication report text ([55989d1656c6f0dec5f9ad19.txt](file:///home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/55989d1656c6f0dec5f9ad19.txt)) and the meta-analysis text ([2736b815e9f115a425e9220a.txt](file:///home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2736b815e9f115a425e9220a.txt)):
+
+- **Audit ID 534 (`pval_value_r`)**: In the exploratory regression `glm(formula = hire_rec ~ manipulation + candidate_name + participant_sex + participant_parent, data = d)`, the applicant motherhood manipulation coefficient (`manipulationparent`, where `b = -0.07025`) has $p = 0.10256$. The shipped value (`0.41435`) erroneously took the $p$-value from the `participant_parent` row (`b = -0.03677`, $p = 0.41435$). Thus, `blind_right` (`0.10256`).
+- **Audit ID 535 (`es_value_r`, `pval_value_r`, `reported_success`)**: Both shipped and blind extracted the same predictor (`participant_sexMale`, $b = -0.13560$, $p = 0.00205$) from the exploratory `hire_rec` GLM and the same overall replication outcome (`mixed`, as the author states the replication attempt was "partially successful" and notes that the participant sex effect replicated). Because shipped and blind agree on all three values (differing only in trailing-zero formatting on `es_value_r` and metric label detail), all three are `shipped_right`.
+
+## Answer
+[
+  {
+    "audit_id": 534,
+    "field": "pval_value_r",
+    "verdict": "blind_right",
+    "correct_value": "0.10256",
+    "location": "Exploratory analyses, glm(hire_rec ~ manipulation + candidate_name + participant_sex + participant_parent) coefficients",
+    "quote": "## manipulationparent  -0.07025    0.04289  -1.638  0.10256",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/55989d1656c6f0dec5f9ad19.txt",
+    "reason": "In the multivariable hire_rec regression where b = -0.07025 for applicant motherhood status (manipulationparent), the p-value is 0.10256; shipped mistakenly recorded 0.41435, which is the p-value for participant_parent (-0.03677)."
+  },
+  {
+    "audit_id": 535,
+    "field": "es_value_r",
+    "verdict": "shipped_right",
+    "correct_value": "-0.1356",
+    "location": "Exploratory analyses, glm(hire_rec ~ manipulation + candidate_name + participant_sex + participant_parent) coefficients",
+    "quote": "## participant_sexMale -0.13560    0.04358  -3.112  0.00205 **",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/55989d1656c6f0dec5f9ad19.txt",
+    "reason": "Both shipped (-0.1356) and blind (-0.13560) extract the exact same unstandardized regression coefficient for participant sex (participant_sexMale) predicting hiring recommendation."
+  },
+  {
+    "audit_id": 535,
+    "field": "pval_value_r",
+    "verdict": "shipped_right",
+    "correct_value": "0.00205",
+    "location": "Exploratory analyses, glm(hire_rec ~ manipulation + candidate_name + participant_sex + participant_parent) coefficients",
+    "quote": "## participant_sexMale -0.13560    0.04358  -3.112  0.00205 **",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/55989d1656c6f0dec5f9ad19.txt",
+    "reason": "Both shipped and blind report the exact same p-value (0.00205) for the participant_sexMale coefficient in the hire_rec regression model."
+  },
+  {
+    "audit_id": 535,
+    "field": "reported_success",
+    "verdict": "shipped_right",
+    "correct_value": "mixed",
+    "location": "Discussion, Summary of Replication Attempt",
+    "quote": "This replication attempt was partially successful.",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/55989d1656c6f0dec5f9ad19.txt",
+    "reason": "Both shipped and blind agree on 'mixed', matching the replication author's explicit summary that the replication attempt was partially successful."
+  }
+]
