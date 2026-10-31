@@ -2,7 +2,7 @@
 
 # FLoRA blind audit — provisional
 
-485 input rows have at least one confirmed field error; 2413 / 2818 rows are fully resolved. 718 blind targets have no proposed shipped counterpart; these are not errors by default.
+488 input rows have at least one confirmed field error; 2417 / 2818 rows are fully resolved. 717 blind targets have no proposed shipped counterpart; these are not errors by default.
 
 This report is provisional until the parent finalizes the audit. Blind disagreement alone establishes no error. Agreements require supported identity and quotes found in saved text; confirmed errors require an obvious or Argon decision with a reason, location and verified quote. The legacy automatic matcher tolerates normalized spacing and removed line-end hyphenation. Parent approval in the active evidence follow-up requires a contiguous literal quotation; a normalized match alone does not authorise integration. Neither check repairs words or mathematical signs.
 
@@ -10,7 +10,7 @@ The complete evidence follow-up remains active. Earlier phase completion and cut
 
 ## Coverage
 
-Works: 2344 total; 2344 attempted; 2290 with verified saved text (1730 full text, 560 abstract); 2290 with validated usable coding. Rows fully resolved: 2413 / 2818.
+Works: 2344 total; 2344 attempted; 2290 with verified saved text (1730 full text, 560 abstract); 2290 with validated usable coding. Rows fully resolved: 2417 / 2818.
 
 Coverage is prioritized and depends on text access. This is not a representative sample. Rates use correct + confirmed-error rows as field-specific evaluable denominators. Bounds put every unverified row first outside, then inside the error count over all applicable input rows; they are sensitivity bounds, not binomial confidence intervals. Confidence is descriptive only. Study status is reported separately and does not change type agreement. Replication outcome rates use rows shipped as replications; axis-specific rates use rows shipped as reproductions. Dependent outcome replacements after a type correction remain in results.csv and the error list.
 
@@ -20,9 +20,9 @@ After the original bounded run, a user-authorised supplemental review covered 10
 
 ## Confirmed field error rates
 
-- type: 38 / 2624 (1.4%); 194 unverified; all-row unresolved bounds 1.3%–8.2% (N=2818)
-- original: 77 / 2586 (3.0%); 232 unverified; all-row unresolved bounds 2.7%–11.0% (N=2818)
-- outcome: 369 / 2244 (16.4%); 369 unverified; all-row unresolved bounds 14.1%–28.2% (N=2613)
+- type: 38 / 2625 (1.4%); 193 unverified; all-row unresolved bounds 1.3%–8.2% (N=2818)
+- original: 79 / 2587 (3.1%); 231 unverified; all-row unresolved bounds 2.8%–11.0% (N=2818)
+- outcome: 372 / 2248 (16.5%); 365 unverified; all-row unresolved bounds 14.2%–28.2% (N=2613)
 - outcome_computation: 30 / 192 (15.6%); 13 unverified; all-row unresolved bounds 14.6%–21.0% (N=205)
 - outcome_robustness: 9 / 197 (4.6%); 8 unverified; all-row unresolved bounds 4.4%–8.3% (N=205)
 
@@ -47,21 +47,21 @@ After the original bounded run, a user-authorised supplemental review covered 10
   - outcome_computation: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
   - outcome_robustness: 0 / 1 (0.0%); 0 unverified; all-row unresolved bounds 0.0%–0.0% (N=1)
 - openalex:
-  - type: 4 / 256 (1.6%); 10 unverified; all-row unresolved bounds 1.5%–5.3% (N=266)
-  - original: 11 / 255 (4.3%); 11 unverified; all-row unresolved bounds 4.1%–8.3% (N=266)
-  - outcome: 25 / 230 (10.9%); 29 unverified; all-row unresolved bounds 9.7%–20.8% (N=259)
+  - type: 4 / 257 (1.6%); 9 unverified; all-row unresolved bounds 1.5%–4.9% (N=266)
+  - original: 12 / 256 (4.7%); 10 unverified; all-row unresolved bounds 4.5%–8.3% (N=266)
+  - outcome: 26 / 231 (11.3%); 28 unverified; all-row unresolved bounds 10.0%–20.8% (N=259)
   - outcome_computation: 2 / 5 (40.0%); 2 unverified; all-row unresolved bounds 28.6%–57.1% (N=7)
   - outcome_robustness: 2 / 7 (28.6%); 0 unverified; all-row unresolved bounds 28.6%–28.6% (N=7)
 - openalex_snapshot:
   - type: 2 / 86 (2.3%); 7 unverified; all-row unresolved bounds 2.2%–9.7% (N=93)
   - original: 2 / 85 (2.4%); 8 unverified; all-row unresolved bounds 2.2%–10.8% (N=93)
-  - outcome: 10 / 80 (12.5%); 13 unverified; all-row unresolved bounds 10.8%–24.7% (N=93)
+  - outcome: 11 / 81 (13.6%); 12 unverified; all-row unresolved bounds 11.8%–24.7% (N=93)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - replications:
   - type: 30 / 1334 (2.2%); 119 unverified; all-row unresolved bounds 2.1%–10.3% (N=1453)
-  - original: 56 / 1309 (4.3%); 144 unverified; all-row unresolved bounds 3.9%–13.8% (N=1453)
-  - outcome: 240 / 1229 (19.5%); 224 unverified; all-row unresolved bounds 16.5%–31.9% (N=1453)
+  - original: 57 / 1309 (4.4%); 144 unverified; all-row unresolved bounds 3.9%–13.8% (N=1453)
+  - outcome: 241 / 1231 (19.6%); 222 unverified; all-row unresolved bounds 16.6%–31.9% (N=1453)
   - outcome_computation: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
   - outcome_robustness: 0 / 0 (not estimable); 0 unverified; all-row unresolved bounds not estimable (N=0)
 - reproductions:
@@ -76,13 +76,13 @@ After the original bounded run, a user-authorised supplemental review covered 10
 - abstract:
   - type: 7 / 438 (1.6%); 136 unverified; all-row unresolved bounds 1.2%–24.9% (N=574)
   - original: 2 / 444 (0.5%); 130 unverified; all-row unresolved bounds 0.3%–23.0% (N=574)
-  - outcome: 53 / 353 (15.0%); 214 unverified; all-row unresolved bounds 9.3%–47.1% (N=567)
+  - outcome: 54 / 354 (15.3%); 213 unverified; all-row unresolved bounds 9.5%–47.1% (N=567)
   - outcome_computation: 0 / 0 (not estimable); 7 unverified; all-row unresolved bounds 0.0%–100.0% (N=7)
   - outcome_robustness: 0 / 3 (0.0%); 4 unverified; all-row unresolved bounds 0.0%–57.1% (N=7)
 - full_text:
-  - type: 31 / 2186 (1.4%); 6 unverified; all-row unresolved bounds 1.4%–1.7% (N=2192)
-  - original: 75 / 2142 (3.5%); 50 unverified; all-row unresolved bounds 3.4%–5.7% (N=2192)
-  - outcome: 316 / 1891 (16.7%); 105 unverified; all-row unresolved bounds 15.8%–21.1% (N=1996)
+  - type: 31 / 2187 (1.4%); 5 unverified; all-row unresolved bounds 1.4%–1.6% (N=2192)
+  - original: 77 / 2143 (3.6%); 49 unverified; all-row unresolved bounds 3.5%–5.7% (N=2192)
+  - outcome: 318 / 1894 (16.8%); 102 unverified; all-row unresolved bounds 15.9%–21.0% (N=1996)
   - outcome_computation: 30 / 192 (15.6%); 4 unverified; all-row unresolved bounds 15.3%–17.3% (N=196)
   - outcome_robustness: 9 / 194 (4.6%); 2 unverified; all-row unresolved bounds 4.6%–5.6% (N=196)
 - none:
@@ -333,7 +333,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 979, [replicating work](https://doi.org/10.1098/rsos.221091): outcome: mixed → successful.
 - Row 986, [replicating work](https://doi.org/10.1136/bmjopen-2024-093080): outcome: mixed → successful.
 - Row 993, [replicating work](https://doi.org/10.1121/10.0042222): outcome: mixed → successful.
-- Row 996, [replicating work](https://doi.org/10.48550/arxiv.2303.08577): type: replication → reproduction.
+- Row 996, [replicating work](https://doi.org/10.48550/arxiv.2303.08577): type: replication → reproduction; original: 10.1016/b978-0-12-823519-5.00003-8 → Generative Adversarial Transformers.
 - Row 1002, [replicating work](https://doi.org/10.1002/pu.30211): type: replication → not_a_replication.
 - Row 1005, [replicating work](https://doi.org/10.29338/wp2019-15): type: replication → reproduction; outcome: failed → outcome_computation: computationally reproducible; outcome_robustness: robustness challenges.
 - Row 1016, [replicating work](https://doi.org/10.1002/smj.2573): outcome: failed → mixed.
@@ -353,6 +353,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 1164, [replicating work](https://doi.org/10.1371/journal.pone.0208794): outcome: failed → statistically successful but flawed.
 - Row 1165, [replicating work](https://doi.org/10.31234/osf.io/zeux9): original: 10.2139/ssrn.3649814 → 10.3758/s13423-014-0683-5.
 - Row 1184, [replicating work](https://doi.org/10.1080/01434632.2020.1730861): outcome: failed → mixed.
+- Row 1191, [replicating work](https://doi.org/10.3390/rs14030597): outcome: failed → statistically successful but flawed.
 - Row 1196, [replicating work](https://doi.org/10.1016/j.cortex.2022.12.003): outcome: failed → statistically successful but flawed.
 - Row 1205, [replicating work](https://doi.org/10.15763/issn.1936-9298.2024.1.1.36-60): outcome: failed → successful.
 - Row 1206, [replicating work](https://doi.org/10.1017/pan.2024.7): type: replication → reproduction; outcome: failed → outcome_computation: computational issues; outcome_robustness: robustness challenges.
@@ -498,6 +499,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 2233, [replicating work](https://doi.org/10.1086/695137): outcome: successful → mixed.
 - Row 2238, [replicating work](https://doi.org/10.1002/jae.2922): type: replication → reproduction; outcome: failed → outcome_computation: computationally reproducible; outcome_robustness: robustness challenges.
 - Row 2254, [replicating work](https://doi.org/10.1086/260573): original: 10.1086/260572 → Household Allocation of Time and Church Attendance.
+- Row 2262, [replicating work](https://doi.org/10.1167/12.11.12): original: 10.1073/pnas.192579399 → 10.1167/8.7.2; outcome: mixed → successful.
 - Row 2267, [replicating work](https://doi.org/10.4995/muse.2019.10390): outcome: descriptive only → mixed.
 - Row 2269, [replicating work](https://doi.org/10.1002/jae.2861): outcome robustness: robust.
 - Row 2274, [replicating work](https://doi.org/10.1098/rsos.250669): outcome: mixed → successful.
@@ -523,6 +525,7 @@ Complete quotes, locations, reasons and corrected values are retained in [result
 - Row 2398, [replicating work](https://doi.org/10.3200/jexe.74.3.267-288): outcome: mixed → failed.
 - Row 2403, [replicating work](https://doi.org/10.1037/xhp0000556): outcome: failed → mixed.
 - Row 2409, [replicating work](https://doi.org/10.1002/smj.2568): outcome: mixed → successful.
+- Row 2410, [replicating work](https://doi.org/10.1095/biolreprod.112.106377): outcome: mixed → failed.
 - Row 2412, [replicating work](https://doi.org/10.1038/s41598-017-07404-4): outcome: mixed → failed.
 - Row 2425, [replicating work](https://doi.org/10.31234/osf.io/gupxn): original: 10.17605/osf.io/hw3v6 → Interinstitutional variation in emerging adulthood: Does selectivity matter?.
 - Row 2429, [replicating work](https://doi.org/10.20381/ruor-28430): type: replication → reproduction.
@@ -745,6 +748,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: [Is level irrelevant in „irrelevant speech“? Effects of loudness, signal-to-noise ratio, and binaural unmasking.](https://doi.org/10.1037/0096-1523.24.5.1406); work [replicating work](https://doi.org/10.1027/1618-3169/a000554), target 1 (argon).
 - Confirmed missing target: [The impact of background speech varying in intelligibility: Effects on cognitive performance and perceived disturbance.](https://doi.org/10.1080/00140130701745925); work [replicating work](https://doi.org/10.1027/1618-3169/a000554), target 2 (argon).
 - Confirmed missing target: [Distinct neural contributions to metacognition for detecting, but not discriminating visual stimuli.](https://doi.org/10.7554/elife.53900); work [replicating work](https://doi.org/10.1098/rsos.221091), target 0 (argon).
+- Confirmed missing target: [Alcohol use disorder symptoms are associated with greater relative value ascribed to alcohol, but not greater discounting of costs imposed on alcohol.](https://doi.org/10.1007/s00213-018-4922-8); work [replicating work](https://doi.org/10.1111/acer.15532), target 1 (obvious).
 - Confirmed missing target: [Do individual differences in lexical reliance reflect states or traits?](https://doi.org/10.1016/j.cognition.2022.105320); work [replicating work](https://doi.org/10.1121/10.0042222), target 1 (argon).
 - Confirmed missing target: [Neglect-like effects induced by tDCS modulation of posterior parietal cortices in healthy subjects](https://doi.org/10.1016/j.brs.2011.01.003); work [replicating work](https://doi.org/10.3389/fnins.2017.00664), target 1 (argon).
 - Confirmed missing target: [Actions seen through babies’ eyes: A dissociation between looking time and predictive gaze.](https://doi.org/10.3389/fpsyg.2012.00370); work [replicating work](https://doi.org/10.1016/j.infbeh.2019.101340), target 1 (argon).
@@ -969,7 +973,7 @@ The [confirmed missing-reference export](confirmed_missing_references.csv) conta
 - Confirmed missing target: Cues of being watched enhance cooperation in a real-world setting.; work https://openalex.org/w2484584964, target 1 (obvious).
 - Confirmed missing target: [Boundaries of cultural influence: Construct activation as a mechanism for cultural differences in social perception.](https://doi.org/10.1177/0022022103034004005); work [replicating work](https://doi.org/10.1111/jpr.12599), target 1 (obvious).
 - Confirmed missing target: [Can uniform color color aggression? Quasi-experimental evidence from professional ice hockey](https://doi.org/10.1177/1948550611418535); work [replicating work](https://doi.org/10.1525/collabra.163080), target 1 (argon).
-213 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
+206 unmatched blind targets remain unverified. Ambiguous proposed pairs remain in results.csv with flags and unverified verdicts.
 
 ## Skips and validation issues
 
