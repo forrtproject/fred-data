@@ -6,8 +6,9 @@ FIELDS=['n_o','es_value_o','pval_value_o','n_r','es_value_r','pval_value_r','rep
 GATES_PATH=Path('/home/lukas/.cache/fred-audit-coverage-diagnostic/remaining_fields.csv')
 SOURCE_MANIFESTS=[Path('/home/lukas/work/fred-mac-recovery-20261030/final_box_source_manifest.json'),Path('/home/lukas/work/fred-mac-recovery-20261030/continuation-1201/final_box_source_manifest.json'),Path('/home/lukas/work/fred-mac-recovery-20261030/drive-check/final_box_source_manifest.json')]
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('--batch',default='continuation_01');parser.add_argument('--limit',type=int,default=12);args=parser.parse_args()
+ parser=argparse.ArgumentParser();parser.add_argument('--batch',default='continuation_01');parser.add_argument('--limit',type=int,default=12);parser.add_argument('--priority',choices=['literal','near_complete'],default='literal');parser.add_argument('--min-source-rows',type=int,default=1);parser.add_argument('--max-source-rows',type=int,default=30);args=parser.parse_args()
  assert args.batch.startswith('continuation_') and args.limit>0
+ assert 1<=args.min_source_rows<=args.max_source_rows
  with (B/'results.csv').open(encoding='utf-8-sig') as stream:results={int(r['input_row_index']):r for r in csv.DictReader(stream)}
  neutral={}
  for p in sorted((B/'inputs').glob('*.json')):
@@ -48,14 +49,15 @@ def main():
    g=groups.setdefault(key,{'key':key,'source':source,'side':side,'rows':[],'near_complete_rows':0,'literal_evidence_fields':0})
    item={k:v for k,v in r.items() if k in ['ref_o','ref_r','doi_o','doi_r','url_r','study_o','study_r','description','es_type_o','es_type_r','locators_o','locators_r']};item.update(audit_id=aid,target_side=side,unfinished_fields=fields,text_paths={short:sourcepath},source_pdf_path=pdfs.get(doi,(None,None))[0],source_version_note=pdfs.get(doi,(None,'Canonical primary source provenance; independently inspect document identity on use.'))[1])
    g['rows'].append(item);g['near_complete_rows']+=sum(results[aid][f+'_final_verdict'] in ['correct','error'] for f in FIELDS)==6;g['literal_evidence_fields']+=sum('fails literal evidence' in gates.get((aid,f),'') for f in fields)
- queue=sorted(groups.values(),key=lambda g:(-g['near_complete_rows'],-g['literal_evidence_fields'],len(g['rows']),g['key']))
+ priority=(lambda g:(-g['literal_evidence_fields'],-g['near_complete_rows'],len(g['rows']),g['key'])) if args.priority=='literal' else (lambda g:(-g['near_complete_rows'],-g['literal_evidence_fields'],len(g['rows']),g['key']))
+ queue=sorted(groups.values(),key=priority)
  # Keep each source together. Larger sources are retained for a later deliberate whole-source assignment.
- eligible=[g for g in queue if len(g['rows'])<=30];selected=eligible[:args.limit]
+ eligible=[g for g in queue if args.min_source_rows<=len(g['rows'])<=args.max_source_rows];selected=eligible[:args.limit]
  out=F/args.batch;(out/'inputs').mkdir(parents=True,exist_ok=True);(out/'outputs').mkdir(exist_ok=True)
  for g in selected:
   p=out/'inputs'/f"{g['key']}.json";encoded=json.dumps(g['rows'],indent=2,ensure_ascii=False)+'\n'
   if p.exists() and any((F/'tasks'/f"{g['key']}.json").exists() for g in selected):assert p.read_text()==encoded,'Inputs changed after dispatch'
   else:p.write_text(encoded)
   g.update(input=str(p),output=str(out/'outputs'/g['key']),audit_ids=[r['audit_id'] for r in g['rows']],unfinished_fields=sum(len(r['unfinished_fields']) for r in g['rows']),source_text=g['rows'][0]['text_paths'][g['side'][0]],all_source_rows=len(g['rows']),status='queued');del g['rows']
- (out/'queue.json').write_text(json.dumps(selected,indent=2)+'\n');(out/'selection.json').write_text(json.dumps({'candidate_source_groups':len(queue),'chosen_source_groups':len(selected),'oversized_source_groups_deferred':sum(len(g.get('rows',[]))>30 for g in queue),'unavailable_rows':unavailable,'rule':'Exclude every previously assigned row/field pair; preserve unattempted rows within previously read sources; all unfinished fields for every row in chosen source-side, prioritise rows one field short then literal evidence failures; at most 30 rows/source and a bounded source count selected by --limit. This prepares inputs only; no tasks launched.'},indent=2)+'\n');print(json.dumps({'sources':len(selected),'rows':sum(len(g['audit_ids']) for g in selected),'fields':sum(g['unfinished_fields'] for g in selected)}))
+ (out/'queue.json').write_text(json.dumps(selected,indent=2)+'\n');(out/'selection.json').write_text(json.dumps({'priority':args.priority,'min_source_rows':args.min_source_rows,'max_source_rows':args.max_source_rows,'candidate_source_groups':len(queue),'chosen_source_groups':len(selected),'oversized_source_groups_deferred':sum(len(g.get('rows',[]))>args.max_source_rows for g in queue),'unavailable_rows':unavailable,'rule':'Exclude every previously assigned row/field pair; preserve unattempted rows within previously read sources; all unfinished fields for every row in chosen source-side, prioritise the explicitly selected evidence-gap stratum; the configured source-size band and bounded source count selected by --limit. This prepares inputs only; no tasks launched.'},indent=2)+'\n');print(json.dumps({'sources':len(selected),'rows':sum(len(g['audit_ids']) for g in selected),'fields':sum(g['unfinished_fields'] for g in selected)}))
 if __name__=='__main__':main()
