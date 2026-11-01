@@ -74,6 +74,19 @@ class EvidenceValidation(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.run_validation()
 
+    def test_report_boundary_without_target_assignment_is_not_a_proof(self):
+        data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
+            dict(report='Main paper', character_start=0, character_end=28)])
+        self.write(self.output / 'evidence_map.json', data)
+        self.assertEqual(self.run_validation()['evidence_map_proofs'], 1)
+
+    def test_optional_boundary_targets_must_still_be_a_list(self):
+        data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
+            dict(report='Main paper', character_start=0, character_end=28, target_indices=None)])
+        self.write(self.output / 'evidence_map.json', data)
+        with self.assertRaises(ValueError):
+            self.run_validation()
+
     def test_report_boundary_must_be_within_the_source(self):
         data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
             dict(report='One report', character_start=0, character_end=9999, target_indices=[])])

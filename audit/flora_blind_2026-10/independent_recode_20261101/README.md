@@ -3,7 +3,7 @@
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
 Current checkpoint: 138 of 677 initial source packets and five additional source views have
-passed Opus schema, literal-span and reading checks; eighteen fresh Sol source views
+passed Opus schema, literal-span and reading checks; nineteen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
 The full reassessment remains in progress. Seventeen cases covering nineteen proposed
@@ -121,7 +121,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 89 evidence/dependency controls:
+Run all 91 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -194,3 +194,5 @@ Fresh complete-source Sol reads for0129/0131 now pass validation: successful and
 The SSRP main report and supplement (document_0139) pass fresh Opus reading and literal-proof checks for21targets. Its historical Sol result used selected supplement views and a different extraction before assembling the final registered source, so a fresh complete Sol reading is required. The21outcomes are not accepted as a batch or inferred from the overall replication rate.
 
 Document_0138 now has certified complete fresh readings from both models, agreeing on mixed. Its original-specific contrasts and task-validity alternative await source review, prepared alongside0129’s preprint/journal identity check. The complete fresh Sol SSRP read is running. No new case is automatically accepted at this checkpoint.
+
+The complete SSRP Sol read now passes all18chunkreceipts and240literalproofs (43codedspans plus197evidencemap passages). Bothfreshmodels align on all21DOIs/outcomes; only1957.outcome is a frozen proposedchange. Its all-data Ackerman failure versus positive stage1 protocol alternative has a prepared primary-source check. Report-boundary metadata may omit target assignments; those valid source ranges never count as evidence proofs. The91controls enforce this without changing raw model outputs.
