@@ -80,6 +80,19 @@ class EvidenceValidation(unittest.TestCase):
         self.write(self.output / 'evidence_map.json', data)
         self.assertEqual(self.run_validation()['evidence_map_proofs'], 1)
 
+    def test_reports_envelope_retains_boundary_checks_without_counting_proofs(self):
+        self.write(self.output/'evidence_map.json',dict(text_sha256=self.source_hash,
+                   spans=[self.proof],reports=[dict(report='One report',target_indices=[0],
+                   character_start=0,character_end=28)]))
+        self.assertEqual(self.run_validation()['evidence_map_proofs'],1)
+
+    def test_reports_envelope_cannot_hide_quoted_content(self):
+        self.write(self.output/'evidence_map.json',dict(text_sha256=self.source_hash,
+                   spans=[self.proof],reports=[dict(report='One report',target_indices=[0],
+                   character_start=0,character_end=28,quote='fabricated')]))
+        with self.assertRaisesRegex(ValueError,'metadata cannot substitute'):
+            self.run_validation()
+
     def test_report_boundary_cannot_claim_a_quote_without_proof(self):
         data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
             dict(report='One report', character_start=0, character_end=28, target_indices=[], quote='fabricated')])

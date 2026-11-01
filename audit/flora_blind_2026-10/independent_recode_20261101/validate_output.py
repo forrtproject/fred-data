@@ -35,7 +35,7 @@ def validate_proofs(obj, raw, source_hash, require_source_hash=False, unproved_e
 
     def walk(value, path='$'):
         if isinstance(value, dict):
-            if re.fullmatch(r'\$\.report_boundaries\[\d+\]', path):
+            if re.fullmatch(r'\$\.(?:report_boundaries|reports)\[\d+\]', path):
                 label_keys = {'report'}
                 boundary_keys = label_keys | {'character_start', 'character_end'}
                 described_keys = {'report_id', 'title', 'structure', 'character_start', 'character_end'}
