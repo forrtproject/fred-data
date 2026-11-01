@@ -1,0 +1,144 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1005": {
+      "source_key": "8cffef51e89787ed",
+      "side": "original",
+      "input": {
+        "ref_o": "Albarracín, D., Handley, I. M., Noguchi, K., McCulloch, K. C., Li, H., Leeper, J., Brown, R. D., Earl, A., & Hart, W. P. (2008). Increasing and decreasing motor and cognitive output: A model of general action and inaction goals. Journal of Personality and Social Psychology, 95(3), 510–523. https://doi.org/10.1037/a0012833",
+        "doi_o": "10.1037/a0012833",
+        "study_o": "5",
+        "ref_r": "(2015). Estimating the reproducibility of psychological science. Science, 349(6251). https://doi.org/10.1126/science.aac4716",
+        "doi_r": "10.1126/science.aac4716",
+        "url_r": "https://osf.io/vy1bc",
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Cognitive output, measured by number of solved problems, under action versus inaction primes.",
+        "locators_o": "p. 8",
+        "locators_r": "p. 4",
+        "audit_id": 1005,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0159766ac7e1f90596e671dc.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 5: Number of Solved Problems; action versus inaction prime, two-cell between-participants ANOVA on correctly solved verbal and math problems.",
+      "worker_notes": "Identity verified from the supplied text: title Increasing and Decreasing Motor and Cognitive Output: A Model of General Action and Inaction Goals; Dolores Albarracín and all eight coauthors match the reference; DOI 10.1037/a0012833; J Pers Soc Psychol. 2008 September; 95(3): 510–523. NIH Public Access author manuscript with methods, results, discussion, references and figure captions; primary report, not an abstract-only or secondary parse. No PDF was supplied. Manuscript pagination differs from the input locator. N=36 is established by the explicitly described two-cell study, the statement that all participants completed the performance measure, and the subsequent ANOVA of that measure; no subgroup, attrition or exclusions are described. It is not derived from degrees of freedom or summed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0159766ac7e1f90596e671dc.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "The action and inaction primes produced, respectively, higher and lower levels of cognitive output (higher or lower performance measured by number of solved problems",
+        "es_repr_o": "p. 8",
+        "es_repr_r": "p. 4",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "no marked in Replicate column"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1005,
+      "field": "n_o",
+      "blind": {
+        "value": "36",
+        "location": "Author manuscript p. 13, Experiment 5, Participants and Design; Performance measure; Results and Discussion",
+        "quote": "Participants were 36 students from introductory psychology ... a two-cell (prime: action or inaction) between-participants design with number of solved ... problems as the main dependent variable. ... All participants completed 21 questions that assessed verbal",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0159766ac7e1f90596e671dc.txt",
+        "confident": true,
+        "sample_role": "Participants in the two-cell Experiment 5 problem-solving analysis; not number of questions.",
+        "exclusions": "No exclusions reported in the Experiment 5 methods/results; all participants completed the 21 questions."
+      },
+      "disposition": {
+        "audit_id": 1005,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "Printed 36 participants in this two-cell study; all participants completed the target performance measure, which is analyzed in the following ANOVA. No exclusions or subset are described. N is not inferred from df.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0159766ac7e1f90596e671dc.txt",
+        "location": "Author manuscript p. 13, Experiment 5, Methods and Results and Discussion",
+        "quote": "Participants were 36 students from introductory psychology ... a two-cell (prime: action or inaction) between-participants design with number of solved ... problems as the main dependent variable. ... All participants completed 21 questions that assessed verbal",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "36",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1005,
+      "field": "es_value_o",
+      "blind": {
+        "value": "5.68",
+        "location": "Author manuscript p. 13, Experiment 5, Results and Discussion",
+        "quote": "prime on number of solved problems, F(1, 34) = 5.68, p = .02, demonstrating that",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0159766ac7e1f90596e671dc.txt",
+        "confident": true,
+        "metric": "F",
+        "test_statistic": "F(1, 34) = 5.68"
+      },
+      "disposition": {
+        "audit_id": 1005,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Requested test statistic is printed as F(1, 34) = 5.68 for the action versus inaction effect on number of solved problems.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0159766ac7e1f90596e671dc.txt",
+        "location": "Author manuscript p. 13, Experiment 5, Methods and Results and Discussion",
+        "quote": "prime on number of solved problems, F(1, 34) = 5.68, p = .02, demonstrating that",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(1, 34) = 5.68",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1005,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".02",
+        "location": "Author manuscript p. 13, Experiment 5, Results and Discussion",
+        "quote": "prime on number of solved problems, F(1, 34) = 5.68, p = .02, demonstrating that",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0159766ac7e1f90596e671dc.txt",
+        "confident": true,
+        "bound": "e"
+      },
+      "disposition": {
+        "audit_id": 1005,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Exact printed p = .02 belongs to the same F(1, 34) = 5.68 test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0159766ac7e1f90596e671dc.txt",
+        "location": "Author manuscript p. 13, Experiment 5, Methods and Results and Discussion",
+        "quote": "prime on number of solved problems, F(1, 34) = 5.68, p = .02, demonstrating that",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.02",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/8cffef51e89787ed. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_8cffef51e89787ed_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
