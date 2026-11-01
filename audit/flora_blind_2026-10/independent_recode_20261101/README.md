@@ -3,7 +3,7 @@
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
 Current checkpoint: 138 of 677 initial source packets and five additional source views have
-passed Opus schema, literal-span and reading checks; seventeen fresh Sol source views
+passed Opus schema, literal-span and reading checks; eighteen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
 The full reassessment remains in progress. Seventeen cases covering nineteen proposed
@@ -192,3 +192,5 @@ Batches0058/0059 add five verified supplied-source readings. Document_0134 is ex
 Fresh complete-source Sol reads for0129/0131 now pass validation: successful and mixed respectively, agreeing with Opus. The former still needs tested-preprint/journal identity checks; the latter is in primary-source review alongside disagreements0130/0136. Document_0138 requires fresh Sol because its earlier display omitted the middle of the registered source. No automatic acceptance follows from matching labels alone.
 
 The SSRP main report and supplement (document_0139) pass fresh Opus reading and literal-proof checks for21targets. Its historical Sol result used selected supplement views and a different extraction before assembling the final registered source, so a fresh complete Sol reading is required. The21outcomes are not accepted as a batch or inferred from the overall replication rate.
+
+Document_0138 now has certified complete fresh readings from both models, agreeing on mixed. Its original-specific contrasts and task-validity alternative await source review, prepared alongside0129’s preprint/journal identity check. The complete fresh Sol SSRP read is running. No new case is automatically accepted at this checkpoint.
