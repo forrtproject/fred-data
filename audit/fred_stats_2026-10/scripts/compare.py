@@ -159,6 +159,11 @@ def fresh_test_review(a,field,row):
  if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
  if a.get('verdict') not in ['shipped_right','blind_right','both_wrong']:return False
  parsed=parsed_stat(a.get('correct_value'));kind=metric(a.get('correct_metric'))
+ if not parsed and a.get('verdict')=='shipped_right':
+  # Current target-confirmed review may certify an identical printed bound.
+  # Do not infer an exact statistic or reconcile different cutoffs/annotations.
+  bounded=bounded_stat(a.get('correct_value'))
+  if bounded and bounded==bounded_stat(row.get(field)) and kind in ['test statistic',bounded[0]]:return True
  if kind=='x2':kind='chi2'
  if kind=='chi-square (1 df)' and parsed and parsed[0]=='chi2' and parsed[1]==(1.0,):kind='chi2'
  if kind=='f-ratio':
