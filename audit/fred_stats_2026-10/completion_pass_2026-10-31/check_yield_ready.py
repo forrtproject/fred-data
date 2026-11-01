@@ -5,9 +5,18 @@ F=Path(__file__).resolve().parent;B=F.parent
 TERMINAL={'completed','failed','cancelled','interrupted'}
 def read(path,default=None):return json.loads(path.read_text()) if path.exists() else default
 def scientific_fingerprint():
- paths=[B/name for name in ['parent_rows.json','target_overrides.json','adjudication_holds.json','metric_equivalences.json','adjudication_tasks.jsonl','obvious_resolutions.json','adjudication_exhausted.json','source_provenance.json','scripts/compare.py']]
- paths+=sorted((B/'extractions').glob('*.json'))+sorted((B/'adjudications').glob('validated_*.json'))
- return hashlib.sha256(json.dumps({str(p.relative_to(B)):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths if p.exists()},sort_keys=True).encode()).hexdigest()
+ paths=[B/name for name in ['parent_rows.json','target_overrides.json','adjudication_holds.json','metric_equivalences.json','obvious_resolutions.json','adjudication_exhausted.json','source_provenance.json','scripts/compare.py']]
+ validated=sorted((B/'adjudications').glob('validated_*.json'))
+ paths+=sorted((B/'extractions').glob('*.json'))+validated
+ fingerprints={str(p.relative_to(B)):hashlib.sha256(p.read_bytes()).hexdigest() for p in paths if p.exists()}
+ # Comparison precedence consults task history only for existing validated files.
+ # Dispatching a future review creates no scientific decision. Once its validated
+ # file appears, both its evidence and its full relevant history enter the hash.
+ keys={p.stem.removeprefix('validated_') for p in validated};history=B/'adjudication_tasks.jsonl'
+ relevant=[json.loads(line) for line in history.read_text().splitlines() if line.strip()] if history.exists() else []
+ relevant=[entry for entry in relevant if entry.get('key') in keys]
+ fingerprints['validated_adjudication_task_history']=hashlib.sha256(json.dumps(relevant,sort_keys=True).encode()).hexdigest()
+ return hashlib.sha256(json.dumps(fingerprints,sort_keys=True).encode()).hexdigest()
 def main():
  parser=argparse.ArgumentParser();parser.add_argument('--refresh-export',action='store_true');args=parser.parse_args()
  if args.refresh_export:
