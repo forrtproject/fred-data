@@ -61,6 +61,25 @@ class EvidenceValidation(unittest.TestCase):
         self.assertFalse(result['automatic_scientific_acceptance'])
         self.assertTrue(result['full_model_visible_reading_receipts_verified'])
 
+    def test_literal_proof_alias_still_requires_the_exact_source_span(self):
+        proof = dict(self.proof)
+        proof['literal_proof'] = proof.pop('quote')
+        self.write(self.output / 'evidence_map.json', dict(text_sha256=self.source_hash, spans=[proof]))
+        self.assertEqual(self.run_validation()['evidence_map_proofs'], 1)
+
+    def test_literal_proof_alias_cannot_pass_changed_words(self):
+        proof = dict(self.proof)
+        proof['literal_proof'] = proof.pop('quote').replace('original', 'invented')
+        self.write(self.output / 'evidence_map.json', dict(text_sha256=self.source_hash, spans=[proof]))
+        with self.assertRaisesRegex(ValueError, 'character mismatch'):
+            self.run_validation()
+
+    def test_literal_proof_alias_cannot_hide_a_conflicting_quote(self):
+        proof = dict(self.proof, literal_proof='A different claim.')
+        self.write(self.output / 'evidence_map.json', dict(text_sha256=self.source_hash, spans=[proof]))
+        with self.assertRaisesRegex(ValueError, 'conflicting literal quote aliases'):
+            self.run_validation()
+
     def test_claimed_reading_without_tool_output_rejected(self):
         (self.receipts / 'item_1.json').unlink()
         with self.assertRaises(ValueError): self.run_validation()

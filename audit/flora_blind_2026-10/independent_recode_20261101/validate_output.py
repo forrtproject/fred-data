@@ -36,7 +36,11 @@ def validate_proofs(obj, raw, source_hash, require_source_hash=False, unproved_e
     def walk(value, path='$'):
         if isinstance(value, dict):
             if any(k in value for k in ('character_start', 'char_start', 'unicode_start')):
-                quote = first(value, ('quote', 'text', 'literal_quote'))
+                quote_names = ('quote', 'text', 'literal_quote', 'literal_proof')
+                quote = first(value, quote_names)
+                if 'literal_proof' in value:
+                    check(all(value[name] == value['literal_proof'] for name in quote_names if name in value),
+                          path + ': conflicting literal quote aliases')
                 a = first(value, ('character_start', 'char_start', 'unicode_start'))
                 z = first(value, ('character_end', 'char_end', 'unicode_end'))
                 ba = first(value, ('utf8_start', 'utf8_byte_start', 'byte_start'))
