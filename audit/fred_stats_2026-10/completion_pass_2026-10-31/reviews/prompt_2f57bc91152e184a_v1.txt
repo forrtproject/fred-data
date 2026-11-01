@@ -1,0 +1,336 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "2f57bc91152e184a",
+    "audit_id": 1839,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "description": "IQ in the early intensive behavioral treatment group versus the comparison group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "audit_id": 1839,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+      "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately"
+    },
+    "blind": {
+      "value": "357",
+      "sample_role": "Repeated child-assessment observations in the target longitudinal linear mixed model; not unique participants.",
+      "exclusions": "Intention-to-treat analyses; baseline and three subsequent visits included. Outcome/visit data are missing (Table 2); Table 3 gives the fitted model observation count. No complete-case participant N is asserted.",
+      "location": "p. 15, Table 3, Observations row; p. 11, Data Analysis",
+      "quote": "All outcome\nanalyses were conducted with the intention-to-treat principle. ... Outcome measure              IQ            NVIQ            Composite        Communication       Daily living      Socialization ... Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1839,
+      "field": "n_r",
+      "code": "extracted_printed",
+      "reason": "Table 3 explicitly reports Observations for the named IQ model. Retained as analytic observation count with its unit, rather than substituting recruitment or Year 3 participant totals.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "location": "p. 15, Table 3, Observations row; p. 11, Data Analysis",
+      "quote": "Outcome measure              IQ            NVIQ            Composite        Communication       Daily living      Socialization ... Observations                357             333                 333               354                354               354 ... All outcome\nanalyses were conducted with the intention-to-treat principle.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "IQ outcome in the EIBI-versus-SAU longitudinal linear mixed model (Table 3); observation count applies to the model, including its treatment and time-by-treatment terms.",
+    "worker_notes": "Only assigned unfinished field n_r examined. Original, effect size, p, and reported_success are unassigned placeholders. Table 3 counts are repeated child-assessment observations used in longitudinal linear mixed models, not unique children. No arithmetic derivation or effect-size conversion performed. PDF p. 15 visually inspected. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+    "shipped": "94",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "with treatment, the early intensive behavioral treatment group obtained significantly higher IQ ... than did the comparison group",
+      "es_repr_o": "p. S150",
+      "es_repr_r": "p. 15",
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood."
+    },
+    "prior_adjudication": {
+      "audit_id": 1839,
+      "field": "n_r",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "location": "Online-first proof pp. 13, 15 (PDF pp. 13, 15), Table 2 and Table 3, IQ",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "reason": "The critical test is a longitudinal linear mixed model across four time points where shipped codes the enrolled/baseline participant count (N = 94 children: 48 EIBI + 46 SAU in Table 2) and blind extracts the repeated-measure observation count (357 observations in Table 3). Because the intended counting unit (participants/clusters vs. repeated observations) and exact model-level cluster count are not disambiguated, analytic n is undeterminable.",
+      "resolution": "argon"
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "2f57bc91152e184a",
+    "audit_id": 1842,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "description": "Communication scores in children receiving early intensive behavioral treatment (EIBT) versus the control group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "audit_id": 1842,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+      "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately"
+    },
+    "blind": {
+      "value": "354",
+      "sample_role": "Repeated child-assessment observations in the target longitudinal linear mixed model; not unique participants.",
+      "exclusions": "Intention-to-treat analyses; baseline and three subsequent visits included. Outcome/visit data are missing (Table 2); Table 3 gives the fitted model observation count. No complete-case participant N is asserted.",
+      "location": "p. 15, Table 3, Observations row; p. 11, Data Analysis",
+      "quote": "All outcome\nanalyses were conducted with the intention-to-treat principle. ... Outcome measure              IQ            NVIQ            Composite        Communication       Daily living      Socialization ... Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1842,
+      "field": "n_r",
+      "code": "extracted_printed",
+      "reason": "Table 3 explicitly reports Observations for the named VABS Communication model. Retained as analytic observation count with its unit, rather than substituting recruitment or Year 3 participant totals.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "location": "p. 15, Table 3, Observations row; p. 11, Data Analysis",
+      "quote": "Outcome measure              IQ            NVIQ            Composite        Communication       Daily living      Socialization ... Observations                357             333                 333               354                354               354 ... All outcome\nanalyses were conducted with the intention-to-treat principle.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "VABS Communication outcome in the EIBI-versus-SAU longitudinal linear mixed model (Table 3); observation count applies to the model, including its treatment and time-by-treatment terms.",
+    "worker_notes": "Only assigned unfinished field n_r examined. Original, effect size, p, and reported_success are unassigned placeholders. Table 3 counts are repeated child-assessment observations used in longitudinal linear mixed models, not unique children. No arithmetic derivation or effect-size conversion performed. PDF p. 15 visually inspected. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+    "shipped": "90",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "Children in the EIBT group achieved significantly higher communication scores compared to the control group.",
+      "es_repr_o": "p. S150",
+      "es_repr_r": "p. 15",
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood."
+    },
+    "prior_adjudication": {
+      "audit_id": 1842,
+      "field": "n_r",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "location": "Online-first proof pp. 13, 15 (PDF pp. 13, 15), Table 2 and Table 3, VABS Communication",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "reason": "Shipped codes the baseline VABS Communication participant count from Table 2 (90 children: 44 EIBI + 46 SAU, with 91 at Year 1 across the 94 enrolled children), whereas blind extracts the Table 3 repeated-measure observation count (354 observations). The unique participant count for the mixed model is not printed in Table 3 and the counting unit is unresolved.",
+      "resolution": "argon"
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "2f57bc91152e184a",
+    "audit_id": 1843,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "description": "Daily living skills in the EIBT group versus the comparison group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "audit_id": 1843,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+      "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately"
+    },
+    "blind": {
+      "value": "354",
+      "sample_role": "Repeated child-assessment observations in the target longitudinal linear mixed model; not unique participants.",
+      "exclusions": "Intention-to-treat analyses; baseline and three subsequent visits included. Outcome/visit data are missing (Table 2); Table 3 gives the fitted model observation count. No complete-case participant N is asserted.",
+      "location": "p. 15, Table 3, Observations row; p. 11, Data Analysis",
+      "quote": "All outcome\nanalyses were conducted with the intention-to-treat principle. ... Outcome measure              IQ            NVIQ            Composite        Communication       Daily living      Socialization ... Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1843,
+      "field": "n_r",
+      "code": "extracted_printed",
+      "reason": "Table 3 explicitly reports Observations for the named VABS Daily living model. Retained as analytic observation count with its unit, rather than substituting recruitment or Year 3 participant totals.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "location": "p. 15, Table 3, Observations row; p. 11, Data Analysis",
+      "quote": "Outcome measure              IQ            NVIQ            Composite        Communication       Daily living      Socialization ... Observations                357             333                 333               354                354               354 ... All outcome\nanalyses were conducted with the intention-to-treat principle.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "VABS Daily living outcome in the EIBI-versus-SAU longitudinal linear mixed model (Table 3); observation count applies to the model, including its treatment and time-by-treatment terms.",
+    "worker_notes": "Only assigned unfinished field n_r examined. Original, effect size, p, and reported_success are unassigned placeholders. Table 3 counts are repeated child-assessment observations used in longitudinal linear mixed models, not unique children. No arithmetic derivation or effect-size conversion performed. PDF p. 15 visually inspected. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+    "shipped": "90",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "The EIBT group demonstrated significantly better daily living skills than the comparison group.",
+      "es_repr_o": "p. S150",
+      "es_repr_r": "p. 15",
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood."
+    },
+    "prior_adjudication": {
+      "audit_id": 1843,
+      "field": "n_r",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "location": "Online-first proof pp. 13, 15 (PDF pp. 13, 15), Table 2 and Table 3, VABS Daily living",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "reason": "Shipped codes the baseline VABS Daily living participant count from Table 2 (90 children: 44 EIBI + 46 SAU, with 91 at Year 1 across the 94 enrolled children), whereas blind extracts the Table 3 repeated-measure observation count (354 observations). Table 3 omits the unique participant count for this mixed model and the counting unit is unresolved.",
+      "resolution": "argon"
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "2f57bc91152e184a",
+    "audit_id": 1844,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "COHEN, H., AMERINE-DICKENS, M., & SMITH, T. (2006). Early Intensive Behavioral Treatment. Journal of Developmental &amp; Behavioral Pediatrics, 27(Supplement 2), S145–S155. https://doi.org/10.1097/00004703-200604002-00013",
+      "doi_o": "10.1097/00004703-200604002-00013",
+      "study_o": null,
+      "ref_r": "Waters, C. F., Amerine Dickens, M., Thurston, S. W., Lu, X., & Smith, T. (2018). Sustainability of Early Intensive Behavioral Intervention for Children With Autism Spectrum Disorder in a Community Setting. Behavior Modification, 44(1), 3–26. https://doi.org/10.1177/0145445518786463",
+      "doi_r": "10.1177/0145445518786463",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "description": "Socialization scores in the EIBT group versus the comparison group.",
+      "locators_o": "p. S150",
+      "locators_r": "p. 15",
+      "audit_id": 1844,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a6a2b397dc015d156f45f3a7_drive.pdf",
+      "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately"
+    },
+    "blind": {
+      "value": "354",
+      "sample_role": "Repeated child-assessment observations in the target longitudinal linear mixed model; not unique participants.",
+      "exclusions": "Intention-to-treat analyses; baseline and three subsequent visits included. Outcome/visit data are missing (Table 2); Table 3 gives the fitted model observation count. No complete-case participant N is asserted.",
+      "location": "p. 15, Table 3, Observations row; p. 11, Data Analysis",
+      "quote": "All outcome\nanalyses were conducted with the intention-to-treat principle. ... Outcome measure              IQ            NVIQ            Composite        Communication       Daily living      Socialization ... Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1844,
+      "field": "n_r",
+      "code": "extracted_printed",
+      "reason": "Table 3 explicitly reports Observations for the named VABS Socialization model. Retained as analytic observation count with its unit, rather than substituting recruitment or Year 3 participant totals.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "location": "p. 15, Table 3, Observations row; p. 11, Data Analysis",
+      "quote": "Outcome measure              IQ            NVIQ            Composite        Communication       Daily living      Socialization ... Observations                357             333                 333               354                354               354 ... All outcome\nanalyses were conducted with the intention-to-treat principle.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "VABS Socialization outcome in the EIBI-versus-SAU longitudinal linear mixed model (Table 3); observation count applies to the model, including its treatment and time-by-treatment terms.",
+    "worker_notes": "Only assigned unfinished field n_r examined. Original, effect size, p, and reported_success are unassigned placeholders. Table 3 counts are repeated child-assessment observations used in longitudinal linear mixed models, not unique children. No arithmetic derivation or effect-size conversion performed. PDF p. 15 visually inspected. ",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+    "shipped": "90",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "There was a positive trend indicating the EIBT group had higher socialization scores than the comparison group.",
+      "es_repr_o": "p. S150",
+      "es_repr_r": "p. 15",
+      "es_type_o": "test statistic",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "Linear mixed models indicated that EIBI participants improved significantly more than SAU participants on standardized tests of IQ, nonverbal IQ, adaptive behavior, and academic achievement, administered by independent evaluators. [...] the study provides evidence for the sustainability of effective EIBI in community settings for children with ASD who start intervention at varying ages throughout early childhood."
+    },
+    "prior_adjudication": {
+      "audit_id": 1844,
+      "field": "n_r",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "location": "Online-first proof pp. 13, 15 (PDF pp. 13, 15), Table 2 and Table 3, VABS Socialization",
+      "quote": "Observations                357             333                 333               354                354               354",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a6a2b397dc015d156f45f3a7.txt",
+      "reason": "Shipped codes the baseline/Year 2 VABS Socialization participant count from Table 2 (90 children: 44 EIBI + 46 SAU at baseline, with 91 at Year 1 across the 94 enrolled children), whereas blind extracts the Table 3 repeated-measure observation count (354 observations). Table 3 does not report the unique participant count for the Socialization mixed model and the counting unit is unresolved.",
+      "resolution": "argon"
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/2f57bc91152e184a. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_2f57bc91152e184a_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

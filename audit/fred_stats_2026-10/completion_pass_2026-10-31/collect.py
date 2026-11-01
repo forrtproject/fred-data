@@ -42,7 +42,15 @@ def main():
      item={**item,'shipped':rows[aid-1][field],'comparison':comparison,'coding_context':{k:rows[aid-1].get(k) for k in ['description','es_repr_o','es_repr_r','es_type_o','es_type_r','pval_type_o','pval_type_r','pval_tails_o','pval_tails_r','nested_o','nested_r','reported_success_quote']}}
      source_reviews.append(item)
    ledger[batch['key']+':'+str(aid)]={'output_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'fields':record['unfinished_fields']}
-  if source_reviews:review.append({'key':batch['key'],'source':batch['source'],'source_path':source,'items':source_reviews})
+  if source_reviews:
+   task_path=F/'reviews'/f"task_{batch['key']}_v1.json";task=json.loads(task_path.read_text()) if task_path.exists() else {}
+   # Keep dispatched rounds frozen. A large cancelled round is retried in smaller
+   # independent subsets, rather than repeat an unchanged prompt that exceeded its cap.
+   split=len(source_reviews)>48 and (not task or task.get('status') in ['failed','cancelled','interrupted'])
+   chunks=[source_reviews[i:i+24] for i in range(0,len(source_reviews),24)] if split else [source_reviews]
+   for i,items in enumerate(chunks,1):
+    key=batch['key']+f'_part{i:02d}' if split else batch['key']
+    review.append({'key':key,'source':batch['source'],'source_path':source,'items':items})
  atomic(F/'collected.json',ledger);atomic(F/'proposals.json',proposals);atomic(F/'review_queue.json',review);atomic(F/'collection_blockers.json',blockers)
  print(json.dumps({'collected_rows':len(ledger),'proposed_fields':len(proposals),'supported_fields':sum(x['supported'] for x in proposals),'review_sources':len(review),'review_items':sum(len(x['items']) for x in review),'blocked_fields':len(blockers)}))
 if __name__=='__main__':main()

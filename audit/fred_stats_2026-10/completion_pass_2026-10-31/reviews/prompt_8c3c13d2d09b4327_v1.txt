@@ -1,0 +1,166 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "8c3c13d2d09b4327",
+    "audit_id": 72,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Pigott, T. D., Valentine, J. C., Polanin, J. R., Williams, R. T., & Canada, D. D. (2013). Outcome-Reporting Bias in Education Research. Educational Researcher, 42(8), 424–432. https://doi.org/10.3102/0013189x13507104",
+      "doi_o": "10.3102/0013189x13507104",
+      "study_o": "1",
+      "ref_r": "Talbott, E., Maggin, D. M., Chua, M., Ashley, L., Chen, X., Chin, P. A., & Curry, M. K. (2024). Outcome-Reporting Bias in Special Education Intervention Research Using Experimental and Quasi-Experimental Group Designs: A Conceptual Replication. Remedial and Special Education. https://doi.org/10.1177/07419325241240067",
+      "doi_r": "10.1177/07419325241240067",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Overall odds ratio that significant and nonsignificant findings reported in special education dissertations would also be reported in corresponding journal publications",
+      "locators_o": "p. 428",
+      "locators_r": "p. 7",
+      "audit_id": 72,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/b4b2c1fbc69291645c4a0441_drive.pdf",
+      "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately"
+    },
+    "blind": {
+      "value": "707",
+      "sample_role": "Treatment/intervention outcomes (analytic observations), drawn from 40 dissertation–publication pairs; not individual participants.",
+      "exclusions": "Final pool follows exclusion of 167 dissertations lacking a corresponding publication and three during coding (one publication mismatch, one single-case design, one not an intervention). Only intervention-effect hypothesis tests extracted; pretest-equivalence, regression-assumption and correlational tests excluded. Overall model explicitly covers all 707 treatment outcomes.",
+      "location": "p. 7, Research Question 1 and Table 2; pp. 4–5, screening and extraction",
+      "quote": "odds ratio for the 707 treatment outcomes was 1.48 (with a ... 95% confidence interval ranging from 1.10 to 2.00).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 72,
+      "field": "n_r",
+      "code": "extracted_printed",
+      "reason": "The RQ1 paragraph explicitly assigns 707 treatment outcomes to the overall Mantel–Haenszel odds ratio. Table 2 distinguishes 40 dissertation–publication pairs from 707 outcome observations.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt",
+      "location": "p. 7, Research Question 1 and Table 2; p. 8, Discussion",
+      "quote": "odds ratio for the 707 treatment outcomes was 1.48 (with a ... 95% confidence interval ranging from 1.10 to 2.00).",
+      "calculation": "None; N directly printed. Analytic observations: 707 treatment outcomes; contributing study pairs: 40."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "RQ1 overall Mantel–Haenszel odds ratio comparing journal publication of statistically significant versus nonsignificant dissertation intervention outcomes.",
+    "worker_notes": "Only assigned unfinished fields examined. Original side, reported_success, and unassigned replication fields are placeholders and must not overwrite previously verified fields. Source title and DOI match the supplied replication reference; publisher proof pagination used. Rendered PDF pages 7–8 inspected for layout. Overall analytic N=707 is directly printed, with 40 dissertation–publication pairs as source clusters; no summation or df inference used. The printed OR is 1.48 with 95% CI 1.10–2.00. No numeric p value/bound for this same overall OR is supplied; qualitative significance in the Discussion is not converted to a p bound. Moderator p values in Table 3 refer to different tests.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt",
+    "shipped": "40",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "Overall odds ratio that significant and nonsignificant findings reported in special education dissertations would also be reported in corresponding journal publications",
+      "es_repr_o": "p. 428",
+      "es_repr_r": "p. 7",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": null,
+      "pval_type_r": null,
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": null,
+      "nested_r": null,
+      "reported_success_quote": "As expected, we found that the odds of a statistically significant outcome in a dissertation appearing in the published version were significantly greater than the odds of a nonsignificant outcome appearing in the published version, replicating (to some extent) the results obtained by Pigott and colleagues. Notably, the odds ratio we obtained (1.48) was smaller than that obtained by Pigott et al. (2.41), indicating a smaller outcome-reporting bias."
+    },
+    "prior_adjudication": {
+      "audit_id": 72,
+      "field": "n_r",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "location": "Online-first p. 7, Table 2 Note and Research Question 1",
+      "quote": "Note. Outcomes obtained from N = 40 dissertations and corresponding … journal articles.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt",
+      "reason": "The overall Mantel–Haenszel odds ratio is computed across 707 treatment outcomes (observation-level count) nested within N = 40 matched dissertation–journal article pairs (study/cluster-level count); because both counting units are valid and the target specification does not fix which level n_r represents, the field is undeterminable.",
+      "resolution": "argon"
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8c3c13d2d09b4327",
+    "audit_id": 72,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Pigott, T. D., Valentine, J. C., Polanin, J. R., Williams, R. T., & Canada, D. D. (2013). Outcome-Reporting Bias in Education Research. Educational Researcher, 42(8), 424–432. https://doi.org/10.3102/0013189x13507104",
+      "doi_o": "10.3102/0013189x13507104",
+      "study_o": "1",
+      "ref_r": "Talbott, E., Maggin, D. M., Chua, M., Ashley, L., Chen, X., Chin, P. A., & Curry, M. K. (2024). Outcome-Reporting Bias in Special Education Intervention Research Using Experimental and Quasi-Experimental Group Designs: A Conceptual Replication. Remedial and Special Education. https://doi.org/10.1177/07419325241240067",
+      "doi_r": "10.1177/07419325241240067",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Overall odds ratio that significant and nonsignificant findings reported in special education dissertations would also be reported in corresponding journal publications",
+      "locators_o": "p. 428",
+      "locators_r": "p. 7",
+      "audit_id": 72,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/b4b2c1fbc69291645c4a0441_drive.pdf",
+      "source_version_note": "Publisher online-first article/proof from private Drive archive; final bibliographic pagination retained separately"
+    },
+    "blind": {
+      "value": "1.48",
+      "metric": "Mantel–Haenszel odds ratio",
+      "test_statistic": null,
+      "location": "p. 7, Research Question 1",
+      "quote": "odds ratio for the 707 treatment outcomes was 1.48 (with a ... 95% confidence interval ranging from 1.10 to 2.00).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 72,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "RQ1 directly prints the overall Mantel–Haenszel odds ratio as 1.48 with 95% CI 1.10–2.00; no metric conversion.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt",
+      "location": "p. 7, Research Question 1 and Table 2; p. 8, Discussion",
+      "quote": "odds ratio for the 707 treatment outcomes was 1.48 (with a ... 95% confidence interval ranging from 1.10 to 2.00).",
+      "calculation": "None."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "RQ1 overall Mantel–Haenszel odds ratio comparing journal publication of statistically significant versus nonsignificant dissertation intervention outcomes.",
+    "worker_notes": "Only assigned unfinished fields examined. Original side, reported_success, and unassigned replication fields are placeholders and must not overwrite previously verified fields. Source title and DOI match the supplied replication reference; publisher proof pagination used. Rendered PDF pages 7–8 inspected for layout. Overall analytic N=707 is directly printed, with 40 dissertation–publication pairs as source clusters; no summation or df inference used. The printed OR is 1.48 with 95% CI 1.10–2.00. No numeric p value/bound for this same overall OR is supplied; qualitative significance in the Discussion is not converted to a p bound. Moderator p values in Table 3 refer to different tests.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b4b2c1fbc69291645c4a0441.txt",
+    "shipped": "1.48",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Overall odds ratio that significant and nonsignificant findings reported in special education dissertations would also be reported in corresponding journal publications",
+      "es_repr_o": "p. 428",
+      "es_repr_r": "p. 7",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": null,
+      "pval_type_r": null,
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": null,
+      "nested_r": null,
+      "reported_success_quote": "As expected, we found that the odds of a statistically significant outcome in a dissertation appearing in the published version were significantly greater than the odds of a nonsignificant outcome appearing in the published version, replicating (to some extent) the results obtained by Pigott and colleagues. Notably, the odds ratio we obtained (1.48) was smaller than that obtained by Pigott et al. (2.41), indicating a smaller outcome-reporting bias."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/8c3c13d2d09b4327. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_8c3c13d2d09b4327_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
