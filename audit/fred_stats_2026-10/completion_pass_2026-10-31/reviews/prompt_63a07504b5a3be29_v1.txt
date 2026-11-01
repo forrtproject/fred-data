@@ -1,0 +1,351 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "408": {
+      "source_key": "63a07504b5a3be29",
+      "side": "original",
+      "input": {
+        "ref_o": "Rottman, J., & Young, L. (2019). Specks of Dirt and Tons of Pain: Dosage Distinguishes Impurity From Harm. Psychological Science, 30(8), 1151–1160. https://doi.org/10.1177/0956797619855382",
+        "doi_o": "10.1177/0956797619855382",
+        "study_o": "1",
+        "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+        "doi_r": "10.1098/rsos.231240",
+        "url_r": "https://rpubs.com/cceballos-stanford/544019",
+        "study_r": "1",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "description": "Sensitivity to transgression dosage for harm-based transgressions.",
+        "locators_o": "p. 4",
+        "locators_r": "https://rpubs.com/cceballos-stanford/544019",
+        "audit_id": 408,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1: simple effect of dosage on moral wrongness of harm transgressions in the domain-by-dosage mixed model (p. 1154).",
+      "worker_notes": "Identity verified from the supplied canonical text: Research Article; title Specks of Dirt and Tons of Pain: Dosage Distinguishes Impurity From Harm; Joshua Rottman and Liane Young; Psychological Science 2019, Vol. 30(8), 1151–1160; DOI 10.1177/0956797619855382. The cache contains the primary report with methods, results, discussion and references, not merely an abstract or secondary account. No PDF was supplied. N = 177 is the explicitly stated final Study 1 participant sample after 12 attention-check exclusions and 12 duplicate-pilot-worker-ID exclusions. These participants supplied the repeated moral judgments analyzed by the Study 1 mixed model, with participant and scenario random intercepts. N denotes participant clusters, not the number of judgment observations or scenarios; no observation total or N from degrees of freedom is inferred. Both domain and dosage vary within participants. No sample arithmetic was needed. Only assigned unfinished fields were populated; all unassigned fields and the replication side are placeholders. The harm-specific simple effect is identified by the explicit Study 1 Results statement; its coefficient and p are outside this assignment and were not populated. The interaction test is a separate test.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants had greater sensitivity to dosage for harm-based transgressions",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "https://rpubs.com/cceballos-stanford/544019",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "subjective replication success rating .5"
+      }
+    },
+    "409": {
+      "source_key": "63a07504b5a3be29",
+      "side": "original",
+      "input": {
+        "ref_o": "Rottman, J., & Young, L. (2019). Specks of Dirt and Tons of Pain: Dosage Distinguishes Impurity From Harm. Psychological Science, 30(8), 1151–1160. https://doi.org/10.1177/0956797619855382",
+        "doi_o": "10.1177/0956797619855382",
+        "study_o": "1",
+        "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+        "doi_r": "10.1098/rsos.231240",
+        "url_r": "https://rpubs.com/cceballos-stanford/544019",
+        "study_r": "1",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "description": "Judgments of wrongness for high-dosage versus low-dosage transgressions.",
+        "locators_o": "p. 4",
+        "locators_r": "https://rpubs.com/cceballos-stanford/544019",
+        "audit_id": 409,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1: overall effect of dosage (high versus low) on moral wrongness in the mixed model rerun without the interaction term (p. 1154).",
+      "worker_notes": "Identity verified from the supplied canonical text: Research Article; title Specks of Dirt and Tons of Pain: Dosage Distinguishes Impurity From Harm; Joshua Rottman and Liane Young; Psychological Science 2019, Vol. 30(8), 1151–1160; DOI 10.1177/0956797619855382. The cache contains the primary report with methods, results, discussion and references, not merely an abstract or secondary account. No PDF was supplied. N = 177 is the explicitly stated final Study 1 participant sample after 12 attention-check exclusions and 12 duplicate-pilot-worker-ID exclusions. These participants supplied the repeated moral judgments analyzed by the Study 1 mixed model, with participant and scenario random intercepts. N denotes participant clusters, not the number of judgment observations or scenarios; no observation total or N from degrees of freedom is inferred. Both domain and dosage vary within participants. No sample arithmetic was needed. Only assigned unfinished fields were populated; all unassigned fields and the replication side are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "High-dosage transgressions were judged to be more wrong than low-dosage transgressions",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "https://rpubs.com/cceballos-stanford/544019",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "subjective replication success rating .5"
+      }
+    },
+    "410": {
+      "source_key": "63a07504b5a3be29",
+      "side": "original",
+      "input": {
+        "ref_o": "Rottman, J., & Young, L. (2019). Specks of Dirt and Tons of Pain: Dosage Distinguishes Impurity From Harm. Psychological Science, 30(8), 1151–1160. https://doi.org/10.1177/0956797619855382",
+        "doi_o": "10.1177/0956797619855382",
+        "study_o": "1",
+        "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+        "doi_r": "10.1098/rsos.231240",
+        "url_r": "https://rpubs.com/cceballos-stanford/544019",
+        "study_r": "1",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "description": "Severity of harm versus purity transgressions.",
+        "locators_o": "p. 4",
+        "locators_r": "https://rpubs.com/cceballos-stanford/544019",
+        "audit_id": 410,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1: overall effect of domain (harm versus purity) on moral wrongness, interpreted as severity matching, in the mixed model rerun without the interaction term (p. 1154).",
+      "worker_notes": "Identity verified from the supplied canonical text: Research Article; title Specks of Dirt and Tons of Pain: Dosage Distinguishes Impurity From Harm; Joshua Rottman and Liane Young; Psychological Science 2019, Vol. 30(8), 1151–1160; DOI 10.1177/0956797619855382. The cache contains the primary report with methods, results, discussion and references, not merely an abstract or secondary account. No PDF was supplied. N = 177 is the explicitly stated final Study 1 participant sample after 12 attention-check exclusions and 12 duplicate-pilot-worker-ID exclusions. These participants supplied the repeated moral judgments analyzed by the Study 1 mixed model, with participant and scenario random intercepts. N denotes participant clusters, not the number of judgment observations or scenarios; no observation total or N from degrees of freedom is inferred. Both domain and dosage vary within participants. No sample arithmetic was needed. Only assigned unfinished fields were populated; all unassigned fields and the replication side are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "The harm and purity transgressions were well matched for severity",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "https://rpubs.com/cceballos-stanford/544019",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "subjective replication success rating .5"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 408,
+      "field": "n_o",
+      "blind": {
+        "value": "177",
+        "sample_role": "Final Study 1 participants; participant clusters contributing repeated judgments to the critical mixed model.",
+        "exclusions": "24 additional completers excluded: 12 failed attention checks (4 planet-destruction, 8 charitable-giving); 12 had worker IDs duplicated from the pilot study.",
+        "location": "pp. 1152–1153, Study 1 Participants and Materials and procedure; pp. 1153–1154, Study 1 Results mixed-model specification.",
+        "quote": "The final sample con- ... sisted of 177 U.S. residents ... Twenty-four additional participants ... completed the study, but 12 were excluded for failing ... attention checks ... Another 12 participants were excluded for having ... worker IDs that duplicated those from a pilot study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 408,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "N = 177 is the explicitly stated final Study 1 participant sample after 12 attention-check exclusions and 12 duplicate-pilot-worker-ID exclusions. These participants supplied the repeated moral judgments analyzed by the Study 1 mixed model, with participant and scenario random intercepts. N denotes participant clusters, not the number of judgment observations or scenarios; no observation total or N from degrees of freedom is inferred. Both domain and dosage vary within participants. No sample arithmetic was needed. Critical model specification: we analyzed the data with a linear ... mixed model fitted using restricted maximum likeli- ... hood. ... the random intercepts of ... scenario and participant.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "location": "pp. 1152–1153, Study 1 Participants and Materials and procedure; pp. 1153–1154, Study 1 Results mixed-model specification.",
+        "quote": "The final sample con- ... sisted of 177 U.S. residents ... Twenty-four additional participants ... completed the study, but 12 were excluded for failing ... attention checks ... Another 12 participants were excluded for having ... worker IDs that duplicated those from a pilot study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "177",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 409,
+      "field": "n_o",
+      "blind": {
+        "value": "177",
+        "sample_role": "Final Study 1 participants; participant clusters contributing repeated judgments to the critical mixed model.",
+        "exclusions": "24 additional completers excluded: 12 failed attention checks (4 planet-destruction, 8 charitable-giving); 12 had worker IDs duplicated from the pilot study.",
+        "location": "pp. 1152–1153, Study 1 Participants and Materials and procedure; pp. 1153–1154, Study 1 Results mixed-model specification.",
+        "quote": "The final sample con- ... sisted of 177 U.S. residents ... Twenty-four additional participants ... completed the study, but 12 were excluded for failing ... attention checks ... Another 12 participants were excluded for having ... worker IDs that duplicated those from a pilot study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 409,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "N = 177 is the explicitly stated final Study 1 participant sample after 12 attention-check exclusions and 12 duplicate-pilot-worker-ID exclusions. These participants supplied the repeated moral judgments analyzed by the Study 1 mixed model, with participant and scenario random intercepts. N denotes participant clusters, not the number of judgment observations or scenarios; no observation total or N from degrees of freedom is inferred. Both domain and dosage vary within participants. No sample arithmetic was needed. Critical model specification: we analyzed the data with a linear ... mixed model fitted using restricted maximum likeli- ... hood. ... the random intercepts of ... scenario and participant.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "location": "pp. 1152–1153, Study 1 Participants and Materials and procedure; pp. 1153–1154, Study 1 Results mixed-model specification.",
+        "quote": "The final sample con- ... sisted of 177 U.S. residents ... Twenty-four additional participants ... completed the study, but 12 were excluded for failing ... attention checks ... Another 12 participants were excluded for having ... worker IDs that duplicated those from a pilot study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "177",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 409,
+      "field": "es_value_o",
+      "blind": {
+        "value": "9.199",
+        "metric": "b (unstandardized mixed-model coefficient)",
+        "test_statistic": null,
+        "location": "p. 1154 (article p. 4), Study 1 Results, model rerun without interaction.",
+        "quote": "Rerunning this model without the interaction term ... (to ensure more interpretable main effects) ... there was a clear effect of dosage, b = ... 9.199, SE = 0.915, p < .001, as high-dosage transgres- ... sions were judged to be more wrong than low-dosage ... transgressions.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 409,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed b coefficient for the dosage main effect, high versus low wrongness in the Study 1 model without the interaction. Description and study identify this test independently of row ordering or numerical matches. The p bound is preserved as p < .001.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "location": "p. 1154 (article p. 4), Study 1 Results, model rerun without interaction.",
+        "quote": "Rerunning this model without the interaction term ... (to ensure more interpretable main effects) ... there was a clear effect of dosage, b = ... 9.199, SE = 0.915, p < .001, as high-dosage transgres- ... sions were judged to be more wrong than low-dosage ... transgressions.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "9.199",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 409,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 1154 (article p. 4), Study 1 Results, model rerun without interaction.",
+        "quote": "Rerunning this model without the interaction term ... (to ensure more interpretable main effects) ... there was a clear effect of dosage, b = ... 9.199, SE = 0.915, p < .001, as high-dosage transgres- ... sions were judged to be more wrong than low-dosage ... transgressions.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 409,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed b coefficient for the dosage main effect, high versus low wrongness in the Study 1 model without the interaction. Description and study identify this test independently of row ordering or numerical matches. The p bound is preserved as p < .001.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "location": "p. 1154 (article p. 4), Study 1 Results, model rerun without interaction.",
+        "quote": "Rerunning this model without the interaction term ... (to ensure more interpretable main effects) ... there was a clear effect of dosage, b = ... 9.199, SE = 0.915, p < .001, as high-dosage transgres- ... sions were judged to be more wrong than low-dosage ... transgressions.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 410,
+      "field": "n_o",
+      "blind": {
+        "value": "177",
+        "sample_role": "Final Study 1 participants; participant clusters contributing repeated judgments to the critical mixed model.",
+        "exclusions": "24 additional completers excluded: 12 failed attention checks (4 planet-destruction, 8 charitable-giving); 12 had worker IDs duplicated from the pilot study.",
+        "location": "pp. 1152–1153, Study 1 Participants and Materials and procedure; pp. 1153–1154, Study 1 Results mixed-model specification.",
+        "quote": "The final sample con- ... sisted of 177 U.S. residents ... Twenty-four additional participants ... completed the study, but 12 were excluded for failing ... attention checks ... Another 12 participants were excluded for having ... worker IDs that duplicated those from a pilot study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 410,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "N = 177 is the explicitly stated final Study 1 participant sample after 12 attention-check exclusions and 12 duplicate-pilot-worker-ID exclusions. These participants supplied the repeated moral judgments analyzed by the Study 1 mixed model, with participant and scenario random intercepts. N denotes participant clusters, not the number of judgment observations or scenarios; no observation total or N from degrees of freedom is inferred. Both domain and dosage vary within participants. No sample arithmetic was needed. Critical model specification: we analyzed the data with a linear ... mixed model fitted using restricted maximum likeli- ... hood. ... the random intercepts of ... scenario and participant.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "location": "pp. 1152–1153, Study 1 Participants and Materials and procedure; pp. 1153–1154, Study 1 Results mixed-model specification.",
+        "quote": "The final sample con- ... sisted of 177 U.S. residents ... Twenty-four additional participants ... completed the study, but 12 were excluded for failing ... attention checks ... Another 12 participants were excluded for having ... worker IDs that duplicated those from a pilot study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "177",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 410,
+      "field": "es_value_o",
+      "blind": {
+        "value": "3.400",
+        "metric": "b (unstandardized mixed-model coefficient)",
+        "test_statistic": null,
+        "location": "p. 1154 (article p. 4), Study 1 Results, model rerun without interaction.",
+        "quote": "Rerunning this model without the interaction term ... (to ensure more interpretable main effects) indicated ... that there was no overall effect of domain, b = 3.400, ... SE = 6.803, p = .625, thus revealing that the harm and ... purity transgressions were well matched for severity.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 410,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed b coefficient for the domain main effect, harm versus purity severity in the Study 1 model without the interaction. Description and study identify this test independently of row ordering or numerical matches. The p value is preserved as p = .625.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "location": "p. 1154 (article p. 4), Study 1 Results, model rerun without interaction.",
+        "quote": "Rerunning this model without the interaction term ... (to ensure more interpretable main effects) indicated ... that there was no overall effect of domain, b = 3.400, ... SE = 6.803, p = .625, thus revealing that the harm and ... purity transgressions were well matched for severity.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "3.4",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 410,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".625",
+        "bound": "e",
+        "location": "p. 1154 (article p. 4), Study 1 Results, model rerun without interaction.",
+        "quote": "Rerunning this model without the interaction term ... (to ensure more interpretable main effects) indicated ... that there was no overall effect of domain, b = 3.400, ... SE = 6.803, p = .625, thus revealing that the harm and ... purity transgressions were well matched for severity.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 410,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed b coefficient for the domain main effect, harm versus purity severity in the Study 1 model without the interaction. Description and study identify this test independently of row ordering or numerical matches. The p value is preserved as p = .625.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9c3132506a366535183bdb7b.txt",
+        "location": "p. 1154 (article p. 4), Study 1 Results, model rerun without interaction.",
+        "quote": "Rerunning this model without the interaction term ... (to ensure more interpretable main effects) indicated ... that there was no overall effect of domain, b = 3.400, ... SE = 6.803, p = .625, thus revealing that the harm and ... purity transgressions were well matched for severity.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.625",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/63a07504b5a3be29. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_63a07504b5a3be29_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
