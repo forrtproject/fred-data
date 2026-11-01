@@ -265,13 +265,25 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
   .toast{left:12px;right:12px;bottom:auto;top:12px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+.workflow-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.workflow-nav button{border:1px solid var(--line,#cbd5e1);border-radius:8px;background:white;padding:9px 15px;font:inherit;cursor:pointer}
+.workflow-nav button[aria-current="step"]{background:#203b32;color:white;border-color:#203b32}
+.workflow{flex:1;overflow:auto;padding:30px max(20px,calc((100% - 1120px)/2));background:#f7f8f5}
+.workflow h2{font-size:30px;margin:0 0 10px}.workflow .intro{max-width:76ch;line-height:1.6}
+.batch-card{background:white;border:1px solid #d8dfd8;border-radius:10px;padding:22px;margin:18px 0}
+.batch-card h3{font-size:21px;margin:0 0 8px}.batch-card p{line-height:1.5}.batch-card .batch-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:16px 0 0}
+.batch-button{font:inherit;font-weight:650;padding:12px 18px;border:1px solid #203b32;background:#203b32;color:white;border-radius:7px;cursor:pointer}
+.batch-button.secondary{background:white;color:#203b32}.batch-button:disabled{opacity:.5;cursor:default}
+.batch-list{max-height:340px;overflow:auto;margin-top:14px}.batch-list li{margin:12px 0;line-height:1.45}.batch-list small{display:block;color:#52615b}.workflow footer{display:flex;gap:12px;flex-wrap:wrap;padding:16px 0 30px}.workflow [hidden],#workspace[hidden],#queues[hidden]{display:none}
+@media(max-width:760px){.workflow{padding:20px 16px}.workflow h2{font-size:25px}.batch-card{padding:16px}.workflow-nav button{padding:8px 10px}.masthead .lede{font-size:14px}}
 </style>
 </head>
 <body>
 <header class="masthead">
   <div>
     <h1>FLoRA audit decisions</h1>
-    <p class="lede">Review proposed fixes and cases needing your judgement. Decisions are saved in this browser until you export them; nothing here edits FLoRA.</p>
+    <p class="lede">Review proposed fixes and cases needing your judgement. Approve safe batches, download the changes, then review the remaining cases. Decisions save automatically in this browser; FLoRA changes only when the download is implemented.</p>
   </div>
   <div class="tools">
     <p class="overall" id="overall"></p>
@@ -281,10 +293,12 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
     <input id="import-file" type="file" accept=".json,application/json" hidden>
     <button class="tool" id="about-button" type="button">Downloads and help</button>
   </div>
+  <p id="save-status" role="status" class="muted"></p><nav id="workflow-nav" class="workflow-nav" aria-label="Review steps"></nav>
   <nav class="queues" id="queues" aria-label="Review queues"></nav>
   <p class="notice" id="notice" role="status" aria-live="polite"></p>
 </header>
-<div class="workspace">
+<main id="workflow" class="workflow" tabindex="-1"></main>
+<div class="workspace" id="workspace">
   <aside class="index" id="index" aria-label="Case list">
     <div class="index-tools">
       <p class="queue-note" id="queue-note"></p>
@@ -400,7 +414,11 @@ const LEVEL={full_text:'Full text',abstract:'Abstract only',none:'No usable text
 let store=readJSON(STORE_KEY,null);
 if(!store||typeof store!=='object'||!store.records)store={version:2,records:{}};
 let prefs=readJSON(PREFS_KEY,{})||{};
-function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(store));return true}catch(e){notice('This browser is not saving decisions. Export them before closing the page.');return false}}
+let savingFailed=false;
+function renderSaveStatus(){const el=$('save-status');if(el)el.textContent=savingFailed?'Not saved — browser storage failed. Export a backup before closing.':store.saved_at?'Saved in this browser · '+new Date(store.saved_at).toLocaleString():'Decisions save automatically in this browser. Export a backup to move them to another browser.'}
+let savedPayload=null;try{savedPayload=localStorage.getItem(STORE_KEY)}catch(e){}
+function persist(){try{const recovered=savingFailed;const currentPayload=localStorage.getItem(STORE_KEY);if(currentPayload!==savedPayload)throw Error('Another tab changed these decisions; reload to restore them.');store.saved_at=stamp();const payload=JSON.stringify(store);localStorage.setItem(STORE_KEY,payload);if(localStorage.getItem(STORE_KEY)!==payload)throw Error('Read-back failed');savedPayload=payload;savingFailed=false;renderSaveStatus();if(recovered)notice('Saving restored. Decisions are saved in this browser.');return true}catch(e){savingFailed=true;renderSaveStatus();notice('Could not save: '+e.message+'. This action was not recorded. Reload if another tab changed these decisions; export a backup before closing.');return false}}
+function transaction(change){const previous=JSON.stringify(store);change();if(persist())return true;store=JSON.parse(previous);return false}
 function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify(prefs))}catch(e){}}
 // Earlier versions of this app saved free-text reviews under a hash-specific key; keep them visible.
 (function migrateLegacy(){const old=readJSON(LEGACY_KEY,null);if(!old||store.legacy_imported)return;for(const [id,d] of Object.entries(old)){if(!d)continue;const r=store.records[id]||{case_id:id};r.legacy={decision:d.decision,notes:d.notes,recorded_at:d.recorded_at};store.records[id]=r}store.legacy_imported=true;persist()})();
@@ -439,7 +457,7 @@ function profile(c){
   profiles.set(c.id,p);return p;
 }
 function snapshotOf(c){const p=profile(c);return fnv(JSON.stringify({changes:c.changes||{},quote:p.qf?p.qf.id||p.qf.proposed_quote:null,action:p.ra?[p.ra.action,p.ra.operation,p.ra.status]:null,options:p.options.map(o=>o.key),missing:p.summary.missing_row?.disposition||null}))}
-function statusOf(c){const r=store.records[c.id];if(!r||!r.decision)return r&&r.legacy?'legacy':'open';return r.proposal_fingerprint&&r.proposal_fingerprint!==snapshotOf(c)?'stale':r.decision}
+function statusOf(c){const r=store.records[c.id];if(!r||!r.decision){const pair=store.pairs?.[c.id.replace(/^missing:/,'pair:')];if(pair&&!r?.notes&&!r?.legacy)return batchGroups.find(g=>g.id===pair.group_id)?.fingerprint===pair.group_fingerprint?'add_pair':'stale';return r&&r.legacy?'legacy':'open'};if(r.batch_id&&batchGroups.find(g=>g.id===r.batch_id)?.fingerprint!==r.group_fingerprint)return 'stale';return r.proposal_fingerprint&&r.proposal_fingerprint!==snapshotOf(c)?'stale':r.decision}
 const APPROVING=new Set(['approve','approve_partial','approve_record_action','add_pair','accept_finding']);
 function markClass(s){return APPROVING.has(s)?'approved':s==='keep_current'||s==='reject_pair'?'kept':s==='follow_up'?'follow':s==='choose_option'||s==='policy_rule'?'option':s}
 const isDecided=c=>!['open','stale','legacy'].includes(statusOf(c));
@@ -496,7 +514,7 @@ function renderQueues(){
   for(const q of QUEUES){const list=cases.filter(q.test);const done=list.filter(isDecided).length;const pct=list.length?Math.round(done/list.length*100):0;
     nav.append(h('button',{class:'tab',type:'button','aria-pressed':String(state.queue===q.id),title:`${done} of ${list.length} decided`,onclick:()=>switchQueue(q.id)},q.label,h('span',{class:'tab-count'},list.length.toLocaleString()),h('span',{class:'tab-bar','aria-hidden':'true'},h('i',{style:`width:${pct}%`}))))}
   const all=cases.filter(isDecided).length,stale=cases.filter(c=>statusOf(c)==='stale').length;
-  const o=$('overall');o.replaceChildren(h('b',{},all.toLocaleString()),' decisions saved',stale?`; ${stale} to re-check`:'');
+  const pairCount=Object.entries(store.pairs||{}).filter(([id,r])=>!caseById.has(id.replace(/^pair:/,'missing:'))&&batchGroups.find(g=>g.id===r.group_id)?.fingerprint===r.group_fingerprint).length;const o=$('overall');o.replaceChildren(h('b',{},(all+pairCount).toLocaleString()),' decisions saved',stale?`; ${stale} to re-check`:'');
 }
 function renderList(){
   visible=computeVisible().map(([,c])=>c);
@@ -799,22 +817,25 @@ function spec(c){
 }
 function proposalOf(c,fields){const p=profile(c);const out={};for(const f of fields){if(f==='outcome_quote'&&p.qf)out[f]={current:p.qf.current_text,proposed:p.qf.proposed_quote,proposed_source:p.qf.proposed_source};else out[f]={current:f==='original'?current(c,f):current(c,f)??null,proposed:(c.changes||{})[f]}}return out}
 function decide(c,opt){
+  flushNote();
   const note=($('note')?.value||'').trim();
   if(opt.disabled)return;
   if(opt.needsNote&&!note){openNote('Describe the rule you chose before recording this decision.');return}
   const p=profile(c),prev=store.records[c.id]?JSON.parse(JSON.stringify(store.records[c.id])):null;
   const fields=['approve','approve_partial'].includes(opt.code)?p.items.filter(f=>includeKey(c).has(f)):[];
   const r={...(store.records[c.id]||{}),case_id:c.id,row:c.row,decision:opt.code,decision_label:opt.label,option:opt.option||null,approved_fields:fields,proposal:p.items.length?proposalOf(c,p.items):null,record_action:opt.code==='approve_record_action'&&p.ra?{action:p.ra.action??null,operation:p.ra.operation??null,proposed_changes:p.ra.proposed_changes??null}:null,expected_before_full_record_sha256:rowCtx(c)?.sha||null,proposal_fingerprint:snapshotOf(c),notes:note,recorded_at:stamp(),applied:false};
-  store.records[c.id]=r;persist();
+  if(!transaction(()=>{delete r.batch_id;store.records[c.id]=r}))return;
   const next=prefs.advance!==false?nextOpen(c.id):null;
-  lastUndo=()=>{lastUndo=null;if(prev)store.records[c.id]=prev;else delete store.records[c.id];persist();openCase(c.id);showToast(`Decision undone for ${c.row!=null?'row '+c.row:'this pair'}.`)};
+  lastUndo=()=>{if(!transaction(()=>{if(prev)store.records[c.id]=prev;else delete store.records[c.id]}))return;lastUndo=null;openCase(c.id);showToast(`Decision undone for ${c.row!=null?'row '+c.row:'this pair'}.`)};
   showToast(`${statusLabel(opt.code)}: ${c.row!=null?'row '+c.row:'missing pair'}. Saved in this browser.`,lastUndo);
   renderQueues();renderList();
   if(next)select(next.id);else{renderCase();renderDock()}
 }
 function openNote(message){state.noteOpen=true;renderDock();const t=$('note');if(t){t.focus();if(message){$('note-error').textContent=message}}}
-let noteTimer=null;
-function saveNote(c,text){clearTimeout(noteTimer);noteTimer=setTimeout(()=>{const r=store.records[c.id]||{case_id:c.id,row:c.row,decision:null};r.notes=text;r.updated_at=stamp();store.records[c.id]=r;persist();const s=$('note-saved');if(s)s.textContent='Note saved.'},350)}
+let noteTimer=null,pendingNote=null;
+function flushNote(){if(pendingNote){clearTimeout(noteTimer);const save=pendingNote;pendingNote=null;save()}}
+window.addEventListener('pagehide',flushNote);
+function saveNote(c,text){clearTimeout(noteTimer);pendingNote=()=>{const r={...(store.records[c.id]||{case_id:c.id,row:c.row,decision:null}),notes:text,updated_at:stamp()};const saved=transaction(()=>{store.records[c.id]=r});const el=$('note-saved');if(el)el.textContent=saved?'Note saved.':'Note not saved.'};noteTimer=setTimeout(flushNote,350)}
 function renderDock(){
   const dock=$('dock');dock.replaceChildren();const c=caseById.get(state.selected);if(!c)return;
   const sp=spec(c),r=store.records[c.id],s=statusOf(c);
@@ -848,7 +869,7 @@ function step(d,focus=false){const i=visible.findIndex(c=>c.id===state.selected)
 function nextOpen(fromId){const i=visible.findIndex(c=>c.id===fromId);for(let k=1;k<=visible.length;k++){const c=visible[(i+k)%visible.length];if(c&&c.id!==fromId&&!isDecided(c))return c}return null}
 function switchQueue(id){state.queue=id;prefs.queue=id;savePrefs();renderQueues();renderList();const keep=visible.find(c=>c.id===state.selected);const remembered=visible.find(c=>c.id===state.lastByQueue[id]);const target=keep||remembered||visible.find(c=>!isDecided(c))||visible[0];if(target)select(target.id);else{state.selected=null;renderCase();renderDock()}}
 function openCase(id){if(!caseById.has(id))return;const c=caseById.get(id);if(!queueById[state.queue].test(c)){state.queue=QUEUES.find(q=>q.id!=='all'&&q.test(c))?.id||'all';prefs.queue=state.queue;savePrefs()}if(!computeVisible().some(([,x])=>x.id===id)){state.search='';$('search').value='';state.show='all';$('show').value='all'}renderQueues();renderList();select(id)}
-function renderAll(){renderQueues();renderList();if(!visible.some(c=>c.id===state.selected)){const t=visible.find(c=>!isDecided(c))||visible[0];state.selected=t?t.id:null}select(state.selected)}
+function renderAll(){renderQueues();renderList();if(!visible.some(c=>c.id===state.selected)){const t=visible.find(c=>!isDecided(c))||visible[0];state.selected=t?t.id:null}select(state.selected);if(workflowReady)renderWorkflow()}
 
 /* ---------- toast ---------- */
 function showToast(text,undo){const t=$('toast');t.replaceChildren(h('span',{},text));if(undo)t.append(h('button',{type:'button',onclick:()=>{t.hidden=true;undo()}},'Undo'));t.hidden=false;const hide=()=>{clearTimeout(toastTimer);toastTimer=setTimeout(()=>{if(!t.matches(':hover,:focus-within'))t.hidden=true;else hide()},undo?10000:3500)};hide()}
@@ -856,20 +877,22 @@ function showToast(text,undo){const t=$('toast');t.replaceChildren(h('span',{},t
 /* ---------- export and import ---------- */
 function download(name,text,type){const u=URL.createObjectURL(new Blob([text],{type}));const a=h('a',{href:u,download:name});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 function exportRecords(){return Object.values(store.records).filter(r=>r&&(r.decision||r.notes||r.legacy)).map(r=>{const c=caseById.get(r.case_id);return {...r,kind:c?.kind??null,title:c?caseTitle(c):null,status:c?statusOf(c):'unknown_case',stale:c?statusOf(c)==='stale':null}})}
-$('export-json').onclick=()=>{const decisions=exportRecords();download(`flora-audit-decisions-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema_version:2,app:'flora-audit-decision-review',input_hash:INPUT_HASH,queue_sha256:QUEUE_HASH,baseline_sha256:CONTEXT.baseline_sha256??null,exported_at:stamp(),canonical_changes_applied:false,decided_cases:cases.filter(isDecided).length,total_cases:cases.length,decisions},null,2),'application/json');notice(`Exported ${decisions.length} records.`)};
+$('export-json').onclick=()=>{flushNote();const decisions=exportRecords();download(`flora-audit-decisions-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema_version:3,app:'flora-audit-decision-review',input_hash:INPUT_HASH,queue_sha256:QUEUE_HASH,baseline_sha256:CONTEXT.baseline_sha256??null,exported_at:stamp(),canonical_changes_applied:false,batch_approvals:store.batch_approvals||{},approved_missing_pairs:store.pairs||{},workflow:store.workflow||{},decided_cases:cases.filter(isDecided).length,total_cases:cases.length,decisions},null,2),'application/json');notice(`Exported ${decisions.length} records.`)};
 $('export-csv').onclick=()=>{const cols=['case_id','row','kind','decision','decision_label','option','approved_fields','stale','notes','recorded_at','title'];const esc=v=>{v=v==null?'':typeof v==='object'?(Array.isArray(v)?v.join('; '):v.label||JSON.stringify(v)):String(v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};const lines=[cols.join(',')].concat(exportRecords().map(r=>cols.map(k=>esc(r[k])).join(',')));download(`flora-audit-decisions-${new Date().toISOString().slice(0,10)}.csv`,'﻿'+lines.join('\r\n')+'\r\n','text/csv')};
 $('import-button').onclick=()=>$('import-file').click();
-$('import-file').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{const data=JSON.parse(await file.text());const list=Array.isArray(data)?data:data&&data.decisions;if(!Array.isArray(list))throw Error('This file has no decisions list.');let added=0,replaced=0,skipped=0,unknown=0;
+$('import-file').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{const data=JSON.parse(await file.text());const beforeImport=JSON.stringify(store);if(data.baseline_sha256&&data.baseline_sha256!==CONTEXT.baseline_sha256)throw Error('Backup belongs to a different audited snapshot.');const list=Array.isArray(data)?data:data&&data.decisions;if(!Array.isArray(list))throw Error('This file has no decisions list.');let added=0,replaced=0,skipped=0,unknown=0;
   for(const d of list){if(!d||!d.case_id||!caseById.has(d.case_id)){unknown++;continue}const local=store.records[d.case_id];let incoming;
     if((data.schema_version||1)<2&&d.decision&&!d.decision_label)incoming={case_id:d.case_id,legacy:{decision:d.decision,notes:d.notes,recorded_at:d.recorded_at}};
     else{const {kind,title,status,stale,...rest}=d;incoming=rest}
     const newer=!local||String(incoming.recorded_at||incoming.updated_at||'')>String(local.recorded_at||local.updated_at||'');
     if(!local||(!local.decision&&!local.notes)){store.records[d.case_id]={...local,...incoming};added++}else if(newer){store.records[d.case_id]={...local,...incoming};replaced++}else skipped++}
-  persist();profiles=new Map();renderAll();const n=added+replaced;notice(`Imported ${n} ${n===1?'record':'records'}: ${added} new, ${replaced} replacing older local entries, ${skipped} skipped as older, ${unknown} not in this queue.`+(data.input_hash&&data.input_hash!==INPUT_HASH?' The file comes from a different audit version; decisions on changed proposals are marked for re-checking.':''))}catch(err){notice('Import failed: '+err.message)}};
+  restoreBatchBackup(data);if(!persist()){store=JSON.parse(beforeImport);throw Error('Browser storage failed; previous decisions retained.')}profiles=new Map();renderAll();const n=added+replaced;notice(`Imported ${n} ${n===1?'record':'records'}: ${added} new, ${replaced} replacing older local entries, ${skipped} skipped as older, ${unknown} not in this queue.`+(data.input_hash&&data.input_hash!==INPUT_HASH?' The file comes from a different audit version; decisions on changed proposals are marked for re-checking.':''))}catch(err){notice('Import failed: '+err.message)}};
 
 /* ---------- evidence ---------- */
 async function loadCompleteEvidence(text){const hash=await reviewHash(text);if(hash!==QUEUE_HASH)throw Error('This file does not match the current handoff. Reload the page and try again.');const loaded=JSON.parse(text);if(loaded.length!==cases.length)throw Error('Case count mismatch');if(new Set(loaded.map(c=>c.id)).size!==loaded.length)throw Error('Duplicate cases');cases=loaded;indexCases();evidenceComplete=true;notice('Complete evidence loaded and hash verified.');$('evidence-status').textContent='Complete evidence loaded and hash verified.';renderAll()}
 $('load').onchange=async e=>{try{await loadCompleteEvidence(await e.target.files[0].text())}catch(error){notice(error.message)}};
+
+/*flora-workflow*/
 
 /* ---------- wiring ---------- */
 $('search').oninput=e=>{state.search=e.target.value;renderList();if(!visible.some(c=>c.id===state.selected)&&visible[0])select(visible[0].id);else renderDock()};
@@ -880,6 +903,7 @@ $('list-toggle').onclick=()=>setListOpen($('index').classList.contains('collapse
 $('about-button').onclick=()=>$('about').showModal();$('about-close').onclick=()=>$('about').close();
 window.addEventListener('hashchange',()=>{const id=decodeURIComponent(location.hash.slice(1));if(id&&id!==state.selected&&caseById.has(id))openCase(id)});
 document.addEventListener('keydown',e=>{
+  if((store.workflow?.stage||'batch')!=='individual')return;
   if(e.defaultPrevented||e.metaKey||e.ctrlKey||e.altKey)return;
   if(e.target.closest('input,textarea,select,[contenteditable],dialog'))return;
   const k=e.key.toLowerCase(),c=caseById.get(state.selected);
@@ -894,10 +918,11 @@ document.addEventListener('keydown',e=>{
 $('data-status').textContent=`Audited FLoRA snapshot SHA-256: ${CONTEXT.baseline_sha256||'not recorded'}. Review queue SHA-256: ${QUEUE_HASH}.`;
 if(new Set(cases.map(c=>c.id)).size!==cases.length)throw Error('Duplicate cases');
 indexCases();
+initializeWorkflow();
 {const id=decodeURIComponent(location.hash.slice(1));if(id&&caseById.has(id)){state.selected=id;const c=caseById.get(id);if(!queueById[state.queue].test(c))state.queue=QUEUES.find(q=>q.id!=='all'&&q.test(c))?.id||'all'}}
 renderAll();
 if(narrow())setListOpen(false);
-window.floraReview={counts:()=>Object.fromEntries(QUEUES.map(q=>[q.id,cases.filter(q.test).length])),decided:()=>cases.filter(isDecided).length,evidenceComplete:()=>evidenceComplete};
+window.floraReview={counts:()=>Object.fromEntries(QUEUES.map(q=>[q.id,cases.filter(q.test).length])),decided:()=>cases.filter(isDecided).length,batches:()=>batchGroups,implementation:implementationBundle,evidenceComplete:()=>evidenceComplete};
 console.log('Validated '+cases.length+' unique cases.',window.floraReview.counts());
 if(location.protocol==='http:'||location.protocol==='https:'){
   notice('Loading complete evidence…');

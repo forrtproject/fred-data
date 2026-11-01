@@ -13,7 +13,9 @@ The [full audit report](../REPORT.md) and [machine-readable overview](audit_over
 - [All input rows](audit_rows.csv): one current audit-status record for every input row.
 - [Review-required cases](review_required.json): 47 cases covering evidence limits, policy choices, and application dependencies.
 
-The [Cloudflare review app](https://lukas-reports.lukas-wallrich.workers.dev/flora-audit-2026-10/) links the combined downloads and supports searching the evidence, reviewing concrete policy alternatives, and saving/exporting notes. Start with the 47 cases in “Needs decision”; the other queues allow optional checks of proposals and evidence limits. It verifies the complete queue SHA-256. Notes remain in browser storage and never edit FLoRA. The published app contains review records and downloads. Acquired full reports, private source paths, and access details are excluded.
+The [Cloudflare review app](https://lukas-reports.lukas-wallrich.workers.dev/flora-audit-2026-10/) starts with batch approval: **345 replication-outcome corrections, 38 reproduction-result rows (40 fields), and 432 confirmed missing-pair identities**. These conservative sets exclude policy holds, record remedies, unresolved identities, source replacements and coupled quote updates. Existing decisions and notes are protected. Missing-pair approvals leave outcomes unassigned.
+
+Next, download the approved implementation bundle, then review the remaining cases individually. The bundle contains exact operations, frozen-baseline and full-record checks, and a decision backup; record actions, policy choices and quote replacements stay separate implementation-review instructions. Downloading does not apply changes. Decisions and the current step save automatically in this browser and survive reopening; export/import transfers the backup between browsers. A save-status line reports failures, and competing tabs cannot silently overwrite each other. The app verifies the complete queue SHA-256. Acquired full reports, private source paths, and access details are excluded from publication.
 
 ## Interpretation and application
 
