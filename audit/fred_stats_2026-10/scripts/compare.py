@@ -159,6 +159,15 @@ def fresh_test_review(a,field,row):
  if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
  if a.get('verdict') not in ['shipped_right','blind_right','both_wrong']:return False
  parsed=parsed_stat(a.get('correct_value'));kind=metric(a.get('correct_metric'))
+ if kind=='f-ratio':
+  # A target-confirmed current review may preserve a table's explicit F-Ratio
+  # label. Keep legacy parsing and printed evidence unchanged.
+  parsed=parsed_stat(re.sub(r'(?i)^\s*F-Ratio\s*=', 'F =',str(a.get('correct_value') or '')));kind='f'
+ if not parsed and a.get('verdict')=='shipped_right' and kind in ['f','t','z','chi2','g']:
+  # A freshly identified source statistic can have a correctly coded bare value.
+  # Do not require a formatter prefix that the data contract never specified.
+  value=number(a.get('correct_value'));raw=number(row.get(field))
+  return value is not None and raw==value
  return bool(parsed and kind in ['test statistic',parsed[0]])
 
 def source_prefix(value):

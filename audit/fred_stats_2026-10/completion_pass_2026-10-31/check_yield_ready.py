@@ -1,6 +1,7 @@
 """Fail closed before handing off: cached 'running' labels do not establish liveness."""
 import argparse,datetime,hashlib,json,subprocess,sys
 from pathlib import Path
+from concurrency_limits import limits
 F=Path(__file__).resolve().parent;B=F.parent
 TERMINAL={'completed','failed','cancelled','interrupted'}
 def read(path,default=None):return json.loads(path.read_text()) if path.exists() else default
@@ -45,9 +46,12 @@ def main():
    for record in read(Path(group['input'])):
     output=Path(group['output'])/f"{record['audit_id']}.json";saved=collected.get(group['key']+':'+str(record['audit_id']),{})
     if not output.exists() or saved.get('output_sha256')!=hashlib.sha256(output.read_bytes()).hexdigest():problems.append('Collect completed source: '+group['key']);break
- if queued and active['tasks']<6:problems.append('Dispatch queued sources into available slots')
+ cap=limits();free=cap['max_combined_children']-sum(active.values())
+ if free<0:problems.append('Combined child limit exceeded')
+ if queued and active['tasks']<cap['source_slots'] and free>0:problems.append('Dispatch queued sources into available slots')
  review_queued=sum(not (F/'reviews'/f"task_{g['key']}_v1.json").exists() for g in read(F/'review_queue.json',[]))
- if review_queued and active['reviews']<2:problems.append('Dispatch queued independent reviews')
+ ordinary_live=sum(read(path).get('taskId') is not None and read(path).get('status') not in TERMINAL for path in (F/'reviews').glob('task_*_v1.json'))
+ if review_queued and ordinary_live<cap['review_slots'] and free>0:problems.append('Dispatch queued independent reviews')
  for name in ['collection_blockers.json','integration_blockers.json']:
   if read(F/name,[]):problems.append('Resolve '+name)
  ledger=read(F/'integration.json',{});holds={(h['audit_id'],h['field']) for h in read(B/'adjudication_holds.json',[]) if h.get('completion_pass')=='2026-10-31-unresolved'}
