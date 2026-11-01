@@ -61,6 +61,19 @@ class EvidenceValidation(unittest.TestCase):
         self.assertFalse(result['automatic_scientific_acceptance'])
         self.assertTrue(result['full_model_visible_reading_receipts_verified'])
 
+    def test_explicit_unicode_character_offset_names_keep_literal_checks(self):
+        proof=dict(self.proof)
+        proof['unicode_char_start']=proof.pop('character_start')
+        proof['unicode_char_end']=proof.pop('character_end')
+        self.write(self.output/'quote_spans.json',dict(source_sha256=self.source_hash,quote_spans=[proof]))
+        self.assertEqual(self.run_validation()['span_map_proofs'],1)
+
+    def test_conflicting_character_offset_alias_cannot_be_ignored(self):
+        proof=dict(self.proof,unicode_char_start=1)
+        self.write(self.output/'quote_spans.json',dict(source_sha256=self.source_hash,quote_spans=[proof]))
+        with self.assertRaisesRegex(ValueError,'conflicting character offset aliases'):
+            self.run_validation()
+
     def test_report_boundary_is_not_counted_as_a_quote_proof(self):
         data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
             dict(report='One report', character_start=0, character_end=28, target_indices=[])])

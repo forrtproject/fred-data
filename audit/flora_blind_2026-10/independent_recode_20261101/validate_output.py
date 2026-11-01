@@ -54,14 +54,19 @@ def validate_proofs(obj, raw, source_hash, require_source_hash=False, unproved_e
                           and all(type(i) is int and i >= 0 for i in value['target_indices']),
                           path + ': invalid boundary target indices')
                 return  # A range description is not a source proof.
-            if any(k in value for k in ('character_start', 'char_start', 'unicode_start')):
+            if any(k in value for k in ('character_start', 'char_start', 'unicode_start', 'unicode_char_start')):
                 quote_names = ('quote', 'text', 'literal_quote', 'literal_proof')
                 quote = first(value, quote_names)
                 if 'literal_proof' in value:
                     check(all(value[name] == value['literal_proof'] for name in quote_names if name in value),
                           path + ': conflicting literal quote aliases')
-                a = first(value, ('character_start', 'char_start', 'unicode_start'))
-                z = first(value, ('character_end', 'char_end', 'unicode_end'))
+                start_names = ('character_start', 'char_start', 'unicode_start', 'unicode_char_start')
+                end_names = ('character_end', 'char_end', 'unicode_end', 'unicode_char_end')
+                a = first(value, start_names)
+                z = first(value, end_names)
+                check(all(value[name] == a for name in start_names if name in value)
+                      and all(value[name] == z for name in end_names if name in value),
+                      path + ': conflicting character offset aliases')
                 ba = first(value, ('utf8_start', 'utf8_byte_start', 'byte_start'))
                 bz = first(value, ('utf8_end', 'utf8_byte_end', 'byte_end'))
                 if quote == '' and all(x is None for x in (a, z, ba, bz)):

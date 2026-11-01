@@ -2,9 +2,9 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-169 of 677 initial source packets and six additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-six fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+180 of 677 initial source packets and six additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-six fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-The current export contains **24 cases covering 26 proposed fields, plus one whole-record exclusion**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
+The current export contains **26 cases covering 28 proposed fields, plus one whole-record exclusion**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
 Agreement between two models is a candidate for correction, not a correctness certificate. A proposal enters `automatically_verified_proposals.json` only after:
 
@@ -23,9 +23,9 @@ The current comparison queue contains unresolved source, target and policy quest
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
-A separate new gap was found in document_0147: both coders read its saved body, but the title, authors and abstract were missing. The complete published PDF is now verified and registered as document_0688, including the repository cover and article pages 61–74. Both fresh blind roles now pass complete reading and literal-evidence checks, agreeing on successful. Independent source review is running. Each role gets exactly one fresh read across aliases of this PDF. The earlier body-only labels confer no approval on the new version. This recovery is outside the finite 60-item queue.
+A separate gap in document_0147 is resolved by the complete published PDF registered as document_0688, including the repository cover and article pages 61–74. Both fresh blind roles pass complete reading and literal-evidence checks, agreeing on successful. The source review raises an unresolved objection about the original deliberate-control and measurement claims, so the case stays outside the automatic set. Each role has exhausted its single fresh read across aliases of this PDF. Earlier body-only labels confer no approval. This recovery is outside the finite 60-item queue.
 
-Source reviews for 0148/0149 are running, including a linked correction and separate additional-target disputes. The first source review for 0150/0151/0688 is running: it covers an atomic reproduction conversion, the distinction between Hall and Roter targets, and the complete AMP report. The latter has a certified complete historical Sol reading; the former required a fresh complete Sol pass. Matching labels alone have not accepted either case.
+Source reviews support Heinemann's failed outcome (row 912) and Hall's mixed outcome (row 649), with contrary passages and target dependencies retained. The crowd-within case (row 1923) remains a policy boundary; its corrigendum changes planned sample sizes only. The proposed reproduction conversion for row 835 stays held until the author manuscript is verified against the published report. Title and abstract are missing from document_0177, and document_0181 has interleaved column text; both remain outside the automatic set.
 
 The parent owns integration, Git and dispatch. Blind Opus children receive only opaque packets, the codebook, schema and primary-source metadata. They receive no dataset values, suspected fixes, earlier codings or selection rationale. Earlier Sol coding is usable only when its exact source version and complete actual reading are verified; otherwise a fresh blind Sol pass is required. Preparers and adjudicators never become blind coders.
 
@@ -48,7 +48,7 @@ Quotations retain exact Unicode, whitespace and UTF-8 offsets. Boundary whitespa
 
 The export also checks authoritative DOI/title/author/year correspondence and complete frozen-row preconditions. Verified printed author errors and CSV newline representation differences remain explicit and narrowly bound to their source receipts. Raw codings and reviews are preserved.
 
-Run the 121 validation and dependency controls, then rebuild the guarded export:
+Run the 123 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
