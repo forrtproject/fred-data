@@ -61,6 +61,24 @@ class EvidenceValidation(unittest.TestCase):
         self.assertFalse(result['automatic_scientific_acceptance'])
         self.assertTrue(result['full_model_visible_reading_receipts_verified'])
 
+    def test_named_reading_range_still_requires_actual_complete_receipts(self):
+        path=self.output/'reading_manifest.json'
+        data=json.loads(path.read_text());n=len((self.packet/'article.txt').read_text())
+        data['model_visible_character_ranges']=[dict(character_start=0,character_end=n)]
+        self.write(path,data)
+        self.assertTrue(self.run_validation()['full_model_visible_reading_receipts_verified'])
+        self.receipt['text']=self.receipt['text'][:40]
+        self.write(self.receipts/'item_1.json',self.receipt)
+        with self.assertRaises(ValueError):self.run_validation()
+
+    def test_named_reading_range_cannot_hide_unknown_fields_or_missing_coverage(self):
+        path=self.output/'reading_manifest.json';data=json.loads(path.read_text())
+        for interval in [dict(character_start=0,character_end=2),
+                         dict(character_start=0,character_end=2,quote='fabricated')]:
+            with self.subTest(interval=interval):
+                data['model_visible_character_ranges']=[interval];self.write(path,data)
+                with self.assertRaises(AssertionError):self.run_validation()
+
     def test_explicit_unicode_character_offset_names_keep_literal_checks(self):
         proof=dict(self.proof)
         proof['unicode_char_start']=proof.pop('character_start')
@@ -92,6 +110,22 @@ class EvidenceValidation(unittest.TestCase):
                    character_start=0,character_end=28,quote='fabricated')]))
         with self.assertRaisesRegex(ValueError,'metadata cannot substitute'):
             self.run_validation()
+
+    def test_named_section_boundaries_remain_metadata(self):
+        for key in ['figure_captions_boundary','references_section_boundary']:
+            with self.subTest(key=key):
+                self.write(self.output/'evidence_map.json',dict(text_sha256=self.source_hash,
+                           spans=[self.proof],**{key:dict(report='Section labels',character_start=0,character_end=28)}))
+                self.assertEqual(self.run_validation()['evidence_map_proofs'],1)
+
+    def test_named_section_boundary_cannot_hide_quoted_content(self):
+        for key in ['figure_captions_boundary','references_section_boundary']:
+            with self.subTest(key=key):
+                self.write(self.output/'evidence_map.json',dict(text_sha256=self.source_hash,
+                           spans=[self.proof],**{key:dict(report='Section labels',character_start=0,
+                           character_end=28,quote='fabricated')}))
+                with self.assertRaisesRegex(ValueError,'metadata cannot substitute'):
+                    self.run_validation()
 
     def test_report_boundary_cannot_claim_a_quote_without_proof(self):
         data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[

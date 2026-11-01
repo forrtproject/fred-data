@@ -100,7 +100,17 @@ def reading_coverage(packet, manifest):
     raw = (packet / 'article.txt').read_bytes()
     n = len(raw.decode('utf-8'))
     assert manifest['text_sha256'] == sha(raw), 'Reading manifest source mismatch'
-    ranges = sorted(manifest['model_visible_character_ranges'])
+    ranges = []
+    for interval in manifest['model_visible_character_ranges']:
+        if isinstance(interval, dict):
+            assert set(interval) == {'character_start', 'character_end'}, 'Invalid named reading range'
+            start, end = interval['character_start'], interval['character_end']
+        else:
+            assert isinstance(interval, (list, tuple)) and len(interval) == 2, 'Invalid reading range'
+            start, end = interval
+        assert type(start) is int and type(end) is int and 0 <= start < end <= n
+        ranges.append([start, end])
+    ranges.sort()
     merged = []
     for start, end in ranges:
         assert type(start) is int and type(end) is int and 0 <= start < end <= n

@@ -2,9 +2,9 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-183 of 677 initial source packets and six additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-six fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+190 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-eight fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-The current export contains **26 cases covering 28 proposed fields, plus one whole-record exclusion**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
+The current export contains **26 cases covering 28 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
 Agreement between two models is a candidate for correction, not a correctness certificate. A proposal enters `automatically_verified_proposals.json` only after:
 
@@ -27,7 +27,9 @@ A separate gap in document_0147 is resolved by the complete published PDF regist
 
 Source reviews support Heinemann's failed outcome (row 912) and Hall's mixed outcome (row 649), with contrary passages and target dependencies retained. The crowd-within case (row 1923) remains a policy boundary; its corrigendum changes planned sample sizes only. The proposed reproduction conversion for row 835 stays held until the author manuscript is verified against the published report. Title and abstract are missing from document_0177, and document_0181 has interleaved column text; both remain outside the automatic set.
 
-Both complete blind readings classify the policy-goals paper (document_0173) as outside replication scope. A separate review is checking positive scope evidence and the whole-record remedy for row 169. Document_0188 cites an apparent review as its target and remains held until the retested empirical finding and target are established.
+Both complete blind readings and the source review place the policy-goals paper (document_0173) outside replication scope. Positive aim, method and sample evidence supports the whole-record exclusion for row 169. Document_0188 cites an apparent review as its target and remains held until the retested empirical finding and target are established.
+
+The old Young–Saxe Stage 1 view (document_0189) is superseded by a separately registered, complete 99-page report (document_0689). Saved OSF file metadata and the cached PDF hash establish its identity; a new extraction is byte-identical to the saved text. Both fresh blind roles read the full main report and supplementary material and classify a completed replication. Matching successful labels remain outside the automatic set because Opus is unconfident and preserves a mixed alternative. Old simulated results and prior nonblind conclusions confer no outcome approval.
 
 The parent owns integration, Git and dispatch. Blind Opus children receive only opaque packets, the codebook, schema and primary-source metadata. They receive no dataset values, suspected fixes, earlier codings or selection rationale. Earlier Sol coding is usable only when its exact source version and complete actual reading are verified; otherwise a fresh blind Sol pass is required. Preparers and adjudicators never become blind coders.
 
@@ -50,7 +52,7 @@ Quotations retain exact Unicode, whitespace and UTF-8 offsets. Boundary whitespa
 
 The export also checks authoritative DOI/title/author/year correspondence and complete frozen-row preconditions. Verified printed author errors and CSV newline representation differences remain explicit and narrowly bound to their source receipts. Raw codings and reviews are preserved.
 
-Run the 125 validation and dependency controls, then rebuild the guarded export:
+Run the 129 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -63,4 +65,4 @@ When registering another source version, verify all frozen inputs:
 python3 audit/flora_blind_2026-10/independent_recode_20261101/freeze_packet_receipts.py
 ```
 
-All 683 registered packets currently pass that check. Raw source bodies, native reading receipts and unpublished coding outputs stay under the ignored private workspace. Rebuild the public review app after cohort integration, preserving shared decisions and requiring explicit batch approval before data application.
+All 684 registered packets currently pass that check. Raw source bodies, native reading receipts and unpublished coding outputs stay under the ignored private workspace. Rebuild the public review app after cohort integration, preserving shared decisions and requiring explicit batch approval before data application.
