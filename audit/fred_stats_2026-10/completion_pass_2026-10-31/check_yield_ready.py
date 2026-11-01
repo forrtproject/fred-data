@@ -1,7 +1,7 @@
 """Fail closed before handing off: cached 'running' labels do not establish liveness."""
 import argparse,datetime,hashlib,json,subprocess,sys
 from pathlib import Path
-from concurrency_limits import limits
+from concurrency_limits import limits,review_launch_paused,recorded_quota_failure
 F=Path(__file__).resolve().parent;B=F.parent
 TERMINAL={'completed','failed','cancelled','interrupted'}
 def read(path,default=None):return json.loads(path.read_text()) if path.exists() else default
@@ -37,7 +37,9 @@ def main():
     checked=task.get('last_checked_at') or task.get('started_at');age=(now-datetime.datetime.fromisoformat(checked.replace('Z','+00:00'))).total_seconds() if checked else 999999
     if age>30:problems.append('Refresh stale live-task status: '+path.name)
     active[folder]+=1
-   elif folder=='reviews' and task.get('status')=='completed' and not (F/'reviews'/path.name.replace('task_','validated_',1)).exists():problems.append('Validate completed review: '+path.name)
+   elif folder=='reviews' and task.get('status')=='completed' and not (F/'reviews'/path.name.replace('task_','validated_',1)).exists():
+    answer=F/'reviews'/path.name.replace('task_','answer_',1)
+    if not recorded_quota_failure(task,answer.exists()):problems.append('Validate completed review: '+path.name)
  queue=read(F/'work_queue.json');collected=read(F/'collected.json',{});queued=0
  for group in queue:
   task=read(F/'tasks'/f"{group['key']}.json",{})
@@ -51,7 +53,7 @@ def main():
  if queued and active['tasks']<cap['source_slots'] and free>0:problems.append('Dispatch queued sources into available slots')
  review_queued=sum(not (F/'reviews'/f"task_{g['key']}_v1.json").exists() for g in read(F/'review_queue.json',[]))
  ordinary_live=sum(read(path).get('taskId') is not None and read(path).get('status') not in TERMINAL for path in (F/'reviews').glob('task_*_v1.json'))
- if review_queued and ordinary_live<cap['review_slots'] and free>0:problems.append('Dispatch queued independent reviews')
+ if review_queued and ordinary_live<cap['review_slots'] and free>0 and not review_launch_paused():problems.append('Dispatch queued independent reviews')
  for name in ['collection_blockers.json','integration_blockers.json']:
   if read(F/name,[]):problems.append('Resolve '+name)
  ledger=read(F/'integration.json',{});holds={(h['audit_id'],h['field']) for h in read(B/'adjudication_holds.json',[]) if h.get('completion_pass')=='2026-10-31-unresolved'}
@@ -63,6 +65,6 @@ def main():
  if read(F/'export_fingerprint.json',{}).get('scientific_inputs_sha256')!=scientific_fingerprint():problems.append('Recompute and validate export after scientific changes')
  if read(F/'export_fingerprint.json',{}).get('results_sha256')!=hashlib.sha256((B/'results.csv').read_bytes()).hexdigest():problems.append('Validate current exported results hash')
  if not sum(active.values()) and read(F/'state.json',{}).get('status') not in ['checkpoint_ready','complete']:problems.append('No live children: continue parent work or explicitly record an idle checkpoint; do not claim active continuation')
- result={'ready_to_yield':not problems,'live_tasks_freshly_checked':active,'queued_sources':queued,'queued_reviews':review_queued,'actionable_work':sorted(set(problems))}
+ result={'ready_to_yield':not problems,'live_tasks_freshly_checked':active,'queued_sources':queued,'queued_reviews':review_queued,'review_launches_paused':review_launch_paused(),'actionable_work':sorted(set(problems))}
  (F/'yield_readiness.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result));assert not problems
 if __name__=='__main__':main()
