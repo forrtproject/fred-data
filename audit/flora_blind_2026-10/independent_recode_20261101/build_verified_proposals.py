@@ -63,6 +63,9 @@ def review_field_dispositions(review):
     """Read explicit field identities; conflicting aliases cannot authorize a fix."""
     case_table = 'reviews' not in review and 'field_reviews' not in review and 'cases' in review
     entries = review.get('reviews', review.get('field_reviews', review.get('cases')))
+    if 'assigned_fields' in review:
+        assert entries is None, 'Conflicting source review field tables'
+        entries = review['assigned_fields']
     if entries is None and review.get('disposition') == 'replace_current_with_proposed':
         value = review.get('recommended_value')
         assert isinstance(value, str) and value, 'Missing replacement value'
@@ -118,6 +121,13 @@ def review_field_dispositions(review):
 
 def review_row_binding(review, row_index, rows, receipt=None, review_sha256=None):
     """Wrong embedded row snapshots require a separately hashed correction."""
+    snapshots = review.get('baseline_snapshot', {})
+    if str(row_index) in snapshots:
+        snapshot = snapshots[str(row_index)]
+        assert snapshot['input_row_index_zero_based'] == row_index
+        assert snapshot['row'] == rows[row_index], 'Review snapshot belongs to another frozen row'
+        assert snapshot['row_sha256_sorted_json'] == sha(json.dumps(
+            rows[row_index], ensure_ascii=False, sort_keys=True).encode()), 'Review snapshot hash differs'
     cases = review.get('cases', {})
     cases = cases.values() if isinstance(cases, dict) else cases
     for case in cases:
@@ -332,6 +342,31 @@ def checked_replacements(row, result, target, decision):
     return replacements
 
 
+def original_alias_replacements(row, metadata, receipt):
+    """Canonicalize one registered DOI alias without replacing the same work's bibliography."""
+    path = Path(receipt['path'])
+    assert sha(path.read_bytes()) == receipt['sha256'], 'DOI alias receipt changed'
+    handle = read(path)
+    canonical = metadata['DOI']
+    assert handle['responseCode'] == 1 and handle['handle'] == row['doi_o'], 'DOI alias names another identifier'
+    aliases = [entry['data']['value'] for entry in handle['values'] if entry['type'] == 'HS_ALIAS']
+    assert aliases == [canonical] and identifier(canonical) != identifier(row['doi_o']), \
+        'Registered DOI alias does not name the canonical identifier'
+    assert norm(metadata_title(metadata)) == norm(row['title_o']), 'DOI alias title differs'
+    for key, column in [('volume', 'volume_o'), ('issue', 'issue_o'), ('page', 'pages_o')]:
+        assert str(metadata[key]) == row[column], 'DOI alias bibliography differs'
+    assert norm(metadata['container-title'][0]) == norm(row['journal_o'])
+    date = metadata.get('published-print') or metadata.get('published-online') or metadata['issued']
+    assert str(date['date-parts'][0][0]) == row['year_o'], 'DOI alias year differs'
+    frozen_authors = json.loads(row['author_o'])
+    assert [(norm(a.get('given', '')), norm(a['family'])) for a in frozen_authors] == [
+        (norm(a.get('given', '')), norm(a['family'])) for a in metadata['author']], 'DOI alias authors differ'
+    assert all(canonical.casefold() in row[column].casefold() for column in ('apa_ref_o', 'bibtex_ref_o')), \
+        'Existing bibliography does not establish canonical DOI'
+    assert row['doi_o_hash'] == hashlib.md5(row['doi_o'].encode()).hexdigest()[:3], 'Frozen DOI hash differs'
+    return dict(doi_o=canonical, doi_o_hash=hashlib.md5(canonical.encode()).hexdigest()[:3])
+
+
 def original_replacements(metadata):
     """Replace the complete original bibliography; never retain another paper's fields."""
     authors = [{k: a[k] for k in ('given', 'family', 'sequence', 'ORCID') if k in a}
@@ -437,7 +472,12 @@ def build():
             receipt = decision['replacement_original_metadata_receipt']
             metadata_path = Path(receipt['path'])
             assert sha(metadata_path.read_bytes()) == receipt['sha256']
-            identity_fields = original_replacements(read(metadata_path)['message'])
+            metadata = read(metadata_path)['message']
+            if decision.get('original_remedy_kind') == 'canonical_doi_alias':
+                identity_fields = original_alias_replacements(row, metadata, decision['original_doi_alias_receipt'])
+            else:
+                assert decision.get('original_remedy_kind') is None, 'Unknown original remedy'
+                identity_fields = original_replacements(metadata)
             aligned_row = dict(row, **identity_fields)
         else:
             identity_fields, aligned_row = None, row
@@ -512,6 +552,8 @@ def build():
                            original_identifier_metadata_alignment=identifier_receipt))
         if decision.get('review_row_binding_correction'):
             result[-1]['review_row_binding_correction'] = decision['review_row_binding_correction']
+        if decision.get('original_doi_alias_receipt'):
+            result[-1]['original_doi_alias_alignment'] = decision['original_doi_alias_receipt']
     record_actions = []
     for decision in acceptance.get('record_cases', []):
         row_index, doc = decision['input_row_index'], decision['document_id']

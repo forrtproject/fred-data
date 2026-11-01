@@ -2,11 +2,11 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 156 of 677 initial source packets and five additional source views have
-passed Opus schema, literal-span and reading checks; twenty-one fresh Sol source views
+Current checkpoint: 160 of 677 initial source packets and five additional source views have
+passed Opus schema, literal-span and reading checks; twenty-two fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Twenty-one cases covering twenty-three proposed
+The full reassessment remains in progress. Twenty-three cases covering twenty-five proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. A separate guarded whole-record exclusion
 is included under `record_actions`. These are proposals for batch approval;
@@ -122,7 +122,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 103 evidence/dependency controls:
+Run all 109 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -210,4 +210,10 @@ The radiation case and two additional verdict-scope cases remain outside the aut
 
 Row 561 now changes failed to mixed from the explicit partial-confirmation verdict and original-specific contrasts. The raw review incorrectly attributes a flawed verdict to Opus; both actual fresh coders chose mixed, and their unchanged files govern acceptance. The citation replacement at row 2320 is withdrawn: canonical journal metadata and the author’s version chain support the existing title, DOI and 2026 print year. Its tested 2024 preprint is recorded separately. The later version describes a similar third experiment and cites the current report; detailed data reuse and full original manuscripts were not newly verified. Do not extend the outcome to later-added experiments.
 
-Batches 0065–0067 add eight supplied-source readings, with uncertain results and the abstract-only report excluded from automatic acceptance. Fresh Sol 0143 passes complete reading checks and agrees on mixed; its source review and the 0142 citation/target review await parent validation. Gemini’s quota failure produced no scientific result. That failed attempt is preserved, and a separate Opus actor completed the source review under the existing request budget. The model change was disclosed; blind codings remain unchanged and no paid API fallback was used.
+Batches 0065–0068 and 0070 add twelve supplied-source readings, with uncertain results and the abstract-only report excluded from automatic acceptance. The BU3GM registration reports future tests; it requires a joint record remedy rather than an outcome-only patch, without assuming that the project remains incomplete today.
+
+Rows 782 and 353 now pass source review and parent integration. Medvec’s double-slash DOI is a registered alias of the same work’s canonical DOI. Only the DOI and its dependent hash change, with the existing bibliography preserved and a literal target-specific outcome quote. This exact handle record does not authorize general slash removal. Li’s outcome changes failed to mixed because the authors explicitly confirm some original-specific tasks and contrast another as inconsistent. The complete abstract passage replaces the isolated failure clause. The possible Matsumoto additional target remains a separate, moderately confident policy boundary; no missing pair is added.
+
+That source review passes 32 literal proofs, eight source/metadata hashes and all sixteen actual primary-text chunk returns. Gemini’s quota failure produced no scientific result. The failed attempt is preserved, and a separate Opus actor completed the review within the existing request budget. The model change was disclosed; blind codings remain unchanged, no third independent model vote is claimed and no paid API fallback was used.
+
+The earlier Sol readings for 0144 and 0145 now have certified complete exact-source returns. Both agree with Opus on mixed; 0144 remains unconfident and excluded. The 0145 source review is running. Earlier 0146 displays establish selected ranges only; a fresh Sol pass now covers all eight chunks. Its shared target labels match Opus, but Opus is unconfident and the coders disagree on an additional Jackson target. No automatic correction or missing pair follows. Supplied-source completeness and report identity remain separate checks.

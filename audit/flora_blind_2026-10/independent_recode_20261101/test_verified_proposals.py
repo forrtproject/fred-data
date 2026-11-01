@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from build_verified_proposals import BASELINE_SHA, checked_replacements, completed_field_work, current_alignment, digest, ids, metadata_title, original_alignment, original_doi_alignment, original_identifier_alignment, original_replacements, record_removal, retained_target_scope_review, review_field_dispositions, review_row_binding
+from build_verified_proposals import BASELINE_SHA, checked_replacements, completed_field_work, current_alignment, digest, ids, metadata_title, original_alias_replacements, original_alignment, original_doi_alignment, original_identifier_alignment, original_replacements, record_removal, retained_target_scope_review, review_field_dispositions, review_row_binding
 
 
 class ProposalDependencies(unittest.TestCase):
@@ -60,6 +60,69 @@ class ProposalDependencies(unittest.TestCase):
             'input_row_index': 104, 'field_review_id': '104.original',
             'requested_fields': ['original'], 'status': 'supported_correction'}}}
         self.assertEqual(review_field_dispositions(review), [(104, 'original', 'supported_correction')])
+
+    def test_assigned_field_table_cannot_override_another_review_table(self):
+        review = {'assigned_fields': [{'input_row_index': 353, 'field': 'outcome',
+                                     'status': 'supported_correction'}]}
+        self.assertEqual(review_field_dispositions(review), [(353, 'outcome', 'supported_correction')])
+        review['reviews'] = []
+        with self.assertRaisesRegex(AssertionError, 'Conflicting source review field tables'):
+            review_field_dispositions(review)
+
+    def test_named_baseline_snapshot_must_match_the_entire_frozen_record(self):
+        row = {'doi_o': 'original', 'doi_r': 'current'}
+        review = {'baseline_snapshot': {'0': {'input_row_index_zero_based': 0, 'row': row,
+            'row_sha256_sorted_json': hashlib.sha256(json.dumps(row, ensure_ascii=False, sort_keys=True).encode()).hexdigest()}}}
+        review_row_binding(review, 0, [row])
+        with self.assertRaisesRegex(AssertionError, 'another frozen row'):
+            review_row_binding(review, 0, [dict(row, doi_r='another-current')])
+
+    def doi_alias_fixture(self, directory):
+        old, canonical = '10.1//work', '10.1/work'
+        authors = [{'given': 'Ann', 'family': 'One'}]
+        row = dict(doi_o=old, doi_o_hash=hashlib.md5(old.encode()).hexdigest()[:3], title_o='Same work',
+                   author_o=json.dumps(authors), year_o='1995', journal_o='Journal', volume_o='69',
+                   issue_o='4', pages_o='603-610', apa_ref_o='Same work. '+canonical,
+                   bibtex_ref_o='DOI={'+canonical+'}', oa_url_o='https://repository.example/same-work.pdf')
+        metadata = dict(DOI=canonical, title=['Same work'], author=authors,
+                        issued={'date-parts': [[1995]]}, **{'container-title':['Journal']},
+                        volume='69', issue='4', page='603-610')
+        path = Path(directory)/'handle.json'
+        path.write_text(json.dumps(dict(responseCode=1,handle=old,values=[
+            dict(type='HS_ALIAS',data={'value':canonical})])))
+        receipt = dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+        return row, metadata, receipt
+
+    def test_registered_doi_alias_preserves_existing_same_work_bibliography(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, metadata, receipt = self.doi_alias_fixture(directory)
+            after = original_alias_replacements(row,metadata,receipt)
+            self.assertEqual(set(after), {'doi_o','doi_o_hash'})
+            self.assertEqual(after['doi_o'],metadata['DOI'])
+            self.assertEqual(after['doi_o_hash'],hashlib.md5(metadata['DOI'].encode()).hexdigest()[:3])
+            self.assertIn('repository.example',row['oa_url_o'])
+
+    def test_similar_doi_strings_without_registered_alias_cannot_be_collapsed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, metadata, receipt = self.doi_alias_fixture(directory)
+            path=Path(receipt['path']);handle=json.loads(path.read_text());handle['values']=[]
+            path.write_text(json.dumps(handle));receipt['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'does not name the canonical'):
+                original_alias_replacements(row,metadata,receipt)
+
+    def test_doi_alias_cannot_authorize_another_works_bibliography(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, metadata, receipt = self.doi_alias_fixture(directory)
+            metadata['title']=['Another work']
+            with self.assertRaisesRegex(AssertionError, 'title differs'):
+                original_alias_replacements(row,metadata,receipt)
+
+    def test_doi_alias_receipt_must_name_the_exact_frozen_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, metadata, receipt = self.doi_alias_fixture(directory)
+            row['doi_o']='10.1///work'
+            with self.assertRaisesRegex(AssertionError, 'names another identifier'):
+                original_alias_replacements(row,metadata,receipt)
 
     def replacement_review(self):
         return dict(input_row_index=699, field='outcome', current_value='successful',
