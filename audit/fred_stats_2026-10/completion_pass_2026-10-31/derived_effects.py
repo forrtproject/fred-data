@@ -5,6 +5,26 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent/'scripts'))
 from compare import metric,quote_ok
 
+def documented_f_to_r_to_d(receipt,row,decision,source_path):
+ """Reproduce an existing coding convention, without assuming group sizes."""
+ assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
+ assert decision.get('target_match_confirmed') is True and decision.get('verdict') in ['shipped_right','blind_right','both_wrong']
+ field=receipt['field'];assert field in ['es_value_o','es_value_r']
+ assert metric(row['es_type_'+field[-1]])==metric(decision.get('correct_metric'))=='d'
+ assert Path(decision['source_path']).resolve()==Path(source_path).resolve()
+ assert receipt['df1']==1 and isinstance(receipt['df2'],int) and not isinstance(receipt['df2'],bool) and receipt['df2']>0
+ f=float(receipt['f']);assert math.isfinite(f) and f>=0
+ statistic=f"F(1, {receipt['df2']}) = {receipt['f']}"
+ expression='esc::cohens_d(r = FReD:::convert_effect_sizes("'+statistic+'", "test statistic"))'
+ assert receipt['expected_coding_expression']==expression and expression in row['es_repr_'+field[-1]]
+ assert quote_ok({'quote':receipt['statistic_quote'],'source_path':source_path,'value':statistic,'confident':True,'location':decision['location']})
+ pattern=r'F\(1,\s*'+str(receipt['df2'])+r'\)\s*(?:=|5)\s*'+re.escape(receipt['f'])+r'(?![\d.])'
+ assert re.search(pattern,receipt['statistic_quote']) and re.search(pattern,decision['quote'])
+ r=math.sqrt(f/(f+receipt['df2']));result=2*r/math.sqrt(1-r*r)
+ value=str(decision['correct_value']);assert re.fullmatch(r'\d+\.\d+',value)
+ assert round(result,len(value.split('.')[1]))==float(value)
+ return result
+
 def documented_equal_group_d(receipt,row,decision,source_path):
  assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
  assert decision.get('target_match_confirmed') is True and decision.get('verdict') in ['shipped_right','blind_right','both_wrong']

@@ -2,7 +2,7 @@ import copy,sys,tempfile,unittest
 from unittest.mock import patch
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from derived_effects import documented_equal_group_d
+from derived_effects import documented_equal_group_d,documented_f_to_r_to_d
 
 class DocumentedEffect(unittest.TestCase):
  def setUp(self):
@@ -24,5 +24,19 @@ class DocumentedEffect(unittest.TestCase):
   for change in [{'n':None},{'n':19},{'n':True},{'mean':'4.99'},{'sd':'0'},{'sample_quote':'Cleanliness priming (n = 21)'}]:
    r=copy.deepcopy(self.receipt);r['groups'][0].update(change)
    with self.subTest(change=change),self.assertRaises(AssertionError):documented_equal_group_d(r,self.row,self.decision,self.source)
+
+class DocumentedF(DocumentedEffect):
+ def test_explicit_coding_convention_and_rejection_guards(self):
+  q='F(1, 132) = 160.5';Path(self.source).write_text(q)
+  expression='esc::cohens_d(r = FReD:::convert_effect_sizes("'+q+'", "test statistic"))'
+  receipt={'field':'es_value_o','df1':1,'df2':132,'f':'160.5','statistic_quote':q,'expected_coding_expression':expression}
+  row={'es_type_o':'d','es_repr_o':expression}
+  decision={**self.decision,'correct_value':'2.21','quote':q,'location':'Results'}
+  self.assertAlmostEqual(documented_f_to_r_to_d(receipt,row,decision,self.source),2.205365358,places=8)
+  for change in [{'df1':2},{'df2':None},{'df2':0},{'df2':131},{'f':'160.6'},{'statistic_quote':'F(1, 131) = 160.5'}]:
+   with self.subTest(change=change),self.assertRaises(AssertionError):documented_f_to_r_to_d({**receipt,**change},row,decision,self.source)
+  for change in [{'target_match_confirmed':False},{'correct_metric':'F'},{'correct_value':'2.20'},{'source_path':'other.txt'}]:
+   with self.subTest(change=change),self.assertRaises(AssertionError):documented_f_to_r_to_d(receipt,row,{**decision,**change},self.source)
+  with self.assertRaises(AssertionError):documented_f_to_r_to_d(receipt,{**row,'es_repr_o':''},decision,self.source)
 
 if __name__=='__main__':unittest.main()
