@@ -1,7 +1,9 @@
 """Reject incompatible fixes even when individual model outputs are valid."""
+import hashlib
+import json
 import unittest
 
-from build_verified_proposals import checked_replacements, ids
+from build_verified_proposals import checked_replacements, ids, original_replacements
 
 
 class ProposalDependencies(unittest.TestCase):
@@ -37,6 +39,26 @@ class ProposalDependencies(unittest.TestCase):
         a = {'doi_r': 'https://doi.org/10.17605/OSF.IO/ABC12', 'alt_identifier_r': 'https://doi.org/10.1111/Example'}
         b = {'doi_r': 'https://osf.io/abc12/', 'alt_identifier_r': '10.1111/example'}
         self.assertEqual(ids(a, 'r'), ids(b, 'r'))
+
+    def test_original_remedy_replaces_all_bibliographic_fields_and_clears_old_oa(self):
+        metadata = {'DOI': '10.1111/example', 'title': ['Actual retested study.'],
+                    'container-title': ['Correct Journal'], 'volume': '53', 'issue': '4', 'page': '579-590',
+                    'author': [{'given': 'Nathalie', 'family': 'klein Selle', 'sequence': 'first'}],
+                    'published-print': {'date-parts': [[2016, 4]]},
+                    'published-online': {'date-parts': [[2015, 11, 30]]}}
+        fields = original_replacements(metadata)
+        self.assertEqual(fields['year_o'], '2016')
+        self.assertEqual(fields['title_o'], 'Actual retested study')
+        self.assertEqual(fields['journal_o'], 'Correct Journal')
+        self.assertEqual(fields['doi_o_hash'], hashlib.md5(b'10.1111/example').hexdigest()[:3])
+        self.assertEqual(fields['oa_url_o'], 'NA')
+        self.assertEqual(fields['alt_identifier_o'], 'NA')
+        self.assertEqual(json.loads(fields['author_o'])[0]['family'], 'klein Selle')
+        for key in ['apa_ref_o', 'bibtex_ref_o', 'url_o']:
+            self.assertIn('10.1111/example', fields[key])
+        self.assertEqual(set(fields), {'doi_o', 'alt_identifier_o', 'doi_o_hash', 'title_o',
+                        'author_o', 'journal_o', 'year_o', 'volume_o', 'issue_o', 'pages_o',
+                        'apa_ref_o', 'bibtex_ref_o', 'url_o', 'language_o', 'oa_url_o'})
 
 
 if __name__ == '__main__':

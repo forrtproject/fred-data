@@ -87,6 +87,36 @@ def checked_replacements(row, result, target, decision):
     return replacements
 
 
+def original_replacements(metadata):
+    """Replace the complete original bibliography; never retain another paper's fields."""
+    authors = [{k: a[k] for k in ('given', 'family', 'sequence', 'ORCID') if k in a}
+               for a in metadata['author']]
+    assert authors and all(a.get('family') for a in authors)
+    date = metadata.get('published-print') or metadata.get('published-online') or metadata['published']
+    year = str(date['date-parts'][0][0])
+    title, journal = metadata['title'][0].rstrip('.'), metadata['container-title'][0]
+    doi = metadata['DOI']
+    volume, issue, pages = (str(metadata.get(k, 'NA')) for k in ('volume', 'issue', 'page'))
+    def initials(given):
+        return ' '.join(x[0] + '.' for x in re.findall(r'[^\W\d_]+', given))
+    names = [a['family'] + (', ' + initials(a['given']) if a.get('given') else '') for a in authors]
+    author_text = names[0] if len(names) == 1 else ', '.join(names[:-1]) + ', & ' + names[-1]
+    location = volume + ('(' + issue + ')' if issue != 'NA' else '')
+    if pages != 'NA':
+        location += ', ' + pages.replace('-', '–')
+    apa = f'{author_text} ({year}). {title}. {journal}, {location}. https://doi.org/{doi}'
+    bib_authors = ' and '.join(a['family'] + (', ' + a['given'] if a.get('given') else '') for a in authors)
+    fields = {'title': title, 'author': bib_authors, 'journal': journal, 'year': year, 'doi': doi}
+    fields.update({k: v for k, v in [('volume', volume), ('number', issue), ('pages', pages)] if v != 'NA'})
+    bibtex = '@article{original_' + re.sub(r'\W', '', doi) + ',\n' + ',\n'.join(
+        '  ' + k + ' = {' + v + '}' for k, v in fields.items()) + '\n}\n'
+    return dict(doi_o=doi, alt_identifier_o='NA', doi_o_hash=hashlib.md5(doi.encode()).hexdigest()[:3],
+                title_o=title, author_o=json.dumps(authors, ensure_ascii=False, separators=(',', ':')),
+                journal_o=journal, year_o=year, volume_o=volume, issue_o=issue, pages_o=pages,
+                apa_ref_o=apa, bibtex_ref_o=bibtex, url_o='https://doi.org/' + doi,
+                language_o=metadata.get('language', 'NA'), oa_url_o='NA')
+
+
 def build():
     assert sha(BASELINE.read_bytes()) == BASELINE_SHA, 'Frozen baseline changed'
     with BASELINE.open(encoding='utf-8-sig') as f:
@@ -131,8 +161,16 @@ def build():
         assert opus['text_sha256'] == sol['text_sha256'] == sha((packet / 'article.txt').read_bytes())
         oi, si = decision['opus_target_index'], decision['sol_target_index']
         ot, st = opus['targets'][oi], sol['targets'][si]
-        original_alignment(row, ot, decision.get('original_year_metadata_receipt'))
-        original_alignment(row, st, decision.get('original_year_metadata_receipt'))
+        if decision['proposal_fields'] == ['original']:
+            receipt = decision['replacement_original_metadata_receipt']
+            metadata_path = Path(receipt['path'])
+            assert sha(metadata_path.read_bytes()) == receipt['sha256']
+            identity_fields = original_replacements(read(metadata_path)['message'])
+            aligned_row = dict(row, **identity_fields)
+        else:
+            identity_fields, aligned_row = None, row
+        original_alignment(aligned_row, ot, decision.get('original_year_metadata_receipt'))
+        original_alignment(aligned_row, st, decision.get('original_year_metadata_receipt'))
         assert ot['outcome_confident'] is True and st['outcome_confident'] is True
         for key, expected in decision['agreed_target_values'].items():
             assert ot[key] == st[key] == expected, 'Independent target labels disagree: ' + key
@@ -144,16 +182,23 @@ def build():
         assert validation['proof_count_verified'] > 0
         for field in decision['proposal_fields']:
             matches = [x for x in review['reviews'] if x.get('row_index', x.get('row_id', x.get('row'))) == row_index
-                       and x.get('field', x.get('field_reviewed')) == field
+                       and x.get('field', x.get('field_reviewed')) == decision.get('review_field_names', {}).get(field, field)
                        and x.get('status', x.get('disposition')) == 'supported_correction']
             assert len(matches) == 1, 'Missing independent adversarial support'
             prop = next(p for p in proposals if int(p['input_row_index']) == row_index and p['field'] == field)
             assert prop['expected_before_full_record_sha256'] == digest(row)
             assert not prop.get('application_hold'), 'Unresolved proposal dependency'
         duplicate_rows = [i for i, other in enumerate(rows) if i != row_index
-                          and ids(other, 'r') & ids(row, 'r') and ids(other, 'o') & ids(row, 'o')]
+                          and (ids(other, 'r') & ids(row, 'r') or norm(other['title_r']) == norm(row['title_r']))
+                          and (ids(other, 'o') & ids(aligned_row, 'o')
+                               or norm(other['title_o']) == norm(aligned_row['title_o']))]
         assert not duplicate_rows, 'Existing pair duplicate requires a joint remedy: ' + str(duplicate_rows)
-        replacements = checked_replacements(row, opus, ot, decision)
+        if identity_fields is not None:
+            assert row['type'] == opus['record_type']
+            assert row['outcome'] == ot['outcome'] == st['outcome'], 'Identity remedy needs compatible dependent outcome'
+            replacements = identity_fields
+        else:
+            replacements = checked_replacements(row, opus, ot, decision)
         quote = ot[decision['replacement_quote_field']]
         replacements['outcome_quote'] = quote
         replacements['outcome_quote_source'] = decision['replacement_quote_section']
@@ -161,6 +206,8 @@ def build():
         evidence = [proof(packet, quote)]
         for key in decision['supporting_quote_fields']:
             evidence.append(proof(packet, opus[key] if key == 'record_type_quote' else ot[key]))
+        for quote in decision.get('supporting_literal_quotes', []):
+            evidence.append(proof(packet, quote))
         operations = [dict(operation='set_field', field=field, expected_before={field: row[field]},
                            proposed_value=value, input_row_index=row_index,
                            expected_before_full_record_sha256=digest(row), atomic_group='row:' + str(row_index))
@@ -172,14 +219,15 @@ def build():
                            apply_all_fields_atomically=True, original_pair_duplicate_rows=duplicate_rows,
                            evidence=evidence, rationale=decision['rationale'], limits=decision['limits'],
                            independent_inputs=dict(opus=str(opus_dir / 'coding.json'), sol=sol_path,
-                                                   reviewer=str(reviewer / 'review.json'))))
+                                                   reviewer=str(reviewer / 'review.json')),
+                           bibliography_metadata=decision.get('replacement_original_metadata_receipt')))
     output = dict(schema_version=1, status='incremental_verified_proposals_cohort_in_progress',
                   baseline_sha256=BASELINE_SHA, canonical_changes_applied=False, user_approval_recorded=False,
                   automatic_fields_verified=sum(len(c['proposal_fields']) for c in result),
                   case_count=len(result), cases=result,
                   implementation_rules=['Obtain batch approval before implementation; this file records verified proposals, not approvals.',
                                         'Verify the frozen file and complete row hash; apply all fields of each case atomically.',
-                                        'Keep prior decisions and source histories. No original identity is changed by these cases.',
+                                        'Keep prior decisions and source histories. Apply original-identity changes with their complete bibliography, identifiers and source evidence.',
                                         'Do not re-enable other outcome proposals from this incremental file.'])
     (OUT / 'automatically_verified_proposals.json').write_text(json.dumps(output, ensure_ascii=False, indent=2) + '\n')
     print(json.dumps({k: output[k] for k in ('case_count', 'automatic_fields_verified', 'canonical_changes_applied')}))

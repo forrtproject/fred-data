@@ -99,6 +99,7 @@ reports=json.loads(${qreports})
 for r in reports:
  t=next(t for t in s['tasks'] if t['taskId']==r['taskId'])
  t['status']='completed_parent_mechanically_validated';t['validation_documents']=[d['document_id'] for d in r['documents']]
+ t['workState']='result_available';t['hasPendingChildRuns']=False
  k='validated_fresh_sol_documents' if t['role']=='blind_comparison_coder' else 'validated_opus_documents'
  s[k]=sorted(set(s.get(k,[])+t['validation_documents']))
 s['updated_at']=datetime.datetime.now(datetime.timezone.utc).isoformat()

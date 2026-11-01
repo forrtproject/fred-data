@@ -2,9 +2,9 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 20 initial documents and one complete-source upgrade have
+Current checkpoint: 30 initial documents and one complete-source upgrade have
 parent-validated Opus coding; seven documents have validated fresh Sol coding.
-The full reassessment remains in progress. Three cases covering four proposed
+The full reassessment remains in progress. Four cases covering five proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
@@ -56,9 +56,9 @@ comparison/review round. Complete available comparisons as well as dispatching
 new blind groups; do not let an agreement queue substitute for source review.
 Documents_0002, _0004 and _0005 have passed source review and parent integration
 for their specified type/outcome fields. Document_0007 retains a low-confidence
-successful-versus-mixed disagreement. Document_0006 has agreeing fresh identities
-and a supporting source review but still requires a complete original-record
-remedy. Document_0008 has an additional cost-effectiveness-target disagreement;
+successful-versus-mixed disagreement. Document_0006 has passed the original-identity
+gates and its proposal replaces the complete bibliography, DOI hash and supporting
+quote together. Document_0008 has an additional cost-effectiveness-target disagreement;
 the clinical identity and that companion-report question stay separate.
 
 After recording a coding completion in state.json, run
@@ -74,8 +74,9 @@ match. Native timeline removal of terminal whitespace is recorded explicitly;
 missing substantive characters or altered quote whitespace are rejected.
 
 `source_upgrades.json` preserves newly verified report versions separately.
-Document_0683 adds the author appendix and errata to document_0001 and requires
-fresh blind Opus and Sol results. Source-block boundaries and hashes prevent
+Document_0683 adds the author appendix and errata to document_0001; both fresh blind
+Opus and Sol results are validated. Its target-role dispute remains held.
+Source-block boundaries and hashes prevent
 quotations from joining different documents or inserted navigation headings.
 
 Use `prepare_dispatch.py GROUP_ID --provider opus|sol --attempt 1|2` before
@@ -90,7 +91,9 @@ replacement tasks have distinct IDs and output directories.
 coded values, validated result hashes, accepted reviewer-file hashes, original
 identity and pair uniqueness. A type conversion must travel with compatible
 results and literal replacement quotes. Its output cannot approve itself or
-enable the other suspended proposals. Run all 27 evidence/dependency controls:
+enable the other suspended proposals. Original-identity remedies refresh all
+original bibliographic fields and clear an unverified link to the old original.
+Run all 28 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
