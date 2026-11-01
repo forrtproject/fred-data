@@ -2,6 +2,7 @@
 """Export only parent-adjudicated cases passing independent evidence gates."""
 import csv
 import hashlib
+import html
 import json
 import re
 from pathlib import Path
@@ -35,7 +36,7 @@ def metadata_title(metadata):
     titles, subtitles = metadata['title'], metadata.get('subtitle', [])
     assert isinstance(titles, list) and len(titles) == 1 and isinstance(titles[0], str) and titles[0]
     assert isinstance(subtitles, list) and len(subtitles) <= 1
-    title = titles[0]
+    title = html.unescape(re.sub(r'</?(?:i|b|em|strong|sub|sup)>', '', titles[0], flags=re.I))
     if subtitles:
         subtitle = subtitles[0]
         assert isinstance(subtitle, str) and subtitle.strip(), 'Invalid deposited subtitle'
@@ -75,6 +76,22 @@ def review_field_dispositions(review):
         entries = [dict(review, status='supported_correction', disposition='supported_correction')]
     assert isinstance(entries, (list, dict)), 'Missing field-specific source review'
     entries = entries.values() if isinstance(entries, dict) else entries
+    if case_table:
+        expanded = []
+        for entry in entries:
+            if 'status' not in entry and isinstance(entry.get('field_reviews'), dict):
+                match = re.fullmatch(r'(\d+)\.([a-z_]+)', entry.get('case_id', ''))
+                assert match and entry.get('record_id') == match[1] and entry.get('focus') == match[2], \
+                    'Conflicting nested case identity'
+                for field, detail in entry['field_reviews'].items():
+                    assert re.fullmatch(r'[a-z_]+', field) and isinstance(detail, dict)
+                    assert not set(detail) & {'row', 'row_id', 'row_index', 'input_row_index', 'field',
+                                              'case_id', 'field_review_id'}, 'Nested field overrides case identity'
+                    expanded.append(dict(detail, case_id=match[1] + '.' + field,
+                                         input_row_index=int(match[1]), field=field))
+            else:
+                expanded.append(entry)
+        entries = expanded
     result = []
     for entry in entries:
         rows = [entry[k] for k in ('row_index', 'input_row_index', 'row_id', 'row') if entry.get(k) is not None]

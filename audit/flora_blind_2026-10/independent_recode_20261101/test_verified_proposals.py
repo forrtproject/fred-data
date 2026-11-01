@@ -78,6 +78,24 @@ class ProposalDependencies(unittest.TestCase):
         with self.assertRaises(AssertionError):
             metadata_title({'title': ['Main'], 'subtitle': ['One', 'Two']})
 
+    def test_deposited_italic_markup_and_entities_are_display_formatting(self):
+        self.assertEqual(metadata_title({'title': ['<i>That</i> &amp; the claim']}), 'That & the claim')
+
+    def test_nested_field_table_cannot_override_its_case_identity(self):
+        detail = {'status': 'supported_correction', 'recommended_value': 'mixed'}
+        entry = {'case_id': '561.outcome', 'record_id': '561', 'focus': 'outcome',
+                 'field_reviews': {'outcome': detail}}
+        self.assertEqual(review_field_dispositions({'cases': [entry]}), [(561, 'outcome', 'supported_correction')])
+        detail['input_row_index'] = 562
+        with self.assertRaisesRegex(AssertionError, 'overrides case identity'):
+            review_field_dispositions({'cases': [entry]})
+
+    def test_nested_case_id_must_match_the_record_id(self):
+        entry = {'case_id': '561.outcome', 'record_id': '562', 'focus': 'outcome',
+                 'field_reviews': {'outcome': {'status': 'supported_correction'}}}
+        with self.assertRaisesRegex(AssertionError, 'Conflicting nested case identity'):
+            review_field_dispositions({'cases': [entry]})
+
     def test_case_table_preserves_explicit_field_identity(self):
         review = {'cases': {'2.original': {'case_id': '2.original', 'input_row_index': 2,
                   'field': 'original', 'status': 'supported_correction'}}}

@@ -996,3 +996,14 @@ Validated the 0130/0131/0136 review: 36 literal proofs and 21 registered/downloa
 911 final second review preserves mixed/successful;639 and2274 preserve special-verdict/overall-verdict policy boundaries. They stay outside automatic proposals until the later individual-policy stage. No extra blind votes.
 
 Mechanical collection also completes143 and144–146 plus freshSol142:145/677 initial Opus packets,5additional views and20freshSol views.142 agrees on primaryMedvec/McGraw outcomes but Sol additionally includes uncertain Matsumoto2006; that target dispute stays separate.143 earlier exact-source reading was incomplete; freshSol is running. Active finite work is freshSol143 and source0129/0138 plus1957SSRP; next untouched Opus0064. The verified file now has19field cases/21logical fields plus1whole-record action, with0approvals/data edits.100controls pass; no app rebuild/publication.
+
+
+## 2026-11-01 — Original-version provenance retained and Ionin outcome passes
+
+Validated 18 exact source slices and 12 registered source hashes for the0129/0138 review.561failed→mixed follows an explicit whole partial-confirmation verdict, an agreeing language-group distinction and two original-specific contrasts. Both actual freshblind roles are mixed/confident; the reviewer’s claim that Opus chose statistically-successful-but-flawed is false and explicitly excluded from acceptance. Raw review and role outputs are unchanged. No upstream coding-process claim is inferred from abstract quote provenance.
+
+2320 retains its canonical journal DOI/title/2026printyear. AuthorOSFv1/v2 records establish the work’s version chain; the2024preprint is the literally tested version. A categorical replacement with a different-original identity is unsupported. Parent withdraws that proposal and binds tested-version provenance to the frozen record. OSFv2 abstract describes a similar third experiment, and the journal cites the current CogSci report; parent did not newly read complete original manuscripts or independently establish exact data reuse. Earlier retested findings stay distinct from later-added experiments. Raw canonical-versus-literal citation representation alternatives remain visible.
+
+The actual review uses a nested field table. Guarded parsing binds caseID, recordID and focus before accepting child field statuses; conflicting identity overrides fail. Crossref italic tags/entities are presentation markup for original-title comparison, while the raw metadata stays intact. Three controls bring the total to103passing.
+
+Collected0064actualsource reads:148/677initialOpuspackets+5additionalviews/20freshSolviews.147Payne2005successful,148Heinemann2009failed,149Vul/Pashler2008successful remain mechanicallyvalidated only. Activefinitework:blind0065,freshSol0143,and1957SSRPsourcecheck. Nextuntouched0066. Verifiedexport now20fieldcases/22logicalfields plus1whole-record action;3withdrawnproposals;0approvals/dataedits. Noapprebuild/publication.

@@ -2,11 +2,11 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 145 of 677 initial source packets and five additional source views have
+Current checkpoint: 148 of 677 initial source packets and five additional source views have
 passed Opus schema, literal-span and reading checks; twenty fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Nineteen cases covering twenty-one proposed
+The full reassessment remains in progress. Twenty cases covering twenty-two proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. A separate guarded whole-record exclusion
 is included under `record_actions`. These are proposals for batch approval;
@@ -122,7 +122,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 100 evidence/dependency controls:
+Run all 103 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -207,3 +207,5 @@ Row 107 is a separate whole-record exclusion proposal. The complete frozen pair 
 The source reviewer’s three incorrect row snapshots were traced to one-based indexing of zero-based identifiers. Raw reviews remain unchanged; export requires a hashed parent correction matching the wrong snapshot, actual full frozen row and review hash. Partial reviewer baselines with wrong identifiers also fail the guard. Reviewer-native Read contents are not exposed in the durable timeline; that limitation is explicit, while both blind roles’ actual reading receipts and all literal proof slices are independently checked.
 
 The radiation case and two additional verdict-scope cases remain outside the automatic set with explicit policy options for the later individual-decision stage. No further blind votes are requested to force agreement.
+
+Row 561 now changes failed to mixed from the explicit partial-confirmation verdict and original-specific contrasts. The raw review incorrectly attributes a flawed verdict to Opus; both actual fresh coders chose mixed, and their unchanged files govern acceptance. The citation replacement at row 2320 is withdrawn: canonical journal metadata and the author’s version chain support the existing title, DOI and 2026 print year. Its tested 2024 preprint is recorded separately. The later version describes a similar third experiment and cites the current report; detailed data reuse and full original manuscripts were not newly verified. Do not extend the outcome to later-added experiments.
