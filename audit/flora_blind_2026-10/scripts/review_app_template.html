@@ -277,13 +277,14 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
 .batch-button.secondary{background:white;color:#203b32}.batch-button:disabled{opacity:.5;cursor:default}
 .batch-list{max-height:340px;overflow:auto;margin-top:14px}.batch-list li{margin:12px 0;line-height:1.45}.batch-list small{display:block;color:#52615b}.workflow footer{display:flex;gap:12px;flex-wrap:wrap;padding:16px 0 30px}.workflow [hidden],#workspace[hidden],#queues[hidden]{display:none}
 @media(max-width:760px){.workflow{padding:20px 16px}.workflow h2{font-size:25px}.batch-card{padding:16px}.workflow-nav button{padding:8px 10px}.masthead .lede{font-size:14px}}
+.shared-tools{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.shared-tools input{font:inherit;padding:7px;border:1px solid var(--rule-strong);border-radius:5px;min-width:220px}.shared-tools small{color:var(--muted)}#shared-conflicts{overflow:auto;max-height:38vh;padding:0 24px;background:#fff5dd}#shared-conflicts[hidden]{display:none}#shared-conflicts pre{white-space:pre-wrap;max-height:250px;overflow:auto}
 </style>
 </head>
 <body>
 <header class="masthead">
   <div>
     <h1>FLoRA audit decisions</h1>
-    <p class="lede">Review proposed fixes and cases needing your judgement. Approve safe batches, download the changes, then review the remaining cases. Decisions save automatically in this browser; FLoRA changes only when the download is implemented.</p>
+    <p class="lede">Review proposed fixes and cases needing your judgement. Approve safe batches, download the changes, then review the remaining cases. Decisions save to a shared review log for all reviewers; FLoRA changes only when the download is implemented.</p>
   </div>
   <div class="tools">
     <p class="overall" id="overall"></p>
@@ -293,10 +294,12 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
     <input id="import-file" type="file" accept=".json,application/json" hidden>
     <button class="tool" id="about-button" type="button">Downloads and help</button>
   </div>
+  <div class="shared-tools"><label>Your name <input id="reviewer-name" autocomplete="name" maxlength="120" placeholder="Name shown to other reviewers"></label><button type="button" class="tool" id="shared-refresh">Refresh shared decisions</button><button type="button" class="tool" id="publish-browser" hidden>Publish previous browser decisions</button><small>Shared with everyone using this review link. Names are self-reported.</small></div>
   <p id="save-status" role="status" class="muted"></p><nav id="workflow-nav" class="workflow-nav" aria-label="Review steps"></nav>
   <nav class="queues" id="queues" aria-label="Review queues"></nav>
   <p class="notice" id="notice" role="status" aria-live="polite"></p>
 </header>
+<aside id="shared-conflicts" aria-label="Conflicting shared decisions" hidden></aside>
 <main id="workflow" class="workflow" tabindex="-1"></main>
 <div class="workspace" id="workspace">
   <aside class="index" id="index" aria-label="Case list">
@@ -326,7 +329,7 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
     <button class="tool about-close" id="about-close" type="button">Close</button>
     <h2 id="about-title">About this review</h2>
     <p>Explore field decisions, supporting evidence, and correction proposals. Each case shows what is wrong with a FLoRA record, the current and proposed values, the evidence, and any dependency that must be settled first.</p>
-    <p>Current values come from the frozen FLoRA snapshot that was audited. Recording a decision never changes FLoRA: decisions stay in this browser, and an exported file is a list of decisions for whoever applies the changes. In audit notes, “parent” means the integrating reviewer who applies decisions.</p>
+    <p>Current values come from the frozen FLoRA snapshot that was audited. Recording a decision never changes FLoRA: decisions are saved in a shared Google-backed change log, and an exported file is a list of decisions for whoever applies the changes. The browser keeps pending writes until the shared service confirms them. Other reviewers’ changes load automatically or with Refresh shared decisions. In audit notes, “parent” means the integrating reviewer who applies decisions.</p>
     <p id="evidence-status" class="muted">Shortened evidence excerpts are embedded in this page.</p>
     <p id="data-status" class="muted hash"></p>
     <h3>Downloads</h3>
@@ -414,11 +417,11 @@ const LEVEL={full_text:'Full text',abstract:'Abstract only',none:'No usable text
 let store=readJSON(STORE_KEY,null);
 if(!store||typeof store!=='object'||!store.records)store={version:2,records:{}};
 let prefs=readJSON(PREFS_KEY,{})||{};
-let savingFailed=false;
-function renderSaveStatus(){const el=$('save-status');if(el)el.textContent=savingFailed?'Not saved — browser storage failed. Export a backup before closing.':store.saved_at?'Saved in this browser · '+new Date(store.saved_at).toLocaleString():'Decisions save automatically in this browser. Export a backup to move them to another browser.'}
+let savingFailed=false,sharedReview=null;
+function renderSaveStatus(){if(sharedReview){sharedReview.display();return}const el=$('save-status');if(el)el.textContent=savingFailed?'Not saved — browser storage failed. Export a backup before closing.':store.saved_at?'Saved in this browser · '+new Date(store.saved_at).toLocaleString():'Decisions save automatically in this browser. Export a backup to move them to another browser.'}
 let savedPayload=null;try{savedPayload=localStorage.getItem(STORE_KEY)}catch(e){}
-function persist(){try{const recovered=savingFailed;const currentPayload=localStorage.getItem(STORE_KEY);if(currentPayload!==savedPayload)throw Error('Another tab changed these decisions; reload to restore them.');store.saved_at=stamp();const payload=JSON.stringify(store);localStorage.setItem(STORE_KEY,payload);if(localStorage.getItem(STORE_KEY)!==payload)throw Error('Read-back failed');savedPayload=payload;savingFailed=false;renderSaveStatus();if(recovered)notice('Saving restored. Decisions are saved in this browser.');return true}catch(e){savingFailed=true;renderSaveStatus();notice('Could not save: '+e.message+'. This action was not recorded. Reload if another tab changed these decisions; export a backup before closing.');return false}}
-function transaction(change){const previous=JSON.stringify(store);change();if(persist())return true;store=JSON.parse(previous);return false}
+function persist(){try{const recovered=savingFailed;const currentPayload=localStorage.getItem(STORE_KEY);if(!sharedReview&&currentPayload!==savedPayload)throw Error('Another tab changed these decisions; reload to restore them.');store.saved_at=stamp();const payload=JSON.stringify(store);localStorage.setItem(STORE_KEY,payload);if(localStorage.getItem(STORE_KEY)!==payload)throw Error('Read-back failed');savedPayload=payload;savingFailed=false;renderSaveStatus();if(recovered)notice('Browser cache restored. Shared-save status is shown above.');return true}catch(e){savingFailed=true;renderSaveStatus();notice('Could not save: '+e.message+'. This action was not recorded. Reload if another tab changed these decisions; export a backup before closing.');return false}}
+function transaction(change){const previous=JSON.stringify(store);change();if(sharedReview&&!sharedReview.prepare(JSON.parse(previous),store)){store=JSON.parse(previous);return false}if(persist()){sharedReview?.committed();return true}store=JSON.parse(previous);sharedReview?.rollback();return false}
 function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify(prefs))}catch(e){}}
 // Earlier versions of this app saved free-text reviews under a hash-specific key; keep them visible.
 (function migrateLegacy(){const old=readJSON(LEGACY_KEY,null);if(!old||store.legacy_imported)return;for(const [id,d] of Object.entries(old)){if(!d)continue;const r=store.records[id]||{case_id:id};r.legacy={decision:d.decision,notes:d.notes,recorded_at:d.recorded_at};store.records[id]=r}store.legacy_imported=true;persist()})();
@@ -776,7 +779,7 @@ function renderCase(){
   if(p.policies.length)art.append(renderPolicy(c,p));
   if(p.ra)art.append(renderRecordAction(c,p.ra,p.type==='record'?splitLead(p.ra.reason||'',260)[0]:''));
   art.append(p.missing?renderMissingCard(c,p):renderCard(c,p));
-  art.append(...renderConditions(c,p),renderEvidence(c,p),renderTechnical(c,p));
+  art.append(...renderConditions(c,p),renderEvidence(c,p),renderTechnical(c,p));const history=sharedReview?.history(c.id)||[];if(history.length)art.append(h('details',{class:'more-text'},h('summary',{},'Shared decision history ('+history.length+')'),h('ul',{},history.map(x=>h('li',{},x.reviewer+' · '+(x.decision||'note')+' · '+timeLabel(x.saved_at)+(x.conflict?' · '+x.conflict:''))))));
 }
 
 /* ---------- decisions ---------- */
@@ -826,8 +829,8 @@ function decide(c,opt){
   const r={...(store.records[c.id]||{}),case_id:c.id,row:c.row,decision:opt.code,decision_label:opt.label,option:opt.option||null,approved_fields:fields,proposal:p.items.length?proposalOf(c,p.items):null,record_action:opt.code==='approve_record_action'&&p.ra?{action:p.ra.action??null,operation:p.ra.operation??null,proposed_changes:p.ra.proposed_changes??null}:null,expected_before_full_record_sha256:rowCtx(c)?.sha||null,proposal_fingerprint:snapshotOf(c),notes:note,recorded_at:stamp(),applied:false};
   if(!transaction(()=>{delete r.batch_id;store.records[c.id]=r}))return;
   const next=prefs.advance!==false?nextOpen(c.id):null;
-  lastUndo=()=>{if(!transaction(()=>{if(prev)store.records[c.id]=prev;else delete store.records[c.id]}))return;lastUndo=null;openCase(c.id);showToast(`Decision undone for ${c.row!=null?'row '+c.row:'this pair'}.`)};
-  showToast(`${statusLabel(opt.code)}: ${c.row!=null?'row '+c.row:'missing pair'}. Saved in this browser.`,lastUndo);
+  lastUndo=()=>{if(store.records[c.id]?.recorded_at!==r.recorded_at||store.records[c.id]?.reviewer!==r.reviewer){notice('A newer shared decision exists; undo it through an explicit new review.');return}if(!transaction(()=>{if(prev)store.records[c.id]=prev;else delete store.records[c.id]}))return;lastUndo=null;openCase(c.id);showToast(`Decision undone for ${c.row!=null?'row '+c.row:'this pair'}.`)};
+  showToast(`${statusLabel(opt.code)}: ${c.row!=null?'row '+c.row:'missing pair'}. Queued for shared save.`,lastUndo);
   renderQueues();renderList();
   if(next)select(next.id);else{renderCase();renderDock()}
 }
@@ -835,7 +838,7 @@ function openNote(message){state.noteOpen=true;renderDock();const t=$('note');if
 let noteTimer=null,pendingNote=null;
 function flushNote(){if(pendingNote){clearTimeout(noteTimer);const save=pendingNote;pendingNote=null;save()}}
 window.addEventListener('pagehide',flushNote);
-function saveNote(c,text){clearTimeout(noteTimer);pendingNote=()=>{const r={...(store.records[c.id]||{case_id:c.id,row:c.row,decision:null}),notes:text,updated_at:stamp()};const saved=transaction(()=>{store.records[c.id]=r});const el=$('note-saved');if(el)el.textContent=saved?'Note saved.':'Note not saved.'};noteTimer=setTimeout(flushNote,350)}
+function saveNote(c,text){clearTimeout(noteTimer);pendingNote=()=>{const r={...(store.records[c.id]||{case_id:c.id,row:c.row,decision:null}),notes:text,updated_at:stamp()};const saved=transaction(()=>{store.records[c.id]=r});const el=$('note-saved');if(el)el.textContent=saved?'Note queued for shared save.':'Note not saved.'};noteTimer=setTimeout(flushNote,350)}
 function renderDock(){
   const dock=$('dock');dock.replaceChildren();const c=caseById.get(state.selected);if(!c)return;
   const sp=spec(c),r=store.records[c.id],s=statusOf(c);
@@ -846,7 +849,7 @@ function renderDock(){
   if(showNote){const t=h('textarea',{id:'note',placeholder:needsNote?'State the coding rule and the value it gives for this row':s==='follow_up'?'What should the follow-up establish?':'Reasons, conditions or anything the integrator should know',oninput:e=>{$('note-error').textContent='';saveNote(c,e.target.value)}});t.value=noteText;inner.append(h('div',{class:'note-box'},h('label',{for:'note'},needsNote?'Rule you chose (required to record a policy decision)':'Note (optional)'),t,h('p',{class:'note-error',id:'note-error','aria-live':'polite'})))}
   let status;
   if(s==='stale')status=h('p',{class:'dock-status stale'},`The proposal changed after you decided (${statusLabel(r.decision).toLowerCase()} on ${timeLabel(r.recorded_at)}). Decide again.`);
-  else if(r&&r.decision)status=h('p',{class:'dock-status saved'},'Decision saved: ',h('b',{},statusLabel(r.decision)+(r.option?` (option: ${r.option.label})`:'')),` on ${timeLabel(r.recorded_at)}`);
+  else if(r&&r.decision)status=h('p',{class:'dock-status saved'},'Decision saved: ',h('b',{},statusLabel(r.decision)+(r.option?` (option: ${r.option.label})`:'')),` by ${r.reviewer||'reviewer'} on ${timeLabel(r.recorded_at)}`);
   else status=h('p',{class:'dock-status'},r&&r.legacy?`Earlier review in the previous app: ${r.legacy.decision}${r.legacy.notes?' — '+r.legacy.notes:''}`:'No decision yet.');
   const pos=visible.findIndex(x=>x.id===c.id);
   const left=h('div',{class:'dock-nav'},status,showNote?h('span',{class:'muted',id:'note-saved','aria-live':'polite'}):h('button',{type:'button',class:'linkish',onclick:()=>openNote()},'Add note'));
@@ -876,8 +879,8 @@ function showToast(text,undo){const t=$('toast');t.replaceChildren(h('span',{},t
 
 /* ---------- export and import ---------- */
 function download(name,text,type){const u=URL.createObjectURL(new Blob([text],{type}));const a=h('a',{href:u,download:name});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
-function exportRecords(){return Object.values(store.records).filter(r=>r&&(r.decision||r.notes||r.legacy)).map(r=>{const c=caseById.get(r.case_id);return {...r,kind:c?.kind??null,title:c?caseTitle(c):null,status:c?statusOf(c):'unknown_case',stale:c?statusOf(c)==='stale':null}})}
-$('export-json').onclick=()=>{flushNote();const decisions=exportRecords();download(`flora-audit-decisions-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema_version:3,app:'flora-audit-decision-review',input_hash:INPUT_HASH,queue_sha256:QUEUE_HASH,baseline_sha256:CONTEXT.baseline_sha256??null,exported_at:stamp(),canonical_changes_applied:false,batch_approvals:store.batch_approvals||{},approved_missing_pairs:store.pairs||{},workflow:store.workflow||{},decided_cases:cases.filter(isDecided).length,total_cases:cases.length,decisions},null,2),'application/json');notice(`Exported ${decisions.length} records.`)};
+function exportRecords(){return Object.values(store.records).filter(r=>r&&(r.decision||r.notes||r.legacy)).map(r=>{const c=caseById.get(r.case_id);return {...r,...(sharedReview?.attribution(r.case_id)||{}),kind:c?.kind??null,title:c?caseTitle(c):null,status:c?statusOf(c):'unknown_case',stale:c?statusOf(c)==='stale':null}})}
+$('export-json').onclick=()=>{flushNote();const decisions=exportRecords();download(`flora-audit-decisions-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema_version:4,app:'flora-audit-decision-review',shared_review:sharedReview?.status()||null,input_hash:INPUT_HASH,queue_sha256:QUEUE_HASH,baseline_sha256:CONTEXT.baseline_sha256??null,exported_at:stamp(),canonical_changes_applied:false,batch_approvals:store.batch_approvals||{},approved_missing_pairs:store.pairs||{},workflow:store.workflow||{},decided_cases:cases.filter(isDecided).length,total_cases:cases.length,decisions},null,2),'application/json');notice(`Exported ${decisions.length} records.`)};
 $('export-csv').onclick=()=>{const cols=['case_id','row','kind','decision','decision_label','option','approved_fields','stale','notes','recorded_at','title'];const esc=v=>{v=v==null?'':typeof v==='object'?(Array.isArray(v)?v.join('; '):v.label||JSON.stringify(v)):String(v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};const lines=[cols.join(',')].concat(exportRecords().map(r=>cols.map(k=>esc(r[k])).join(',')));download(`flora-audit-decisions-${new Date().toISOString().slice(0,10)}.csv`,'﻿'+lines.join('\r\n')+'\r\n','text/csv')};
 $('import-button').onclick=()=>$('import-file').click();
 $('import-file').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{const data=JSON.parse(await file.text());const beforeImport=JSON.stringify(store);if(data.baseline_sha256&&data.baseline_sha256!==CONTEXT.baseline_sha256)throw Error('Backup belongs to a different audited snapshot.');const list=Array.isArray(data)?data:data&&data.decisions;if(!Array.isArray(list))throw Error('This file has no decisions list.');let added=0,replaced=0,skipped=0,unknown=0;
@@ -886,13 +889,15 @@ $('import-file').onchange=async e=>{const file=e.target.files[0];e.target.value=
     else{const {kind,title,status,stale,...rest}=d;incoming=rest}
     const newer=!local||String(incoming.recorded_at||incoming.updated_at||'')>String(local.recorded_at||local.updated_at||'');
     if(!local||(!local.decision&&!local.notes)){store.records[d.case_id]={...local,...incoming};added++}else if(newer){store.records[d.case_id]={...local,...incoming};replaced++}else skipped++}
-  restoreBatchBackup(data);if(!persist()){store=JSON.parse(beforeImport);throw Error('Browser storage failed; previous decisions retained.')}profiles=new Map();renderAll();const n=added+replaced;notice(`Imported ${n} ${n===1?'record':'records'}: ${added} new, ${replaced} replacing older local entries, ${skipped} skipped as older, ${unknown} not in this queue.`+(data.input_hash&&data.input_hash!==INPUT_HASH?' The file comes from a different audit version; decisions on changed proposals are marked for re-checking.':''))}catch(err){notice('Import failed: '+err.message)}};
+  restoreBatchBackup(data);const imported=store;store=JSON.parse(beforeImport);if(!transaction(()=>{store=imported}))throw Error('Import not recorded; shared review must be loaded and your name entered.');profiles=new Map();renderAll();const n=added+replaced;notice(`Imported ${n} ${n===1?'record':'records'}: ${added} new, ${replaced} replacing older local entries, ${skipped} skipped as older, ${unknown} not in this queue.`+(data.input_hash&&data.input_hash!==INPUT_HASH?' The file comes from a different audit version; decisions on changed proposals are marked for re-checking.':''))}catch(err){notice('Import failed: '+err.message)}};
 
 /* ---------- evidence ---------- */
 async function loadCompleteEvidence(text){const hash=await reviewHash(text);if(hash!==QUEUE_HASH)throw Error('This file does not match the current handoff. Reload the page and try again.');const loaded=JSON.parse(text);if(loaded.length!==cases.length)throw Error('Case count mismatch');if(new Set(loaded.map(c=>c.id)).size!==loaded.length)throw Error('Duplicate cases');cases=loaded;indexCases();evidenceComplete=true;notice('Complete evidence loaded and hash verified.');$('evidence-status').textContent='Complete evidence loaded and hash verified.';renderAll()}
 $('load').onchange=async e=>{try{await loadCompleteEvidence(await e.target.files[0].text())}catch(error){notice(error.message)}};
 
+/*flora-shared-state*/
 /*flora-workflow*/
+/*flora-shared-sync*/
 
 /* ---------- wiring ---------- */
 $('search').oninput=e=>{state.search=e.target.value;renderList();if(!visible.some(c=>c.id===state.selected)&&visible[0])select(visible[0].id);else renderDock()};
@@ -919,10 +924,12 @@ $('data-status').textContent=`Audited FLoRA snapshot SHA-256: ${CONTEXT.baseline
 if(new Set(cases.map(c=>c.id)).size!==cases.length)throw Error('Duplicate cases');
 indexCases();
 initializeWorkflow();
+sharedReview=createSharedReview(CONTEXT.shared_review);
+sharedReview.sync();
 {const id=decodeURIComponent(location.hash.slice(1));if(id&&caseById.has(id)){state.selected=id;const c=caseById.get(id);if(!queueById[state.queue].test(c))state.queue=QUEUES.find(q=>q.id!=='all'&&q.test(c))?.id||'all'}}
 renderAll();
 if(narrow())setListOpen(false);
-window.floraReview={counts:()=>Object.fromEntries(QUEUES.map(q=>[q.id,cases.filter(q.test).length])),decided:()=>cases.filter(isDecided).length,batches:()=>batchGroups,implementation:implementationBundle,evidenceComplete:()=>evidenceComplete};
+window.floraReview={counts:()=>Object.fromEntries(QUEUES.map(q=>[q.id,cases.filter(q.test).length])),decided:()=>cases.filter(isDecided).length,batches:()=>batchGroups,implementation:implementationBundle,shared:()=>sharedReview.status(),evidenceComplete:()=>evidenceComplete};
 console.log('Validated '+cases.length+' unique cases.',window.floraReview.counts());
 if(location.protocol==='http:'||location.protocol==='https:'){
   notice('Loading complete evidence…');

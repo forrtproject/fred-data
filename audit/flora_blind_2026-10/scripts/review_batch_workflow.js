@@ -15,10 +15,10 @@ function approvedItem(item,group){
   const r=store.pairs[item.id];return r?.decision==='add_pair'&&r.group_fingerprint===group.fingerprint;
 }
 function approvedOperations(){
-  return batchGroups.flatMap(g=>g.items.filter(i=>approvedItem(i,g)).flatMap(i=>i.operations.map(op=>({...op,approval_item_id:i.id,input_row_index:i.input_row_index??null,approved_at:(i.case_id?store.records[i.case_id]:store.pairs[i.id]).recorded_at}))));
+  return batchGroups.flatMap(g=>g.items.filter(i=>approvedItem(i,g)).flatMap(i=>i.operations.map(op=>({...op,...(sharedReview?.attribution(i.case_id||i.id,i.case_id?'records':'pairs')||{}),approval_item_id:i.id,input_row_index:i.input_row_index??null,approved_at:(i.case_id?store.records[i.case_id]:store.pairs[i.id]).recorded_at}))));
 }
 function implementationFingerprint(){return fnv(JSON.stringify(approvedOperations()))}
-function backupData(){flushNote();return {schema_version:3,app:'flora-audit-decision-review',baseline_sha256:CONTEXT.baseline_sha256,input_hash:INPUT_HASH,queue_sha256:QUEUE_HASH,exported_at:stamp(),canonical_changes_applied:false,decisions:exportRecords(),batch_approvals:store.batch_approvals,approved_missing_pairs:store.pairs,workflow:store.workflow}}
+function backupData(){flushNote();return {schema_version:3,app:'flora-audit-decision-review',shared_review:sharedReview?.status()||null,baseline_sha256:CONTEXT.baseline_sha256,input_hash:INPUT_HASH,queue_sha256:QUEUE_HASH,exported_at:stamp(),canonical_changes_applied:false,decisions:exportRecords(),batch_approvals:store.batch_approvals,approved_missing_pairs:store.pairs,workflow:store.workflow}}
 function implementationBundle(){
   const operations=approvedOperations(),safeIds=new Set(operations.map(x=>x.approval_item_id));
   return {...backupData(),bundle_type:'approved_flora_changes',implementation_fingerprint:implementationFingerprint(),
@@ -47,7 +47,7 @@ function approveBatch(group){
     for(const item of pending){const records=item.case_id?store.records:store.pairs,key=item.case_id||item.id;if(records[key]?.recorded_at!==when)return;const old=(item.case_id?previous.records:previous.pairs)?.[key];if(old)records[key]=old;else delete records[key]}
     if(store.batch_approvals[group.id]?.recorded_at===when){if(previous.batch_approvals?.[group.id])store.batch_approvals[group.id]=previous.batch_approvals[group.id];else delete store.batch_approvals[group.id]}
   }))return;lastUndo=null;renderAll();showToast('Batch approval undone. Later individual decisions kept.')};
-  renderAll();showToast(`${pending.length} approvals saved in this browser.`,lastUndo);
+  renderAll();showToast(`${pending.length} approvals queued for shared save.`,lastUndo);
 }
 function undoBatch(group){
   const approval=store.batch_approvals[group.id];if(!approval)return;
@@ -62,8 +62,8 @@ function setStage(stage){
   if(stage==='individual'){state.show='open';$('show').value='open';state.queue='remaining'}
   renderAll();$('workflow').scrollTop=0;
 }
-function downloadImplementation(){
-  flushNote();
+async function downloadImplementation(){
+  flushNote();if(sharedReview){const synced=await sharedReview.sync();if(!synced||!sharedReview.canDownload()){notice('Confirm all shared saves and resolve conflicts before downloading approved changes.');return}}
   const fingerprint=implementationFingerprint(),when=stamp();
   if(!transaction(()=>{store.workflow.downloaded_fingerprint=fingerprint;store.workflow.downloaded_at=when}))return;
   download('flora-approved-changes-'+when.slice(0,10)+'.json',JSON.stringify(implementationBundle(),null,2),'application/json');
