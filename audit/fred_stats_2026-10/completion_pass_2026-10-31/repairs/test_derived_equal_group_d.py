@@ -25,7 +25,8 @@ class DocumentedEffect(unittest.TestCase):
    r=copy.deepcopy(self.receipt);r['groups'][0].update(change)
    with self.subTest(change=change),self.assertRaises(AssertionError):documented_equal_group_d(r,self.row,self.decision,self.source)
 
-class DocumentedF(DocumentedEffect):
+class DocumentedF(unittest.TestCase):
+ setUp=DocumentedEffect.setUp
  def test_explicit_coding_convention_and_rejection_guards(self):
   q='F(1, 132) = 160.5';Path(self.source).write_text(q)
   expression='esc::cohens_d(r = FReD:::convert_effect_sizes("'+q+'", "test statistic"))'
