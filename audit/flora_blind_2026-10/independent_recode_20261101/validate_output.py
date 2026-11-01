@@ -29,7 +29,7 @@ def first(obj, names):
     raise ValueError('Missing proof key: ' + '/'.join(names))
 
 
-def validate_proofs(obj, raw, source_hash):
+def validate_proofs(obj, raw, source_hash, require_source_hash=False):
     text = raw.decode('utf-8')
     proofs = []
 
@@ -46,6 +46,9 @@ def validate_proofs(obj, raw, source_hash):
                 check(0 <= a < z <= len(text) and text[a:z] == quote, path + ': character mismatch')
                 check(ba == len(text[:a].encode()) and bz == len(text[:z].encode()), path + ': UTF8 mismatch')
                 check(raw[ba:bz] == quote.encode(), path + ': raw byte mismatch')
+                if require_source_hash:
+                    check(any(k in value for k in ('source_text_sha256', 'source_sha256', 'text_sha256')),
+                          path + ': missing proof source hash')
                 proof_source = next((value[k] for k in ('source_text_sha256', 'source_sha256', 'text_sha256')
                                      if k in value), source_hash)
                 check(proof_source == source_hash,
@@ -143,8 +146,10 @@ def validate(packet, output, receipts, expected_inputs=None):
     maps = {}
     for filename in ('quote_spans.json', 'evidence_map.json'):
         data = read(output / filename)
-        check(first(data, ('text_sha256', 'source_sha256')) == source_hash, filename + ': source mismatch')
-        maps[filename] = validate_proofs(data, raw, source_hash)
+        root_hash = next((data[k] for k in ('text_sha256', 'source_sha256') if k in data), None)
+        if root_hash is not None:
+            check(root_hash == source_hash, filename + ': source mismatch')
+        maps[filename] = validate_proofs(data, raw, source_hash, require_source_hash=root_hash is None)
     if (packet / 'source_blocks.json').exists():
         block_map = read(packet / 'source_blocks.json')
         check(block_map['text_sha256'] == source_hash, 'Source-block map hash mismatch')

@@ -135,6 +135,16 @@ class EvidenceValidation(unittest.TestCase):
         self.write(self.output / 'evidence_map.json', dict(text_sha256=self.source_hash, spans=[proof]))
         with self.assertRaises(ValueError): self.run_validation()
 
+    def test_per_proof_source_hashes_establish_map_without_root_hash(self):
+        self.write(self.output / 'evidence_map.json', dict(spans=[self.proof]))
+        self.assertEqual(self.run_validation()['evidence_map_proofs'], 1)
+
+    def test_map_without_root_or_proof_source_hash_rejected(self):
+        proof = dict(self.proof)
+        del proof['source_sha256']
+        self.write(self.output / 'evidence_map.json', dict(spans=[proof]))
+        with self.assertRaises(ValueError): self.run_validation()
+
     def test_semantic_schema_extra_rejected(self):
         self.coding['safe'] = True
         self.write(self.output / 'coding.json', self.coding)

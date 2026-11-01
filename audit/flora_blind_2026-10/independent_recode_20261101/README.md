@@ -2,6 +2,14 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
+Current checkpoint: 20 initial documents and one complete-source upgrade have
+parent-validated Opus coding; seven documents have validated fresh Sol coding.
+The full reassessment remains in progress. Three cases covering four proposed
+fields have passed the scientific acceptance gates and are exported in
+`automatically_verified_proposals.json`. These are proposals for batch approval;
+no user approval or dataset changes are recorded. Other outcome batches remain
+suspended.
+
 Fresh Claude Opus 5.5 children receive only opaque document packets, the codebook, schema and primary-source metadata. They receive no dataset values, proposed fixes, earlier codings, reviewer opinions, or task-selection rationale. They must code the whole document and find its targets independently, with literal source evidence and complete reading coverage. Existing reviewers and technical source preparers never become blind coders.
 
 The parent owns source verification, target alignment, comparison, scientific integration, Git and dispatch. A previous genuine blind Sol result can be compared only when its exact source version/hash and source scope match. Otherwise a fresh blinded Sol pass is required. No prior adjudicator judgment is substituted for independent blind coding.
@@ -46,10 +54,12 @@ receipts and independent scientific checks are still required.
 Use `comparison_review_queue.json` and `prior_sol_receipt_checks.json` for the next
 comparison/review round. Complete available comparisons as well as dispatching
 new blind groups; do not let an agreement queue substitute for source review.
-In particular document_0004 has matching validated fresh Opus/Sol outcomes and
-still needs adversarial source review, document_0005 is in source review, and
-document_0007 has a low-confidence successful-versus-mixed disagreement. The
-document_0006 assignment concerns original identity, not outcome agreement.
+Documents_0002, _0004 and _0005 have passed source review and parent integration
+for their specified type/outcome fields. Document_0007 retains a low-confidence
+successful-versus-mixed disagreement. Document_0006 has agreeing fresh identities
+and a supporting source review but still requires a complete original-record
+remedy. Document_0008 has an additional cost-effectiveness-target disagreement;
+the clinical identity and that companion-report question stay separate.
 
 After recording a coding completion in state.json, run
 `collect_completed_coding.js` through `AsyncFunction(tools, text)`. It collects
@@ -75,3 +85,14 @@ paths, every frozen file hash, the owned output root, capacity, duplicate task
 history and the attempt limit. Do not construct packet/output prefixes manually.
 Parent-supplied invalid paths consumed two preserved technical attempts; their
 replacement tasks have distinct IDs and output directories.
+
+`build_verified_proposals.py` rechecks frozen full-record hashes, independently
+coded values, validated result hashes, accepted reviewer-file hashes, original
+identity and pair uniqueness. A type conversion must travel with compatible
+results and literal replacement quotes. Its output cannot approve itself or
+enable the other suspended proposals. Run all 27 evidence/dependency controls:
+
+```sh
+python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
+python3 audit/flora_blind_2026-10/independent_recode_20261101/build_verified_proposals.py
+```
