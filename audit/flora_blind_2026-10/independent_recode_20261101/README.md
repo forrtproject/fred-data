@@ -24,3 +24,29 @@ Agreement with the existing FLoRA value withdraws the suspected correction when 
 Read state.json and source_inventory.json/dispatch_plan.json when preparation finishes. Reconcile exact owned task IDs. Completion notifications drive integration and the next bounded delegate_task round; no polling/watch loops or schedules. Never restart historical tick.js, tick_evidence_followup.js, coding controllers or their old deadlines for this new cohort. Use a new delegate_task for every blind/review round, not t3_thread_send. Maximum two attempts per packet, preserving every attempt and mechanical failure cause. Keep combined active lanes below ten and reserve validation capacity; currently use at most three model children. Included native usage only, no paid API fallback. The old recovery schedule remains removed.
 
 Active packets and outputs are ignored under evidence_followup/private/independent_recode_20261101/. No source bodies or unpublished coding outputs are deployed to the public app. The suspended outcome batch approvals remain suspended until the acceptance gates are satisfied.
+
+Parent mechanical checks are in `validate_output.py`. Recover the child's actual
+durable tool items into a private receipt directory before running it; a child's
+reading-manifest assertion is insufficient. Both exact shell output and native
+Read content are checked against every source chunk. The validator records
+mechanical validity separately from scientific acceptance. Run its failure
+controls with:
+
+```sh
+python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p test_validation.py -v
+```
+
+`project_prior_sol.py` creates a separate parent-only projection when an older
+blind result transcribed source whitespace. It can replace only whitespace with
+the exact, uniquely matched contiguous source span; missing or changed words and
+ambiguous matches are rejected. Original files and scientific labels remain
+unchanged. The projection ledger preserves both quotations and offsets. Reading
+receipts and independent scientific checks are still required.
+
+Use `comparison_review_queue.json` and `prior_sol_receipt_checks.json` for the next
+comparison/review round. Complete available comparisons as well as dispatching
+new blind groups; do not let an agreement queue substitute for source review.
+In particular document_0004 needs the newly dispatched blind Sol pass because its
+old reading was incomplete, document_0005 needs an adversarial source check, and
+document_0007 has a low-confidence successful-versus-mixed disagreement. The
+document_0006 assignment concerns original identity, not outcome agreement.
