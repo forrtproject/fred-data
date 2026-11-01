@@ -2,7 +2,7 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 30 initial documents and one complete-source upgrade have
+Current checkpoint: 33 initial documents and one complete-source upgrade have
 parent-validated Opus coding; seven documents have validated fresh Sol coding.
 The full reassessment remains in progress. Four cases covering five proposed
 fields have passed the scientific acceptance gates and are exported in
