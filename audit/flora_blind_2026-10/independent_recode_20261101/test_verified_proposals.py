@@ -581,6 +581,63 @@ class ProposalDependencies(unittest.TestCase):
             with self.assertRaisesRegex(AssertionError, 'metadata DOI differs'):
                 original_alignment(row, target, author_receipt=receipt)
 
+    def conflicting_dates_fixture(self, directory):
+        row = dict(doi_o='10.1/original', title_o='Actual paper', year_o='2020',
+                   volume_o='36', issue_o='9', pages_o='1823-1834',
+                   author_o=json.dumps([dict(family='Luna')]))
+        target = dict(doi=row['doi_o'], title=row['title_o'], year='2021', authors='Luna M')
+        metadata = dict(DOI=row['doi_o'], title=[row['title_o']], volume='36', issue='9', page='1823-1834',
+                        **{'published-online': {'date-parts': [[2021, 5, 17]]},
+                           'published-print': {'date-parts': [[2020, 12, 1]]}})
+        path = Path(directory)/'metadata.json'; path.write_text(json.dumps(dict(message=metadata)))
+        quote = 'Luna M. Actual paper. Journal. 2021;36(9):1823–1834. 10.1/original'
+        source = Path(directory)/'article.txt'; source.write_text(quote)
+        receipt = dict(path=str(path), sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                       kind='conflicting_deposited_date_fields_same_work', scope='identity_only_preserve_frozen_year',
+                       literal_reference=dict(source_path=str(source), source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                                              quote=quote, quote_sha256=hashlib.sha256(quote.encode()).hexdigest()))
+        return row, target, receipt
+
+    def test_conflicting_deposited_dates_preserve_same_work_without_changing_year(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.conflicting_dates_fixture(directory)
+            before = dict(row)
+            original_alignment(row, target, receipt)
+            self.assertEqual(row, before)
+            del receipt['kind']
+            with self.assertRaises(AssertionError):
+                original_alignment(row, target, receipt)
+
+    def test_date_conflict_cannot_authorize_an_unregistered_year_or_missing_printed_doi(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.conflicting_dates_fixture(directory)
+            for changes in [dict(year='2022'), dict(doi='')]:
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(row, dict(target, **changes), receipt)
+            with self.assertRaises(AssertionError):
+                original_alignment(dict(row, year_o='2019'), target, receipt)
+
+    def test_date_conflict_requires_a_hashed_literal_reference(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.conflicting_dates_fixture(directory)
+            for changes in [dict(source_sha256='wrong'), dict(quote_sha256='wrong'), dict(quote='not in source')]:
+                altered = dict(receipt, literal_reference=dict(receipt['literal_reference'], **changes))
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(row, target, altered)
+
+    def test_date_conflict_cannot_hide_a_different_work_issue_or_reference_year(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.conflicting_dates_fixture(directory)
+            for changes in [dict(doi_o='10.1/other'), dict(title_o='Another paper'), dict(pages_o='1-2')]:
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(dict(row, **changes), target, receipt)
+            source = Path(receipt['literal_reference']['source_path'])
+            quote = source.read_text().replace('2021;', '2020;'); source.write_text(quote)
+            receipt['literal_reference'].update(source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                                                quote=quote, quote_sha256=hashlib.sha256(quote.encode()).hexdigest())
+            with self.assertRaisesRegex(AssertionError, 'printed year or issue differs'):
+                original_alignment(row, target, receipt)
+
     def test_advance_year_requires_primary_publisher_evidence_for_later_issue(self):
         row = {'title_o': 'Actual paper', 'year_o': '2015', 'doi_o': '10.1/original',
                'volume_o': 'NA', 'issue_o': 'NA', 'pages_o': 'muu053',

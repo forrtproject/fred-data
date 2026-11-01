@@ -279,12 +279,32 @@ def original_alignment(row, target, year_receipt=None, author_receipt=None, doi_
         metadata = read(path)['message']
         assert identifier(metadata['DOI']) in ids(row, 'o')
         assert norm(metadata_title(metadata)) == norm(target['title'])
-        assert row['year_o'] == str(metadata['published-online']['date-parts'][0][0])
-        if metadata.get('published-print'):
+        if year_receipt.get('kind') == 'conflicting_deposited_date_fields_same_work':
+            assert year_receipt['scope'] == 'identity_only_preserve_frozen_year'
+            online = metadata['published-online']['date-parts'][0][0]
+            printed = metadata['published-print']['date-parts'][0][0]
+            assert printed < online and row['year_o'] == str(printed) and target['year'] == str(online), \
+                'Declared date conflict does not match deposited years'
+            assert identifier(target['doi']) in ids(row, 'o'), 'Date conflict needs a printed matching DOI'
+            for key, field in [('volume', 'volume_o'), ('issue', 'issue_o'), ('page', 'pages_o')]:
+                assert norm(metadata[key]) == norm(row[field]), 'Date conflict citation differs'
+            reference = year_receipt['literal_reference']
+            source = Path(reference['source_path'])
+            assert sha(source.read_bytes()) == reference['source_sha256'], 'Date conflict source changed'
+            quote = reference['quote']
+            assert quote and quote in source.read_text(), 'Date conflict reference is not literal'
+            assert sha(quote.encode()) == reference['quote_sha256'], 'Date conflict quote changed'
+            assert norm(target['title']) in norm(quote) and target['doi'].casefold() in quote.casefold(), \
+                'Date conflict reference identifies another work'
+            citation = f"{target['year']};{metadata['volume']}({metadata['issue']}):{metadata['page']}"
+            assert norm(citation) in norm(quote), 'Date conflict printed year or issue differs'
+        elif metadata.get('published-print'):
+            assert row['year_o'] == str(metadata['published-online']['date-parts'][0][0])
             assert target['year'] == str(metadata['published-print']['date-parts'][0][0])
             assert metadata['volume'] == row['volume_o'] and metadata['issue'] == row['issue_o']
             assert norm(metadata['page']) == norm(row['pages_o'])
         else:
+            assert row['year_o'] == str(metadata['published-online']['date-parts'][0][0])
             ref = year_receipt.get('publisher_print_metadata_receipt')
             assert ref, 'Print date absent; publisher issue evidence required'
             path = Path(ref['path'])

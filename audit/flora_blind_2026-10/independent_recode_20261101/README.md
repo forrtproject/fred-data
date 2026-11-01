@@ -4,7 +4,7 @@ This reassessment covers 562 proposed fields across 515 frozen rows and 469 work
 
 209 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-eight fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-The current export contains **28 cases covering 30 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
+The current export contains **29 cases covering 31 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
 Agreement between two models is a candidate for correction, not a correctness certificate. A proposal enters `automatically_verified_proposals.json` only after:
 
@@ -23,7 +23,9 @@ The current comparison queue contains unresolved source, target and policy quest
 
 Wolfers's original-paper mismatch (row 387) is established, but its dependent outcome remains disputed between complete confident blind coders and has only a moderate-confidence source recommendation. The original and outcome stay held together. Breda/Napp's archived SSRN record links to the IZA working paper, whose publication footnote links to the PNAS article: these are versions of the same empirical work. Row 1032 retains its current identity pending an individual representation decision; the different DOI does not establish a wrong target.
 
-The bone-strength case (document_0201, row 1208) has complete exact-source blind agreement on uninformative. A separate source reviewer is checking the original claim, current test and authors' verdict under the whole codebook before any proposal becomes eligible. Document_0205 has interleaved columns and fragment quotes; document_0206 is unconfident; documents_0207 and 0208 have abstract-level evidence. These limits exclude automatic acceptance.
+The bone-strength case (document_0201, row 1208) is eligible as an unapproved outcome correction to uninformative. The authors explicitly say this attempt cannot support or refute the original microbiota-to-tissue-strength claim, with the verdict repeated in the abstract. The failed-manipulation default applies only without an author verdict. The direct treatment null and post hoc microbiota investigation remain the strongest contrary evidence; the source review's moderate-high confidence is preserved. Exact-source blind agreement supplements the claim-specific source assessment.
+
+The original's frozen 2020 year, literal 2021 citation and conflicting Crossref print-2020/online-2021 fields remain recorded. Exact DOI, title, authoritative full authors, volume, issue, pages and a hashed literal reference establish the same work without changing the year or inferring reliable publication chronology. Document_0205 has interleaved columns and fragment quotes; document_0206 is unconfident; documents_0207 and 0208 have abstract-level evidence. These limits exclude automatic acceptance.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
@@ -58,7 +60,7 @@ Quotations retain exact Unicode, whitespace and UTF-8 offsets. Boundary whitespa
 
 The export also checks authoritative DOI/title/author/year correspondence and complete frozen-row preconditions. Verified printed author errors and CSV newline representation differences remain explicit and narrowly bound to their source receipts. Raw codings and reviews are preserved.
 
-Run the 133 validation and dependency controls, then rebuild the guarded export:
+Run the 137 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
