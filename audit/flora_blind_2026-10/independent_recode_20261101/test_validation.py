@@ -8,7 +8,7 @@ from pathlib import Path
 
 from prepare_packets import B
 from project_prior_sol import literal_whitespace_span, project
-from validate_output import command_chunk_trim_loss, contains_exact_chunk, validate
+from validate_output import command_chunk_trim_loss, command_chunk_utf8_wrap_loss, contains_exact_chunk, validate
 
 
 class EvidenceValidation(unittest.TestCase):
@@ -60,6 +60,27 @@ class EvidenceValidation(unittest.TestCase):
         result = self.run_validation()
         self.assertFalse(result['automatic_scientific_acceptance'])
         self.assertTrue(result['full_model_visible_reading_receipts_verified'])
+
+    def test_declared_fold_preserves_unicode_and_records_insertions(self):
+        source = '\u03b1' * 1000 + 'B' * 2000 + 'end '
+        rendered = '\u03b1' * 1000 + '\n' + 'B' * 2000 + '\nend'
+        self.assertEqual(command_chunk_utf8_wrap_loss('$ cat chunks/one.txt | fold -w 2000', rendered, source, 'one.txt'),
+                         (1, 2))
+
+    def test_transport_wrap_cannot_hide_a_changed_source_character(self):
+        source = '\u03b1' * 1000 + 'B' * 2000 + 'end '
+        rendered = '\u03b1' * 1000 + '\n' + 'B' * 1999 + 'C\nend'
+        self.assertIsNone(command_chunk_utf8_wrap_loss('$ cat chunks/one.txt | fold -w 2000', rendered, source, 'one.txt'))
+
+    def test_transport_wrap_does_not_accept_arbitrary_newline_normalization(self):
+        source = '\u03b1' * 1000 + 'B' * 2000 + 'end '
+        rendered = '\u03b1' * 999 + '\n\u03b1' + 'B' * 2000 + '\nend'
+        self.assertIsNone(command_chunk_utf8_wrap_loss('$ cat chunks/one.txt | fold -w 2000', rendered, source, 'one.txt'))
+
+    def test_fold_rendering_requires_the_declared_fold_command(self):
+        source = '\u03b1' * 1000 + 'B' * 2000 + 'end '
+        rendered = '\u03b1' * 1000 + '\n' + 'B' * 2000 + '\nend'
+        self.assertIsNone(command_chunk_utf8_wrap_loss('$ cat chunks/one.txt', rendered, source, 'one.txt'))
 
     def test_literal_proof_alias_still_requires_the_exact_source_span(self):
         proof = dict(self.proof)

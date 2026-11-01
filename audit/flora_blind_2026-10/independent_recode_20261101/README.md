@@ -2,7 +2,7 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 112 of 677 initial source packets and four additional source views have
+Current checkpoint: 115 of 677 initial source packets and four additional source views have
 passed Opus schema, literal-span and reading checks; twelve fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
@@ -86,6 +86,9 @@ registered original source bytes, including exact collection boundaries.
 The validator rejects packet changes even if the result metadata is changed to
 match. Native timeline removal of boundary whitespace or a leading byte-order mark is recorded explicitly;
 missing substantive characters or altered quote whitespace are rejected.
+For an explicitly recorded `cat | fold -w 2000` read of a single long line,
+the validator reconstructs the exact UTF-8 byte wrapping and records inserted
+line breaks. Arbitrary newline removal cannot satisfy a reading receipt.
 
 `source_upgrades.json` preserves newly verified report versions separately.
 Document_0683 adds the author appendix and errata to document_0001; both fresh blind
@@ -115,7 +118,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 74 evidence/dependency controls:
+Run all 78 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -127,3 +130,15 @@ The current automatic set also verifies completed study status and authoritative
 Row 104 corrects a dataset/method citation to the explicitly retested Smith et al. (2009) paper, with its complete eleven-author bibliography and literal source citation retained together. A single named author plus “et al.” requires matching printed DOI, exact title, first-author initials and authoritative complete metadata. Source-review field tables may use either an explicit list or keyed entries; conflicting row/field aliases are rejected. Row 1868’s proposed outcome change is withdrawn under the author-overall-verdict rule, with both confident blind readings and the hemispheric contrast preserved. Its full-context quote update remains a separate recommendation.
 
 Row 783 changes successful to mixed from the authors’ explicit original-specific concern-to-usage reversal alongside agreeing findings. Its canonical DOI is retained. A missing SICI ISSN line-break hyphen in the literal extraction is recognized only with an exact one-hyphen transformation, authoritative original metadata and the current publisher’s deposited canonical reference; other DOI differences fail the gate. Both blind citation strings remain unchanged.
+
+Row 2651 remains outside the automatic set after its final source review. The
+companion script establishes how the baseline table outputs were generated,
+but the reviewer remains unconfident about numerical recovery. Both confident
+blind labels, contrary table details and the corrected first-review inference
+remain preserved. No further vote is requested to obtain agreement.
+
+Document_0115 is the results-blind version of the Crosby project at row 2362.
+Its prospective coding applies to that manuscript only. The completed report
+already has a positively bound source packet, document_0479, awaiting its
+scheduled independent recoding. The obsolete manuscript cannot justify an
+unknown-outcome patch or moving the completed project to planned studies.

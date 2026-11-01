@@ -114,6 +114,26 @@ def command_chunk_trim_loss(command, displayed, text, filename):
     return None
 
 
+def command_chunk_utf8_wrap_loss(command, displayed, text, filename):
+    """Recognize the declared cat | fold -w 2000 rendering of one long line."""
+    if '\n' in text or len(text.encode()) <= 2000:
+        return None
+    if not re.search(r'\bcat\s+[^;|\n]*' + re.escape(filename)
+                     + r"['\"]?\s*\|\s*fold\s+-w\s+2000\s*$", command):
+        return None
+    raw = text.encode()
+    try:
+        lines = [raw[start:start + 2000].decode() for start in range(0, len(raw), 2000)]
+    except UnicodeDecodeError:
+        return None
+    rendered = '\n'.join(lines)
+    if displayed == rendered:
+        return (0, len(lines) - 1)
+    if displayed == rendered.rstrip() and rendered.rstrip():
+        return (len(rendered) - len(rendered.rstrip()), len(lines) - 1)
+    return None
+
+
 def contains_exact_chunk(item, packet, chunk_path, chunk_raw):
     if item.get('textTruncated', True):
         return False
@@ -138,7 +158,8 @@ def contains_exact_chunk(item, packet, chunk_path, chunk_raw):
             return False
         if 'Output truncated' in body:
             return False
-        return command_chunk_trim_loss(command, displayed, chunk_raw.decode(), chunk_path.name) is not None
+        return (command_chunk_trim_loss(command, displayed, chunk_raw.decode(), chunk_path.name) is not None
+                or command_chunk_utf8_wrap_loss(command, displayed, chunk_raw.decode(), chunk_path.name) is not None)
     return False
 
 
@@ -208,15 +229,22 @@ def validate(packet, output, receipts, expected_inputs=None):
         check(bool(matches), 'Missing exact untruncated tool output for ' + chunk['file'])
         p, item = matches[0]
         leading, trailing = (0, 0)
+        inserted_breaks = 0
         if item.get('type') == 'command_execution':
             command, _, displayed = item['text'].partition('\n')
-            leading, trailing = command_chunk_trim_loss(command, displayed, chunk_raw.decode(), chunk_path.name)
+            trim = command_chunk_trim_loss(command, displayed, chunk_raw.decode(), chunk_path.name)
+            if trim is not None:
+                leading, trailing = trim
+            else:
+                trailing, inserted_breaks = command_chunk_utf8_wrap_loss(
+                    command, displayed, chunk_raw.decode(), chunk_path.name)
         evidence.append({'chunk': chunk['file'], 'range': [chunk['character_start'], chunk['character_end']],
                          'chunk_sha256': chunk['sha256'], 'threadId': item['threadId'],
                          'itemId': item['itemId'], 'position': item['position'],
                          'receipt_path': str(p), 'receipt_sha256': sha(p.read_bytes()),
                          'leading_whitespace_or_bom_not_preserved_by_timeline': leading,
-                         'trailing_whitespace_not_preserved_by_timeline': trailing})
+                         'trailing_whitespace_not_preserved_by_timeline': trailing,
+                         'line_breaks_inserted_by_declared_fold': inserted_breaks})
     return {'status': 'mechanically_validated_pending_scientific_comparison', 'document_id': packet.name,
             'source_sha256': source_hash, 'unicode_characters': len(raw.decode()),
             'coding_quote_fields': len(literal), 'span_map_proofs': len(maps['quote_spans.json']),
