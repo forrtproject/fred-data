@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-200 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-eight fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+206 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-eight fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **28 cases covering 30 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -20,6 +20,10 @@ A reproduction conversion carries its type and both result axes together. An ori
 `parent_acceptance_decisions.json` records the parent's scientific eligibility judgments. The historical counter named `automatic_corrections_accepted` counts eligible proposed fields, not user approvals. `withdrawn_proposals.json` preserves three withdrawn suspicions; disagreements and tested-version provenance remain visible.
 
 The current comparison queue contains unresolved source, target and policy questions. Genuine codebook boundaries remain for the later individual-decision stage. Unconfident results and incomplete sources stay outside the automatic set. Prospective registrations require a joint record remedy; an obsolete plan cannot override a separately verified completed report.
+
+Wolfers's original-paper mismatch (row 387) is established, but its dependent outcome remains disputed between complete confident blind coders and has only a moderate-confidence source recommendation. The original and outcome stay held together. Breda/Napp's archived SSRN record links to the IZA working paper, whose publication footnote links to the PNAS article: these are versions of the same empirical work. Row 1032 retains its current identity pending an individual representation decision; the different DOI does not establish a wrong target.
+
+The bone-strength case (document_0201, row 1208) has complete exact-source blind agreement on uninformative. A separate source reviewer is checking the original claim, current test and authors' verdict under the whole codebook before any proposal becomes eligible. Document_0205 has interleaved columns and fragment quotes; document_0206 is unconfident; documents_0207 and 0208 have abstract-level evidence. These limits exclude automatic acceptance.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
