@@ -2,7 +2,7 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 138 of 677 initial source packets and five additional source views have
+Current checkpoint: 141 of 677 initial source packets and five additional source views have
 passed Opus schema, literal-span and reading checks; nineteen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
@@ -196,3 +196,5 @@ The SSRP main report and supplement (document_0139) pass fresh Opus reading and 
 Document_0138 now has certified complete fresh readings from both models, agreeing on mixed. Its original-specific contrasts and task-validity alternative await source review, prepared alongside0129’s preprint/journal identity check. The complete fresh Sol SSRP read is running. No new case is automatically accepted at this checkpoint.
 
 The complete SSRP Sol read now passes all18chunkreceipts and240literalproofs (43codedspans plus197evidencemap passages). Bothfreshmodels align on all21DOIs/outcomes; only1957.outcome is a frozen proposedchange. Its all-data Ackerman failure versus positive stage1 protocol alternative has a prepared primary-source check. Report-boundary metadata may omit target assignments; those valid source ranges never count as evidence proofs. The91controls enforce this without changing raw model outputs.
+
+Batch0061 adds three verified supplied-source readings. Document_0140 has an unconfident replication/reproduction disagreement requiring joint result-axis review;0141isabstractonly. Document_0142 needs freshSol because the earlier registered extraction was read only in selected ranges. Its double-slash original DOI remedy and additional-target questions remain distinct. No automatic proposals are added.
