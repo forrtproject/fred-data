@@ -1,0 +1,300 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "5d4abcbebbf5b95e",
+    "audit_id": 686,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Jacowitz, K. E., & Kahneman, D. (1995). Measures of Anchoring in Estimation Tasks. Personality and Social Psychology Bulletin, 21(11), 1161–1166. https://doi.org/10.1177/01461672952111004",
+      "doi_o": "10.1177/01461672952111004",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Ratliff, K. A., Vianello, M., Adams, R. B., Bahník, Š., Bernstein, M. J., Bocian, K., Brandt, M. J., Brooks, B., Brumbaugh, C. C., Cemalcilar, Z., Chandler, J., Cheong, W., Davis, W. E., Devos, T., Eisner, M., Frankowska, N., Furrow, D., Galliani, E. M., … Nosek, B. A. (2014). Investigating Variation in Replicability. Social Psychology, 45(3), 142–152. https://doi.org/10.1027/1864-9335/a000178",
+      "doi_r": "10.1027/1864-9335/a000178",
+      "url_r": "https://osf.io/y36m8",
+      "study_r": "03 (as labeled in the Many Labs supplement).",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "description": "Anchoring in estimates concerning Mt. Everest.",
+      "locators_o": "p. 3, n",
+      "locators_r": "p. 5",
+      "audit_id": 686,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f923f2aec2a3484d65c62b23_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": ".79",
+      "metric": "anchoring index (AI)",
+      "test_statistic": null,
+      "location": "Published p.1163 (PDF p.3), Table 1, Height of Mount Everest, Anchoring Index column",
+      "quote": "2. Height of Mount Everest (in feet) 12,000 2,000 45,500 8,000 42,550 36.79 83.02 «16.4879 ... Finally, the last\ncolumn of Table 1 shows the AI computed for each\nproblem.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 686,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Requested test statistic is not printed for this quantity; retain the alternative printed anchoring index .79 under its actual metric. Canonical text contains OCR errors in the numeric table cells. The supplied PDF p.3 was rendered and inspected: the printed anchoring index for this named quantity is .79. Evidence quotes preserve canonical OCR literally.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "location": "Published p.1163 (PDF p.3), Table 1, Height of Mount Everest, Anchoring Index column",
+      "quote": "2. Height of Mount Everest (in feet) 12,000 2,000 45,500 8,000 42,550 36.79 83.02 «16.4879 ... Finally, the last\ncolumn of Table 1 shows the AI computed for each\nproblem.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Berkeley estimation study; Height of Mount Everest; descriptive high-anchor versus low-anchor median comparison (anchoring index).",
+    "worker_notes": "Assigned fields only: es_value_o and pval_value_o. N, replication and reported_success are unassigned placeholders. Matched by named quantity, not order or numeric matching. Requested individual-quantity test statistic is not printed; alternative printed descriptive AI is retained without conversion. Canonical text contains OCR errors in the numeric table cells. The supplied PDF p.3 was rendered and inspected: the printed anchoring index for this named quantity is .79. Evidence quotes preserve canonical OCR literally. Table 1 reports medians, transformed medians, extreme-value percentages and AI, without quantity-specific p values. The t(102)=7.99, p<.01 on p.1163 compares individual averages across problems for high versus low anchor asymmetry. The t(102)=6.12, p<.001 on p.1164 concerns extreme-estimate frequencies. The p.1165 confidence analyses also test different pooled questions. These statistics cannot be assigned to individual quantity anchoring contrasts. No N derivation or effect-size conversion performed.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+    "shipped": "t(102) = 7.99",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "anchoring - mt. everest",
+      "es_repr_o": "p. 3, n based on df",
+      "es_repr_r": "p. 5",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "In the aggregate, 10 effects\nreplicated consistently. One effect – imagined contact reducing prejudice – showed weak support for replicability. And two effects – flag\npriming influencing conservatism and currency priming influencing system justification – did not replicate."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "5d4abcbebbf5b95e",
+    "audit_id": 687,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Jacowitz, K. E., & Kahneman, D. (1995). Measures of Anchoring in Estimation Tasks. Personality and Social Psychology Bulletin, 21(11), 1161–1166. https://doi.org/10.1177/01461672952111004",
+      "doi_o": "10.1177/01461672952111004",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Ratliff, K. A., Vianello, M., Adams, R. B., Bahník, Š., Bernstein, M. J., Bocian, K., Brandt, M. J., Brooks, B., Brumbaugh, C. C., Cemalcilar, Z., Chandler, J., Cheong, W., Davis, W. E., Devos, T., Eisner, M., Frankowska, N., Furrow, D., Galliani, E. M., … Nosek, B. A. (2014). Investigating Variation in Replicability. Social Psychology, 45(3), 142–152. https://doi.org/10.1027/1864-9335/a000178",
+      "doi_r": "10.1027/1864-9335/a000178",
+      "url_r": "https://osf.io/y36m8",
+      "study_r": "03 (as labeled in the Many Labs supplement).",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "description": "Anchoring in estimates concerning Chicago.",
+      "locators_o": "p. 3, n",
+      "locators_r": "p. 5",
+      "audit_id": 687,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f923f2aec2a3484d65c62b23_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": ".93",
+      "metric": "anchoring index (AI)",
+      "test_statistic": null,
+      "location": "Published p.1163 (PDF p.3), Table 1, Population of Chicago, Anchoring Index column",
+      "quote": "8. Population of Chicago (in millions) 10 02 5.0 06 5.05 33.65 88.46 8 52 98 ... Finally, the last\ncolumn of Table 1 shows the AI computed for each\nproblem.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 687,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Requested test statistic is not printed for this quantity; retain the alternative printed anchoring index .93 under its actual metric. Canonical text contains OCR errors in the numeric table cells. The supplied PDF p.3 was rendered and inspected: the printed anchoring index for this named quantity is .93. Evidence quotes preserve canonical OCR literally.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "location": "Published p.1163 (PDF p.3), Table 1, Population of Chicago, Anchoring Index column",
+      "quote": "8. Population of Chicago (in millions) 10 02 5.0 06 5.05 33.65 88.46 8 52 98 ... Finally, the last\ncolumn of Table 1 shows the AI computed for each\nproblem.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Berkeley estimation study; Population of Chicago; descriptive high-anchor versus low-anchor median comparison (anchoring index).",
+    "worker_notes": "Assigned fields only: es_value_o and pval_value_o. N, replication and reported_success are unassigned placeholders. Matched by named quantity, not order or numeric matching. Requested individual-quantity test statistic is not printed; alternative printed descriptive AI is retained without conversion. Canonical text contains OCR errors in the numeric table cells. The supplied PDF p.3 was rendered and inspected: the printed anchoring index for this named quantity is .93. Evidence quotes preserve canonical OCR literally. Table 1 reports medians, transformed medians, extreme-value percentages and AI, without quantity-specific p values. The t(102)=7.99, p<.01 on p.1163 compares individual averages across problems for high versus low anchor asymmetry. The t(102)=6.12, p<.001 on p.1164 concerns extreme-estimate frequencies. The p.1165 confidence analyses also test different pooled questions. These statistics cannot be assigned to individual quantity anchoring contrasts. No N derivation or effect-size conversion performed.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+    "shipped": "t(102) = 7.99",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "anchoring - chicago",
+      "es_repr_o": "p. 3, n based on df",
+      "es_repr_r": "p. 5",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "In the aggregate, 10 effects\nreplicated consistently. One effect – imagined contact reducing prejudice – showed weak support for replicability. And two effects – flag\npriming influencing conservatism and currency priming influencing system justification – did not replicate."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "5d4abcbebbf5b95e",
+    "audit_id": 688,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Jacowitz, K. E., & Kahneman, D. (1995). Measures of Anchoring in Estimation Tasks. Personality and Social Psychology Bulletin, 21(11), 1161–1166. https://doi.org/10.1177/01461672952111004",
+      "doi_o": "10.1177/01461672952111004",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Ratliff, K. A., Vianello, M., Adams, R. B., Bahník, Š., Bernstein, M. J., Bocian, K., Brandt, M. J., Brooks, B., Brumbaugh, C. C., Cemalcilar, Z., Chandler, J., Cheong, W., Davis, W. E., Devos, T., Eisner, M., Frankowska, N., Furrow, D., Galliani, E. M., … Nosek, B. A. (2014). Investigating Variation in Replicability. Social Psychology, 45(3), 142–152. https://doi.org/10.1027/1864-9335/a000178",
+      "doi_r": "10.1027/1864-9335/a000178",
+      "url_r": "https://osf.io/y36m8",
+      "study_r": "03 (as labeled in the Many Labs supplement).",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "description": "Anchoring in estimates of distance to NYC.",
+      "locators_o": "p. 3, n",
+      "locators_r": "p. 5",
+      "audit_id": 688,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f923f2aec2a3484d65c62b23_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": ".31",
+      "metric": "anchoring index (AI)",
+      "test_statistic": null,
+      "location": "Published p.1163 (PDF p.3), Table 1, Distance from San Francisco to New York City, Anchoring Index column",
+      "quote": "4. Distance from San Francisco to\nNew York City (in miles) 3,200 1,500 6,000 2,600 4,000 87.74 74.53 6 18 31 ... Finally, the last\ncolumn of Table 1 shows the AI computed for each\nproblem.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 688,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Requested test statistic is not printed for this quantity; retain the alternative printed anchoring index .31 under its actual metric. Canonical text contains OCR errors in the numeric table cells. The supplied PDF p.3 was rendered and inspected: the printed anchoring index for this named quantity is .31. Evidence quotes preserve canonical OCR literally.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "location": "Published p.1163 (PDF p.3), Table 1, Distance from San Francisco to New York City, Anchoring Index column",
+      "quote": "4. Distance from San Francisco to\nNew York City (in miles) 3,200 1,500 6,000 2,600 4,000 87.74 74.53 6 18 31 ... Finally, the last\ncolumn of Table 1 shows the AI computed for each\nproblem.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Berkeley estimation study; Distance from San Francisco to New York City; descriptive high-anchor versus low-anchor median comparison (anchoring index).",
+    "worker_notes": "Assigned fields only: es_value_o and pval_value_o. N, replication and reported_success are unassigned placeholders. Matched by named quantity, not order or numeric matching. Requested individual-quantity test statistic is not printed; alternative printed descriptive AI is retained without conversion. Canonical text contains OCR errors in the numeric table cells. The supplied PDF p.3 was rendered and inspected: the printed anchoring index for this named quantity is .31. Evidence quotes preserve canonical OCR literally. Table 1 reports medians, transformed medians, extreme-value percentages and AI, without quantity-specific p values. The t(102)=7.99, p<.01 on p.1163 compares individual averages across problems for high versus low anchor asymmetry. The t(102)=6.12, p<.001 on p.1164 concerns extreme-estimate frequencies. The p.1165 confidence analyses also test different pooled questions. These statistics cannot be assigned to individual quantity anchoring contrasts. No N derivation or effect-size conversion performed.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+    "shipped": "t(102) = 7.99",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "anchoring - distance to nyc",
+      "es_repr_o": "p. 3, n based on df",
+      "es_repr_r": "p. 5",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "In the aggregate, 10 effects\nreplicated consistently. One effect – imagined contact reducing prejudice – showed weak support for replicability. And two effects – flag\npriming influencing conservatism and currency priming influencing system justification – did not replicate."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "5d4abcbebbf5b95e",
+    "audit_id": 689,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Jacowitz, K. E., & Kahneman, D. (1995). Measures of Anchoring in Estimation Tasks. Personality and Social Psychology Bulletin, 21(11), 1161–1166. https://doi.org/10.1177/01461672952111004",
+      "doi_o": "10.1177/01461672952111004",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Ratliff, K. A., Vianello, M., Adams, R. B., Bahník, Š., Bernstein, M. J., Bocian, K., Brandt, M. J., Brooks, B., Brumbaugh, C. C., Cemalcilar, Z., Chandler, J., Cheong, W., Davis, W. E., Devos, T., Eisner, M., Frankowska, N., Furrow, D., Galliani, E. M., … Nosek, B. A. (2014). Investigating Variation in Replicability. Social Psychology, 45(3), 142–152. https://doi.org/10.1027/1864-9335/a000178",
+      "doi_r": "10.1027/1864-9335/a000178",
+      "url_r": "https://osf.io/y36m8",
+      "study_r": "03 (as labeled in the Many Labs supplement).",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "description": "Anchoring in estimates concerning babies born.",
+      "locators_o": "p. 3, n",
+      "locators_r": "p. 5",
+      "audit_id": 689,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f923f2aec2a3484d65c62b23_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": ".78",
+      "metric": "anchoring index (AI)",
+      "test_statistic": null,
+      "location": "Published p.1163 (PDF p.3), Table 1, Average number of babies born per day in the United States, Anchoring Index column",
+      "quote": "10. Average number of babies born per\nday in the United States 2,000 100 50,000 1,000 40,000 37.74 84.91 8 42° 78 ... Finally, the last\ncolumn of Table 1 shows the AI computed for each\nproblem.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 689,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Requested test statistic is not printed for this quantity; retain the alternative printed anchoring index .78 under its actual metric. Canonical text contains OCR errors in the numeric table cells. The supplied PDF p.3 was rendered and inspected: the printed anchoring index for this named quantity is .78. Evidence quotes preserve canonical OCR literally.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "location": "Published p.1163 (PDF p.3), Table 1, Average number of babies born per day in the United States, Anchoring Index column",
+      "quote": "10. Average number of babies born per\nday in the United States 2,000 100 50,000 1,000 40,000 37.74 84.91 8 42° 78 ... Finally, the last\ncolumn of Table 1 shows the AI computed for each\nproblem.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Berkeley estimation study; Average number of babies born per day in the United States; descriptive high-anchor versus low-anchor median comparison (anchoring index).",
+    "worker_notes": "Assigned fields only: es_value_o and pval_value_o. N, replication and reported_success are unassigned placeholders. Matched by named quantity, not order or numeric matching. Requested individual-quantity test statistic is not printed; alternative printed descriptive AI is retained without conversion. Canonical text contains OCR errors in the numeric table cells. The supplied PDF p.3 was rendered and inspected: the printed anchoring index for this named quantity is .78. Evidence quotes preserve canonical OCR literally. Table 1 reports medians, transformed medians, extreme-value percentages and AI, without quantity-specific p values. The t(102)=7.99, p<.01 on p.1163 compares individual averages across problems for high versus low anchor asymmetry. The t(102)=6.12, p<.001 on p.1164 concerns extreme-estimate frequencies. The p.1165 confidence analyses also test different pooled questions. These statistics cannot be assigned to individual quantity anchoring contrasts. No N derivation or effect-size conversion performed.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+    "shipped": "t(102) = 7.99",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "anchoring - babies born",
+      "es_repr_o": "p. 3, n based on df",
+      "es_repr_r": "p. 5",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "In the aggregate, 10 effects\nreplicated consistently. One effect – imagined contact reducing prejudice – showed weak support for replicability. And two effects – flag\npriming influencing conservatism and currency priming influencing system justification – did not replicate."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/5d4abcbebbf5b95e. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_5d4abcbebbf5b95e_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

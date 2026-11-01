@@ -1,0 +1,515 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "8633d0ed8afa9e99",
+    "audit_id": 1420,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Amundadottir, L. T., Sulem, P., Gudmundsson, J., Helgason, A., Baker, A., Agnarsson, B. A., Sigurdsson, A., Benediktsdottir, K. R., Cazier, J.-B., Sainz, J., Jakobsdottir, M., Kostic, J., Magnusdottir, D. N., Ghosh, S., Agnarsson, K., Birgisdottir, B., Le Roux, L., Olafsdottir, A., Blondal, T., … Stefansson, K. (2006). A common variant associated with prostate cancer in European and African populations. Nature Genetics, 38(6), 652–658. https://doi.org/10.1038/ng1808",
+      "doi_o": "10.1038/ng1808",
+      "study_o": null,
+      "ref_r": "Okobia, M. N., Zmuda, J. M., Ferrell, R. E., Patrick, A. L., & Bunker, C. H. (2011). Chromosome 8q24 variants are associated with prostate cancer risk in a high risk population of African ancestry. The Prostate, 71(10), 1054–1063. Portico. https://doi.org/10.1002/pros.21320",
+      "doi_r": "10.1002/pros.21320",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Relationship between allele A of SNP rs1447295 and prostate cancer in Iceland.",
+      "locators_o": "p. 3; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 1420,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/27f542f4fe28e841bf98a8ac_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "2288",
+      "sample_role": "Participants: 1,291 prostate cancer cases and 997 controls in target Table 1 association.",
+      "exclusions": "Final Table 1 analysis counts; additional genotype-specific exclusions not stated in Table 1. Adjusted for relatedness.",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, Iceland, combined groups I and II, rs1447295 allele A",
+      "quote": "Combined groups I and IIb ... (1,291/997)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1420,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "Table labels N cases/N controls. Rendered PDF confirms rs1447295 shares these population-specific counts. Adjusted for relatedness.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, Iceland, combined groups I and II, rs1447295 allele A",
+      "quote": "(N cases/N controls) ... Combined groups I and IIb ... (1,291/997)",
+      "calculation": "1,291 cases + 997 controls = 2,288 participants. Mutually exclusive final Table 1 case/control groups; not allele counts."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Prostate cancer association with rs1447295 allele A, Iceland, combined groups I and II, Table 1 allelic OR test.",
+    "worker_notes": "Only assigned unfinished fields populated; other nulls are unassigned placeholders. Target identified by population, SNP and allele labels. 1,291 cases + 997 controls = 2,288 participants. Mutually exclusive final Table 1 case/control groups; not allele counts. Adjusted for relatedness. Iceland rs1447295 is reported only for combined groups I and II in Table 1; separate group I/II rows are DG8S737, a different marker. N denotes participants, while test concerns allelic frequencies. Render inspected: /home/lukas/.cache/fred-completion-renders/8633d0ed8afa9e99/page3.png.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+    "shipped": "2288",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "In Iceland allele A of SNP rs1447295 was significantly associated with prostate cancer",
+      "es_repr_o": "p. 3/ Table 1",
+      "es_repr_r": "p. 4/ Table 1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The replication of the association of chromosome 8q24 variants with\nincreased prostate cancer risk in Tobago men and the higher frequency of the risk alleles in\ncontrols in populations of African ancestry further strengthens the possible role of this genomic\nregion in the disproportionate higher burden of prostate cancer in men of African ancestry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8633d0ed8afa9e99",
+    "audit_id": 1420,
+    "field": "pval_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Amundadottir, L. T., Sulem, P., Gudmundsson, J., Helgason, A., Baker, A., Agnarsson, B. A., Sigurdsson, A., Benediktsdottir, K. R., Cazier, J.-B., Sainz, J., Jakobsdottir, M., Kostic, J., Magnusdottir, D. N., Ghosh, S., Agnarsson, K., Birgisdottir, B., Le Roux, L., Olafsdottir, A., Blondal, T., … Stefansson, K. (2006). A common variant associated with prostate cancer in European and African populations. Nature Genetics, 38(6), 652–658. https://doi.org/10.1038/ng1808",
+      "doi_o": "10.1038/ng1808",
+      "study_o": null,
+      "ref_r": "Okobia, M. N., Zmuda, J. M., Ferrell, R. E., Patrick, A. L., & Bunker, C. H. (2011). Chromosome 8q24 variants are associated with prostate cancer risk in a high risk population of African ancestry. The Prostate, 71(10), 1054–1063. Portico. https://doi.org/10.1002/pros.21320",
+      "doi_r": "10.1002/pros.21320",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Relationship between allele A of SNP rs1447295 and prostate cancer in Iceland.",
+      "locators_o": "p. 3; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 1420,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/27f542f4fe28e841bf98a8ac_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "1.7 × 10−9",
+      "bound": "e",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, Iceland, combined groups I and II, rs1447295 allele A",
+      "quote": "rs1447295 ... A ... 1.72 ... 1.7 × 10−9",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1420,
+      "field": "pval_value_o",
+      "code": "extracted_printed",
+      "reason": "Printed two-sided P for this population-specific rs1447295 allele A OR test, confirmed from PDF layout. Adjusted for relatedness.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, Iceland, combined groups I and II, rs1447295 allele A",
+      "quote": "rs1447295 ... A ... 1.72 ... 1.7 × 10−9",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Prostate cancer association with rs1447295 allele A, Iceland, combined groups I and II, Table 1 allelic OR test.",
+    "worker_notes": "Only assigned unfinished fields populated; other nulls are unassigned placeholders. Target identified by population, SNP and allele labels. 1,291 cases + 997 controls = 2,288 participants. Mutually exclusive final Table 1 case/control groups; not allele counts. Adjusted for relatedness. Iceland rs1447295 is reported only for combined groups I and II in Table 1; separate group I/II rows are DG8S737, a different marker. N denotes participants, while test concerns allelic frequencies. Render inspected: /home/lukas/.cache/fred-completion-renders/8633d0ed8afa9e99/page3.png.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+    "shipped": "0.0000000017",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "In Iceland allele A of SNP rs1447295 was significantly associated with prostate cancer",
+      "es_repr_o": "p. 3/ Table 1",
+      "es_repr_r": "p. 4/ Table 1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The replication of the association of chromosome 8q24 variants with\nincreased prostate cancer risk in Tobago men and the higher frequency of the risk alleles in\ncontrols in populations of African ancestry further strengthens the possible role of this genomic\nregion in the disproportionate higher burden of prostate cancer in men of African ancestry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8633d0ed8afa9e99",
+    "audit_id": 1421,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Amundadottir, L. T., Sulem, P., Gudmundsson, J., Helgason, A., Baker, A., Agnarsson, B. A., Sigurdsson, A., Benediktsdottir, K. R., Cazier, J.-B., Sainz, J., Jakobsdottir, M., Kostic, J., Magnusdottir, D. N., Ghosh, S., Agnarsson, K., Birgisdottir, B., Le Roux, L., Olafsdottir, A., Blondal, T., … Stefansson, K. (2006). A common variant associated with prostate cancer in European and African populations. Nature Genetics, 38(6), 652–658. https://doi.org/10.1038/ng1808",
+      "doi_o": "10.1038/ng1808",
+      "study_o": null,
+      "ref_r": "Okobia, M. N., Zmuda, J. M., Ferrell, R. E., Patrick, A. L., & Bunker, C. H. (2011). Chromosome 8q24 variants are associated with prostate cancer risk in a high risk population of African ancestry. The Prostate, 71(10), 1054–1063. Portico. https://doi.org/10.1002/pros.21320",
+      "doi_r": "10.1002/pros.21320",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Relationship between allele A of SNP rs1447295 and prostate cancer in Sweden.",
+      "locators_o": "p. 3; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 1421,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/27f542f4fe28e841bf98a8ac_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "2214",
+      "sample_role": "Participants: 1,435 prostate cancer cases and 779 controls in target Table 1 association.",
+      "exclusions": "Final Table 1 analysis counts; additional genotype-specific exclusions not stated in Table 1. OR and P adjusted for covariate representing two centers.",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, Sweden, rs1447295 allele A",
+      "quote": "Swedenc ... (1,435/779)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1421,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "Table labels N cases/N controls. Rendered PDF confirms rs1447295 shares these population-specific counts. OR and P adjusted for covariate representing two centers.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, Sweden, rs1447295 allele A",
+      "quote": "(N cases/N controls) ... Swedenc ... (1,435/779)",
+      "calculation": "1,435 cases + 779 controls = 2,214 participants. Mutually exclusive final Table 1 case/control groups; not allele counts."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Prostate cancer association with rs1447295 allele A, Sweden, Table 1 allelic OR test.",
+    "worker_notes": "Only assigned unfinished fields populated; other nulls are unassigned placeholders. Target identified by population, SNP and allele labels. 1,435 cases + 779 controls = 2,214 participants. Mutually exclusive final Table 1 case/control groups; not allele counts. OR and P adjusted for covariate representing two centers. Iceland rs1447295 is reported only for combined groups I and II in Table 1; separate group I/II rows are DG8S737, a different marker. N denotes participants, while test concerns allelic frequencies. Render inspected: /home/lukas/.cache/fred-completion-renders/8633d0ed8afa9e99/page3.png.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+    "shipped": "2214",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "In Sweden allele A of SNP rs1447295 was significantly associated with prostate cancer",
+      "es_repr_o": "p. 3/ Table 1",
+      "es_repr_r": "p. 4/ Table 1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The replication of the association of chromosome 8q24 variants with\nincreased prostate cancer risk in Tobago men and the higher frequency of the risk alleles in\ncontrols in populations of African ancestry further strengthens the possible role of this genomic\nregion in the disproportionate higher burden of prostate cancer in men of African ancestry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8633d0ed8afa9e99",
+    "audit_id": 1421,
+    "field": "pval_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Amundadottir, L. T., Sulem, P., Gudmundsson, J., Helgason, A., Baker, A., Agnarsson, B. A., Sigurdsson, A., Benediktsdottir, K. R., Cazier, J.-B., Sainz, J., Jakobsdottir, M., Kostic, J., Magnusdottir, D. N., Ghosh, S., Agnarsson, K., Birgisdottir, B., Le Roux, L., Olafsdottir, A., Blondal, T., … Stefansson, K. (2006). A common variant associated with prostate cancer in European and African populations. Nature Genetics, 38(6), 652–658. https://doi.org/10.1038/ng1808",
+      "doi_o": "10.1038/ng1808",
+      "study_o": null,
+      "ref_r": "Okobia, M. N., Zmuda, J. M., Ferrell, R. E., Patrick, A. L., & Bunker, C. H. (2011). Chromosome 8q24 variants are associated with prostate cancer risk in a high risk population of African ancestry. The Prostate, 71(10), 1054–1063. Portico. https://doi.org/10.1002/pros.21320",
+      "doi_r": "10.1002/pros.21320",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Relationship between allele A of SNP rs1447295 and prostate cancer in Sweden.",
+      "locators_o": "p. 3; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 1421,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/27f542f4fe28e841bf98a8ac_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "4.5 × 10−3",
+      "bound": "e",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, Sweden, rs1447295 allele A",
+      "quote": "rs1447295 ... A ... 1.29 ... 4.5 × 10−3",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1421,
+      "field": "pval_value_o",
+      "code": "extracted_printed",
+      "reason": "Printed two-sided P for this population-specific rs1447295 allele A OR test, confirmed from PDF layout. OR and P adjusted for covariate representing two centers.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, Sweden, rs1447295 allele A",
+      "quote": "rs1447295 ... A ... 1.29 ... 4.5 × 10−3",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Prostate cancer association with rs1447295 allele A, Sweden, Table 1 allelic OR test.",
+    "worker_notes": "Only assigned unfinished fields populated; other nulls are unassigned placeholders. Target identified by population, SNP and allele labels. 1,435 cases + 779 controls = 2,214 participants. Mutually exclusive final Table 1 case/control groups; not allele counts. OR and P adjusted for covariate representing two centers. Iceland rs1447295 is reported only for combined groups I and II in Table 1; separate group I/II rows are DG8S737, a different marker. N denotes participants, while test concerns allelic frequencies. Render inspected: /home/lukas/.cache/fred-completion-renders/8633d0ed8afa9e99/page3.png.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+    "shipped": "0.0045",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "In Sweden allele A of SNP rs1447295 was significantly associated with prostate cancer",
+      "es_repr_o": "p. 3/ Table 1",
+      "es_repr_r": "p. 4/ Table 1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The replication of the association of chromosome 8q24 variants with\nincreased prostate cancer risk in Tobago men and the higher frequency of the risk alleles in\ncontrols in populations of African ancestry further strengthens the possible role of this genomic\nregion in the disproportionate higher burden of prostate cancer in men of African ancestry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8633d0ed8afa9e99",
+    "audit_id": 1422,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Amundadottir, L. T., Sulem, P., Gudmundsson, J., Helgason, A., Baker, A., Agnarsson, B. A., Sigurdsson, A., Benediktsdottir, K. R., Cazier, J.-B., Sainz, J., Jakobsdottir, M., Kostic, J., Magnusdottir, D. N., Ghosh, S., Agnarsson, K., Birgisdottir, B., Le Roux, L., Olafsdottir, A., Blondal, T., … Stefansson, K. (2006). A common variant associated with prostate cancer in European and African populations. Nature Genetics, 38(6), 652–658. https://doi.org/10.1038/ng1808",
+      "doi_o": "10.1038/ng1808",
+      "study_o": null,
+      "ref_r": "Okobia, M. N., Zmuda, J. M., Ferrell, R. E., Patrick, A. L., & Bunker, C. H. (2011). Chromosome 8q24 variants are associated with prostate cancer risk in a high risk population of African ancestry. The Prostate, 71(10), 1054–1063. Portico. https://doi.org/10.1002/pros.21320",
+      "doi_r": "10.1002/pros.21320",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Relationship between allele A of SNP rs1447295 and prostate cancer among European Americans.",
+      "locators_o": "p. 3; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 1422,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/27f542f4fe28e841bf98a8ac_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "705",
+      "sample_role": "Participants: 458 prostate cancer cases and 247 controls in target Table 1 association.",
+      "exclusions": "Final Table 1 analysis counts; additional genotype-specific exclusions not stated in Table 1. Chicago case-control series.",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, European Americans, Chicago, rs1447295 allele A",
+      "quote": "European Americans, ... Chicago ... (458/247)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1422,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "Table labels N cases/N controls. Rendered PDF confirms rs1447295 shares these population-specific counts. Chicago case-control series.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, European Americans, Chicago, rs1447295 allele A",
+      "quote": "(N cases/N controls) ... European Americans, ... Chicago ... (458/247)",
+      "calculation": "458 cases + 247 controls = 705 participants. Mutually exclusive final Table 1 case/control groups; not allele counts."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Prostate cancer association with rs1447295 allele A, European Americans, Chicago, Table 1 allelic OR test.",
+    "worker_notes": "Only assigned unfinished fields populated; other nulls are unassigned placeholders. Target identified by population, SNP and allele labels. 458 cases + 247 controls = 705 participants. Mutually exclusive final Table 1 case/control groups; not allele counts. Chicago case-control series. Iceland rs1447295 is reported only for combined groups I and II in Table 1; separate group I/II rows are DG8S737, a different marker. N denotes participants, while test concerns allelic frequencies. Render inspected: /home/lukas/.cache/fred-completion-renders/8633d0ed8afa9e99/page3.png.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+    "shipped": "705",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "Among European Americans allele A of SNP rs1447295 was significantly associated with prostate cancer",
+      "es_repr_o": "p. 3/ Table 1",
+      "es_repr_r": "p. 4/ Table 1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The replication of the association of chromosome 8q24 variants with\nincreased prostate cancer risk in Tobago men and the higher frequency of the risk alleles in\ncontrols in populations of African ancestry further strengthens the possible role of this genomic\nregion in the disproportionate higher burden of prostate cancer in men of African ancestry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8633d0ed8afa9e99",
+    "audit_id": 1422,
+    "field": "pval_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Amundadottir, L. T., Sulem, P., Gudmundsson, J., Helgason, A., Baker, A., Agnarsson, B. A., Sigurdsson, A., Benediktsdottir, K. R., Cazier, J.-B., Sainz, J., Jakobsdottir, M., Kostic, J., Magnusdottir, D. N., Ghosh, S., Agnarsson, K., Birgisdottir, B., Le Roux, L., Olafsdottir, A., Blondal, T., … Stefansson, K. (2006). A common variant associated with prostate cancer in European and African populations. Nature Genetics, 38(6), 652–658. https://doi.org/10.1038/ng1808",
+      "doi_o": "10.1038/ng1808",
+      "study_o": null,
+      "ref_r": "Okobia, M. N., Zmuda, J. M., Ferrell, R. E., Patrick, A. L., & Bunker, C. H. (2011). Chromosome 8q24 variants are associated with prostate cancer risk in a high risk population of African ancestry. The Prostate, 71(10), 1054–1063. Portico. https://doi.org/10.1002/pros.21320",
+      "doi_r": "10.1002/pros.21320",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Relationship between allele A of SNP rs1447295 and prostate cancer among European Americans.",
+      "locators_o": "p. 3; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 1422,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/27f542f4fe28e841bf98a8ac_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "6.7 × 10−3",
+      "bound": "e",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, European Americans, Chicago, rs1447295 allele A",
+      "quote": "rs1447295 ... A ... 1.66 ... 6.7 × 10−3",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1422,
+      "field": "pval_value_o",
+      "code": "extracted_printed",
+      "reason": "Printed two-sided P for this population-specific rs1447295 allele A OR test, confirmed from PDF layout. Chicago case-control series.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, European Americans, Chicago, rs1447295 allele A",
+      "quote": "rs1447295 ... A ... 1.66 ... 6.7 × 10−3",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Prostate cancer association with rs1447295 allele A, European Americans, Chicago, Table 1 allelic OR test.",
+    "worker_notes": "Only assigned unfinished fields populated; other nulls are unassigned placeholders. Target identified by population, SNP and allele labels. 458 cases + 247 controls = 705 participants. Mutually exclusive final Table 1 case/control groups; not allele counts. Chicago case-control series. Iceland rs1447295 is reported only for combined groups I and II in Table 1; separate group I/II rows are DG8S737, a different marker. N denotes participants, while test concerns allelic frequencies. Render inspected: /home/lukas/.cache/fred-completion-renders/8633d0ed8afa9e99/page3.png.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+    "shipped": "0.0067",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Among European Americans allele A of SNP rs1447295 was significantly associated with prostate cancer",
+      "es_repr_o": "p. 3/ Table 1",
+      "es_repr_r": "p. 4/ Table 1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The replication of the association of chromosome 8q24 variants with\nincreased prostate cancer risk in Tobago men and the higher frequency of the risk alleles in\ncontrols in populations of African ancestry further strengthens the possible role of this genomic\nregion in the disproportionate higher burden of prostate cancer in men of African ancestry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "8633d0ed8afa9e99",
+    "audit_id": 1423,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Amundadottir, L. T., Sulem, P., Gudmundsson, J., Helgason, A., Baker, A., Agnarsson, B. A., Sigurdsson, A., Benediktsdottir, K. R., Cazier, J.-B., Sainz, J., Jakobsdottir, M., Kostic, J., Magnusdottir, D. N., Ghosh, S., Agnarsson, K., Birgisdottir, B., Le Roux, L., Olafsdottir, A., Blondal, T., … Stefansson, K. (2006). A common variant associated with prostate cancer in European and African populations. Nature Genetics, 38(6), 652–658. https://doi.org/10.1038/ng1808",
+      "doi_o": "10.1038/ng1808",
+      "study_o": null,
+      "ref_r": "Okobia, M. N., Zmuda, J. M., Ferrell, R. E., Patrick, A. L., & Bunker, C. H. (2011). Chromosome 8q24 variants are associated with prostate cancer risk in a high risk population of African ancestry. The Prostate, 71(10), 1054–1063. Portico. https://doi.org/10.1002/pros.21320",
+      "doi_r": "10.1002/pros.21320",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "description": "Relationship between allele A of SNP rs1447295 and prostate cancer among African Americans.",
+      "locators_o": "p. 3; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "audit_id": 1423,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/27f542f4fe28e841bf98a8ac_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "598",
+      "sample_role": "Participants: 246 prostate cancer cases and 352 controls in target Table 1 association.",
+      "exclusions": "Final Table 1 analysis counts; additional genotype-specific exclusions not stated in Table 1. Adjusted for relatedness and European/African ancestry; Table 1 footnote d says practically identical to unadjusted results.",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, African Americans, Michigan, rs1447295 allele A",
+      "quote": "African Americans, ... Michiganb,d ... (246/352)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1423,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "Table labels N cases/N controls. Rendered PDF confirms rs1447295 shares these population-specific counts. Adjusted for relatedness and European/African ancestry; Table 1 footnote d says practically identical to unadjusted results.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+      "location": "Printed p. 654 (PDF p. 3), Table 1, African Americans, Michigan, rs1447295 allele A",
+      "quote": "(N cases/N controls) ... African Americans, ... Michiganb,d ... (246/352)",
+      "calculation": "246 cases + 352 controls = 598 participants. Mutually exclusive final Table 1 case/control groups; not allele counts."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Prostate cancer association with rs1447295 allele A, African Americans, Michigan, Table 1 allelic OR test.",
+    "worker_notes": "Only assigned unfinished fields populated; other nulls are unassigned placeholders. Target identified by population, SNP and allele labels. 246 cases + 352 controls = 598 participants. Mutually exclusive final Table 1 case/control groups; not allele counts. Adjusted for relatedness and European/African ancestry; Table 1 footnote d says practically identical to unadjusted results. Iceland rs1447295 is reported only for combined groups I and II in Table 1; separate group I/II rows are DG8S737, a different marker. N denotes participants, while test concerns allelic frequencies. Render inspected: /home/lukas/.cache/fred-completion-renders/8633d0ed8afa9e99/page3.png.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_27f542f4fe28e841bf98a8ac.txt",
+    "shipped": "598",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "Among African Americans allele A of SNP rs1447295 was not associated with prostate cancer",
+      "es_repr_o": "p. 3/ Table 1",
+      "es_repr_r": "p. 4/ Table 1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The replication of the association of chromosome 8q24 variants with\nincreased prostate cancer risk in Tobago men and the higher frequency of the risk alleles in\ncontrols in populations of African ancestry further strengthens the possible role of this genomic\nregion in the disproportionate higher burden of prostate cancer in men of African ancestry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/8633d0ed8afa9e99. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_8633d0ed8afa9e99_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
