@@ -67,3 +67,11 @@ missing substantive characters or altered quote whitespace are rejected.
 Document_0683 adds the author appendix and errata to document_0001 and requires
 fresh blind Opus and Sol results. Source-block boundaries and hashes prevent
 quotations from joining different documents or inserted navigation headings.
+
+Use `prepare_dispatch.py GROUP_ID --provider opus|sol --attempt 1|2` before
+delegating an initial-cohort group. It returns native delegate arguments and a
+task-registration record only after checking registry-derived absolute input
+paths, every frozen file hash, the owned output root, capacity, duplicate task
+history and the attempt limit. Do not construct packet/output prefixes manually.
+Parent-supplied invalid paths consumed two preserved technical attempts; their
+replacement tasks have distinct IDs and output directories.

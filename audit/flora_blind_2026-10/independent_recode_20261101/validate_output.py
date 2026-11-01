@@ -36,7 +36,7 @@ def validate_proofs(obj, raw, source_hash):
     def walk(value, path='$'):
         if isinstance(value, dict):
             if any(k in value for k in ('character_start', 'char_start', 'unicode_start')):
-                quote = first(value, ('quote', 'text'))
+                quote = first(value, ('quote', 'text', 'literal_quote'))
                 a = first(value, ('character_start', 'char_start', 'unicode_start'))
                 z = first(value, ('character_end', 'char_end', 'unicode_end'))
                 ba = first(value, ('utf8_start', 'utf8_byte_start', 'byte_start'))
