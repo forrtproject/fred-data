@@ -5,6 +5,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
+from urllib.parse import urlparse
 
 from prepare_packets import B, OUT, PACKETS
 from project_prior_sol import project
@@ -53,7 +54,18 @@ def current_alignment(row, source):
     assert key == identifier(source_url), 'Current URL work key differs'
 
 
-def original_alignment(row, target, year_receipt=None):
+def original_identifier_alignment(row, receipt):
+    if not ids(row, 'o'):
+        return
+    assert receipt, 'Original identifier needs authoritative metadata verification'
+    path = Path(receipt['path'])
+    assert sha(path.read_bytes()) == receipt['sha256']
+    metadata = read(path)['message']
+    assert identifier(metadata['DOI']) in ids(row, 'o'), 'Registered original identifier differs'
+    assert norm(metadata['title'][0]) == norm(row['title_o']), 'Original identifier resolves to a different title'
+
+
+def original_alignment(row, target, year_receipt=None, author_receipt=None):
     assert norm(row['title_o']) == norm(target['title']), 'Original title is not positively aligned'
     if row['year_o'] != target['year']:
         assert year_receipt, 'Original year/version needs separate adjudication'
@@ -63,11 +75,57 @@ def original_alignment(row, target, year_receipt=None):
         assert identifier(metadata['DOI']) in ids(row, 'o')
         assert norm(metadata['title'][0]) == norm(target['title'])
         assert row['year_o'] == str(metadata['published-online']['date-parts'][0][0])
-        assert target['year'] == str(metadata['published-print']['date-parts'][0][0])
-        assert metadata['volume'] == row['volume_o'] and metadata['issue'] == row['issue_o']
-        assert norm(metadata['page']) == norm(row['pages_o'])
+        if metadata.get('published-print'):
+            assert target['year'] == str(metadata['published-print']['date-parts'][0][0])
+            assert metadata['volume'] == row['volume_o'] and metadata['issue'] == row['issue_o']
+            assert norm(metadata['page']) == norm(row['pages_o'])
+        else:
+            ref = year_receipt.get('publisher_print_metadata_receipt')
+            assert ref, 'Print date absent; publisher issue evidence required'
+            path = Path(ref['path'])
+            assert sha(path.read_bytes()) == ref['sha256']
+            printed = read(path)
+            publisher = urlparse(metadata['resource']['primary']['URL']).hostname
+            assert publisher and urlparse(printed['source_url']).hostname == publisher, 'Print evidence is not from the registered publisher'
+            source_path = Path(printed['source_path'])
+            assert sha(source_path.read_bytes()) == printed['source_sha256']
+            quote = printed['quote']
+            assert quote and len(quote) <= 2000 and quote in source_path.read_text()
+            assert identifier(printed['doi']) in ids(row, 'o') and printed['doi'] in quote
+            assert norm(printed['title']) == norm(target['title']) and norm(printed['title']) in norm(quote)
+            assert str(printed['year']) == target['year']
+            context = norm(quote)
+            volume = context.find(norm('Volume ' + printed['volume']))
+            issue = context.find(norm('Issue ' + printed['issue']), volume)
+            pages = context.find(norm('Pages ' + printed['page']), issue)
+            assert 0 <= volume < issue < pages and target['year'] in context[issue:pages], 'Publisher issue citation differs'
+            for key, field in [('volume', 'volume_o'), ('issue', 'issue_o'), ('page', 'pages_o')]:
+                assert norm(str(metadata.get(key) or 'NA')) == norm(row[field]), 'Frozen advance-publication metadata differs'
     authors = json.loads(row['author_o'])
-    assert authors and all(norm(a['family']) in norm(target['authors']) for a in authors), 'Original authors differ'
+    complete_author_match = authors and all(a.get('family') and norm(a['family']) in norm(target['authors'])
+                                            for a in authors)
+    if not complete_author_match:
+        assert author_receipt, 'Original authors differ or citation is abbreviated'
+        metadata_path = Path(author_receipt['path'])
+        assert sha(metadata_path.read_bytes()) == author_receipt['sha256']
+        metadata = read(metadata_path)['message']
+        assert identifier(metadata['DOI']) in ids(row, 'o'), 'Author metadata DOI differs'
+        assert norm(metadata['title'][0]) == norm(target['title']), 'Author metadata title differs'
+        registered = metadata['author']
+        assert len(authors) == len(registered), 'Registered author count differs'
+        for frozen, actual in zip(authors, registered, strict=True):
+            if frozen.get('family'):
+                assert norm(frozen['family']) == norm(actual.get('family', '')), 'Registered author differs'
+                assert norm(frozen.get('given', '')) == norm(actual.get('given', '')), 'Registered author given name differs'
+            else:
+                assert set(frozen) <= {'sequence'} and actual.get('name'), 'Unnamed author is not a verified group'
+        printed = author_receipt['source_printed_authors']
+        assert norm(target['authors']) == norm(printed), 'Abbreviated citation differs from its source receipt'
+        count = author_receipt['source_printed_person_count']
+        named = [a for a in registered if a.get('family')]
+        assert 2 <= count <= len(named)
+        positions = [norm(printed).find(norm(a['family'])) for a in named[:count]]
+        assert all(i >= 0 for i in positions) and positions == sorted(positions), 'Citation is not the registered author prefix'
     if target.get('doi'):
         assert identifier(target['doi']) in ids(row, 'o'), 'Original DOI differs'
 
@@ -81,6 +139,11 @@ def proof(packet, quote):
     return dict(quote=quote, source_path=str(packet / 'article.txt'), source_sha256=sha(raw),
                 character_start=start, character_end=end, utf8_start=len(text[:start].encode()),
                 utf8_end=len(text[:end].encode()), quote_sha256=sha(quote.encode()))
+
+
+def completed_field_work(opus, sol):
+    assert opus.get('study_status') == sol.get('study_status') == 'completed', \
+        'Plans and unfinished studies need a record-level remedy before field approval'
 
 
 def checked_replacements(row, result, target, decision):
@@ -188,6 +251,7 @@ def build():
             assert sol_valid['frozen_packet_inputs_verified'] is True
             sol_path = str(sol_dir / 'coding.json')
         assert opus['text_sha256'] == sol['text_sha256'] == sha((packet / 'article.txt').read_bytes())
+        completed_field_work(opus, sol)
         oi, si = decision['opus_target_index'], decision['sol_target_index']
         ot, st = opus['targets'][oi], sol['targets'][si]
         if decision['proposal_fields'] == ['original']:
@@ -198,8 +262,14 @@ def build():
             aligned_row = dict(row, **identity_fields)
         else:
             identity_fields, aligned_row = None, row
-        original_alignment(aligned_row, ot, decision.get('original_year_metadata_receipt'))
-        original_alignment(aligned_row, st, decision.get('original_year_metadata_receipt'))
+        original_alignment(aligned_row, ot, decision.get('original_year_metadata_receipt'),
+                           decision.get('original_author_metadata_receipt'))
+        original_alignment(aligned_row, st, decision.get('original_year_metadata_receipt'),
+                           decision.get('original_author_metadata_receipt'))
+        identifier_receipt = next((decision[k] for k in (
+            'replacement_original_metadata_receipt', 'original_identifier_metadata_receipt',
+            'original_year_metadata_receipt', 'original_author_metadata_receipt') if decision.get(k)), None)
+        original_identifier_alignment(aligned_row, identifier_receipt)
         assert ot['outcome_confident'] is True and st['outcome_confident'] is True
         for key, expected in decision['agreed_target_values'].items():
             assert ot[key] == st[key] == expected, 'Independent target labels disagree: ' + key
@@ -237,24 +307,31 @@ def build():
             evidence.append(proof(packet, opus[key] if key == 'record_type_quote' else ot[key]))
         for quote in decision.get('supporting_literal_quotes', []):
             evidence.append(proof(packet, quote))
+        if decision.get('original_author_metadata_receipt'):
+            evidence.append(proof(packet, decision['original_author_metadata_receipt']['source_printed_authors']))
         operations = [dict(operation='set_field', field=field, expected_before={field: row[field]},
                            proposed_value=value, input_row_index=row_index,
                            expected_before_full_record_sha256=digest(row), atomic_group='row:' + str(row_index))
                       for field, value in replacements.items() if value != row[field]]
         result.append(dict(case_id='row:' + str(row_index), input_row_index=row_index,
                            status='ready_for_batch_approval', proposal_fields=decision['proposal_fields'],
+                           independently_verified_study_status='completed',
                            expected_before_full_record_sha256=digest(row), expected_before=row,
                            replacements=replacements, operations=operations,
                            apply_all_fields_atomically=True, original_pair_duplicate_rows=duplicate_rows,
                            evidence=evidence, rationale=decision['rationale'], limits=decision['limits'],
                            independent_inputs=dict(opus=str(opus_dir / 'coding.json'), sol=sol_path,
                                                    reviewer=str(reviewer / 'review.json')),
-                           bibliography_metadata=decision.get('replacement_original_metadata_receipt')))
+                           bibliography_metadata=decision.get('replacement_original_metadata_receipt'),
+                           original_author_metadata_alignment=decision.get('original_author_metadata_receipt'),
+                           original_year_metadata_alignment=decision.get('original_year_metadata_receipt'),
+                           original_identifier_metadata_alignment=identifier_receipt))
     output = dict(schema_version=1, status='incremental_verified_proposals_cohort_in_progress',
                   baseline_sha256=BASELINE_SHA, canonical_changes_applied=False, user_approval_recorded=False,
                   automatic_fields_verified=sum(len(c['proposal_fields']) for c in result),
                   case_count=len(result), cases=result,
                   implementation_rules=['Obtain batch approval before implementation; this file records verified proposals, not approvals.',
+                                        'Plans and unfinished studies require record-level actions; they cannot enter this field-only set.',
                                         'Verify the frozen file and complete row hash; apply all fields of each case atomically.',
                                         'Keep prior decisions and source histories. Apply original-identity changes with their complete bibliography, identifiers and source evidence.',
                                         'Do not re-enable other outcome proposals from this incremental file.'])

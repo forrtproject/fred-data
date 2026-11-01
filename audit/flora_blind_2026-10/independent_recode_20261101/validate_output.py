@@ -92,6 +92,24 @@ def coding_quotes(value, path=''):
     return result
 
 
+def command_chunk_trim_loss(command, displayed, text, filename):
+    """Only terminal-boundary trivia may disappear; source words stay exact."""
+    if text in displayed:
+        return (0, 0)
+    core = text.lstrip('\ufeff \t\r\n\f\v')
+    leading = len(text) - len(core)
+    cat = re.search(r'\bcat\s+[^;\n]*' + re.escape(filename), command)
+    if cat and core and core in displayed:
+        return (leading, 0)
+    terminal_cat = re.search(r'\bcat\s+[^;\n]*' + re.escape(filename) + r"['\"]?\s*$", command)
+    if terminal_cat:
+        if text.rstrip() and displayed.rstrip().endswith(text.rstrip()):
+            return (0, len(text) - len(text.rstrip()))
+        if core.rstrip() and displayed.rstrip().endswith(core.rstrip()):
+            return (leading, len(text) - len(text.rstrip()))
+    return None
+
+
 def contains_exact_chunk(item, packet, chunk_path, chunk_raw):
     if item.get('textTruncated', True):
         return False
@@ -116,14 +134,7 @@ def contains_exact_chunk(item, packet, chunk_path, chunk_raw):
             return False
         if 'Output truncated' in body:
             return False
-        text = chunk_raw.decode()
-        if text in displayed:
-            return True
-        # The native command timeline trims terminal whitespace. A terminal cat
-        # can still prove every substantive source character; record the lost
-        # whitespace separately rather than treating it as unseen source text.
-        terminal_cat = re.search(r'\bcat\s+[^;\n]*' + re.escape(chunk_path.name) + r"['\"]?\s*$", command)
-        return bool(terminal_cat and displayed.rstrip().endswith(text.rstrip()))
+        return command_chunk_trim_loss(command, displayed, chunk_raw.decode(), chunk_path.name) is not None
     return False
 
 
@@ -192,13 +203,16 @@ def validate(packet, output, receipts, expected_inputs=None):
                    if contains_exact_chunk(item, packet, chunk_path, chunk_raw)]
         check(bool(matches), 'Missing exact untruncated tool output for ' + chunk['file'])
         p, item = matches[0]
+        leading, trailing = (0, 0)
+        if item.get('type') == 'command_execution':
+            command, _, displayed = item['text'].partition('\n')
+            leading, trailing = command_chunk_trim_loss(command, displayed, chunk_raw.decode(), chunk_path.name)
         evidence.append({'chunk': chunk['file'], 'range': [chunk['character_start'], chunk['character_end']],
                          'chunk_sha256': chunk['sha256'], 'threadId': item['threadId'],
                          'itemId': item['itemId'], 'position': item['position'],
                          'receipt_path': str(p), 'receipt_sha256': sha(p.read_bytes()),
-                         'trailing_whitespace_not_preserved_by_timeline':
-                             len(chunk_raw.decode()) - len(chunk_raw.decode().rstrip())
-                             if chunk_raw.decode() not in item.get('text', '') and item.get('type') == 'command_execution' else 0})
+                         'leading_whitespace_or_bom_not_preserved_by_timeline': leading,
+                         'trailing_whitespace_not_preserved_by_timeline': trailing})
     return {'status': 'mechanically_validated_pending_scientific_comparison', 'document_id': packet.name,
             'source_sha256': source_hash, 'unicode_characters': len(raw.decode()),
             'coding_quote_fields': len(literal), 'span_map_proofs': len(maps['quote_spans.json']),

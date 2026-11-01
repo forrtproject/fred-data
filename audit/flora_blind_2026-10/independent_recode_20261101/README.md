@@ -2,11 +2,11 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 68 initial documents and four additional source views have
-passed Opus schema, literal-span and reading checks; ten fresh Sol source views
+Current checkpoint: 89 initial documents and four additional source views have
+passed Opus schema, literal-span and reading checks; eleven fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Seven cases covering eight proposed
+The full reassessment remains in progress. Nine cases covering ten proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
@@ -17,7 +17,7 @@ source adjudication. Its blind disagreement remains visible; this is not labelle
 two-model agreement. The finite 60-item source-completeness recovery pass reuses
 old attempts and seeks full primary reports. Its preparer never becomes a blind coder.
 The first acquisition pass recovered one verified full report. It has completed
-both fresh blind roles and awaits primary adjudication. The
+both fresh blind roles and primary adjudication. Its simulation classification and low-confidence outcome remain outside automatic acceptance. The
 bounded second pass checked saved HTML and new search routes using unused budgets.
 Its HTML candidate was rejected as an abstract/reference access page; 59 source
 completeness gaps remain. Seven zero-new-request cases had earlier acquisition
@@ -84,7 +84,7 @@ dispatches models, changes scientific judgments, or publishes outputs.
 `freeze_packet_receipts.py` independently reconstructs those inputs from the
 registered original source bytes, including exact collection boundaries.
 The validator rejects packet changes even if the result metadata is changed to
-match. Native timeline removal of terminal whitespace is recorded explicitly;
+match. Native timeline removal of boundary whitespace or a leading byte-order mark is recorded explicitly;
 missing substantive characters or altered quote whitespace are rejected.
 
 `source_upgrades.json` preserves newly verified report versions separately.
@@ -115,9 +115,11 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 49 evidence/dependency controls:
+Run all 59 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
 python3 audit/flora_blind_2026-10/independent_recode_20261101/build_verified_proposals.py
 ```
+
+The current automatic set also verifies completed study status and authoritative original DOI/title correspondence. Advance-online and print years remain separate provenance for the same publication. A report carrying a plan-only source needs a record remedy, rather than an outcome-only patch. The withheld prior incremental acceptance for row 403 is preserved in `held_acceptance_decisions.json` while the actual retested target in its replication chain is checked. Rows 195 and 869 remain outside automatic acceptance with their joint identity/type/outcome boundaries documented. No review-app rebuild or deployment is inferred from this checkpoint.

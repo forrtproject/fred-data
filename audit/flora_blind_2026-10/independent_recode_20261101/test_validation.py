@@ -8,7 +8,7 @@ from pathlib import Path
 
 from prepare_packets import B
 from project_prior_sol import literal_whitespace_span, project
-from validate_output import validate
+from validate_output import command_chunk_trim_loss, contains_exact_chunk, validate
 
 
 class EvidenceValidation(unittest.TestCase):
@@ -222,6 +222,28 @@ class EvidenceValidation(unittest.TestCase):
     def test_unrelated_parser_mismatch_is_not_silently_replaced(self):
         self.coding['parser'] = 'pdftotext'
         with self.assertRaises(AssertionError): project(self.packet, self.coding)
+
+    def test_terminal_bom_and_leading_blank_lines_are_recorded_as_trivia(self):
+        source = (self.packet / 'article.txt').read_text()
+        raw = ('\ufeff\n\n' + source).encode()
+        command = f'$ cd {self.packet} && cat chunks/one.txt; echo END'
+        item = dict(self.receipt, text=command + '\n' + source + 'END')
+        self.assertTrue(contains_exact_chunk(item, self.packet, self.packet / 'chunks/one.txt', raw))
+        self.assertEqual(command_chunk_trim_loss(command, source + 'END', raw.decode(), 'one.txt'), (3, 0))
+
+    def test_terminal_trivia_exception_cannot_hide_missing_source_words(self):
+        source = (self.packet / 'article.txt').read_text()
+        command = f'$ cd {self.packet} && cat chunks/one.txt; echo END'
+        item = dict(self.receipt, text=command + '\n' + source[3:] + 'END')
+        self.assertFalse(contains_exact_chunk(item, self.packet, self.packet / 'chunks/one.txt',
+                                             ('\ufeff\n\n' + source).encode()))
+
+    def test_terminal_trivia_exception_cannot_normalize_interior_whitespace(self):
+        source = (self.packet / 'article.txt').read_text()
+        command = f'$ cd {self.packet} && cat chunks/one.txt; echo END'
+        item = dict(self.receipt, text=command + '\n' + source.replace('\u00a0', ' ') + 'END')
+        self.assertFalse(contains_exact_chunk(item, self.packet, self.packet / 'chunks/one.txt',
+                                             ('\ufeff\n\n' + source).encode()))
 
 
 if __name__ == '__main__':
