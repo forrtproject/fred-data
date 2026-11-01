@@ -1,6 +1,6 @@
 # FReD completion checkpoint corrections
 
-Interim validated checkpoint: 631 confirmed field decisions affecting 467 rows, expressed as 1196 physical cell updates. The broader completion pass remains active. Unverified fields are not patched. All 6,411 baseline verified decisions remain unchanged.
+Interim validated checkpoint: 635 confirmed field decisions affecting 470 rows, expressed as 1207 physical cell updates. The broader completion pass remains active. Independent reviews are temporarily paused by a service quota; new supported observations remain unverified. Unverified fields are not patched. All 6,411 baseline verified decisions remain unchanged.
 
 Use only the frozen b48a7d6 workbook whose SHA256 is checked by the R script. The merger verifies record identities, expected old values and download hashes. It writes a separate corrected workbook and change log; the source workbook and preparation pipeline are unchanged. Excel styling is not preserved. Reapplication to the corrected R object is a no-op.
 
