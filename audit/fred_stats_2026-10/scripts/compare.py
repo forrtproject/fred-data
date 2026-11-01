@@ -159,6 +159,13 @@ def fresh_test_review(a,field,row):
  if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
  if a.get('verdict') not in ['shipped_right','blind_right','both_wrong']:return False
  parsed=parsed_stat(a.get('correct_value'));kind=metric(a.get('correct_metric'))
+ if kind=='binomial z' and a.get('verdict')=='shipped_right':
+  # Confirm the same co-reported z copied in the data, not a conversion of
+  # the blind worker's chi-square statistic or a general metric alias.
+  # Isolate its printed expression so a following chi-square's N cannot
+  # become an annotation on this z. Legacy parsing remains unchanged.
+  printed=re.search(r'(?i)\bz\s*(?:\(\s*[^)]*\))?\s*=\s*[+-]?(?:\d*\.\d+|\d+\.?\d*)',str(a.get('quote') or ''))
+  return bool(parsed and parsed[0]=='z' and parsed==parsed_stat(row.get(field)) and printed and parsed==parsed_stat(printed[0]))
  if not parsed and a.get('verdict')=='shipped_right':
   # Current target-confirmed review may certify an identical printed bound.
   # Do not infer an exact statistic or reconcile different cutoffs/annotations.
