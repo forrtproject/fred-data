@@ -7,6 +7,7 @@ from schema import validate
 from compare import quote_ok,metric
 from consistency import number
 from validate_adjudication import validate_batch
+from derived_effects import documented_equal_group_d
 
 def atomic(p,x):
  t=p.with_suffix('.tmp');t.write_text(json.dumps(x,indent=2,ensure_ascii=False)+'\n');t.replace(p)
@@ -84,9 +85,11 @@ def main():
   item=next(a for a in proposals if (a['audit_id'],a['field'])==(aid,field));row=json.loads((B/'parent_rows.json').read_text())[aid-1]
   assert receipt['expected_coding_expression'] in row['es_repr_'+field[-1]],'Calculation is not documented in original coding'
   assert metric(decision['correct_metric'])==metric(row['es_type_'+field[-1]])
-  assert receipt['calculation']=='reported_proportion_odds_ratio'
-  p,q=map(Fraction,receipt['proportions']);result=(p/(1-p))/(q/(1-q));assert abs(result-Fraction(decision['correct_value']))<Fraction(1,10**9)
-  assert '70%' in decision['quote'] and '65%' in decision['quote'],'Primary reported input proportions missing'
+  if receipt['calculation']=='reported_proportion_odds_ratio':
+   p,q=map(Fraction,receipt['proportions']);result=(p/(1-p))/(q/(1-q));assert abs(result-Fraction(decision['correct_value']))<Fraction(1,10**9)
+   assert '70%' in decision['quote'] and '65%' in decision['quote'],'Primary reported input proportions missing'
+  elif receipt['calculation']=='documented_equal_group_cohens_d':result=documented_equal_group_d(receipt,row,decision,item['blind']['source_path'])
+  else:raise AssertionError('Unsupported documented calculation')
   equivalences.append({'audit_id':aid,'field':field,'printed_value':item['blind']['value'],'printed_metric':item['blind']['metric'],'source_path':item['blind']['source_path'],'comparison_metric':decision['correct_metric'],'comparison_value':decision['correct_value'],'reason':decision['reason'],'location':decision['location'],'quote':decision['quote'],'derivation':{**receipt,'exact_result':str(result)},'completion_pass':'2026-10-31'})
  atomic(B/'metric_equivalences.json',equivalences);atomic(B/'adjudication_holds.json',holds);atomic(B/'target_overrides.json',dedupe_overrides(overrides));atomic(F/'integration.json',ledger);atomic(F/'integration_blockers.json',blocked);print(json.dumps({'integrated_fields':len(ledger),'changed_this_run':changes,'review_blockers':blocked}))
 if __name__=='__main__':main()

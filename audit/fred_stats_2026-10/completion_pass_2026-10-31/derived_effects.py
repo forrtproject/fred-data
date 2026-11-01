@@ -1,0 +1,33 @@
+"""Validate a documented equal-group standardized mean difference against its source."""
+import math,re,sys
+from fractions import Fraction
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parent.parent/'scripts'))
+from compare import metric,quote_ok
+
+def documented_equal_group_d(receipt,row,decision,source_path):
+ assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
+ assert decision.get('target_match_confirmed') is True and decision.get('verdict') in ['shipped_right','blind_right','both_wrong']
+ field=receipt['field'];assert field in ['es_value_o','es_value_r']
+ assert metric(row['es_type_'+field[-1]])==metric(decision.get('correct_metric'))=='d'
+ assert Path(decision['source_path']).resolve()==Path(source_path).resolve()
+ groups=receipt['groups'];assert len(groups)==2
+ assert all(isinstance(g['n'],int) and not isinstance(g['n'],bool) and g['n']>1 for g in groups)
+ assert groups[0]['n']==groups[1]['n'],'Pooled SD requires explicit equal group sizes'
+ for g in groups:
+  assert Fraction(g['sd'])>0
+  for key in ['mean_sd_quote','sample_quote']:
+   assert g['source_label'].lower() in g[key].lower()
+   assert quote_ok({'quote':g[key],'source_path':source_path,'value':'documented input','confident':True,'location':'documented '+key})
+  assert re.search(r'\bn\s*(?:=|5)\s*'+str(g['n'])+r'\b',g['sample_quote'])
+  for number in [g['mean'],g['sd']]:
+   pattern=r'(?<![\d.])'+re.escape(number)+r'(?![\d.])'
+   assert re.search(pattern,g['mean_sd_quote']) and re.search(pattern,decision['quote'])
+ a,b=groups
+ expression=f"=({a['mean']}-{b['mean']})/SQRT(({a['sd']}^2+{b['sd']}^2)/2)"
+ assert receipt['expected_coding_expression']==expression
+ assert expression in row['es_repr_'+field[-1]],'Calculation is not documented in original coding'
+ result=float(Fraction(a['mean'])-Fraction(b['mean']))/math.sqrt(float((Fraction(a['sd'])**2+Fraction(b['sd'])**2)/2))
+ value=str(decision['correct_value']);assert re.fullmatch(r'-?\d+\.\d+',value)
+ assert round(result,len(value.split('.')[1]))==float(value),'Reviewed value does not reproduce the documented calculation'
+ return result

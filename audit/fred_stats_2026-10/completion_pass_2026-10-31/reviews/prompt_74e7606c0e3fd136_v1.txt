@@ -1,0 +1,89 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1278": {
+      "source_key": "74e7606c0e3fd136",
+      "side": "replication",
+      "input": {
+        "ref_o": "Wu, S., & Ortega, L. (2013). Measuring global oral proficiency in SLA research: A new elicited imitation test of L2 Chinese. Foreign Language Annals, 46(4), 680–704. Portico. https://doi.org/10.1111/flan.12063",
+        "doi_o": "10.1111/flan.12063",
+        "study_o": null,
+        "ref_r": "McManus, K., & Liu, Y. (2020). Using elicited imitation to measure global oral proficiency in SLA research: A close replication study. Language Teaching, 55(1), 116–135. https://doi.org/10.1017/s026144482000021x",
+        "doi_r": "10.1017/s026144482000021x",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of Chinese EIT performance between high- and low-proficiency groups.",
+        "locators_o": "p.12",
+        "locators_r": "p. 9; Table 4",
+        "audit_id": 1278,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/406658215312d72691513899.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Chinese EIT Low-versus-High foreign-language-learner posthoc comparison, Table 4 Low-High; final EIT descriptives in Table 3 establish its two group counts. Supplied p.9/Table 4 locator corresponds to preprint pp.9,16–17.",
+      "worker_notes": "Identity assessment: supplied source begins with OSF download provenance, title USING ELICITED IMITATION TO MEASURE GLOBAL ORAL PROFICIENCY IN SLA RESEARCH: A CLOSE REPLICATION STUDY, and authors Kevin McManus and Yingying Liu. It is labelled Preprint version, Language Teaching, accepted for publication 19 March 2020. Title, authors, journal, year and original-study identity match the neutral replication reference. Full primary research report with methods, results, references and appendices; not an abstract or secondary report. DOI is not printed in this candidate, so DOI identity is not independently confirmed. No PDF was supplied. Unassigned sides/fields are null placeholders only; not re-extracted. Analytic N arithmetic: Low 20 + High 25 = 45 participants. Table 3 supplies final EIT group counts, Table 4 identifies Low-High as the target comparison; the three-group recruitment total 65 is not substituted. The two curricular components of High (13 + 12 = 25) are not additional participants.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/406658215312d72691513899.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "The effectiveness of the Chinese EIT in distinguishing between high and low proficiency groups.",
+        "es_repr_o": "p.12",
+        "es_repr_r": "p. 9/ Table 4",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Consistent with the original study, our results showed clear between-group differences, indicating that the EIT can distinguish between both broad (beginner vs high) and finer-grained (beginner vs low, low vs high) language abilities."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1278,
+      "field": "n_r",
+      "blind": {
+        "value": "45",
+        "sample_role": "Participants in the mutually exclusive final Low (20) and High (25) EIT groups in the pairwise comparison.",
+        "exclusions": "Beginner group (20) is outside this pairwise contrast. Graduate students excluded from High by design; heritage learners not sampled. No additional EIT participant exclusions are reported in methods/results.",
+        "location": "Preprint p.9, section 5.1; p.16 Table 3; p.17 Table 4 Low-High",
+        "quote": "Low group (n=20) and learners in 300- and 400-level courses constituted the High group\n\n(n=25, 13 participants from 300-level courses and 12 participants from 400-level courses). ... Replication       20          33.8                17.2       25.7, 41.8 ... Replication       25          51.6                22.1       42.5, 60.7",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/406658215312d72691513899.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1278,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Explicit mutually exclusive Low and High groups are retained in the final EIT descriptives and are compared in Table 4. Counts are participant counts, not items or observations. Beginner excluded from this pairwise N; graduate students excluded by design. No further EIT exclusions reported.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/406658215312d72691513899.txt",
+        "location": "Preprint p.9 section 5.1; p.16 Table 3; p.17 Table 4",
+        "quote": "Low group (n=20) and learners in 300- and 400-level courses constituted the High group\n\n(n=25, 13 participants from 300-level courses and 12 participants from 400-level courses). ... Replication       20          33.8                17.2       25.7, 41.8 ... Replication       25          51.6                22.1       42.5, 60.7",
+        "calculation": "20 (Low final EIT participants) + 25 (High final EIT participants) = 45. Exclude Beginner n=20; do not add the nested High subgroups 13 and 12 again."
+      },
+      "supported": true,
+      "shipped": "65",
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/74e7606c0e3fd136. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_74e7606c0e3fd136_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
