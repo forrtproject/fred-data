@@ -2,7 +2,7 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 65 initial documents and four additional source views have
+Current checkpoint: 68 initial documents and four additional source views have
 passed Opus schema, literal-span and reading checks; ten fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
