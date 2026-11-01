@@ -2,9 +2,10 @@
 """Preserve old blind labels; document whitespace-only quotation transcription."""
 import copy
 import hashlib
+import json
 import re
 
-from prepare_packets import strict_result
+from prepare_packets import BAD, strict_result
 
 
 def literal_whitespace_span(text, quote):
@@ -51,6 +52,14 @@ def project(packet, original):
         excluded['parent_provenance_completion'] = result.pop('parent_provenance_completion')
     old_work_key = result['work_key']
     result['work_key'] = packet.name
+    metadata = json.loads((packet / 'metadata.json').read_text())
+    parser = result.get('parser')
+    if (metadata.get('parser') is None and isinstance(parser, str)
+            and (BAD.search(parser) or re.search(r'blind|audit|parent|coding|verdict|target', parser, re.I))):
+        excluded['opaque_packet_parser_redaction'] = {
+            'original_value': parser, 'packet_value': None,
+            'reason': 'Same metadata redaction rule used to prepare the opaque blind packet.'}
+        result['parser'] = None
     text, transcriptions = raw.decode(), []
 
     def walk(value, path=''):

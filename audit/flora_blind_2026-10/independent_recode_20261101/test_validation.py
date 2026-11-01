@@ -205,6 +205,24 @@ class EvidenceValidation(unittest.TestCase):
         self.coding['parent_provenance_completion'] = dict(filled_fields=['outcome'], original_values={'outcome': 'failed'})
         with self.assertRaises(ValueError): project(self.packet, self.coding)
 
+    def test_opaque_parser_redaction_is_logged_without_changing_old_coding(self):
+        self.coding['parser'] = 'parent-supplied cached text; cache helper unspecified'
+        original = copy.deepcopy(self.coding)
+        projected, ledger = project(self.packet, self.coding)
+        self.assertIsNone(projected['parser'])
+        self.assertEqual(self.coding, original)
+        self.assertEqual(ledger['excluded_technical_metadata']['opaque_packet_parser_redaction']['original_value'], original['parser'])
+        self.assertFalse(ledger['scientific_labels_modified'])
+
+    def test_parser_redaction_does_not_allow_other_metadata_changes(self):
+        self.coding['parser'] = 'parent-supplied cached text'
+        self.coding['source_url'] = 'https://example.invalid/different-source'
+        with self.assertRaises(AssertionError): project(self.packet, self.coding)
+
+    def test_unrelated_parser_mismatch_is_not_silently_replaced(self):
+        self.coding['parser'] = 'pdftotext'
+        with self.assertRaises(AssertionError): project(self.packet, self.coding)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -73,6 +73,29 @@ class SharedSourceBudget(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Attempt already registered'):
                 prepare('document_0686', 'opus', 1)
 
+    def initial_document_read(self, path):
+        if path.name == 'dispatch_plan.json':
+            return {'groups': [{'group_id': 'group_0028', 'document_ids': ['document_0061']}]}
+        return self.read(path)
+
+    def test_one_initial_document_can_be_compared_without_repeating_its_group(self):
+        with patch('prepare_dispatch.read', side_effect=self.initial_document_read):
+            with self.assertRaises(ReachedFrozenInputCheck):
+                prepare('document_0061', 'sol', 1)
+
+    def test_single_document_alias_cannot_repeat_a_completed_group_comparison(self):
+        self.state['tasks'].append(dict(role='blind_comparison_coder', group_id='group_0028',
+                                       packet_ids=['document_0061'], attempt=1,
+                                       status='completed_parent_mechanically_validated'))
+        with patch('prepare_dispatch.read', side_effect=self.initial_document_read):
+            with self.assertRaisesRegex(ValueError, 'Already validated'):
+                prepare('document_0061', 'sol', 1)
+
+    def test_unregistered_single_document_is_rejected(self):
+        with patch('prepare_dispatch.read', side_effect=self.initial_document_read):
+            with self.assertRaisesRegex(ValueError, 'absent from parent registry'):
+                prepare('document_9999', 'sol', 1)
+
 
 if __name__ == '__main__':
     unittest.main()

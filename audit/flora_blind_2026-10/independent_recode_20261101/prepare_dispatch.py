@@ -17,13 +17,14 @@ def prepare(group_id, provider, attempt):
         raise ValueError('Two attempts maximum')
     state = read(OUT / 'state.json')
     upgrade = None
-    group = next((g for g in read(OUT / 'dispatch_plan.json')['groups'] if g['group_id'] == group_id), None)
+    plan = read(OUT / 'dispatch_plan.json')['groups']
+    group = next((g for g in plan if g['group_id'] == group_id), None)
     if group is None:
         upgrade = next((d for d in read(OUT / 'source_upgrades.json')['upgrades']
                         if d['document_id'] == group_id), None)
-        if upgrade is None:
+        if upgrade is None and not any(group_id in g['document_ids'] for g in plan):
             raise ValueError('Group or source version absent from parent registry')
-        group = {'group_id': group_id, 'document_ids': [upgrade['document_id']]}
+        group = {'group_id': group_id, 'document_ids': [upgrade['document_id'] if upgrade else group_id]}
     if PACKETS.is_symlink():
         raise ValueError('Active packet root must stay on local SSD')
     role = 'blind_coder' if provider == 'opus' else 'blind_comparison_coder'
