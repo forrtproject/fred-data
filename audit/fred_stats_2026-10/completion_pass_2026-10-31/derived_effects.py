@@ -5,6 +5,22 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent/'scripts'))
 from compare import metric,quote_ok
 
+def reviewed_ocr_minus_copy(receipt,row,decision,source_path):
+ """Normalize one reviewed numeric token; do not alter the global parser."""
+ assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
+ assert decision.get('target_match_confirmed') is True and decision.get('verdict')=='blind_right'
+ field=receipt['field'];assert field in ['es_value_o','es_value_r']
+ assert metric(row['es_type_'+field[-1]])==metric(decision.get('correct_metric'))=='b (unstd)'
+ assert Path(decision['source_path']).resolve()==Path(source_path).resolve()
+ token=receipt['printed_value'];assert re.fullmatch(r'⫺(?:\d+(?:\.\d+)?|\.\d+)',token)
+ normalized='-'+token[1:];assert decision['correct_value']==normalized
+ assert receipt['source_label'] in receipt['statistic_quote'] and receipt['source_label'] in decision['quote']
+ assert token in receipt['statistic_quote'] and token in decision['quote']
+ assert 'negative' in receipt['negative_context_quote'].lower()
+ for key in ['statistic_quote','negative_context_quote']:
+  assert quote_ok({'quote':receipt[key],'source_path':source_path,'value':token,'confident':True,'location':decision['location']})
+ return normalized
+
 def documented_f_to_r_to_d(receipt,row,decision,source_path):
  """Reproduce an existing coding convention, without assuming group sizes."""
  assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
