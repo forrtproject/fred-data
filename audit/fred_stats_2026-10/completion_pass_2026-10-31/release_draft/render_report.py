@@ -8,7 +8,11 @@ def read(name):return list(csv.DictReader((P/name).open(encoding='utf-8-sig')))
 def build():
  s=json.loads((P/'release_summary.json').read_text());c=read('confirmed_corrections.csv');field=s['field_counts'];N=s['snapshot_effects']
  error=s['confirmed_field_errors'];affected=s['affected_effect_rows'];coverage=s['coverage'];verified=sum(a.get('correct',0)+a.get('error',0) for a in field.values());stamp=datetime.date.today().strftime('%-d %B %Y')
- shutil.copyfile(B/'field_summary_by_project.csv',P/'field_summary_by_project.csv')
+ project=read('field_summary_by_project.csv')
+ for f,a in field.items():
+  group=[r for r in project if r['field']==f]
+  for column,want in [('errors',a.get('error',0)),('evaluable',a.get('correct',0)+a.get('error',0)),('unverified',a.get('unverified',0)),('not_comparable',a.get('not_comparable',0))]:
+   assert sum(int(r[column]) for r in group)==want,(f,column,'Rebuild current project summary before rendering')
  bars=[];table=[]
  for f,a in field.items():
   counts={k:a.get(k,0) for k in ['correct','error','unverified','not_comparable']};assert sum(counts.values())==N

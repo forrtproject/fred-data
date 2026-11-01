@@ -12,6 +12,17 @@ def txt(x):return '' if x is None else str(x)
 def write_csv(name,rows,cols=None):
  with (P/name).open('w',encoding='utf-8-sig',newline='') as f:
   w=csv.DictWriter(f,fieldnames=cols or list(rows[0]),lineterminator='\n');w.writeheader();w.writerows(rows)
+def project_summary(project_counts,field_counts):
+ rows=[]
+ for prefix,fields in sorted(project_counts.items()):
+  for field,c in fields.items():
+   e=c.get('error',0);ev=e+c.get('correct',0);u=c.get('unverified',0);nc=c.get('not_comparable',0);n=ev+u+nc
+   rows.append({'fred_id_prefix':prefix,'field':field,'errors':e,'evaluable':ev,'error_rate_evaluable':e/ev if ev else None,'unverified':u,'not_comparable':nc,'total':n,'lower_all_row_error_bound':e/n if n else None,'upper_all_row_error_bound':(e+u+nc)/n if n else None})
+ for field,c in field_counts.items():
+  group=[r for r in rows if r['field']==field]
+  for column,want in [('errors',c.get('error',0)),('evaluable',c.get('correct',0)+c.get('error',0)),('unverified',c.get('unverified',0)),('not_comparable',c.get('not_comparable',0))]:
+   assert sum(r[column] for r in group)==want,(field,column,'Project totals disagree with overall field totals')
+ return rows
 def build():
  sys.path.insert(0,str(P.parent))
  from check_yield_ready import scientific_fingerprint
@@ -62,6 +73,7 @@ def build():
  assert len(corrections)==len({(e['audit_id'],e['field']) for e in progress['confirmed_errors']})
  write_csv('confirmed_corrections.csv',corrections);write_csv('fred_fixes.csv',patches);write_csv('row_guard.csv',[{k:txt(parent[i-1][k]) for k in GUARD} for i in sorted(guard_ids)],GUARD)
  write_csv('field_summary.csv',[{'field':f,**{k:progress['field_counts'][f].get(k,0) for k in ['correct','error','unverified','not_comparable']},'evaluable':progress['field_counts'][f].get('correct',0)+progress['field_counts'][f].get('error',0)} for f in FIELDS])
+ write_csv('field_summary_by_project.csv',project_summary(progress['project_counts'],progress['field_counts']))
  write_csv('availability_followups.csv',[{'audit_id':a['audit_id'],'side':a['side'],'reference':a['reference'],'reference_url':a['url'],'coded_work_url':a['coded_work_url'],'flag':a['flag'],'status':a['status'],'requested_action':a['requested_parent_action']} for a in json.loads((B/'safe_source_addendum/availability_followups.json').read_text())])
  # Recheck the original diagnostic flags against the complete physical patch.
  updated=[dict(r) for r in parent]
