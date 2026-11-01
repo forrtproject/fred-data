@@ -1,5 +1,6 @@
 """Merge only unfinished fields, retaining every baseline-verified field and scope."""
 import copy,csv,hashlib,json,sys
+from fractions import Fraction
 from pathlib import Path
 F=Path(__file__).resolve().parent;B=F.parent;sys.path.insert(0,str(B/'scripts'))
 from schema import validate
@@ -16,7 +17,7 @@ def dedupe_overrides(records):
   if r.get('pass')=='completion_2026-10-31':own[r['audit_id'],r['field']]=r
  return old+list(own.values())
 def main():
- base={int(r['input_row_index']):r for r in csv.DictReader((F/'baseline_results.csv').open(encoding='utf-8-sig'))};proposals=json.loads((F/'proposals.json').read_text());ledger=json.loads((F/'integration.json').read_text()) if (F/'integration.json').exists() else {};overrides=json.loads((B/'target_overrides.json').read_text());changes=[];blocked=[];decisions={}
+ base={int(r['input_row_index']):r for r in csv.DictReader((F/'baseline_results.csv').open(encoding='utf-8-sig'))};proposals=json.loads((F/'proposals.json').read_text());ledger=json.loads((F/'integration.json').read_text()) if (F/'integration.json').exists() else {};overrides=json.loads((B/'target_overrides.json').read_text());changes=[];blocked=[];decisions={};equivalences=[]
  for file in sorted((F/'reviews').glob('answer_*_v*.json')):
   stem=file.stem.removeprefix('answer_');key,version=stem.rsplit('_v',1);task=F/'reviews'/f'task_{key}_v{version}.json'
   if not task.exists() or json.loads(task.read_text())['status']!='completed':continue
@@ -28,6 +29,8 @@ def main():
   payload=json.loads((F/'reviews'/f'payload_{key}_v{version}.json').read_text());good,failed=validate_batch(data,payload)
   if failed:blocked.append({'review':key,'fields':failed});continue
   for d in good:
+   expected=next(a for a in payload if (a['audit_id'],a['field'])==(d['audit_id'],d['field']));assert Path(d['source_path']).resolve()==Path(expected['source_path']).resolve(),'Review used an unassigned source'
+   assert isinstance(d.get('target_match_confirmed'),bool)
    assert base[d['audit_id']][d['field']+'_final_verdict'] not in ['correct','error']
    d['completion_pass']='2026-10-31';d['replaces_unverified']=True
   atomic(F/'reviews'/f'validated_{key}_v{version}.json',good)
@@ -48,6 +51,9 @@ def main():
    continue
   aid,field=item['audit_id'],item['field'];key=item['source_key']+':'+str(aid)+':'+field
   digest=hashlib.sha256(json.dumps(item,sort_keys=True).encode()).hexdigest();decision=decisions.get((aid,field));signature=digest+(':review_required' if (aid,field) in review_fields else ':direct')+(':'+hashlib.sha256(json.dumps(decision,sort_keys=True).encode()).hexdigest() if decision else '')
+  signature+=':metric-copy-v1'
+  if decision and decision.get('target_match_confirmed') is True and decision['verdict']!='undeterminable' and field.startswith('es_') and metric(decision.get('correct_metric'))==metric(item['input']['es_type_o' if item['side']=='original' else 'es_type_r']) and number(item['blind']['value']) is not None and number(item['blind']['value'])==number(decision.get('correct_value')):
+   equivalences.append({'audit_id':aid,'field':field,'printed_value':item['blind']['value'],'printed_metric':item['blind']['metric'],'source_path':item['blind']['source_path'],'comparison_metric':decision['correct_metric'],'reason':decision['reason'],'location':decision['location'],'quote':decision['quote'],'completion_pass':'2026-10-31'})
   if ledger.get(key,{}).get('signature')==signature:continue
   assert base[aid][field+'_final_verdict'] not in ['correct','error']
   dest=B/'extractions'/f'{aid}.json';before=validate(json.loads(dest.read_text()));merged=copy.deepcopy(before);side=item['side'];e=copy.deepcopy(item['blind'])
@@ -58,9 +64,6 @@ def main():
   # Existing side-level identity remains unchanged. Confirmation is narrowly field scoped.
   needs_review=(aid,field) in review_fields;confirmed=item['worker_target_match'] is True and not needs_review
   if decision:confirmed=decision.get('target_match_confirmed') is True and decision['verdict']!='undeterminable' and (field!='reported_success' or decision.get('effect_specific_verdict_confirmed') is True)
-  if confirmed and decision and field.startswith('es_') and metric(decision.get('correct_metric'))==metric(item['input']['es_type_o' if side=='original' else 'es_type_r']) and number(e['value']) is not None and number(e['value'])==number(decision.get('correct_value')):
-   old_metric=e['metric'];e['metric']=decision['correct_metric'];merged[side]['es']=e
-   merged['notes']+='\nIndependent metric clarification: '+str(old_metric)+' -> '+str(e['metric'])+'; no numeric conversion.'
   ev=decision if confirmed and decision else e
   assert quote_ok({**ev,'value':'field scope','confident':True})
   overrides.append({'audit_id':aid,'field':field,'side':side,'target_match':True if confirmed else False if field=='reported_success' else None,'location':ev['location'],'quote':ev['quote'],'source_path':ev['source_path'],'reason':('Independent completion review confirms field target; ' if decision and confirmed else 'Fresh blind completion identifies this field target; ' if confirmed else 'Completion field is pending independent target/sample/metric review; ')+item['worker_target_description'],'pass':'completion_2026-10-31'})
@@ -75,5 +78,15 @@ def main():
    else:
     w='original' if f.endswith('_o') else 'replication';z='n' if f.startswith('n_') else 'es' if f.startswith('es_') else 'p';assert before[w][z]==merged[w][z]
   atomic(dest,merged);ledger[key]={'signature':signature,'audit_id':aid,'field':field,'source_key':item['source_key'],'reviewed':bool(decision),'field_target_confirmed':confirmed};changes.append([aid,field])
- atomic(B/'adjudication_holds.json',holds);atomic(B/'target_overrides.json',dedupe_overrides(overrides));atomic(F/'integration.json',ledger);atomic(F/'integration_blockers.json',blocked);print(json.dumps({'integrated_fields':len(ledger),'changed_this_run':changes,'review_blockers':blocked}))
+ for receipt in json.loads((F/'repairs/derived_effects.json').read_text()) if (F/'repairs/derived_effects.json').exists() else []:
+  aid,field=receipt['audit_id'],receipt['field'];decision=decisions.get((aid,field))
+  if not decision or decision['verdict']=='undeterminable' or decision.get('target_match_confirmed') is not True:continue
+  item=next(a for a in proposals if (a['audit_id'],a['field'])==(aid,field));row=json.loads((B/'parent_rows.json').read_text())[aid-1]
+  assert receipt['expected_coding_expression'] in row['es_repr_'+field[-1]],'Calculation is not documented in original coding'
+  assert metric(decision['correct_metric'])==metric(row['es_type_'+field[-1]])
+  assert receipt['calculation']=='reported_proportion_odds_ratio'
+  p,q=map(Fraction,receipt['proportions']);result=(p/(1-p))/(q/(1-q));assert abs(result-Fraction(decision['correct_value']))<Fraction(1,10**9)
+  assert '70%' in decision['quote'] and '65%' in decision['quote'],'Primary reported input proportions missing'
+  equivalences.append({'audit_id':aid,'field':field,'printed_value':item['blind']['value'],'printed_metric':item['blind']['metric'],'source_path':item['blind']['source_path'],'comparison_metric':decision['correct_metric'],'comparison_value':decision['correct_value'],'reason':decision['reason'],'location':decision['location'],'quote':decision['quote'],'derivation':{**receipt,'exact_result':str(result)},'completion_pass':'2026-10-31'})
+ atomic(B/'metric_equivalences.json',equivalences);atomic(B/'adjudication_holds.json',holds);atomic(B/'target_overrides.json',dedupe_overrides(overrides));atomic(F/'integration.json',ledger);atomic(F/'integration_blockers.json',blocked);print(json.dumps({'integrated_fields':len(ledger),'changed_this_run':changes,'review_blockers':blocked}))
 if __name__=='__main__':main()

@@ -74,6 +74,21 @@ def parsed_stat(s):
  dfs=tuple(number(x) for x in (m[2] or '').split(',') if number(x) is not None)
  annotation=re.search(r'(?i)\bN\s*=\s*(\d+)',s)
  return kind,dfs,m[3],int(annotation[1]) if annotation else None
+def bounded_stat(value):
+ text=norm(value).replace('≤','<=').replace('≥','>=')
+ match=re.fullmatch(r'(?i)(F|t|z|X2|chi2)\s*(?:values)?\s*(\([^)]*\))?\s*(<=|>=|<|>)\s*([+-]?(?:\d*\.\d+|\d+\.?\d*))',text)
+ return (match[1].lower(),re.sub(r'\s+','',match[2] or ''),match[3],number(match[4])) if match else None
+
+def comparison_evidence(aid,field,e,rules):
+ """Use a reviewed field-specific metric identity without relabelling printed evidence."""
+ rule=rules.get((aid,field))
+ if not e or not rule:return e
+ if any(e.get(k)!=rule.get('printed_'+k if k in ['value','metric'] else k) for k in ['value','metric','source_path']):return e
+ if not quote_ok({**rule,'value':'metric identity','confident':True}):return e
+ value=rule.get('comparison_value',e['value'])
+ if value!=e['value'] and not rule.get('derivation'):return e
+ return {**e,'metric':rule['comparison_metric'],'value':value}
+
 def overlap(a,b):return a is not None and b is not None and max(a[0],b[0])<=min(a[1],b[1])
 def comp(field,raw,blind,r):
  val=blind['value']
@@ -102,7 +117,10 @@ def comp(field,raw,blind,r):
  if metric(r['es_type_'+field[-1]])=='test statistic':
   a=parsed_stat(raw);b=parsed_stat(blind.get('test_statistic') or val)
   if raw in [None,''] and b:return 'differ'
-  if not a or not b or a[0]!=b[0]:return 'not_comparable'
+  if not a or not b:
+   aa=bounded_stat(raw);bb=bounded_stat(blind.get('test_statistic') or val)
+   return 'agree' if aa is not None and aa==bb else 'not_comparable'
+  if a[0]!=b[0]:return 'not_comparable'
   if a[1]!=b[1]:return 'differ'
   if a[3] is not None and b[3] is not None and a[3]!=b[3]:return 'differ'
   return 'agree' if number(a[2])==number(b[2]) else 'compatible' if overlap(rounding(a[2]),rounding(b[2])) else 'differ'
@@ -128,11 +146,21 @@ def field_target_match(x,field,overrides):
  return x[side]['target_match']
 def adjudication_confirms_shipped(field,raw,a,row):
  if a.get('verdict')!='shipped_right' or a.get('correct_value') is None:return False
+ # Newly supported bounds cannot establish the identity of an old unknown target.
+ if bounded_stat(raw) and a.get('target_match_confirmed') is not True:return False
  if field.startswith('es_value'):
   requested=metric(row.get('es_type_'+field[-1]))
   if requested!='test statistic' and metric(a.get('correct_metric'))!=requested:return False
  e={'value':a['correct_value'],'bound':a.get('correct_bound') or row.get('pval_type_'+field[-1]),'metric':a.get('correct_metric'),'test_statistic':a['correct_value']}
  return comp(field,raw,e,row) in ['agree','identical','compatible']
+def fresh_test_review(a,field,row):
+ """A fresh source-matched review can resolve printed notation or a wrongly coded test kind."""
+ if not field.startswith('es_value') or metric(row.get('es_type_'+field[-1]))!='test statistic':return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
+ if a.get('verdict') not in ['shipped_right','blind_right','both_wrong']:return False
+ parsed=parsed_stat(a.get('correct_value'));kind=metric(a.get('correct_metric'))
+ return bool(parsed and kind in ['test statistic',parsed[0]])
+
 def source_prefix(value):
  s=str(value or '').strip()
  if not s:return '(missing)'
@@ -189,6 +217,8 @@ def main():
  exhausted={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_exhausted.json').read_text())} if (B/'adjudication_exhausted.json').exists() else {}
  holds={(a['audit_id'],a['field']) for a in json.loads((B/'adjudication_holds.json').read_text())} if (B/'adjudication_holds.json').exists() else set()
  completion_pending={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_holds.json').read_text()) if a.get('completion_pass') in ['2026-10-31-pending','2026-10-31-unresolved']} if (B/'adjudication_holds.json').exists() else set()
+ metric_path=B/'metric_equivalences.json'
+ metric_rules={(a['audit_id'],a['field']):a for a in json.loads(metric_path.read_text())} if metric_path.exists() else {}
  target_overrides={};field_overrides={}
  if (B/'target_overrides.json').exists():
   overrides=json.loads((B/'target_overrides.json').read_text())
@@ -215,8 +245,12 @@ def main():
    if f.startswith('es_value'):
     z[f+'_shipped_metric']=r['es_type_'+f[-1]];z[f+'_blind_metric']=e.get('metric') if e else None
     z[f+'_blind_printed_value']=v;z[f+'_blind_printed_metric']=e.get('metric') if e else None;z[f+'_blind_test_statistic']=e.get('test_statistic') if e else None;z[f+'_comparison_basis']='printed es value'
-    if e and metric(r['es_type_'+f[-1]])=='test statistic' and parsed_stat(e.get('test_statistic')):
+    if e and metric(r['es_type_'+f[-1]])=='test statistic' and (parsed_stat(e.get('test_statistic')) or bounded_stat(e.get('test_statistic'))):
      v=e['test_statistic'];z[f+'_blind_metric']='test statistic';z[f+'_comparison_basis']='separately blind-extracted printed test_statistic (no conversion)'
+   effective_e=comparison_evidence(aid,f,e,metric_rules) if f.startswith('es_value') else e
+   if f.startswith('es_value'):z[f+'_comparison_value']=effective_e['value'] if effective_e is not e else v
+   if effective_e is not e:
+    z[f+'_blind_metric']=effective_e['metric'];z[f+'_comparison_basis']='Independent field-specific metric equivalence or documented calculation: '+metric_rules[(aid,f)]['reason']
    broad_success=bool(f=='reported_success' and narrative_scope_unknown(x,field_overrides.get((aid,f))))
    matched_target=field_target_match(x,f,field_overrides) if x else None
    z[f+'_target_basis']=field_overrides.get((aid,f),{}).get('reason','')
@@ -230,15 +264,16 @@ def main():
    elif broad_success and v is not None:comparison='mismatched_target';reason='Only broad paper-level narrative is identified; no individual-effect verdict established.'
    elif x and v is not None and (matched_target is False or side is not None and matched_target is None and quote_ok({**e,'value':v,'confident':True})):comparison='mismatched_target'
    elif e and quote_ok({**e,'value':v}) and (side is None or x[side]['status']=='done' and matched_target is True):
-    comparison=comp(f,raw,e,r)
+    comparison=comp(f,raw,effective_e,r)
     if comparison in ['agree','identical','compatible']:
      resolution='agree' if comparison in ['agree','identical'] else 'obvious';verdict='correct';reason='Compatible printed rounding intervals' if comparison=='compatible' else ''
     elif comparison=='not_comparable':verdict='not_comparable'
    elif e and v is not None:reason='Evidence, confidence or target match not validated'
    primary_adjud=bool(secondary and adjud.get((aid,f)) and original_primary_evidence(adjud[(aid,f)],r))
    if primary_adjud:
-    comparison=comp(f,raw,e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
-   if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud:
+    comparison=comp(f,raw,effective_e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
+   fresh_notation=bool(comparison=='not_comparable' and fresh_test_review(adjud.get((aid,f),{}),f,r))
+   if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_notation:
     a=adjud.get((aid,f))
     if (aid,f) in holds:a=None
     if a:
