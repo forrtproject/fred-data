@@ -2,7 +2,7 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 129 of 677 initial source packets and five additional source views have
+Current checkpoint: 132 of 677 initial source packets and five additional source views have
 passed Opus schema, literal-span and reading checks; fifteen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
@@ -184,3 +184,5 @@ fail under the authors' whole-study verdict. Row 2308 updates both reproduction
 axes together: the authors judge the numerical reproduction essentially the same,
 but alternative analyses challenge the four-varieties conclusion. The numerical
 discrepancies and scope limited to the 2004 survey remain explicit.
+
+The latest batch adds three mechanically validated readings. Document_0131 needs a fresh blind Sol read because the earlier tool returns omit two source ranges; document_0129 likewise lacks a complete exact-version reading. Document_0130 has a certified complete earlier read but a successful-versus-statistically-successful-but-flawed disagreement. Document_0132 remains unconfident, and document_0133 is abstract-only. None enters the automatic file from this checkpoint.
