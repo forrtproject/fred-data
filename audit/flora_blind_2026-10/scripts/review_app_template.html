@@ -290,7 +290,7 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
 <header class="masthead">
   <div>
     <h1>FLoRA audit decisions</h1>
-    <p class="lede">Review proposed fixes and cases needing your judgement. Approve safe batches, download the changes, then review the remaining cases. Decisions save to a shared review log for all reviewers; FLoRA changes only when the download is implemented.</p>
+    <p class="lede">Review proposed fixes and cases needing your judgement. Inspect grouped proposals, review outcomes individually, then download approved changes. Decisions save to a shared review log for all reviewers; FLoRA changes only when the download is implemented.</p>
   </div>
   <div class="tools">
     <p class="overall" id="overall"></p>
@@ -470,7 +470,7 @@ function profile(c){
   profiles.set(c.id,p);return p;
 }
 function snapshotOf(c){const p=profile(c);return fnv(JSON.stringify({changes:c.changes||{},quote:p.qf?p.qf.id||p.qf.proposed_quote:null,action:p.ra?[p.ra.action,p.ra.operation,p.ra.status]:null,options:p.options.map(o=>o.key),missing:p.summary.missing_row?.disposition||null}))}
-function statusOf(c){const r=store.records[c.id];if(!r||!r.decision){const pair=store.pairs?.[c.id.replace(/^missing:/,'pair:')];if(pair&&!r?.notes&&!r?.legacy)return batchGroups.find(g=>g.id===pair.group_id)?.fingerprint===pair.group_fingerprint?'add_pair':'stale';return r&&r.legacy?'legacy':'open'};if(r.batch_id&&batchGroups.find(g=>g.id===r.batch_id)?.fingerprint!==r.group_fingerprint)return 'stale';return r.proposal_fingerprint&&r.proposal_fingerprint!==snapshotOf(c)?'stale':r.decision}
+function statusOf(c){const r=store.records[c.id];if(c.review_hold&&['approve','approve_partial','approve_record_action'].includes(r?.decision))return 'stale';if(r?.batch_id&&['replication_outcomes','reproduction_results'].includes(r.batch_id)&&CONTEXT.review_reliability?.bulk_outcome_approval_enabled===false)return 'stale';if(!r||!r.decision){const pair=store.pairs?.[c.id.replace(/^missing:/,'pair:')];if(pair&&!r?.notes&&!r?.legacy)return batchGroups.find(g=>g.id===pair.group_id)?.fingerprint===pair.group_fingerprint?'add_pair':'stale';return r&&r.legacy?'legacy':'open'};if(r.batch_id&&batchGroups.find(g=>g.id===r.batch_id)?.fingerprint!==r.group_fingerprint)return 'stale';return r.proposal_fingerprint&&r.proposal_fingerprint!==snapshotOf(c)?'stale':r.decision}
 const APPROVING=new Set(['approve','approve_partial','approve_record_action','add_pair','accept_finding']);
 function markClass(s){return APPROVING.has(s)?'approved':s==='keep_current'||s==='reject_pair'?'kept':s==='follow_up'?'follow':s==='choose_option'||s==='policy_rule'?'option':s}
 const isDecided=c=>!['open','stale','legacy'].includes(statusOf(c));
@@ -785,6 +785,7 @@ function renderCase(){
   const art=$('case');art.replaceChildren();const c=caseById.get(state.selected);
   if(!c){art.append(h('p',{class:'empty'},visible.length?'Choose a case from the list.':'No cases match this view.'));return}
   const p=profile(c);
+  if(c.review_hold)art.append(h('section',{class:'callout'},h('h3',{},'Correction withheld after a review objection'),h('p',{},c.review_hold.reason),...c.review_hold.evidence.map(e=>quoteBlock(e.quote,[e.section,'Excerpt from the current report']))));
   art.append(kicker(c,p),h('h2',{class:'case-title'},caseTitle(c)),byline(c),h('p',{class:'issue'},issue(c,p)));
   if(p.policies.length)art.append(renderPolicy(c,p));
   if(p.ra)art.append(renderRecordAction(c,p.ra,p.type==='record'?splitLead(p.ra.reason||'',260)[0]:''));
@@ -832,7 +833,7 @@ function proposalOf(c,fields){const p=profile(c);const out={};for(const f of fie
 function decide(c,opt){
   flushNote();
   const note=($('note')?.value||'').trim();
-  if(opt.disabled)return;
+  if(opt.disabled||c.review_hold&&['approve','approve_partial'].includes(opt.code)){notice('This correction is withheld; keep the current value or request follow-up.');return}
   if(opt.needsNote&&!note){openNote('Describe the rule you chose before recording this decision.');return}
   const p=profile(c),prev=store.records[c.id]?JSON.parse(JSON.stringify(store.records[c.id])):null;
   const fields=['approve','approve_partial'].includes(opt.code)?p.items.filter(f=>includeKey(c).has(f)):[];
@@ -854,7 +855,7 @@ function renderDock(){
   const sp=spec(c),r=store.records[c.id],s=statusOf(c);
   const inner=h('div',{class:'dock-inner'});
   inner.append(h('p',{class:'dock-q'},sp.question));if(sp.sub)inner.append(h('p',{class:'dock-sub'},sp.sub));
-  inner.append(h('div',{class:'dock-actions'},sp.options.map(o=>h('button',{type:'button',class:'choice '+(o.tone||''),'aria-pressed':String(!!r&&r.decision===o.code&&(!o.option||r.option?.key===o.option.key)),disabled:o.disabled?true:null,'aria-keyshortcuts':o.key?o.key.toUpperCase():null,onclick:()=>decide(c,o)},o.label,o.key?h('kbd',{},o.key.toUpperCase()):null))));
+  inner.append(h('div',{class:'dock-actions'},sp.options.map(o=>h('button',{type:'button',class:'choice '+(o.tone||''),'aria-pressed':String(!!r&&r.decision===o.code&&(!o.option||r.option?.key===o.option.key)),disabled:o.disabled||c.review_hold&&['approve','approve_partial'].includes(o.code)?true:null,'aria-keyshortcuts':o.key?o.key.toUpperCase():null,onclick:()=>decide(c,o)},o.label,o.key?h('kbd',{},o.key.toUpperCase()):null))));
   const noteText=r?.notes||'',needsNote=sp.options.some(o=>o.needsNote),showNote=state.noteOpen||!!noteText||needsNote;
   if(showNote){const t=h('textarea',{id:'note',placeholder:needsNote?'State the coding rule and the value it gives for this row':s==='follow_up'?'What should the follow-up establish?':'Reasons, conditions or anything the integrator should know',oninput:e=>{$('note-error').textContent='';saveNote(c,e.target.value)}});t.value=noteText;inner.append(h('div',{class:'note-box'},h('label',{for:'note'},needsNote?'Rule you chose (required to record a policy decision)':'Note (optional)'),t,h('p',{class:'note-error',id:'note-error','aria-live':'polite'})))}
   let status;

@@ -57,6 +57,9 @@ for r in base_rows:
                          record_action_operation=record_action_map.get(i, {}).get('operation', ''),
                          record_action_reference='record_actions.json' if i in record_action_map else '',
                          decision_reference=d.get('decision_reference', 'sol_review_decisions.json') if d else '../results.csv'))
+reliability=read_json(O/'review_reliability.json') if (O/'review_reliability.json').exists() else {}
+for r in row_view:
+    if f"row:{r['input_row_index']}" in reliability.get('holds',{}):r['audit_status']='contested';r['application_dependency']=reliability['holds'][f"row:{r['input_row_index']}"]['reason'];r['decision_reference']='review_reliability.json'
 counts = Counter(r['audit_status'] for r in row_view)
 assert sum(counts.values()) == 2818 and counts['policy_decision'] == 8
 save_csv('audit_rows.csv', row_view, list(row_view[0]))
@@ -104,6 +107,10 @@ for (i, field), item in proposals.items():
             operation=record_action_map[i]['operation'], isolated_field_application_allowed=False)
         item['application_hold'] = ' '.join(filter(None, [item.get('application_hold'),
             'Resolve the whole-record remedy before applying this field; do not apply it in isolation.']))
+    reliability_file=O/'review_reliability.json'
+    reliability=read_json(reliability_file) if reliability_file.exists() else {}
+    contested=reliability.get('holds',{}).get(f'row:{i}')
+    if contested and field==contested['field']:item['application_hold']=contested['reason'];item['review_objection_reference']='review_reliability.json'
     item['audit_provenance_status'] = item['status']
     item['status'] = ('decision_required' if item.get('application_hold') or
                       item['status'] == 'conditional_review_required' else 'evidence_checked_proposal')
@@ -243,5 +250,7 @@ report = report.replace('Seven field proposals have a policy or application hold
 report = report.replace('four row bundles require coordination of identity changes, duplicate removal, or retained-attempt evidence.', 'record-level remedies cover inclusion, report binding, dependent metadata and quotations, and duplicate-attempt preservation.')
 if current:
     report += '\nThree newly recovered completed reports were coded blind and independently source-reviewed after the record-identity check. Their current decisions supersede source-bound Stage 1 dispositions; those earlier decisions remain preserved. See [current-source decisions](handoff/current_source_decisions.json).\n'
+if reliability.get('holds'):
+    report=report.replace('# FLoRA audit\n', '# FLoRA audit\n\n**Current reliability correction:** Row 462’s proposed outcome change is withheld after a source-evidence objection. Its shipped value remains unchanged. Bulk approval of outcome changes is suspended; earlier bulk outcome approvals are preserved but excluded from implementation exports. One row is now marked contested, in addition to the evidence-limit and policy cases below. See [current objection and source passages](handoff/review_reliability.json).\n')
 (B / 'REPORT.md').write_text(report)
 print(json.dumps(summary, indent=2))

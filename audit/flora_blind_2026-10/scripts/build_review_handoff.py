@@ -107,6 +107,15 @@ from review_record_actions import enrich_cases
 enrich_cases(cases,frozen)
 m['final_review_required_rows']=len(json.loads((O/'review_required.json').read_text())['cases'])
 m['status']='final_source_review_complete_proposals_not_applied' if m['final_Sol_reviewed_fulltext_rows']==109 else 'final_source_review_active_proposals_not_applied'
+reliability=json.loads((O/'review_reliability.json').read_text()) if (O/'review_reliability.json').exists() else {}
+for c in cases:
+ if c['id'] in reliability.get('holds',{}):
+  c['requires_review']=True;c['review_hold']=reliability['holds'][c['id']]
+  c['evidence']['outcome']['quote']=c['review_hold']['evidence'][0]['quote'];c['evidence']['outcome']['location']='Discussion: explicit attribution to Berinsky (2017)'
+  c['evidence']['outcome']['reason']=c['review_hold']['reason']
+  required=json.loads((O/'review_required.json').read_text());required['cases'].append(dict(case_id=c['id'],input_row_index=c['row'],application_hold=c['review_hold']['reason'],status='postpublication_objection_unresolved'));save('review_required.json',required)
+m['final_review_required_rows']=len(json.loads((O/'review_required.json').read_text())['cases'])
+if reliability.get('holds'):m['status']='postpublication_objection_open_proposals_not_applied'
 save('fix_proposals.json',dict(baseline_sha256=sha(source),existing_rows=fixes,add_pairs=adds));save('review_queue.json',cases);
 if not (O/'fulltext_109_inventory.json').exists():save('fulltext_109_inventory.json',ft)
 save('manifest.json',m)
@@ -220,7 +229,7 @@ from build_batch_evidence import build as build_batch_evidence
 build_batch_evidence()
 shared_config=json.loads((Path.home()/'.claude/html-comments.config.json').read_text())
 shared_review=dict(endpoint=shared_config['endpoint'],project='flora-audit-decisions-2026-10',protocol=1)
-context=dict(batch_evidence_sha256=sha(O/'batch_evidence.json'),shared_review=shared_review,batch_review=batch_review,baseline_sha256=sha(source),rows=rows,proposals=proposals,limits=limits,contrary=contrary,review_notes=review_notes,candidates=candidates,works=works,quote_fixes=quote_fixes,record_actions={k:safe(a) for k,a in record_actions.items() if not caseids.get(k,{}).get('record_action')})
+context=dict(review_reliability=safe(reliability),batch_evidence_sha256=sha(O/'batch_evidence.json'),shared_review=shared_review,batch_review=batch_review,baseline_sha256=sha(source),rows=rows,proposals=proposals,limits=limits,contrary=contrary,review_notes=review_notes,candidates=candidates,works=works,quote_fixes=quote_fixes,record_actions={k:safe(a) for k,a in record_actions.items() if not caseids.get(k,{}).get('record_action')})
 if derived:print(f'Review app: {len(derived)} proposal statuses derived because correction_proposals.json is missing or differs, e.g. {derived[:5]}',file=sys.stderr)
 DOWNLOADS=[('correction_proposals.json','Correction proposals (JSON)'),('record_actions.json','Record-level actions (JSON)'),
  ('evidence_provenance_fixes.json','Evidence quote updates (JSON)'),('review_required.json','Limits, policy choices and holds (JSON)'),
@@ -228,7 +237,7 @@ DOWNLOADS=[('correction_proposals.json','Correction proposals (JSON)'),('record_
  ('unresolved_missing_pairs.csv','Unresolved missing candidates (CSV)'),('audit_rows.csv','Status of every input row (CSV)'),
  ('sol_review_decisions.json','Field-level source decisions (JSON)'),('current_source_decisions.json','Current-source decisions (JSON)'),
  ('missing_pair_review_decisions.json','Missing-pair source decisions (JSON)'),('review_queue.json','Complete review queue (JSON)'),
- ('batch_evidence.json','Supporting evidence for batch items (JSON)'),('audit_overview.json','Audit overview (JSON)')]
+ ('review_reliability.json','Current objections and bulk-approval restrictions (JSON)'),('batch_evidence.json','Supporting evidence for batch items (JSON)'),('audit_overview.json','Audit overview (JSON)')]
 # The public builder inserts its report link before the first anchor of this paragraph.
 downloads='<p>'+''.join(f'<a href="{n}">{label}</a>' for n,label in DOWNLOADS if n=='correction_proposals.json' or (O/n).exists())+'</p>'
 display=json.loads(json.dumps(cases))

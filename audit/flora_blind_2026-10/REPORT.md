@@ -1,12 +1,14 @@
 # FLoRA audit
 
+**Current reliability correction:** Row 462’s proposed outcome change is withheld after a source-evidence objection. Its shipped value remains unchanged. Bulk approval of outcome changes is suspended; earlier bulk outcome approvals are preserved but excluded from implementation exports. One row is now marked contested, in addition to the evidence-limit and policy cases below. See [current objection and source passages](handoff/review_reliability.json).
+
 We audited the frozen FLoRA snapshot of **2,818 rows representing 2,344 works** using blind GPT-6.1 Sol coding, primary-source checks, and independent adjudication. The audit identifies incorrect original-study links, duplicate pairs, outcome miscoding, unsupported evidence quotations, and omitted study–original pairs. Corrections remain proposals; the shipped dataset and downstream pipelines are unchanged.
 
 ## Findings
 
 | Result | Count |
 | --- | ---: |
-| Row reviews with determined field dispositions | 2,518 |
+| Row reviews with determined field dispositions | 2,517 |
 | Rows retaining a specific evidence limit | 292 |
 | Rows requiring a coding-policy decision | 8 |
 | Proposed field corrections | 562 across 515 rows |
@@ -14,7 +16,7 @@ We audited the frozen FLoRA snapshot of **2,818 rows representing 2,344 works** 
 | Planned-study target pairs, kept separately | 2 |
 | Unresolved possible missing pairs | 124 |
 
-The row categories sum to all 2,818 input rows. “Determined” includes fields that become inapplicable when a source-supported removal or type correction is applied; it does not mean the proposed dataset changes have been applied. Every correction proposal has supporting audit evidence. 19 field proposals have a policy or record-application hold; record-level remedies cover inclusion, report binding, dependent metadata and quotations, and duplicate-attempt preservation. Fourteen primary-report quotation/provenance replacements are supplied separately. All proposals retain their evidence and application dependencies, and none is applied automatically.
+The row categories sum to all 2,818 input rows. “Determined” includes fields that become inapplicable when a source-supported removal or type correction is applied; it does not mean the proposed dataset changes have been applied. Every correction proposal has supporting audit evidence. 20 field proposals have a policy or record-application hold; record-level remedies cover inclusion, report binding, dependent metadata and quotations, and duplicate-attempt preservation. Fourteen primary-report quotation/provenance replacements are supplied separately. All proposals retain their evidence and application dependencies, and none is applied automatically.
 
 The principal problems were incorrect allocation of findings to originals and incorrect interpretation of outcomes. For example, a results-blind ManyLabs5 manuscript had concealed an available completed report supporting a successful replication. Several student records used collection ratings or quotations from another project instead of the actual individual report. Checks also prevented unnecessary corrections: a title variant in a reference list was a miscitation, and online versus print publication years did not establish a different original.
 
