@@ -6,18 +6,21 @@ We audited the frozen FLoRA snapshot of **2,818 rows representing 2,344 works** 
 
 | Result | Count |
 | --- | ---: |
-| Row reviews with determined field dispositions | 2,516 |
-| Rows retaining a specific evidence limit | 294 |
+| Row reviews with determined field dispositions | 2,518 |
+| Rows retaining a specific evidence limit | 292 |
 | Rows requiring a coding-policy decision | 8 |
-| Proposed field corrections | 563 across 516 rows |
-| Source-confirmed missing study–original pairs | 442 |
+| Proposed field corrections | 562 across 515 rows |
+| Source-confirmed missing study–original pairs for completed reports | 440 |
+| Planned-study target pairs, kept separately | 2 |
 | Unresolved possible missing pairs | 124 |
 
-The row categories sum to all 2,818 input rows. “Determined” includes fields that become inapplicable when a source-supported removal or type correction is applied; it does not mean the proposed dataset changes have been applied. Every correction proposal has supporting audit evidence. Seven field proposals have a policy or application hold; four row bundles require coordination of identity changes, duplicate removal, or retained-attempt evidence. Fourteen primary-report quotation/provenance replacements are supplied separately. All proposals retain their evidence and application dependencies, and none is applied automatically.
+The row categories sum to all 2,818 input rows. “Determined” includes fields that become inapplicable when a source-supported removal or type correction is applied; it does not mean the proposed dataset changes have been applied. Every correction proposal has supporting audit evidence. 19 field proposals have a policy or record-application hold; record-level remedies cover inclusion, report binding, dependent metadata and quotations, and duplicate-attempt preservation. Fourteen primary-report quotation/provenance replacements are supplied separately. All proposals retain their evidence and application dependencies, and none is applied automatically.
 
 The principal problems were incorrect allocation of findings to originals and incorrect interpretation of outcomes. For example, a results-blind ManyLabs5 manuscript had concealed an available completed report supporting a successful replication. Several student records used collection ratings or quotations from another project instead of the actual individual report. Checks also prevented unnecessary corrections: a title variant in a reference list was a miscitation, and online versus print publication years did not establish a different original.
 
 Missing pairs were confirmed against the complete shipped counterpart set, corrected identities, and alternate or preliminary reports. A different DOI, title, or year alone did not establish an omission. The DeWitt science-capital comparison, for example, qualified because a distinct empirical sample and its finding were actually retested; shared data with an earlier article were retained in the reasoning. Missing-pair confirmation does not imply a separately verified replication outcome.
+
+Record-level remedies are supplied separately from field corrections. A prospective registration is not evidence of a completed attempt: move it out of completed-result records, or bind it to an independently verified completed report and update the dependent metadata and quotations together. Two target pairs from the Bulgarian registration are therefore preserved as planned-study pairs, outside the 440 completed-report additions. Previously proposed “not a replication” type changes also require explicit record-exclusion review.
 
 ## Method
 
@@ -27,7 +30,7 @@ Source recovery covered the finite acquisition and omission inventories, includi
 
 ## Remaining limits and decisions
 
-Of the 294 rows with evidence limits, 221 have partial or abstract evidence, 52 lack usable text, and 21 have saved full text that still does not establish a necessary value. Complete reports can omit the required comparison, identify only a review rather than the claimed empirical original, or leave a particular project narrative unavailable. These are documented evidence limits, not unfinished reading.
+Of the 292 rows with evidence limits, 221 have partial or abstract evidence, 52 lack usable text, and 19 have saved full text that still does not establish a necessary value. Complete reports can omit the required comparison, identify only a review rather than the claimed empirical original, or leave a particular project narrative unavailable. These are documented evidence limits, not unfinished reading.
 
 The eight policy cases concern claim selection, hybrid replication/reproduction workflows, published anecdotal findings, inconclusive author verdicts, or discovery-inclusive pooled support. Concrete alternatives and their consequences appear in the review app. A complete source and agreement between models cannot settle an unspecified coding rule.
 
@@ -39,12 +42,15 @@ This is a completed audit within the documented source and codebook limits. It i
 - [Audit overview](handoff/audit_overview.json) and [all input-row dispositions](handoff/audit_rows.csv).
 - [Correction proposals](handoff/correction_proposals.json) and [primary evidence replacements](handoff/evidence_provenance_fixes.json).
 - [Confirmed missing pairs](handoff/confirmed_missing_pairs.csv) and [unresolved candidates](handoff/unresolved_missing_pairs.csv).
+- [Record-level remedies](handoff/record_actions.json) and [planned-study targets](handoff/planned_study_pairs.csv).
 - [Cases requiring review](handoff/review_required.json) and [field-level source decisions](handoff/sol_review_decisions.json).
 
 The source exports and execution ledgers remain available for provenance. The [detailed comparison tables](evidence_followup/historical_integrated_report.md) retain their original denominators; the figures above reconcile all completed review decisions into one current audit view. Proposed changes are never automatically applied to FLoRA.
 
 ## Validation
 
-Validation passed 88 regression tests, 533 raw handoff quotation checks, source schema and metadata checks, source hashes, baseline preconditions, and pair deduplication. The frozen FLoRA SHA-256 is `6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7`.
+Validation passed 160 regression tests, 533 raw handoff quotation checks and 146 new source-proof checks, source schema and metadata checks, source hashes, baseline preconditions, and pair deduplication. The frozen FLoRA SHA-256 is `6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7`.
 
 All owned model tasks are terminal; no audit workers or recovery schedule remain active. The review app is published on Cloudflare. Full acquired reports and private access details are excluded from the public app. Verification and preservation receipts are linked from the [audit handoff](handoff/README.md).
+
+Three newly recovered completed reports were coded blind and independently source-reviewed after the record-identity check. Their current decisions supersede source-bound Stage 1 dispositions; those earlier decisions remain preserved. See [current-source decisions](handoff/current_source_decisions.json).

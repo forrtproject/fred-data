@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FLoRA audit decisions</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ctext y=%2726%27 font-size=%2727%27%3E🔎%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#1b2333;--ink-2:#3b4659;--muted:#566174;--faint:#7c8796;
+  --rule:#d7dde5;--rule-strong:#b6c0cc;--wash:#f1f4f7;--paper:#fff;
+  --card-red:#c9483f;--card-blue:#d6e4f1;
+  --strike:#a3221b;--insert:#0d6a4e;--insert-wash:#dcf2e7;
+  --hold:#7a4800;--hold-wash:#fff3d8;--hold-rule:#e6bf74;
+  --follow:#5f3a9e;--follow-wash:#f1ebfa;--follow-rule:#cbb8ec;
+  --keep:#3f4a5c;--keep-wash:#e9edf2;--stale:#b42318;
+  --link:#1d4f9e;--focus:#2f6fe0;
+  --sans:Seravek,"Gill Sans Nova",Ubuntu,Calibri,"DejaVu Sans",source-sans-pro,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype","URW Palladio L",P052,Georgia,serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:16px/1.5 var(--sans);color:var(--ink);background:var(--paper);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+a{color:var(--link);overflow-wrap:anywhere}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.muted{color:var(--muted)}
+
+/* Masthead */
+.masthead{flex:none;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 24px;padding:14px 24px 0;border-bottom:1px solid var(--rule)}
+.masthead h1{margin:0;font-size:20px;line-height:1.3;font-weight:650}
+.lede{margin:2px 0 0;font-size:14px;color:var(--muted);max-width:78ch}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end}
+.overall{margin:0 6px 0 0;font-size:14px;color:var(--muted);white-space:nowrap}
+.overall b{color:var(--ink);font-weight:650}
+.tool{border:1px solid var(--rule-strong);background:var(--paper);border-radius:6px;padding:6px 11px;font-size:14px;cursor:pointer}
+.tool:hover{background:var(--wash)}
+.queues{grid-column:1/-1;display:flex;gap:2px;overflow-x:auto;margin-top:10px;scrollbar-width:thin}
+.tab{flex:none;border:0;background:none;padding:8px 12px 9px;cursor:pointer;border-bottom:3px solid transparent;text-align:left;font-size:15px;color:var(--ink-2)}
+.tab:hover{color:var(--ink);background:var(--wash)}
+.tab[aria-pressed=true]{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+.tab-count{margin-left:6px;color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums}
+.tab-bar{display:block;height:2px;margin-top:5px;background:var(--rule);border-radius:1px;overflow:hidden}
+.tab-bar i{display:block;height:100%;background:var(--insert)}
+.notice{grid-column:1/-1;margin:0;min-height:0;font-size:13.5px;color:var(--hold)}
+.notice:not(:empty){padding:4px 0 8px}
+
+/* Workspace */
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(290px,350px) minmax(0,1fr)}
+.index{display:flex;flex-direction:column;min-height:0;background:var(--wash);border-right:1px solid var(--rule)}
+.index-tools{flex:none;padding:12px 14px 10px;border-bottom:1px solid var(--rule)}
+.queue-note{margin:0 0 10px;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.filters{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}
+.filters input,.filters select{border:1px solid var(--rule-strong);border-radius:6px;background:var(--paper);padding:7px 9px;font-size:14px;min-width:0}
+.list-count{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.list-toggle{display:none}
+.case-list{list-style:none;margin:0;padding:0 0 24px;overflow:auto;flex:1;min-height:0}
+.group{position:sticky;top:0;z-index:1;padding:8px 14px 5px;font-size:13px;font-weight:600;color:var(--ink-2);background:var(--wash);border-bottom:1px solid var(--rule)}
+.group span{font-weight:400;color:var(--muted);margin-left:4px}
+.item{scroll-margin-top:34px;display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;width:100%;border:0;border-bottom:1px solid var(--rule);background:none;text-align:left;padding:9px 14px 10px 12px;cursor:pointer;font-size:14px;line-height:1.35}
+.item:hover{background:#e6ebf1}
+.item[aria-current=true]{background:var(--paper);box-shadow:inset 4px 0 0 var(--ink)}
+.item-head{display:flex;gap:6px;align-items:baseline;font-weight:600}
+.item-flag{font-weight:500;font-size:12px;padding:0 6px;border-radius:3px;background:var(--keep-wash);color:var(--keep)}
+.item-flag.tone-hold{background:var(--hold-wash);color:var(--hold)}
+.item-flag.tone-policy{background:var(--follow-wash);color:var(--follow)}
+.item-change{display:block;color:var(--ink-2);margin-top:2px;overflow-wrap:anywhere}
+.item-title{display:block;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mark{width:14px;height:14px;margin-top:2px;border-radius:50%;border:1.5px solid var(--rule-strong);position:relative;flex:none}
+.mark.approved{background:var(--insert);border-color:var(--insert)}
+.mark.approved::after{content:"";position:absolute;left:4px;top:1px;width:3px;height:7px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.mark.kept{background:var(--keep);border-color:var(--keep)}
+.mark.kept::after{content:"";position:absolute;left:3px;top:5px;width:6px;height:2px;background:#fff}
+.mark.follow{background:var(--hold-wash);border-color:var(--hold);border-radius:2px}
+.mark.option{background:var(--follow);border-color:var(--follow);border-radius:2px;transform:rotate(45deg) scale(.82)}
+.mark.stale{border-color:var(--stale);background:#fde8e6}
+.mark.stale::after{content:"!";position:absolute;inset:-3px 0 0;font-size:11px;font-weight:700;color:var(--stale);text-align:center}
+.mark.legacy::after{content:"";position:absolute;left:4px;top:4px;width:4px;height:4px;border-radius:50%;background:var(--faint)}
+
+/* Case pane */
+.detail{display:flex;flex-direction:column;min-height:0;min-width:0}
+.case{flex:1;min-height:0;overflow:auto;padding:22px 32px 40px}
+.case>*{max-width:900px}
+.kicker{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px;font-size:14px;color:var(--muted)}
+.kicker b{color:var(--ink);font-weight:650;margin-right:2px}
+.chip{display:inline-block;font-size:12.5px;line-height:1.5;padding:1px 7px;border-radius:3px;background:var(--keep-wash);color:var(--keep)}
+.chip.tone-hold{background:var(--hold-wash);color:var(--hold)}
+.chip.tone-policy{background:var(--follow-wash);color:var(--follow)}
+.chip.tone-ok{background:var(--insert-wash);color:var(--insert)}
+.case-title{margin:0;font:600 25px/1.25 var(--serif);letter-spacing:-.005em;max-width:46ch}
+.byline{margin:6px 0 0;font-size:14.5px;color:var(--muted)}
+.byline a{margin-left:4px}
+.issue{margin:18px 0 0;font-size:19px;line-height:1.45;max-width:62ch}
+.issue q,.dock-q q{quotes:"“" "”" "‘" "’";font-weight:650}
+.block-title{margin:30px 0 8px;font-size:17px;font-weight:650}
+.sub{margin:16px 0 6px;font-size:14px;font-weight:650;color:var(--ink-2)}
+
+/* The catalogue card: FLoRA's record, marked up with proposed corrections */
+.card{margin:20px 0 0;border:1px solid #c5d3e1;border-radius:2px;background:var(--paper);box-shadow:0 1px 0 #c5d3e1,0 3px 0 -1px #fff,0 4px 0 -1px #c5d3e1}
+.card-head{display:flex;flex-wrap:wrap;gap:4px 16px;justify-content:space-between;align-items:baseline;padding:10px 18px 8px;border-bottom:2px solid var(--card-red)}
+.card-title{font-weight:650;font-size:15px}
+.card-note{font-size:13px;color:var(--muted)}
+.card-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 18px;padding:12px 18px;border-bottom:1px solid var(--card-blue)}
+.card-row:last-child{border-bottom:0}
+.card-label{font-size:14.5px;font-weight:600;color:var(--ink)}
+.card-label small{display:block;font-weight:400;font-size:12.5px;line-height:1.35;color:var(--muted);margin-top:2px}
+.card-row.is-change .card-label small{color:var(--insert)}
+.card-row.is-hold .card-label small,.card-row.is-unverified .card-label small{color:var(--hold)}
+.card-row.is-policy .card-label small{color:var(--follow)}
+.card-row.is-excluded{opacity:.55}
+.values{display:grid;gap:8px;min-width:0}
+.val{min-width:0}
+.val-tag{display:block;font-size:12px;color:var(--muted);margin-bottom:1px}
+.code{font-size:17px;font-weight:600}
+.val-now del,.val-now .cite{text-decoration:line-through;text-decoration-color:var(--strike);text-decoration-thickness:2px;color:var(--ink-2)}
+.val-now del{text-decoration-skip-ink:none}
+.val-new ins{text-decoration:none;background:var(--insert-wash);color:var(--insert);padding:0 .25em;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.val-new .cite{border-left:3px solid var(--insert);padding-left:10px}
+.def{display:block;margin:1px 0 0;font-size:13px;line-height:1.4;color:var(--muted);max-width:60ch}
+.cite{display:block;max-width:68ch}
+.cite-who{font-weight:600}
+.cite-title{display:block;font-family:var(--serif);font-size:16.5px;line-height:1.4}
+.cite-tail{display:block;font-size:13.5px;color:var(--muted)}
+.cite-tail>*+*{margin-left:10px}
+.flora-quote{margin:8px 0 0;font:italic 15px/1.5 var(--serif);color:var(--ink-2);max-width:66ch}
+.flora-quote span{font:13px/1.4 var(--sans);font-style:normal;color:var(--muted);display:block}
+.include{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);margin-top:2px}
+.include input{margin:0}
+
+/* Record action, policy and caveats */
+.action{margin:22px 0 0;padding:16px 20px 18px;background:#f4f7fb;border:1px solid #c5d3e1;border-top:4px solid var(--ink);border-radius:2px}
+.action-kicker{margin:0;font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.action-title{margin:4px 0 0;font-size:21px;line-height:1.3;font-weight:650}
+.action-reason{margin:8px 0 0;max-width:72ch}
+.action-changes{margin-top:12px;border-top:1px solid var(--card-blue)}
+.action-change{display:grid;grid-template-columns:170px minmax(0,1fr);gap:4px 16px;padding:9px 0;border-bottom:1px solid var(--card-blue)}
+.action-change .card-label{font-size:14px}
+.action-preserves{margin:12px 0 0;font-size:14.5px;max-width:72ch}
+.policy-block{margin:22px 0 0;padding:16px 20px 18px;border:1px solid var(--follow-rule);border-top:4px solid var(--follow);border-radius:2px;background:#fbf9fe}
+.policy-block .block-title{margin-top:0;color:var(--follow)}
+.affects{margin:0;font-size:14px;color:var(--muted)}
+.policy-q{margin:6px 0 0;font-size:17.5px;line-height:1.45;max-width:68ch}
+.options{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+.option{padding:10px 14px;background:var(--paper);border:1px solid var(--follow-rule);border-radius:4px}
+.option p{margin:4px 0 0;max-width:70ch}
+.option-head{margin:0!important;font-size:15.5px}
+.option-num{display:inline-block;min-width:4.6em;font-size:13px;color:var(--follow);font-weight:650}
+.option-scope{color:var(--ink-2);font-size:14.5px}
+.option.is-chosen{border-color:var(--follow);box-shadow:inset 4px 0 0 var(--follow)}
+.callout{margin:20px 0 0;padding:12px 16px;border-radius:3px;border:1px solid var(--hold-rule);background:var(--hold-wash)}
+.callout-title{margin:0 0 4px;font-size:15px;font-weight:650;color:var(--hold)}
+.callout ul{margin:4px 0 0;padding-left:20px}
+.callout li{margin:4px 0;max-width:74ch}
+.callout.info{border-color:var(--rule-strong);background:var(--wash)}
+.callout.info .callout-title{color:var(--ink-2)}
+
+/* Evidence */
+.why-field{margin:16px 0 0;padding-top:12px;border-top:1px solid var(--rule)}
+.why-field h4{margin:0;font-size:15px;font-weight:650;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.why-field h4 .chip{font-weight:500}
+.reason{margin:6px 0 0;max-width:72ch}
+.more-text{margin:4px 0 0}
+.more-text summary{cursor:pointer;color:var(--link);font-size:14px}
+.more-text p{margin:6px 0 0;max-width:72ch}
+.quote{margin:10px 0 0;padding:2px 0 2px 16px;border-left:3px solid #9fb6cf;font:16px/1.55 var(--serif);white-space:pre-wrap;max-width:68ch}
+.quote-loc{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:6px 16px;margin:10px 0 0;font-size:14.5px}
+.detail-list{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr);gap:6px 16px;margin:10px 0 0;font-size:14.5px}
+.detail-list dt{color:var(--muted)}
+.detail-list dd{margin:0;max-width:70ch;min-width:0}
+.detail-list .detail-list{grid-template-columns:minmax(100px,150px) minmax(0,1fr);margin:2px 0 6px}
+.plain{margin:0;padding-left:18px}
+.plain li{margin:2px 0}
+details.inline summary{cursor:pointer;color:var(--link)}
+.tech{margin:34px 0 0;border-top:1px solid var(--rule);padding-top:10px;font-size:14px}
+.tech>summary{cursor:pointer;color:var(--muted)}
+.tech pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--wash);padding:12px;border-radius:3px;font-size:12.5px;max-height:420px;overflow:auto}
+.tech .detail-list{font-size:13.5px}
+.hash{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;overflow-wrap:anywhere}
+.empty{margin:40px 0;color:var(--muted)}
+
+/* Decision dock */
+.dock{flex:none;border-top:1px solid var(--rule-strong);background:var(--paper);padding:12px 32px 12px;box-shadow:0 -6px 14px -12px rgba(27,35,51,.45)}
+.dock-inner{max-width:900px}
+.dock-q{margin:0;font-size:16.5px;line-height:1.4;font-weight:600;max-width:80ch}
+.dock-sub{margin:3px 0 0;font-size:13.5px;color:var(--hold)}
+.dock-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.choice{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--rule-strong);background:var(--paper);border-radius:6px;padding:8px 13px;font-size:15px;cursor:pointer;max-width:100%;text-align:left}
+.choice:hover{background:var(--wash)}
+.choice kbd{font:12px/1 var(--sans);color:var(--faint);border:1px solid var(--rule);border-radius:3px;padding:2px 5px}
+.choice.approve{background:var(--insert);border-color:var(--insert);color:#fff}
+.choice.approve:hover{background:#0a5a42}
+.choice.approve kbd{color:#cfeee0;border-color:#4f9a80}
+.choice.follow{color:var(--follow);border-color:var(--follow-rule)}
+.choice.option{color:var(--follow);border-color:var(--follow-rule)}
+.choice[aria-pressed=true]{outline:3px solid var(--ink);outline-offset:1px}
+.choice[disabled]{opacity:.45;cursor:not-allowed}
+.dock-row{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;justify-content:space-between;margin-top:10px}
+.dock-status{margin:0;font-size:14px;color:var(--muted);max-width:70ch}
+.dock-status b{color:var(--ink)}
+.dock-status.saved b{color:var(--insert)}
+.dock-status.stale{color:var(--stale)}
+.linkish{border:0;background:none;padding:0;color:var(--link);cursor:pointer;font-size:14px;text-decoration:underline;text-underline-offset:2px}
+.dock-nav{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted)}
+.dock-nav button{border:1px solid var(--rule-strong);background:var(--paper);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:14px}
+.dock-nav button.linkish{border:0;background:none;padding:0;border-radius:0}
+.dock-nav button[disabled]{opacity:.45;cursor:default}
+.note-box{margin-top:8px}
+.note-box textarea{width:100%;min-height:62px;border:1px solid var(--rule-strong);border-radius:6px;padding:8px 10px;font-size:14.5px;resize:vertical}
+.note-box label{display:block;font-size:13px;color:var(--muted);margin-bottom:3px}
+.note-error{margin:4px 0 0;font-size:13.5px;color:var(--stale)}
+.auto{display:flex;gap:6px;align-items:center;font-size:13.5px;color:var(--muted)}
+
+/* Toast and dialog */
+.toast{position:fixed;left:24px;bottom:24px;z-index:20;display:flex;gap:14px;align-items:center;max-width:min(560px,calc(100vw - 48px));padding:10px 14px;background:var(--ink);color:#fff;border-radius:6px;font-size:14.5px;box-shadow:0 6px 18px rgba(27,35,51,.3)}
+.toast[hidden]{display:none}
+.toast button{border:0;background:none;color:#b7d7ff;cursor:pointer;font-size:14.5px;text-decoration:underline;padding:0}
+dialog.about{max-width:780px;width:calc(100vw - 32px);border:1px solid var(--rule-strong);border-radius:6px;padding:0;color:var(--ink)}
+dialog.about::backdrop{background:rgba(27,35,51,.35)}
+.about-body{padding:20px 26px 26px;max-height:calc(100vh - 80px);overflow:auto}
+.about-body h2{margin:0;font-size:20px}
+.about-body h3{margin:22px 0 6px;font-size:16px}
+.about-body p{max-width:72ch;margin:8px 0 0}
+.about-close{float:right}
+.downloads p{font-size:0;line-height:0;margin:8px 0 0;max-width:none}
+.downloads a{display:inline-block;font-size:14.5px;line-height:1.4;margin:0 18px 8px 0}
+.downloads a.unavailable{color:var(--faint);text-decoration:line-through}
+kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bottom-width:2px;border-radius:3px;padding:2px 6px;background:var(--wash)}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:8px 0 0;font-size:14.5px}
+.keys dd{margin:0}
+
+@media (max-width:1000px){
+  .workspace{grid-template-columns:minmax(250px,300px) minmax(0,1fr)}
+  .case{padding:18px 22px 32px}.dock{padding:10px 22px}
+  .card-row{grid-template-columns:120px minmax(0,1fr)}
+}
+@media (max-width:760px){
+  body{display:block;height:auto;overflow:visible}
+  .masthead{position:relative;grid-template-columns:1fr;padding:10px 14px 0;gap:6px}
+  .tools{justify-content:flex-start;gap:6px;flex-wrap:nowrap;overflow-x:auto;max-width:100%}
+  .tool{padding:5px 9px;font-size:13px;white-space:nowrap;flex-shrink:0}
+  .masthead h1{font-size:18px;padding-right:132px}.lede{display:none}
+  .overall{position:absolute;right:14px;top:11px;width:auto;font-size:12px;margin:0}
+  .workspace{display:block}
+  .index{border-right:0;border-bottom:1px solid var(--rule)}
+  .list-toggle{display:block;margin-top:8px}
+  .case-list{max-height:55vh}
+  .index.collapsed .case-list,.index.collapsed .filters,.index.collapsed .list-count{display:none}
+  .index.collapsed .queue-note{display:none}
+  .index.collapsed .index-tools{padding:8px 14px}
+  .index.collapsed .list-toggle{margin-top:0}
+  .case{overflow:visible;padding:16px 14px 24px}
+  .dock{position:sticky;bottom:0;padding:10px 14px;z-index:5}
+  .card-row,.action-change,.detail-list{grid-template-columns:1fr}
+  .card-row{gap:4px}
+  .case-title{font-size:22px}.issue{font-size:17.5px}
+  .choice kbd{display:none}
+  .dock-q{font-size:15px}.dock-sub{font-size:12.5px}
+  .dock-actions{gap:6px;margin-top:8px}
+  .choice{padding:6px 10px;font-size:14px}
+  .dock-row{margin-top:6px;gap:4px 12px}
+  .auto{display:none}
+  .dock-status{font-size:13px}
+  .toast{left:12px;right:12px;bottom:auto;top:12px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div>
+    <h1>FLoRA audit decisions</h1>
+    <p class="lede">Decide what should happen to each audited FLoRA record. Decisions are saved in this browser until you export them; nothing here edits FLoRA.</p>
+  </div>
+  <div class="tools">
+    <p class="overall" id="overall"></p>
+    <button class="tool" id="export-json" type="button">Export decisions</button>
+    <button class="tool" id="export-csv" type="button">Export CSV</button>
+    <button class="tool" id="import-button" type="button">Import decisions</button>
+    <input id="import-file" type="file" accept=".json,application/json" hidden>
+    <button class="tool" id="about-button" type="button">Downloads and help</button>
+  </div>
+  <nav class="queues" id="queues" aria-label="Review queues"></nav>
+  <p class="notice" id="notice" role="status" aria-live="polite"></p>
+</header>
+<div class="workspace">
+  <aside class="index" id="index" aria-label="Case list">
+    <div class="index-tools">
+      <p class="queue-note" id="queue-note"></p>
+      <div class="filters">
+        <input id="search" type="search" placeholder="Search row, DOI, title or value" aria-label="Search cases in this queue">
+        <select id="show" aria-label="Which cases to show">
+          <option value="all">All</option>
+          <option value="open">Not decided</option>
+          <option value="decided">Decided</option>
+          <option value="follow_up">Follow-up</option>
+        </select>
+      </div>
+      <p class="list-count" id="list-count"></p>
+      <button class="tool list-toggle" id="list-toggle" type="button" aria-expanded="true">Hide case list</button>
+    </div>
+    <ol class="case-list" id="list"></ol>
+  </aside>
+  <main class="detail" id="detail">
+    <article class="case" id="case" tabindex="-1" aria-live="polite"></article>
+    <section class="dock" id="dock" aria-label="Your decision"></section>
+  </main>
+</div>
+<dialog class="about" id="about" aria-labelledby="about-title">
+  <div class="about-body">
+    <button class="tool about-close" id="about-close" type="button">Close</button>
+    <h2 id="about-title">About this review</h2>
+    <p>Explore field decisions, supporting evidence, and correction proposals. Each case shows what is wrong with a FLoRA record, the current and proposed values, the evidence, and any dependency that must be settled first.</p>
+    <p>Current values come from the frozen FLoRA snapshot that was audited. Recording a decision never changes FLoRA: decisions stay in this browser, and an exported file is a list of decisions for whoever applies the changes. In audit notes, “parent” means the integrating reviewer who applies decisions.</p>
+    <p id="evidence-status" class="muted">Shortened evidence excerpts are embedded in this page.</p>
+    <p id="data-status" class="muted hash"></p>
+    <h3>Downloads</h3>
+    <div class="downloads"><!--flora-downloads--></div>
+    <h3>Keyboard</h3>
+    <dl class="keys">
+      <dt><kbd class="key">A</kbd></dt><dd>Approve the proposal, add the pair or accept the finding</dd>
+      <dt><kbd class="key">C</kbd></dt><dd>Keep FLoRA as it is</dd>
+      <dt><kbd class="key">F</kbd></dt><dd>Mark for follow-up</dd>
+      <dt><kbd class="key">1</kbd>–<kbd class="key">9</kbd></dt><dd>Choose a numbered policy option</dd>
+      <dt><kbd class="key">J</kbd> <kbd class="key">K</kbd></dt><dd>Next or previous case in the list</dd>
+      <dt><kbd class="key">N</kbd></dt><dd>Next case without a decision</dd>
+      <dt><kbd class="key">U</kbd></dt><dd>Undo the last decision</dd>
+      <dt><kbd class="key">/</kbd></dt><dd>Search</dd>
+    </dl>
+    <h3>Coding vocabulary</h3>
+    <p class="muted">Short definitions from the audit codebook.</p>
+    <dl class="detail-list" id="vocabulary"></dl>
+    <h3>Evidence file</h3>
+    <p>Served pages load the complete review queue automatically and check its SHA-256. When the page is opened as a file, load <code>review_queue.json</code> here.</p>
+    <p><label>Load complete evidence <input id="load" type="file" accept=".json" aria-label="Load review_queue.json"></label></p>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script>
+'use strict';
+/*flora-sha256*/
+let cases=/*flora-cases-start*/__DATA__/*flora-cases-end*/;
+const CONTEXT=/*flora-context-start*/__CONTEXT__/*flora-context-end*/;
+const INPUT_HASH=__HASH__;
+const QUEUE_HASH=__QUEUEHASH__;
+const STORE_KEY='flora-audit-decisions-2026-10',LEGACY_KEY='flora-review-'+INPUT_HASH,PREFS_KEY='flora-audit-review-prefs';
+const $=id=>document.getElementById(id);
+
+/* ---------- small helpers ---------- */
+function h(tag,props,...kids){const n=document.createElement(tag);if(props)for(const [k,v] of Object.entries(props)){if(v==null||v===false)continue;if(k==='class')n.className=v;else if(k.startsWith('on'))n.addEventListener(k.slice(2),v);else n.setAttribute(k,v===true?'':v)}for(const kid of kids.flat(Infinity))if(kid!=null&&kid!==false&&kid!=='')n.append(kid instanceof Node?kid:String(kid));return n}
+const words=v=>String(v??'').replace(/_/g,' ');
+const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1):s;
+const arr=v=>Array.isArray(v)?v:v==null||v===''?[]:[v];
+const has=o=>!!o&&typeof o==='object'&&Object.keys(o).length>0;
+const unique=xs=>[...new Set(xs.filter(Boolean))];
+function listPhrase(xs){xs=xs.filter(Boolean);return xs.length<2?xs.join(''):xs.slice(0,-1).join(', ')+' and '+xs[xs.length-1]}
+function clip(s,n){s=String(s??'');return s.length>n?s.slice(0,n).replace(/\s+\S*$/,'')+'…':s}
+function fnv(s){let x=0x811c9dc5;for(let i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,0x01000193)}return (x>>>0).toString(16).padStart(8,'0')}
+function readJSON(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function stamp(){return new Date().toISOString()}
+function timeLabel(iso){const d=new Date(iso);return isNaN(d)?'':d.toLocaleString(undefined,{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}
+function notice(text){$('notice').textContent=text}
+function extLink(href,text){return h('a',{href,target:'_blank',rel:'noopener'},text)}
+function doiOf(v){const m=String(v??'').trim().match(/(?:doi\.org\/|doi:\s*)?(10\.\d{4,9}\/\S+)/i);return m?m[1].replace(/[.,;]$/,''):''}
+function doiLink(v){const d=doiOf(v);return d?extLink('https://doi.org/'+d,'doi:'+d):null}
+// Text with clickable URLs, DOIs and row references ("row 1697", "row814").
+const RICH=/(https?:\/\/[^\s<>"')\]]*[^\s<>"')\].,;:])|\b(doi:\s*)?(10\.\d{4,9}\/[^\s"<>]*[^\s"<>.,;:)\]])|\b(rows?)\s?(\d{1,4})\b/gi;
+function rich(text){const f=document.createDocumentFragment();text=String(text??'');let last=0;for(const m of text.matchAll(RICH)){f.append(text.slice(last,m.index));if(m[1])f.append(extLink(m[1],m[1]));else if(m[3])f.append(extLink('https://doi.org/'+m[3],m[0]));else{const id='row:'+Number(m[5]);f.append(caseById.has(id)?h('a',{href:'#'+id,onclick:e=>{e.preventDefault();openCase(id)}},m[0]):m[0])}last=m.index+m[0].length}f.append(text.slice(last));return f}
+function splitLead(text,max=330){text=String(text??'').trim();if(text.length<=max)return [text,''];const re=/[.!?](?=\s+[A-Z“"])/g;let cut=-1,m;while((m=re.exec(text))){if(m.index+1<=max)cut=m.index+1;else break}if(cut<80){cut=text.lastIndexOf(' ',max);if(cut<80)cut=max;return [text.slice(0,cut).trim()+'…','…'+text.slice(cut).trim()]}return [text.slice(0,cut).trim(),text.slice(cut).trim()]}
+
+/* ---------- vocabulary ---------- */
+const VOCAB={
+  successful:'The authors conclude the original finding was confirmed or supported.',
+  failed:'The authors conclude the original finding was not supported or did not replicate.',
+  mixed:'The authors present their evidence as partly supporting and partly not.',
+  'descriptive only':'The authors applied the original methods in a new context and compared no result with the original.',
+  'statistically successful but flawed':'The authors obtained the effect but argue the method does not validly test the claim.',
+  uninformative:'The authors state that a defect of this attempt prevents a meaningful test.',
+  cannot_be_determined:'The available evidence does not state the outcome. This is a verdict about the evidence, not the authors’ verdict.',
+  replication:'Collected new data or used a different sample to re-test a published finding.',
+  reproduction:'Re-analysed the original study’s own data or code.',
+  not_a_replication:'Re-tests no specific earlier published finding.',
+  unclear:'The text does not show what kind of study this is.',
+  'computationally reproducible':'The reported numbers were obtained again.',
+  'computational issues':'The analysis ran but did not recover the reported numbers.',
+  'technical failure':'The reproduction could not be run or completed; no comparable numbers came out.',
+  'not checked':'This check was outside the paper’s analysis.',
+  robust:'The finding holds across the alternative analyses that were tested.',
+  'robustness challenges':'At least one reasonable alternative analysis materially weakens or reverses the finding.'
+};
+const vocabKey=v=>{v=String(v??'').trim();return /^(computation|robustness) not checked$/.test(v)?'not checked':v};
+const FIELD={type:'record type',original:'original study',outcome:'outcome',outcome_computation:'computation result',outcome_robustness:'robustness result',missing_row:'missing pair',outcome_quote:'evidence quote'};
+const fieldName=f=>FIELD[f]||words(f);
+const COLUMN={doi_r:'Replication DOI',url_r:'Replication link',oa_url_r:'Open-access copy',title_r:'Replication title',author_r:'Replication authors',year_r:'Replication year',journal_r:'Replication journal',doi_o:'Original DOI',title_o:'Original title',author_o:'Original authors',year_o:'Original year',journal_o:'Original journal',url_o:'Original link',type:'Record type',outcome:'Outcome',outcome_quote:'Evidence quote',outcome_quote_source:'Quote source',study_status:'Study status',record_inclusion:'Dataset inclusion'};
+const DISPOSITION={confirmed_correct:['Confirmed by source review','tone-ok'],correction_supported:['Correction supported','tone-ok'],not_applicable:['Not applicable',''],reviewed_unknown:['Source does not settle this','tone-hold'],source_needed:['Source needed','tone-hold'],policy_decision_required:['Policy choice needed','tone-policy'],represented:['Already in FLoRA',''],genuinely_missing:['Confirmed missing','tone-ok']};
+const LEVEL={full_text:'Full text',abstract:'Abstract only',none:'No usable text'};
+
+/* ---------- decisions store ---------- */
+let store=readJSON(STORE_KEY,null);
+if(!store||typeof store!=='object'||!store.records)store={version:2,records:{}};
+let prefs=readJSON(PREFS_KEY,{})||{};
+function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(store));return true}catch(e){notice('This browser is not saving decisions. Export them before closing the page.');return false}}
+function savePrefs(){try{localStorage.setItem(PREFS_KEY,JSON.stringify(prefs))}catch(e){}}
+// Earlier versions of this app saved free-text reviews under a hash-specific key; keep them visible.
+(function migrateLegacy(){const old=readJSON(LEGACY_KEY,null);if(!old||store.legacy_imported)return;for(const [id,d] of Object.entries(old)){if(!d)continue;const r=store.records[id]||{case_id:id};r.legacy={decision:d.decision,notes:d.notes,recorded_at:d.recorded_at};store.records[id]=r}store.legacy_imported=true;persist()})();
+
+/* ---------- case model ---------- */
+let caseById=new Map(),profiles=new Map(),searchCache=new Map();
+function indexCases(){caseById=new Map(cases.map(c=>[c.id,c]));profiles=new Map();searchCache=new Map()}
+const rowCtx=c=>c.row!=null?(CONTEXT.rows||{})[c.row]||null:null;
+const meta=(c,f)=>c.row!=null?((CONTEXT.proposals||{})[c.row]||{})[f]||null:null;
+const limitOf=(c,f)=>c.row!=null?((CONTEXT.limits||{})[c.row]||{})[f]||null:null;
+function current(c,f){const rc=rowCtx(c);if(!rc)return undefined;if(f==='type')return rc.type;if(f==='outcome')return rc.outcome;if(f==='original')return rc.o;if(f==='outcome_computation'||f==='outcome_robustness'){const parts=String(rc.outcome||'').split(',');return parts.length===2?parts[f==='outcome_computation'?0:1].trim():rc.type==='reproduction'?rc.outcome:''}if(f==='outcome_quote')return rc.quote;return undefined}
+function columnValue(c,k){const rc=rowCtx(c);if(!rc)return undefined;const side=k.endsWith('_r')?rc.r:k.endsWith('_o')?rc.o:null;const base=k.replace(/_[ro]$/,'');if(side&&base in {doi:1,title:1,year:1,journal:1,url:1})return side[base];if(side&&base==='author')return side.authors;if(k==='type'||k==='outcome')return rc[k];if(k==='outcome_quote')return rc.quote;if(k==='outcome_quote_source')return rc.quote_source;return undefined}
+function questionOf(d){if(typeof d==='string')return d;if(!d||typeof d!=='object')return null;for(const k of ['decision','decision_required','decision_needed','policy_question','choice','policy_choice'])if(typeof d[k]==='string'&&d[k].trim())return d[k];return null}
+function optionsOf(d){const out=[];if(!d||typeof d!=='object')return out;arr(d.options).forEach((o,i)=>{if(o&&typeof o==='object'){const {scope,value,reason,...extra}=o;out.push({key:'options.'+i,short:value!=null?words(value):'Option '+(i+1),value,scope,text:reason,extra:has(extra)?extra:null})}else out.push({key:'options.'+i,short:String(o)})});for(const [k,v] of Object.entries(d)){if(v==null||v==='')continue;if(/^option_[a-z0-9]+$/i.test(k))out.push({key:k,short:cap(words(k)),text:v});else if(/^if_/.test(k))out.push({key:k,short:cap(words(k)),text:v});else if(/^conditional_.+_outcome$/.test(k))out.push({key:k,short:'Code as '+words(k.replace(/^conditional_|_outcome$/g,'')),text:v});else if(/^value_if_/.test(k))out.push({key:k,short:'If '+words(k.slice(9)),text:v})}return out}
+function profile(c){
+  let p=profiles.get(c.id);if(p)return p;
+  const summary=c.final_review_summary||{};
+  const changeFields=Object.keys(c.changes||{});
+  const ra=c.record_action||(CONTEXT.record_actions||{})[c.id]||null;
+  const qf=c.row!=null?(CONTEXT.quote_fixes||{})[c.row]||null:null;
+  const policyFields=Object.keys(summary).filter(f=>summary[f].disposition==='policy_decision_required');
+  const policies=[];for(const f of policyFields){const d=summary[f].policy_choice||limitOf(c,f);const key=JSON.stringify(d);const same=policies.find(x=>x.key===key);if(same)same.fields.push(f);else policies.push({key,detail:d,fields:[f]})}
+  let n=0;const options=[];for(const pol of policies)for(const o of optionsOf(pol.detail))options.push({...o,n:++n});
+  const holds=unique([...changeFields.map(f=>meta(c,f)?.hold),...Object.values(summary).map(s=>s.application_dependency)]);
+  const conditional=changeFields.filter(f=>meta(c,f)?.conditional);
+  const unknown=Object.keys(summary).filter(f=>['reviewed_unknown','source_needed'].includes(summary[f].disposition));
+  const missing=c.kind==='possible missing pair',missingOpen=missing&&c.missing_pair_unresolved!==false;
+  const unverified=!missing&&!has(summary)?c.fields.filter(f=>!changeFields.includes(f)):[];
+  const items=[...changeFields,...(qf?['outcome_quote']:[])];
+  let type;
+  if(policies.length)type='policy';else if(ra)type='record';else if(items.length)type='change';
+  else if(missing)type=missingOpen?'missing-open':'missing-settled';
+  else if(unknown.length||unverified.length)type='limit';else type='confirmed';
+  const needs=!!c.requires_review||!!ra||changeFields.some(f=>meta(c,f)?.status==='decision_required');
+  p={summary,changeFields,items,ra,qf,policies,options,holds,conditional,unknown,unverified,missing,missingOpen,type,needs};
+  profiles.set(c.id,p);return p;
+}
+function snapshotOf(c){const p=profile(c);return fnv(JSON.stringify({changes:c.changes||{},quote:p.qf?p.qf.id||p.qf.proposed_quote:null,action:p.ra?[p.ra.action,p.ra.operation,p.ra.status]:null,options:p.options.map(o=>o.key),missing:p.summary.missing_row?.disposition||null}))}
+function statusOf(c){const r=store.records[c.id];if(!r||!r.decision)return r&&r.legacy?'legacy':'open';return r.proposal_fingerprint&&r.proposal_fingerprint!==snapshotOf(c)?'stale':r.decision}
+const APPROVING=new Set(['approve','approve_partial','approve_record_action','add_pair','accept_finding']);
+function markClass(s){return APPROVING.has(s)?'approved':s==='keep_current'||s==='reject_pair'?'kept':s==='follow_up'?'follow':s==='choose_option'||s==='policy_rule'?'option':s}
+const isDecided=c=>!['open','stale','legacy'].includes(statusOf(c));
+
+/* ---------- display text ---------- */
+function shortAuthor(a){a=String(a??'').trim();if(!a)return '';if(/ & /.test(a)&&!/,/.test(a))return a;let first=a.split(/;|,| and | & /)[0].trim().replace(/\s+([A-Z][A-Za-z]?[.\-]?\s*)+$/,'');const many=/;|&| and |,.*,/.test(a)||/et al/.test(a);return first+(many&&!/et al/.test(first)?' et al.':'')}
+function shortCite(o){if(!o||typeof o!=='object')return '';const who=shortAuthor(o.authors);const y=o.year?` (${o.year})`:'';if(who)return who+y;if(o.title)return '“'+clip(o.title,60)+'”'+y;return o.doi?'doi:'+o.doi:'an unnamed original'}
+function shortValue(f,v){if(v==null||v==='')return 'no value';if(typeof v==='object'){if(v.action==='remove_row')return 'remove row';if('outcome_computation' in v||'outcome_robustness' in v)return `computation ${words(v.outcome_computation)}, robustness ${words(v.outcome_robustness)}`;return shortCite(v)||'see details'}return f==='outcome_quote'?'verified quote':words(v)}
+function typePhrase(v){v=String(v??'');return v==='replication'||v==='reproduction'?'a '+v:words(v)||'no type'}
+function quoted(v){return h('q',{},words(v)||'no value')}
+function changeSummary(c){
+  const p=profile(c);
+  if(p.type==='policy')return 'Policy choice for the '+listPhrase(unique(p.policies.flatMap(x=>x.fields)).map(fieldName));
+  if(p.ra)return p.ra.action||cap(words(p.ra.operation))||'Record-level action';
+  if(p.changeFields.length===1&&!p.qf){const f=p.changeFields[0];return cap(fieldName(f))+': '+shortValue(f,current(c,f))+' → '+shortValue(f,c.changes[f])}
+  if(p.items.length>1)return p.items.length+' changes: '+listPhrase(p.items.map(fieldName));
+  if(p.qf)return 'Evidence quote update';
+  if(p.missing){const t=p.summary.missing_row?.confirmed_value||(CONTEXT.candidates||{})[c.id];const s=p.summary.missing_row?.disposition;return (s==='represented'?'Already in FLoRA: ':s==='genuinely_missing'?'Confirmed missing: ':'Candidate: ')+(shortCite(t)||'original not identified')}
+  if(p.type==='limit')return 'Not verified: '+listPhrase((p.unknown.length?p.unknown:p.unverified).map(fieldName));
+  return 'Confirmed; no change proposed';
+}
+function caseTitle(c){const rc=rowCtx(c);if(rc&&rc.r.title)return rc.r.title;const w=(CONTEXT.works||{})[c.work];if(w&&w.title)return w.title;return c.title||c.work}
+function levelOf(c){const rc=rowCtx(c);return LEVEL[c.level]?c.level:rc?.level||c.level}
+
+/* ---------- queues ---------- */
+const QUEUES=[
+  {id:'needs',label:'Needs decision',test:c=>profile(c).needs,note:'Policy choices, record-level actions, corrections with holds and full-text evidence limits that the audit could not settle on its own.'},
+  {id:'changes',label:'Proposed changes',test:c=>profile(c).items.length>0,note:'Source-checked corrections to field values, plus verified replacements for evidence quotes. Approve, keep FLoRA as it is, or ask for follow-up.'},
+  {id:'missing',label:'Missing pairs',test:c=>profile(c).missing,note:'Study–original pairs that FLoRA may be missing. Confirmed missing pairs are listed in the downloads.'},
+  {id:'limits',label:'Evidence limits',test:c=>{const p=profile(c);return !p.missing&&!p.items.length&&(p.unknown.length>0||p.unverified.length>0)},note:'The available source could not verify FLoRA’s values. No change is proposed; decide whether to keep the value or seek the source.'},
+  {id:'all',label:'Everything',test:()=>true,note:'Every audit case.'}
+];
+const queueById=Object.fromEntries(QUEUES.map(q=>[q.id,q]));
+function groupOf(c,qid){
+  const p=profile(c);
+  if(qid==='needs'){if(p.type==='policy')return [0,'Policy choices'];if(p.ra)return [1,'Record-level actions'];if(p.holds.length||p.conditional.length)return [2,'Corrections with holds'];if(p.unknown.length)return [3,'Evidence limits after full-text review'];return [4,'Other review cases']}
+  if(qid==='changes'){const v=Object.values(c.changes||{});if(v.some(x=>x&&x.action==='remove_row'))return [0,'Row removals'];if('original' in (c.changes||{}))return [1,'Original study replacements'];if('type' in (c.changes||{}))return [2,'Record type changes'];if('outcome' in (c.changes||{}))return [3,'Outcome changes'];if(p.changeFields.length)return [4,'Reproduction result changes'];return [5,'Evidence quote updates']}
+  if(qid==='missing')return p.missingOpen?[0,'Unresolved candidates']:[1,'Settled by source review'];
+  if(qid==='limits'){const l=levelOf(c);return l==='full_text'?[0,'Full text does not settle it']:l==='abstract'?[1,'Abstract only']:[2,'No usable text']}
+  if(qid==='all'){if(p.needs)return [0,'Needs decision'];if(p.items.length)return [1,'Proposed changes'];if(p.missing)return [2,'Possible missing pairs'];if(p.type==='limit')return [3,'Evidence limits'];return [4,'Confirmed; no change proposed']}
+  return [0,''];
+}
+function searchText(c){let s=searchCache.get(c.id);if(s)return s;const rc=rowCtx(c);const parts=[c.id,c.row!=null?'row '+c.row:'',caseTitle(c),c.work,c.file_key,c.route,changeSummary(c),JSON.stringify(c.changes||{})];if(rc)parts.push(rc.o.title,rc.o.authors,rc.o.doi,rc.r.authors,rc.type,rc.outcome);for(const e of Object.values(c.evidence||{}))parts.push(e.reason||'');const cand=(CONTEXT.candidates||{})[c.id];if(cand)parts.push(JSON.stringify(cand));if(profile(c).ra)parts.push(JSON.stringify(profile(c).ra.action||''));s=parts.join(' ').toLowerCase();searchCache.set(c.id,s);return s}
+
+/* ---------- state ---------- */
+const state={queue:prefs.queue&&queueById[prefs.queue]?prefs.queue:'needs',show:'all',search:'',selected:null,included:new Map(),noteOpen:false,lastByQueue:{}};
+let visible=[],evidenceComplete=false,toastTimer=null,lastUndo=null;
+function queueCases(qid){const q=queueById[qid];const list=cases.filter(q.test);return list.map(c=>[groupOf(c,qid),c]).sort((a,b)=>a[0][0]-b[0][0]||(a[1].row??1e9)-(b[1].row??1e9)||a[1].id.localeCompare(b[1].id))}
+function computeVisible(){const q=state.search.trim().toLowerCase();return queueCases(state.queue).filter(([,c])=>{if(q&&!searchText(c).includes(q))return false;const s=statusOf(c);if(state.show==='open')return !isDecided(c);if(state.show==='decided')return isDecided(c);if(state.show==='follow_up')return s==='follow_up';return true})}
+
+/* ---------- rendering: masthead and list ---------- */
+function renderQueues(){
+  const nav=$('queues');nav.replaceChildren();
+  for(const q of QUEUES){const list=cases.filter(q.test);const done=list.filter(isDecided).length;const pct=list.length?Math.round(done/list.length*100):0;
+    nav.append(h('button',{class:'tab',type:'button','aria-pressed':String(state.queue===q.id),title:`${done} of ${list.length} decided`,onclick:()=>switchQueue(q.id)},q.label,h('span',{class:'tab-count'},list.length.toLocaleString()),h('span',{class:'tab-bar','aria-hidden':'true'},h('i',{style:`width:${pct}%`}))))}
+  const all=cases.filter(isDecided).length,stale=cases.filter(c=>statusOf(c)==='stale').length;
+  const o=$('overall');o.replaceChildren(h('b',{},all.toLocaleString()),` of ${cases.length.toLocaleString()} cases decided`,stale?`; ${stale} to re-check`:'');
+}
+function renderList(){
+  visible=computeVisible().map(([,c])=>c);
+  const list=$('list');list.replaceChildren();
+  $('queue-note').textContent=queueById[state.queue].note;
+  const total=queueCases(state.queue).length;
+  $('list-count').textContent=visible.length===total?`${total.toLocaleString()} cases`:`${visible.length.toLocaleString()} of ${total.toLocaleString()} cases shown`;
+  if(!visible.length){list.append(h('li',{class:'group'},'No cases match. Clear the search or choose another filter.'));return}
+  let group=null;const counts={};for(const c of visible){const g=groupOf(c,state.queue)[1];counts[g]=(counts[g]||0)+1}
+  for(const c of visible){
+    const g=groupOf(c,state.queue)[1];
+    if(g&&g!==group){group=g;list.append(h('li',{class:'group'},g,h('span',{},counts[g])))}
+    const p=profile(c),s=statusOf(c);
+    const flag=p.type==='policy'?['Policy','tone-policy']:p.ra?['Record action','']:p.holds.length||p.conditional.length?['Hold','tone-hold']:null;
+    list.append(h('li',{},h('button',{class:'item',type:'button','data-id':c.id,'aria-current':String(c.id===state.selected),tabindex:c.id===state.selected?'0':'-1'},
+      h('span',{class:'mark '+markClass(s),role:'img','aria-label':statusLabel(s)}),
+      h('span',{},h('span',{class:'item-head'},c.row!=null?'Row '+c.row:'Pair for '+(shortCite((CONTEXT.works||{})[c.work])||'this replication'),flag?h('span',{class:'item-flag '+flag[1]},flag[0]):null),
+        h('span',{class:'item-change'},changeSummary(c)),h('span',{class:'item-title'},caseTitle(c))))));
+  }
+}
+function statusLabel(s){return {open:'Not decided',stale:'Proposal changed after your decision',legacy:'Earlier note only',approve:'Approved',approve_partial:'Partly approved',approve_record_action:'Record action approved',add_pair:'Addition approved',accept_finding:'Finding accepted',keep_current:'Kept as is',reject_pair:'Not added',follow_up:'Follow-up',choose_option:'Policy option chosen',policy_rule:'Policy decided'}[s]||s}
+
+/* ---------- rendering: values ---------- */
+function codeValue(v,{tag}={}){const raw=String(v??'');const label=raw===''?'No value':raw==='NA'?'NA (no value)':words(raw);const def=VOCAB[vocabKey(raw)];return [tag?h(tag,{},h('span',{class:'code'},label)):h('span',{class:'code'},label),def?h('span',{class:'def'},def):null]}
+function citation(o){
+  if(!o||typeof o!=='object')return h('span',{class:'muted'},'No citation recorded');
+  const box=h('span',{class:'cite'});const who=[o.authors?clip(o.authors,160):'',o.year?`(${o.year})`:''].filter(Boolean).join(' ');
+  if(who)box.append(h('span',{class:'cite-who'},who));
+  if(o.title)box.append(h('span',{class:'cite-title'},o.title));
+  const tail=[o.journal?h('span',{},o.journal):null,doiLink(o.doi)||(o.url&&/^https?:/.test(o.url)?extLink(o.url,'link'):null),o.study_numbers?h('span',{},'Studies '+o.study_numbers):null,o.replication_study_numbers?h('span',{},'Replication studies '+o.replication_study_numbers):null,o.identified_by?h('span',{},'Identified by '+words(o.identified_by)):null].filter(Boolean);
+  if(tail.length)box.append(h('span',{class:'cite-tail'},tail));
+  if(!who&&!o.title&&!o.doi)box.append(h('span',{class:'muted'},o.described_source||'No citation recorded'));
+  return box;
+}
+function valueNode(f,v){
+  if(f==='original'){if(v&&v.action==='remove_row')return [h('span',{class:'code'},'Remove this row'),v.retain_input_row_index!=null?h('span',{class:'def'},'Keep ',rich('row '+v.retain_input_row_index),' instead.'):null,v.prerequisite?h('span',{class:'def'},'First: ',rich(v.prerequisite)):null];return citation(v)}
+  if(f==='outcome_quote')return h('span',{class:'flora-quote'},'“'+(v||'')+'”');
+  if(v&&typeof v==='object'){if('outcome_computation' in v||'outcome_robustness' in v)return [h('span',{class:'def'},'Reproduction'),h('span',{class:'code'},'Computation: '+words(v.outcome_computation)),h('br'),h('span',{class:'code'},'Robustness: '+words(v.outcome_robustness))];return renderDetail(v)}
+  return codeValue(v);
+}
+function prettyColumn(v){if(v==null||v==='')return h('span',{class:'muted'},'—');if(Array.isArray(v))return v.every(x=>typeof x!=='object')?v.join('; '):renderValue(v);if(typeof v==='object')return renderDetail(v);const s=String(v);if(s.startsWith('[{')){try{const people=JSON.parse(s);if(Array.isArray(people))return people.map(x=>[x.given,x.family].filter(Boolean).join(' ')||x.literal||'').join('; ')}catch(e){}}if(/^https?:\/\//.test(s))return extLink(s,s);if(/^[a-z0-9]+(_[a-z0-9]+)+$/.test(s))return words(s);return rich(s)}
+
+/* ---------- rendering: generic detail lists ---------- */
+const LABELS={decision:'Decision needed',decision_required:'Decision needed',decision_needed:'Decision needed',choice:'Decision needed',policy_choice:'Policy choice',policy_question:'Decision needed',why_material:'Why it matters',evidence_limit:'Evidence limit',limit:'Evidence limit',necessary_missing_finding:'Missing finding',needed_to_resolve:'What would resolve it',needed_to_resolve_substantive_outcome:'What would resolve it',needed_evidence:'What would resolve it',necessary_source:'Source needed',question_to_resolve:'Open question',integration_dependency:'Dependency',dependencies:'Dependencies',dependency:'Dependency',parent_action:'Required step',missing_evidence:'Missing evidence',evidence_missing:'Missing evidence',missing:'Missing',unresolved_evidence:'Unresolved evidence',actual_attempted_routes:'Sources tried',bounded_routes_reviewed:'Sources tried',candidate_citations_from_current_text:'Candidate citations in the report',citation_limits:'Citation limits',source_note:'Source note',pointer_scope:'Source scope',optional_source_pointers:'Optional sources',projects_missing_report:'Projects without a located report',available_project_verdicts:'Available project verdicts',registered_original_and_supplement_pointers:'Original and supplement links',original_and_supplement_pointers:'Original and supplement links',registered_replication_pointer:'Replication link',kind:'Issue type',classification:'Issue type',policy_choice_required:'Policy choice required',access_failure:'Access failure',additional_source_required:'Additional source required',source_needed:'Source needed',parent_owns_choice:'Integrator owns this choice',bibliographic_correction_condition:'Condition for the citation change',conference_journal_empirical_equivalence:'Conference and journal equivalence',new_material_assessment:'New material assessed',old_access_limit_superseded:'Earlier access limit',retained_replication_target_context:'Retained replication target',excluded_target_source_citation:'Excluded target citation',value_if_conference_binding_retained:'Value if the conference report stays linked',value_if_journal_correction_integrated:'Value if the journal correction is applied',remaining_review_work:'Remaining review work'};
+const ORDER=['decision','decision_required','decision_needed','policy_question','choice','policy_choice','question_to_resolve','why_material','necessary_missing_finding','needed_to_resolve','needed_to_resolve_substantive_outcome','needed_evidence','necessary_source','evidence_limit','limit','missing_evidence','evidence_missing','missing','unresolved_evidence','bibliographic_correction_condition','integration_dependency','dependencies','dependency','parent_action'];
+const COLLAPSE=new Set(['actual_attempted_routes','bounded_routes_reviewed','registered_original_and_supplement_pointers','original_and_supplement_pointers','registered_pointers_reviewed','new_material_assessment','candidate_citations_from_current_text','optional_source_pointers']);
+const rank=k=>{const i=ORDER.indexOf(k);return i<0?ORDER.length:i};
+const isCitation=o=>o&&typeof o==='object'&&!Array.isArray(o)&&('title' in o||'doi' in o)&&('authors' in o||'year' in o);
+const PRIVATE='[private audit artifact]';
+function renderDetail(obj,skip=[]){
+  const dl=h('dl',{class:'detail-list'});
+  const keys=Object.keys(obj||{}).filter(k=>!skip.includes(k)&&obj[k]!=null&&obj[k]!==''&&obj[k]!==PRIVATE&&!(Array.isArray(obj[k])&&!obj[k].length)&&!(typeof obj[k]==='object'&&!Array.isArray(obj[k])&&!has(obj[k]))).sort((a,b)=>rank(a)-rank(b));
+  for(const k of keys){const label=LABELS[k]||cap(words(k));const v=/row_index$/.test(k)&&typeof obj[k]==='number'?h('span',{},rich('row '+obj[k])):renderValue(obj[k]);dl.append(h('dt',{},label),h('dd',{},COLLAPSE.has(k)?h('details',{class:'inline'},h('summary',{},Array.isArray(obj[k])?`Show ${obj[k].length}`:'Show'),v):v))}
+  return keys.length?dl:null;
+}
+function renderValue(v){
+  if(v==null)return '';if(typeof v==='boolean')return v?'Yes':'No';if(typeof v==='number')return String(v);
+  if(typeof v==='string')return /^[a-z0-9]+(_[a-z0-9]+)+$/.test(v)?words(v):h('span',{},rich(v));
+  if(Array.isArray(v))return h('ul',{class:'plain'},v.map(x=>h('li',{},isCitation(x)?citation(x):renderValue(x))));
+  if(isCitation(v))return citation(v);
+  return renderDetail(v)||'';
+}
+function frag(...nodes){const f=document.createDocumentFragment();for(const n of nodes.flat(Infinity))if(n!=null&&n!==false&&n!=='')f.append(n);return f}
+function reasonBlock(text){const [lead,rest]=splitLead(text);return frag(h('p',{class:'reason'},rich(lead)),rest?h('details',{class:'more-text'},h('summary',{},'Full reasoning'),h('p',{},rich(rest))):null)}
+function locText(l){if(l==null||l==='')return '';if(typeof l!=='object')return String(l);const out=[];if(l.section)out.push(String(l.section));if(l.start_line!=null)out.push(l.end_line!=null&&l.end_line!==l.start_line?`lines ${l.start_line}–${l.end_line}`:`line ${l.start_line}`);const pg=l.page??l.form_feed_page;if(pg!=null)out.push('page '+pg);for(const [k,v] of Object.entries(l))if(!['section','start_line','end_line','page','form_feed_page'].includes(k)&&v!=null&&typeof v!=='object')out.push(words(k)+' '+v);return out.join(', ')}
+function quoteBlock(q,bits){bits=bits.map(locText);return frag(h('blockquote',{class:'quote'},rich(q)),bits.filter(Boolean).length?h('p',{class:'quote-loc'},bits.filter(Boolean).join('; ')):null)}
+
+/* ---------- rendering: case ---------- */
+function kicker(c,p){
+  const bits=[h('b',{},c.row!=null?'Row '+c.row:'Possible missing pair')];
+  const kind={policy:['Policy choice','tone-policy'],record:['Record-level action','tone-hold'],change:['Proposed change','tone-ok'],'missing-open':['Unresolved candidate','tone-hold'],'missing-settled':['Settled by source review',''],limit:['Evidence limit','tone-hold'],confirmed:['No change proposed','']}[p.type];
+  bits.push(h('span',{class:'chip '+kind[1]},kind[0]));
+  const lvl=LEVEL[levelOf(c)];if(lvl)bits.push(h('span',{class:'chip'},lvl));
+  const review=c.signoff==='final_Sol_reviewed'||c.signoff==='final_Sol_missing_pair_reviewed'?'Final source review':c.signoff==='prior_source_adjudicated_proposal'?'Earlier source adjudication':null;
+  if(review)bits.push(h('span',{class:'chip'},review));
+  if(p.holds.length||p.conditional.length)bits.push(h('span',{class:'chip tone-hold'},'Apply with conditions'));
+  return h('p',{class:'kicker'},bits);
+}
+function byline(c){const rc=rowCtx(c);const w=(CONTEXT.works||{})[c.work];const r=rc?rc.r:w;const bits=[];if(r){const who=[r.authors,r.year?`(${r.year})`:''].filter(Boolean).join(' ');if(who)bits.push(who);if(r.journal)bits.push(r.journal)}const doi=doiOf(c.work)||(r&&doiOf(r.doi));const link=doi?extLink('https://doi.org/'+doi,'Open current source'):/^https?:/.test(c.work||'')?extLink(c.work,'Open current source'):null;return h('p',{class:'byline'},bits.join('. '),link?' ':null,link)}
+// Reader-facing wording for the eight existing policy questions; values and
+// option keys remain the verbatim source-review decisions.
+const POLICY_COPY={
+  242:{question:'Should a deliberate retest of published anecdotal observations count as a replication?',labels:{if_observations_qualify:'Count published observations',if_observations_do_not_qualify:'Exclude anecdotal observations'}},
+  264:{question:'How should original-data reanalysis and tests on new code be represented?'},
+  833:{question:'How should a historical panel containing overlapping and new observations be represented?'},
+  836:{question:'How should original-data reanalysis and tests on new market samples be represented?'},
+  509:{question:'How should the authors’ “Inconclusive” verdict be recorded?'},
+  559:{question:'How should the authors’ “Inconclusive” verdict be recorded?'},
+  1532:{question:'Are we judging the original correlation or the tested causal prediction?',labels:{'options.0':'Original correlation: cannot determine','options.1':'Causal prediction: failed'}},
+  266:{question:'Should success reflect the authors’ pooled results or only the independent new samples?',labels:{'options.0':'Authors’ pooled conclusion: mixed','options.1':'New samples alone: failed'}}
+};
+function issue(c,p){
+  const rc=rowCtx(c);const lvl=levelOf(c);
+  if(p.type==='policy'&&POLICY_COPY[c.row])return POLICY_COPY[c.row].question;
+  if(p.type==='policy')return ['The source review could not code this row without a policy decision about the ',listPhrase(unique(p.policies.flatMap(x=>x.fields)).map(fieldName)),'.'];
+  if(p.type==='record'){const [lead]=splitLead(p.ra.reason||'',260);return lead||'A record-level change is proposed for this row.'}
+  if(p.type==='change'){
+    if(p.items.length>1)return `The audit proposes ${p.items.length} changes to this row: the ${listPhrase(p.items.map(fieldName))}.`;
+    if(p.qf&&!p.changeFields.length)return ['The coded outcome stays ',quoted(rc?.outcome),'. FLoRA’s supporting quote is replaced with a literal quote from the verified primary report.'];
+    const f=p.changeFields[0],v=c.changes[f],now=current(c,f);
+    if(f==='original'){if(v&&v.action==='remove_row')return v.retain_input_row_index!=null?['The audit proposes removing this row and keeping ',rich('row '+v.retain_input_row_index),' instead.']:'The audit proposes removing this row from FLoRA.';return ['FLoRA links this replication to ',h('b',{},shortCite(now)||'no original'),'; the audit identifies ',h('b',{},shortCite(v)),' as the original it re-tests.']}
+    if(f==='type')return ['FLoRA lists this record as ',typePhrase(now),'; the audit classifies it as ',h('b',{},typePhrase(v)),'.'];
+    if(f==='outcome'&&v&&typeof v==='object')return ['FLoRA records the replication outcome ',quoted(now),'; the audit codes the reproduction axes instead.'];
+    if(f==='outcome')return ['FLoRA records the outcome as ',quoted(now),'; the audit supports ',quoted(v),'.'];
+    return ['FLoRA records the ',fieldName(f),' as ',quoted(now),'; the audit supports ',quoted(v),'.'];
+  }
+  if(p.type==='missing-open'){const t=(CONTEXT.candidates||{})[c.id];return ['This replication may also re-test ',h('b',{},shortCite(t)||'an original the report does not name'),', which FLoRA does not list for it. The audit could not settle the original’s identity.']}
+  if(p.type==='missing-settled'){const s=p.summary.missing_row?.disposition;return s==='represented'?'The source review found that FLoRA already includes this study–original pair.':s==='genuinely_missing'?'The source review confirmed that FLoRA is missing this study–original pair.':'The source review could not identify this original.'}
+  if(p.type==='limit'){const fields=listPhrase((p.unknown.length?p.unknown:p.unverified).map(fieldName));if(lvl==='abstract')return `Only the abstract was available, so the audit could not verify the ${fields}.`;if(lvl==='none')return `No usable text of the report was available, so the audit could not verify the ${fields}.`;return `The full text does not establish the ${fields}.`}
+  return 'The source review confirmed FLoRA’s values for this row; no change is proposed.';
+}
+function cardRows(c,p){
+  const rc=rowCtx(c);const rows=['type','original'];const fs=new Set([...p.changeFields,...c.fields,...Object.keys(p.summary)]);
+  const repro=rc?.type==='reproduction';
+  if(fs.has('outcome')||!repro)rows.push('outcome');
+  if(repro||fs.has('outcome_computation')||fs.has('outcome_robustness'))rows.push('outcome_computation','outcome_robustness');
+  if(p.qf)rows.push('outcome_quote');
+  return rows;
+}
+function rowStatus(c,p,f){
+  if(f in (c.changes||{})){const m=meta(c,f);return m&&m.status==='decision_required'?['is-change is-hold','Proposed change, needs a decision']:['is-change','Proposed change']}
+  if(f==='outcome_quote'&&p.qf)return ['is-change','Proposed evidence update'];
+  const s=p.summary[f];if(s){const d=DISPOSITION[s.disposition]||[words(s.disposition),''];return [s.disposition==='policy_decision_required'?'is-policy':['reviewed_unknown','source_needed'].includes(s.disposition)?'is-unverified':'',d[0]]}
+  if(c.fields.includes(f)){const l=levelOf(c);return ['is-unverified',l==='abstract'?'Not verified: abstract only':l==='none'?'Not verified: no usable text':'Not verified']}
+  return ['','No change proposed'];
+}
+function includeKey(c){if(!state.included.has(c.id))state.included.set(c.id,new Set(profile(c).items));return state.included.get(c.id)}
+function renderCard(c,p){
+  const rc=rowCtx(c);const card=h('section',{class:'card','aria-label':'FLoRA record values'});
+  const legend=p.type==='record'&&p.items.length?'Field corrections behind the record-level action; not applied on their own':p.items.length?'Struck values are FLoRA’s; highlighted values are proposed':rc?'Values in the audited FLoRA snapshot':'';
+  card.append(h('header',{class:'card-head'},h('span',{class:'card-title'},c.row!=null?`FLoRA row ${c.row}`:'Record'),h('span',{class:'card-note'},legend)));
+  if(!rc){card.append(h('div',{class:'card-row'},h('div',{class:'card-label'},'Values'),h('div',{},'Current values are not available for this case.')));return card}
+  const multi=p.type==='change'&&p.items.length>1,inc=includeKey(c);
+  for(const f of cardRows(c,p)){
+    const [cls,label]=rowStatus(c,p,f);const changed=f in (c.changes||{})||(f==='outcome_quote'&&p.qf);
+    const row=h('div',{class:'card-row '+cls},h('div',{class:'card-label'},cap(fieldName(f)),h('small',{},label)));
+    const vals=h('div',{class:'values'});
+    if(changed){
+      const now=f==='outcome_quote'?p.qf.current_text:current(c,f),next=f==='outcome_quote'?p.qf.proposed_quote:c.changes[f];
+      const nowNode=f==='original'?valueNode(f,now):f==='outcome_quote'?h('span',{class:'flora-quote'},h('del',{},'“'+(now||'')+'”'),p.qf.current_source?h('span',{},'Source: '+p.qf.current_source):null):codeValue(now,{tag:'del'});
+      const nextNode=f==='outcome_quote'?h('span',{class:'flora-quote'},h('ins',{},'“'+(next||'')+'”'),p.qf.proposed_source?h('span',{},'Source: ',prettyColumn(p.qf.proposed_source)):null):f==='original'?valueNode(f,next):(next&&typeof next==='object')?valueNode(f,next):codeValue(next,{tag:'ins'});
+      vals.append(h('div',{class:'val val-now'},h('span',{class:'val-tag'},'FLoRA now'),nowNode),h('div',{class:'val val-new'},h('span',{class:'val-tag'},'Proposed'),nextNode));
+      if(multi){const box=h('input',{type:'checkbox',checked:inc.has(f)?true:null,onchange:e=>{e.target.checked?inc.add(f):inc.delete(f);renderDock()}});vals.append(h('label',{class:'include'},box,'Include in approval'))}
+    }else{
+      const now=current(c,f);vals.append(h('div',{class:'val'},f==='original'?citation(now):codeValue(now)));
+      const s=p.summary[f];if(s&&s.confirmed_value!=null&&s.confirmed_value!==''&&typeof s.confirmed_value!=='object'&&String(s.confirmed_value)!==String(now??''))vals.append(h('span',{class:'def'},'Source review value: '+words(s.confirmed_value)));
+    }
+    if(f==='outcome'&&rc.quote&&!p.qf)vals.append(h('p',{class:'flora-quote'},'“'+rc.quote+'”',h('span',{},'FLoRA’s supporting quote'+(rc.quote_source?` (${rc.quote_source})`:''))));
+    row.append(vals);card.append(row);
+  }
+  return card;
+}
+function renderMissingCard(c,p){
+  const w=(CONTEXT.works||{})[c.work];const cand=(CONTEXT.candidates||{})[c.id];const s=p.summary.missing_row;
+  const status=!s?'Unresolved candidate':s.disposition==='represented'?'Already in FLoRA':s.disposition==='genuinely_missing'?'Confirmed missing':'Identity not established';
+  const card=h('section',{class:'card','aria-label':'Possible missing pair'},h('header',{class:'card-head'},h('span',{class:'card-title'},'Possible new FLoRA pair'),h('span',{class:'card-note'},status)));
+  const rowOf=(label,node)=>h('div',{class:'card-row'},h('div',{class:'card-label'},label),h('div',{class:'values'},node));
+  card.append(rowOf('Replication',citation({authors:w?.authors,year:w?.year,title:w?.title||(doiOf(c.work)?'':c.title),journal:w?.journal,doi:doiOf(c.work)})));
+  const target=s?.confirmed_value&&has(s.confirmed_value)?s.confirmed_value:cand;
+  card.append(rowOf(s?.disposition==='represented'?'Original (already linked)':'Candidate original',target&&(target.title||target.authors||target.doi)?citation(target):h('span',{},target?.described_source||'The report does not identify the original.')));
+  if(w&&w.rows&&w.rows.length)card.append(rowOf('Already in FLoRA',h('ul',{class:'plain'},w.rows.map(r=>h('li',{},caseById.has('row:'+r.row)?h('a',{href:'#row:'+r.row,onclick:e=>{e.preventDefault();openCase('row:'+r.row)}},'Row '+r.row):'Row '+r.row,': ',shortCite(r),r.doi?h('span',{class:'muted'},' doi:'+r.doi):null)))));
+  return card;
+}
+function nowNode(field,v){if(field in FIELD)return field==='original'?valueNode(field,v):codeValue(v,{tag:'del'});return v===undefined?h('span',{class:'muted'},'Not recorded'):h('del',{},prettyColumn(v))}
+function nextNode(field,v){if(v===undefined)return h('span',{class:'muted'},'See details');if(field in FIELD)return field==='original'||(v&&typeof v==='object')?valueNode(field,v):codeValue(v,{tag:'ins'});return v&&typeof v==='object'&&!Array.isArray(v)?prettyColumn(v):h('ins',{},prettyColumn(v))}
+function actionChange(c,field,label,now,next,notes){const vals=h('div',{class:'values'},h('div',{class:'val val-now'},h('span',{class:'val-tag'},'Now'),nowNode(field,now)),h('div',{class:'val val-new'},h('span',{class:'val-tag'},'Proposed'),nextNode(field,next)));const d=notes&&has(notes)?renderDetail(notes):null;if(d)vals.append(d);return h('div',{class:'action-change'},h('div',{class:'card-label'},label),vals)}
+function renderRecordAction(c,ra,shown=''){
+  const sec=h('section',{class:'action','aria-label':'Record-level action'});
+  sec.append(h('p',{class:'action-kicker'},'Record-level action',ra.status?h('span',{class:'chip '+(ra.status==='decision_required'?'tone-hold':'')},cap(words(ra.status))):null));
+  sec.append(h('h3',{class:'action-title'},ra.action||cap(words(ra.operation))||'Change this record'));
+  const reason=shown&&ra.reason&&ra.reason.startsWith(shown)?ra.reason.slice(shown.length).trim():ra.reason;
+  if(reason)sec.append(h('p',{class:'action-reason'},rich(reason)));
+  const box=h('div',{class:'action-changes'});const cur=ra.current_record||{};const pc=ra.proposed_changes;
+  for(const item of Array.isArray(pc)?pc:[]){
+    if(item&&typeof item==='object'&&item.field){const pk=Object.keys(item).find(k=>k==='proposed'||k.startsWith('proposed'));const {field,old,proof_source,proof,...rest}=item;if(pk)delete rest[pk];box.append(actionChange(c,field,COLUMN[field]||cap(fieldName(field)),'old' in item?old:field in FIELD?current(c,field):cur[field]??columnValue(c,field),pk?item[pk]:undefined,rest))}
+    else if(item&&typeof item==='object'){const rest={...item};const pairs=[];for(const k of Object.keys(item)){const m=k.match(/^from_(.+)$/);if(m&&('to_'+m[1]) in item){pairs.push(actionChange(c,k,cap(words(m[1])),item[k],item['to_'+m[1]]));delete rest[k];delete rest['to_'+m[1]]}}const op=rest.operation;delete rest.operation;delete rest.proof_source;if(op)box.append(h('p',{class:'sub'},cap(words(op))));pairs.forEach(x=>box.append(x));const d=renderDetail(rest);if(d)box.append(d)}
+    else box.append(h('p',{},renderValue(item)));
+  }
+  if(pc&&typeof pc==='object'&&!Array.isArray(pc))for(const [k,v] of Object.entries(pc))box.append(actionChange(c,k,COLUMN[k]||cap(fieldName(k)),k in FIELD?current(c,k):k in cur?cur[k]:k==='record_inclusion'?'In the replication/reproduction dataset':columnValue(c,k),v));
+  if(box.childNodes.length)sec.append(box);
+  if(arr(ra.dependencies).length)sec.append(h('div',{class:'callout'},h('p',{class:'callout-title'},'Depends on'),h('ul',{},arr(ra.dependencies).map(d=>h('li',{},renderValue(d))))));
+  if(ra.preserves)sec.append(h('p',{class:'action-preserves'},h('b',{},'Preserved: '),rich(ra.preserves)));
+  const ev=arr(ra.evidence);if(ev.length){sec.append(h('p',{class:'sub'},'Evidence for this action'));for(const e of ev){if(typeof e==='string'){sec.append(h('p',{class:'reason'},rich(e)));continue}if(e.quote)sec.append(quoteBlock(e.quote,[e.section||e.location,e.quote_is_excerpt?'excerpt':null]));else if(e.location)sec.append(h('p',{class:'quote-loc'},locText(e.location)));const r=e.reason||e.rationale;if(r&&r!==ra.reason)sec.append(reasonBlock(r))}}
+  if(arr(ra.source_urls).length)sec.append(h('p',{class:'links'},arr(ra.source_urls).map(u=>extLink(u,'Open source: '+u.replace(/^https?:\/\//,'')))));
+  const known=new Set(['input_row_index','case_id','status','action','reason','proposed_changes','dependencies','evidence','preserves','source_urls','operation','decision_reference','expected_before_full_record_sha256','current_record','canonical_dataset_changes_applied']);
+  const extra=Object.fromEntries(Object.entries(ra).filter(([k])=>!known.has(k)));const d=renderDetail(extra);if(d)sec.append(h('details',{class:'more-text'},h('summary',{},'More about this action'),d));
+  return sec;
+}
+function renderPolicy(c,p){
+  const sec=h('section',{class:'policy-block','aria-label':'Policy choice'},h('h3',{class:'block-title'},'Policy choice needed'));
+  const chosen=store.records[c.id]?.option?.key;
+  for(const pol of p.policies){
+    sec.append(h('p',{class:'affects'},'Affects the '+listPhrase(pol.fields.map(fieldName))));
+    const q=questionOf(pol.detail);if(q)sec.append(h('p',{class:'policy-q'},rich(q)));
+    const opts=p.options.filter(o=>optionsOf(pol.detail).some(x=>x.key===o.key));
+    const now=pol.fields.length===1?current(c,pol.fields[0]):undefined;
+    if(opts.length)sec.append(h('ol',{class:'options'},opts.map(o=>h('li',{class:'option'+(chosen===o.key?' is-chosen':'')},h('p',{class:'option-head'},h('span',{class:'option-num'},'Option '+o.n),h('b',{},o.short),o.value!=null&&now!=null&&String(o.value)===String(now)?h('span',{class:'muted'},' (FLoRA’s current value)'):null),o.scope?h('p',{class:'option-scope'},rich(o.scope)):null,o.text?h('p',{},rich(o.text)):null,o.extra?renderDetail(o.extra):null))));
+    else sec.append(h('p',{class:'muted'},'The review names no fixed options. Record the rule you choose in the note.'));
+    const skip=['decision','decision_required','decision_needed','policy_question','choice','policy_choice'].filter(k=>pol.detail&&pol.detail[k]===q).concat(opts.map(o=>o.key.split('.')[0]));
+    const d=pol.detail&&typeof pol.detail==='object'?renderDetail(pol.detail,skip):null;if(d)sec.append(d);
+  }
+  return sec;
+}
+function renderConditions(c,p){
+  const items=[];
+  for(const t of p.holds)items.push(h('li',{},rich(t)));
+  for(const f of p.conditional)items.push(h('li',{},`The ${fieldName(f)} change is conditional; its conditions are listed with the evidence below.`));
+  const rm=Object.values(c.changes||{}).find(v=>v&&v.action==='remove_row'&&v.prerequisite);if(rm)items.push(h('li',{},'Before removing the row: ',rich(rm.prerequisite)));
+  const out=[];
+  if(items.length)out.push(h('section',{class:'callout'},h('h3',{class:'callout-title'},'Before applying'),h('ul',{},items)));
+  if(has(c.withdrawn_proposals))out.push(h('section',{class:'callout info'},h('h3',{class:'callout-title'},'Withdrawn earlier proposal'),h('ul',{},Object.entries(c.withdrawn_proposals).map(([f,v])=>h('li',{},`${cap(fieldName(f))}: ${shortValue(f,v)}. The complete source review withdrew this proposal; it is not part of the current changes.`)))));
+  return out;
+}
+function traceText(c){
+  const t=rowCtx(c)?.trace;if(!t)return null;
+  if(t.skip_reason)return t.skip_reason==='no_text'?'No usable text of the report was available for blind coding.':`Coding note: ${t.skip_reason}.`;
+  const parts=[];if(t.blind_type)parts.push('type '+words(t.blind_type));
+  const bo=t.blind_original;parts.push(bo&&(bo.title||bo.authors||bo.doi)?'original '+shortCite(bo):'no identifiable original');
+  if(t.blind_outcome)parts.push('outcome '+words(t.blind_outcome));else if(t.blind_outcome_computation||t.blind_outcome_robustness)parts.push(`computation ${words(t.blind_outcome_computation||'not coded')}, robustness ${words(t.blind_outcome_robustness||'not coded')}`);else parts.push('no outcome');
+  return `A blind coder reading only the ${levelOf(c)==='abstract'?'abstract':'available text'} recorded ${listPhrase(parts)}.`;
+}
+function renderEvidence(c,p){
+  const sec=h('section',{'aria-label':'Evidence and reasoning'},h('h3',{class:'block-title'},'Evidence and reasoning'));
+  const links=arr(c.primary_evidence_urls).map(u=>extLink(u,'Open verified primary report'));
+  if(links.length)sec.append(h('p',{class:'links'},links));
+  const fields=unique([...p.changeFields,...Object.keys(p.summary),...Object.keys(c.evidence||{}),...p.unknown]);
+  const contrary=c.row!=null?(CONTEXT.contrary||{})[c.row]||{}:{};
+  for(const f of fields){
+    const e=(c.evidence||{})[f],s=p.summary[f],lim=limitOf(c,f);
+    const block=h('div',{class:'why-field'});
+    const disp=s?DISPOSITION[s.disposition]||[words(s.disposition),'']:null;
+    block.append(h('h4',{},cap(fieldName(f)),disp?h('span',{class:'chip '+disp[1]},disp[0]):null,e&&e.method&&!/Sol/.test(e.method)?h('span',{class:'chip'},e.method==='argon'?'Adjudicated by Gemini 4 Argon':e.method==='obvious'?'Clear-cut adjudication':words(e.method)):null));
+    if(e&&e.reason)block.append(reasonBlock(e.reason));
+    if(e&&e.quote)block.append(quoteBlock(e.quote,[e.location,e.quote_is_excerpt?'excerpt':null]));else if(e&&e.location)block.append(h('p',{class:'quote-loc'},locText(e.location)));
+    if(lim&&!(s&&s.disposition==='policy_decision_required')){const d=renderDetail(typeof lim==='object'?lim:{evidence_limit:lim});if(d)block.append(h('p',{class:'sub'},p.conditional.includes(f)?'Conditions':'Limits and dependencies'),d)}
+    const con=arr(contrary[f]);if(con.length)block.append(h('details',{class:'more-text'},h('summary',{},`Contrary evidence the review considered (${con.length})`),h('div',{},con.map(x=>typeof x==='object'?[x.quote?quoteBlock(x.quote,[x.quote_is_excerpt?'excerpt':null]):null,x.resolution?h('p',{class:'reason'},rich(x.resolution)):renderDetail(x,['quote'])]:h('p',{},rich(x))))));
+    if(!e&&!lim)block.append(h('p',{class:'muted'},s?'No further reasoning was recorded for this field.':'No field-level reasoning was recorded.'));
+    sec.append(block);
+  }
+  if(p.qf){const block=h('div',{class:'why-field'},h('h4',{},'Evidence quote'));if(p.qf.rationale)block.append(reasonBlock(p.qf.rationale));if(p.qf.outcome_reviewed)block.append(h('p',{class:'quote-loc'},'Outcome reviewed against this quote: '+words(p.qf.outcome_reviewed)));sec.append(block)}
+  const t=traceText(c);if(t&&!fields.some(f=>(c.evidence||{})[f])){sec.append(h('div',{class:'why-field'},h('h4',{},'What the audit could see'),h('p',{class:'reason'},t),h('p',{class:'muted'},'No field-level reasoning was recorded because the evidence was insufficient.')))}
+  const notes=c.row!=null?(CONTEXT.review_notes||{})[c.row]:null;if(notes){const d=renderDetail(notes);if(d)sec.append(h('details',{class:'more-text'},h('summary',{},'More from the source review'),d))}
+  return sec;
+}
+function renderTechnical(c,p){
+  const rc=rowCtx(c);
+  const facts={'Case ID':c.id,'Row':c.row,'File key':c.file_key,'Work key':c.work,'Triage route':c.route,'Review status':c.signoff,'Evidence level':c.level,'Decision file':c.final_review_reference||meta(c,p.changeFields[0])?.review,'Full-record SHA-256':rc?.sha,'Queue SHA-256':QUEUE_HASH,'Baseline SHA-256':CONTEXT.baseline_sha256,'Evidence loaded':evidenceComplete?'Complete queue, hash verified':'Shortened excerpts embedded in this page'};
+  const dl=h('dl',{class:'detail-list'});for(const [k,v] of Object.entries(facts))if(v!=null&&v!=='')dl.append(h('dt',{},k),h('dd',{class:/SHA/.test(k)?'hash':''},String(v)));
+  for(const f of p.changeFields){const m=meta(c,f);if(m)dl.append(h('dt',{},'Proposal: '+fieldName(f)),h('dd',{},[m.status==='decision_required'?'Decision required':'Evidence-checked',m.review==='final_source_review'?'final source review':'earlier source adjudication',m.conditional?'conditional':''].filter(Boolean).join('; ')))}
+  if(rc&&rc.omitted&&rc.omitted.length)dl.append(h('dt',{},'Omitted values'),h('dd',{},'Private link fields omitted: '+rc.omitted.join(', ')));
+  const ctx={row:rc,proposals:c.row!=null?(CONTEXT.proposals||{})[c.row]:undefined,limits:c.row!=null?(CONTEXT.limits||{})[c.row]:undefined,record_action:p.ra&&!c.record_action?p.ra:undefined,quote_fix:p.qf||undefined,candidate:(CONTEXT.candidates||{})[c.id]};
+  return h('details',{class:'tech'},h('summary',{},'Technical details'),dl,h('details',{class:'more-text'},h('summary',{},'Case record (JSON)'),h('pre',{},JSON.stringify(c,null,2))),h('details',{class:'more-text'},h('summary',{},'Display context (JSON)'),h('pre',{},JSON.stringify(ctx,null,2))));
+}
+function renderCase(){
+  const art=$('case');art.replaceChildren();const c=caseById.get(state.selected);
+  if(!c){art.append(h('p',{class:'empty'},visible.length?'Choose a case from the list.':'No cases match this view.'));return}
+  const p=profile(c);
+  art.append(kicker(c,p),h('h2',{class:'case-title'},caseTitle(c)),byline(c),h('p',{class:'issue'},issue(c,p)));
+  if(p.policies.length)art.append(renderPolicy(c,p));
+  if(p.ra)art.append(renderRecordAction(c,p.ra,p.type==='record'?splitLead(p.ra.reason||'',260)[0]:''));
+  art.append(p.missing?renderMissingCard(c,p):renderCard(c,p));
+  art.append(...renderConditions(c,p),renderEvidence(c,p),renderTechnical(c,p));
+}
+
+/* ---------- decisions ---------- */
+function spec(c){
+  const p=profile(c),row=c.row!=null?'row '+c.row:'this replication';
+  const keep={code:'keep_current',label:'Keep FLoRA as it is',key:'c'},follow={code:'follow_up',label:'Needs follow-up',key:'f',tone:'follow'};
+  const inc=includeKey(c),n=p.items.filter(f=>inc.has(f)).length,total=p.items.length;
+  const approveLabel=total<2?(Object.values(c.changes||{}).some(v=>v&&v.action==='remove_row')?'Approve removal':'Approve change'):n===total?`Approve ${total} changes`:`Approve ${n} of ${total} changes`;
+  const approve={code:n===total?'approve':'approve_partial',label:approveLabel,key:'a',tone:'approve',disabled:n===0};
+  let question,sub=null,options;
+  if(p.type==='policy'){
+    question=`Which coding policy should apply to the ${listPhrase(unique(p.policies.flatMap(x=>x.fields)).map(fieldName))} of ${row}?`;
+    if(POLICY_COPY[c.row])question=POLICY_COPY[c.row].question;
+    options=p.options.map(o=>({code:'choose_option',label:POLICY_COPY[c.row]?.labels?.[o.key]||`Option ${o.n}: ${clip(o.short,48)}`,key:o.n<10?String(o.n):null,tone:'option',option:{key:o.key,label:o.short,value:o.value??null,scope:o.scope??null}}));
+    if(!options.length)options.push({code:'policy_rule',label:'Record policy decision',key:'1',tone:'option',needsNote:true});
+    options.push(keep,follow);sub=p.options.length?'Choose the option that matches the rule FLoRA should follow, or keep the current value.':'Describe the rule in the note; the review offers no fixed options.';
+  }else if(p.type==='record'){
+    question=(p.ra.action?p.ra.action.replace(/[.\s]+$/,''):'Apply the record-level action')+'?';
+    options=[{code:'approve_record_action',label:'Approve record action',key:'a',tone:'approve'},{...keep,label:'Keep the record as it is'},follow];
+    if(p.ra.status==='decision_required'||arr(p.ra.dependencies).length)sub='This action has dependencies; see “Depends on”.';
+    else if(p.changeFields.length)sub='The field corrections on this row are not applied on their own; they stay with the record-level decision.';
+  }else if(p.type==='change'){
+    if(total>1)question=`Apply ${n===total?'all '+total:n+' of '+total} changes to ${row}?`;
+    else if(p.qf&&!p.changeFields.length)question=`Replace the evidence quote for ${row}?`;
+    else{const f=p.changeFields[0],v=c.changes[f];question=f==='original'?(v&&v.action==='remove_row'?`Remove ${row} from FLoRA?`:['Replace the original study with ',h('q',{},shortCite(v)),'?']):f==='type'?['Change the record type to ',h('q',{},words(v)),'?']:v&&typeof v==='object'?['Recode ',row,' with the reproduction axes?']:['Change the ',fieldName(f),' from ',quoted(current(c,f)),' to ',quoted(v),'?']}
+    options=[approve,keep,follow];
+    if(p.holds.length||p.conditional.length)sub=n<total&&p.holds.length?'These changes are meant to be applied together; partial approval breaks the bundle.':'Approval is conditional; see “Before applying”.';
+  }else if(p.type==='missing-open'){
+    const t=(CONTEXT.candidates||{})[c.id];question=['Add ',shortCite(t)?h('q',{},shortCite(t)):'this candidate',' as a missing original for this replication?'];
+    options=[{code:'add_pair',label:'Approve addition',key:'a',tone:'approve'},{code:'reject_pair',label:'Do not add',key:'c'},follow];
+  }else if(p.type==='missing-settled'){
+    const s=p.summary.missing_row?.disposition;question=s==='represented'?'Accept that FLoRA already includes this pair?':s==='genuinely_missing'?'Accept that FLoRA is missing this pair?':'Accept that this original cannot be identified?';
+    options=[{code:'accept_finding',label:'Accept finding',key:'a',tone:'approve'},follow];
+  }else if(p.type==='limit'){
+    question=`Keep FLoRA’s values for ${row} despite the evidence limit?`;options=[{...keep,label:'Keep as it is'},follow];
+  }else{question=`Keep ${row} as it is?`;options=[keep,follow]}
+  return {question,sub,options};
+}
+function proposalOf(c,fields){const p=profile(c);const out={};for(const f of fields){if(f==='outcome_quote'&&p.qf)out[f]={current:p.qf.current_text,proposed:p.qf.proposed_quote,proposed_source:p.qf.proposed_source};else out[f]={current:f==='original'?current(c,f):current(c,f)??null,proposed:(c.changes||{})[f]}}return out}
+function decide(c,opt){
+  const note=($('note')?.value||'').trim();
+  if(opt.disabled)return;
+  if(opt.needsNote&&!note){openNote('Describe the rule you chose before recording this decision.');return}
+  const p=profile(c),prev=store.records[c.id]?JSON.parse(JSON.stringify(store.records[c.id])):null;
+  const fields=['approve','approve_partial'].includes(opt.code)?p.items.filter(f=>includeKey(c).has(f)):[];
+  const r={...(store.records[c.id]||{}),case_id:c.id,row:c.row,decision:opt.code,decision_label:opt.label,option:opt.option||null,approved_fields:fields,proposal:p.items.length?proposalOf(c,p.items):null,record_action:opt.code==='approve_record_action'&&p.ra?{action:p.ra.action??null,operation:p.ra.operation??null,proposed_changes:p.ra.proposed_changes??null}:null,expected_before_full_record_sha256:rowCtx(c)?.sha||null,proposal_fingerprint:snapshotOf(c),notes:note,recorded_at:stamp(),applied:false};
+  store.records[c.id]=r;persist();
+  const next=prefs.advance!==false?nextOpen(c.id):null;
+  lastUndo=()=>{lastUndo=null;if(prev)store.records[c.id]=prev;else delete store.records[c.id];persist();openCase(c.id);showToast(`Decision undone for ${c.row!=null?'row '+c.row:'this pair'}.`)};
+  showToast(`${statusLabel(opt.code)}: ${c.row!=null?'row '+c.row:'missing pair'}. Saved in this browser.`,lastUndo);
+  renderQueues();renderList();
+  if(next)select(next.id);else{renderCase();renderDock()}
+}
+function openNote(message){state.noteOpen=true;renderDock();const t=$('note');if(t){t.focus();if(message){$('note-error').textContent=message}}}
+let noteTimer=null;
+function saveNote(c,text){clearTimeout(noteTimer);noteTimer=setTimeout(()=>{const r=store.records[c.id]||{case_id:c.id,row:c.row,decision:null};r.notes=text;r.updated_at=stamp();store.records[c.id]=r;persist();const s=$('note-saved');if(s)s.textContent='Note saved.'},350)}
+function renderDock(){
+  const dock=$('dock');dock.replaceChildren();const c=caseById.get(state.selected);if(!c)return;
+  const sp=spec(c),r=store.records[c.id],s=statusOf(c);
+  const inner=h('div',{class:'dock-inner'});
+  inner.append(h('p',{class:'dock-q'},sp.question));if(sp.sub)inner.append(h('p',{class:'dock-sub'},sp.sub));
+  inner.append(h('div',{class:'dock-actions'},sp.options.map(o=>h('button',{type:'button',class:'choice '+(o.tone||''),'aria-pressed':String(!!r&&r.decision===o.code&&(!o.option||r.option?.key===o.option.key)),disabled:o.disabled?true:null,'aria-keyshortcuts':o.key?o.key.toUpperCase():null,onclick:()=>decide(c,o)},o.label,o.key?h('kbd',{},o.key.toUpperCase()):null))));
+  const noteText=r?.notes||'',needsNote=sp.options.some(o=>o.needsNote),showNote=state.noteOpen||!!noteText||needsNote;
+  if(showNote){const t=h('textarea',{id:'note',placeholder:needsNote?'State the coding rule and the value it gives for this row':s==='follow_up'?'What should the follow-up establish?':'Reasons, conditions or anything the integrator should know',oninput:e=>{$('note-error').textContent='';saveNote(c,e.target.value)}});t.value=noteText;inner.append(h('div',{class:'note-box'},h('label',{for:'note'},needsNote?'Rule you chose (required to record a policy decision)':'Note (optional)'),t,h('p',{class:'note-error',id:'note-error','aria-live':'polite'})))}
+  let status;
+  if(s==='stale')status=h('p',{class:'dock-status stale'},`The proposal changed after you decided (${statusLabel(r.decision).toLowerCase()} on ${timeLabel(r.recorded_at)}). Decide again.`);
+  else if(r&&r.decision)status=h('p',{class:'dock-status saved'},'Decision saved: ',h('b',{},statusLabel(r.decision)+(r.option?` (option: ${r.option.label})`:'')),` on ${timeLabel(r.recorded_at)}`);
+  else status=h('p',{class:'dock-status'},r&&r.legacy?`Earlier review in the previous app: ${r.legacy.decision}${r.legacy.notes?' — '+r.legacy.notes:''}`:'No decision yet.');
+  const pos=visible.findIndex(x=>x.id===c.id);
+  const left=h('div',{class:'dock-nav'},status,showNote?h('span',{class:'muted',id:'note-saved','aria-live':'polite'}):h('button',{type:'button',class:'linkish',onclick:()=>openNote()},'Add note'));
+  const nav=h('div',{class:'dock-nav'},h('label',{class:'auto'},h('input',{type:'checkbox',checked:prefs.advance!==false?true:null,onchange:e=>{prefs.advance=e.target.checked;savePrefs()}}),'Next case after deciding'),h('button',{type:'button',onclick:()=>step(-1),disabled:pos<=0?true:null},'Previous'),h('span',{},pos>=0?`${pos+1} of ${visible.length}`:''),h('button',{type:'button',onclick:()=>step(1),disabled:pos<0||pos>=visible.length-1?true:null},'Next'));
+  inner.append(h('div',{class:'dock-row'},left,nav));
+  dock.append(inner);
+}
+
+/* ---------- navigation ---------- */
+function select(id,{focus=false}={}){
+  const same=state.selected===id;state.selected=id;state.lastByQueue[state.queue]=id;
+  if(location.hash!=='#'+id)history.replaceState(null,'','#'+id);
+  for(const b of $('list').querySelectorAll('.item')){const on=b.dataset.id===id;b.setAttribute('aria-current',String(on));b.tabIndex=on?0:-1;if(on){revealInList(b);if(focus)b.focus({preventScroll:true})}}
+  const top=$('case').scrollTop;if(!same)state.noteOpen=false;renderCase();renderDock();$('case').scrollTop=same?top:0;
+}
+function revealInList(el){const list=$('list'),lr=list.getBoundingClientRect(),er=el.getBoundingClientRect();if(er.top<lr.top+34)list.scrollTop-=lr.top+34-er.top;else if(er.bottom>lr.bottom)list.scrollTop+=er.bottom-lr.bottom}
+const narrow=()=>matchMedia('(max-width:760px)').matches;
+function setListOpen(open){const idx=$('index'),btn=$('list-toggle');idx.classList.toggle('collapsed',!open);btn.setAttribute('aria-expanded',String(open));btn.textContent=open?'Hide case list':`Show case list (${visible.length.toLocaleString()})`}
+function step(d,focus=false){const i=visible.findIndex(c=>c.id===state.selected);const next=visible[Math.min(Math.max(i+d,0),visible.length-1)];if(next&&next.id!==state.selected)select(next.id,{focus})}
+function nextOpen(fromId){const i=visible.findIndex(c=>c.id===fromId);for(let k=1;k<=visible.length;k++){const c=visible[(i+k)%visible.length];if(c&&c.id!==fromId&&!isDecided(c))return c}return null}
+function switchQueue(id){state.queue=id;prefs.queue=id;savePrefs();renderQueues();renderList();const keep=visible.find(c=>c.id===state.selected);const remembered=visible.find(c=>c.id===state.lastByQueue[id]);const target=keep||remembered||visible.find(c=>!isDecided(c))||visible[0];if(target)select(target.id);else{state.selected=null;renderCase();renderDock()}}
+function openCase(id){if(!caseById.has(id))return;const c=caseById.get(id);if(!queueById[state.queue].test(c)){state.queue=QUEUES.find(q=>q.id!=='all'&&q.test(c))?.id||'all';prefs.queue=state.queue;savePrefs()}if(!computeVisible().some(([,x])=>x.id===id)){state.search='';$('search').value='';state.show='all';$('show').value='all'}renderQueues();renderList();select(id)}
+function renderAll(){renderQueues();renderList();if(!visible.some(c=>c.id===state.selected)){const t=visible.find(c=>!isDecided(c))||visible[0];state.selected=t?t.id:null}select(state.selected)}
+
+/* ---------- toast ---------- */
+function showToast(text,undo){const t=$('toast');t.replaceChildren(h('span',{},text));if(undo)t.append(h('button',{type:'button',onclick:()=>{t.hidden=true;undo()}},'Undo'));t.hidden=false;const hide=()=>{clearTimeout(toastTimer);toastTimer=setTimeout(()=>{if(!t.matches(':hover,:focus-within'))t.hidden=true;else hide()},undo?10000:3500)};hide()}
+
+/* ---------- export and import ---------- */
+function download(name,text,type){const u=URL.createObjectURL(new Blob([text],{type}));const a=h('a',{href:u,download:name});document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function exportRecords(){return Object.values(store.records).filter(r=>r&&(r.decision||r.notes||r.legacy)).map(r=>{const c=caseById.get(r.case_id);return {...r,kind:c?.kind??null,title:c?caseTitle(c):null,status:c?statusOf(c):'unknown_case',stale:c?statusOf(c)==='stale':null}})}
+$('export-json').onclick=()=>{const decisions=exportRecords();download(`flora-audit-decisions-${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({schema_version:2,app:'flora-audit-decision-review',input_hash:INPUT_HASH,queue_sha256:QUEUE_HASH,baseline_sha256:CONTEXT.baseline_sha256??null,exported_at:stamp(),canonical_changes_applied:false,decided_cases:cases.filter(isDecided).length,total_cases:cases.length,decisions},null,2),'application/json');notice(`Exported ${decisions.length} records.`)};
+$('export-csv').onclick=()=>{const cols=['case_id','row','kind','decision','decision_label','option','approved_fields','stale','notes','recorded_at','title'];const esc=v=>{v=v==null?'':typeof v==='object'?(Array.isArray(v)?v.join('; '):v.label||JSON.stringify(v)):String(v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};const lines=[cols.join(',')].concat(exportRecords().map(r=>cols.map(k=>esc(r[k])).join(',')));download(`flora-audit-decisions-${new Date().toISOString().slice(0,10)}.csv`,'﻿'+lines.join('\r\n')+'\r\n','text/csv')};
+$('import-button').onclick=()=>$('import-file').click();
+$('import-file').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{const data=JSON.parse(await file.text());const list=Array.isArray(data)?data:data&&data.decisions;if(!Array.isArray(list))throw Error('This file has no decisions list.');let added=0,replaced=0,skipped=0,unknown=0;
+  for(const d of list){if(!d||!d.case_id||!caseById.has(d.case_id)){unknown++;continue}const local=store.records[d.case_id];let incoming;
+    if((data.schema_version||1)<2&&d.decision&&!d.decision_label)incoming={case_id:d.case_id,legacy:{decision:d.decision,notes:d.notes,recorded_at:d.recorded_at}};
+    else{const {kind,title,status,stale,...rest}=d;incoming=rest}
+    const newer=!local||String(incoming.recorded_at||incoming.updated_at||'')>String(local.recorded_at||local.updated_at||'');
+    if(!local||(!local.decision&&!local.notes)){store.records[d.case_id]={...local,...incoming};added++}else if(newer){store.records[d.case_id]={...local,...incoming};replaced++}else skipped++}
+  persist();profiles=new Map();renderAll();const n=added+replaced;notice(`Imported ${n} ${n===1?'record':'records'}: ${added} new, ${replaced} replacing older local entries, ${skipped} skipped as older, ${unknown} not in this queue.`+(data.input_hash&&data.input_hash!==INPUT_HASH?' The file comes from a different audit version; decisions on changed proposals are marked for re-checking.':''))}catch(err){notice('Import failed: '+err.message)}};
+
+/* ---------- evidence ---------- */
+async function loadCompleteEvidence(text){const hash=await reviewHash(text);if(hash!==QUEUE_HASH)throw Error('This file does not match the current handoff. Reload the page and try again.');const loaded=JSON.parse(text);if(loaded.length!==cases.length)throw Error('Case count mismatch');if(new Set(loaded.map(c=>c.id)).size!==loaded.length)throw Error('Duplicate cases');cases=loaded;indexCases();evidenceComplete=true;notice('Complete evidence loaded and hash verified.');$('evidence-status').textContent='Complete evidence loaded and hash verified.';renderAll()}
+$('load').onchange=async e=>{try{await loadCompleteEvidence(await e.target.files[0].text())}catch(error){notice(error.message)}};
+
+/* ---------- wiring ---------- */
+$('search').oninput=e=>{state.search=e.target.value;renderList();if(!visible.some(c=>c.id===state.selected)&&visible[0])select(visible[0].id);else renderDock()};
+$('show').onchange=e=>{state.show=e.target.value;renderList();if(!visible.some(c=>c.id===state.selected)&&visible[0])select(visible[0].id);else renderDock()};
+$('list').addEventListener('click',e=>{const b=e.target.closest('.item');if(!b)return;select(b.dataset.id);if(narrow()){setListOpen(false);$('case').scrollIntoView({block:'start'})}});
+$('list').addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();step(e.key==='ArrowDown'?1:-1,true)}});
+$('list-toggle').onclick=()=>setListOpen($('index').classList.contains('collapsed'));
+$('about-button').onclick=()=>$('about').showModal();$('about-close').onclick=()=>$('about').close();
+window.addEventListener('hashchange',()=>{const id=decodeURIComponent(location.hash.slice(1));if(id&&id!==state.selected&&caseById.has(id))openCase(id)});
+document.addEventListener('keydown',e=>{
+  if(e.defaultPrevented||e.metaKey||e.ctrlKey||e.altKey)return;
+  if(e.target.closest('input,textarea,select,[contenteditable],dialog'))return;
+  const k=e.key.toLowerCase(),c=caseById.get(state.selected);
+  if(k==='j'){step(1);e.preventDefault();return}if(k==='k'){step(-1);e.preventDefault();return}
+  if(k==='n'){const n=nextOpen(state.selected);if(n)select(n.id);e.preventDefault();return}
+  if(k==='/'){$('search').focus();e.preventDefault();return}
+  if(k==='u'&&lastUndo){$('toast').hidden=true;lastUndo();e.preventDefault();return}
+  if(k==='?'){$('about').showModal();e.preventDefault();return}
+  if(!c)return;const o=spec(c).options.find(x=>x.key===k);if(o){decide(c,o);e.preventDefault()}
+});
+(function vocabulary(){const dl=$('vocabulary');for(const [k,v] of Object.entries(VOCAB))dl.append(h('dt',{},words(k)),h('dd',{},v))})();
+$('data-status').textContent=`Audited FLoRA snapshot SHA-256: ${CONTEXT.baseline_sha256||'not recorded'}. Review queue SHA-256: ${QUEUE_HASH}.`;
+if(new Set(cases.map(c=>c.id)).size!==cases.length)throw Error('Duplicate cases');
+indexCases();
+{const id=decodeURIComponent(location.hash.slice(1));if(id&&caseById.has(id)){state.selected=id;const c=caseById.get(id);if(!queueById[state.queue].test(c))state.queue=QUEUES.find(q=>q.id!=='all'&&q.test(c))?.id||'all'}}
+renderAll();
+if(narrow())setListOpen(false);
+window.floraReview={counts:()=>Object.fromEntries(QUEUES.map(q=>[q.id,cases.filter(q.test).length])),decided:()=>cases.filter(isDecided).length,evidenceComplete:()=>evidenceComplete};
+console.log('Validated '+cases.length+' unique cases.',window.floraReview.counts());
+if(location.protocol==='http:'||location.protocol==='https:'){
+  notice('Loading complete evidence…');
+  fetch('review_queue.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Complete evidence could not be loaded; showing shortened evidence.');return r.text()}).then(loadCompleteEvidence).catch(e=>notice(e.message));
+  for(const a of document.querySelectorAll('.downloads a')){const href=a.getAttribute('href');if(/^[\w.-]+$/.test(href))fetch(href,{method:'HEAD',cache:'no-store'}).then(r=>{if(!r.ok){a.classList.add('unavailable');a.title='Not published with this copy of the app'}}).catch(()=>{})}
+}
+</script>
+</body>
+</html>

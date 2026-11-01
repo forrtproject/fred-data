@@ -19,7 +19,13 @@ assert not any(out.iterdir()), 'Use an empty staging directory.'
 json_files = ['review_queue.json', 'audit_overview.json', 'correction_proposals.json',
               'evidence_provenance_fixes.json', 'review_required.json',
               'sol_review_decisions.json', 'missing_pair_review_decisions.json']
+if (H / 'record_actions.json').exists():
+    json_files.append('record_actions.json')
+if (H / 'current_source_decisions.json').exists():
+    json_files.append('current_source_decisions.json')
 csv_files = ['audit_rows.csv', 'confirmed_missing_pairs.csv', 'unresolved_missing_pairs.csv']
+if (H / 'planned_study_pairs.csv').exists():
+    csv_files.append('planned_study_pairs.csv')
 drop_keys = {'source_path', 'source_read_manifest', 'relevant_context_reads', 'parent_gate',
              'prior_review_artifact', 'prior_full_source_Sol_review_artifact',
              'prior_full_source_Sol_review_read_manifest', 'primary_metadata_receipt',
@@ -61,7 +67,8 @@ def public(value, in_before=False):
                 result['publication_omitted_private_fields'] = omitted
             continue
         before = in_before or key == 'expected_before'
-        if isinstance(item, str) and (key == 'quote' or key.endswith('_quote')) and not before:
+        proposed_quote = str(value.get('field', '')).endswith('_quote') and key == 'proposed'
+        if isinstance(item, str) and (key == 'quote' or key.endswith('_quote') or proposed_quote) and not before:
             short = excerpt(item)
             if private_path.search(short):
                 short = ''
@@ -69,14 +76,21 @@ def public(value, in_before=False):
             if short != item:
                 result['quote_is_excerpt'] = True
                 result['complete_quote_sha256'] = hashlib.sha256(item.encode()).hexdigest()
-                if key == 'quote' and 'character_start' in value:
+                if key in {'quote', 'literal_contiguous_quote'} and 'character_start' in value:
                     result['complete_proof_span'] = {k: value[k] for k in
                         ['character_start', 'character_end', 'utf8_byte_start', 'utf8_byte_end']}
             continue
         result[key] = public(item, before)
-    if result.get('quote_is_excerpt') and 'quote' in result and 'character_start' in result:
-        result['character_end'] = result['character_start'] + len(result['quote'])
-        result['utf8_byte_end'] = result['utf8_byte_start'] + len(result['quote'].encode())
+    proof_quote_key = next((k for k in ['quote', 'literal_contiguous_quote'] if k in result), None)
+    if proof_quote_key and 'character_start' in result and result.get('character_end', 0) - result['character_start'] != len(result[proof_quote_key]):
+        # The presentation context may already contain a shortened quote.
+        result.setdefault('complete_proof_span', {k: result[k] for k in
+            ['character_start', 'character_end', 'utf8_byte_start', 'utf8_byte_end']})
+        result['quote_is_excerpt'] = True
+    if result.get('quote_is_excerpt') and proof_quote_key and 'character_start' in result:
+        short = result[proof_quote_key]
+        result['character_end'] = result['character_start'] + len(short)
+        result['utf8_byte_end'] = result['utf8_byte_start'] + len(short.encode())
     return result
 
 published = {}
@@ -107,6 +121,12 @@ start_marker, end_marker = '/*flora-cases-start*/', '/*flora-cases-end*/'
 start = html.index(start_marker) + len(start_marker)
 end = html.index(end_marker, start)
 html = html[:start] + json.dumps(display, ensure_ascii=False).replace('<', '\\u003c') + html[end:]
+context_start_marker, context_end_marker = '/*flora-context-start*/', '/*flora-context-end*/'
+if context_start_marker in html:
+    context_start = html.index(context_start_marker) + len(context_start_marker)
+    context_end = html.index(context_end_marker, context_start)
+    context = public(json.loads(html[context_start:context_end]))
+    html = html[:context_start] + json.dumps(context, ensure_ascii=False).replace('<', '\\u003c') + html[context_end:]
 old_hash = hashlib.sha256((H / 'review_queue.json').read_bytes()).hexdigest()
 new_hash = hashlib.sha256((out / 'review_queue.json').read_bytes()).hexdigest()
 assert old_hash in html
