@@ -271,7 +271,7 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
 <header class="masthead">
   <div>
     <h1>FLoRA audit decisions</h1>
-    <p class="lede">Decide what should happen to each audited FLoRA record. Decisions are saved in this browser until you export them; nothing here edits FLoRA.</p>
+    <p class="lede">Review proposed fixes and cases needing your judgement. Decisions are saved in this browser until you export them; nothing here edits FLoRA.</p>
   </div>
   <div class="tools">
     <p class="overall" id="overall"></p>
@@ -486,7 +486,7 @@ function levelOf(c){const rc=rowCtx(c);return LEVEL[c.level]?c.level:rc?.level||
 const QUEUES=[
   {id:'needs',label:'Needs decision',test:c=>profile(c).needs,note:'Policy choices, record-level actions, corrections with holds and full-text evidence limits that the audit could not settle on its own.'},
   {id:'changes',label:'Proposed changes',test:c=>profile(c).items.length>0,note:'Source-checked corrections to field values, plus verified replacements for evidence quotes. Approve, keep FLoRA as it is, or ask for follow-up.'},
-  {id:'missing',label:'Missing pairs',test:c=>profile(c).missing,note:'Study–original pairs that FLoRA may be missing. Confirmed missing pairs are listed in the downloads.'},
+  {id:'missing',label:'Possible omissions',test:c=>profile(c).missing,note:'Study–original pairs that FLoRA may be missing. Confirmed missing pairs are listed in the downloads.'},
   {id:'limits',label:'Evidence limits',test:c=>{const p=profile(c);return !p.missing&&!p.items.length&&(p.unknown.length>0||p.unverified.length>0)},note:'The available source could not verify FLoRA’s values. No change is proposed; decide whether to keep the value or seek the source.'},
   {id:'all',label:'Everything',test:()=>true,note:'Every audit case.'}
 ];
@@ -514,7 +514,7 @@ function renderQueues(){
   for(const q of QUEUES){const list=cases.filter(q.test);const done=list.filter(isDecided).length;const pct=list.length?Math.round(done/list.length*100):0;
     nav.append(h('button',{class:'tab',type:'button','aria-pressed':String(state.queue===q.id),title:`${done} of ${list.length} decided`,onclick:()=>switchQueue(q.id)},q.label,h('span',{class:'tab-count'},list.length.toLocaleString()),h('span',{class:'tab-bar','aria-hidden':'true'},h('i',{style:`width:${pct}%`}))))}
   const all=cases.filter(isDecided).length,stale=cases.filter(c=>statusOf(c)==='stale').length;
-  const o=$('overall');o.replaceChildren(h('b',{},all.toLocaleString()),` of ${cases.length.toLocaleString()} cases decided`,stale?`; ${stale} to re-check`:'');
+  const o=$('overall');o.replaceChildren(h('b',{},all.toLocaleString()),' decisions saved',stale?`; ${stale} to re-check`:'');
 }
 function renderList(){
   visible=computeVisible().map(([,c])=>c);

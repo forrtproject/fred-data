@@ -13,7 +13,7 @@ The [full audit report](../REPORT.md) and [machine-readable overview](audit_over
 - [All input rows](audit_rows.csv): one current audit-status record for every input row.
 - [Review-required cases](review_required.json): 47 cases covering evidence limits, policy choices, and application dependencies.
 
-The [Cloudflare review app](https://lukas-reports.lukas-wallrich.workers.dev/flora-audit-2026-10/) links the combined downloads and supports searching the evidence, reviewing concrete policy alternatives, and saving/exporting notes. It verifies the complete queue SHA-256. Notes remain in browser storage and never edit FLoRA. The published app contains review records and downloads. Acquired full reports, private source paths, and access details are excluded.
+The [Cloudflare review app](https://lukas-reports.lukas-wallrich.workers.dev/flora-audit-2026-10/) links the combined downloads and supports searching the evidence, reviewing concrete policy alternatives, and saving/exporting notes. Start with the 47 cases in “Needs decision”; the other queues allow optional checks of proposals and evidence limits. It verifies the complete queue SHA-256. Notes remain in browser storage and never edit FLoRA. The published app contains review records and downloads. Acquired full reports, private source paths, and access details are excluded.
 
 ## Interpretation and application
 
