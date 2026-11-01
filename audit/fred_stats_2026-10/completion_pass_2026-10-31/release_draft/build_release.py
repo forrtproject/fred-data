@@ -3,7 +3,7 @@ import collections,csv,hashlib,json,re,subprocess,sys
 from pathlib import Path
 P=Path(__file__).resolve().parent;B=P.parents[1]
 sys.path.insert(0,str(B/'scripts'))
-from compare import load_adjudications,combine_obvious,metric,parsed_stat,quote_ok
+from compare import load_adjudications,combine_obvious,metric,parsed_stat,quote_ok,fresh_test_review
 from consistency import p_parts,number,analytic_n,pinterval,stat_interval
 KEY=['entry_id','effect_id','fred_id']
 GUARD=KEY+['ref_o','doi_o','study_o','ref_r','doi_r','url_r','study_r','description','es_type_o','es_type_r','nested_o','nested_r','pval_tails_o','pval_tails_r']
@@ -49,7 +49,7 @@ def build():
   if field.startswith('es_'):
    esmetric=d.get('correct_metric') or ('test statistic' if parsed_stat(new) else None)
    if not esmetric and d['verdict']=='blind_right' and number(new)==number(blind['value']):esmetric=blind['metric']
-   if metric(row['es_type_'+field[-1]])=='test statistic' and parsed_stat(new):esmetric='test statistic'
+   if metric(row['es_type_'+field[-1]])=='test statistic' and (parsed_stat(new) or fresh_test_review(d,field,row)):esmetric='test statistic'
    assert esmetric and metric(esmetric)==metric(row['es_type_'+field[-1]]),(aid,field)
    patch(row,e,cid,'es_repr_'+field[-1],f"{source_url}; {d['location']}",'associated_source_locator')
   if field=='reported_success':
