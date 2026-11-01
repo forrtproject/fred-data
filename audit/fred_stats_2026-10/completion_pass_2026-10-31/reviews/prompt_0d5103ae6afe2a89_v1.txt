@@ -1,0 +1,469 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "281": {
+      "source_key": "0d5103ae6afe2a89",
+      "side": "original",
+      "input": {
+        "ref_o": "Teló, C., Trofimovich, P., & Grantham O’Brien, M. (2022). Disentangling professional competence and foreign accent. Journal of Second Language Pronunciation, 8(3), 413–443. Portico. https://doi.org/10.1075/jslp.22013.tel",
+        "doi_o": "10.1075/jslp.22013.tel",
+        "study_o": "1",
+        "ref_r": "Teló, C., Silveira, R., Marcelino, A. F. B., & O’Brien, M. G. (2024). Accent Bias in Professional Evaluations: A Conceptual Replication Study in Brazil. Applied Linguistics, 45(6), 1010–1029. https://doi.org/10.1093/applin/amae042",
+        "doi_r": "10.1093/applin/amae042",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Comparison of competence ratings of English and Tagalog speakers.",
+        "locators_o": "p. 16",
+        "locators_r": "p. 7",
+        "audit_id": 281,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "speaker competence: speaker L1 main-effect coefficient, Tagalog versus English in the binomial logit mixed-effects model.",
+      "worker_notes": "Identity verified from supplied text title page: Disentangling Professional Competence and Foreign Accent; Cesar Teló, Pavel Trofimovich, Mary Grantham O’Brien; 2022; DOI 10.1075/jslp.22013.tel. The supplied candidate is a full primary manuscript with methods, results, references and appendices (43 numbered pages), not an abstract or secondary report. No PDF was supplied. Only es_value_o is assigned; all other fields are unassigned placeholders. Tables label the coefficient column Estimate, not standardized beta. Section 4.4 (pp. 13–14) specifies a binomial distribution with a logit link. No effect-size conversion performed. The same-row printed test is Speaker L1 (Tagalog vs. English)      –3.22        0.35   [–4.01, –2.35]   –9.06   < .001.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Compared to English speakers, Tagalog speakers were rated as less competent.",
+        "es_repr_o": "p. 16",
+        "es_repr_r": "p. 7",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Our findings challenge the notion of consistent bias, as listeners did not uniformly perceive L1 Brazilian Portuguese speakers as more competent and comprehensible than L1 Spanish speakers, and, in fact, generally preferred treatment provided by L1 Spanish speakers."
+      }
+    },
+    "282": {
+      "source_key": "0d5103ae6afe2a89",
+      "side": "original",
+      "input": {
+        "ref_o": "Teló, C., Trofimovich, P., & Grantham O’Brien, M. (2022). Disentangling professional competence and foreign accent. Journal of Second Language Pronunciation, 8(3), 413–443. Portico. https://doi.org/10.1075/jslp.22013.tel",
+        "doi_o": "10.1075/jslp.22013.tel",
+        "study_o": "1",
+        "ref_r": "Teló, C., Silveira, R., Marcelino, A. F. B., & O’Brien, M. G. (2024). Accent Bias in Professional Evaluations: A Conceptual Replication Study in Brazil. Applied Linguistics, 45(6), 1010–1029. https://doi.org/10.1093/applin/amae042",
+        "doi_r": "10.1093/applin/amae042",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Interaction of speaker language (English versus Tagalog), job prestige (low versus high), and performance scenario in competence ratings, including low-performance scenarios.",
+        "locators_o": "p. 16",
+        "locators_r": "p. 7",
+        "audit_id": 282,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "speaker competence: speaker L1 × job prestige × performance (Skill) interaction in the binomial logit mixed-effects model.",
+      "worker_notes": "Identity verified from supplied text title page: Disentangling Professional Competence and Foreign Accent; Cesar Teló, Pavel Trofimovich, Mary Grantham O’Brien; 2022; DOI 10.1075/jslp.22013.tel. The supplied candidate is a full primary manuscript with methods, results, references and appendices (43 numbered pages), not an abstract or secondary report. No PDF was supplied. Only es_value_o is assigned; all other fields are unassigned placeholders. Tables label the coefficient column Estimate, not standardized beta. Section 4.4 (pp. 13–14) specifies a binomial distribution with a logit link. No effect-size conversion performed. The same-row printed test is Speaker L1 × Prestige × Skill         –0.99        0.12   [–1.23, –0.74]   –8.03   < .001. The target is the three-way parameter explicitly identified by the interaction description and table locator. Skill is the table label for performance level (Figure captions explicitly say performance (skill) level). The subsequent narrative describes low-performance simple contrasts using ORs; these are follow-up tests rather than the three-way coefficient.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "A significant three-way interaction was driven by the competence ratings in low-performance scenarios, where both English and Tagalog speakers received higher competence ratings in low- versus high-prestige jobs, but the magnitude of this difference was greater for English speakers.",
+        "es_repr_o": "p. 16",
+        "es_repr_r": "p. 7",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Our findings challenge the notion of consistent bias, as listeners did not uniformly perceive L1 Brazilian Portuguese speakers as more competent and comprehensible than L1 Spanish speakers, and, in fact, generally preferred treatment provided by L1 Spanish speakers."
+      }
+    },
+    "283": {
+      "source_key": "0d5103ae6afe2a89",
+      "side": "original",
+      "input": {
+        "ref_o": "Teló, C., Trofimovich, P., & Grantham O’Brien, M. (2022). Disentangling professional competence and foreign accent. Journal of Second Language Pronunciation, 8(3), 413–443. Portico. https://doi.org/10.1075/jslp.22013.tel",
+        "doi_o": "10.1075/jslp.22013.tel",
+        "study_o": "1",
+        "ref_r": "Teló, C., Silveira, R., Marcelino, A. F. B., & O’Brien, M. G. (2024). Accent Bias in Professional Evaluations: A Conceptual Replication Study in Brazil. Applied Linguistics, 45(6), 1010–1029. https://doi.org/10.1093/applin/amae042",
+        "doi_r": "10.1093/applin/amae042",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Comparison of ratings of how English and Tagalog speakers are treated.",
+        "locators_o": "p. 19",
+        "locators_r": "p. 9",
+        "audit_id": 283,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "listener treatment preference: speaker L1 main-effect coefficient, Tagalog versus English in the binomial logit mixed-effects model.",
+      "worker_notes": "Identity verified from supplied text title page: Disentangling Professional Competence and Foreign Accent; Cesar Teló, Pavel Trofimovich, Mary Grantham O’Brien; 2022; DOI 10.1075/jslp.22013.tel. The supplied candidate is a full primary manuscript with methods, results, references and appendices (43 numbered pages), not an abstract or secondary report. No PDF was supplied. Only es_value_o is assigned; all other fields are unassigned placeholders. Tables label the coefficient column Estimate, not standardized beta. Section 4.4 (pp. 13–14) specifies a binomial distribution with a logit link. No effect-size conversion performed. The same-row printed test is Speaker L1 (Tagalog vs. English)      –3.56        0.38    [–4.37, –2.74]    –9.45 < .001.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Compared to English speakers, Tagalog speakers were rated as less treated.",
+        "es_repr_o": "p. 19",
+        "es_repr_r": "p. 9",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Our findings challenge the notion of consistent bias, as listeners did not uniformly perceive L1 Brazilian Portuguese speakers as more competent and comprehensible than L1 Spanish speakers, and, in fact, generally preferred treatment provided by L1 Spanish speakers."
+      }
+    },
+    "284": {
+      "source_key": "0d5103ae6afe2a89",
+      "side": "original",
+      "input": {
+        "ref_o": "Teló, C., Trofimovich, P., & Grantham O’Brien, M. (2022). Disentangling professional competence and foreign accent. Journal of Second Language Pronunciation, 8(3), 413–443. Portico. https://doi.org/10.1075/jslp.22013.tel",
+        "doi_o": "10.1075/jslp.22013.tel",
+        "study_o": "1",
+        "ref_r": "Teló, C., Silveira, R., Marcelino, A. F. B., & O’Brien, M. G. (2024). Accent Bias in Professional Evaluations: A Conceptual Replication Study in Brazil. Applied Linguistics, 45(6), 1010–1029. https://doi.org/10.1093/applin/amae042",
+        "doi_r": "10.1093/applin/amae042",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Interaction of speaker language (English versus Tagalog), job prestige (low versus high), and performance scenario in treatment preference ratings, including low-performance scenarios.",
+        "locators_o": "p. 19",
+        "locators_r": "p. 9",
+        "audit_id": 284,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "listener treatment preference: speaker L1 × job prestige × performance (Skill) interaction in the binomial logit mixed-effects model.",
+      "worker_notes": "Identity verified from supplied text title page: Disentangling Professional Competence and Foreign Accent; Cesar Teló, Pavel Trofimovich, Mary Grantham O’Brien; 2022; DOI 10.1075/jslp.22013.tel. The supplied candidate is a full primary manuscript with methods, results, references and appendices (43 numbered pages), not an abstract or secondary report. No PDF was supplied. Only es_value_o is assigned; all other fields are unassigned placeholders. Tables label the coefficient column Estimate, not standardized beta. Section 4.4 (pp. 13–14) specifies a binomial distribution with a logit link. No effect-size conversion performed. The same-row printed test is Speaker L1 × Prestige × Skill          1.26        0.13     [0.95, 1.52]      9.49 < .001. The target is the three-way parameter explicitly identified by the interaction description and table locator. Skill is the table label for performance level (Figure captions explicitly say performance (skill) level). The subsequent narrative describes low-performance simple contrasts using ORs; these are follow-up tests rather than the three-way coefficient.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "A significant three-way interaction was driven by the treatment preference ratings given to Tagalog speakers (rather than English speakers) in low-performance scenarios, where Tagalog speakers received higher ratings in low- versus high-prestige jobs.",
+        "es_repr_o": "p. 19",
+        "es_repr_r": "p. 9",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Our findings challenge the notion of consistent bias, as listeners did not uniformly perceive L1 Brazilian Portuguese speakers as more competent and comprehensible than L1 Spanish speakers, and, in fact, generally preferred treatment provided by L1 Spanish speakers."
+      }
+    },
+    "285": {
+      "source_key": "0d5103ae6afe2a89",
+      "side": "original",
+      "input": {
+        "ref_o": "Teló, C., Trofimovich, P., & Grantham O’Brien, M. (2022). Disentangling professional competence and foreign accent. Journal of Second Language Pronunciation, 8(3), 413–443. Portico. https://doi.org/10.1075/jslp.22013.tel",
+        "doi_o": "10.1075/jslp.22013.tel",
+        "study_o": "1",
+        "ref_r": "Teló, C., Silveira, R., Marcelino, A. F. B., & O’Brien, M. G. (2024). Accent Bias in Professional Evaluations: A Conceptual Replication Study in Brazil. Applied Linguistics, 45(6), 1010–1029. https://doi.org/10.1093/applin/amae042",
+        "doi_r": "10.1093/applin/amae042",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Comparison of comprehensibility ratings of English and Tagalog speakers.",
+        "locators_o": "p. 21",
+        "locators_r": "p. 11",
+        "audit_id": 285,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "speaker comprehensibility: speaker L1 main-effect coefficient, Tagalog versus English in the binomial logit mixed-effects model.",
+      "worker_notes": "Identity verified from supplied text title page: Disentangling Professional Competence and Foreign Accent; Cesar Teló, Pavel Trofimovich, Mary Grantham O’Brien; 2022; DOI 10.1075/jslp.22013.tel. The supplied candidate is a full primary manuscript with methods, results, references and appendices (43 numbered pages), not an abstract or secondary report. No PDF was supplied. Only es_value_o is assigned; all other fields are unassigned placeholders. Tables label the coefficient column Estimate, not standardized beta. Section 4.4 (pp. 13–14) specifies a binomial distribution with a logit link. No effect-size conversion performed. The same-row printed test is Speaker L1 (Tagalog vs. English)       1.53        0.56    [0.34, 2.65]     2.74     .006.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Compared to English speakers, Tagalog speakers were rated as less comprehensible.",
+        "es_repr_o": "p. 21",
+        "es_repr_r": "p. 11",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Our findings challenge the notion of consistent bias, as listeners did not uniformly perceive L1 Brazilian Portuguese speakers as more competent and comprehensible than L1 Spanish speakers, and, in fact, generally preferred treatment provided by L1 Spanish speakers."
+      }
+    },
+    "286": {
+      "source_key": "0d5103ae6afe2a89",
+      "side": "original",
+      "input": {
+        "ref_o": "Teló, C., Trofimovich, P., & Grantham O’Brien, M. (2022). Disentangling professional competence and foreign accent. Journal of Second Language Pronunciation, 8(3), 413–443. Portico. https://doi.org/10.1075/jslp.22013.tel",
+        "doi_o": "10.1075/jslp.22013.tel",
+        "study_o": "1",
+        "ref_r": "Teló, C., Silveira, R., Marcelino, A. F. B., & O’Brien, M. G. (2024). Accent Bias in Professional Evaluations: A Conceptual Replication Study in Brazil. Applied Linguistics, 45(6), 1010–1029. https://doi.org/10.1093/applin/amae042",
+        "doi_r": "10.1093/applin/amae042",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Interaction of speaker L1 (English versus Tagalog), job prestige (low versus high), and performance level in comprehensibility ratings, including low-performance scenarios.",
+        "locators_o": "p. 21",
+        "locators_r": "p. 11",
+        "audit_id": 286,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "speaker comprehensibility: speaker L1 × job prestige × performance (Skill) interaction in the binomial logit mixed-effects model.",
+      "worker_notes": "Identity verified from supplied text title page: Disentangling Professional Competence and Foreign Accent; Cesar Teló, Pavel Trofimovich, Mary Grantham O’Brien; 2022; DOI 10.1075/jslp.22013.tel. The supplied candidate is a full primary manuscript with methods, results, references and appendices (43 numbered pages), not an abstract or secondary report. No PDF was supplied. Only es_value_o is assigned; all other fields are unassigned placeholders. Tables label the coefficient column Estimate, not standardized beta. Section 4.4 (pp. 13–14) specifies a binomial distribution with a logit link. No effect-size conversion performed. The same-row printed test is Speaker L1 × Prestige × Skill         –0.84        0.20   [–1.25, –0.45]   –4.13 < .001. The target is the three-way parameter explicitly identified by the interaction description and table locator. Skill is the table label for performance level (Figure captions explicitly say performance (skill) level). The subsequent narrative describes low-performance simple contrasts using ORs; these are follow-up tests rather than the three-way coefficient.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "A significant three-way interaction between speaker L1, prestige, and performance level was driven by the ratings in low-performance scenarios, where both English and Tagalog speakers were evaluated as sounding more comprehensible in low- versus high-prestige jobs, but the magnitude of this difference was greater for English speakers.",
+        "es_repr_o": "p. 21",
+        "es_repr_r": "p. 11",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Our findings challenge the notion of consistent bias, as listeners did not uniformly perceive L1 Brazilian Portuguese speakers as more competent and comprehensible than L1 Spanish speakers, and, in fact, generally preferred treatment provided by L1 Spanish speakers."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 281,
+      "field": "es_value_o",
+      "blind": {
+        "value": "–3.22",
+        "metric": "Estimate (binomial mixed-effects model coefficient, logit link; standardization not stated)",
+        "test_statistic": "z = –9.06",
+        "location": "p. 16, Table 1, Speaker L1 (Tagalog vs. English) row, Estimate column",
+        "quote": "Speaker L1 (Tagalog vs. English)      –3.22        0.35   [–4.01, –2.35]   –9.06   < .001",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 281,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Outcome and contrast identified from description and named table. Retained the printed Estimate on the binomial-logit model scale; standardized-beta identity is not established and no conversion was performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "location": "p. 16, Table 1, Speaker L1 (Tagalog vs. English) row, Estimate column",
+        "quote": "Speaker L1 (Tagalog vs. English)      –3.22        0.35   [–4.01, –2.35]   –9.06   < .001",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-3.22",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 282,
+      "field": "es_value_o",
+      "blind": {
+        "value": "–0.99",
+        "metric": "Estimate (binomial mixed-effects model coefficient, logit link; standardization not stated)",
+        "test_statistic": "z = –8.03",
+        "location": "p. 16, Table 1, Speaker L1 × Prestige × Skill row, Estimate column",
+        "quote": "Speaker L1 × Prestige × Skill         –0.99        0.12   [–1.23, –0.74]   –8.03   < .001",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 282,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Outcome and contrast identified from description and named table. Retained the printed Estimate on the binomial-logit model scale; standardized-beta identity is not established and no conversion was performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "location": "p. 16, Table 1, Speaker L1 × Prestige × Skill row, Estimate column",
+        "quote": "Speaker L1 × Prestige × Skill         –0.99        0.12   [–1.23, –0.74]   –8.03   < .001",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.99",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 283,
+      "field": "es_value_o",
+      "blind": {
+        "value": "–3.56",
+        "metric": "Estimate (binomial mixed-effects model coefficient, logit link; standardization not stated)",
+        "test_statistic": "z = –9.45",
+        "location": "p. 19, Table 2, Speaker L1 (Tagalog vs. English) row, Estimate column",
+        "quote": "Speaker L1 (Tagalog vs. English)      –3.56        0.38    [–4.37, –2.74]    –9.45 < .001",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 283,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Outcome and contrast identified from description and named table. Retained the printed Estimate on the binomial-logit model scale; standardized-beta identity is not established and no conversion was performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "location": "p. 19, Table 2, Speaker L1 (Tagalog vs. English) row, Estimate column",
+        "quote": "Speaker L1 (Tagalog vs. English)      –3.56        0.38    [–4.37, –2.74]    –9.45 < .001",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-3.56",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 284,
+      "field": "es_value_o",
+      "blind": {
+        "value": "1.26",
+        "metric": "Estimate (binomial mixed-effects model coefficient, logit link; standardization not stated)",
+        "test_statistic": "z = 9.49",
+        "location": "p. 19, Table 2, Speaker L1 × Prestige × Skill row, Estimate column",
+        "quote": "Speaker L1 × Prestige × Skill          1.26        0.13     [0.95, 1.52]      9.49 < .001",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 284,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Outcome and contrast identified from description and named table. Retained the printed Estimate on the binomial-logit model scale; standardized-beta identity is not established and no conversion was performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "location": "p. 19, Table 2, Speaker L1 × Prestige × Skill row, Estimate column",
+        "quote": "Speaker L1 × Prestige × Skill          1.26        0.13     [0.95, 1.52]      9.49 < .001",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "1.26",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 285,
+      "field": "es_value_o",
+      "blind": {
+        "value": "1.53",
+        "metric": "Estimate (binomial mixed-effects model coefficient, logit link; standardization not stated)",
+        "test_statistic": "z = 2.74",
+        "location": "p. 21, Table 3, Speaker L1 (Tagalog vs. English) row, Estimate column",
+        "quote": "Speaker L1 (Tagalog vs. English)       1.53        0.56    [0.34, 2.65]     2.74     .006",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 285,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Outcome and contrast identified from description and named table. Retained the printed Estimate on the binomial-logit model scale; standardized-beta identity is not established and no conversion was performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "location": "p. 21, Table 3, Speaker L1 (Tagalog vs. English) row, Estimate column",
+        "quote": "Speaker L1 (Tagalog vs. English)       1.53        0.56    [0.34, 2.65]     2.74     .006",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "1.53",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 286,
+      "field": "es_value_o",
+      "blind": {
+        "value": "–0.84",
+        "metric": "Estimate (binomial mixed-effects model coefficient, logit link; standardization not stated)",
+        "test_statistic": "z = –4.13",
+        "location": "p. 21, Table 3, Speaker L1 × Prestige × Skill row, Estimate column",
+        "quote": "Speaker L1 × Prestige × Skill         –0.84        0.20   [–1.25, –0.45]   –4.13 < .001",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 286,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Outcome and contrast identified from description and named table. Retained the printed Estimate on the binomial-logit model scale; standardized-beta identity is not established and no conversion was performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c4712391bc4803bfe19dc718.txt",
+        "location": "p. 21, Table 3, Speaker L1 × Prestige × Skill row, Estimate column",
+        "quote": "Speaker L1 × Prestige × Skill         –0.84        0.20   [–1.25, –0.45]   –4.13 < .001",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.84",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/0d5103ae6afe2a89. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_0d5103ae6afe2a89_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

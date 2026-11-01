@@ -171,6 +171,17 @@ def fresh_test_review(a,field,row):
   return value is not None and raw==value
  return bool(parsed and kind in ['test statistic',parsed[0]])
 
+def fresh_printed_effect_review(a,field,row,blind):
+ """Copy a directly printed requested coefficient over a wrongly stored statistic."""
+ if not field.startswith('es_value_') or not blind:return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
+ if a.get('verdict') not in ['blind_right','both_wrong']:return False
+ requested=metric(row.get('es_type_'+field[-1]))
+ if not requested or requested in ['test statistic','f','t','z','chi2','x2','g']:return False
+ if metric(a.get('correct_metric'))!=requested or metric(blind.get('metric'))!=requested:return False
+ value=number(a.get('correct_value'))
+ return bool(parsed_stat(row.get(field)) and value is not None and value==number(blind.get('value')))
+
 def source_prefix(value):
  s=str(value or '').strip()
  if not s:return '(missing)'
@@ -282,8 +293,8 @@ def main():
    primary_adjud=bool(secondary and adjud.get((aid,f)) and original_primary_evidence(adjud[(aid,f)],r))
    if primary_adjud:
     comparison=comp(f,raw,effective_e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
-   fresh_notation=bool(comparison=='not_comparable' and fresh_test_review(adjud.get((aid,f),{}),f,r))
-   if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_notation:
+   fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e)))
+   if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_review:
     a=adjud.get((aid,f))
     if (aid,f) in holds:a=None
     if a:
