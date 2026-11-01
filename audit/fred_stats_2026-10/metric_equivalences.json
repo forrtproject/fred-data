@@ -1512,6 +1512,42 @@
     "completion_pass": "2026-10-31"
   },
   {
+    "audit_id": 1587,
+    "field": "es_value_r",
+    "printed_value": "−0.16",
+    "printed_metric": "Cohen’s d",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0348267ab81eafffcaf54867.txt",
+    "comparison_metric": "d",
+    "reason": "Both shipped and blind match the printed Cohen's d = -0.16 in Table 2 for the RP:P replication protocol after exclusions.",
+    "location": "p. 424 (PDF p. 7), Table 2, Current project / RP:P replication, L502–510",
+    "quote": "Table 2. Effect of Emotion Condition on the Initial Offer in the Original Study, the RP:P Study, and the Current ... Project After Exclusions ... M SD M SD M Cohen’s d ... Current project ... RP:P replication 41.93 20.29 38.73 20.68 −3.20 −0.16",
+    "completion_pass": "2026-10-31"
+  },
+  {
+    "audit_id": 1588,
+    "field": "es_value_r",
+    "printed_value": "−0.48",
+    "printed_metric": "Cohen’s d",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0348267ab81eafffcaf54867.txt",
+    "comparison_metric": "d",
+    "reason": "Both shipped and blind match the printed Cohen's d = -0.48 in Table 2 for the revised protocol after exclusions.",
+    "location": "p. 424 (PDF p. 7), Table 2, Current project / Revised, L502–511",
+    "quote": "Table 2. Effect of Emotion Condition on the Initial Offer in the Original Study, the RP:P Study, and the Current ... Project After Exclusions ... M SD M SD M Cohen’s d ... Current project ... Revised 46.40 11.67 38.98 21.23 −7.42 −0.48",
+    "completion_pass": "2026-10-31"
+  },
+  {
+    "audit_id": 1589,
+    "field": "es_value_r",
+    "printed_value": "−0.10",
+    "printed_metric": "Cohen’s d",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0348267ab81eafffcaf54867.txt",
+    "comparison_metric": "d",
+    "reason": "Shipped (-0.1) and blind (-0.10) agree on the printed Cohen's d = -0.10 in Table 2 for the online protocol after exclusions, differing only in trailing-zero formatting.",
+    "location": "p. 424 (PDF p. 7), Table 2, Current project / Online, L502–512",
+    "quote": "Table 2. Effect of Emotion Condition on the Initial Offer in the Original Study, the RP:P Study, and the Current ... Project After Exclusions ... M SD M SD M Cohen’s d ... Current project ... Online 44.60 21.07 42.07 28.43 −2.53 −0.10",
+    "completion_pass": "2026-10-31"
+  },
+  {
     "audit_id": 880,
     "field": "es_value_o",
     "printed_value": "4.91",
@@ -1646,6 +1682,76 @@
         }
       ],
       "exact_result": "2.2053653583105826"
+    },
+    "completion_pass": "2026-10-31"
+  },
+  {
+    "audit_id": 1872,
+    "field": "es_value_r",
+    "printed_value": "0.62",
+    "printed_metric": "partial eta squared (η²p)",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/73481fd24e20e8f1b7876e12.txt",
+    "comparison_metric": "d",
+    "comparison_value": "2.57",
+    "reason": "While the text prints partial eta-squared (0.62) rather than Cohen's d for the Study 2a camp-size main effect on benefit ratings, coding_context documents the reproducible transformation esc::cohens_d(r = FReD:::convert_effect_sizes(\"F(1, 498) = 821.82\", \"test statistic\")), which yields d = 2 * sqrt(821.82 / 498) = 2.5692 (shipped 2.57).",
+    "location": "Manuscript p. 41, Study 2a Results—Benefit Ratings (formfeed page 44)",
+    "quote": "We found support for a main effect of camp size, F(1, 498) = 821.82, p < .001, η²p =\n\n0.62, 90% CI [0.58, 0.66].",
+    "derivation": {
+      "audit_id": 1872,
+      "field": "es_value_r",
+      "calculation": "documented_f_to_r_to_d",
+      "df1": 1,
+      "df2": 498,
+      "f": "821.82",
+      "statistic_quote": "We found support for a main effect of camp size, F(1, 498) = 821.82, p < .001, η²p =\n\n0.62, 90% CI [0.58, 0.66].",
+      "expected_coding_expression": "esc::cohens_d(r = FReD:::convert_effect_sizes(\"F(1, 498) = 821.82\", \"test statistic\"))",
+      "reason": "Reproduce the originally documented coding expression from primary printed F and degrees of freedom, independently target-confirmed in f4b094cce6f52e1d_v1. Preserve raw partial eta-squared. This is an existing F→r→d convention, not a new pooled-mean d calculation or an inferred equal allocation. Historical software versions unspecified; pinned maintainer implementations reproduce the documented formula.",
+      "software_sources": [
+        {
+          "url": "https://github.com/forrtproject/FReD/blob/923d993c73ed7f2369cd219396e438716d25ff34/R/effect_size_transformations.R",
+          "formula": "df1=1: r=sqrt(F)/sqrt(F+df2)"
+        },
+        {
+          "url": "https://github.com/cran/esc/blob/cd240aa36dbe7aa7f6baf66bff9557510232a83d/R/hedges_g.R",
+          "formula": "cohens_d(r): 2*r/sqrt(1-r^2)"
+        }
+      ],
+      "exact_result": "2.5692340989916986"
+    },
+    "completion_pass": "2026-10-31"
+  },
+  {
+    "audit_id": 1873,
+    "field": "es_value_r",
+    "printed_value": "0.24",
+    "printed_metric": "partial eta squared (η²p)",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/73481fd24e20e8f1b7876e12.txt",
+    "comparison_metric": "d",
+    "comparison_value": "1.13",
+    "reason": "While the text prints partial eta-squared (0.24) rather than Cohen's d for the Study 2b camp-size main effect on benefit ratings, coding_context documents the reproducible transformation esc::cohens_d(r = FReD:::convert_effect_sizes(\"F(1, 1598) = 511.60\", \"test statistic\")), which yields d = 2 * sqrt(511.60 / 1598) = 1.1316 (shipped 1.13).",
+    "location": "Manuscript p. 46, Study 2b Results—Replication—Benefits rating (formfeed page 49)",
+    "quote": "For camp size, we found support for a main effect, F(1,\n\n1598) = 511.60, p < .001 , η²p = 0.24, 90% CI [0.21, 0.27].",
+    "derivation": {
+      "audit_id": 1873,
+      "field": "es_value_r",
+      "calculation": "documented_f_to_r_to_d",
+      "df1": 1,
+      "df2": 1598,
+      "f": "511.60",
+      "statistic_quote": "For camp size, we found support for a main effect, F(1,\n\n1598) = 511.60, p < .001 , η²p = 0.24, 90% CI [0.21, 0.27].",
+      "expected_coding_expression": "esc::cohens_d(r = FReD:::convert_effect_sizes(\"F(1, 1598) = 511.60\", \"test statistic\"))",
+      "reason": "Reproduce the originally documented coding expression from primary printed F and degrees of freedom, independently target-confirmed in f4b094cce6f52e1d_v1. Preserve raw partial eta-squared. This is an existing F→r→d convention, not a new pooled-mean d calculation or an inferred equal allocation. Historical software versions unspecified; pinned maintainer implementations reproduce the documented formula.",
+      "software_sources": [
+        {
+          "url": "https://github.com/forrtproject/FReD/blob/923d993c73ed7f2369cd219396e438716d25ff34/R/effect_size_transformations.R",
+          "formula": "df1=1: r=sqrt(F)/sqrt(F+df2)"
+        },
+        {
+          "url": "https://github.com/cran/esc/blob/cd240aa36dbe7aa7f6baf66bff9557510232a83d/R/hedges_g.R",
+          "formula": "cohens_d(r): 2*r/sqrt(1-r^2)"
+        }
+      ],
+      "exact_result": "1.1316363156680125"
     },
     "completion_pass": "2026-10-31"
   }

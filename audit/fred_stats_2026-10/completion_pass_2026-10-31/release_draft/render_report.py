@@ -90,6 +90,9 @@ search.addEventListener('input',filter);field.addEventListener('change',filter);
  if engagement:
   null_note=' Row 1664 counts the authors’ explicit agreement with an original null result as successful replication.' if any(int(x['audit_id'])==1664 and x['new_value']=='successful' for x in engagement) else ''
   notices.append(f'<strong>Decision to review: engagement outcomes.</strong> {len(engagement)} corrections use the authors’ comparisons for individual fall-to-spring relationships.{null_note} Review this interpretation alongside the quoted comparison before merging.')
+ negotiation=[x for x in c if int(x['audit_id']) in [1587,1588,1589] and x['field'] in ['reported_success','pval_value_r']]
+ if negotiation:
+  notices.append('<strong>Decision to review: Many Labs negotiation protocols.</strong> Rows 1587–1589 apply the authors’ stated replication criterion separately to the RP:P, revised and online protocols. Only the revised protocol met that criterion. Evidence did not establish a larger effect for that protocol. The added p-values come from the protocol-specific mixed-effects tests in Table 4, which account for testing site; the stored d values remain the descriptive effects printed in Table 2. Review this model pairing and the protocol-specific outcome coding alongside the quoted evidence before merging.')
  if notices:
   notice='<div class="notice">'+''.join('<p'+(' style="margin-top:14px"' if i else '')+'>'+text+'</p>' for i,text in enumerate(notices))+'</div>'
   doc=doc.replace('<h2>What the checks found</h2>','<h2>What the checks found</h2>'+notice)
