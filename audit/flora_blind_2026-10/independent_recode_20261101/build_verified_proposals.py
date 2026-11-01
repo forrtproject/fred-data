@@ -44,6 +44,33 @@ def ids(row, role):
             if (v := identifier(row.get(k, '')))}
 
 
+def review_field_dispositions(review):
+    """Read explicit field identities; conflicting aliases cannot authorize a fix."""
+    entries = review.get('reviews', review.get('field_reviews'))
+    assert isinstance(entries, (list, dict)), 'Missing field-specific source review'
+    entries = entries.values() if isinstance(entries, dict) else entries
+    result = []
+    for entry in entries:
+        rows = [entry[k] for k in ('row_index', 'input_row_index', 'row_id', 'row') if entry.get(k) is not None]
+        fields = [entry[k] for k in ('field', 'field_reviewed') if entry.get(k) is not None]
+        if entry.get('requested_fields') is not None:
+            assert len(entry['requested_fields']) == 1, 'Review is not field-specific'
+            fields.extend(entry['requested_fields'])
+        if entry.get('field_review_id'):
+            match = re.fullmatch(r'(\d+)\.([a-z_]+)', entry['field_review_id'])
+            assert match, 'Invalid review field identity'
+            rows.append(match[1])
+            fields.append(match[2])
+        assert rows and all(type(value) in (int, str) and re.fullmatch(r'(?:row:)?\d+', str(value)) for value in rows)
+        rows = {int(str(value).removeprefix('row:')) for value in rows}
+        assert len(rows) == 1, 'Conflicting review row identities'
+        assert fields and len(set(fields)) == 1, 'Conflicting review field identities'
+        statuses = {entry[k] for k in ('status', 'disposition') if entry.get(k) is not None}
+        assert len(statuses) == 1, 'Conflicting or missing review dispositions'
+        result.append((rows.pop(), fields[0], statuses.pop()))
+    return result
+
+
 def retained_target_scope_review(receipt, row_index, row, outcome):
     """Bind a resolved target objection to its raw review and parent corrections."""
     directory = Path(receipt['directory'])
@@ -145,7 +172,14 @@ def original_alignment(row, target, year_receipt=None, author_receipt=None):
         assert norm(target['authors']) == norm(printed), 'Abbreviated citation differs from its source receipt'
         count = author_receipt['source_printed_person_count']
         named = [a for a in registered if a.get('family')]
-        assert 2 <= count <= len(named)
+        assert 1 <= count <= len(named)
+        if count == 1:
+            assert (target.get('doi') and identifier(target['doi']) in ids(row, 'o')
+                    and re.search(r'\bet\s*\.?\s*al\b', printed, re.I)), \
+                'Single-author abbreviation requires a printed matching DOI and et al.'
+            initials = ''.join(word[0] for word in re.findall(r'[^\W\d_]+', named[0].get('given', '')))
+            assert initials and norm(named[0]['family'] + initials) in norm(printed), \
+                'Abbreviated first-author initials differ'
         positions = [norm(printed).find(norm(a['family'])) for a in named[:count]]
         assert all(i >= 0 for i in positions) and positions == sorted(positions), 'Citation is not the registered author prefix'
     if target.get('doi'):
@@ -305,9 +339,8 @@ def build():
             assert sha((reviewer / name).read_bytes()) == expected, 'Reviewed evidence changed: ' + name
         assert validation['proof_count_verified'] > 0
         for field in decision['proposal_fields']:
-            matches = [x for x in review['reviews'] if x.get('row_index', x.get('row_id', x.get('row'))) == row_index
-                       and x.get('field', x.get('field_reviewed')) == decision.get('review_field_names', {}).get(field, field)
-                       and x.get('status', x.get('disposition')) == 'supported_correction']
+            expected = (row_index, decision.get('review_field_names', {}).get(field, field), 'supported_correction')
+            matches = [entry for entry in review_field_dispositions(review) if entry == expected]
             assert len(matches) == 1, 'Missing independent adversarial support'
             prop = next(p for p in proposals if int(p['input_row_index']) == row_index and p['field'] == field)
             assert prop['expected_before_full_record_sha256'] == digest(row)

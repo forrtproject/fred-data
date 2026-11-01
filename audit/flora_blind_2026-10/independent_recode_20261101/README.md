@@ -2,18 +2,18 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 103 initial documents and four additional source views have
+Current checkpoint: 105 of 677 initial source packets and four additional source views have
 passed Opus schema, literal-span and reading checks; twelve fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Ten cases covering eleven proposed
+The full reassessment remains in progress. Eleven cases covering twelve proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
 suspended.
 
-One suspected outcome correction is withdrawn in `withdrawn_proposals.json` after
-source adjudication. Its blind disagreement remains visible; this is not labelled
+Two suspected outcome corrections are withdrawn in `withdrawn_proposals.json` after
+source adjudication. Their blind disagreements remain visible; these are not labelled
 two-model agreement. The finite 60-item source-completeness recovery pass reuses
 old attempts and seeks full primary reports. Its preparer never becomes a blind coder.
 The first acquisition pass recovered one verified full report. It has completed
@@ -115,7 +115,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 62 evidence/dependency controls:
+Run all 68 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -123,3 +123,5 @@ python3 audit/flora_blind_2026-10/independent_recode_20261101/build_verified_pro
 ```
 
 The current automatic set also verifies completed study status and authoritative original DOI/title correspondence. Advance-online and print years remain separate provenance for the same publication. A report carrying a plan-only source needs a record remedy, rather than an outcome-only patch. Row 403 retains the directly retested 2000 original: its H4 finding explicitly contradicts the original while other findings agree. The resolved objection and earlier hold remain in `held_acceptance_decisions.json`; the raw second review and verified parent corrections are bound to the proposal. Rows 195 and 869 remain outside automatic acceptance with their joint identity/type/outcome boundaries documented. No review-app rebuild or deployment is inferred from this checkpoint.
+
+Row 104 corrects a dataset/method citation to the explicitly retested Smith et al. (2009) paper, with its complete eleven-author bibliography and literal source citation retained together. A single named author plus “et al.” requires matching printed DOI, exact title, first-author initials and authoritative complete metadata. Source-review field tables may use either an explicit list or keyed entries; conflicting row/field aliases are rejected. Row 1868’s proposed outcome change is withdrawn under the author-overall-verdict rule, with both confident blind readings and the hemispheric contrast preserved. Its full-context quote update remains a separate recommendation.

@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from build_verified_proposals import checked_replacements, completed_field_work, current_alignment, ids, original_alignment, original_identifier_alignment, original_replacements, retained_target_scope_review
+from build_verified_proposals import checked_replacements, completed_field_work, current_alignment, ids, original_alignment, original_identifier_alignment, original_replacements, retained_target_scope_review, review_field_dispositions
 
 
 class ProposalDependencies(unittest.TestCase):
@@ -14,6 +14,53 @@ class ProposalDependencies(unittest.TestCase):
         self.result = {'record_type': 'reproduction'}
         self.target = {'outcome': '', 'outcome_computation': 'computational issues',
                        'outcome_robustness': 'robustness challenges'}
+
+    def test_source_review_native_field_dictionary_preserves_explicit_identity(self):
+        review = {'field_reviews': {'104.original': {
+            'input_row_index': 104, 'field_review_id': '104.original',
+            'requested_fields': ['original'], 'status': 'supported_correction'}}}
+        self.assertEqual(review_field_dispositions(review), [(104, 'original', 'supported_correction')])
+
+    def test_source_review_rejects_conflicting_row_aliases(self):
+        review = {'reviews': [{'row_index': 104, 'row_id': 'row:105', 'field': 'original',
+                               'status': 'supported_correction'}]}
+        with self.assertRaisesRegex(AssertionError, 'Conflicting review row'):
+            review_field_dispositions(review)
+
+    def test_source_review_rejects_conflicting_field_aliases(self):
+        review = {'field_reviews': {'104.original': {'input_row_index': 104,
+            'field_review_id': '104.original', 'field': 'outcome', 'status': 'supported_correction'}}}
+        with self.assertRaisesRegex(AssertionError, 'Conflicting review field'):
+            review_field_dispositions(review)
+
+    def one_author_abbreviation_fixture(self, directory, printed='Smith SM, et al.'):
+        authors = [{'family': 'Smith', 'given': 'Stephen M.'}, {'family': 'Jones', 'given': 'Ann'}]
+        row = {'title_o': 'Actual target', 'year_o': '2009', 'doi_o': '10.1/original',
+               'author_o': json.dumps(authors)}
+        target = {'title': 'Actual target', 'year': '2009', 'doi': '10.1/original', 'authors': printed}
+        path = Path(directory) / 'authors.json'
+        path.write_text(json.dumps({'message': {'DOI': '10.1/original', 'title': ['Actual target'], 'author': authors}}))
+        receipt = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                   'source_printed_authors': printed, 'source_printed_person_count': 1}
+        return row, target, receipt
+
+    def test_single_named_author_et_al_requires_matching_source_doi_and_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.one_author_abbreviation_fixture(directory)
+            original_alignment(row, target, author_receipt=receipt)
+
+    def test_single_author_abbreviation_cannot_bypass_missing_source_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.one_author_abbreviation_fixture(directory)
+            target['doi'] = ''
+            with self.assertRaisesRegex(AssertionError, 'printed matching DOI'):
+                original_alignment(row, target, author_receipt=receipt)
+
+    def test_single_author_abbreviation_requires_matching_first_author_initials(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.one_author_abbreviation_fixture(directory, 'Smith SJ, et al.')
+            with self.assertRaisesRegex(AssertionError, 'first-author initials differ'):
+                original_alignment(row, target, author_receipt=receipt)
 
     def scope_fixture(self, directory, original_status='retain_current'):
         row = {'doi_o': '10.1/original', 'title_o': 'Actual retested study', 'type': 'replication'}
