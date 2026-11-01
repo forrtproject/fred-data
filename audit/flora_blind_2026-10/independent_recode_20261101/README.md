@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-209 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-eight fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+214 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-eight fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **29 cases covering 31 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -26,6 +26,8 @@ Wolfers's original-paper mismatch (row 387) is established, but its dependent ou
 The bone-strength case (document_0201, row 1208) is eligible as an unapproved outcome correction to uninformative. The authors explicitly say this attempt cannot support or refute the original microbiota-to-tissue-strength claim, with the verdict repeated in the abstract. The failed-manipulation default applies only without an author verdict. The direct treatment null and post hoc microbiota investigation remain the strongest contrary evidence; the source review's moderate-high confidence is preserved. Exact-source blind agreement supplements the claim-specific source assessment.
 
 The original's frozen 2020 year, literal 2021 citation and conflicting Crossref print-2020/online-2021 fields remain recorded. Exact DOI, title, authoritative full authors, volume, issue, pages and a hashed literal reference establish the same work without changing the year or inferring reliable publication chronology. Document_0205 has interleaved columns and fragment quotes; document_0206 is unconfident; documents_0207 and 0208 have abstract-level evidence. These limits exclude automatic acceptance.
+
+Document_0212 has gaps in the title, Study 2 Discussion and reference list despite its full-text metadata label. Document_0213 is abstract-only; document_0214 has an unresolved replication-chain target question; document_0216 has unconfident Wynn outcomes and uncertain claim attribution. Complete packet reading does not resolve these limits. Document_0215 has a verified complete earlier Sol reading and blind agreement on Schmidt 1998, while frozen row 439 names a 2017 metabolome paper. A separate source review is prepared, not dispatched, to check that original correction together with pooled original/new cohorts, the dependent type and outcome, and the extracted DOI/PMID boundary.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
