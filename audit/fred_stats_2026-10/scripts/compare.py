@@ -194,6 +194,18 @@ def fresh_printed_effect_review(a,field,row,blind):
  value=number(a.get('correct_value'))
  return bool(parsed_stat(row.get(field)) and value is not None and value==number(blind.get('value')))
 
+def fresh_quoted_p_review(a,field,row):
+ """Confirm literal quoted bound metadata only under a current source review."""
+ if field not in ['pval_value_o','pval_value_r']:return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict')!='shipped_right':return False
+ match=re.fullmatch(r'"(<=|>=|<|>|=|≤|≥)"',str(row.get('pval_type_'+field[-1]) or '').strip())
+ if not match:return False
+ bound={'=':'e','<':'l','>':'g','<=':'le','≤':'le','>=':'ge','≥':'ge'}[match[1]]
+ if a.get('correct_bound')!=bound:return False
+ value=number(row.get(field))
+ if value is None or value!=number(a.get('correct_value')):return False
+ return comp(field,row[field],{'value':a['correct_value'],'bound':bound},{**row,'pval_type_'+field[-1]:bound}) in ['agree','identical','compatible']
+
 def source_prefix(value):
  s=str(value or '').strip()
  if not s:return '(missing)'
@@ -305,7 +317,7 @@ def main():
    primary_adjud=bool(secondary and adjud.get((aid,f)) and original_primary_evidence(adjud[(aid,f)],r))
    if primary_adjud:
     comparison=comp(f,raw,effective_e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
-   fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e)))
+   fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e) or fresh_quoted_p_review(adjud.get((aid,f),{}),f,r)))
    if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_review:
     a=adjud.get((aid,f))
     if (aid,f) in holds:a=None
