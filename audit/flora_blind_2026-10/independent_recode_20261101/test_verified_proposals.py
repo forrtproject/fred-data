@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from build_verified_proposals import checked_replacements, completed_field_work, current_alignment, ids, original_alignment, original_identifier_alignment, original_replacements
+from build_verified_proposals import checked_replacements, completed_field_work, current_alignment, ids, original_alignment, original_identifier_alignment, original_replacements, retained_target_scope_review
 
 
 class ProposalDependencies(unittest.TestCase):
@@ -14,6 +14,45 @@ class ProposalDependencies(unittest.TestCase):
         self.result = {'record_type': 'reproduction'}
         self.target = {'outcome': '', 'outcome_computation': 'computational issues',
                        'outcome_robustness': 'robustness challenges'}
+
+    def scope_fixture(self, directory, original_status='retain_current'):
+        row = {'doi_o': '10.1/original', 'title_o': 'Actual retested study', 'type': 'replication'}
+        review = {'field_reviews': [
+            {'field_id': '403.original', 'status': original_status,
+             'recommended_value': {'doi_o': row['doi_o'], 'title_o': row['title_o']}},
+            {'field_id': '403.type', 'status': 'retain_current', 'recommended_value': 'replication'},
+            {'field_id': '403.outcome', 'status': 'supported_correction', 'recommended_value': 'mixed'}]}
+        directory = Path(directory)
+        (directory / 'review.json').write_text(json.dumps(review))
+        validation = {'proof_count_verified': 1,
+                      'review_file_sha256': hashlib.sha256((directory / 'review.json').read_bytes()).hexdigest(),
+                      'parent_corrections': ['Raw reviewer provenance error preserved and corrected.']}
+        for name, value in [('parent_validation.json', validation), ('sources_and_proofs.json', {}),
+                            ('reading_manifest.json', {})]:
+            (directory / name).write_text(json.dumps(value))
+        receipt = {'directory': str(directory), 'file_hashes': {
+            p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in directory.iterdir()}}
+        return receipt, row
+
+    def test_resolved_target_objection_keeps_raw_review_and_parent_corrections_bound(self):
+        with tempfile.TemporaryDirectory() as directory:
+            receipt, row = self.scope_fixture(directory)
+            retained_target_scope_review(receipt, 403, row, 'mixed')
+            with self.assertRaisesRegex(AssertionError, 'disposition differs'):
+                retained_target_scope_review(receipt, 403, row, 'successful')
+
+    def test_matching_conditional_outcome_does_not_resolve_target_policy_boundary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            receipt, row = self.scope_fixture(directory, 'policy_boundary')
+            with self.assertRaisesRegex(AssertionError, 'objection remains unresolved: original'):
+                retained_target_scope_review(receipt, 403, row, 'mixed')
+
+    def test_target_scope_parent_corrections_cannot_change_after_acceptance(self):
+        with tempfile.TemporaryDirectory() as directory:
+            receipt, row = self.scope_fixture(directory)
+            (Path(directory) / 'parent_validation.json').write_text('{}')
+            with self.assertRaisesRegex(AssertionError, 'evidence changed: parent_validation'):
+                retained_target_scope_review(receipt, 403, row, 'mixed')
 
     def test_field_set_requires_both_coders_to_establish_a_completed_study(self):
         completed_field_work({'study_status': 'completed'}, {'study_status': 'completed'})

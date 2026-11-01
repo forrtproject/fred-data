@@ -44,6 +44,28 @@ def ids(row, role):
             if (v := identifier(row.get(k, '')))}
 
 
+def retained_target_scope_review(receipt, row_index, row, outcome):
+    """Bind a resolved target objection to its raw review and parent corrections."""
+    directory = Path(receipt['directory'])
+    required = {'review.json', 'sources_and_proofs.json', 'reading_manifest.json', 'parent_validation.json'}
+    assert set(receipt['file_hashes']) == required, 'Target scope review files incomplete'
+    for name, expected in receipt['file_hashes'].items():
+        assert sha((directory / name).read_bytes()) == expected, 'Target scope evidence changed: ' + name
+    review, validation = read(directory / 'review.json'), read(directory / 'parent_validation.json')
+    assert validation['proof_count_verified'] > 0
+    assert validation['review_file_sha256'] == receipt['file_hashes']['review.json']
+    fields = review['field_reviews']
+    for field, status in [('original', 'retain_current'), ('type', 'retain_current'),
+                          ('outcome', 'supported_correction')]:
+        matches = [f for f in fields if f['field_id'] == f'{row_index}.{field}' and f['status'] == status]
+        assert len(matches) == 1, 'Target scope objection remains unresolved: ' + field
+        value = matches[0]['recommended_value']
+        if field == 'original':
+            assert identifier(value['doi_o']) in ids(row, 'o') and norm(value['title_o']) == norm(row['title_o'])
+        else:
+            assert value == (row['type'] if field == 'type' else outcome), 'Target scope disposition differs'
+
+
 def current_alignment(row, source):
     key = identifier(source['parent_work_key'])
     if key in ids(row, 'r'):
@@ -223,6 +245,9 @@ def build():
         assert decision['positive_claim_alignment_parent_verified'] is True
         assert decision['counterevidence_parent_adjudicated'] is True
         assert decision['dependent_fields_parent_verified'] is True
+        if decision.get('target_scope_review'):
+            retained_target_scope_review(decision['target_scope_review'], row_index, row,
+                                        decision['replacement_fields']['outcome'])
         assert 'row:' + str(row_index) not in holds, 'Live scientific hold'
         source = next((d for d in inventory['documents'] if d['document_id'] == doc), None)
         if source is None:
@@ -321,7 +346,8 @@ def build():
                            apply_all_fields_atomically=True, original_pair_duplicate_rows=duplicate_rows,
                            evidence=evidence, rationale=decision['rationale'], limits=decision['limits'],
                            independent_inputs=dict(opus=str(opus_dir / 'coding.json'), sol=sol_path,
-                                                   reviewer=str(reviewer / 'review.json')),
+                                                   reviewer=str(reviewer / 'review.json'),
+                                                   target_scope_review=decision.get('target_scope_review')),
                            bibliography_metadata=decision.get('replacement_original_metadata_receipt'),
                            original_author_metadata_alignment=decision.get('original_author_metadata_receipt'),
                            original_year_metadata_alignment=decision.get('original_year_metadata_receipt'),
