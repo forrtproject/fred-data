@@ -61,6 +61,33 @@ class EvidenceValidation(unittest.TestCase):
         self.assertFalse(result['automatic_scientific_acceptance'])
         self.assertTrue(result['full_model_visible_reading_receipts_verified'])
 
+    def test_report_boundary_is_not_counted_as_a_quote_proof(self):
+        data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
+            dict(report='One report', character_start=0, character_end=28, target_indices=[])])
+        self.write(self.output / 'evidence_map.json', data)
+        self.assertEqual(self.run_validation()['evidence_map_proofs'], 1)
+
+    def test_report_boundary_cannot_claim_a_quote_without_proof(self):
+        data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
+            dict(report='One report', character_start=0, character_end=28, target_indices=[], quote='fabricated')])
+        self.write(self.output / 'evidence_map.json', data)
+        with self.assertRaises(ValueError):
+            self.run_validation()
+
+    def test_report_boundary_must_be_within_the_source(self):
+        data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
+            dict(report='One report', character_start=0, character_end=9999, target_indices=[])])
+        self.write(self.output / 'evidence_map.json', data)
+        with self.assertRaises(ValueError):
+            self.run_validation()
+
+    def test_unlabelled_missing_quote_is_still_rejected(self):
+        data = dict(text_sha256=self.source_hash, spans=[self.proof], claims=[
+            dict(character_start=0, character_end=28)])
+        self.write(self.output / 'evidence_map.json', data)
+        with self.assertRaises(ValueError):
+            self.run_validation()
+
     def test_declared_fold_preserves_unicode_and_records_insertions(self):
         source = '\u03b1' * 1000 + 'B' * 2000 + 'end '
         rendered = '\u03b1' * 1000 + '\n' + 'B' * 2000 + '\nend'

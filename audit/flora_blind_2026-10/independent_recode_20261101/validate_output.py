@@ -35,6 +35,18 @@ def validate_proofs(obj, raw, source_hash, require_source_hash=False, unproved_e
 
     def walk(value, path='$'):
         if isinstance(value, dict):
+            if re.fullmatch(r'\$\.report_boundaries\[\d+\]', path):
+                check(set(value) == {'report', 'character_start', 'character_end', 'target_indices'},
+                      path + ': boundary metadata cannot substitute for a quotation')
+                a, z = value['character_start'], value['character_end']
+                check(type(a) is int and type(z) is int and 0 <= a < z <= len(text),
+                      path + ': invalid report boundary')
+                check(isinstance(value['report'], str) and bool(value['report'].strip()),
+                      path + ': missing report label')
+                check(isinstance(value['target_indices'], list)
+                      and all(type(i) is int and i >= 0 for i in value['target_indices']),
+                      path + ': invalid boundary target indices')
+                return  # A range description is not a source proof.
             if any(k in value for k in ('character_start', 'char_start', 'unicode_start')):
                 quote_names = ('quote', 'text', 'literal_quote', 'literal_proof')
                 quote = first(value, quote_names)

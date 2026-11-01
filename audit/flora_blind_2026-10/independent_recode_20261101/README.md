@@ -2,11 +2,11 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 117 of 677 initial source packets and four additional source views have
-passed Opus schema, literal-span and reading checks; thirteen fresh Sol source views
+Current checkpoint: 120 of 677 initial source packets and four additional source views have
+passed Opus schema, literal-span and reading checks; fourteen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Thirteen cases covering fourteen proposed
+The full reassessment remains in progress. Fourteen cases covering fifteen proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
@@ -89,6 +89,9 @@ missing substantive characters or altered quote whitespace are rejected.
 For an explicitly recorded `cat | fold -w 2000` read of a single long line,
 the validator reconstructs the exact UTF-8 byte wrapping and records inserted
 line breaks. Arbitrary newline removal cannot satisfy a reading receipt.
+Explicit report-boundary descriptions are checked as source ranges and never
+counted as quotation proofs. Missing quote data in other evidence entries still
+fails validation.
 
 `source_upgrades.json` preserves newly verified report versions separately.
 Document_0683 adds the author appendix and errata to document_0001; both fresh blind
@@ -118,7 +121,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 78 evidence/dependency controls:
+Run all 82 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -150,3 +153,11 @@ but its citation remedy stays outside the automatic set while authoritative
 records disagree on the title suffix and final page. This is a metadata hold,
 not a new user policy question. Document_0098 now has two certified fresh blind
 reads; its outcome comparison awaits primary-source adjudication.
+
+Row 793 changes successful to mixed: the report explicitly confirms some original
+Study 3 findings and identifies failures of the company-interest moderation and
+another tested contrast. Row 911 remains held because its blind packet omitted
+the abstract containing contrary trend evidence. The complete publisher PDF,
+including the abstract and final appendix, is recovered and identified; it needs
+a registered complete-source blind pass before any automatic correction. This
+newly discovered omission is separate from the finite 60-item recovery queue.
