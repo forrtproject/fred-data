@@ -30,6 +30,20 @@ def norm(value):
     return re.sub(r'[^\w]', '', value.casefold())
 
 
+def metadata_title(metadata):
+    """Crossref may deposit a subtitle separately from the title."""
+    titles, subtitles = metadata['title'], metadata.get('subtitle', [])
+    assert isinstance(titles, list) and len(titles) == 1 and isinstance(titles[0], str) and titles[0]
+    assert isinstance(subtitles, list) and len(subtitles) <= 1
+    title = titles[0]
+    if subtitles:
+        subtitle = subtitles[0]
+        assert isinstance(subtitle, str) and subtitle.strip(), 'Invalid deposited subtitle'
+        if not norm(title).endswith(norm(subtitle)):
+            title = title.rstrip(' .:') + ': ' + subtitle
+    return title
+
+
 def identifier(value):
     value = value.strip().casefold()
     if value in ('', 'na', 'nan', 'null'):
@@ -46,7 +60,8 @@ def ids(row, role):
 
 def review_field_dispositions(review):
     """Read explicit field identities; conflicting aliases cannot authorize a fix."""
-    entries = review.get('reviews', review.get('field_reviews'))
+    case_table = 'reviews' not in review and 'field_reviews' not in review and 'cases' in review
+    entries = review.get('reviews', review.get('field_reviews', review.get('cases')))
     if entries is None and review.get('disposition') == 'replace_current_with_proposed':
         value = review.get('recommended_value')
         assert isinstance(value, str) and value, 'Missing replacement value'
@@ -67,8 +82,10 @@ def review_field_dispositions(review):
         if entry.get('requested_fields') is not None:
             assert len(entry['requested_fields']) == 1, 'Review is not field-specific'
             fields.extend(entry['requested_fields'])
-        if entry.get('field_review_id'):
-            match = re.fullmatch(r'(\d+)\.([a-z_]+)', entry['field_review_id'])
+        for identity in (('field_review_id', 'case_id') if case_table else ('field_review_id',)):
+            if not entry.get(identity):
+                continue
+            match = re.fullmatch(r'(\d+)\.([a-z_]+)', entry[identity])
             assert match, 'Invalid review field identity'
             rows.append(match[1])
             fields.append(match[2])
@@ -80,6 +97,41 @@ def review_field_dispositions(review):
         assert len(statuses) == 1, 'Conflicting or missing review dispositions'
         result.append((rows.pop(), fields[0], statuses.pop()))
     return result
+
+
+def review_row_binding(review, row_index, rows, receipt=None, review_sha256=None):
+    """Wrong embedded row snapshots require a separately hashed correction."""
+    cases = review.get('cases', {})
+    cases = cases.values() if isinstance(cases, dict) else cases
+    for case in cases:
+        if case.get('input_row_index') != row_index:
+            continue
+        baseline = case.get('frozen_csv_baseline', {})
+        for key, value in baseline.items():
+            if key in rows[row_index]:
+                assert value == rows[row_index][key], 'Review baseline identifier or value differs'
+        if 'value' in baseline and case.get('field') in rows[row_index]:
+            assert baseline['value'] == rows[row_index][case['field']], 'Review baseline value differs'
+        if 'frozen_row_state' not in case:
+            continue
+        snapshot = case['frozen_row_state']
+        normalized = {('doi_o' if key == '\ufeff"doi_o"' else key): value
+                      for key, value in snapshot.items()}
+        if normalized == rows[row_index]:
+            continue
+        assert receipt, 'Review snapshot belongs to another frozen row'
+        path = Path(receipt['path'])
+        assert sha(path.read_bytes()) == receipt['sha256'], 'Row-binding correction changed'
+        correction = read(path)
+        assert correction['review_file_sha256'] == review_sha256, 'Row correction names another review'
+        assert correction['baseline_sha256'] == BASELINE_SHA
+        binding = correction['case_bindings'][case['case_id']]
+        assert binding['input_row_index'] == row_index
+        assert binding['correct_frozen_full_record_sha256'] == digest(rows[row_index])
+        assert binding['review_snapshot_sha256'] == digest(snapshot)
+        assert row_index > 0 and normalized == rows[row_index - 1], 'Not the verified one-based indexing error'
+        assert binding['incorrect_snapshot_row_index'] == row_index - 1
+        assert binding['correction_kind'] == 'one_based_index_used_for_zero_based_row'
 
 
 def retained_target_scope_review(receipt, row_index, row, outcome):
@@ -122,7 +174,7 @@ def original_identifier_alignment(row, receipt):
     assert sha(path.read_bytes()) == receipt['sha256']
     metadata = read(path)['message']
     assert identifier(metadata['DOI']) in ids(row, 'o'), 'Registered original identifier differs'
-    assert norm(metadata['title'][0]) == norm(row['title_o']), 'Original identifier resolves to a different title'
+    assert norm(metadata_title(metadata)) == norm(row['title_o']), 'Original identifier resolves to a different title'
 
 
 def original_doi_alignment(row, target, transcription_receipt=None):
@@ -154,7 +206,7 @@ def original_alignment(row, target, year_receipt=None, author_receipt=None, doi_
         assert sha(path.read_bytes()) == year_receipt['sha256']
         metadata = read(path)['message']
         assert identifier(metadata['DOI']) in ids(row, 'o')
-        assert norm(metadata['title'][0]) == norm(target['title'])
+        assert norm(metadata_title(metadata)) == norm(target['title'])
         assert row['year_o'] == str(metadata['published-online']['date-parts'][0][0])
         if metadata.get('published-print'):
             assert target['year'] == str(metadata['published-print']['date-parts'][0][0])
@@ -191,7 +243,7 @@ def original_alignment(row, target, year_receipt=None, author_receipt=None, doi_
         assert sha(metadata_path.read_bytes()) == author_receipt['sha256']
         metadata = read(metadata_path)['message']
         assert identifier(metadata['DOI']) in ids(row, 'o'), 'Author metadata DOI differs'
-        assert norm(metadata['title'][0]) == norm(target['title']), 'Author metadata title differs'
+        assert norm(metadata_title(metadata)) == norm(target['title']), 'Author metadata title differs'
         registered = metadata['author']
         assert len(authors) == len(registered), 'Registered author count differs'
         for frozen, actual in zip(authors, registered, strict=True):
@@ -270,7 +322,7 @@ def original_replacements(metadata):
     assert authors and all(a.get('family') for a in authors)
     date = metadata.get('published-print') or metadata.get('published-online') or metadata['published']
     year = str(date['date-parts'][0][0])
-    title, journal = metadata['title'][0].rstrip('.'), metadata['container-title'][0]
+    title, journal = metadata_title(metadata).rstrip('.'), metadata['container-title'][0]
     doi = metadata['DOI']
     volume, issue, pages = (str(metadata.get(k, 'NA')) for k in ('volume', 'issue', 'page'))
     def initials(given):
@@ -293,6 +345,25 @@ def original_replacements(metadata):
                 language_o=metadata.get('language', 'NA'), oa_url_o='NA')
 
 
+def record_removal(row, row_index, opus, sol, decision, evidence):
+    completed_field_work(opus, sol)
+    assert opus['record_type'] == sol['record_type'] == 'not_a_replication'
+    assert opus['targets'] == sol['targets'] == []
+    assert decision['positive_record_scope_parent_verified'] is True, 'Omitted targets alone do not authorize removal'
+    assert decision['action'] == 'exclude_nonreplication_record'
+    assert decision['isolated_field_application_allowed'] is False, 'Whole-record remedy required'
+    assert len(evidence) >= 2, 'Positive record-scope evidence required'
+    return dict(case_id='row:' + str(row_index), input_row_index=row_index,
+                status='ready_for_batch_approval', action=decision['action'],
+                expected_before_full_record_sha256=digest(row), expected_before=row,
+                proposed_record_type='not_a_replication', original_pair_applicable=False,
+                outcome_applicable=False, isolated_field_application_allowed=False,
+                operations=[dict(operation='remove_row', input_row_index=row_index,
+                    expected_before_full_record_sha256=digest(row), archive_before=row)],
+                evidence=evidence, rationale=decision['rationale'], limits=decision['limits'],
+                canonical_changes_applied=False, user_approval_recorded=False)
+
+
 def build():
     assert sha(BASELINE.read_bytes()) == BASELINE_SHA, 'Frozen baseline changed'
     with BASELINE.open(encoding='utf-8-sig') as f:
@@ -301,7 +372,8 @@ def build():
     holds = read(B / 'handoff/review_reliability.json').get('holds', {})
     inventory = read(OUT / 'source_inventory.json')
     prior_checks = read(OUT / 'prior_sol_receipt_checks.json')['documents']
-    decisions = read(OUT / 'parent_acceptance_decisions.json')['cases']
+    acceptance = read(OUT / 'parent_acceptance_decisions.json')
+    decisions = acceptance['cases']
     result = []
     for decision in decisions:
         row_index, doc = decision['input_row_index'], decision['document_id']
@@ -368,6 +440,8 @@ def build():
         assert opus['record_type'] == sol['record_type'] == decision['agreed_record_type']
         reviewer = Path(decision['review_dir'])
         review, validation = read(reviewer / 'review.json'), read(reviewer / 'parent_validation.json')
+        review_row_binding(review, row_index, rows, decision.get('review_row_binding_correction'),
+                           sha((reviewer / 'review.json').read_bytes()))
         for name, expected in decision['accepted_review_file_hashes'].items():
             assert sha((reviewer / name).read_bytes()) == expected, 'Reviewed evidence changed: ' + name
         assert validation['proof_count_verified'] > 0
@@ -419,17 +493,60 @@ def build():
                            original_year_metadata_alignment=decision.get('original_year_metadata_receipt'),
                            original_doi_transcription_alignment=decision.get('original_doi_transcription_receipt'),
                            original_identifier_metadata_alignment=identifier_receipt))
+        if decision.get('review_row_binding_correction'):
+            result[-1]['review_row_binding_correction'] = decision['review_row_binding_correction']
+    record_actions = []
+    for decision in acceptance.get('record_cases', []):
+        row_index, doc = decision['input_row_index'], decision['document_id']
+        row, packet = rows[row_index], PACKETS / doc
+        assert decision['disposition'] == 'accepted_for_automatic_record_proposal'
+        assert 'row:' + str(row_index) not in holds, 'Live scientific hold'
+        source = next(d for d in inventory['documents'] if d['document_id'] == doc)
+        current_alignment(row, source)
+        opus_dir = Path(decision['opus_output'])
+        opus, ov = read(opus_dir / 'coding.json'), read(opus_dir / 'parent_validation.json')
+        assert ov['output_hashes']['coding.json'] == sha((opus_dir / 'coding.json').read_bytes())
+        assert ov['full_model_visible_reading_receipts_verified'] and ov['frozen_packet_inputs_verified']
+        assert decision['sol_kind'] == 'prior', 'Record proposal needs a certified comparison'
+        prior = prior_checks[doc]
+        assert prior['status'].startswith('exact_source_complete_tool_receipt_verified')
+        assert sha(Path(prior['prior_coding_path']).read_bytes()) == prior['prior_coding_sha256']
+        sol, _ = project(packet, read(Path(prior['prior_coding_path'])))
+        assert opus['evidence_level'] == sol['evidence_level'] == 'full_text'
+        assert opus['text_sha256'] == sol['text_sha256'] == sha((packet / 'article.txt').read_bytes())
+        reviewer = Path(decision['review_dir'])
+        for name, expected in decision['accepted_review_file_hashes'].items():
+            assert sha((reviewer / name).read_bytes()) == expected
+        review, validation = read(reviewer / 'review.json'), read(reviewer / 'parent_validation.json')
+        assert validation['proof_count_verified'] > 0
+        assert (row_index, 'type', 'supported_correction') in review_field_dispositions(review)
+        review_row_binding(review, row_index, rows, decision.get('review_row_binding_correction'),
+                           sha((reviewer / 'review.json').read_bytes()))
+        prop = next(p for p in proposals if int(p['input_row_index']) == row_index and p['field'] == 'type')
+        assert prop['expected_before_full_record_sha256'] == digest(row)
+        dependency = prop['record_action_dependency']
+        assert dependency['operation'] == decision['action'] and dependency['isolated_field_application_allowed'] is False
+        evidence = [proof(packet, quote) for quote in decision['supporting_literal_quotes']]
+        action = record_removal(row, row_index, opus, sol, decision, evidence)
+        action['resolved_field_only_hold'] = prop.get('application_hold')
+        action['independent_inputs'] = dict(opus=str(opus_dir / 'coding.json'),
+            sol=prior['prior_coding_path'], reviewer=str(reviewer / 'review.json'))
+        action['review_row_binding_correction'] = decision.get('review_row_binding_correction')
+        record_actions.append(action)
     output = dict(schema_version=1, status='incremental_verified_proposals_cohort_in_progress',
                   baseline_sha256=BASELINE_SHA, canonical_changes_applied=False, user_approval_recorded=False,
                   automatic_fields_verified=sum(len(c['proposal_fields']) for c in result),
                   case_count=len(result), cases=result,
+                  record_action_count=len(record_actions), record_actions=record_actions,
                   implementation_rules=['Obtain batch approval before implementation; this file records verified proposals, not approvals.',
                                         'Plans and unfinished studies require record-level actions; they cannot enter this field-only set.',
                                         'Verify the frozen file and complete row hash; apply all fields of each case atomically.',
                                         'Keep prior decisions and source histories. Apply original-identity changes with their complete bibliography, identifiers and source evidence.',
+                                        'Record exclusions remove the complete pair and archive its frozen record; never apply only their type field.',
+                                        'Preflight every frozen record before mutation; use stable record hashes when exclusions change row positions.',
                                         'Do not re-enable other outcome proposals from this incremental file.'])
     (OUT / 'automatically_verified_proposals.json').write_text(json.dumps(output, ensure_ascii=False, indent=2) + '\n')
-    print(json.dumps({k: output[k] for k in ('case_count', 'automatic_fields_verified', 'canonical_changes_applied')}))
+    print(json.dumps({k: output[k] for k in ('case_count', 'automatic_fields_verified', 'record_action_count', 'canonical_changes_applied')}))
     return output
 
 

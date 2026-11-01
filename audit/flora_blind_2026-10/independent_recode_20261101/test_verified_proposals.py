@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from build_verified_proposals import checked_replacements, completed_field_work, current_alignment, ids, original_alignment, original_doi_alignment, original_identifier_alignment, original_replacements, retained_target_scope_review, review_field_dispositions
+from build_verified_proposals import BASELINE_SHA, checked_replacements, completed_field_work, current_alignment, digest, ids, metadata_title, original_alignment, original_doi_alignment, original_identifier_alignment, original_replacements, record_removal, retained_target_scope_review, review_field_dispositions, review_row_binding
 
 
 class ProposalDependencies(unittest.TestCase):
@@ -67,6 +67,89 @@ class ProposalDependencies(unittest.TestCase):
                     value='mixed', status='propose_change_to_mixed',
                     disposition='replace_current_with_proposed', outcome_confident=True,
                     policy_boundary_needed=False)
+
+    def test_deposited_subtitle_is_preserved_without_duplication(self):
+        self.assertEqual(metadata_title({'title': ['Main title'], 'subtitle': ['A question?']}),
+                         'Main title: A question?')
+        self.assertEqual(metadata_title({'title': ['Main title: A question?'], 'subtitle': ['A question?']}),
+                         'Main title: A question?')
+
+    def test_ambiguous_deposited_subtitles_are_rejected(self):
+        with self.assertRaises(AssertionError):
+            metadata_title({'title': ['Main'], 'subtitle': ['One', 'Two']})
+
+    def test_case_table_preserves_explicit_field_identity(self):
+        review = {'cases': {'2.original': {'case_id': '2.original', 'input_row_index': 2,
+                  'field': 'original', 'status': 'supported_correction'}}}
+        self.assertEqual(review_field_dispositions(review), [(2, 'original', 'supported_correction')])
+        review['cases']['2.original']['case_id'] = '3.original'
+        with self.assertRaisesRegex(AssertionError, 'Conflicting review row'):
+            review_field_dispositions(review)
+
+    def test_partial_review_baseline_cannot_name_a_different_current_work(self):
+        rows = [{'doi_r': '10.1/current', 'outcome': 'failed'}]
+        review = {'cases': [{'input_row_index': 0, 'field': 'outcome',
+                            'frozen_csv_baseline': {'doi_r': '10.1/unrelated', 'value': 'failed'}}]}
+        with self.assertRaisesRegex(AssertionError, 'baseline identifier'):
+            review_row_binding(review, 0, rows)
+
+    def row_binding_fixture(self, directory):
+        rows = [{'doi_o': 'old', 'doi_r': 'unrelated'}, {'doi_o': 'target', 'doi_r': 'current'}]
+        snapshot = {'\ufeff"doi_o"': 'old', 'doi_r': 'unrelated'}
+        review = {'cases': {'1.original': {'case_id': '1.original', 'input_row_index': 1,
+                  'field': 'original', 'status': 'supported_correction', 'frozen_row_state': snapshot}}}
+        correction = {'review_file_sha256': 'review-hash', 'baseline_sha256': BASELINE_SHA,
+            'case_bindings': {'1.original': {'input_row_index': 1,
+                'correct_frozen_full_record_sha256': digest(rows[1]),
+                'review_snapshot_sha256': digest(snapshot), 'incorrect_snapshot_row_index': 0,
+                'correction_kind': 'one_based_index_used_for_zero_based_row'}}}
+        path = Path(directory) / 'correction.json'
+        path.write_text(json.dumps(correction))
+        receipt = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+        return rows, review, receipt
+
+    def test_wrong_row_snapshot_requires_exact_parent_correction(self):
+        with tempfile.TemporaryDirectory() as directory:
+            rows, review, receipt = self.row_binding_fixture(directory)
+            with self.assertRaisesRegex(AssertionError, 'another frozen row'):
+                review_row_binding(review, 1, rows)
+            review_row_binding(review, 1, rows, receipt, 'review-hash')
+
+    def test_row_correction_cannot_authorize_another_review_or_record(self):
+        with tempfile.TemporaryDirectory() as directory:
+            rows, review, receipt = self.row_binding_fixture(directory)
+            with self.assertRaisesRegex(AssertionError, 'another review'):
+                review_row_binding(review, 1, rows, receipt, 'different-review')
+            rows[1]['doi_r'] = 'different-current'
+            with self.assertRaises(AssertionError):
+                review_row_binding(review, 1, rows, receipt, 'review-hash')
+
+    def record_removal_fixture(self):
+        result = dict(study_status='completed', record_type='not_a_replication', targets=[])
+        decision = dict(positive_record_scope_parent_verified=True, action='exclude_nonreplication_record',
+                        isolated_field_application_allowed=False, rationale='Within-paper repetition only', limits=[])
+        return result, decision
+
+    def test_record_exclusion_archives_the_complete_pair_without_field_patches(self):
+        result, decision = self.record_removal_fixture()
+        action = record_removal(self.row, 1, result, result, decision, ['proof1', 'proof2'])
+        self.assertEqual(action['operations'][0]['operation'], 'remove_row')
+        self.assertEqual(action['operations'][0]['archive_before'], self.row)
+        self.assertEqual(action['expected_before_full_record_sha256'], digest(self.row))
+        self.assertFalse(action['outcome_applicable'])
+        self.assertFalse(action['user_approval_recorded'])
+
+    def test_zero_targets_alone_cannot_authorize_record_exclusion(self):
+        result, decision = self.record_removal_fixture()
+        decision['positive_record_scope_parent_verified'] = False
+        with self.assertRaisesRegex(AssertionError, 'Omitted targets alone'):
+            record_removal(self.row, 1, result, result, decision, ['proof1', 'proof2'])
+
+    def test_record_exclusion_rejects_isolated_type_application(self):
+        result, decision = self.record_removal_fixture()
+        decision['isolated_field_application_allowed'] = True
+        with self.assertRaisesRegex(AssertionError, 'Whole-record remedy'):
+            record_removal(self.row, 1, result, result, decision, ['proof1', 'proof2'])
 
     def test_explicit_replacement_disposition_preserves_field_identity(self):
         self.assertEqual(review_field_dispositions(self.replacement_review()),

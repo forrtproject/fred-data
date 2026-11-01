@@ -2,13 +2,14 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 141 of 677 initial source packets and five additional source views have
-passed Opus schema, literal-span and reading checks; nineteen fresh Sol source views
+Current checkpoint: 145 of 677 initial source packets and five additional source views have
+passed Opus schema, literal-span and reading checks; twenty fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Seventeen cases covering nineteen proposed
+The full reassessment remains in progress. Nineteen cases covering twenty-one proposed
 fields have passed the scientific acceptance gates and are exported in
-`automatically_verified_proposals.json`. These are proposals for batch approval;
+`automatically_verified_proposals.json`. A separate guarded whole-record exclusion
+is included under `record_actions`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
 suspended.
 
@@ -121,7 +122,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 91 evidence/dependency controls:
+Run all 100 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -198,3 +199,11 @@ Document_0138 now has certified complete fresh readings from both models, agreei
 The complete SSRP Sol read now passes all18chunkreceipts and240literalproofs (43codedspans plus197evidencemap passages). Bothfreshmodels align on all21DOIs/outcomes; only1957.outcome is a frozen proposedchange. Its all-data Ackerman failure versus positive stage1 protocol alternative has a prepared primary-source check. Report-boundary metadata may omit target assignments; those valid source ranges never count as evidence proofs. The91controls enforce this without changing raw model outputs.
 
 Batch0061 adds three verified supplied-source readings. Document_0140 has an unconfident replication/reproduction disagreement requiring joint result-axis review;0141isabstractonly. Document_0142 needs freshSol because the earlier registered extraction was read only in selected ranges. Its double-slash original DOI remedy and additional-target questions remain distinct. No automatic proposals are added.
+
+Rows 2425 and 2003 now pass the field-proposal gates. Row 2425 replaces the scale-development source with the explicitly retested Fosse–Toyokawa paper, including its full bibliography and separately deposited subtitle. Row 2003 changes the outcome to mixed from the author’s overall partial-replication verdict and Table 2; genuine contradictions elsewhere in the published paper remain documented. The original’s 2010 online and 2011 print dates are kept as provenance, with no year-only correction.
+
+Row 107 is a separate whole-record exclusion proposal. The complete frozen pair is archived and removed from the completed-replication pool only after approval; an isolated type edit is rejected. Positive evidence establishes a first pure-MCT intervention with repetition across cases inside one paper, rather than a retest of the currently linked published finding. Zero targets alone cannot authorize exclusion.
+
+The source reviewer’s three incorrect row snapshots were traced to one-based indexing of zero-based identifiers. Raw reviews remain unchanged; export requires a hashed parent correction matching the wrong snapshot, actual full frozen row and review hash. Partial reviewer baselines with wrong identifiers also fail the guard. Reviewer-native Read contents are not exposed in the durable timeline; that limitation is explicit, while both blind roles’ actual reading receipts and all literal proof slices are independently checked.
+
+The radiation case and two additional verdict-scope cases remain outside the automatic set with explicit policy options for the later individual-decision stage. No further blind votes are requested to force agreement.
