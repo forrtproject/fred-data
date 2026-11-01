@@ -13,6 +13,11 @@ def write_csv(name,rows,cols=None):
  with (P/name).open('w',encoding='utf-8-sig',newline='') as f:
   w=csv.DictWriter(f,fieldnames=cols or list(rows[0]),lineterminator='\n');w.writeheader();w.writerows(rows)
 def build():
+ sys.path.insert(0,str(P.parent))
+ from check_yield_ready import scientific_fingerprint
+ fingerprint=json.loads((P.parent/'export_fingerprint.json').read_text())
+ assert fingerprint['scientific_inputs_sha256']==scientific_fingerprint(),'Recompute the checked export before building downloads'
+ assert fingerprint['results_sha256']==hashlib.sha256((B/'results.csv').read_bytes()).hexdigest()
  manifest=json.loads((B/'run_manifest.json').read_text());progress=json.loads((B/'progress.json').read_text());parent=json.loads((B/'parent_rows.json').read_text());results={int(r['input_row_index']):r for r in csv.DictReader((B/'results.csv').open(encoding='utf-8-sig'))}
  assert hashlib.sha256((B.parents[1]/'output/FReD.xlsx').read_bytes()).hexdigest()==manifest['input_sha256']
  decisions=load_adjudications(B)
@@ -77,6 +82,10 @@ def build():
  write_csv('screen_recheck.csv',screen)
  # Public export omits source files, private filesystem paths, raw model logs and full texts.
  summary={'release_status':'interim completion-pass draft; audit continuation remains active','audit_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'frozen_workbook_sha256':manifest['input_sha256'],'snapshot_effects':2164,'replication_works':432,'confirmed_field_errors':len(corrections),'affected_effect_rows':len(guard_ids),'physical_cell_updates':len(patches),'patch_roles':dict(collections.Counter(p['role'] for p in patches)),'coding_omissions':sum(c['error_kind']=='coding omission' for c in corrections),'exact_source_coverage':'249/255 initially missing source groups','coverage':progress['coverage'],'six_numeric_fields_complete':sum(all(r[f+'_final_verdict'] in ['correct','error'] for f in FIELDS if f!='reported_success') for r in results.values()),'field_counts':progress['field_counts'],'all_row_uncertainty_bounds_not_confidence_intervals':True,'bound_metadata_recovered_from_validated_equality_quotes':bound_inferences,'manual_availability_flags':4,'removals_in_patch':0,'screen_recheck':dict(collections.Counter(r['status'] for r in screen))}
+ proposals=json.loads((P.parent/'proposals.json').read_text());preservation=json.loads((P.parent/'preservation_check.json').read_text())
+ assert not preservation['changed_protected_fields'] and not preservation['unscoped_gains']
+ summary['exported_at']=progress['updated_at']
+ summary['completion_pass']={'source_side_groups_assessed':len({r['source_key'] for r in proposals}),'row_sides_assessed':len({(r['source_key'],r['audit_id']) for r in proposals}),'field_assessments':len(proposals),'supported_observations':sum(r['supported'] for r in proposals),'worker_dispositions':dict(collections.Counter(r['disposition']['code'] for r in proposals)),'additional_verified_fields':len(preservation['new_verified_fields']),'protected_verified_baseline_fields':preservation['protected_baseline_fields'],'changed_protected_fields':0,'unscoped_gains':0,'incremental_paid_API_spend_USD':0}
  (P/'release_summary.json').write_text(json.dumps(summary,indent=2,ensure_ascii=False)+'\n')
  r=P/'merge_fred_fixes.R';code=r.read_text()
  for key,file in [('FIX','fred_fixes.csv'),('GUARD','row_guard.csv')]:

@@ -1,0 +1,81 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "ebabba78ac667378",
+    "audit_id": 267,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Shah, A. K., & LaForest, M. (2022). Knowledge about others reduces one’s own sense of anonymity. Nature, 603(7900), 297–301. https://doi.org/10.1038/s41586-022-04452-3",
+      "doi_o": "10.1038/s41586-022-04452-3",
+      "study_o": "2A",
+      "ref_r": "WITHDRAWN. (2024). https://doi.org/10.31234/osf.io/xjaty",
+      "doi_r": "10.31234/osf.io/xjaty",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "description": "H6: Mediation analysis of knowledge of the partner in the relationship between assigned condition and participants’ estimated percentage chance that their partner will detect their lie (restricted to participants meeting the manipulation-check criterion).",
+      "locators_o": "p.3",
+      "locators_r": "p. 5",
+      "audit_id": 267,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9a79679bc4e06f82af22a7be.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use."
+    },
+    "blind": {
+      "value": "4.18",
+      "metric": "indirect effect",
+      "test_statistic": null,
+      "location": "Supplementary Information, p. 3, A.2 Experiments 2A-B, Additional results",
+      "quote": "And we again find that participants’ feeling of knowing their partner significantly mediated the effect of information on participants’ beliefs that their partners would detect their lies (indirect effect = 4.18, bias-corrected 95% confidence interval = [1.64, 7.35]).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9a79679bc4e06f82af22a7be.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 267,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Restricted Experiment 2A mediation matches the described mediator, outcome, condition and suspicion-check restriction. Estimate is printed as indirect effect, not explicitly identified as unstandardized b; no conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9a79679bc4e06f82af22a7be.txt",
+      "location": "Supplementary Information, p. 3, A.2 Experiments 2A-B, Additional results",
+      "quote": "And we again find that participants’ feeling of knowing their partner significantly mediated the effect of information on participants’ beliefs that their partners would detect their lies (indirect effect = 4.18, bias-corrected 95% confidence interval = [1.64, 7.35]).",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 2A: mediation of information condition effects on perceived likelihood of partner detecting a lie by feeling of knowing the partner; restricted to participants who believed they were connected to another participant.",
+    "worker_notes": "Only assigned unfinished original es and p fields were examined; all other fields are placeholders. Canonical source identifies the title and authors and is the primary Supplementary Information. The restricted-sample mediation is explicitly reported as indirect effect = 4.18 with bias-corrected 95% CI [1.64, 7.35]. The source does not explicitly label this estimate as an unstandardized b; retain the printed metric, indirect effect. No numeric p or p bound is printed for this mediation; the statement significantly mediated does not supply a numeric p bound. The adjacent P = .008 and P < .001 refer to separate condition-comparison t-tests and are not assigned to this mediation. No PDF was supplied. No N extraction or calculation was assigned.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9a79679bc4e06f82af22a7be.txt",
+    "shipped": "3.83",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "H6: Knowledge of the ‘partner’ mediates the relationship between the condition participants were assigned to and their assessment of the percentage chance that their ‘partner’ will detect their lie. (manipulation check passed only)",
+      "es_repr_o": "mediation analysis, indirect effect, p.3",
+      "es_repr_r": "mediation analysis, indirect effect, p. 5",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The primary result in the original study failed to replicate."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/ebabba78ac667378. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_ebabba78ac667378_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

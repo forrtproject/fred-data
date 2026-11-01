@@ -2,7 +2,7 @@
 const base='/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31';
 const read=async cmd=>{const r=await tools.exec_command({cmd,max_output_tokens:22000});if(r.exit_code!==0)throw Error(r.output);return r.output};
 const save=async(path,data)=>await tools.exec_command({cmd:"python3 - <<'FREDTASKJSON'\nfrom pathlib import Path\nimport json\np=Path("+JSON.stringify(path)+");old=json.loads(p.read_text()) if p.exists() else {};old.update(json.loads("+JSON.stringify(JSON.stringify(data))+"));p.write_text(json.dumps(old,indent=2)+chr(10))\nFREDTASKJSON",max_output_tokens:100});
-const q=JSON.parse(await read(`python3 -c "from pathlib import Path;import json;p=Path('${base}');print(json.dumps([x for x in json.loads((p/('work_queue.json' if (p/'work_queue.json').exists() else 'pilot_queue.json')).read_text()) if not (p/'tasks'/(x['key']+'.json')).exists()]))"`));
+const pending=JSON.parse(await read(`python3 -c "from pathlib import Path;import json;p=Path('${base}');q=[x for x in json.loads((p/('work_queue.json' if (p/'work_queue.json').exists() else 'pilot_queue.json')).read_text()) if not (p/'tasks'/(x['key']+'.json')).exists()];print(json.dumps({'total':len(q),'next':q[:6]}))"`));const q=pending.next;
 const tasks=JSON.parse(await read(`python3 - <<'PY'\nimport json\nfrom pathlib import Path\np=Path('${base}/tasks')\nprint(json.dumps({f.stem:{k:v for k,v in json.loads(f.read_text()).items() if k in ['taskId','status','started_at']} for f in p.glob('*.json')}))\nPY`));
 let active=0;let finished=0;
 for(const [key,t] of Object.entries(tasks)){
@@ -19,4 +19,4 @@ for(const b of q){if(tasks[b.key]||active>=6)continue;
  const s=res.structuredContent;if(!s||s.providerInstanceId!=='codex'||s.model!=='gpt-6.1-sol'||!s.options?.some(o=>o.id==='reasoningEffort'&&o.value==='medium'))throw Error('Model/options mismatch');
  const t={...b,taskId:s.taskId,status:s.status,started_at:new Date().toISOString(),provider:s.providerInstanceId,model:s.model,options:s.options};await save(`${base}/tasks/${b.key}.json`,t);active++;launched++;
 }
-text({active_children:active,finished_tasks:finished,launched,remaining_pilot_sources:q.filter(b=>!tasks[b.key]).length-launched});
+text({active_children:active,finished_tasks:finished,launched,remaining_pilot_sources:pending.total-launched});

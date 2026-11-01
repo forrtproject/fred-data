@@ -14,6 +14,7 @@ def main():
  for p in sorted((B/'inputs').glob('*.json')):
   for r in json.loads(p.read_text()):neutral.setdefault(r['audit_id'],r)
  provenance=json.loads((B/'source_provenance.json').read_text());bydoi=collections.defaultdict(list)
+ cache_names={p.name for p in (B/'texts').iterdir()} if (B/'texts').is_dir() else set()
  for path,info in provenance.items():
   if info.get('work_doi'):bydoi[str(info['work_doi']).lower()].append(path)
  existing=json.loads((F/('work_queue.json' if (F/'work_queue.json').exists() else 'pilot_queue.json')).read_text());attempted=set();existing_keys={g['key'] for g in existing if g.get('phase')!=args.batch}
@@ -42,6 +43,10 @@ def main():
    p=r.get('text_paths',{}).get(short)
    if p and (not doi or str(provenance.get(p,{}).get('work_doi','')).lower()==doi):candidates.append(p)
    candidates+=bydoi.get(doi,[])
+   # The original blind cache also contains DOI/URL-keyed files absent from the
+   # later provenance index. A matching filename routes inspection, never identity acceptance.
+   cached=B/'texts'/(hashlib.sha256(source.strip().lower().encode()).hexdigest()[:24]+'.txt')
+   if cached.name in cache_names and (str(cached) not in provenance or not doi or str(provenance[str(cached)].get('work_doi','')).lower()==doi):candidates.append(str(cached))
    candidates=[p for p in dict.fromkeys(candidates) if Path(p).is_file()]
    if not candidates:unavailable.append({'audit_id':aid,'side':side,'source':source});continue
    sourcepath=candidates[0];key=hashlib.sha256((source+'|'+side).encode()).hexdigest()[:16]
@@ -49,6 +54,8 @@ def main():
    g=groups.setdefault(key,{'key':key,'source':source,'side':side,'rows':[],'near_complete_rows':0,'literal_evidence_fields':0})
    item={k:v for k,v in r.items() if k in ['ref_o','ref_r','doi_o','doi_r','url_r','study_o','study_r','description','es_type_o','es_type_r','locators_o','locators_r']};item.update(audit_id=aid,target_side=side,unfinished_fields=fields,text_paths={short:sourcepath},source_pdf_path=pdfs.get(doi,(None,None))[0],source_version_note=pdfs.get(doi,(None,'Canonical primary source provenance; independently inspect document identity on use.'))[1])
    g['rows'].append(item);g['near_complete_rows']+=sum(results[aid][f+'_final_verdict'] in ['correct','error'] for f in FIELDS)==6;g['literal_evidence_fields']+=sum('fails literal evidence' in gates.get((aid,f),'') for f in fields)
+   item['source_identity_pending']=sourcepath not in provenance
+   if item['source_identity_pending']:item['source_identity_note']='Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work.'
  priority=(lambda g:(-g['literal_evidence_fields'],-g['near_complete_rows'],len(g['rows']),g['key'])) if args.priority=='literal' else (lambda g:(-g['near_complete_rows'],-g['literal_evidence_fields'],len(g['rows']),g['key']))
  queue=sorted(groups.values(),key=priority)
  # Keep each source together. Larger sources are retained for a later deliberate whole-source assignment.

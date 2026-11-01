@@ -21,6 +21,8 @@ def main():
  for folder,pattern in [('tasks','*.json'),('reviews','task_*.json')]:
   for path in (F/folder).glob(pattern):
    task=read(path)
+   if task.get('status') in ['failed','cancelled','interrupted'] and not task.get('failure_disposition_recorded'):problems.append('Record terminal failure disposition: '+path.name)
+   if task.get('hasPendingChildRuns'):problems.append('Resolve unexpected nested child work: '+path.name)
    if task.get('status') not in TERMINAL and task.get('taskId'):
     checked=task.get('last_checked_at') or task.get('started_at');age=(now-datetime.datetime.fromisoformat(checked.replace('Z','+00:00'))).total_seconds() if checked else 999999
     if age>30:problems.append('Refresh stale live-task status: '+path.name)

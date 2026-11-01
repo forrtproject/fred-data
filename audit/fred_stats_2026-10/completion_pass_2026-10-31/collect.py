@@ -37,7 +37,7 @@ def main():
     proposals.append(item)
     if not supported:continue
     comparison=comp(field,rows[aid-1][field],{**e,'value':value},rows[aid-1])
-    needs_review=(comparison not in ['agree','identical','compatible'] or field=='reported_success' or dis['code']=='extracted_documented_n_sum' or x[side]['target_match'] is not True or old[side]['target_match'] is not True)
+    needs_review=(record.get('source_identity_pending') is True or comparison not in ['agree','identical','compatible'] or field=='reported_success' or dis['code']=='extracted_documented_n_sum' or x[side]['target_match'] is not True or old[side]['target_match'] is not True)
     if needs_review:
      item={**item,'shipped':rows[aid-1][field],'comparison':comparison,'coding_context':{k:rows[aid-1].get(k) for k in ['description','es_repr_o','es_repr_r','es_type_o','es_type_r','pval_type_o','pval_type_r','pval_tails_o','pval_tails_r','nested_o','nested_r','reported_success_quote']}}
      source_reviews.append(item)

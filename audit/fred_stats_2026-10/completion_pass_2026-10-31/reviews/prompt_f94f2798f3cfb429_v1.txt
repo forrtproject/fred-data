@@ -1,0 +1,80 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "f94f2798f3cfb429",
+    "audit_id": 2139,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Usta, M., & Häubl, G. (2011). Self-Regulatory Strength and Consumers’ Relinquishment of Decision Control: When Less Effortful Decisions Are More Resource Depleting. Journal of Marketing Research, 48(2), 403–412. https://doi.org/10.1509/jmkr.48.2.403",
+      "doi_o": "10.1509/jmkr.48.2.403",
+      "study_o": null,
+      "ref_r": "Vargo, E., Tyner, A. H., Miske, O., Luis, B., & Loomas, Z. (2025, November 18). Usta_JournMarketRes_2011_R8RN - Vargo - New Data Replication - 1yz2. Retrieved from osf.io/kvsa6",
+      "doi_r": null,
+      "url_r": "https://osf.io/fr6g8",
+      "study_r": null,
+      "es_type_o": "log_odds_ratio",
+      "es_type_r": "log_odds_ratio",
+      "description": null,
+      "locators_o": "p. 7",
+      "locators_r": "",
+      "audit_id": 2139,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_428099187af7080e15ea1f32.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/continuation-1201/private_batch_02/artifacts/428099187af7080e15ea1f32_ebsco.pdf",
+      "source_version_note": "Published article supplied by licensed EBSCO all-database service"
+    },
+    "blind": {
+      "value": "5.46",
+      "metric": "chi-square",
+      "test_statistic": "χ²(1, 36) = 5.46",
+      "location": "PDF p. 7 / printed p. 409, Study 3 Results, Depletion of self-regulatory resources",
+      "quote": "A logistic regression analysis showed that the ... been instructed to recall a delegated decision (70.6%) was ... asked to recall an independent decision (31.6%; c2(1, 36) = ... 5.46, p < .03).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_428099187af7080e15ea1f32.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 2139,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "The page-7 main Study 3 depletion result prints a chi-square test statistic rather than the requested log_odds_ratio. Retained the printed metric without conversion. Study 4 results are on the following page, so its introductory material does not identify another main test at the supplied locator.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_428099187af7080e15ea1f32.txt",
+      "location": "PDF p. 7 / printed p. 409, Study 3 Results, Depletion of self-regulatory resources",
+      "quote": "A logistic regression analysis showed that the ... been instructed to recall a delegated decision (70.6%) was ... asked to recall an independent decision (31.6%; c2(1, 36) = ... 5.46, p < .03).",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 3, main depletion analysis: chocolate-cake versus fruit-salad choice after recalling a delegated versus independently made decision; logistic regression, PDF p. 7 / printed p. 409.",
+    "worker_notes": "Only es_value_o is assigned. The p. 7 locator identifies the Study 3 main depletion test; the Study 4 material on that page is introduction/method, not its results. The printed statistic is chi-square 5.46 for a logistic-regression analysis, with same-test p < .03. No log odds ratio or logistic coefficient is printed in this result. Retained the printed statistic without conversion; 70.6% and 31.6% are printed choice shares, not log odds ratios. PDF page 7 was rendered and visually inspected. Unassigned fields are null placeholders and do not update previously verified data.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_428099187af7080e15ea1f32.txt",
+    "shipped": "1.648251",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": null,
+      "es_repr_o": null,
+      "es_repr_r": null,
+      "es_type_o": "log_odds_ratio",
+      "es_type_r": "log_odds_ratio",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": "2",
+      "pval_tails_r": "2",
+      "nested_o": null,
+      "nested_r": null,
+      "reported_success_quote": "NB: SCORE relied on statistical significance and direction as the leading success criterion - so reported_success coded based on that"
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/f94f2798f3cfb429. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_f94f2798f3cfb429_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
