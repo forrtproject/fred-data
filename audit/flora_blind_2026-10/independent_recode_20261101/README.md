@@ -2,11 +2,11 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 115 of 677 initial source packets and four additional source views have
-passed Opus schema, literal-span and reading checks; twelve fresh Sol source views
+Current checkpoint: 117 of 677 initial source packets and four additional source views have
+passed Opus schema, literal-span and reading checks; thirteen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Twelve cases covering thirteen proposed
+The full reassessment remains in progress. Thirteen cases covering fourteen proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
@@ -142,3 +142,11 @@ Its prospective coding applies to that manuscript only. The completed report
 already has a positively bound source packet, document_0479, awaiting its
 scheduled independent recoding. The obsolete manuscript cannot justify an
 unknown-outcome patch or moving the completed project to planned studies.
+
+Row 351 replaces the wrong Imel (2014) paper with the explicitly retested vocal
+synchrony paper, updating its complete bibliography and supporting quote while
+retaining the failed outcome. Row 2149's Han (2015) target is also established,
+but its citation remedy stays outside the automatic set while authoritative
+records disagree on the title suffix and final page. This is a metadata hold,
+not a new user policy question. Document_0098 now has two certified fresh blind
+reads; its outcome comparison awaits primary-source adjudication.
