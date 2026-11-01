@@ -103,7 +103,8 @@ def prepare(group_id, provider, attempt):
                                 'prompt_sha256': hashlib.sha256(prompt.encode()).hexdigest(),
                                 'output_dir': str(output), 'output_layout': 'per_document'},
             'preflight': {'registered_absolute_inputs_verified': True, 'frozen_input_hashes_verified': True,
-                          'owned_output_root_verified': True, 'max_attempts': 2, 'active_model_children': len(active),
+                          'owned_output_root_verified': True, 'max_attempts': min(limits) if upgrade else 2,
+                          'active_model_children': len(active),
                           'occupied_model_and_helper_slots': occupied_slots}}
 
 

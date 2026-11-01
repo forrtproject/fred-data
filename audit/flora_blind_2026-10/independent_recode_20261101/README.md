@@ -2,11 +2,11 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 120 of 677 initial source packets and four additional source views have
-passed Opus schema, literal-span and reading checks; fourteen fresh Sol source views
+Current checkpoint: 129 of 677 initial source packets and five additional source views have
+passed Opus schema, literal-span and reading checks; fifteen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Fifteen cases covering sixteen proposed
+The full reassessment remains in progress. Seventeen cases covering nineteen proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
@@ -163,8 +163,24 @@ allows one fresh reading per model; the lower limit applies to every extraction
 sharing its PDF hash. Those complete-source reads must pass before any automatic correction. This
 newly discovered omission is separate from the finite 60-item recovery queue.
 
+Both complete-source radiation reads now pass mechanically: Opus chooses
+successful and Sol mixed, both unconfident. The case remains excluded, with a
+final second source review addressing the actual interpretation boundary. No
+further blind attempts are allowed. The therapy case-series and secondary
+omega-3 news item require record-level scope remedies if confirmed; neither
+can enter an isolated field-correction batch. The news item's primary trial is
+identified in official metadata, but its full report and original-target binding
+remain unresolved.
+
 Row 699 changes successful to mixed because the confirmed rejection-vote finding
 is explicitly contrasted with a failed committee-assignment finding. Its smaller
 effect and ranking sensitivity remain qualifications. The review's explicit
 replacement disposition is read without changing its raw file; inconsistent
 value/status aliases or an unresolved policy boundary cannot authorize a change.
+
+Row 1973 changes mixed to failed: the successful lifetime-reading association is
+explicitly a baseline control, while all experimental passage-reading comparisons
+fail under the authors' whole-study verdict. Row 2308 updates both reproduction
+axes together: the authors judge the numerical reproduction essentially the same,
+but alternative analyses challenge the four-varieties conclusion. The numerical
+discrepancies and scope limited to the 2004 survey remain explicit.
