@@ -57,7 +57,8 @@ def prepare(group_id, provider, attempt):
         raise ValueError('Attempt already registered; reconcile exact task instead')
     active = [t for t in state['tasks'] if t['status'] in ('running', 'queued', 'waiting')
               or t['status'].startswith('cancel_requested')]
-    if len(active) >= state['max_active_model_children']:
+    occupied_slots = sum(t.get('reserved_slots', 1) for t in active)
+    if occupied_slots >= state['max_active_model_children']:
         raise ValueError('No free model slot')
     registry = read(OUT / 'packet_input_receipts.json')['documents']
     packets = []
@@ -93,7 +94,8 @@ def prepare(group_id, provider, attempt):
                                 'prompt_sha256': hashlib.sha256(prompt.encode()).hexdigest(),
                                 'output_dir': str(output), 'output_layout': 'per_document'},
             'preflight': {'registered_absolute_inputs_verified': True, 'frozen_input_hashes_verified': True,
-                          'owned_output_root_verified': True, 'max_attempts': 2, 'active_model_children': len(active)}}
+                          'owned_output_root_verified': True, 'max_attempts': 2, 'active_model_children': len(active),
+                          'occupied_model_and_helper_slots': occupied_slots}}
 
 
 if __name__ == '__main__':

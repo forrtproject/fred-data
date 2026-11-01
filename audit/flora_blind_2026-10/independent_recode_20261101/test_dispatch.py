@@ -59,6 +59,13 @@ class SharedSourceBudget(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Owned task still active'):
             self.check('opus', 2)
 
+    def test_source_worker_helper_reservation_consumes_capacity(self):
+        self.state['tasks'].extend([
+            dict(role='source_acquisition', status='running', reserved_slots=2),
+            dict(role='source_adjudicator', status='running')])
+        with self.assertRaisesRegex(ValueError, 'No free model slot'):
+            self.check('opus', 2)
+
     def test_unlisted_third_extraction_cannot_reset_the_same_pdf_budget(self):
         self.upgrades['upgrades'].append(dict(self.upgrades['upgrades'][0], document_id='document_0686'))
         self.state['tasks'].append(dict(self.first, packet_ids=['document_0685'], attempt=2))

@@ -3,7 +3,7 @@ import hashlib
 import json
 import unittest
 
-from build_verified_proposals import checked_replacements, ids, original_replacements
+from build_verified_proposals import checked_replacements, current_alignment, ids, original_replacements
 
 
 class ProposalDependencies(unittest.TestCase):
@@ -35,10 +35,45 @@ class ProposalDependencies(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, 'Unvalidated field'):
             checked_replacements(self.row, {'record_type': 'replication'}, {'outcome': 'mixed'}, decision)
 
+    def test_axis_fix_preserves_the_other_axis_and_replaces_complete_csv_value(self):
+        row = {'type': 'reproduction', 'outcome': 'computational issues, robust'}
+        target = {'outcome_computation': 'computationally reproducible', 'outcome_robustness': 'robust'}
+        decision = {'proposal_fields': ['outcome_computation'], 'replacement_fields': {
+                    'outcome': 'computationally reproducible, robust'}}
+        self.assertEqual(checked_replacements(row, self.result, target, decision), decision['replacement_fields'])
+        target['outcome_robustness'] = 'robustness challenges'
+        with self.assertRaisesRegex(AssertionError, 'dependent reproduction axis'):
+            checked_replacements(row, self.result, target, decision)
+
+    def test_axis_fix_requires_both_axes_and_correct_csv_encoding(self):
+        row = {'type': 'reproduction', 'outcome': 'computational issues, robustness not checked'}
+        decision = {'proposal_fields': ['outcome_computation'], 'replacement_fields': {
+                    'outcome': 'computationally reproducible, robustness not checked'}}
+        target = {'outcome_computation': 'computationally reproducible', 'outcome_robustness': 'not checked'}
+        self.assertEqual(checked_replacements(row, self.result, target, decision), decision['replacement_fields'])
+        target['outcome_robustness'] = ''
+        with self.assertRaisesRegex(AssertionError, 'Both reproduction axes'):
+            checked_replacements(row, self.result, target, decision)
+
     def test_pair_check_recognizes_doi_and_osf_alias_forms(self):
         a = {'doi_r': 'https://doi.org/10.17605/OSF.IO/ABC12', 'alt_identifier_r': 'https://doi.org/10.1111/Example'}
         b = {'doi_r': 'https://osf.io/abc12/', 'alt_identifier_r': '10.1111/example'}
         self.assertEqual(ids(a, 'r'), ids(b, 'r'))
+
+    def test_non_doi_report_requires_its_exact_registered_source_url(self):
+        url = 'https://example.org/Report.pdf'
+        row = {'doi_r': 'NA', 'alt_identifier_r': 'NA', 'url_r': url}
+        source = {'parent_work_key': url.lower(), 'metadata': {'source_url': url}}
+        current_alignment(row, source)
+        source['metadata']['source_url'] = 'https://example.org/AnotherReport.pdf'
+        with self.assertRaisesRegex(AssertionError, 'source URL differs'):
+            current_alignment(row, source)
+
+    def test_url_cannot_bypass_a_disagreeing_current_doi(self):
+        row = {'doi_r': '10.1/actual', 'url_r': 'https://example.org/Report.pdf'}
+        source = {'parent_work_key': row['url_r'].lower(), 'metadata': {'source_url': row['url_r']}}
+        with self.assertRaisesRegex(AssertionError, 'identifier differs'):
+            current_alignment(row, source)
 
     def test_original_remedy_replaces_all_bibliographic_fields_and_clears_old_oa(self):
         metadata = {'DOI': '10.1111/example', 'title': ['Actual retested study.'],

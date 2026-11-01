@@ -43,6 +43,16 @@ def ids(row, role):
             if (v := identifier(row.get(k, '')))}
 
 
+def current_alignment(row, source):
+    key = identifier(source['parent_work_key'])
+    if key in ids(row, 'r'):
+        return
+    source_url = source.get('metadata', {}).get('source_url', '')
+    assert not ids(row, 'r'), 'Current DOI or alternate identifier differs'
+    assert source_url and source_url == row.get('url_r'), 'Current source URL differs'
+    assert key == identifier(source_url), 'Current URL work key differs'
+
+
 def original_alignment(row, target, year_receipt=None):
     assert norm(row['title_o']) == norm(target['title']), 'Original title is not positively aligned'
     if row['year_o'] != target['year']:
@@ -75,7 +85,23 @@ def proof(packet, quote):
 
 def checked_replacements(row, result, target, decision):
     replacements = decision['replacement_fields'].copy()
-    assert set(replacements) == set(decision['proposal_fields']) <= {'type', 'outcome'}, 'Unvalidated field replacement'
+    fields = set(decision['proposal_fields'])
+    axes = ('outcome_computation', 'outcome_robustness')
+    if fields and fields <= set(axes):
+        assert row['type'] == result['record_type'] == 'reproduction', 'Axis fix requires a reproduction record'
+        assert set(replacements) == {'outcome'}, 'Axis fix must replace the complete CSV outcome'
+        before = row['outcome'].split(', ')
+        assert len(before) == 2, 'Ambiguous compound outcome'
+        after = [target[k] for k in axes]
+        assert all(after), 'Both reproduction axes must be established'
+        after = [('computation not checked' if i == 0 else 'robustness not checked')
+                 if value == 'not checked' else value for i, value in enumerate(after)]
+        for i, key in enumerate(axes):
+            if key not in fields:
+                assert after[i] == before[i], 'Unreviewed dependent reproduction axis changed'
+        assert replacements['outcome'] == ', '.join(after), 'Replacement differs from independently coded axes'
+        return replacements
+    assert set(replacements) == fields <= {'type', 'outcome'}, 'Unvalidated field replacement'
     if 'type' in replacements:
         assert replacements['type'] == result['record_type']
     else:
@@ -139,7 +165,7 @@ def build():
         if source is None:
             source = next(d for d in read(OUT / 'source_upgrades.json')['upgrades'] if d['document_id'] == doc)
         assert not source.get('status', '').startswith('withheld'), 'Primary source view is withheld'
-        assert identifier(source['parent_work_key']) in ids(row, 'r'), 'Current work is not aligned'
+        current_alignment(row, source)
         opus_dir = Path(decision['opus_output'])
         opus = read(opus_dir / 'coding.json')
         opus_valid = read(opus_dir / 'parent_validation.json')

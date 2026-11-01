@@ -2,11 +2,11 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 52 initial documents and three additional source views have
+Current checkpoint: 53 initial documents and three additional source views have
 passed Opus schema, literal-span and reading checks; nine fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Five cases covering six proposed
+The full reassessment remains in progress. Seven cases covering eight proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
@@ -16,6 +16,10 @@ One suspected outcome correction is withdrawn in `withdrawn_proposals.json` afte
 source adjudication. Its blind disagreement remains visible; this is not labelled
 two-model agreement. The finite 60-item source-completeness recovery pass reuses
 old attempts and seeks full primary reports. Its preparer never becomes a blind coder.
+The first acquisition pass recovered one verified full report; a fourth source
+packet is prepared for fresh blind coding. A bounded second pass checks saved HTML,
+previously unprobed identifiers and new search routes using unused request budgets.
+Rate limits remain access limits, not findings about whether a report exists.
 
 Fresh Claude Opus 5.5 children receive only opaque document packets, the codebook, schema and primary-source metadata. They receive no dataset values, proposed fixes, earlier codings, reviewer opinions, or task-selection rationale. They must code the whole document and find its targets independently, with literal source evidence and complete reading coverage. Existing reviewers and technical source preparers never become blind coders.
 
@@ -104,7 +108,11 @@ Blank evidence-map placeholders are retained as unproved claims, never counted a
 validated quotations or accepted exclusions. Nonempty quotations still require
 exact hashes and integer offsets. Alternate extractions of one archived PDF share
 the two-attempt budget per model, so a new file ID cannot restart it.
-Run all 38 evidence/dependency controls:
+Reproduction-axis fixes replace the complete compound CSV value while preserving
+any unchanged axis. A report without a DOI must match its exact registered source
+URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
+technical helpers.
+Run all 43 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
