@@ -15,6 +15,12 @@ class ReviewedScalarStatistic(unittest.TestCase):
   self.assertFalse(compare.fresh_test_review({**decision,'completion_pass':'old'},'es_value_o',row))
   self.assertFalse(compare.fresh_test_review({**decision,'target_match_confirmed':False},'es_value_o',row))
   self.assertIsNone(compare.parsed_stat('F-Ratio = 3.145'))
+ def test_fresh_review_accepts_explicit_chi_square_symbol(self):
+  row={'es_type_o':'test statistic','es_value_o':'X2(2, N = 133) = 8.07'}
+  decision={'completion_pass':'2026-10-31','replaces_unverified':True,'target_match_confirmed':True,'verdict':'both_wrong','correct_value':'X2(1, N = 133) = 8.07','correct_metric':'X2'}
+  self.assertTrue(compare.fresh_test_review(decision,'es_value_o',row))
+  self.assertFalse(compare.fresh_test_review({**decision,'completion_pass':'old'},'es_value_o',row))
+  self.assertFalse(compare.fresh_test_review({**decision,'target_match_confirmed':False},'es_value_o',row))
  def test_scalar_confirmation_needs_current_review_positive_kind_and_exact_value(self):
   row={'es_type_o':'test statistic','es_value_o':'1.56'}
   base={'completion_pass':'2026-10-31','replaces_unverified':True,'target_match_confirmed':True,'verdict':'shipped_right','correct_value':'1.56','correct_metric':'F'}

@@ -159,6 +159,7 @@ def fresh_test_review(a,field,row):
  if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
  if a.get('verdict') not in ['shipped_right','blind_right','both_wrong']:return False
  parsed=parsed_stat(a.get('correct_value'));kind=metric(a.get('correct_metric'))
+ if kind=='x2':kind='chi2'
  if kind=='f-ratio':
   # A target-confirmed current review may preserve a table's explicit F-Ratio
   # label. Keep legacy parsing and printed evidence unchanged.
