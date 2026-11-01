@@ -36,14 +36,19 @@ def validate_proofs(obj, raw, source_hash, require_source_hash=False, unproved_e
     def walk(value, path='$'):
         if isinstance(value, dict):
             if re.fullmatch(r'\$\.report_boundaries\[\d+\]', path):
-                boundary_keys = {'report', 'character_start', 'character_end'}
-                check(set(value) in (boundary_keys, boundary_keys | {'target_indices'}),
+                label_keys = {'report'}
+                boundary_keys = label_keys | {'character_start', 'character_end'}
+                described_keys = {'report_id', 'title', 'structure', 'character_start', 'character_end'}
+                check(set(value) in (label_keys, label_keys | {'target_indices'}, boundary_keys,
+                                     boundary_keys | {'target_indices'}, described_keys),
                       path + ': boundary metadata cannot substitute for a quotation')
-                a, z = value['character_start'], value['character_end']
-                check(type(a) is int and type(z) is int and 0 <= a < z <= len(text),
-                      path + ': invalid report boundary')
-                check(isinstance(value['report'], str) and bool(value['report'].strip()),
-                      path + ': missing report label')
+                if 'character_start' in value:
+                    a, z = value['character_start'], value['character_end']
+                    check(type(a) is int and type(z) is int and 0 <= a < z <= len(text),
+                          path + ': invalid report boundary')
+                labels = ['report'] if 'report' in value else ['report_id', 'title', 'structure']
+                check(all(isinstance(value[key], str) and bool(value[key].strip()) for key in labels),
+                      path + ': missing or nontext report label')
                 if 'target_indices' in value:
                     check(isinstance(value['target_indices'], list)
                           and all(type(i) is int and i >= 0 for i in value['target_indices']),

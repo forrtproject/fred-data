@@ -80,6 +80,37 @@ class EvidenceValidation(unittest.TestCase):
         self.write(self.output / 'evidence_map.json', data)
         self.assertEqual(self.run_validation()['evidence_map_proofs'], 1)
 
+    def test_described_report_boundary_is_metadata_not_a_quote_proof(self):
+        data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
+            dict(report_id='main_report', title='One report', structure='Introduction then analysis',
+                 character_start=0, character_end=28)])
+        self.write(self.output / 'evidence_map.json', data)
+        self.assertEqual(self.run_validation()['evidence_map_proofs'], 1)
+
+    def test_report_label_without_source_range_is_not_a_proof(self):
+        self.write(self.output/'evidence_map.json',dict(text_sha256=self.source_hash,
+                   spans=[self.proof],report_boundaries=[dict(report='One experiment',target_indices=[0])]))
+        self.assertEqual(self.run_validation()['evidence_map_proofs'],1)
+
+    def test_report_boundary_cannot_claim_only_one_offset(self):
+        self.write(self.output/'evidence_map.json',dict(text_sha256=self.source_hash,
+                   spans=[self.proof],report_boundaries=[dict(report='One experiment',character_start=0)]))
+        with self.assertRaises(ValueError):self.run_validation()
+
+    def test_described_boundary_cannot_claim_an_unproved_quote(self):
+        boundary=dict(report_id='main_report',title='One report',structure='Analysis',
+                      character_start=0,character_end=28,quote='fabricated')
+        self.write(self.output/'evidence_map.json',dict(text_sha256=self.source_hash,
+                   spans=[self.proof],report_boundaries=[boundary]))
+        with self.assertRaises(ValueError):self.run_validation()
+
+    def test_boundary_structure_cannot_hide_a_nested_quote_object(self):
+        boundary=dict(report_id='main_report',title='One report',structure={'quote':'fabricated'},
+                      character_start=0,character_end=28)
+        self.write(self.output/'evidence_map.json',dict(text_sha256=self.source_hash,
+                   spans=[self.proof],report_boundaries=[boundary]))
+        with self.assertRaises(ValueError):self.run_validation()
+
     def test_optional_boundary_targets_must_still_be_a_list(self):
         data = dict(text_sha256=self.source_hash, spans=[self.proof], report_boundaries=[
             dict(report='Main paper', character_start=0, character_end=28, target_indices=None)])

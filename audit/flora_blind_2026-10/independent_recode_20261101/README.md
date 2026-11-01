@@ -1,223 +1,64 @@
 # Independent recoding of proposed corrections
 
-Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
+This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-Current checkpoint: 166 of 677 initial source packets and five additional source views have
-passed Opus schema, literal-span and reading checks; twenty-four fresh Sol source views
-pass the same checks. One layout view is withheld because its quotes interleave
-PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Twenty-four cases covering twenty-six proposed
-fields have passed the scientific acceptance gates and are exported in
-`automatically_verified_proposals.json`. A separate guarded whole-record exclusion
-is included under `record_actions`. These are proposals for batch approval;
-no user approval or dataset changes are recorded. Other outcome batches remain
-suspended.
+169 of 677 initial source packets and six additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-six fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-Three suspected corrections are withdrawn in `withdrawn_proposals.json` after
-source adjudication: two outcomes and one original-citation replacement. Their blind
-disagreements and tested-version provenance remain visible. The finite 60-item source-completeness recovery pass reuses
-old attempts and seeks full primary reports. Its preparer never becomes a blind coder.
-The first acquisition pass recovered one verified full report. It has completed
-both fresh blind roles and primary adjudication. Its simulation classification and low-confidence outcome remain outside automatic acceptance. The
-bounded second pass checked saved HTML and new search routes using unused budgets.
-Its HTML candidate was rejected as an abstract/reference access page; 59 source
-completeness gaps remain. Seven zero-new-request cases had earlier acquisition
-records, rather than missing DOI identifiers.
-Rate limits remain access limits, not findings about whether a report exists.
+The current export contains **24 cases covering 26 proposed fields, plus one whole-record exclusion**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
-Fresh Claude Opus 5.5 children receive only opaque document packets, the codebook, schema and primary-source metadata. They receive no dataset values, proposed fixes, earlier codings, reviewer opinions, or task-selection rationale. They must code the whole document and find its targets independently, with literal source evidence and complete reading coverage. Existing reviewers and technical source preparers never become blind coders.
+Agreement between two models is a candidate for correction, not a correctness certificate. A proposal enters `automatically_verified_proposals.json` only after:
 
-The parent owns source verification, target alignment, comparison, scientific integration, Git and dispatch. A previous genuine blind Sol result can be compared only when its exact source version/hash and source scope match. Otherwise a fresh blinded Sol pass is required. No prior adjudicator judgment is substituted for independent blind coding.
+- Primary report identity, version, completeness and empirical study status are established.
+- Both genuine blind readings cover the complete registered source and pass schema, metadata, hash and literal-evidence checks.
+- The same original claim and current test are positively aligned. Attempt language, a shared DOI or an omitted target cannot establish an outcome.
+- A separate adversarial source review addresses contrary passages, verdict scope and target/report dependencies.
+- Bibliographic metadata, duplicate constraints, supporting quotes and dependent fields agree.
+- The export retains the complete frozen record, its hash and every atomic operation required for the remedy.
 
-## Automatic acceptance gates
+A reproduction conversion carries its type and both result axes together. An original-identity correction replaces the dependent bibliography and quotes. A registered alias of the same DOI can be canonicalized only with its exact authoritative alias record. Whole-record exclusion requires positive scope evidence, archives the complete pair and removes the row after approval; zero targets alone cannot authorize it.
 
-Agreement is a candidate, not a correctness certificate. A correction enters a proposed automatic fix file only after:
+`parent_acceptance_decisions.json` records the parent's scientific eligibility judgments. The historical counter named `automatic_corrections_accepted` counts eligible proposed fields, not user approvals. `withdrawn_proposals.json` preserves three withdrawn suspicions; disagreements and tested-version provenance remain visible.
 
-- The primary source identity, report version, completeness and applicable study status are established. Abstract-only or unverified sources cannot establish this high-confidence set.
-- Both blind results pass schema, exact metadata/hash, literal contiguous quotation and model-visible reading-coverage checks.
-- The same original and retested findings are positively aligned. A shared DOI/year, an omitted target, or a generic whole-paper statement does not establish that alignment.
-- The coded value agrees and the evidence identifies the original claim, the corresponding current result, and the authors' comparison/verdict. Attempt language is not outcome evidence; no finding or exception is transferred across originals.
-- An independent adversarial source check addresses contrary passages and claim-selection/report-binding issues. This reviewer may see the proposed comparison but must never be reused as a blind coder.
-- All dependent fields, record remedies, quotations and duplicate constraints are coherent. Frozen baseline and full-record preconditions remain intact.
+The current comparison queue contains unresolved source, target and policy questions. Genuine codebook boundaries remain for the later individual-decision stage. Unconfident results and incomplete sources stay outside the automatic set. Prospective registrations require a joint record remedy; an obsolete plan cannot override a separately verified completed report.
 
-Agreement with the existing FLoRA value withdraws the suspected correction when these gates pass. Disagreements go to an automated source-adjudication queue. Unsupported cases stay out of the automatic file; they are not relabelled resolved. Only a genuinely unspecified coding-policy choice requires the user's decision. Existing scientific records and objections remain preserved.
+The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
-## Continuation
+A separate new gap was found in document_0147: both coders read its saved body, but the title, authors and abstract were missing. The complete published PDF is now verified and registered as document_0688, including the repository cover and article pages 61–74. Both fresh blind roles now pass complete reading and literal-evidence checks, agreeing on successful. Independent source review is running. Each role gets exactly one fresh read across aliases of this PDF. The earlier body-only labels confer no approval on the new version. This recovery is outside the finite 60-item queue.
 
-Read state.json and source_inventory.json/dispatch_plan.json when preparation finishes. Reconcile exact owned task IDs. Completion notifications drive integration and the next bounded delegate_task round; no polling/watch loops or schedules. Never restart historical tick.js, tick_evidence_followup.js, coding controllers or their old deadlines for this new cohort. Use a new delegate_task for every blind/review round, not t3_thread_send. Maximum two attempts per packet, preserving every attempt and mechanical failure cause. Keep combined active lanes below ten and reserve validation capacity; currently use at most three model children. Included native usage only, no paid API fallback. The old recovery schedule remains removed.
+Source reviews for 0148/0149 are running, including a linked correction and separate additional-target disputes. The first source review for 0150/0151/0688 is running: it covers an atomic reproduction conversion, the distinction between Hall and Roter targets, and the complete AMP report. The latter has a certified complete historical Sol reading; the former required a fresh complete Sol pass. Matching labels alone have not accepted either case.
 
-Active packets and outputs are ignored under evidence_followup/private/independent_recode_20261101/. No source bodies or unpublished coding outputs are deployed to the public app. The suspended outcome batch approvals remain suspended until the acceptance gates are satisfied.
+The parent owns integration, Git and dispatch. Blind Opus children receive only opaque packets, the codebook, schema and primary-source metadata. They receive no dataset values, suspected fixes, earlier codings or selection rationale. Earlier Sol coding is usable only when its exact source version and complete actual reading are verified; otherwise a fresh blind Sol pass is required. Preparers and adjudicators never become blind coders.
 
-Parent mechanical checks are in `validate_output.py`. Recover the child's actual
-durable tool items into a private receipt directory before running it; a child's
-reading-manifest assertion is insufficient. Both exact shell output and native
-Read content are checked against every source chunk. The validator records
-mechanical validity separately from scientific acceptance. Run its failure
-controls with:
+At most three model children run concurrently. General attempts are capped at two per role and source, with lower source-specific limits in `source_upgrades.json`. Alternate extractions of one PDF share the limit. Included native usage is used throughout; incremental paid API spend is zero.
 
-```sh
-python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p test_validation.py -v
-```
+Native completion notifications drive continuation. Reconcile exact task IDs in `state.json`; use a new `delegate_task` for each round. Do not restart historical controllers, polling loops, watchers or schedules.
 
-`project_prior_sol.py` creates a separate parent-only projection when an older
-blind result transcribed source whitespace. It can replace only whitespace with
-the exact, uniquely matched contiguous source span; missing or changed words and
-ambiguous matches are rejected. Original files and scientific labels remain
-unchanged. The projection ledger preserves both quotations and offsets. Reading
-receipts and independent scientific checks are still required.
+The working files are:
 
-Use `comparison_review_queue.json` and `prior_sol_receipt_checks.json` for the next
-comparison/review round. Complete available comparisons as well as dispatching
-new blind groups; do not let an agreement queue substitute for source review.
-Documents_0002, _0004 and _0005 have passed source review and parent integration
-for their specified type/outcome fields. Document_0007 retains a low-confidence
-successful-versus-mixed disagreement. Document_0006 has passed the original-identity
-gates and its proposal replaces the complete bibliography, DOI hash and supporting
-quote together. Document_0008 has an additional cost-effectiveness-target disagreement;
-the clinical identity and that companion-report question stay separate.
+- `progress.json`: current counts, active tasks and next untouched group.
+- `comparison_review_queue.json`: scientific comparison and review status.
+- `current_validation_index.json` and `prior_sol_receipt_checks.json`: verified source-reading and literal-evidence receipts.
+- `source_inventory.json`, `source_upgrades.json` and `packet_input_receipts.json`: immutable initial inputs and separately registered source versions.
+- `automatically_verified_proposals.json`: guarded, unapproved operations.
+- `../run_log.md`: the chronological audit trail.
 
-After recording a coding completion in state.json, run
-`collect_completed_coding.js` through `AsyncFunction(tools, text)`. It collects
-only explicitly completed coding tasks, recovers their actual source-reading
-tool items, and runs the mechanical validator. It never polls active tasks,
-dispatches models, changes scientific judgments, or publishes outputs.
-`packet_input_receipts.json` separately freezes the immutable packet files;
-`freeze_packet_receipts.py` independently reconstructs those inputs from the
-registered original source bytes, including exact collection boundaries.
-The validator rejects packet changes even if the result metadata is changed to
-match. Native timeline removal of boundary whitespace or a leading byte-order mark is recorded explicitly;
-missing substantive characters or altered quote whitespace are rejected.
-For an explicitly recorded `cat | fold -w 2000` read of a single long line,
-the validator reconstructs the exact UTF-8 byte wrapping and records inserted
-line breaks. Arbitrary newline removal cannot satisfy a reading receipt.
-Explicit report-boundary descriptions are checked as source ranges and never
-counted as quotation proofs. Missing quote data in other evidence entries still
-fails validation.
+`prepare_dispatch.py` checks absolute packet paths, frozen inputs, output ownership, capacity and attempts before returning native arguments. `collect_completed_coding.js`, run through `AsyncFunction(tools, text)`, collects explicitly completed tasks and verifies actual tool returns. Neither tool accepts a scientific correction.
 
-`source_upgrades.json` preserves newly verified report versions separately.
-Document_0683 adds the author appendix and errata to document_0001; both fresh blind
-Opus and Sol results are validated. Its target-role dispute remains held.
-Source-block boundaries and hashes prevent
-quotations from joining different documents or inserted navigation headings.
+Quotations retain exact Unicode, whitespace and UTF-8 offsets. Boundary whitespace lost in transport is recorded; substantive changes fail validation. Report-boundary descriptions are metadata and never count as quote proofs. Missing evidence remains unproved. Source blocks prevent quotes from crossing separate reports.
 
-Use `prepare_dispatch.py GROUP_ID --provider opus|sol --attempt 1|2` before
-delegating an initial-cohort group. It returns native delegate arguments and a
-task-registration record only after checking registry-derived absolute input
-paths, every frozen file hash, the owned output root, capacity, duplicate task
-history and the attempt limit. Do not construct packet/output prefixes manually.
-Parent-supplied invalid paths consumed two preserved technical attempts; their
-replacement tasks have distinct IDs and output directories.
+The export also checks authoritative DOI/title/author/year correspondence and complete frozen-row preconditions. Verified printed author errors and CSV newline representation differences remain explicit and narrowly bound to their source receipts. Raw codings and reviews are preserved.
 
-`build_verified_proposals.py` rechecks frozen full-record hashes, independently
-coded values, validated result hashes, accepted reviewer-file hashes, original
-identity and pair uniqueness. A type conversion must travel with compatible
-results and literal replacement quotes. Its output cannot approve itself or
-enable the other suspended proposals. Original-identity remedies refresh all
-original bibliographic fields and clear an unverified link to the old original.
-Blank evidence-map placeholders are retained as unproved claims, never counted as
-validated quotations or accepted exclusions. Nonempty quotations still require
-exact hashes and integer offsets. Alternate extractions of one archived PDF share
-the two-attempt budget per model, so a new file ID cannot restart it.
-Reproduction-axis fixes replace the complete compound CSV value while preserving
-any unchanged axis. A report without a DOI must match its exact registered source
-URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
-technical helpers.
-Run all 116 evidence/dependency controls:
+Run the 121 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
 python3 audit/flora_blind_2026-10/independent_recode_20261101/build_verified_proposals.py
 ```
 
-The current automatic set also verifies completed study status and authoritative original DOI/title correspondence. Advance-online and print years remain separate provenance for the same publication. A report carrying a plan-only source needs a record remedy, rather than an outcome-only patch. Row 403 retains the directly retested 2000 original: its H4 finding explicitly contradicts the original while other findings agree. The resolved objection and earlier hold remain in `held_acceptance_decisions.json`; the raw second review and verified parent corrections are bound to the proposal. Rows 195 and 869 remain outside automatic acceptance with their joint identity/type/outcome boundaries documented. No review-app rebuild or deployment is inferred from this checkpoint.
+When registering another source version, verify all frozen inputs:
 
-Row 104 corrects a dataset/method citation to the explicitly retested Smith et al. (2009) paper, with its complete eleven-author bibliography and literal source citation retained together. A single named author plus “et al.” requires matching printed DOI, exact title, first-author initials and authoritative complete metadata. Source-review field tables may use either an explicit list or keyed entries; conflicting row/field aliases are rejected. Row 1868’s proposed outcome change is withdrawn under the author-overall-verdict rule, with both confident blind readings and the hemispheric contrast preserved. Its full-context quote update remains a separate recommendation.
+```sh
+python3 audit/flora_blind_2026-10/independent_recode_20261101/freeze_packet_receipts.py
+```
 
-Row 783 changes successful to mixed from the authors’ explicit original-specific concern-to-usage reversal alongside agreeing findings. Its canonical DOI is retained. A missing SICI ISSN line-break hyphen in the literal extraction is recognized only with an exact one-hyphen transformation, authoritative original metadata and the current publisher’s deposited canonical reference; other DOI differences fail the gate. Both blind citation strings remain unchanged.
-
-Row 2651 remains outside the automatic set after its final source review. The
-companion script establishes how the baseline table outputs were generated,
-but the reviewer remains unconfident about numerical recovery. Both confident
-blind labels, contrary table details and the corrected first-review inference
-remain preserved. No further vote is requested to obtain agreement.
-
-Document_0115 is the results-blind version of the Crosby project at row 2362.
-Its prospective coding applies to that manuscript only. The completed report
-already has a positively bound source packet, document_0479, awaiting its
-scheduled independent recoding. The obsolete manuscript cannot justify an
-unknown-outcome patch or moving the completed project to planned studies.
-
-Row 351 replaces the wrong Imel (2014) paper with the explicitly retested vocal
-synchrony paper, updating its complete bibliography and supporting quote while
-retaining the failed outcome. Row 2149's Han (2015) target is also established,
-but its citation remedy stays outside the automatic set while authoritative
-records disagree on the title suffix and final page. This is a metadata hold,
-not a new user policy question. Document_0098 now has two certified fresh blind
-reads; its outcome comparison awaits primary-source adjudication.
-
-Row 793 changes successful to mixed: the report explicitly confirms some original
-Study 3 findings and identifies failures of the company-interest moderation and
-another tested contrast. Row 911 remains held because its blind packet omitted
-the abstract containing contrary trend evidence. The complete publisher PDF,
-including the abstract and final appendix, is registered as document_0687. It
-allows one fresh reading per model; the lower limit applies to every extraction
-sharing its PDF hash. Those complete-source reads must pass before any automatic correction. This
-newly discovered omission is separate from the finite 60-item recovery queue.
-
-Both complete-source radiation reads now pass mechanically: Opus chooses
-successful and Sol mixed, both unconfident. The case remains excluded, with a
-final second source review addressing the actual interpretation boundary. No
-further blind attempts are allowed. The therapy case-series and secondary
-omega-3 news item require record-level scope remedies if confirmed; neither
-can enter an isolated field-correction batch. The news item's primary trial is
-identified in official metadata, but its full report and original-target binding
-remain unresolved.
-
-Row 699 changes successful to mixed because the confirmed rejection-vote finding
-is explicitly contrasted with a failed committee-assignment finding. Its smaller
-effect and ranking sensitivity remain qualifications. The review's explicit
-replacement disposition is read without changing its raw file; inconsistent
-value/status aliases or an unresolved policy boundary cannot authorize a change.
-
-Row 1973 changes mixed to failed: the successful lifetime-reading association is
-explicitly a baseline control, while all experimental passage-reading comparisons
-fail under the authors' whole-study verdict. Row 2308 updates both reproduction
-axes together: the authors judge the numerical reproduction essentially the same,
-but alternative analyses challenge the four-varieties conclusion. The numerical
-discrepancies and scope limited to the 2004 survey remain explicit.
-
-The latest batch adds three mechanically validated readings. Document_0131 needs a fresh blind Sol read because the earlier tool returns omit two source ranges; document_0129 likewise lacks a complete exact-version reading. Document_0130 has a certified complete earlier read but a successful-versus-statistically-successful-but-flawed disagreement. Document_0132 remains unconfident, and document_0133 is abstract-only. None enters the automatic file from this checkpoint.
-
-Batches0058/0059 add five verified supplied-source readings. Document_0134 is explicitly partial, document_0135 has an unconfident special-verdict boundary, and document_0137 is abstract-only. Documents_0136/0138 await exact-version comparison and original-specific source checks. Fresh Sol reads for0129/0131 are active; the primary-source review for0130 is prepared. The seventeen-case/nineteen-field proposal file is unchanged.
-
-Fresh complete-source Sol reads for0129/0131 now pass validation: successful and mixed respectively, agreeing with Opus. The former still needs tested-preprint/journal identity checks; the latter is in primary-source review alongside disagreements0130/0136. Document_0138 requires fresh Sol because its earlier display omitted the middle of the registered source. No automatic acceptance follows from matching labels alone.
-
-The SSRP main report and supplement (document_0139) now have two certified complete fresh blind readings. Its historical Sol reading was incomplete and is excluded. Row 1957 changes successful to failed under the authors’ final all-data Ackerman verdict. The positive first-stage result and the second collection’s protocol deviation remain explicit contrary evidence. Primary review passes 31 literal proofs and 13 artifact hashes; 35 exact visible tool spans establish complete source coverage. A truncated tool item contributes only its independently verified visible span. The other SSRP outcomes are not accepted as a batch or inferred from the overall replication rate.
-
-Document_0138 now has certified complete fresh readings from both models, agreeing on mixed. Its original-specific contrasts and task-validity alternative await source review, prepared alongside0129’s preprint/journal identity check. The complete fresh Sol SSRP read is running. No new case is automatically accepted at this checkpoint.
-
-The complete SSRP Sol read now passes all18chunkreceipts and240literalproofs (43codedspans plus197evidencemap passages). Bothfreshmodels align on all21DOIs/outcomes; only1957.outcome is a frozen proposedchange. Its all-data Ackerman failure versus positive stage1 protocol alternative has a prepared primary-source check. Report-boundary metadata may omit target assignments; those valid source ranges never count as evidence proofs. The91controls enforce this without changing raw model outputs.
-
-Batch0061 adds three verified supplied-source readings. Document_0140 has an unconfident replication/reproduction disagreement requiring joint result-axis review;0141isabstractonly. Document_0142 needs freshSol because the earlier registered extraction was read only in selected ranges. Its double-slash original DOI remedy and additional-target questions remain distinct. No automatic proposals are added.
-
-Rows 2425 and 2003 now pass the field-proposal gates. Row 2425 replaces the scale-development source with the explicitly retested Fosse–Toyokawa paper, including its full bibliography and separately deposited subtitle. Row 2003 changes the outcome to mixed from the author’s overall partial-replication verdict and Table 2; genuine contradictions elsewhere in the published paper remain documented. The original’s 2010 online and 2011 print dates are kept as provenance, with no year-only correction.
-
-Row 107 is a separate whole-record exclusion proposal. The complete frozen pair is archived and removed from the completed-replication pool only after approval; an isolated type edit is rejected. Positive evidence establishes a first pure-MCT intervention with repetition across cases inside one paper, rather than a retest of the currently linked published finding. Zero targets alone cannot authorize exclusion.
-
-The source reviewer’s three incorrect row snapshots were traced to one-based indexing of zero-based identifiers. Raw reviews remain unchanged; export requires a hashed parent correction matching the wrong snapshot, actual full frozen row and review hash. Partial reviewer baselines with wrong identifiers also fail the guard. Reviewer-native Read contents are not exposed in the durable timeline; that limitation is explicit, while both blind roles’ actual reading receipts and all literal proof slices are independently checked.
-
-The radiation case and two additional verdict-scope cases remain outside the automatic set with explicit policy options for the later individual-decision stage. No further blind votes are requested to force agreement.
-
-Row 561 now changes failed to mixed from the explicit partial-confirmation verdict and original-specific contrasts. The raw review incorrectly attributes a flawed verdict to Opus; both actual fresh coders chose mixed, and their unchanged files govern acceptance. The citation replacement at row 2320 is withdrawn: canonical journal metadata and the author’s version chain support the existing title, DOI and 2026 print year. Its tested 2024 preprint is recorded separately. The later version describes a similar third experiment and cites the current report; detailed data reuse and full original manuscripts were not newly verified. Do not extend the outcome to later-added experiments.
-
-Batches 0065–0068 and 0070 add twelve supplied-source readings, with uncertain results and the abstract-only report excluded from automatic acceptance. The BU3GM registration reports future tests; it requires a joint record remedy rather than an outcome-only patch, without assuming that the project remains incomplete today.
-
-Rows 782 and 353 now pass source review and parent integration. Medvec’s double-slash DOI is a registered alias of the same work’s canonical DOI. Only the DOI and its dependent hash change, with the existing bibliography preserved and a literal target-specific outcome quote. This exact handle record does not authorize general slash removal. Li’s outcome changes failed to mixed because the authors explicitly confirm some original-specific tasks and contrast another as inconsistent. The complete abstract passage replaces the isolated failure clause. The possible Matsumoto additional target remains a separate, moderately confident policy boundary; no missing pair is added.
-
-That source review passes 32 literal proofs, eight source/metadata hashes and all sixteen actual primary-text chunk returns. Gemini’s quota failure produced no scientific result. The failed attempt is preserved, and a separate Opus actor completed the review within the existing request budget. The model change was disclosed; blind codings remain unchanged, no third independent model vote is claimed and no paid API fallback was used.
-
-The earlier Sol readings for 0144 and 0145 now have certified complete exact-source returns. Both agree with Opus on mixed; 0144 remains unconfident and excluded. Row 2604 now passes source review: its final pooled SCORE report explicitly gives a partial verdict, supporting mixed despite the failed prespecified interaction test. The report’s source file, printed author typo and full original identity are positively bound. Earlier 0146 displays establish selected ranges only; a fresh Sol pass now covers all eight chunks. Its shared target labels match Opus, but Opus is unconfident and the coders disagree on an additional Jackson target. No automatic correction or missing pair follows.
-
-For row 2604, authoritative OSF metadata binds the file page to its download and project; a related URL alone cannot bypass report identity. Crossref verifies the complete original bibliography behind the report’s printed “Girell” versus canonical “Girelli”. The source and both blind strings stay literal. The report’s 2020 date versus the row’s 2026 date, and a printed denominator-df inconsistency, remain separate observations. The reviewer preserved embedded CSV CRLF while the export reader uses universal newlines; complete field values and both hashes establish that only this representation differs. A hypothetical binary-only SCORE convention is preserved as an alternative, while the supplied codebook’s author-framing rule governs this proposal.
-
-Both coders read the entire saved 0147 body, but its title, authors and abstract are missing. It stays outside automatic acceptance until the complete primary report is recovered. This is a new completeness observation outside the finite 60-item recovery queue. Fresh Sol readings for 0148 and 0149 now pass complete source checks: the first agrees on the main target but adds two uncertain targets; the second disagrees with Opus on the outcome. Their source review includes verdict scope, additional targets and a linked correction. No batch acceptance follows from those readings alone.
+All 683 registered packets currently pass that check. Raw source bodies, native reading receipts and unpublished coding outputs stay under the ignored private workspace. Rebuild the public review app after cohort integration, preserving shared decisions and requiring explicit batch approval before data application.
