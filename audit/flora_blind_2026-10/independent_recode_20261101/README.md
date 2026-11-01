@@ -4,7 +4,7 @@ This reassessment covers 562 proposed fields across 515 frozen rows and 469 work
 
 190 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-eight fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-The current export contains **26 cases covering 28 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
+The current export contains **28 cases covering 30 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
 Agreement between two models is a candidate for correction, not a correctness certificate. A proposal enters `automatically_verified_proposals.json` only after:
 
@@ -26,6 +26,8 @@ The finite 60-item source-recovery pass recovered one verified full report, whos
 A separate gap in document_0147 is resolved by the complete published PDF registered as document_0688, including the repository cover and article pages 61–74. Both fresh blind roles pass complete reading and literal-evidence checks, agreeing on successful. The source review raises an unresolved objection about the original deliberate-control and measurement claims, so the case stays outside the automatic set. Each role has exhausted its single fresh read across aliases of this PDF. Earlier body-only labels confer no approval. This recovery is outside the finite 60-item queue.
 
 Source reviews support Heinemann's failed outcome (row 912) and Hall's mixed outcome (row 649), with contrary passages and target dependencies retained. The crowd-within case (row 1923) remains a policy boundary; its corrigendum changes planned sample sizes only. The proposed reproduction conversion for row 835 stays held until the author manuscript is verified against the published report. Title and abstract are missing from document_0177, and document_0181 has interleaved column text; both remain outside the automatic set.
+
+Knudsen's successful outcome (row 1865) applies to the 24-month informing task, separate from the paper's failed looking-time tasks. Its 2011 online and 2012 print dates identify the same work; the frozen year stays. Rydell's original-paper correction (row 1161) replaces the complete bibliography with the four-author empirical paper and retains failed. Both pass original-specific source review.
 
 Both complete blind readings and the source review place the policy-goals paper (document_0173) outside replication scope. Positive aim, method and sample evidence supports the whole-record exclusion for row 169. Document_0188 cites an apparent review as its target and remains held until the retested empirical finding and target are established.
 
@@ -52,7 +54,7 @@ Quotations retain exact Unicode, whitespace and UTF-8 offsets. Boundary whitespa
 
 The export also checks authoritative DOI/title/author/year correspondence and complete frozen-row preconditions. Verified printed author errors and CSV newline representation differences remain explicit and narrowly bound to their source receipts. Raw codings and reviews are preserved.
 
-Run the 129 validation and dependency controls, then rebuild the guarded export:
+Run the 133 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v

@@ -15,6 +15,50 @@ class ProposalDependencies(unittest.TestCase):
         self.target = {'outcome': '', 'outcome_computation': 'computational issues',
                        'outcome_robustness': 'robustness challenges'}
 
+    def external_snapshot_fixture(self, directory):
+        row={'doi_o':'original','doi_r':'current','outcome':'mixed'}
+        snapshot=dict(input_row_index_zero_based=0,row=row,row_sha256_sorted_json=
+                      hashlib.sha256(json.dumps(row,ensure_ascii=False,sort_keys=True).encode()).hexdigest())
+        path=Path(directory)/'baseline_snapshot.json'
+        path.write_text(json.dumps(dict(frozen_csv_sha256=BASELINE_SHA,rows_total=1,rows={'0':snapshot})))
+        receipt=dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),review_file_sha256='review-hash')
+        review=dict(frozen_csv=dict(baseline_snapshot=path.name))
+        return row,review,receipt
+
+    def test_external_full_snapshot_binds_review_and_entire_record(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,review,receipt=self.external_snapshot_fixture(directory)
+            review_row_binding(review,0,[row],review_sha256='review-hash',snapshot_receipt=receipt)
+            with self.assertRaisesRegex(AssertionError,'another frozen row'):
+                review_row_binding(review,0,[dict(row,outcome='failed')],review_sha256='review-hash',snapshot_receipt=receipt)
+
+    def test_legacy_csv_path_keeps_embedded_full_snapshot_checks(self):
+        row={'doi_o':'original','doi_r':'current'}
+        review=dict(frozen_csv='/path/to/input.csv',baseline_snapshot={'0':dict(
+                    input_row_index_zero_based=0,row=row,row_sha256_sorted_json=
+                    hashlib.sha256(json.dumps(row,ensure_ascii=False,sort_keys=True).encode()).hexdigest())})
+        review_row_binding(review,0,[row])
+        with self.assertRaisesRegex(AssertionError,'another frozen row'):
+            review_row_binding(review,0,[dict(row,doi_r='other')])
+
+    def test_external_snapshot_requires_exact_file_and_review_receipt(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,review,receipt=self.external_snapshot_fixture(directory)
+            with self.assertRaisesRegex(AssertionError,'bound receipt'):
+                review_row_binding(review,0,[row],review_sha256='review-hash')
+            for changes in [dict(sha256='wrong'),dict(review_file_sha256='another-review')]:
+                with self.subTest(changes=changes),self.assertRaises(AssertionError):
+                    review_row_binding(review,0,[row],review_sha256='review-hash',snapshot_receipt=dict(receipt,**changes))
+
+    def test_external_snapshot_cannot_omit_row_or_conflict_with_embedded_snapshot(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,review,receipt=self.external_snapshot_fixture(directory)
+            with self.assertRaisesRegex(AssertionError,'Conflicting'):
+                review_row_binding(dict(review,baseline_snapshot={'0':{}}),0,[row],review_sha256='review-hash',snapshot_receipt=receipt)
+            path=Path(receipt['path']);value=json.loads(path.read_text());value['rows']={};path.write_text(json.dumps(value));receipt['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError,'omits'):
+                review_row_binding(review,0,[row],review_sha256='review-hash',snapshot_receipt=receipt)
+
     def sici_fixture(self, directory):
         canonical = '10.1002/(sici)1520-6653(199924)13:1<5::aid-dir2>3.0.co;2-9'
         literal = canonical.replace('1520-6653', '15206653')

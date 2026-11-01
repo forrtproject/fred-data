@@ -119,9 +119,27 @@ def review_field_dispositions(review):
     return result
 
 
-def review_row_binding(review, row_index, rows, receipt=None, review_sha256=None):
+def review_row_binding(review, row_index, rows, receipt=None, review_sha256=None,
+                       snapshot_receipt=None):
     """Wrong embedded row snapshots require a separately hashed correction."""
     snapshots = review.get('baseline_snapshot', {})
+    csv_reference = review.get('frozen_csv')
+    external_name = csv_reference.get('baseline_snapshot') if isinstance(csv_reference, dict) else None
+    if external_name is not None:
+        assert not snapshots, 'Conflicting embedded and external review snapshots'
+        assert isinstance(external_name, str) and Path(external_name).name == external_name, \
+            'External snapshot must be a named file'
+        assert snapshot_receipt, 'External review snapshot needs a bound receipt'
+        path = Path(snapshot_receipt['path'])
+        assert path.name == external_name, 'External snapshot filename differs'
+        assert sha(path.read_bytes()) == snapshot_receipt['sha256'], 'External snapshot changed'
+        assert review_sha256 and snapshot_receipt['review_file_sha256'] == review_sha256, \
+            'External snapshot receipt belongs to another review'
+        external = read(path)
+        assert external['frozen_csv_sha256'] == BASELINE_SHA and external['rows_total'] == len(rows), \
+            'External snapshot belongs to another baseline'
+        snapshots = external['rows']
+        assert isinstance(snapshots, dict) and str(row_index) in snapshots, 'External snapshot omits the reviewed row'
     if 'input_row_index_zero_based' in snapshots:
         assert snapshots['input_row_index_zero_based'] == row_index
         literal = {field['field']: field['value'] for field in snapshots['fields']}
@@ -536,7 +554,8 @@ def build():
         reviewer = Path(decision['review_dir'])
         review, validation = read(reviewer / 'review.json'), read(reviewer / 'parent_validation.json')
         review_row_binding(review, row_index, rows, decision.get('review_row_binding_correction'),
-                           sha((reviewer / 'review.json').read_bytes()))
+                           sha((reviewer / 'review.json').read_bytes()),
+                           decision.get('review_external_snapshot_receipt'))
         for name, expected in decision['accepted_review_file_hashes'].items():
             assert sha((reviewer / name).read_bytes()) == expected, 'Reviewed evidence changed: ' + name
         assert validation['proof_count_verified'] > 0
@@ -590,6 +609,8 @@ def build():
                            original_identifier_metadata_alignment=identifier_receipt))
         if decision.get('review_row_binding_correction'):
             result[-1]['review_row_binding_correction'] = decision['review_row_binding_correction']
+        if decision.get('review_external_snapshot_receipt'):
+            result[-1]['review_external_snapshot_receipt'] = decision['review_external_snapshot_receipt']
         if decision.get('original_doi_alias_receipt'):
             result[-1]['original_doi_alias_alignment'] = decision['original_doi_alias_receipt']
         if decision.get('current_report_metadata_receipt'):
@@ -620,7 +641,8 @@ def build():
         assert validation['proof_count_verified'] > 0
         assert (row_index, 'type', 'supported_correction') in review_field_dispositions(review)
         review_row_binding(review, row_index, rows, decision.get('review_row_binding_correction'),
-                           sha((reviewer / 'review.json').read_bytes()))
+                           sha((reviewer / 'review.json').read_bytes()),
+                           decision.get('review_external_snapshot_receipt'))
         prop = next(p for p in proposals if int(p['input_row_index']) == row_index and p['field'] == 'type')
         assert prop['expected_before_full_record_sha256'] == digest(row)
         dependency = prop['record_action_dependency']
