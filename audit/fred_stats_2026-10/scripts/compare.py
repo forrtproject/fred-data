@@ -160,10 +160,17 @@ def fresh_test_review(a,field,row):
  if a.get('verdict') not in ['shipped_right','blind_right','both_wrong']:return False
  parsed=parsed_stat(a.get('correct_value'));kind=metric(a.get('correct_metric'))
  if kind=='x2':kind='chi2'
+ if kind=='chi-square (1 df)' and parsed and parsed[0]=='chi2' and parsed[1]==(1.0,):kind='chi2'
  if kind=='f-ratio':
   # A target-confirmed current review may preserve a table's explicit F-Ratio
   # label. Keep legacy parsing and printed evidence unchanged.
   parsed=parsed_stat(re.sub(r'(?i)^\s*F-Ratio\s*=', 'F =',str(a.get('correct_value') or '')));kind='f'
+ if not parsed and a.get('verdict')=='shipped_right' and kind in ['test statistic','q']:
+  # Confirm an exactly copied q expression only after the current source review.
+  # Do not extend legacy parsing or infer q parameters.
+  value=re.sub(r'\s+','',str(a.get('correct_value') or '')).lower()
+  raw=re.sub(r'\s+','',str(row.get(field) or '')).lower()
+  if re.fullmatch(r'q\(\d+(?:,\d+)*\)=[+-]?(?:\d*\.\d+|\d+\.?\d*)',value) and value==raw:return True
  if not parsed and a.get('verdict')=='shipped_right' and kind in ['f','t','z','chi2','g']:
   # A freshly identified source statistic can have a correctly coded bare value.
   # Do not require a formatter prefix that the data contract never specified.

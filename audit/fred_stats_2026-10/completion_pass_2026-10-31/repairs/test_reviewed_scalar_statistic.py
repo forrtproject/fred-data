@@ -21,6 +21,20 @@ class ReviewedScalarStatistic(unittest.TestCase):
   self.assertTrue(compare.fresh_test_review(decision,'es_value_o',row))
   self.assertFalse(compare.fresh_test_review({**decision,'completion_pass':'old'},'es_value_o',row))
   self.assertFalse(compare.fresh_test_review({**decision,'target_match_confirmed':False},'es_value_o',row))
+ def test_fresh_review_confirms_literal_q_without_global_parser_alias(self):
+  row={'es_type_o':'test statistic','es_value_o':'q(2, 50) = 3.31'}
+  decision={'completion_pass':'2026-10-31','replaces_unverified':True,'target_match_confirmed':True,'verdict':'shipped_right','correct_value':'q(2, 50) = 3.31','correct_metric':'test statistic'}
+  self.assertTrue(compare.fresh_test_review(decision,'es_value_o',row))
+  self.assertFalse(compare.fresh_test_review({**decision,'completion_pass':'old'},'es_value_o',row))
+  self.assertFalse(compare.fresh_test_review({**decision,'verdict':'blind_right'},'es_value_o',row))
+  self.assertFalse(compare.fresh_test_review({**decision,'correct_value':'q(2, 51) = 3.31'},'es_value_o',row))
+  self.assertIsNone(compare.parsed_stat(row['es_value_o']))
+ def test_current_review_accepts_explicit_one_df_chi_square_label(self):
+  row={'es_type_o':'test statistic','es_value_o':'X2(1, N = 106) = 5.5'}
+  decision={'completion_pass':'2026-10-31','replaces_unverified':True,'target_match_confirmed':True,'verdict':'blind_right','correct_value':'X2(1) = 5.50','correct_metric':'chi-square (1 df)'}
+  self.assertTrue(compare.fresh_test_review(decision,'es_value_o',row))
+  self.assertFalse(compare.fresh_test_review({**decision,'completion_pass':'old'},'es_value_o',row))
+  self.assertFalse(compare.fresh_test_review({**decision,'correct_value':'X2(2) = 5.50'},'es_value_o',row))
  def test_scalar_confirmation_needs_current_review_positive_kind_and_exact_value(self):
   row={'es_type_o':'test statistic','es_value_o':'1.56'}
   base={'completion_pass':'2026-10-31','replaces_unverified':True,'target_match_confirmed':True,'verdict':'shipped_right','correct_value':'1.56','correct_metric':'F'}
