@@ -5,8 +5,8 @@
 # Keep fred_fixes.csv and row_guard.csv beside this script.
 
 FRED_INPUT_SHA256 <- "59545e3fc0c2979d97507097526319ec8c275aae3ac40c0d1a6d327492079e6b"
-FRED_FIX_SHA256 <- "1359f86037af8e68ed511b66a91650e5ed8535e6389a3ef17c1d790b43d01be4"
-FRED_GUARD_SHA256 <- "77ec4ffc0b4a2360e516b5789cb7405bead69589e15f059fd51ab21e48e0f47f"
+FRED_FIX_SHA256 <- "0de868a22fdac052ce37ce5feb24f855d2197589047cc97d1b4d03911eb5da7e"
+FRED_GUARD_SHA256 <- "036a08f2c5516e333febe0d6e995b8131e0a772053376fb26c2ba4273430776d"
 
 .fred_text <- function(x) {
   x <- as.character(x)
