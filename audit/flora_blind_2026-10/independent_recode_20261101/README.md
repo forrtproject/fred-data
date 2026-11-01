@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-221 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-eight fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+223 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-nine fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **29 cases covering 31 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -29,9 +29,11 @@ The original's frozen 2020 year, literal 2021 citation and conflicting Crossref 
 
 Document_0212 has gaps in the title, Study 2 Discussion and reference list despite its full-text metadata label. Document_0213 is abstract-only; document_0214 has an unresolved replication-chain target question; document_0216 has unconfident Wynn outcomes and uncertain claim attribution. Complete packet reading does not resolve these limits. Document_0215 has a verified complete earlier Sol reading and blind agreement on Schmidt 1998, while frozen row 439 names a 2017 metabolome paper. A separate source reviewer is checking that original correction together with pooled original/new cohorts, the dependent type and outcome, and the extracted DOI/PMID boundary.
 
-Document_0217 is unconfident, document_0218 contains conflicting Results and Discussion descriptions of the reading-course effect, and document_0220 has an unresolved replication-chain target question. A fresh blind Sol read of document_0219 is running: the earlier native returns establish selected passages but leave three contiguous gaps. Its earlier full-text label cannot certify complete reading. These four cases remain outside the automatic set.
+Document_0217 is unconfident, document_0218 contains conflicting Results and Discussion descriptions of the reading-course effect, and document_0220 has an unresolved replication-chain target question. Document_0219's fresh blind Sol reading passes complete-source checks and agrees on mixed. A separate source reviewer is checking the original-specific findings and changed behavior/population before any proposal is eligible. The earlier incomplete Sol reading remains uncertified. These four cases remain outside the automatic set.
 
 Document_0221 has unresolved record-type and computation-axis boundaries, including new observations that must be separated from original-data robustness checks. Document_0222 has an unconfident verdict and reconstructed author names from damaged OCR; those inferred names cannot serve as a literal citation. Document_0223's confident reproduction axes still require independent comparison and source review, separating original-data checks from a new Nationscape benchmark. No automatic correction follows these readings.
+
+Document_0224's dementia class-structure outcome is unconfident. Document_0225 has complete blind agreement on statistically successful but flawed, but its reported photographic-prime statistics need to be positively attributed to the current replication rather than the original. A source review is prepared, not dispatched, to check that evidence, the central elongated-shape critique and the 2008/2010 target scope. Attempt wording alone cannot establish a replicated effect.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
