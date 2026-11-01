@@ -943,3 +943,12 @@ FreshSol0129successful and0131mixed each passed fullactual chunk receipts/strict
 Certified0136historicalfull94,689characters after nativepaginatedtailrecovery. Two earliercitationquotes differ only newlinewhitespace inside reference[1]; exactunique sourcetransformation is recorded in a separateparentprojectionledger, strictschema/literalchecks pass, rawcoding andscientificlabels unchanged. Solmixed/confident versusOpussuccessful/confident remainsrealdisagreement over(mostly)successfulcriterion versus explicitlyunsupportedstudies/yetmixed.0138earlierdisplayomits5000–34482;freshSolrequired,notaccessfailure.
 
 Firstprimaryreview639.outcome/2003.outcome/2274.outcome dispatchedwith actualpairedresults/receipts,strongestoppositions and bounded8freeHTTPbudget; preparedstandalone130brief supersededbybundle,neverdispatched. Activefinitework:blind0060,source0122/0124/final0687,source0130/0131/0136. Nextuntouched0061; nextfreshSol0138.17verifiedcases/19fields unchanged,0approvals/dataedits. No apprebuild/deployment.
+
+
+## 2026-11-01 — SSRP complete-report recoding validated; independent comparison still required
+
+Collected0060document0139:all18actualchunkreturns cover208,444characters of registered mainreport+supplement; strictschema/exactmetadata/sourceblocks/hashes/43codedquotes/43spanproofs/171evidencemapproofs pass.21original-specific outcomes13successful/8failed remain mechanicallyvalid,not scientificallyaccepted. Pooledstage2Ackerman failure remains distinct fromstage1success and theproject’soverallrate.
+
+Historical00079Solactuallyviewedlayoutmain andselectedsupplementsections; finalcodedsource assemblednormalized/dehyphenatedrawmain+supplementwithheaders withoutfullvisible return ofthat exactassembly. Fullsupplementreading isnotestablished. Matchingfinalhash/21labels cannotreplace genuineindependentcomplete reading; freshSol0139required. Rawselectedtoolitems andincomplete-readingdiagnosis preservedprivately;noacquisitionfailureclaim.
+
+138/677initialOpuspackets plus5additionalviews/17freshSolviews validated. Activefinitework:FreshSol0138 andtwo boundedprimaryreviewbundles0122/0124/final0687 plus0130/0131/0136. Nextuntouched0061.17verifiedcases/19logicalfields unchanged;0userapprovals/dataedits. Noapprebuild/deployment.
