@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from build_verified_proposals import checked_replacements, completed_field_work, current_alignment, ids, original_alignment, original_identifier_alignment, original_replacements, retained_target_scope_review, review_field_dispositions
+from build_verified_proposals import checked_replacements, completed_field_work, current_alignment, ids, original_alignment, original_doi_alignment, original_identifier_alignment, original_replacements, retained_target_scope_review, review_field_dispositions
 
 
 class ProposalDependencies(unittest.TestCase):
@@ -14,6 +14,46 @@ class ProposalDependencies(unittest.TestCase):
         self.result = {'record_type': 'reproduction'}
         self.target = {'outcome': '', 'outcome_computation': 'computational issues',
                        'outcome_robustness': 'robustness challenges'}
+
+    def sici_fixture(self, directory):
+        canonical = '10.1002/(sici)1520-6653(199924)13:1<5::aid-dir2>3.0.co;2-9'
+        literal = canonical.replace('1520-6653', '15206653')
+        row = {'doi_o': canonical, 'doi_r': '10.1/current'}
+        path = Path(directory) / 'publisher.json'
+        path.write_text(json.dumps({'message': {'DOI': row['doi_r'], 'reference': [
+            {'key': 'bibr37', 'doi-asserted-by': 'publisher', 'DOI': canonical}]}}))
+        receipt = {'canonical_doi': canonical, 'literal_extracted_doi': literal,
+                   'publisher_reference_key': 'bibr37', 'publisher_reference_metadata': {
+                       'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}}
+        return row, {'doi': literal}, receipt
+
+    def test_publisher_verified_sici_transcription_preserves_canonical_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.sici_fixture(directory)
+            before = dict(row)
+            original_doi_alignment(row, target, receipt)
+            self.assertEqual(row, before)
+            with self.assertRaisesRegex(AssertionError, 'verified transcription evidence'):
+                original_doi_alignment(row, target)
+
+    def test_sici_transcription_cannot_remove_an_article_identifier_hyphen(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.sici_fixture(directory)
+            target['doi'] = target['doi'].replace('aid-dir2', 'aiddir2')
+            receipt['literal_extracted_doi'] = target['doi']
+            with self.assertRaisesRegex(AssertionError, 'Only the SICI ISSN'):
+                original_doi_alignment(row, target, receipt)
+
+    def test_sici_transcription_requires_the_actual_current_publisher_reference(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.sici_fixture(directory)
+            receipt['publisher_reference_key'] = 'missing'
+            with self.assertRaisesRegex(AssertionError, 'canonical reference not established'):
+                original_doi_alignment(row, target, receipt)
+            receipt['publisher_reference_key'] = 'bibr37'
+            row['doi_r'] = '10.1/different-current-work'
+            with self.assertRaisesRegex(AssertionError, 'different current work'):
+                original_doi_alignment(row, target, receipt)
 
     def test_source_review_native_field_dictionary_preserves_explicit_identity(self):
         review = {'field_reviews': {'104.original': {

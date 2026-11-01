@@ -114,7 +114,28 @@ def original_identifier_alignment(row, receipt):
     assert norm(metadata['title'][0]) == norm(row['title_o']), 'Original identifier resolves to a different title'
 
 
-def original_alignment(row, target, year_receipt=None, author_receipt=None):
+def original_doi_alignment(row, target, transcription_receipt=None):
+    literal = identifier(target.get('doi', ''))
+    if not literal or literal in ids(row, 'o'):
+        return
+    assert transcription_receipt, 'Original DOI differs; verified transcription evidence required'
+    canonical = identifier(transcription_receipt['canonical_doi'])
+    assert canonical in ids(row, 'o') and literal == identifier(transcription_receipt['literal_extracted_doi'])
+    without_issn_hyphen = re.sub(r'(\(sici\)\d{4})-(\d{4}\()', r'\1\2', canonical, count=1)
+    assert without_issn_hyphen != canonical and literal == without_issn_hyphen, \
+        'Only the SICI ISSN line-break hyphen may differ'
+    receipt = transcription_receipt['publisher_reference_metadata']
+    path = Path(receipt['path'])
+    assert sha(path.read_bytes()) == receipt['sha256']
+    metadata = read(path)['message']
+    assert identifier(metadata['DOI']) in ids(row, 'r'), 'Publisher reference belongs to a different current work'
+    refs = [ref for ref in metadata.get('reference', [])
+            if ref.get('key') == transcription_receipt['publisher_reference_key']
+            and ref.get('doi-asserted-by') == 'publisher' and identifier(ref.get('DOI', '')) == canonical]
+    assert len(refs) == 1, 'Publisher-deposited canonical reference not established'
+
+
+def original_alignment(row, target, year_receipt=None, author_receipt=None, doi_receipt=None):
     assert norm(row['title_o']) == norm(target['title']), 'Original title is not positively aligned'
     if row['year_o'] != target['year']:
         assert year_receipt, 'Original year/version needs separate adjudication'
@@ -182,8 +203,7 @@ def original_alignment(row, target, year_receipt=None, author_receipt=None):
                 'Abbreviated first-author initials differ'
         positions = [norm(printed).find(norm(a['family'])) for a in named[:count]]
         assert all(i >= 0 for i in positions) and positions == sorted(positions), 'Citation is not the registered author prefix'
-    if target.get('doi'):
-        assert identifier(target['doi']) in ids(row, 'o'), 'Original DOI differs'
+    original_doi_alignment(row, target, doi_receipt)
 
 
 def proof(packet, quote):
@@ -322,9 +342,11 @@ def build():
         else:
             identity_fields, aligned_row = None, row
         original_alignment(aligned_row, ot, decision.get('original_year_metadata_receipt'),
-                           decision.get('original_author_metadata_receipt'))
+                           decision.get('original_author_metadata_receipt'),
+                           decision.get('original_doi_transcription_receipt'))
         original_alignment(aligned_row, st, decision.get('original_year_metadata_receipt'),
-                           decision.get('original_author_metadata_receipt'))
+                           decision.get('original_author_metadata_receipt'),
+                           decision.get('original_doi_transcription_receipt'))
         identifier_receipt = next((decision[k] for k in (
             'replacement_original_metadata_receipt', 'original_identifier_metadata_receipt',
             'original_year_metadata_receipt', 'original_author_metadata_receipt') if decision.get(k)), None)
@@ -384,6 +406,7 @@ def build():
                            bibliography_metadata=decision.get('replacement_original_metadata_receipt'),
                            original_author_metadata_alignment=decision.get('original_author_metadata_receipt'),
                            original_year_metadata_alignment=decision.get('original_year_metadata_receipt'),
+                           original_doi_transcription_alignment=decision.get('original_doi_transcription_receipt'),
                            original_identifier_metadata_alignment=identifier_receipt))
     output = dict(schema_version=1, status='incremental_verified_proposals_cohort_in_progress',
                   baseline_sha256=BASELINE_SHA, canonical_changes_applied=False, user_approval_recorded=False,
