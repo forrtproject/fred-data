@@ -46,7 +46,24 @@ receipts and independent scientific checks are still required.
 Use `comparison_review_queue.json` and `prior_sol_receipt_checks.json` for the next
 comparison/review round. Complete available comparisons as well as dispatching
 new blind groups; do not let an agreement queue substitute for source review.
-In particular document_0004 needs the newly dispatched blind Sol pass because its
-old reading was incomplete, document_0005 needs an adversarial source check, and
+In particular document_0004 has matching validated fresh Opus/Sol outcomes and
+still needs adversarial source review, document_0005 is in source review, and
 document_0007 has a low-confidence successful-versus-mixed disagreement. The
 document_0006 assignment concerns original identity, not outcome agreement.
+
+After recording a coding completion in state.json, run
+`collect_completed_coding.js` through `AsyncFunction(tools, text)`. It collects
+only explicitly completed coding tasks, recovers their actual source-reading
+tool items, and runs the mechanical validator. It never polls active tasks,
+dispatches models, changes scientific judgments, or publishes outputs.
+`packet_input_receipts.json` separately freezes the immutable packet files;
+`freeze_packet_receipts.py` independently reconstructs those inputs from the
+registered original source bytes, including exact collection boundaries.
+The validator rejects packet changes even if the result metadata is changed to
+match. Native timeline removal of terminal whitespace is recorded explicitly;
+missing substantive characters or altered quote whitespace are rejected.
+
+`source_upgrades.json` preserves newly verified report versions separately.
+Document_0683 adds the author appendix and errata to document_0001 and requires
+fresh blind Opus and Sol results. Source-block boundaries and hashes prevent
+quotations from joining different documents or inserted navigation headings.

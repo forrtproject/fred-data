@@ -40,6 +40,15 @@ def project(packet, original):
         raise ValueError('Prior coding uses another source')
     result = copy.deepcopy(original)
     excluded = {k: result.pop(k) for k in ('elapsed_seconds', 'acquisition_seconds', 'skip_reason') if k in result}
+    if 'parent_provenance_completion' in result:
+        provenance = result['parent_provenance_completion']
+        if (not isinstance(provenance, dict)
+                or not set(provenance.get('filled_fields', [])).issubset({'source_url', 'retrieved_at', 'parser'})
+                or not set(provenance.get('original_values', {})).issubset({'source_url', 'retrieved_at', 'parser'})
+                or not set(provenance).issubset({'filled_fields', 'original_values', 'source_url_basis',
+                                               'retrieved_at_basis', 'cache_parser'})):
+            raise ValueError('Unrecognized parent provenance; do not discard scientific changes')
+        excluded['parent_provenance_completion'] = result.pop('parent_provenance_completion')
     old_work_key = result['work_key']
     result['work_key'] = packet.name
     text, transcriptions = raw.decode(), []

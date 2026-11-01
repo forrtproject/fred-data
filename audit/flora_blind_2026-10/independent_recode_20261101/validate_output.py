@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 
 from prepare_packets import reading_coverage, strict_result
@@ -49,8 +50,8 @@ def validate_proofs(obj, raw, source_hash):
                                      if k in value), source_hash)
                 check(proof_source == source_hash,
                       path + ': source hash mismatch')
-                if 'quote_sha256' in value:
-                    check(value['quote_sha256'] == sha(quote.encode()), path + ': quote hash mismatch')
+                check(first(value, ('quote_sha256', 'sha256')) == sha(quote.encode()),
+                      path + ': quote hash mismatch')
                 proofs.append({'path': path, 'field': value.get('field_path', value.get('field')),
                                'quote': quote, 'character_start': a, 'character_end': z})
             for key, child in value.items():
@@ -98,10 +99,18 @@ def contains_exact_chunk(item, packet, chunk_path, chunk_raw):
             return False
     if item.get('type') == 'command_execution':
         command, _, displayed = body.partition('\n')
-        return (packet.name in command and chunk_path.relative_to(packet).as_posix() in command
-                and (displayed == chunk_raw.decode()
-                     or (chunk_raw.decode() in displayed and '=====END' in displayed))
-                and 'Output truncated' not in body)
+        if packet.name not in command or chunk_path.relative_to(packet).as_posix() not in command:
+            return False
+        if 'Output truncated' in body:
+            return False
+        text = chunk_raw.decode()
+        if text in displayed:
+            return True
+        # The native command timeline trims terminal whitespace. A terminal cat
+        # can still prove every substantive source character; record the lost
+        # whitespace separately rather than treating it as unseen source text.
+        terminal_cat = re.search(r'\bcat\s+[^;\n]*' + re.escape(chunk_path.name) + r"['\"]?\s*$", command)
+        return bool(terminal_cat and displayed.rstrip().endswith(text.rstrip()))
     return False
 
 
@@ -115,8 +124,16 @@ def field_key(path):
     return path.removeprefix('$.')
 
 
-def validate(packet, output, receipts):
+def validate(packet, output, receipts, expected_inputs=None):
     packet, output, receipts = map(Path, (packet, output, receipts))
+    if expected_inputs is None:
+        registry = read(Path(__file__).with_name('packet_input_receipts.json'))
+        check(packet.name in registry['documents'], 'Packet absent from parent input registry')
+        expected_inputs = registry['documents'][packet.name]
+    for name, expected_hash in expected_inputs.items():
+        check(sha((packet / name).read_bytes()) == expected_hash, 'Frozen packet input changed: ' + name)
+    check(('source_blocks.json' in expected_inputs) == (packet / 'source_blocks.json').exists(),
+          'Unregistered source-block map')
     result = read(output / 'coding.json')
     literal = strict_result(packet, result)
     manifest = read(output / 'reading_manifest.json')
@@ -128,6 +145,18 @@ def validate(packet, output, receipts):
         data = read(output / filename)
         check(first(data, ('text_sha256', 'source_sha256')) == source_hash, filename + ': source mismatch')
         maps[filename] = validate_proofs(data, raw, source_hash)
+    if (packet / 'source_blocks.json').exists():
+        block_map = read(packet / 'source_blocks.json')
+        check(block_map['text_sha256'] == source_hash, 'Source-block map hash mismatch')
+        text = raw.decode()
+        for block in block_map['blocks']:
+            part = text[block['character_start']:block['character_end']].encode()
+            check(sha(part) == block['source_raw_sha256'], 'Original source block changed')
+        for proofs in maps.values():
+            for proof in proofs:
+                check(any(block['character_start'] <= proof['character_start']
+                          < proof['character_end'] <= block['character_end'] for block in block_map['blocks']),
+                      'Quotation crosses source boundary or includes an inserted heading')
     proof_quotes = {(field_key(x['field']), x['quote']) for x in maps['quote_spans.json']}
     for field, quote in coding_quotes(result):
         check((field, quote) in proof_quotes,
@@ -149,12 +178,16 @@ def validate(packet, output, receipts):
         evidence.append({'chunk': chunk['file'], 'range': [chunk['character_start'], chunk['character_end']],
                          'chunk_sha256': chunk['sha256'], 'threadId': item['threadId'],
                          'itemId': item['itemId'], 'position': item['position'],
-                         'receipt_path': str(p), 'receipt_sha256': sha(p.read_bytes())})
+                         'receipt_path': str(p), 'receipt_sha256': sha(p.read_bytes()),
+                         'trailing_whitespace_not_preserved_by_timeline':
+                             len(chunk_raw.decode()) - len(chunk_raw.decode().rstrip())
+                             if chunk_raw.decode() not in item.get('text', '') and item.get('type') == 'command_execution' else 0})
     return {'status': 'mechanically_validated_pending_scientific_comparison', 'document_id': packet.name,
             'source_sha256': source_hash, 'unicode_characters': len(raw.decode()),
             'coding_quote_fields': len(literal), 'span_map_proofs': len(maps['quote_spans.json']),
             'evidence_map_proofs': len(maps['evidence_map.json']),
             'full_model_visible_reading_receipts_verified': True, 'reading_receipts': evidence,
+            'frozen_packet_inputs_verified': True,
             'output_hashes': {p.name: sha(p.read_bytes()) for p in output.glob('*.json')
                               if p.name != 'parent_validation.json'},
             'automatic_scientific_acceptance': False}

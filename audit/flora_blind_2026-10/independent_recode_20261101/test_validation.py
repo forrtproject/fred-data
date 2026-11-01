@@ -46,13 +46,15 @@ class EvidenceValidation(unittest.TestCase):
                             itemId='fixture', position=1,
                             text='$ cat document_test/chunks/one.txt\n=====BEGIN\n' + text + '=====END')
         self.write(self.receipts / 'item_1.json', self.receipt)
+        self.expected_inputs = {p.relative_to(self.packet).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                                for p in self.packet.rglob('*') if p.is_file()}
 
     @staticmethod
     def write(path, value):
         path.write_text(json.dumps(value))
 
     def run_validation(self):
-        return validate(self.packet, self.output, self.receipts)
+        return validate(self.packet, self.output, self.receipts, self.expected_inputs)
 
     def test_valid_is_only_mechanical(self):
         result = self.run_validation()
@@ -89,10 +91,33 @@ class EvidenceValidation(unittest.TestCase):
         self.write(self.receipts / 'item_1.json', self.receipt)
         self.assertTrue(self.run_validation()['full_model_visible_reading_receipts_verified'])
 
+    def test_timeline_trailing_whitespace_crop_recorded(self):
+        text = (self.packet / 'article.txt').read_bytes().decode()
+        self.receipt['text'] = '$ cat document_test/chunks/one.txt\n' + text.rstrip()
+        self.write(self.receipts / 'item_1.json', self.receipt)
+        result = self.run_validation()
+        self.assertEqual(result['reading_receipts'][0]['trailing_whitespace_not_preserved_by_timeline'], 1)
+
+    def test_cat_losing_substantive_character_rejected(self):
+        text = (self.packet / 'article.txt').read_bytes().decode()
+        self.receipt['text'] = '$ cat document_test/chunks/one.txt\n' + text.rstrip()[:-1]
+        self.write(self.receipts / 'item_1.json', self.receipt)
+        with self.assertRaises(ValueError): self.run_validation()
+
     def test_json_pointer_quote_path_accepted(self):
         proof = dict(self.proof, field_path='/record_type_quote')
         self.write(self.output / 'quote_spans.json', dict(text_sha256=self.source_hash, spans=[proof]))
         self.assertEqual(self.run_validation()['coding_quote_fields'], 1)
+
+    def test_quote_crossing_original_source_boundary_rejected(self):
+        text = (self.packet / 'article.txt').read_text()
+        blocks = []
+        for a, z in [(0, 10), (10, len(text))]:
+            blocks.append(dict(character_start=a, character_end=z,
+                               source_raw_sha256=hashlib.sha256(text[a:z].encode()).hexdigest()))
+        self.write(self.packet / 'source_blocks.json', dict(text_sha256=self.source_hash, blocks=blocks))
+        self.expected_inputs['source_blocks.json'] = hashlib.sha256((self.packet / 'source_blocks.json').read_bytes()).hexdigest()
+        with self.assertRaises(ValueError): self.run_validation()
 
     def test_incomplete_reading_rejected(self):
         p = self.output / 'reading_manifest.json'
@@ -117,7 +142,15 @@ class EvidenceValidation(unittest.TestCase):
 
     def test_changed_source_rejected(self):
         (self.packet / 'article.txt').write_text('Different evidence.')
-        with self.assertRaises(AssertionError): self.run_validation()
+        with self.assertRaises(ValueError): self.run_validation()
+
+    def test_matching_forged_packet_and_result_metadata_rejected(self):
+        metadata = json.loads((self.packet / 'metadata.json').read_text())
+        metadata['source_url'] = 'https://example.invalid/other-version'
+        self.write(self.packet / 'metadata.json', metadata)
+        self.coding['source_url'] = metadata['source_url']
+        self.write(self.output / 'coding.json', self.coding)
+        with self.assertRaises(ValueError): self.run_validation()
 
     def test_changed_word_cannot_be_transcribed(self):
         with self.assertRaises(ValueError):
@@ -136,6 +169,10 @@ class EvidenceValidation(unittest.TestCase):
         self.assertEqual(projected['record_type_quote'], 'The effect α\u00a0failed.')
         self.assertFalse(ledger['scientific_labels_modified'])
         self.assertEqual(len(ledger['quote_transcriptions']), 1)
+
+    def test_provenance_cannot_hide_scientific_change(self):
+        self.coding['parent_provenance_completion'] = dict(filled_fields=['outcome'], original_values={'outcome': 'failed'})
+        with self.assertRaises(ValueError): project(self.packet, self.coding)
 
 
 if __name__ == '__main__':
