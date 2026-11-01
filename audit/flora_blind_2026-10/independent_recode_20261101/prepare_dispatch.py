@@ -16,14 +16,40 @@ def prepare(group_id, provider, attempt):
     if attempt not in (1, 2):
         raise ValueError('Two attempts maximum')
     state = read(OUT / 'state.json')
-    group = next(g for g in read(OUT / 'dispatch_plan.json')['groups'] if g['group_id'] == group_id)
+    upgrade = None
+    group = next((g for g in read(OUT / 'dispatch_plan.json')['groups'] if g['group_id'] == group_id), None)
+    if group is None:
+        upgrade = next((d for d in read(OUT / 'source_upgrades.json')['upgrades']
+                        if d['document_id'] == group_id), None)
+        if upgrade is None:
+            raise ValueError('Group or source version absent from parent registry')
+        group = {'group_id': group_id, 'document_ids': [upgrade['document_id']]}
     if PACKETS.is_symlink():
         raise ValueError('Active packet root must stay on local SSD')
     role = 'blind_coder' if provider == 'opus' else 'blind_comparison_coder'
-    prior = [t for t in state['tasks'] if t.get('group_id') == group_id and t['role'] == role]
+    budget_documents = set(group['document_ids'])
+    if upgrade and upgrade.get('primary_pdf_sha256'):
+        budget_documents.update(d['document_id'] for d in read(OUT / 'source_upgrades.json')['upgrades']
+                                if d.get('primary_pdf_sha256') == upgrade['primary_pdf_sha256']
+                                and d['parent_work_key'] == upgrade['parent_work_key'])
+    if upgrade and upgrade.get('attempt_history_document_ids'):
+        versions = {d['document_id']: d for d in read(OUT / 'source_upgrades.json')['upgrades']}
+        for doc_id in upgrade['attempt_history_document_ids']:
+            previous = versions[doc_id]
+            if (previous['parent_work_key'] != upgrade['parent_work_key']
+                    or not previous.get('primary_pdf_sha256')
+                    or previous['primary_pdf_sha256'] != upgrade.get('primary_pdf_sha256')):
+                raise ValueError('Cannot borrow an attempt from another primary report')
+            budget_documents.add(doc_id)
+    validated_key = 'validated_opus_documents' if provider == 'opus' else 'validated_fresh_sol_documents'
+    if set(group['document_ids']) & set(state.get(validated_key, [])):
+        raise ValueError('Already validated packet; never duplicate this role/source version')
+    prior = [t for t in state['tasks'] if t['role'] == role and
+             (t.get('group_id') == group_id or set(t.get('packet_ids', [])) & budget_documents)]
     if any(t['status'] in ('running', 'queued', 'waiting') or t['status'].startswith('cancel_requested') for t in prior):
         raise ValueError('Owned task still active or cancellation unconfirmed')
-    if any(t['status'] == 'completed_parent_mechanically_validated' for t in prior):
+    if any(t['status'] == 'completed_parent_mechanically_validated'
+           and set(t.get('packet_ids', [])) & set(group['document_ids']) for t in prior):
         raise ValueError('Already validated; never duplicate this role/group')
     if attempt == 2 and not any(t.get('attempt') == 1 for t in prior):
         raise ValueError('Retry requires preserved first attempt')
@@ -63,6 +89,7 @@ def prepare(group_id, provider, attempt):
                              'role': 'research', 'mode': 'async', 'target': target, 'task': prompt},
             'dispatch_record': {'clientRequestId': request_id, 'role': role, 'group_id': group_id,
                                 'packet_ids': group['document_ids'], 'attempt': attempt,
+                                'attempt_budget_document_ids': sorted(budget_documents),
                                 'prompt_sha256': hashlib.sha256(prompt.encode()).hexdigest(),
                                 'output_dir': str(output), 'output_layout': 'per_document'},
             'preflight': {'registered_absolute_inputs_verified': True, 'frozen_input_hashes_verified': True,

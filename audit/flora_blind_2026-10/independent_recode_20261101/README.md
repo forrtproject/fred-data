@@ -2,13 +2,20 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 33 initial documents and one complete-source upgrade have
-parent-validated Opus coding; seven documents have validated fresh Sol coding.
-The full reassessment remains in progress. Four cases covering five proposed
+Current checkpoint: 52 initial documents and three additional source views have
+passed Opus schema, literal-span and reading checks; nine fresh Sol source views
+pass the same checks. One layout view is withheld because its quotes interleave
+PDF columns; the reading-order replacement has completed both final blind attempts.
+The full reassessment remains in progress. Five cases covering six proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
 suspended.
+
+One suspected outcome correction is withdrawn in `withdrawn_proposals.json` after
+source adjudication. Its blind disagreement remains visible; this is not labelled
+two-model agreement. The finite 60-item source-completeness recovery pass reuses
+old attempts and seeks full primary reports. Its preparer never becomes a blind coder.
 
 Fresh Claude Opus 5.5 children receive only opaque document packets, the codebook, schema and primary-source metadata. They receive no dataset values, proposed fixes, earlier codings, reviewer opinions, or task-selection rationale. They must code the whole document and find its targets independently, with literal source evidence and complete reading coverage. Existing reviewers and technical source preparers never become blind coders.
 
@@ -93,7 +100,11 @@ identity and pair uniqueness. A type conversion must travel with compatible
 results and literal replacement quotes. Its output cannot approve itself or
 enable the other suspended proposals. Original-identity remedies refresh all
 original bibliographic fields and clear an unverified link to the old original.
-Run all 28 evidence/dependency controls:
+Blank evidence-map placeholders are retained as unproved claims, never counted as
+validated quotations or accepted exclusions. Nonempty quotations still require
+exact hashes and integer offsets. Alternate extractions of one archived PDF share
+the two-attempt budget per model, so a new file ID cannot restart it.
+Run all 38 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v

@@ -145,6 +145,27 @@ class EvidenceValidation(unittest.TestCase):
         self.write(self.output / 'evidence_map.json', dict(spans=[proof]))
         with self.assertRaises(ValueError): self.run_validation()
 
+    def test_empty_evidence_placeholder_is_retained_as_unproved_not_a_proof(self):
+        placeholder = dict(self.proof, quote='', character_start=None, character_end=None,
+                           utf8_start=None, utf8_end=None, quote_sha256=None, work='Unproved exclusion')
+        self.write(self.output / 'evidence_map.json', dict(text_sha256=self.source_hash,
+                   spans=[self.proof], excluded_candidates=[placeholder]))
+        result = self.run_validation()
+        self.assertEqual(result['evidence_map_proofs'], 1)
+        self.assertEqual(len(result['unproved_evidence_entries']), 1)
+        self.assertIn('not_accepted', result['unproved_evidence_entries'][0]['status'])
+
+    def test_nonempty_quote_with_null_coordinates_still_rejected(self):
+        proof = dict(self.proof, character_start=None, character_end=None, utf8_start=None, utf8_end=None)
+        self.write(self.output / 'evidence_map.json', dict(text_sha256=self.source_hash, spans=[proof]))
+        with self.assertRaises(ValueError): self.run_validation()
+
+    def test_empty_placeholder_with_a_claimed_quote_hash_rejected(self):
+        proof = dict(self.proof, quote='', character_start=None, character_end=None,
+                     utf8_start=None, utf8_end=None)
+        self.write(self.output / 'evidence_map.json', dict(text_sha256=self.source_hash, spans=[proof]))
+        with self.assertRaises(ValueError): self.run_validation()
+
     def test_semantic_schema_extra_rejected(self):
         self.coding['safe'] = True
         self.write(self.output / 'coding.json', self.coding)

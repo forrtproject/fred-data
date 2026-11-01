@@ -135,7 +135,10 @@ def build():
         assert decision['counterevidence_parent_adjudicated'] is True
         assert decision['dependent_fields_parent_verified'] is True
         assert 'row:' + str(row_index) not in holds, 'Live scientific hold'
-        source = next(d for d in inventory['documents'] if d['document_id'] == doc)
+        source = next((d for d in inventory['documents'] if d['document_id'] == doc), None)
+        if source is None:
+            source = next(d for d in read(OUT / 'source_upgrades.json')['upgrades'] if d['document_id'] == doc)
+        assert not source.get('status', '').startswith('withheld'), 'Primary source view is withheld'
         assert identifier(source['parent_work_key']) in ids(row, 'r'), 'Current work is not aligned'
         opus_dir = Path(decision['opus_output'])
         opus = read(opus_dir / 'coding.json')

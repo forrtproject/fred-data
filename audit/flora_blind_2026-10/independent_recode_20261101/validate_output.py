@@ -29,7 +29,7 @@ def first(obj, names):
     raise ValueError('Missing proof key: ' + '/'.join(names))
 
 
-def validate_proofs(obj, raw, source_hash, require_source_hash=False):
+def validate_proofs(obj, raw, source_hash, require_source_hash=False, unproved_entries=None):
     text = raw.decode('utf-8')
     proofs = []
 
@@ -41,6 +41,16 @@ def validate_proofs(obj, raw, source_hash, require_source_hash=False):
                 z = first(value, ('character_end', 'char_end', 'unicode_end'))
                 ba = first(value, ('utf8_start', 'utf8_byte_start', 'byte_start'))
                 bz = first(value, ('utf8_end', 'utf8_byte_end', 'byte_end'))
+                if quote == '' and all(x is None for x in (a, z, ba, bz)):
+                    check(unproved_entries is not None, path + ': missing quotation is not a proof')
+                    check(first(value, ('quote_sha256', 'sha256')) is None,
+                          path + ': empty quotation claims a hash')
+                    check(first(value, ('source_text_sha256', 'source_sha256', 'text_sha256')) == source_hash,
+                          path + ': unproved entry source mismatch')
+                    unproved_entries.append({'path': path, 'claim': value.get('work', value.get('claim')),
+                                            'reason': value.get('reason'),
+                                            'status': 'unproved_not_accepted_as_exclusion_or_evidence'})
+                    return
                 check(all(type(x) is int for x in (a, z, ba, bz)), path + ': noninteger offsets')
                 check(isinstance(quote, str) and bool(quote), path + ': empty proof')
                 check(0 <= a < z <= len(text) and text[a:z] == quote, path + ': character mismatch')
@@ -144,12 +154,14 @@ def validate(packet, output, receipts, expected_inputs=None):
     raw = (packet / 'article.txt').read_bytes()
     source_hash = sha(raw)
     maps = {}
+    unproved_entries = []
     for filename in ('quote_spans.json', 'evidence_map.json'):
         data = read(output / filename)
         root_hash = next((data[k] for k in ('text_sha256', 'source_sha256') if k in data), None)
         if root_hash is not None:
             check(root_hash == source_hash, filename + ': source mismatch')
-        maps[filename] = validate_proofs(data, raw, source_hash, require_source_hash=root_hash is None)
+        maps[filename] = validate_proofs(data, raw, source_hash, require_source_hash=root_hash is None,
+                                        unproved_entries=unproved_entries if filename == 'evidence_map.json' else None)
     if (packet / 'source_blocks.json').exists():
         block_map = read(packet / 'source_blocks.json')
         check(block_map['text_sha256'] == source_hash, 'Source-block map hash mismatch')
@@ -191,6 +203,7 @@ def validate(packet, output, receipts, expected_inputs=None):
             'source_sha256': source_hash, 'unicode_characters': len(raw.decode()),
             'coding_quote_fields': len(literal), 'span_map_proofs': len(maps['quote_spans.json']),
             'evidence_map_proofs': len(maps['evidence_map.json']),
+            'unproved_evidence_entries': unproved_entries,
             'full_model_visible_reading_receipts_verified': True, 'reading_receipts': evidence,
             'frozen_packet_inputs_verified': True,
             'output_hashes': {p.name: sha(p.read_bytes()) for p in output.glob('*.json')
