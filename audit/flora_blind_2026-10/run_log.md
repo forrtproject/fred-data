@@ -932,3 +932,14 @@ Historical receipt audit certifies0130complete82,395-character exact source afte
 0129earlier full display was a layout extraction, while the final registered default extraction displayed only the last14,500of36,116characters.0131earlier raw-source selected ranges omit4500–11000and22500–28000. Both require fresh blindSol readings; matching final source hashes or agreeing scientific labels cannot establish complete exact-source reading. Immutable actual tool items and explicit limit receipts preserved; these are reading-verification limits, not source-access failures. No scientific acceptance from this batch.
 
 Active finitework:blind0058/0059 and source0122/0124/final0687; nextuntouchedinitialgroup0060.17verifiedcases/19logicalfields remain unchanged,0userapprovals orcanonicaledits. All89controls and guardedproposalbuild pass. No app rebuild/publication or attempt reset.
+
+
+## 2026-11-01 — Batches0058/0059 and two complete independent comparisons validated
+
+137/677initialOpuspackets plus5additionalviews and17freshSolviews now pass actual supplied-source mechanical checks.0058:0134explicitlypartial ResearchGateexcerpts with missingwindows/truncateddiscussion (metadataabstract),0135unconfident statistically-successful-but-flawed versusmixed/failed.0059:0136successful/confident,0137abstractonlysuccessful/confident,0138mixed/confident. Incompletepublicationcoverage remains excluded regardlessof confidence.
+
+FreshSol0129successful and0131mixed each passed fullactual chunk receipts/strictquotes/metadata/hashes, agreeingwithOpus; earlierpartialSolreads remain preserved and arenot certifiedvotes.0129testedpreprintversuscanonicaljournaloriginalstillneedspositiveversioncorrespondence.0131source ANOVA/TOST contradictions/specialverdictalternative needprimaryreview.
+
+Certified0136historicalfull94,689characters after nativepaginatedtailrecovery. Two earliercitationquotes differ only newlinewhitespace inside reference[1]; exactunique sourcetransformation is recorded in a separateparentprojectionledger, strictschema/literalchecks pass, rawcoding andscientificlabels unchanged. Solmixed/confident versusOpussuccessful/confident remainsrealdisagreement over(mostly)successfulcriterion versus explicitlyunsupportedstudies/yetmixed.0138earlierdisplayomits5000–34482;freshSolrequired,notaccessfailure.
+
+Firstprimaryreview639.outcome/2003.outcome/2274.outcome dispatchedwith actualpairedresults/receipts,strongestoppositions and bounded8freeHTTPbudget; preparedstandalone130brief supersededbybundle,neverdispatched. Activefinitework:blind0060,source0122/0124/final0687,source0130/0131/0136. Nextuntouched0061; nextfreshSol0138.17verifiedcases/19fields unchanged,0approvals/dataedits. No apprebuild/deployment.

@@ -2,8 +2,8 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 132 of 677 initial source packets and five additional source views have
-passed Opus schema, literal-span and reading checks; fifteen fresh Sol source views
+Current checkpoint: 137 of 677 initial source packets and five additional source views have
+passed Opus schema, literal-span and reading checks; seventeen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
 The full reassessment remains in progress. Seventeen cases covering nineteen proposed
@@ -186,3 +186,7 @@ but alternative analyses challenge the four-varieties conclusion. The numerical
 discrepancies and scope limited to the 2004 survey remain explicit.
 
 The latest batch adds three mechanically validated readings. Document_0131 needs a fresh blind Sol read because the earlier tool returns omit two source ranges; document_0129 likewise lacks a complete exact-version reading. Document_0130 has a certified complete earlier read but a successful-versus-statistically-successful-but-flawed disagreement. Document_0132 remains unconfident, and document_0133 is abstract-only. None enters the automatic file from this checkpoint.
+
+Batches0058/0059 add five verified supplied-source readings. Document_0134 is explicitly partial, document_0135 has an unconfident special-verdict boundary, and document_0137 is abstract-only. Documents_0136/0138 await exact-version comparison and original-specific source checks. Fresh Sol reads for0129/0131 are active; the primary-source review for0130 is prepared. The seventeen-case/nineteen-field proposal file is unchanged.
+
+Fresh complete-source Sol reads for0129/0131 now pass validation: successful and mixed respectively, agreeing with Opus. The former still needs tested-preprint/journal identity checks; the latter is in primary-source review alongside disagreements0130/0136. Document_0138 requires fresh Sol because its earlier display omitted the middle of the registered source. No automatic acceptance follows from matching labels alone.
