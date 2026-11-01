@@ -122,6 +122,19 @@ def review_field_dispositions(review):
 def review_row_binding(review, row_index, rows, receipt=None, review_sha256=None):
     """Wrong embedded row snapshots require a separately hashed correction."""
     snapshots = review.get('baseline_snapshot', {})
+    if 'input_row_index_zero_based' in snapshots:
+        assert snapshots['input_row_index_zero_based'] == row_index
+        literal = {field['field']: field['value'] for field in snapshots['fields']}
+        assert len(literal) == len(snapshots['fields']) and set(literal) == set(rows[row_index]), \
+            'Review snapshot does not cover the complete frozen row'
+        for field in snapshots['fields']:
+            assert field['row'] == field['input_row_index_zero_based'] == row_index
+            value = field['value'].replace('\r\n', '\n').replace('\r', '\n')
+            assert value == rows[row_index][field['field']], 'Review baseline field differs'
+            assert field['value_sha256'] == sha(field['value'].encode()), 'Review baseline value hash differs'
+        assert snapshots['row_sha256'] == digest(literal), 'Review snapshot hash differs'
+        if literal != rows[row_index]:
+            assert "newline=''" in snapshots.get('reader', ''), 'Undeclared CSV newline representation'
     if str(row_index) in snapshots:
         snapshot = snapshots[str(row_index)]
         assert snapshot['input_row_index_zero_based'] == row_index
@@ -183,13 +196,27 @@ def retained_target_scope_review(receipt, row_index, row, outcome):
             assert value == (row['type'] if field == 'type' else outcome), 'Target scope disposition differs'
 
 
-def current_alignment(row, source):
+def current_alignment(row, source, file_receipt=None):
     key = identifier(source['parent_work_key'])
     if key in ids(row, 'r'):
         return
     source_url = source.get('metadata', {}).get('source_url', '')
     assert not ids(row, 'r'), 'Current DOI or alternate identifier differs'
-    assert source_url and source_url == row.get('url_r'), 'Current source URL differs'
+    if source_url != row.get('url_r'):
+        assert file_receipt, 'Current source URL differs'
+        path = Path(file_receipt['path'])
+        assert sha(path.read_bytes()) == file_receipt['sha256'], 'Current file metadata changed'
+        file = read(path)['data']
+        guid = file['attributes']['guid']
+        assert re.fullmatch(r'[a-z0-9]{5}', guid) and file['id'] == guid and file['type'] == 'files'
+        assert file['attributes']['kind'] == 'file'
+        assert file['links']['self'] == 'https://api.osf.io/v2/files/' + guid + '/'
+        assert file['links']['iri'] == row.get('url_r') == 'https://osf.io/' + guid, \
+            'Current file metadata names another source'
+        assert source_url == file['links']['download'] == 'https://osf.io/download/' + guid + '/', \
+            'Current download is not the registered file'
+        assert key == identifier(file['links']['iri']), 'Current file work key differs'
+        return
     assert key == identifier(source_url), 'Current URL work key differs'
 
 
@@ -291,7 +318,18 @@ def original_alignment(row, target, year_receipt=None, author_receipt=None, doi_
             initials = ''.join(word[0] for word in re.findall(r'[^\W\d_]+', named[0].get('given', '')))
             assert initials and norm(named[0]['family'] + initials) in norm(printed), \
                 'Abbreviated first-author initials differ'
-        positions = [norm(printed).find(norm(a['family'])) for a in named[:count]]
+        families = [a['family'] for a in named[:count]]
+        transcription = author_receipt.get('source_author_transcription')
+        if transcription:
+            assert count == len(named), 'Author transcription requires the complete printed author list'
+            assert set(transcription) == {'author_index', 'canonical_family', 'printed_family', 'kind'}
+            index = transcription['author_index']
+            assert type(index) is int and 0 <= index < count
+            canonical, literal = transcription['canonical_family'], transcription['printed_family']
+            assert canonical == families[index] and transcription['kind'] == 'missing_final_character'
+            assert len(literal) >= 5 and literal == canonical[:-1], 'Unverified author transcription'
+            families[index] = literal
+        positions = [norm(printed).find(norm(family)) for family in families]
         assert all(i >= 0 for i in positions) and positions == sorted(positions), 'Citation is not the registered author prefix'
     original_doi_alignment(row, target, doi_receipt)
 
@@ -442,7 +480,7 @@ def build():
         if source is None:
             source = next(d for d in read(OUT / 'source_upgrades.json')['upgrades'] if d['document_id'] == doc)
         assert not source.get('status', '').startswith('withheld'), 'Primary source view is withheld'
-        current_alignment(row, source)
+        current_alignment(row, source, decision.get('current_report_metadata_receipt'))
         opus_dir = Path(decision['opus_output'])
         opus = read(opus_dir / 'coding.json')
         opus_valid = read(opus_dir / 'parent_validation.json')
@@ -554,6 +592,8 @@ def build():
             result[-1]['review_row_binding_correction'] = decision['review_row_binding_correction']
         if decision.get('original_doi_alias_receipt'):
             result[-1]['original_doi_alias_alignment'] = decision['original_doi_alias_receipt']
+        if decision.get('current_report_metadata_receipt'):
+            result[-1]['current_report_metadata_alignment'] = decision['current_report_metadata_receipt']
     record_actions = []
     for decision in acceptance.get('record_cases', []):
         row_index, doc = decision['input_row_index'], decision['document_id']

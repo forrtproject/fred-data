@@ -77,6 +77,26 @@ class ProposalDependencies(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, 'another frozen row'):
             review_row_binding(review, 0, [dict(row, doi_r='another-current')])
 
+    def test_flat_hashed_baseline_cannot_hide_a_conflicting_field_snapshot(self):
+        row=dict(doi_r='current')
+        field=dict(row=0,input_row_index_zero_based=0,field='doi_r',value='current',
+                   value_sha256=hashlib.sha256(b'current').hexdigest())
+        review={'baseline_snapshot':dict(input_row_index_zero_based=0,row_sha256=digest(row),fields=[field])}
+        review_row_binding(review,0,[row])
+        field['value']='another-current'
+        with self.assertRaisesRegex(AssertionError,'baseline field differs'):
+            review_row_binding(review,0,[row])
+
+    def test_complete_csv_snapshot_preserves_declared_embedded_crlf(self):
+        literal=dict(bibtex_ref_r='line1\r\nline2');parsed=dict(bibtex_ref_r='line1\nline2')
+        field=dict(row=0,input_row_index_zero_based=0,field='bibtex_ref_r',value=literal['bibtex_ref_r'],
+                   value_sha256=hashlib.sha256(literal['bibtex_ref_r'].encode()).hexdigest())
+        snapshot=dict(input_row_index_zero_based=0,row_sha256=digest(literal),fields=[field],reader="csv.DictReader newline=''")
+        review_row_binding({'baseline_snapshot':snapshot},0,[parsed])
+        del snapshot['reader']
+        with self.assertRaisesRegex(AssertionError,'Undeclared CSV newline'):
+            review_row_binding({'baseline_snapshot':snapshot},0,[parsed])
+
     def doi_alias_fixture(self, directory):
         old, canonical = '10.1//work', '10.1/work'
         authors = [{'given': 'Ann', 'family': 'One'}]
@@ -418,6 +438,65 @@ class ProposalDependencies(unittest.TestCase):
         source = {'parent_work_key': row['url_r'].lower(), 'metadata': {'source_url': row['url_r']}}
         with self.assertRaisesRegex(AssertionError, 'identifier differs'):
             current_alignment(row, source)
+
+    def osf_file_fixture(self, directory):
+        guid='abc12'
+        row=dict(doi_r='NA',alt_identifier_r='NA',url_r='https://osf.io/'+guid)
+        source=dict(parent_work_key=row['url_r'],metadata={'source_url':'https://osf.io/download/'+guid+'/'})
+        file=dict(id=guid,type='files',attributes=dict(guid=guid,kind='file'),links=dict(
+            self='https://api.osf.io/v2/files/'+guid+'/',iri=row['url_r'],download=source['metadata']['source_url']))
+        path=Path(directory)/'file.json';path.write_text(json.dumps({'data':file}))
+        receipt=dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+        return row,source,receipt
+
+    def test_osf_file_page_and_download_require_authoritative_same_file_binding(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,source,receipt=self.osf_file_fixture(directory)
+            with self.assertRaisesRegex(AssertionError,'Current source URL differs'):
+                current_alignment(row,source)
+            current_alignment(row,source,receipt)
+            source['metadata']['source_url']='https://osf.io/download/other/'
+            with self.assertRaisesRegex(AssertionError,'not the registered file'):
+                current_alignment(row,source,receipt)
+
+    def test_osf_file_receipt_cannot_bypass_a_different_current_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,source,receipt=self.osf_file_fixture(directory);row['doi_r']='10.1/unrelated'
+            with self.assertRaisesRegex(AssertionError,'Current DOI or alternate identifier differs'):
+                current_alignment(row,source,receipt)
+
+    def author_typo_fixture(self,directory):
+        authors=[dict(given='Luca',family='Rinaldi'),dict(given='Samuel',family='Di Luca'),
+                 dict(given='Avishai',family='Henik'),dict(given='Luisa',family='Girelli')]
+        row=dict(doi_o='10.1/original',title_o='Same work',year_o='2016',author_o=json.dumps(authors))
+        printed='Rinaldi, L., Di Luca, S., Henik, A., & Girell, L.'
+        target=dict(doi='',title='Same work',year='2016',authors=printed)
+        path=Path(directory)/'authors.json';path.write_text(json.dumps({'message':dict(
+            DOI=row['doi_o'],title=[row['title_o']],author=authors)}))
+        receipt=dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+            source_printed_authors=printed,source_printed_person_count=4,
+            source_author_transcription=dict(author_index=3,canonical_family='Girelli',
+                printed_family='Girell',kind='missing_final_character'))
+        return row,target,receipt
+
+    def test_bound_final_character_author_typo_preserves_literal_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,target,receipt=self.author_typo_fixture(directory)
+            original_alignment(row,target,author_receipt=receipt)
+            self.assertTrue(target['authors'].endswith('Girell, L.'))
+
+    def test_author_typo_cannot_replace_a_different_internal_character(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,target,receipt=self.author_typo_fixture(directory)
+            receipt['source_author_transcription']['printed_family']='Garell'
+            with self.assertRaisesRegex(AssertionError,'Unverified author transcription'):
+                original_alignment(row,target,author_receipt=receipt)
+
+    def test_author_typo_requires_all_printed_authors_instead_of_a_prefix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,target,receipt=self.author_typo_fixture(directory);receipt['source_printed_person_count']=3
+            with self.assertRaisesRegex(AssertionError,'complete printed author list'):
+                original_alignment(row,target,author_receipt=receipt)
 
     def test_abbreviated_author_list_requires_registered_metadata(self):
         row = {'title_o': 'Actual paper', 'year_o': '2015', 'doi_o': '10.1/original',

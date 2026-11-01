@@ -2,11 +2,11 @@
 
 Current scope: 562 proposed fields across 515 existing rows, covering 469 works. This is a full-cohort reassessment of proposed changes. Missing-pair additions remain a separate evidence stream; a coder omitting a target is not evidence to remove a row.
 
-Current checkpoint: 160 of 677 initial source packets and five additional source views have
-passed Opus schema, literal-span and reading checks; twenty-two fresh Sol source views
+Current checkpoint: 166 of 677 initial source packets and five additional source views have
+passed Opus schema, literal-span and reading checks; twenty-four fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Twenty-three cases covering twenty-five proposed
+The full reassessment remains in progress. Twenty-four cases covering twenty-six proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. A separate guarded whole-record exclusion
 is included under `record_actions`. These are proposals for batch approval;
@@ -122,7 +122,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 109 evidence/dependency controls:
+Run all 116 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -216,4 +216,8 @@ Rows 782 and 353 now pass source review and parent integration. Medvec’s doubl
 
 That source review passes 32 literal proofs, eight source/metadata hashes and all sixteen actual primary-text chunk returns. Gemini’s quota failure produced no scientific result. The failed attempt is preserved, and a separate Opus actor completed the review within the existing request budget. The model change was disclosed; blind codings remain unchanged, no third independent model vote is claimed and no paid API fallback was used.
 
-The earlier Sol readings for 0144 and 0145 now have certified complete exact-source returns. Both agree with Opus on mixed; 0144 remains unconfident and excluded. The 0145 source review is running. Earlier 0146 displays establish selected ranges only; a fresh Sol pass now covers all eight chunks. Its shared target labels match Opus, but Opus is unconfident and the coders disagree on an additional Jackson target. No automatic correction or missing pair follows. Supplied-source completeness and report identity remain separate checks.
+The earlier Sol readings for 0144 and 0145 now have certified complete exact-source returns. Both agree with Opus on mixed; 0144 remains unconfident and excluded. Row 2604 now passes source review: its final pooled SCORE report explicitly gives a partial verdict, supporting mixed despite the failed prespecified interaction test. The report’s source file, printed author typo and full original identity are positively bound. Earlier 0146 displays establish selected ranges only; a fresh Sol pass now covers all eight chunks. Its shared target labels match Opus, but Opus is unconfident and the coders disagree on an additional Jackson target. No automatic correction or missing pair follows.
+
+For row 2604, authoritative OSF metadata binds the file page to its download and project; a related URL alone cannot bypass report identity. Crossref verifies the complete original bibliography behind the report’s printed “Girell” versus canonical “Girelli”. The source and both blind strings stay literal. The report’s 2020 date versus the row’s 2026 date, and a printed denominator-df inconsistency, remain separate observations. The reviewer preserved embedded CSV CRLF while the export reader uses universal newlines; complete field values and both hashes establish that only this representation differs. A hypothetical binary-only SCORE convention is preserved as an alternative, while the supplied codebook’s author-framing rule governs this proposal.
+
+Both coders read the entire saved 0147 body, but its title, authors and abstract are missing. It stays outside automatic acceptance until the complete primary report is recovered. This is a new completeness observation outside the finite 60-item recovery queue. Fresh Sol readings for 0148 and 0149 now pass complete source checks: the first agrees on the main target but adds two uncertain targets; the second disagrees with Opus on the outcome. Their source review includes verdict scope, additional targets and a linked correction. No batch acceptance follows from those readings alone.
