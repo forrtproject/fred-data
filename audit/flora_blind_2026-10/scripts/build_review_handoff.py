@@ -216,9 +216,11 @@ if (O/'evidence_provenance_fixes.json').exists():
   quote_fixes[x['input_row_index']]=safe(dict(id=x.get('id'),current_text=b.get('outcome_quote',''),current_source=b.get('outcome_quote_source',''),proposed_quote=p.get('outcome_quote',''),proposed_source=p.get('outcome_quote_source',''),outcome_reviewed=x.get('scientific_value_reviewed'),rationale=x.get('rationale','')))
 from build_batch_review import build as build_batches
 batch_review=build_batches()
+from build_batch_evidence import build as build_batch_evidence
+build_batch_evidence()
 shared_config=json.loads((Path.home()/'.claude/html-comments.config.json').read_text())
 shared_review=dict(endpoint=shared_config['endpoint'],project='flora-audit-decisions-2026-10',protocol=1)
-context=dict(shared_review=shared_review,batch_review=batch_review,baseline_sha256=sha(source),rows=rows,proposals=proposals,limits=limits,contrary=contrary,review_notes=review_notes,candidates=candidates,works=works,quote_fixes=quote_fixes,record_actions={k:safe(a) for k,a in record_actions.items() if not caseids.get(k,{}).get('record_action')})
+context=dict(batch_evidence_sha256=sha(O/'batch_evidence.json'),shared_review=shared_review,batch_review=batch_review,baseline_sha256=sha(source),rows=rows,proposals=proposals,limits=limits,contrary=contrary,review_notes=review_notes,candidates=candidates,works=works,quote_fixes=quote_fixes,record_actions={k:safe(a) for k,a in record_actions.items() if not caseids.get(k,{}).get('record_action')})
 if derived:print(f'Review app: {len(derived)} proposal statuses derived because correction_proposals.json is missing or differs, e.g. {derived[:5]}',file=sys.stderr)
 DOWNLOADS=[('correction_proposals.json','Correction proposals (JSON)'),('record_actions.json','Record-level actions (JSON)'),
  ('evidence_provenance_fixes.json','Evidence quote updates (JSON)'),('review_required.json','Limits, policy choices and holds (JSON)'),
@@ -226,7 +228,7 @@ DOWNLOADS=[('correction_proposals.json','Correction proposals (JSON)'),('record_
  ('unresolved_missing_pairs.csv','Unresolved missing candidates (CSV)'),('audit_rows.csv','Status of every input row (CSV)'),
  ('sol_review_decisions.json','Field-level source decisions (JSON)'),('current_source_decisions.json','Current-source decisions (JSON)'),
  ('missing_pair_review_decisions.json','Missing-pair source decisions (JSON)'),('review_queue.json','Complete review queue (JSON)'),
- ('audit_overview.json','Audit overview (JSON)')]
+ ('batch_evidence.json','Supporting evidence for batch items (JSON)'),('audit_overview.json','Audit overview (JSON)')]
 # The public builder inserts its report link before the first anchor of this paragraph.
 downloads='<p>'+''.join(f'<a href="{n}">{label}</a>' for n,label in DOWNLOADS if n=='correction_proposals.json' or (O/n).exists())+'</p>'
 display=json.loads(json.dumps(cases))
@@ -239,7 +241,7 @@ def embed(x):return json.dumps(x,ensure_ascii=False,separators=(',',':')).replac
 blob=embed(context)
 assert not PRIVATE_PATH.search(blob) and not ACCESS_TOKEN.search(blob) and '.t3/worktrees/' not in blob
 template=Path(__file__).with_name('review_app_template.html').read_text()
-fill={'/*flora-shared-state*/':(B/'scripts'/'review_shared_state.js').read_text(),'/*flora-shared-sync*/':(B/'scripts'/'review_shared_sync.js').read_text(),'/*flora-workflow*/':(B/'scripts'/'review_batch_workflow.js').read_text(),'/*flora-sha256*/':(O/'review_sha256.js').read_text(),'__DATA__':embed(display),'__CONTEXT__':blob,'__HASH__':json.dumps(m['input_sha256']['results.csv']),'__QUEUEHASH__':json.dumps(sha(O/'review_queue.json')),'<!--flora-downloads-->':downloads}
+fill={'/*flora-batch-evidence*/':(B/'scripts'/'review_batch_evidence.js').read_text(),'/*flora-shared-state*/':(B/'scripts'/'review_shared_state.js').read_text(),'/*flora-shared-sync*/':(B/'scripts'/'review_shared_sync.js').read_text(),'/*flora-workflow*/':(B/'scripts'/'review_batch_workflow.js').read_text(),'/*flora-sha256*/':(O/'review_sha256.js').read_text(),'__DATA__':embed(display),'__CONTEXT__':blob,'__HASH__':json.dumps(m['input_sha256']['results.csv']),'__QUEUEHASH__':json.dumps(sha(O/'review_queue.json')),'<!--flora-downloads-->':downloads}
 assert all(template.count(k)==1 for k in fill)
 html=re.sub('|'.join(map(re.escape,fill)),lambda x:fill[x.group(0)],template)
 (O/'review.html').write_text(html)

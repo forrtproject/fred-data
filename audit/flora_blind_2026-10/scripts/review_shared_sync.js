@@ -22,6 +22,7 @@ function createSharedReview(config){
     else if(model.conflicts.length)status.textContent=`${model.conflicts.length} conflicting change${model.conflicts.length===1?' needs':'s need'} review. Shared decisions are preserved.`;
     else if(pendingAll().length)status.textContent=`${pendingAll().length} change${pendingAll().length===1?'':'s'} waiting for shared confirmation`+(error?' · '+error:'…');
     else status.textContent='Saved for all reviewers'+(lastSync?' · checked '+new Date(lastSync).toLocaleTimeString():'')+(busy?' · refreshing…':error?' · refresh failed: '+error:'');
+    const evidenceStatus=$('batch-evidence-save');if(evidenceStatus&&$('batch-evidence')?.open&&batchEvidenceState.item){const item=batchEvidenceState.item,record=item.case_id?store.records[item.case_id]:store.pairs[item.id];if(record?.decision)evidenceStatus.textContent='Current decision: '+statusLabel(record.decision)+' · '+(record.reviewer||'reviewer')+'. '+status.textContent}
     const carry=$('publish-browser');if(carry){carry.hidden=!carryover;carry.disabled=!ready;carry.textContent='Publish previous browser decisions'+(carryover?' ('+(Object.keys(carryover.records||{}).length+Object.keys(carryover.pairs||{}).length)+')':'')}
     const banner=$('shared-conflicts');if(!banner)return;banner.replaceChildren();banner.hidden=!model.conflicts.length;
     for(const conflict of model.conflicts){const event=conflict.event;

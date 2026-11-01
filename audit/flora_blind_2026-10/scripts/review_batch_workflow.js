@@ -69,12 +69,13 @@ async function downloadImplementation(){
   download('flora-approved-changes-'+when.slice(0,10)+'.json',JSON.stringify(implementationBundle(),null,2),'application/json');
   renderWorkflow();notice('Approved changes downloaded. Apply this file to FLoRA separately; the app has not applied it.');
 }
-function batchItemLine(item){
-  const li=h('li',{},item.case_id?'Row '+item.input_row_index+' · '+item.title:item.title);
+function batchItemLine(item,group){
+  const li=h('li',{},h('button',{class:'batch-item-title',type:'button','data-batch-item':item.id,onclick:()=>openBatchEvidence(item,group)},item.case_id?'Row '+item.input_row_index+' · '+item.title:item.title));
   for(const op of item.operations){
     if(op.operation==='add_confirmed_pair')li.append(h('small',{},op.work_key+' → '+op.original.authors+' ('+op.original.year+'). Outcome unassigned.'));
     else{const old=op.expected_before[op.field]??op.expected_before.outcome??op.expected_before.title_o;li.append(h('small',{},fieldName(op.field)+': '+shortValue(op.field,old)+' → '+shortValue(op.field,op.proposed_value)))}
   }
+  li.append(h('button',{class:'batch-item-evidence',type:'button',onclick:()=>openBatchEvidence(item,group)},'Quotes & evidence'));
   return li;
 }
 function renderWorkflow(){
@@ -84,14 +85,14 @@ function renderWorkflow(){
   const nav=$('workflow-nav');nav.replaceChildren();
   for(const [id,title] of [['batch','1. Approve safe sets'],['download','2. Download to implement'],['individual','3. Individual decisions']])nav.append(h('button',{type:'button','aria-current':stage===id?'step':null,onclick:()=>setStage(id)},title));
   renderSaveStatus();if(individual)return;
-  const root=$('workflow');root.replaceChildren();
+  const root=$('workflow'),scroll=root.scrollTop,windowScroll=window.scrollY,keepScroll=lastWorkflowStage===stage;for(const list of root.querySelectorAll('[data-batch-group]'))batchScroll.set(list.dataset.batchGroup,list.scrollTop);lastWorkflowStage=stage;root.replaceChildren();
   if(stage==='batch'){
-    root.append(h('h2',{},'Approve safe sets first'),h('p',{class:'intro'},'These sets contain source-checked proposals with no recorded policy hold, record-level dependency, unresolved identity or coupled quote replacement. Approve a whole set, inspect its contents, or leave it unapproved. Existing decisions and notes are kept.'));
+    root.append(h('h2',{},'Approve safe sets first'),h('p',{class:'intro'},'These sets contain source-checked proposals with no recorded policy hold, record-level dependency, unresolved identity or coupled quote replacement. Approve a whole set, inspect its contents, or leave it unapproved. Open any title to inspect quotes, the original-study identity and the reasoning. Individual choices you make there are kept when you approve the remaining batch.'));
     for(const g of batchGroups){
       const pending=g.items.filter(untouched),approved=g.items.filter(i=>approvedItem(i,g)),protectedCount=g.items.length-pending.length-approved.length;
       const card=h('section',{class:'batch-card'},h('h3',{},g.title),h('p',{},g.description),h('p',{},`${g.items.length} items · ${approved.length} approved · ${pending.length} available`+(protectedCount?` · ${protectedCount} with earlier decisions or notes`:'')));
       if(store.batch_approvals[g.id]&&store.batch_approvals[g.id].fingerprint!==g.fingerprint)card.append(h('p',{class:'notice'},'This set changed after your earlier approval. Earlier choices are kept; changed proposals require re-checking.'));
-      const list=h('ol',{class:'batch-list'});for(const item of g.items)list.append(batchItemLine(item));card.append(h('details',{},h('summary',{},'Inspect '+g.items.length+' items'),list));
+      const list=h('ol',{class:'batch-list','data-batch-group':g.id,onscroll:e=>{if(e.target.isConnected)batchScroll.set(g.id,e.target.scrollTop)}});for(const item of g.items)list.append(batchItemLine(item,g));const details=h('details',{open:batchExpanded.has(g.id),ontoggle:e=>{if(e.target.open)batchExpanded.add(g.id);else batchExpanded.delete(g.id)}},h('summary',{},'Inspect '+g.items.length+' items and their evidence'),list);card.append(details);const savedListScroll=batchScroll.get(g.id)||0;requestAnimationFrame(()=>{if(list.isConnected)list.scrollTop=savedListScroll});
       card.append(h('div',{class:'batch-controls'},h('button',{type:'button',class:'batch-button',disabled:!pending.length,onclick:()=>approveBatch(g)},pending.length?'Approve '+pending.length+' available items':'No untouched items to approve'),store.batch_approvals[g.id]?h('button',{type:'button',class:'tool',onclick:()=>undoBatch(g)},'Undo latest batch'):null));
       root.append(card);
     }
@@ -101,6 +102,7 @@ function renderWorkflow(){
     root.append(h('h2',{},'Download approved changes'),h('p',{class:'intro'},'Download one implementation bundle before reviewing individual cases. It includes exact proposed values, checks against the audited snapshot, your approvals, and a backup of all decisions. Downloading does not change FLoRA.'),h('section',{class:'batch-card'},h('h3',{},`${rows} rows to correct · ${pairs} missing pairs to add`),h('p',{},ops.length+' operations ready. Quotes, policy choices and record actions remain explicit review instructions, outside these ready operations.'),h('button',{type:'button',class:'batch-button',onclick:downloadImplementation},'Download approved changes + decision backup'),h('p',{class:'muted'},current?'This version has been downloaded'+(store.workflow.downloaded_at?' · '+new Date(store.workflow.downloaded_at).toLocaleString():'')+'.':ops.length?'Download this version before continuing.':'No ready operations selected. You can download a backup or continue.')));
     root.append(h('footer',{},h('button',{type:'button',class:'batch-button secondary',onclick:()=>setStage('batch')},'Back to safe sets'),h('button',{type:'button',class:'batch-button',disabled:!!ops.length&&!current,onclick:()=>setStage('individual')},'Continue to individual decisions')));
   }
+  if(keepScroll){root.scrollTop=scroll;if(narrow())window.scrollTo({top:windowScroll,behavior:'instant'})}
 }
 function restoreBatchBackup(data){
   if(data.baseline_sha256&&data.baseline_sha256!==CONTEXT.baseline_sha256)throw Error('Backup belongs to a different audited snapshot.');

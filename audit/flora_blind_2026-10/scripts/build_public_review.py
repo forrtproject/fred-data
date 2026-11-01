@@ -16,7 +16,7 @@ out = args.output.resolve()
 out.mkdir(parents=True, exist_ok=True)
 assert not any(out.iterdir()), 'Use an empty staging directory.'
 
-json_files = ['batch_review.json', 'review_queue.json', 'audit_overview.json', 'correction_proposals.json',
+json_files = ['batch_evidence.json', 'batch_review.json', 'review_queue.json', 'audit_overview.json', 'correction_proposals.json',
               'evidence_provenance_fixes.json', 'review_required.json',
               'sol_review_decisions.json', 'missing_pair_review_decisions.json']
 if (H / 'record_actions.json').exists():
@@ -126,6 +126,7 @@ if context_start_marker in html:
     context_start = html.index(context_start_marker) + len(context_start_marker)
     context_end = html.index(context_end_marker, context_start)
     context = public(json.loads(html[context_start:context_end]))
+    context['batch_evidence_sha256'] = hashlib.sha256((out/'batch_evidence.json').read_bytes()).hexdigest()
     html = html[:context_start] + json.dumps(context, ensure_ascii=False).replace('<', '\\u003c') + html[context_end:]
 old_hash = hashlib.sha256((H / 'review_queue.json').read_bytes()).hexdigest()
 new_hash = hashlib.sha256((out / 'review_queue.json').read_bytes()).hexdigest()
