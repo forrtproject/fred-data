@@ -47,6 +47,17 @@ def ids(row, role):
 def review_field_dispositions(review):
     """Read explicit field identities; conflicting aliases cannot authorize a fix."""
     entries = review.get('reviews', review.get('field_reviews'))
+    if entries is None and review.get('disposition') == 'replace_current_with_proposed':
+        value = review.get('recommended_value')
+        assert isinstance(value, str) and value, 'Missing replacement value'
+        assert review.get('field') == 'outcome', 'Replacement disposition is not an outcome review'
+        assert review.get('status') == 'propose_change_to_' + value, 'Conflicting replacement status'
+        assert all(review.get(key) == value for key in ('proposed_value', 'adjudicated_value', 'value')), \
+            'Conflicting replacement values'
+        assert review.get('current_value') != value, 'Replacement does not change the current value'
+        assert review.get('outcome_confident') is True and review.get('policy_boundary_needed') is False, \
+            'Replacement disposition is uncertain'
+        entries = [dict(review, status='supported_correction', disposition='supported_correction')]
     assert isinstance(entries, (list, dict)), 'Missing field-specific source review'
     entries = entries.values() if isinstance(entries, dict) else entries
     result = []

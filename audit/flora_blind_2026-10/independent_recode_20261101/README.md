@@ -6,7 +6,7 @@ Current checkpoint: 120 of 677 initial source packets and four additional source
 passed Opus schema, literal-span and reading checks; fourteen fresh Sol source views
 pass the same checks. One layout view is withheld because its quotes interleave
 PDF columns; the reading-order replacement has completed both final blind attempts.
-The full reassessment remains in progress. Fourteen cases covering fifteen proposed
+The full reassessment remains in progress. Fifteen cases covering sixteen proposed
 fields have passed the scientific acceptance gates and are exported in
 `automatically_verified_proposals.json`. These are proposals for batch approval;
 no user approval or dataset changes are recorded. Other outcome batches remain
@@ -121,7 +121,7 @@ Reproduction-axis fixes replace the complete compound CSV value while preserving
 any unchanged axis. A report without a DOI must match its exact registered source
 URL; that URL cannot bypass a mismatching DOI. Capacity checks include reserved
 technical helpers.
-Run all 82 evidence/dependency controls:
+Run all 89 evidence/dependency controls:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
@@ -158,6 +158,13 @@ Row 793 changes successful to mixed: the report explicitly confirms some origina
 Study 3 findings and identifies failures of the company-interest moderation and
 another tested contrast. Row 911 remains held because its blind packet omitted
 the abstract containing contrary trend evidence. The complete publisher PDF,
-including the abstract and final appendix, is recovered and identified; it needs
-a registered complete-source blind pass before any automatic correction. This
+including the abstract and final appendix, is registered as document_0687. It
+allows one fresh reading per model; the lower limit applies to every extraction
+sharing its PDF hash. Those complete-source reads must pass before any automatic correction. This
 newly discovered omission is separate from the finite 60-item recovery queue.
+
+Row 699 changes successful to mixed because the confirmed rejection-vote finding
+is explicitly contrasted with a failed committee-assignment finding. Its smaller
+effect and ranking sensitivity remain qualifications. The review's explicit
+replacement disposition is read without changing its raw file; inconsistent
+value/status aliases or an unresolved policy boundary cannot authorize a change.

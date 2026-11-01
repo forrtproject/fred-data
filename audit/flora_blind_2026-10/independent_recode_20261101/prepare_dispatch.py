@@ -42,6 +42,14 @@ def prepare(group_id, provider, attempt):
                     or previous['primary_pdf_sha256'] != upgrade.get('primary_pdf_sha256')):
                 raise ValueError('Cannot borrow an attempt from another primary report')
             budget_documents.add(doc_id)
+    if upgrade:
+        limits = [d.get('max_attempts_per_role', 2)
+                  for d in read(OUT / 'source_upgrades.json')['upgrades']
+                  if d['document_id'] in budget_documents]
+        if not all(type(limit) is int and 1 <= limit <= 2 for limit in limits):
+            raise ValueError('Invalid source-specific attempt limit')
+        if attempt > min(limits):
+            raise ValueError('Source-specific attempt budget exhausted')
     validated_key = 'validated_opus_documents' if provider == 'opus' else 'validated_fresh_sol_documents'
     if set(group['document_ids']) & set(state.get(validated_key, [])):
         raise ValueError('Already validated packet; never duplicate this role/source version')

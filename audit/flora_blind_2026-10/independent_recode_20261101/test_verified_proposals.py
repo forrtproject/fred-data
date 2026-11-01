@@ -61,6 +61,35 @@ class ProposalDependencies(unittest.TestCase):
             'requested_fields': ['original'], 'status': 'supported_correction'}}}
         self.assertEqual(review_field_dispositions(review), [(104, 'original', 'supported_correction')])
 
+    def replacement_review(self):
+        return dict(input_row_index=699, field='outcome', current_value='successful',
+                    proposed_value='mixed', adjudicated_value='mixed', recommended_value='mixed',
+                    value='mixed', status='propose_change_to_mixed',
+                    disposition='replace_current_with_proposed', outcome_confident=True,
+                    policy_boundary_needed=False)
+
+    def test_explicit_replacement_disposition_preserves_field_identity(self):
+        self.assertEqual(review_field_dispositions(self.replacement_review()),
+                         [(699, 'outcome', 'supported_correction')])
+
+    def test_replacement_disposition_rejects_conflicting_values(self):
+        review = self.replacement_review()
+        review['adjudicated_value'] = 'successful'
+        with self.assertRaisesRegex(AssertionError, 'Conflicting replacement values'):
+            review_field_dispositions(review)
+
+    def test_replacement_disposition_rejects_uncertain_policy(self):
+        review = self.replacement_review()
+        review['policy_boundary_needed'] = True
+        with self.assertRaisesRegex(AssertionError, 'uncertain'):
+            review_field_dispositions(review)
+
+    def test_replacement_disposition_rejects_wrong_status(self):
+        review = self.replacement_review()
+        review['status'] = 'retain_current'
+        with self.assertRaisesRegex(AssertionError, 'Conflicting replacement status'):
+            review_field_dispositions(review)
+
     def test_source_review_rejects_conflicting_row_aliases(self):
         review = {'reviews': [{'row_index': 104, 'row_id': 'row:105', 'field': 'original',
                                'status': 'supported_correction'}]}

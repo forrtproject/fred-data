@@ -96,6 +96,21 @@ class SharedSourceBudget(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'absent from parent registry'):
                 prepare('document_9999', 'sol', 1)
 
+    def test_lower_source_attempt_limit_blocks_a_second_attempt(self):
+        self.upgrades['upgrades'][1]['max_attempts_per_role'] = 1
+        with self.assertRaisesRegex(ValueError, 'Source-specific attempt budget exhausted'):
+            self.check('opus', 2)
+
+    def test_another_extraction_inherits_the_lowest_physical_source_limit(self):
+        self.upgrades['upgrades'][0]['max_attempts_per_role'] = 1
+        with self.assertRaisesRegex(ValueError, 'Source-specific attempt budget exhausted'):
+            self.check('opus', 2)
+
+    def test_invalid_source_attempt_limit_is_rejected(self):
+        self.upgrades['upgrades'][1]['max_attempts_per_role'] = 0
+        with self.assertRaisesRegex(ValueError, 'Invalid source-specific attempt limit'):
+            self.check('opus', 1)
+
 
 if __name__ == '__main__':
     unittest.main()
