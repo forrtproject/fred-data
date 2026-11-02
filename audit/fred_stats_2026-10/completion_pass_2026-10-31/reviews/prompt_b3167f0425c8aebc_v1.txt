@@ -1,0 +1,127 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "2138": {
+      "source_key": "b3167f0425c8aebc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Teney, C. (2016). Does the EU Economic Crisis Undermine Subjective Europeanization? Assessing the Dynamics of Citizens’ EU Framing between 2004 and 2013. European Sociological Review, 32(5), 619–633. https://doi.org/10.1093/esr/jcw008",
+        "doi_o": "10.1093/esr/jcw008",
+        "study_o": null,
+        "ref_r": "OYEBANJO, A., Ramljak, M., Tyner, A. H., Fox, N. W., Loomas, Z., Miske, O., & Luis, B. (2025, November 18). Teney_EurSocioRev_2016_qXX2 - Ramljak/Oyebanjo - Secondary Data Replication - gz51. Retrieved from osf.io/zt5y2",
+        "doi_r": null,
+        "url_r": "https://osf.io/7efsw",
+        "study_r": null,
+        "es_type_o": null,
+        "es_type_r": "ser_method_t",
+        "description": null,
+        "locators_o": "",
+        "locators_r": "",
+        "audit_id": 2138,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/28118e5afdaed77e8ce74080.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Explicitly designated focal Analysis One: unemployment-rate coefficient predicting cosmopolitan EU framing in a three-level hierarchical linear regression with selected predictors and wave and country effects.",
+      "worker_notes": "Identity assessment: supplied text is a replication report with results, tables, methods and original-study citation, not an abstract or preregistration. Title identifies replication of Teney (2016) in European Sociological Review. Project ID Teney_EurSocioRev_2016_qXX2_gz51 and OSF project https://osf.io/zt5y2/ match the neutral reference; SOURCE_URL https://osf.io/download/7efsw/ matches the assigned file URL. The original-study citation matches Céline Teney, title, year, journal, volume and pages. Replication author names/date and original DOI are not printed, so those details cannot independently be verified. No PDF supplied. Target selection follows explicit designation of Analysis One as the focal SCORE test, with unemployment predicting cosmopolitan framing; no row-order or numeric matching. The 28 EU member states in Sample and Power Threshold have a country-level counting role distinct from the explicit 352,114 person-year analytic observations in the focal test. No N arithmetic or df inference. Analysis Two is explicitly alternative, retaining still-studying/no-full-time-education categories (379,396 person-year observations, t=2.394). Printed focal t=2.004 retained without conversion; same sentence gives unstandardized Beta=0.002 and exact p=0.046. Only assigned n_r and es_value_r are populated; other fields are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/28118e5afdaed77e8ce74080.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": null,
+        "es_repr_o": null,
+        "es_repr_r": null,
+        "es_type_o": null,
+        "es_type_r": "ser_method_t",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2",
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "NB: SCORE relied on statistical significance and direction as the leading success criterion - so reported_success coded based on that"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 2138,
+      "field": "n_r",
+      "blind": {
+        "value": "352,114",
+        "sample_role": "Person-year observations in the focal regression analytic sample; country-level units are separate.",
+        "exclusions": "Analysis One replaces education categories 10 = Still studying, 11 = No full-time education, 97 = Refusal, 98 = DK with NA; urbanity don’t know is replaced with NA. Other cleaning/merging is referenced but not fully documented here.",
+        "location": "Page 2, Replication result: Analysis One: Focal Analysis; pp. 9–10, INDEPENDENT VARIABLE",
+        "quote": "The replication included 352,114 person-year observations in the analytic sample.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/28118e5afdaed77e8ce74080.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 2138,
+        "field": "n_r",
+        "code": "extracted_printed",
+        "reason": "Explicit focal Analysis One analytic sample: 352,114 person-year observations. Separate 28 EU member states count country-level units. Analysis Two is secondary. Education and urbanity exclusions are described in the checkpoint. No arithmetic used.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/28118e5afdaed77e8ce74080.txt",
+        "location": "Page 2, Replication result: Analysis One: Focal Analysis",
+        "quote": "The replication included 352,114 person-year observations in the analytic sample.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "28",
+      "comparison": "differ",
+      "prior_adjudication": {
+        "audit_id": 2138,
+        "field": "n_r",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "Sample and Power Threshold (p. 2); Replication result, Analysis One: Focal Analysis and Table 1 (pp. 2, 4)",
+        "quote": "The analytic sample included 28 observations (EU member states)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/28118e5afdaed77e8ce74080.txt",
+        "reason": "The three-level multilevel replication reports both 28 Level-3 EU member-state clusters (used for the power threshold and matching the original study's coded country count N=27 for the country-level unemployment predictor) and 352,114 Level-1 person-year observations in focal Analysis One (379,396 in Analysis Two) as the analytic sample. Because the codebook does not prescribe which nested level of a multilevel model must be coded for n_r and both counts validly represent distinct sample roles, the target unit is undeterminable.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 2138,
+      "field": "es_value_r",
+      "blind": {
+        "value": "2.004",
+        "metric": "t",
+        "test_statistic": "t-value= 2.004",
+        "location": "Page 2, Replication result: Analysis One: Focal Analysis",
+        "quote": "Unstandardized Beta= 0.002, p = 0.046, standard errors = 0.0008, t-value= 2.004",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/28118e5afdaed77e8ce74080.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 2138,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit focal Analysis One prints t-value=2.004 for unemployment predicting cosmopolitan framing. Retain printed t metric without conversion. Same-test exact p=0.046 and unstandardized Beta=0.002 are printed in the same sentence.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/28118e5afdaed77e8ce74080.txt",
+        "location": "Page 2, Replication result: Analysis One: Focal Analysis",
+        "quote": "Unstandardized Beta= 0.002, p = 0.046, standard errors = 0.0008, t-value= 2.004",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.002",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/b3167f0425c8aebc. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_b3167f0425c8aebc_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
