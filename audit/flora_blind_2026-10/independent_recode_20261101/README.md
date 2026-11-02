@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-301 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+307 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -83,6 +83,12 @@ Document_0304's mixed coding follows named supported and failed effects, with a 
 
 Document_0300 maps thirteen effects to twelve papers. Its use of a collection verdict by complement needs exhaustive target attribution, and imagined contact is unconfident because summary sections count it differently. Document_0302 covers one original-data table, with varied robustness results across claims. Document_0303 is unconfident about a small formal-criterion miss and has dollar/log-mean ambiguity. All remain outside the proposed batch.
 
+Documents_0226 and 0305 are the same 643,857-character thesis text, with matching source URL and article hash. The two Opus readings disagree between successful and mixed and are both unconfident; they are not independent model votes. The declarative finding versus changed-dose priming boundary remains held. Their shared two-attempt Opus budget is spent. The frozen inputs remain separate packets, without a DOI or row rewrite.
+
+The other exact text alias is initial document_0499 and complete source_0689. Both blind roles have already used that source's single fresh read. Document_0499 needs an exact metadata and receipt projection when reached, with the existing confidence limits preserved; it must not trigger another read or be counted newly validated before that projection passes. Dispatch now checks article hashes across the immutable registry, inherits the lowest registered source cap and keeps roles separate.
+
+Documents_0306 and 0308 are unconfident about interpreting later descriptive changes as replication outcomes. Document_0307 keeps immediate and delayed ERP comparisons separate. Document_0309 has a globally unconfident reproduction coding despite stronger confidence in its robustness critique; the computation axis cannot be silently promoted. Document_0310 requires the original gender-specific findings aligned with both current studies. None enters the proposed batch.
+
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
 A separate gap in document_0147 is resolved by the complete published PDF registered as document_0688, including the repository cover and article pages 61–74. Both fresh blind roles pass complete reading and literal-evidence checks, agreeing on successful. The source review raises an unresolved objection about the original deliberate-control and measurement claims, so the case stays outside the automatic set. Each role has exhausted its single fresh read across aliases of this PDF. Earlier body-only labels confer no approval. This recovery is outside the finite 60-item queue.
@@ -118,7 +124,7 @@ The export also checks authoritative DOI/title/author/year correspondence and co
 
 A JATS `etal` element lost in text extraction can bind a flattened author prefix and its rendered form only with the hashed XML, exact current/original DOIs, reference, title, ordered named authors and initials. The exporter checks supplied author evidence even if all surnames appear in a coding. This leaves the raw coding strings unchanged.
 
-Run the 141 validation and dependency controls, then rebuild the guarded export:
+Run the 149 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v

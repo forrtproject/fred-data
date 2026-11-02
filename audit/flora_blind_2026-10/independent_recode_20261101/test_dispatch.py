@@ -2,7 +2,66 @@
 import unittest
 from unittest.mock import patch
 
-from prepare_dispatch import prepare
+from prepare_dispatch import identical_source_budget, prepare
+
+
+class IdenticalArticleBudget(unittest.TestCase):
+    def setUp(self):
+        self.registry = {doc: {'article.txt': digest} for doc, digest in
+                         [('old', 'a' * 64), ('alias', 'a' * 64),
+                          ('third', 'a' * 64), ('other', 'b' * 64)]}
+        self.tasks = [dict(role='blind_coder', packet_ids=[doc], attempt=1,
+                           status='completed_parent_mechanically_validated')
+                      for doc in ['old', 'alias']]
+
+    def check(self, docs=('third',), role='blind_coder', upgrades=()):
+        return identical_source_budget(docs, role, self.tasks, self.registry, upgrades)
+
+    def test_distinct_opaque_ids_cannot_reset_two_completed_attempts(self):
+        with self.assertRaisesRegex(ValueError, 'Identical source attempt budget exhausted'):
+            self.check()
+
+    def test_initial_alias_inherits_upgrade_single_read_cap(self):
+        self.tasks.pop()
+        with self.assertRaisesRegex(ValueError, 'Identical source attempt budget exhausted'):
+            self.check(upgrades=[dict(document_id='old', max_attempts_per_role=1)])
+
+    def test_other_model_role_keeps_its_own_budget(self):
+        aliases, limit, budgets = self.check(role='blind_comparison_coder')
+        self.assertEqual(aliases, {'old', 'alias', 'third'})
+        self.assertEqual(limit, 2)
+        self.assertEqual(budgets['a' * 64]['prior_role_tasks'], 0)
+
+    def test_unrelated_source_tasks_do_not_consume_budget(self):
+        aliases, limit, budgets = self.check(docs=('other',))
+        self.assertEqual(aliases, {'other'})
+        self.assertEqual(budgets['b' * 64]['prior_role_tasks'], 0)
+
+    def test_budget_is_per_source_not_sum_of_group_tasks(self):
+        self.tasks.pop()
+        self.tasks.append(dict(self.tasks[0], packet_ids=['other']))
+        _, _, budgets = self.check(docs=('third', 'other'))
+        self.assertEqual([x['prior_role_tasks'] for x in budgets.values()], [1, 1])
+
+    def test_active_alias_cannot_start_a_parallel_read(self):
+        self.tasks.pop()
+        for status in ['running', 'completed_pending_parent_validation', 'cancel_requested']:
+            with self.subTest(status=status):
+                self.tasks[0]['status'] = status
+                with self.assertRaisesRegex(ValueError, 'still active or awaiting validation'):
+                    self.check()
+
+    def test_same_source_cannot_appear_twice_in_one_task(self):
+        with self.assertRaisesRegex(ValueError, 'Group contains identical source aliases'):
+            self.check(docs=('alias', 'third'))
+
+    def test_missing_hash_and_invalid_cap_fail_closed(self):
+        self.tasks.clear()
+        with self.assertRaisesRegex(ValueError, 'Invalid source-specific attempt limit'):
+            self.check(upgrades=[dict(document_id='old', max_attempts_per_role=True)])
+        self.registry['third'] = {}
+        with self.assertRaisesRegex(ValueError, 'Missing or invalid frozen article hash'):
+            self.check()
 
 
 class ReachedFrozenInputCheck(Exception):

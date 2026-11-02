@@ -12,6 +12,39 @@ def read(path):
     return json.loads(path.read_text())
 
 
+def identical_source_budget(document_ids, role, tasks, registry, upgrades):
+    """Charge byte-identical registered articles to one role/source budget."""
+    documents = set(document_ids)
+    hashes = []
+    for doc in document_ids:
+        digest = registry.get(doc, {}).get('article.txt', '')
+        if len(digest) != 64 or any(c not in '0123456789abcdef' for c in digest):
+            raise ValueError('Missing or invalid frozen article hash: ' + doc)
+        if digest in hashes:
+            raise ValueError('Group contains identical source aliases')
+        hashes.append(digest)
+    limits = {}
+    for digest in hashes:
+        aliases = {doc for doc, files in registry.items() if files.get('article.txt') == digest}
+        documents.update(aliases)
+        caps = [item.get('max_attempts_per_role', 2) for item in upgrades
+                if item['document_id'] in aliases]
+        if any(type(cap) is not int or not 1 <= cap <= 2 for cap in caps):
+            raise ValueError('Invalid source-specific attempt limit')
+        limit = min([2] + caps)
+        prior = [task for task in tasks if task.get('role') == role
+                 and aliases.intersection(task.get('packet_ids', []))]
+        if any(task['status'] in ('running', 'queued', 'waiting',
+                                  'completed_pending_parent_validation')
+               or task['status'].startswith('cancel_requested') for task in prior):
+            raise ValueError('Identical source role still active or awaiting validation')
+        if len(prior) >= limit:
+            raise ValueError('Identical source attempt budget exhausted')
+        limits[digest] = {'document_ids': sorted(aliases), 'max_attempts': limit,
+                          'prior_role_tasks': len(prior)}
+    return documents, min(value['max_attempts'] for value in limits.values()), limits
+
+
 def prepare(group_id, provider, attempt):
     if attempt not in (1, 2):
         raise ValueError('Two attempts maximum')
@@ -70,6 +103,10 @@ def prepare(group_id, provider, attempt):
     if occupied_slots >= state['max_active_model_children']:
         raise ValueError('No free model slot')
     registry = read(OUT / 'packet_input_receipts.json')['documents']
+    identical_documents, identical_limit, identical_limits = identical_source_budget(
+        group['document_ids'], role, state['tasks'], registry,
+        read(OUT / 'source_upgrades.json')['upgrades'])
+    budget_documents.update(identical_documents)
     packets = []
     for doc in group['document_ids']:
         packet = PACKETS / doc
@@ -100,10 +137,12 @@ def prepare(group_id, provider, attempt):
             'dispatch_record': {'clientRequestId': request_id, 'role': role, 'group_id': group_id,
                                 'packet_ids': group['document_ids'], 'attempt': attempt,
                                 'attempt_budget_document_ids': sorted(budget_documents),
+                                'identical_source_budgets': identical_limits,
                                 'prompt_sha256': hashlib.sha256(prompt.encode()).hexdigest(),
                                 'output_dir': str(output), 'output_layout': 'per_document'},
             'preflight': {'registered_absolute_inputs_verified': True, 'frozen_input_hashes_verified': True,
-                          'owned_output_root_verified': True, 'max_attempts': min(limits) if upgrade else 2,
+                          'owned_output_root_verified': True,
+                          'max_attempts': min([identical_limit] + (limits if upgrade else [2])),
                           'active_model_children': len(active),
                           'occupied_model_and_helper_slots': occupied_slots}}
 
