@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-336 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+341 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -102,6 +102,10 @@ Document_0328's reproduction covers main pricing regressions in rebuilt samples,
 Document_0335 combines original-cohort reanalysis, a new cohort and a scaling-validity critique, requiring joint classification and outcome scope. Document_0336 explicitly contrasts two SNP results, with the original status of its secondary, sub-genome-wide association still needing verification. Both complete readings were checked against actual native tool returns despite unavailable tool-call IDs in the child's own manifest. Neither enters the proposed batch.
 
 Document_0339's classroom verdict requires correspondence with the original consulting intervention and instrument claim. Document_0340 is unconfident about directional agreement despite non-significant tests. Document_0341 has two method-related targets, with the second unconfident and its substantive token-plus-praise finding untested. Method suitability cannot transfer one target's verdict to the other; all three reports remain outside the proposed batch.
+
+Documents_0337 and 0338 are unconfident. The former has path-layer comparisons and internal reporting conflicts. The latter obtained the original email-response effect, while its critique concerns broader cultural measurement and country comparisons. Whether that critique supports the special flawed verdict on the same tested claim remains unresolved; added recovery measures and new-data questions receive no transferred original outcome.
+
+Documents_0342 and 0343 are abstract-only. Their apparent comparisons need original-finding correspondence and a distinction between a result verdict and attempt language. Document_0344 combines original-wave models and a sparse new wave, with an unconfident outcome. A shared U-shape cannot establish agreement unless the same measured outcome is compared; its type and result axes require joint review.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
