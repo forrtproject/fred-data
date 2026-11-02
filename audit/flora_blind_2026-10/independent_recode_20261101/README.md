@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-244 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+245 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -44,6 +44,8 @@ Roodman's record type and computation result (document_0233) remain unconfident:
 Documents_0235, 0237 and 0241 have unconfident outcomes; 0241 also lacks its Analysis text. Other recent confident results still require independent comparison and source review, preserving the distinctions between changed PISA waves, selected SCORE claims, new mechanistic extensions and the findings actually re-tested.
 
 Bertin's report (document_0236) has two new complete blind codings that agree with the frozen reproduction axes. A source reviewer is checking whether the frozen preprint and cited journal article are versions of the same empirical work, together with the current OSF report's identity. The earlier Sol reading was complete, but its evidence heading added punctuation absent from the source. Whitespace-only projection rejected it; raw outputs remain unchanged and that earlier coding is not used for acceptance. No original-paper correction follows from different DOIs or title wording alone.
+
+Document_0250 re-analyses Ceylan et al.'s original Study 2 data and explicitly declines a new-data replication. Its confident reproduction axes remain a single blind result. Independent review must separate central numerical discrepancies from incidental or eventually recovered values, and distinguish effect-size qualification from directional agreement. Missing figures, screenshots and linked responses remain explicit limits.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
