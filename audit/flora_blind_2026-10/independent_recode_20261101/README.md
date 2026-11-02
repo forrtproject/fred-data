@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-291 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+292 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -72,6 +72,8 @@ Document_0283 is abstract-only and unconfident about numerical discrepancies and
 Document_0286's mixed result has explicit accuracy agreement and speed/recall exceptions, with inconsistent original-speed descriptions and a changed VR design. Document_0287 gives an original-specific failure statement alongside policy-boundary qualifications. Neither design adaptation nor a shared recruitment panel settles empirical target correspondence; both await independent comparison and source review.
 
 Documents_0288–0293 remain outside the proposed batch. The memory study's mechanism critique needs to be assessed alongside its successful original contrast. Sabourin is unconfident, with a possible Watt target and an unverified printed DOI. Stoffer's second experiment is unavailable in the missing supplement. The direct STEARC claim stays separate from new indirect tasks. The religiosity report requires alignment of its named original with a broader theory verdict. The radio-donation abstract mainly describes renewing donors, whom the original also found unaffected; its failed label needs conditional-claim and data correspondence before acceptance.
+
+Document_0299 reports regenerating all original tables and then correcting a variable-order error that reverses a secondary comparison. Its confident reproduction axes remain one blind coding. Numerical recovery, correctness of the stated specification and the scope of the authors' main-conclusion verdict require separate assessment; the word “minor” alone does not settle the changed claim.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
