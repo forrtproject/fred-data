@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-228 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-nine fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+230 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-nine fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -36,6 +36,8 @@ Document_0221 has unresolved record-type and computation-axis boundaries, includ
 Document_0224's dementia class-structure outcome is unconfident. Document_0225's statistically successful but flawed outcome is eligible. The authors' own method-validation statement and current Experiment 1 establish an obtained priming effect; the central elongated-shape critique challenges its tool-category interpretation. The ambiguous photographic-prime statistics are excluded from that inference. Separate obtained-effect and critique passages remain supporting dependencies; no synthetic combined quote or additional 2010 target is introduced. Source confidence remains moderate-high, with figures and the original full text unread.
 
 The newly read thesis and documents_0227–0229 have unconfident outcomes or reproduction axes. Document_0230's confident failure remains a single blind reading pending independent comparison and source review. None enters the automatic set.
+
+Document_0231's failure and document_0232's success remain single blind results. The latter follows an explicit whole-study verdict despite a null association and opposite-allele qualifications. Independent review must align the original and current locus/allele claims and assess the verdict's scope; neither a success label nor contrary p-values settle that alignment alone.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
