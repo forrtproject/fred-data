@@ -5,6 +5,7 @@ import hashlib
 import html
 import json
 import re
+import subprocess
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
 from pathlib import Path
@@ -393,6 +394,16 @@ def original_doi_alignment(row, target, transcription_receipt=None):
     assert transcription_receipt, 'Original DOI differs; verified transcription evidence required'
     canonical = identifier(transcription_receipt['canonical_doi'])
     assert canonical in ids(row, 'o') and literal == identifier(transcription_receipt['literal_extracted_doi'])
+    if transcription_receipt.get('kind') == 'registered_doi_alias':
+        receipt = transcription_receipt['handle_receipt']
+        path = Path(receipt['path'])
+        assert sha(path.read_bytes()) == receipt['sha256'], 'DOI alias evidence changed'
+        handle = read(path)
+        assert handle['responseCode'] == 1 and identifier(handle['handle']) == literal, \
+            'DOI alias names another printed identifier'
+        aliases = [entry['data']['value'] for entry in handle['values'] if entry['type'] == 'HS_ALIAS']
+        assert aliases == [transcription_receipt['canonical_doi']], 'Registered DOI alias not established'
+        return
     without_issn_hyphen = re.sub(r'(\(sici\)\d{4})-(\d{4}\()', r'\1\2', canonical, count=1)
     assert without_issn_hyphen != canonical and literal == without_issn_hyphen, \
         'Only the SICI ISSN line-break hyphen may differ'
@@ -552,6 +563,49 @@ def proof(packet, quote):
     return dict(quote=quote, source_path=str(packet / 'article.txt'), source_sha256=sha(raw),
                 character_start=start, character_end=end, utf8_start=len(text[:start].encode()),
                 utf8_end=len(text[:end].encode()), quote_sha256=sha(quote.encode()))
+
+
+def replacement_quote(packet, decision, opus_target, sol_target):
+    """Keep raw blind evidence; a separately verified PDF may supply reading order."""
+    field = decision['replacement_quote_field']
+    binding = decision.get('published_quote_receipt')
+    if binding is None:
+        quote = opus_target[field]
+        return quote, proof(packet, quote)
+    assert field == 'outcome_quote', 'Published order only replaces the outcome quotation'
+    path = Path(binding['path'])
+    assert sha(path.read_bytes()) == binding['sha256'], 'Published quote receipt changed'
+    receipt = read(path)
+    assert receipt['kind'] == 'same_pdf_published_reading_order'
+    assert receipt['raw_outcome_quotes_sha256'] == [sha(target[field].encode())
+                                                   for target in (opus_target, sol_target)], \
+        'Published quote does not bind both raw blind quotes'
+    pdf = Path(receipt['pdf_path'])
+    assert sha(pdf.read_bytes()) == receipt['pdf_sha256'], 'Published PDF changed'
+    raw = (packet / 'article.txt').read_bytes()
+    assert sha(raw) == receipt['registered_source_sha256'], 'Registered source differs'
+    layout = subprocess.run(['pdftotext', '-layout', str(pdf), '-'], check=True, capture_output=True).stdout
+    assert layout == raw, 'Published PDF does not reproduce the complete registered extraction'
+    published = subprocess.run(['pdftotext', str(pdf), '-'], check=True, capture_output=True).stdout
+    source = Path(receipt['published_reading_order_path'])
+    assert published == source.read_bytes() and sha(published) == receipt['published_reading_order_sha256'], \
+        'Published reading order is not an exact extraction of the same PDF'
+    page = receipt['page']
+    pages = published.decode().split('\f')
+    assert type(page) is int and 1 <= page <= len(pages), 'Invalid published quote page'
+    image = Path(receipt['page_image_path'])
+    assert sha(image.read_bytes()) == receipt['page_image_sha256'] and receipt['root_visually_inspected'] is True, \
+        'Published quotation page lacks parent visual verification'
+    quote = receipt['clean_quote']
+    text = published.decode()
+    start, end = receipt['quote_character_start'], receipt['quote_character_end']
+    assert quote and text.count(quote) == 1 and text[start:end] == quote and quote in pages[page - 1], \
+        'Published quote is not a unique contiguous span on the inspected page'
+    return quote, dict(quote=quote, source_path=str(source), source_sha256=sha(published),
+                       character_start=start, character_end=end, utf8_start=len(text[:start].encode()),
+                       utf8_end=len(text[:end].encode()), quote_sha256=sha(quote.encode()),
+                       registered_source_sha256=sha(raw), pdf_path=str(pdf), pdf_sha256=receipt['pdf_sha256'],
+                       page=page, published_quote_receipt=binding, raw_blind_quotes_preserved=True)
 
 
 def completed_field_work(opus, sol):
@@ -768,11 +822,11 @@ def build():
             replacements = identity_fields
         else:
             replacements = checked_replacements(row, opus, ot, decision)
-        quote = ot[decision['replacement_quote_field']]
+        quote, quote_evidence = replacement_quote(packet, decision, ot, st)
         replacements['outcome_quote'] = quote
         replacements['outcome_quote_source'] = decision['replacement_quote_section']
         assert set(replacements).issubset(row), 'Unknown CSV columns'
-        evidence = [proof(packet, quote)]
+        evidence = [quote_evidence]
         for key in decision['supporting_quote_fields']:
             evidence.append(proof(packet, opus[key] if key == 'record_type_quote' else ot[key]))
         for quote in decision.get('supporting_literal_quotes', []):

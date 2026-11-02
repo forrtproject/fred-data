@@ -1,11 +1,12 @@
 """Reject incompatible fixes even when individual model outputs are valid."""
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
 
-from build_verified_proposals import BASELINE_SHA, checked_replacements, completed_field_work, current_alignment, digest, ids, metadata_title, original_alias_replacements, original_alignment, original_doi_alignment, original_identifier_alignment, original_replacements, record_removal, retained_target_scope_review, review_field_dispositions, review_row_binding
+from build_verified_proposals import BASELINE_SHA, checked_replacements, completed_field_work, current_alignment, digest, ids, metadata_title, original_alias_replacements, original_alignment, original_doi_alignment, original_identifier_alignment, original_replacements, record_removal, replacement_quote, retained_target_scope_review, review_field_dispositions, review_row_binding
 
 
 class ProposalDependencies(unittest.TestCase):
@@ -58,6 +59,113 @@ class ProposalDependencies(unittest.TestCase):
             path=Path(receipt['path']);value=json.loads(path.read_text());value['rows']={};path.write_text(json.dumps(value));receipt['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
             with self.assertRaisesRegex(AssertionError,'omits'):
                 review_row_binding(review,0,[row],review_sha256='review-hash',snapshot_receipt=receipt)
+
+
+    def printed_alias_fixture(self, directory):
+        canonical = '10.1037/0022-3514.68.5.793'
+        literal = '10.1037//0022-3514.68.5.793'
+        path = Path(directory) / 'handle.json'
+        path.write_text(json.dumps(dict(responseCode=1, handle=literal, values=[
+            dict(type='HS_ALIAS', data=dict(value=canonical))])))
+        receipt = dict(kind='registered_doi_alias', canonical_doi=canonical,
+                       literal_extracted_doi=literal, handle_receipt=dict(
+                           path=str(path), sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+        return dict(doi_o=canonical), dict(doi=literal), receipt
+
+    def test_printed_registered_alias_aligns_without_mutating_either_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.printed_alias_fixture(directory)
+            before = json.dumps([row, target], sort_keys=True)
+            original_doi_alignment(row, target, receipt)
+            self.assertEqual(json.dumps([row, target], sort_keys=True), before)
+
+    def test_printed_alias_needs_exact_handle_and_single_canonical_alias(self):
+        for mutation in ('different-handle', 'no-alias', 'different-canonical', 'two-aliases', 'bad-hash'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+                row, target, receipt = self.printed_alias_fixture(directory)
+                path = Path(receipt['handle_receipt']['path']); handle = json.loads(path.read_text())
+                if mutation == 'different-handle': handle['handle'] += 'x'
+                elif mutation == 'no-alias': handle['values'] = []
+                elif mutation == 'different-canonical': handle['values'][0]['data']['value'] += 'x'
+                elif mutation == 'two-aliases': handle['values'] *= 2
+                path.write_text(json.dumps(handle))
+                receipt['handle_receipt']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+                if mutation == 'bad-hash': receipt['handle_receipt']['sha256'] = 'wrong'
+                with self.assertRaises(AssertionError): original_doi_alignment(row, target, receipt)
+
+    def published_order_fixture(self, directory):
+        # A real PDF keeps the source-equivalence gate under test, without a mock extractor.
+        packet = Path(directory); pdf = packet / 'report.pdf'
+        content = b'BT /F1 12 Tf 50 700 Td (The replication was partly successful.) Tj ET'
+        objects = [b'<< /Type /Catalog /Pages 2 0 R >>',
+                   b'<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+                   b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+                   b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+                   b'<< /Length ' + str(len(content)).encode() + b' >>\nstream\n' + content + b'\nendstream']
+        raw = b'%PDF-1.4\n'; offsets = []
+        for index, obj in enumerate(objects, 1):
+            offsets.append(len(raw)); raw += str(index).encode() + b' 0 obj\n' + obj + b'\nendobj\n'
+        xref = len(raw); raw += b'xref\n0 6\n0000000000 65535 f \n'
+        raw += b''.join(f'{offset:010} 00000 n \n'.encode() for offset in offsets)
+        raw += b'trailer << /Size 6 /Root 1 0 R >>\nstartxref\n' + str(xref).encode() + b'\n%%EOF\n'
+        pdf.write_bytes(raw)
+        article = packet / 'article.txt'
+        article.write_bytes(subprocess.run(['pdftotext', '-layout', str(pdf), '-'], check=True, capture_output=True).stdout)
+        published = packet / 'published.txt'
+        published.write_bytes(subprocess.run(['pdftotext', str(pdf), '-'], check=True, capture_output=True).stdout)
+        image = packet / 'view.png'; image.write_bytes(b'parent-inspected-page-receipt')
+        quote = 'The replication was partly successful.'; text = published.read_text()
+        targets = [dict(outcome_quote='raw first layout quote'), dict(outcome_quote='raw second layout quote')]
+        h = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+        receipt = dict(kind='same_pdf_published_reading_order', raw_outcome_quotes_sha256=[
+            hashlib.sha256(t['outcome_quote'].encode()).hexdigest() for t in targets],
+            pdf_path=str(pdf), pdf_sha256=h(pdf), registered_source_sha256=h(article),
+            published_reading_order_path=str(published), published_reading_order_sha256=h(published),
+            page=1, page_image_path=str(image), page_image_sha256=h(image), root_visually_inspected=True,
+            clean_quote=quote, quote_character_start=text.index(quote), quote_character_end=text.index(quote)+len(quote))
+        path = packet / 'receipt.json'; path.write_text(json.dumps(receipt))
+        decision = dict(replacement_quote_field='outcome_quote', published_quote_receipt=dict(path=str(path), sha256=h(path)))
+        return packet, decision, targets, receipt
+
+    def test_published_quote_replays_same_pdf_and_preserves_raw_codings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            packet, decision, targets, receipt = self.published_order_fixture(directory)
+            before = json.dumps(targets)
+            quote, evidence = replacement_quote(packet, decision, *targets)
+            self.assertEqual(quote, receipt['clean_quote'])
+            self.assertEqual(json.dumps(targets), before)
+            self.assertTrue(evidence['raw_blind_quotes_preserved'])
+            self.assertEqual(Path(evidence['source_path']).read_text()[evidence['character_start']:evidence['character_end']], quote)
+
+    def test_published_quote_rejects_stale_source_pdf_or_coding(self):
+        for mutation in ('pdf', 'registered-source', 'saved-extraction', 'raw-coder', 'receipt-hash'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+                packet, decision, targets, receipt = self.published_order_fixture(directory)
+                if mutation == 'raw-coder': targets[1]['outcome_quote'] += ' changed'
+                elif mutation == 'receipt-hash': decision['published_quote_receipt']['sha256'] = 'wrong'
+                else:
+                    path = packet / {'pdf': 'report.pdf', 'registered-source': 'article.txt',
+                                     'saved-extraction': 'published.txt'}[mutation]
+                    path.write_bytes(path.read_bytes() + b'changed')
+                with self.assertRaises(AssertionError): replacement_quote(packet, decision, *targets)
+
+    def test_published_quote_rejects_forged_extraction_even_with_updated_hash(self):
+        with tempfile.TemporaryDirectory() as directory:
+            packet, decision, targets, receipt = self.published_order_fixture(directory)
+            source = packet / 'published.txt'; source.write_text('Injected successful verdict.')
+            receipt['published_reading_order_sha256'] = hashlib.sha256(source.read_bytes()).hexdigest()
+            path = Path(decision['published_quote_receipt']['path']); path.write_text(json.dumps(receipt))
+            decision['published_quote_receipt']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'exact extraction'): replacement_quote(packet, decision, *targets)
+
+    def test_published_quote_needs_exact_offsets_inspected_page_and_both_coders(self):
+        for changes in [dict(quote_character_start=999), dict(page=2), dict(root_visually_inspected=False),
+                        dict(raw_outcome_quotes_sha256=[]), dict(clean_quote='partly ... successful')]:
+            with self.subTest(changes=changes), tempfile.TemporaryDirectory() as directory:
+                packet, decision, targets, receipt = self.published_order_fixture(directory)
+                receipt.update(changes); path = Path(decision['published_quote_receipt']['path'])
+                path.write_text(json.dumps(receipt)); decision['published_quote_receipt']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+                with self.assertRaises(AssertionError): replacement_quote(packet, decision, *targets)
 
     def sici_fixture(self, directory):
         canonical = '10.1002/(sici)1520-6653(199924)13:1<5::aid-dir2>3.0.co;2-9'
