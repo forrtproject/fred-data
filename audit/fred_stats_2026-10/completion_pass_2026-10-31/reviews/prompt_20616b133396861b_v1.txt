@@ -1,0 +1,99 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "2156": {
+      "source_key": "20616b133396861b",
+      "side": "replication",
+      "input": {
+        "ref_o": "Chung, K. H., & Chuwonganant, C. (2014). Uncertainty, market structure, and liquidity. Journal of Financial Economics, 113(3), 476–499. https://doi.org/10.1016/j.jfineco.2014.05.008",
+        "doi_o": "10.1016/j.jfineco.2014.05.008",
+        "study_o": null,
+        "ref_r": "Reed, W. R., Duan, J., Hong, S., Loomas, Z., Miske, O., Luis, B., … Vo, D. T. H. (2025, November 18). Chung_JournFinEco_2014_RrOb - Hong & Duan/Reed - Secondary Data Replication - 19gz. Retrieved from osf.io/devn8",
+        "doi_r": null,
+        "url_r": "https://osf.io/xg6q5",
+        "study_r": null,
+        "es_type_o": null,
+        "es_type_r": "d",
+        "description": null,
+        "locators_o": "",
+        "locators_r": "",
+        "audit_id": 2156,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dd799efa235be5369f6fefa9.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Source-defined focal replication claim: effect of VIX (lnvix) on quoted spread for NASDAQ stocks, 2010–2019 annual-screening data; mean of estimated focal coefficients from separate entity regressions tested against zero (P17, P25–27, P61, P64, P77–82). No row-order or numeric matching used.",
+      "worker_notes": "Identity assessment: supplied canonical text is a paragraph-numbered DOCX extraction with Source: https://osf.io/download/xg6q5/, matching the assigned replication file URL. P3–5/P13–17 identify a replication of Chung & Chuwonganant (2014), Journal of Financial Economics, and name the replication team (Bob Reed, Diem Vo, Jianhua Duan, Sanghyun Hong, Tom Coupe). P84 identifies the original title Uncertainty, market structure, and liquidity, volume 113 issue 3, pages 476–499. The document is a primary replication report, with Replication Results, deviations and reproducibility-file descriptions, rather than an abstract or preregistration. Its internal date is November 17, 2020 (P8), differing from the supplied reference date November 18, 2025; no DOI is printed for the replication. Only the assigned replication effect-size field is extracted. P30 explicitly prints the focal coefficient -0.02; retain this coefficient in its printed metric although requested metric is d. No standardisation or conversion to d is justified by the supplied source. P37/P40 separately report mean/median t-statistic summaries (-0.068/-0.079); these are not attached as the test statistic for the P30 coefficient. No PDF was supplied; embedded results images are absent from this DOCX text, and the separately referenced Chung_Results file is outside the supplied material. Unassigned n, p, original and reported_success fields are placeholders, not negative findings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dd799efa235be5369f6fefa9.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": null,
+        "es_repr_o": null,
+        "es_repr_r": null,
+        "es_type_o": null,
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2",
+        "pval_tails_r": "2",
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "NB: SCORE relied on statistical significance and direction as the leading success criterion - so reported_success coded based on that"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 2156,
+      "field": "es_value_r",
+      "blind": {
+        "value": "-0.02",
+        "metric": "estimated regression coefficient",
+        "test_statistic": null,
+        "location": "Replication Results, paragraph P30",
+        "quote": "In the original paper the estimated coefficient is positive (0.4644) and significant. In the replication, the estimated coefficient is negative (-0.02) and significant (p=0.025).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dd799efa235be5369f6fefa9.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 2156,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "The primary replication report explicitly identifies a single focal VIX/quoted-spread claim and prints its replication estimated coefficient. Retained the printed regression coefficient, not a converted d. Internal report date differs from reference metadata; title, team, original citation and supplied OSF file URL support source identity. Separate mean/median t-statistic summaries describe other summaries and were not substituted.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dd799efa235be5369f6fefa9.txt",
+        "location": "Claim Summary P17; Replication Criteria P25–27; Replication Results P30; deviations P77–82",
+        "quote": "In the original paper the estimated coefficient is positive (0.4644) and significant. In the replication, the estimated coefficient is negative (-0.02) and significant (p=0.025).",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.0483322303071279",
+      "comparison": "not_comparable",
+      "prior_adjudication": {
+        "audit_id": 2156,
+        "field": "es_value_r",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "DOCX paragraphs 30 and 43, Replication Results",
+        "quote": "In the replication, the estimated coefficient is negative (-0.02) and significant (p=0.025).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dd799efa235be5369f6fefa9.txt",
+        "reason": "The requested metric is Cohen's d, whereas the supplied text only reports the unstandardized mean regression coefficient (-0.02), which is not_comparable, and defers full statistics to an external 'Chung_Results' file not in the supplied text (where t = -2.2369 with N = 2142 yields d = -0.0483322303071279).",
+        "resolution": "argon"
+      }
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/20616b133396861b. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_20616b133396861b_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
