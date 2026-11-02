@@ -10,6 +10,8 @@ Yes. Although some users of the data may not find repeated tests informative, ot
 
 We rely on what replication authors say in the abstract, or if not stated there, what is written in the report (discussion and conclusion sections). If studies are part of a meta-paper, we rely on the individual reports where available, and otherwise on the main criterion used by the meta-paper's authors. The outcome refers to whether the central finding that the replication was designed to test could be replicated and may leave out robustness checks and exploratory analyses.
 
+Outcome labels are a starting point, not a verdict. They depend on how replication authors describe their results. A failed replication does not by itself show that the original finding was false or the original study flawed: a replication can also fail by chance, because of low power or problems in its own conduct, or because conditions, situations, or contexts differed.
+
 ### What is the outcome if the manipulation check failed so the hypothesis could not be tested?
 
 This will be coded as failed. Also, if the manipulation check was successful and the main test failed, it is coded as failed. Equivalent to these cases are studies with a preliminary test (e.g., gender knowledge gap test before stereotype threat test).   
