@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-271 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+274 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -60,6 +60,8 @@ Document_0263 contains eighteen separate target outcomes, with Kirchler unconfid
 Documents_0267 and 0268 require different reproduction assessments: one reports no comparable output after a data/code mismatch, while the other reports a rounding-level formal miss among six claims. Neither receives a robustness verdict from computation alone. Document_0269 lacks its abstract and has unresolved scope between an agreement statement and a specific original-condition contrast. Document_0273's successful verdict concerns a revised scale; Finnish sample independence, the original extended model's poor fit and a possible second target remain unresolved. Shared authorship alone cannot exclude another report as a target. None enters the proposed batch.
 
 Document_0270's mixed coding cites an explicit partial verdict and claim-level contrasts, with changed meta-analytic data and criteria still requiring alignment. Document_0271's success statement rests mainly on pooled original and new GWAS data; the independent cohort and original IRF4 claim need separate review. Document_0272 is unconfident because later polarization may extend, rather than contradict, the original cross-sectional finding. These readings confer no automatic eligibility.
+
+Document_0277 separates a replicated blood-flow effect from an unobserved original correlation; the verdict's scope remains for review. Document_0278 reports its own empirical attempts within a Data Descriptor, with the primary moderation claim kept distinct from greed main effects and an unread linked correction. Document_0279 is unconfident about whether an interim mixed statement or the closing verdict governs; its exact original title is known, but authors, year and DOI remain absent. None enters the proposed batch.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
