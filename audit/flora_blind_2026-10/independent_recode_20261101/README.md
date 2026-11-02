@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-232 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-nine fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+244 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -40,6 +40,10 @@ The newly read thesis and documents_0227–0229 have unconfident outcomes or rep
 Document_0231's failure and document_0232's success remain single blind results. The latter follows an explicit whole-study verdict despite a null association and opposite-allele qualifications. Independent review must align the original and current locus/allele claims and assess the verdict's scope; neither a success label nor contrary p-values settle that alignment alone.
 
 Roodman's record type and computation result (document_0233) remain unconfident: reconstructed historical records, expanded census samples and reported discrepancies require a joint classification and outcome remedy. Document_0234 is abstract-only, with an unresolved strategic-planning difference versus extension. Both remain excluded.
+
+Documents_0235, 0237 and 0241 have unconfident outcomes; 0241 also lacks its Analysis text. Other recent confident results still require independent comparison and source review, preserving the distinctions between changed PISA waves, selected SCORE claims, new mechanistic extensions and the findings actually re-tested.
+
+Bertin's report (document_0236) has two new complete blind codings that agree with the frozen reproduction axes. A source reviewer is checking whether the frozen preprint and cited journal article are versions of the same empirical work, together with the current OSF report's identity. The earlier Sol reading was complete, but its evidence heading added punctuation absent from the source. Whitespace-only projection rejected it; raw outputs remain unchanged and that earlier coding is not used for acceptance. No original-paper correction follows from different DOIs or title wording alone.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
