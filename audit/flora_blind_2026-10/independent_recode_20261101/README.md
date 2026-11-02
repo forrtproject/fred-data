@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-310 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+316 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -90,6 +90,8 @@ The other exact text alias is initial document_0499 and complete source_0689. Bo
 Documents_0306 and 0308 are unconfident about interpreting later descriptive changes as replication outcomes. Document_0307 keeps immediate and delayed ERP comparisons separate. Document_0309 has a globally unconfident reproduction coding despite stronger confidence in its robustness critique; the computation axis cannot be silently promoted. Document_0310 requires the original gender-specific findings aligned with both current studies. None enters the proposed batch.
 
 Document_0311 separates reconstructed historical observations from a later-period extension and measure-specific robustness claims. Document_0312 is abstract-only: similar coefficients do not establish that the same data were analysed. Document_0313 is also abstract-only, with unresolved replication scope and a mechanism critique. Their raw labels remain preserved pending independent comparison and positive claim correspondence.
+
+Document_0314's second target and verdict rely on inferred set membership and remain unconfident. Document_0315 separates class-identification agreement from an explicit ACE non-replication. Document_0316's later-grade recovery need not contradict the original first-grade loss. Documents_0317 and 0319 have unconfident summary verdicts alongside named contrasts; 0319 was registered after analysis. Document_0318 requires a joint assessment of reconstructed data, differing coefficients and a separate US analysis. None enters the proposed batch.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
