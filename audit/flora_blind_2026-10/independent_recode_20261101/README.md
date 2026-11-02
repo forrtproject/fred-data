@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-307 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+310 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -88,6 +88,8 @@ Documents_0226 and 0305 are the same 643,857-character thesis text, with matchin
 The other exact text alias is initial document_0499 and complete source_0689. Both blind roles have already used that source's single fresh read. Document_0499 needs an exact metadata and receipt projection when reached, with the existing confidence limits preserved; it must not trigger another read or be counted newly validated before that projection passes. Dispatch now checks article hashes across the immutable registry, inherits the lowest registered source cap and keeps roles separate.
 
 Documents_0306 and 0308 are unconfident about interpreting later descriptive changes as replication outcomes. Document_0307 keeps immediate and delayed ERP comparisons separate. Document_0309 has a globally unconfident reproduction coding despite stronger confidence in its robustness critique; the computation axis cannot be silently promoted. Document_0310 requires the original gender-specific findings aligned with both current studies. None enters the proposed batch.
+
+Document_0311 separates reconstructed historical observations from a later-period extension and measure-specific robustness claims. Document_0312 is abstract-only: similar coefficients do not establish that the same data were analysed. Document_0313 is also abstract-only, with unresolved replication scope and a mechanism critique. Their raw labels remain preserved pending independent comparison and positive claim correspondence.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
