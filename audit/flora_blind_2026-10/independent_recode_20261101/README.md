@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-324 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+327 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -94,6 +94,8 @@ Document_0311 separates reconstructed historical observations from a later-perio
 Document_0314's second target and verdict rely on inferred set membership and remain unconfident. Document_0315 separates class-identification agreement from an explicit ACE non-replication. Document_0316's later-grade recovery need not contradict the original first-grade loss. Documents_0317 and 0319 have unconfident summary verdicts alongside named contrasts; 0319 was registered after analysis. Document_0318 requires a joint assessment of reconstructed data, differing coefficients and a separate US analysis. None enters the proposed batch.
 
 Documents_0320–0327 remain outside the proposed batch. Their dependencies include hybrid original/new-data analyses and manuscript identity, large versus small stimulus sets, an obtained choice pattern with a method-validity critique, corrected order/curvature claims, direct versus modified postures, and whole-failure versus partial-result statements. Document_0326 lacks front matter and leaves the original core comparative claim untested. Document_0327 is unconfident, with unavailable per-variable results and uncertain regional/national overlap. Each outcome remains tied to the finding actually tested.
+
+Document_0332 is abstract-only and does not establish reconstructed-data identity. Document_0333's success concerns a focal SCORE claim; the role of its secondary null and a lost wording correction need review. Document_0334 lacks front matter and appendices, with unresolved correspondence between a tested developmental sequence and broader model support. All remain outside the proposed batch.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
