@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-264 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+268 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -56,6 +56,8 @@ Document_0256 combines a successful new-data IIA replication with original-data 
 Document_0262 reports obtaining Ashraf/Galor's implemented numbers before correcting specification coding and changing data constructions. Its confident reproduction axes remain one blind result. Legal-origin coding errors do not by themselves establish a failure to recover published numbers. Added heterozygosity observations, replacement population estimates and largely untested contemporary GDP analyses require explicit scope review before any joint record conversion or robustness attribution.
 
 Document_0263 contains eighteen separate target outcomes, with Kirchler unconfident. Four individual reports are missing: Duffy/Puzzello, Huck, Kessler/Roth and Kuziemko rest on Table S1's supplied manual raster transcription. Literal checks establish correspondence to that text, without verifying the transcription against its image or supplying the absent reports. Those limits remain target-specific; the collection's eleven-success/seven-failure count confers no eligibility. Document_0264 lacks its original's title and DOI, 0265 reuses a trained model in new cohorts with unavailable supplements, and 0266 is unconfident with overlapping panel data and inconsistent descriptions of the precursor findings. All await independent comparison and source review.
+
+Documents_0267 and 0268 require different reproduction assessments: one reports no comparable output after a data/code mismatch, while the other reports a rounding-level formal miss among six claims. Neither receives a robustness verdict from computation alone. Document_0269 lacks its abstract and has unresolved scope between an agreement statement and a specific original-condition contrast. Document_0273's successful verdict concerns a revised scale; Finnish sample independence, the original extended model's poor fit and a possible second target remain unresolved. Shared authorship alone cannot exclude another report as a target. None enters the proposed batch.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
