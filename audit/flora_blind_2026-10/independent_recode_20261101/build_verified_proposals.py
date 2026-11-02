@@ -6,6 +6,7 @@ import html
 import json
 import re
 import xml.etree.ElementTree as ET
+from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -215,7 +216,61 @@ def retained_target_scope_review(receipt, row_index, row, outcome):
             assert value == (row['type'] if field == 'type' else outcome), 'Target scope disposition differs'
 
 
+def econstor_report_alignment(row, source, receipt):
+    """Bind one repository report without treating its shared OSF project as an alias."""
+    path = Path(receipt['path'])
+    assert sha(path.read_bytes()) == receipt['sha256'], 'Report binding changed'
+    binding = read(path)
+    assert binding['kind'] == 'econstor_handle_with_shared_osf_project'
+    handle = row.get('url_r', '')
+    match = re.fullmatch(r'https://hdl\.handle\.net/(10419/\d+)', handle)
+    assert match and identifier(source['parent_work_key']) == identifier(handle), 'Different report handle'
+    assert not identifier(row.get('doi_r', '')), 'DOI needs its own identity verification'
+    repository, project = binding['repository_metadata'], binding['osf_project_metadata']
+    assert repository['url'] == 'https://www.econstor.eu/handle/' + match[1]
+    for item in (repository, project, binding['primary_text']):
+        assert sha(Path(item['path']).read_bytes()) == item['sha256'], 'Report identity evidence changed'
+
+    class Tags(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.values = {}
+
+        def handle_starttag(self, tag, attrs):
+            data = dict(attrs)
+            if tag.lower() == 'meta' and data.get('name') and data.get('content'):
+                self.values.setdefault(data['name'].casefold(), []).append(data['content'])
+
+    tags = Tags()
+    tags.feed(Path(repository['path']).read_text())
+    assert handle in tags.values.get('dc.identifier', []), 'Repository names another handle'
+    download = source['metadata']['source_url']
+    assert tags.values.get('citation_pdf_url') == [download], 'Repository names another PDF'
+    title = tags.values.get('citation_title', [])
+    assert len(title) == 1 and norm(title[0]) and norm(row['title_r']).startswith(norm(title[0])), \
+        'Report title differs'
+    primary = Path(binding['primary_text']['path']).read_text()
+    assert binding['primary_text']['sha256'] == source['source_checks']['raw_sha256']
+    assert handle in primary and norm(title[0]) in norm(primary), 'Primary report does not identify itself'
+    node = read(Path(project['path']))['data']
+    guid = node['id']
+    assert re.fullmatch(r'[a-z0-9]{5}', guid) and node['type'] == 'nodes'
+    assert identifier(row.get('alt_identifier_r', '')) == 'osf:' + guid, 'Different OSF project'
+    assert project['url'] == node['links']['self'] == 'https://api.osf.io/v2/nodes/' + guid + '/'
+    parsed = urlparse(download)
+    assert parsed.scheme == 'https' and parsed.netloc == 'www.econstor.eu'
+    assert parsed.path.startswith('/bitstream/' + match[1] + '/') and not parsed.query and not parsed.fragment
+    # This explicit report link is membership evidence, never a one-to-one DOI/URL alias.
+    member = 'https://econstor.eu' + parsed.path
+    links = {url.rstrip('.,;)\"]') for url in re.findall(r'https://[^\s<>]+', node['attributes']['description'])}
+    assert member in links or download in links, \
+        'Shared project does not identify this report'
+
+
 def current_alignment(row, source, file_receipt=None):
+    if file_receipt and file_receipt.get('kind') == 'econstor_handle_with_shared_osf_project':
+        econstor_report_alignment(row, source, file_receipt)
+        return
     key = identifier(source['parent_work_key'])
     if key in ids(row, 'r'):
         return

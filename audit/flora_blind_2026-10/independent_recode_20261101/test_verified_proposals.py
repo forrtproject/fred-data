@@ -509,6 +509,101 @@ class ProposalDependencies(unittest.TestCase):
             with self.assertRaisesRegex(AssertionError,'Current DOI or alternate identifier differs'):
                 current_alignment(row,source,receipt)
 
+    def econstor_fixture(self, directory):
+        root = Path(directory)
+        handle = 'https://hdl.handle.net/10419/12345'
+        download = 'https://www.econstor.eu/bitstream/10419/12345/1/DP180.pdf'
+        row = dict(doi_r='NA', alt_identifier_r='https://osf.io/abc12/',
+                   url_r=handle, title_r='A report (Discussion Paper Series No')
+        article = root / 'article.txt'
+        article.write_text('A report\nThis version is available at:\n' + handle)
+        repository = root / 'repository.html'
+        repository.write_text('<meta name="DC.identifier" content="' + handle + '">'
+                              '<meta name="citation_title" content="A report">'
+                              '<meta name="citation_pdf_url" content="' + download + '">')
+        node = root / 'project.json'
+        node.write_text(json.dumps({'data': dict(id='abc12', type='nodes',
+            links={'self': 'https://api.osf.io/v2/nodes/abc12/'},
+            attributes={'description': 'Two reports: ' + download.replace('www.', '')
+                        + ' and https://econstor.eu/bitstream/10419/67890/1/DP162.pdf'})}))
+        file = lambda p, **extra: dict(path=str(p), sha256=hashlib.sha256(p.read_bytes()).hexdigest(), **extra)
+        binding = dict(kind='econstor_handle_with_shared_osf_project',
+                       repository_metadata=file(repository, url='https://www.econstor.eu/handle/10419/12345'),
+                       osf_project_metadata=file(node, url='https://api.osf.io/v2/nodes/abc12/'),
+                       primary_text=file(article))
+        source = dict(parent_work_key=handle, metadata={'source_url': download},
+                      source_checks={'raw_sha256': binding['primary_text']['sha256']})
+        path = root / 'binding.json'
+        path.write_text(json.dumps(binding))
+        receipt = dict(kind=binding['kind'], **file(path))
+        return row, source, receipt, binding
+
+    def test_exact_repository_report_can_belong_to_a_shared_project(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            current_alignment(row, source, receipt)
+
+    def test_shared_project_cannot_substitute_another_pdf(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            source['metadata']['source_url'] = source['metadata']['source_url'].replace('DP180', 'DP162')
+            with self.assertRaisesRegex(AssertionError, 'another PDF'):
+                current_alignment(row, source, receipt)
+
+    def test_shared_project_receipt_cannot_override_a_different_handle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            row['url_r'] = 'https://hdl.handle.net/10419/67890'
+            with self.assertRaisesRegex(AssertionError, 'Different report handle'):
+                current_alignment(row, source, receipt)
+
+    def test_report_membership_requires_the_project_to_name_that_report(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            path = Path(binding['osf_project_metadata']['path'])
+            node = json.loads(path.read_text())
+            node['data']['attributes']['description'] = 'Only https://econstor.eu/bitstream/10419/67890/1/DP162.pdf'
+            path.write_text(json.dumps(node))
+            binding['osf_project_metadata']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            bp = Path(receipt['path']); bp.write_text(json.dumps(binding))
+            receipt['sha256'] = hashlib.sha256(bp.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'does not identify this report'):
+                current_alignment(row, source, receipt)
+
+    def test_repository_binding_cannot_override_a_different_project(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            row['alt_identifier_r'] = 'https://osf.io/other/'
+            with self.assertRaisesRegex(AssertionError, 'Different OSF project'):
+                current_alignment(row, source, receipt)
+
+    def test_project_report_link_must_be_exact_not_a_filename_prefix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            path = Path(binding['osf_project_metadata']['path'])
+            node = json.loads(path.read_text())
+            node['data']['attributes']['description'] = source['metadata']['source_url'] + '-another-report'
+            path.write_text(json.dumps(node))
+            binding['osf_project_metadata']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            bp = Path(receipt['path']); bp.write_text(json.dumps(binding))
+            receipt['sha256'] = hashlib.sha256(bp.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'does not identify this report'):
+                current_alignment(row, source, receipt)
+
+    def test_repository_binding_cannot_bypass_an_unverified_doi(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            row['doi_r'] = '10.1/another'
+            with self.assertRaisesRegex(AssertionError, 'DOI needs its own'):
+                current_alignment(row, source, receipt)
+
+    def test_repository_binding_rejects_changed_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            Path(binding['repository_metadata']['path']).write_text('Another report')
+            with self.assertRaisesRegex(AssertionError, 'evidence changed'):
+                current_alignment(row, source, receipt)
+
     def author_typo_fixture(self,directory):
         authors=[dict(given='Luca',family='Rinaldi'),dict(given='Samuel',family='Di Luca'),
                  dict(given='Avishai',family='Henik'),dict(given='Luisa',family='Girelli')]
