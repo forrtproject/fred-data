@@ -5,6 +5,7 @@ import hashlib
 import html
 import json
 import re
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -329,7 +330,7 @@ def original_alignment(row, target, year_receipt=None, author_receipt=None, doi_
     authors = json.loads(row['author_o'])
     complete_author_match = authors and all(a.get('family') and norm(a['family']) in norm(target['authors'])
                                             for a in authors)
-    if not complete_author_match:
+    if not complete_author_match or author_receipt:
         assert author_receipt, 'Original authors differ or citation is abbreviated'
         metadata_path = Path(author_receipt['path'])
         assert sha(metadata_path.read_bytes()) == author_receipt['sha256']
@@ -345,10 +346,44 @@ def original_alignment(row, target, year_receipt=None, author_receipt=None, doi_
             else:
                 assert set(frozen) <= {'sequence'} and actual.get('name'), 'Unnamed author is not a verified group'
         printed = author_receipt['source_printed_authors']
-        assert norm(target['authors']) == norm(printed), 'Abbreviated citation differs from its source receipt'
         count = author_receipt['source_printed_person_count']
         named = [a for a in registered if a.get('family')]
         assert 1 <= count <= len(named)
+        abbreviation = author_receipt.get('source_author_abbreviation')
+        if abbreviation:
+            assert abbreviation['kind'] == 'jats_etal_element', 'Unknown author abbreviation evidence'
+            path = Path(abbreviation['path'])
+            assert sha(path.read_bytes()) == abbreviation['sha256'], 'JATS author evidence changed'
+            root = ET.fromstring(path.read_bytes())
+            current = root.findall('.//article-meta/article-id[@pub-id-type="doi"]')
+            assert len(current) == 1 and identifier(current[0].text) in ids(row, 'r'), \
+                'JATS author evidence belongs to another current work'
+            refs = root.findall(f".//ref[@id='{abbreviation['reference_id']}']")
+            assert len(refs) == 1, 'JATS author reference is not unique'
+            citations = refs[0].findall('mixed-citation')
+            assert len(citations) == 1, 'JATS author citation is not unique'
+            citation = citations[0]
+            original = citation.findall('pub-id[@pub-id-type="doi"]')
+            assert len(original) == 1 and identifier(original[0].text) in ids(row, 'o'), \
+                'JATS author reference names another original'
+            names, etal = citation.findall('name'), citation.findall('etal')
+            assert len(names) == count and len(etal) == 1, 'JATS author prefix or etal differs'
+            children = list(citation)
+            title = citation.find('article-title')
+            assert title is not None and norm(''.join(title.itertext())) == norm(target['title'])
+            assert children.index(names[-1]) < children.index(etal[0]) < children.index(title)
+            prefix = ''
+            for name, person in zip(names, named[:count], strict=True):
+                family, given = name.findtext('surname'), name.findtext('given-names')
+                initials = ''.join(word[0] for word in re.findall(r'[^\W\d_]+', person.get('given', '')))
+                assert family and given and norm(family) == norm(person['family']) and norm(given) == norm(initials), \
+                    'JATS named author differs from registered metadata'
+                prefix += family + given
+            assert norm(printed) == norm(prefix), 'Literal author prefix differs from JATS names'
+            assert norm(target['authors']) in (norm(printed), norm(printed) + 'etal'), \
+                'Abbreviated citation differs from JATS prefix'
+        else:
+            assert norm(target['authors']) == norm(printed), 'Abbreviated citation differs from its source receipt'
         if count == 1:
             assert (target.get('doi') and identifier(target['doi']) in ids(row, 'o')
                     and re.search(r'\bet\s*\.?\s*al\b', printed, re.I)), \

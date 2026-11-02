@@ -581,6 +581,68 @@ class ProposalDependencies(unittest.TestCase):
             with self.assertRaisesRegex(AssertionError, 'metadata DOI differs'):
                 original_alignment(row, target, author_receipt=receipt)
 
+    def jats_etal_fixture(self, directory):
+        authors = [dict(given='Peter J.', family='Schmidt'), dict(given='Lynnette K.', family='Nieman'),
+                   dict(given='Merry A.', family='Danaceau'), dict(given='Linda F.', family='Adams')]
+        row = dict(doi_o='10.1/original', doi_r='10.1/current', title_o='Actual paper', year_o='1998',
+                   author_o=json.dumps(authors))
+        target = dict(doi='10.1/original', title='Actual paper', year='1998',
+                      authors='Schmidt, PJ, Nieman, LK, Danaceau, MA, et al.')
+        metadata = Path(directory)/'metadata.json'
+        metadata.write_text(json.dumps(dict(message=dict(DOI=row['doi_o'], title=[row['title_o']], author=authors))))
+        xml = Path(directory)/'article.xml'
+        xml.write_text('<article><front><article-meta><article-id pub-id-type="doi">10.1/current</article-id>'
+                       '</article-meta></front><back><ref-list><ref id="R3"><mixed-citation>'
+                       '<name><surname>Schmidt</surname><given-names>PJ</given-names></name>'
+                       '<name><surname>Nieman</surname><given-names>LK</given-names></name>'
+                       '<name><surname>Danaceau</surname><given-names>MA</given-names></name>'
+                       '<etal/><article-title>Actual paper</article-title><pub-id pub-id-type="doi">'
+                       '10.1/original</pub-id></mixed-citation></ref></ref-list></back></article>')
+        receipt = dict(path=str(metadata), sha256=hashlib.sha256(metadata.read_bytes()).hexdigest(),
+                       source_printed_authors='SchmidtPJ, NiemanLK, DanaceauMA', source_printed_person_count=3,
+                       source_author_abbreviation=dict(kind='jats_etal_element', path=str(xml),
+                       sha256=hashlib.sha256(xml.read_bytes()).hexdigest(), reference_id='R3'))
+        return row, target, receipt
+
+    def test_bound_jats_etal_preserves_flattened_and_rendered_author_prefixes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.jats_etal_fixture(directory)
+            before = dict(target)
+            original_alignment(row, target, author_receipt=receipt)
+            original_alignment(row, dict(target, authors='Schmidt PJ, Nieman LK, Danaceau MA'), author_receipt=receipt)
+            self.assertEqual(target, before)
+            del receipt['source_author_abbreviation']
+            with self.assertRaises(AssertionError):
+                original_alignment(row, target, author_receipt=receipt)
+
+    def test_jats_etal_requires_bound_hash_and_exact_reference(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.jats_etal_fixture(directory)
+            for changes in [dict(sha256='wrong'), dict(reference_id='R4'), dict(kind='inferred')]:
+                altered = dict(receipt, source_author_abbreviation=dict(receipt['source_author_abbreviation'], **changes))
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(row, target, author_receipt=altered)
+
+    def test_jats_etal_cannot_bind_another_current_or_original_work(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.jats_etal_fixture(directory)
+            for changes in [dict(doi_r='10.1/other'), dict(doi_o='10.1/other')]:
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(dict(row, **changes), target, author_receipt=receipt)
+
+    def test_jats_etal_rejects_missing_element_changed_author_and_false_rendering(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.jats_etal_fixture(directory)
+            path = Path(receipt['source_author_abbreviation']['path']); raw = path.read_text()
+            for value in [raw.replace('<etal/>', ''), raw.replace('<surname>Danaceau</surname>', '<surname>Other</surname>'),
+                          raw.replace('<given-names>MA</given-names>', '<given-names>PA</given-names>')]:
+                path.write_text(value); receipt['source_author_abbreviation']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+                with self.subTest(value=value), self.assertRaises(AssertionError):
+                    original_alignment(row, target, author_receipt=receipt)
+            path.write_text(raw); receipt['source_author_abbreviation']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaises(AssertionError):
+                original_alignment(row, dict(target, authors=target['authors']+' Adams LF'), author_receipt=receipt)
+
     def conflicting_dates_fixture(self, directory):
         row = dict(doi_o='10.1/original', title_o='Actual paper', year_o='2020',
                    volume_o='36', issue_o='9', pages_o='1823-1834',

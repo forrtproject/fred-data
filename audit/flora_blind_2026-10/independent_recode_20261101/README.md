@@ -2,9 +2,9 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-223 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-nine fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+228 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Twenty-nine fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-The current export contains **29 cases covering 31 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
+The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
 Agreement between two models is a candidate for correction, not a correctness certificate. A proposal enters `automatically_verified_proposals.json` only after:
 
@@ -27,13 +27,15 @@ The bone-strength case (document_0201, row 1208) is eligible as an unapproved ou
 
 The original's frozen 2020 year, literal 2021 citation and conflicting Crossref print-2020/online-2021 fields remain recorded. Exact DOI, title, authoritative full authors, volume, issue, pages and a hashed literal reference establish the same work without changing the year or inferring reliable publication chronology. Document_0205 has interleaved columns and fragment quotes; document_0206 is unconfident; documents_0207 and 0208 have abstract-level evidence. These limits exclude automatic acceptance.
 
-Document_0212 has gaps in the title, Study 2 Discussion and reference list despite its full-text metadata label. Document_0213 is abstract-only; document_0214 has an unresolved replication-chain target question; document_0216 has unconfident Wynn outcomes and uncertain claim attribution. Complete packet reading does not resolve these limits. Document_0215 has a verified complete earlier Sol reading and blind agreement on Schmidt 1998, while frozen row 439 names a 2017 metabolome paper. A separate source reviewer is checking that original correction together with pooled original/new cohorts, the dependent type and outcome, and the extracted DOI/PMID boundary.
+Document_0212 has gaps in the title, Study 2 Discussion and reference list despite its full-text metadata label. Document_0213 is abstract-only; document_0214 has an unresolved replication-chain target question; document_0216 has unconfident Wynn outcomes and uncertain claim attribution. Complete packet reading does not resolve these limits. Document_0215's original correction is eligible: primary JATS, PubMed and Crossref establish Schmidt 1998 and the DOI/PMID boundary; the frozen 2017 metabolome paper is background. Its new cohort qualifies as replication under the codebook, and the explicit author verdict remains successful. Pooling 25 original with 85 new participants limits independence; no new-cohort-only success is claimed.
 
-Document_0217 is unconfident, document_0218 contains conflicting Results and Discussion descriptions of the reading-course effect, and document_0220 has an unresolved replication-chain target question. Document_0219's fresh blind Sol reading passes complete-source checks and agrees on mixed. A separate source reviewer is checking the original-specific findings and changed behavior/population before any proposal is eligible. The earlier incomplete Sol reading remains uncertified. These four cases remain outside the automatic set.
+Document_0217 is unconfident, document_0218 contains conflicting Results and Discussion descriptions of the reading-course effect, and document_0220 has an unresolved replication-chain target question. These cases remain held. Document_0219's mixed outcome is eligible after two complete blind readings and source review of explicit original-specific agreements and contrasts. General theory confirmation and changed behavior/population do not make it descriptive only. The earlier incomplete Sol reading stays uncertified. The parent brief's incorrect author label is explicitly corrected to Xu & Zhang using the primary source and Crossref; the raw brief remains preserved.
 
 Document_0221 has unresolved record-type and computation-axis boundaries, including new observations that must be separated from original-data robustness checks. Document_0222 has an unconfident verdict and reconstructed author names from damaged OCR; those inferred names cannot serve as a literal citation. Document_0223's confident reproduction axes still require independent comparison and source review, separating original-data checks from a new Nationscape benchmark. No automatic correction follows these readings.
 
-Document_0224's dementia class-structure outcome is unconfident. Document_0225 has complete blind agreement on statistically successful but flawed, but its reported photographic-prime statistics need to be positively attributed to the current replication rather than the original. A source review is prepared, not dispatched, to check that evidence, the central elongated-shape critique and the 2008/2010 target scope. Attempt wording alone cannot establish a replicated effect.
+Document_0224's dementia class-structure outcome is unconfident. Document_0225's statistically successful but flawed outcome is eligible. The authors' own method-validation statement and current Experiment 1 establish an obtained priming effect; the central elongated-shape critique challenges its tool-category interpretation. The ambiguous photographic-prime statistics are excluded from that inference. Separate obtained-effect and critique passages remain supporting dependencies; no synthetic combined quote or additional 2010 target is introduced. Source confidence remains moderate-high, with figures and the original full text unread.
+
+The newly read thesis and documents_0227–0229 have unconfident outcomes or reproduction axes. Document_0230's confident failure remains a single blind reading pending independent comparison and source review. None enters the automatic set.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
@@ -68,7 +70,9 @@ Quotations retain exact Unicode, whitespace and UTF-8 offsets. Boundary whitespa
 
 The export also checks authoritative DOI/title/author/year correspondence and complete frozen-row preconditions. Verified printed author errors and CSV newline representation differences remain explicit and narrowly bound to their source receipts. Raw codings and reviews are preserved.
 
-Run the 137 validation and dependency controls, then rebuild the guarded export:
+A JATS `etal` element lost in text extraction can bind a flattened author prefix and its rendered form only with the hashed XML, exact current/original DOIs, reference, title, ordered named authors and initials. The exporter checks supplied author evidence even if all surnames appear in a coding. This leaves the raw coding strings unchanged.
+
+Run the 141 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v
