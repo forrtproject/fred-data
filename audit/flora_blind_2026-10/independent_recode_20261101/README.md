@@ -396,3 +396,12 @@ Archivedscope46selected33533of126851characters leaves93318unproven; fresh readin
 
 
 Additional0260completion:0648uninformative/TRUE,0649mixed/TRUE,0650mixed/FALSE,each passed actual full native reading/schema/metadata/quote/hash checks. Root read all three full coding JSONs,not their full primary sources. Authored interpretability verdict,participant/item contrast,and main-finding versus secondary-contrast scope retained without automatic acceptance. Current totals637actual initialOpus+1projection(638covered),7upgrades,48freshSol,691ordinary validations;85archivedscopechecks. Unrelated0261/0262/0263active,next0264. All holds,exports,684inputs,192controls and59recoverygaps unchanged.
+
+
+## 2026-11-02 — Further three readings and curriculum scope-review preparation
+
+Opus0261documents0651–0653passed actual whole native reading,schema,metadata and exact quote/hash checks. Root read allthree codingJSONs and the entire18338character0651primary source. Its reasons not to discount the original and pooled significance do not alone establish partial replication; explicit As-in-original neutral/one-sided null agreement is distinct evidence if no overriding whole-attempt verdict. Five exact primary proofs preserve rawmixed/FALSE and outcome/quote/confidence scope.0652strongly-replicated primary finding and0653overallfailure retained with unrun-analysis/expected-null qualifications.
+
+A separate NONBLIND source45review is prepared,notyetdispatched,request86eba3d2bd4439d5429f20d2b1df7f9cfc676f331d0f16b33aa66c1503334054. It must establish actual earlier reported finding versus curriculum implementation,including review-mediated empirical claims,1992development studies,prior implementations,DIRECTbenchmark and missing supplement limits. MissingDOI or review genre alone cannot reject a target; replicationwording alone cannot establish one. FreshSolnot-a-replication/0 versus Opusreplication/unnamed successful target preserved; oldnonliteraloutput excluded,no thirdblindvote. Any exclusion is whole229record/original/outcome remedy,not type-only patch. EightinclusivefreeHTTP/$0cap.
+
+Current640actual initialOpus+1verifiedprojection(641covered),7upgrades,48freshSol,694ordinaryvalidations,85archivedscopechecks. Activeunrelated0262/0263/0264,next0265;one source review prepared. All684inputs,192controls,59recoverygaps,exports and provider/source/attempt holds retained. Originalfourretries onlyatveryend. No canonical edits.
