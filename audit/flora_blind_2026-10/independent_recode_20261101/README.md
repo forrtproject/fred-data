@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-248 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+259 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -43,11 +43,15 @@ Roodman's record type and computation result (document_0233) remain unconfident:
 
 Documents_0235, 0237 and 0241 have unconfident outcomes; 0241 also lacks its Analysis text. Other recent confident results still require independent comparison and source review, preserving the distinctions between changed PISA waves, selected SCORE claims, new mechanistic extensions and the findings actually re-tested.
 
-Bertin's report (document_0236) has two new complete blind codings that agree with the frozen reproduction axes. A source reviewer is checking whether the frozen preprint and cited journal article are versions of the same empirical work, together with the current OSF report's identity. The earlier Sol reading was complete, but its evidence heading added punctuation absent from the source. Whitespace-only projection rejected it; raw outputs remain unchanged and that earlier coding is not used for acceptance. No original-paper correction follows from different DOIs or title wording alone.
+Bertin's report (document_0236) has two new complete blind codings that agree with the frozen reproduction axes. Source review supports a paper-level relationship between the preprint and journal versions, but leaves the tested numerical version unresolved. The journal's inspected coefficients differ from the report's claimed original numbers; the preprint PDF was not read within the eight-request budget. Shared data pointers establish neither identical data-file versions nor a formal DOI alias. Row 1440 retains its preprint identifier and stays held; the frozen axes are report-relative, without an automatic endorsement of journal-version numerical recovery. OSF 54syu is the report component and q6mxh its registration. The earlier Sol reading was complete, but its evidence heading added punctuation absent from the source. Whitespace-only projection rejected it; raw outputs remain unchanged and that earlier coding is not used for acceptance.
 
 Document_0250 re-analyses Ceylan et al.'s original Study 2 data and explicitly declines a new-data replication. Its confident reproduction axes remain a single blind result. Independent review must separate central numerical discrepancies from incidental or eventually recovered values, and distinguish effect-size qualification from directional agreement. Missing figures, screenshots and linked responses remain explicit limits.
 
 Document_0247's reproduction axes are unconfident, and document_0248 has abstract-level evidence with an unconfident outcome. Document_0249 keeps its two targets separate: Abe 2012 is unconfident; Matsumoto & Hwang 2013 has a confident coding but an unresolved 2015 citation and finding-attribution conflict. The latter cannot be assumed to be a harmless citation slip. Neither pair enters the automatic set.
+
+Documents_0251, 0255 and 0257 have unconfident outcomes or axes. The merged-reference DOI in 0251 is unverified; 0255 is abstract-level; 0257's closing theory-support statement may not cover its mixed original-specific comparisons. Document_0253's zero targets do not authorize exclusion: its five-case series may repeat only within-study interventions, but the missing front matter and relationship to earlier published findings require positive source review and independent comparison.
+
+Document_0256 combines a successful new-data IIA replication with original-data reproduction and robustness challenges. Those components need joint scope review. Document_0260 has a confident delayed-keyword verdict but no positively identified single original; likely Thiede citations cannot bind a frozen pair. The other new confident results remain single blind readings: original-specific chain questions, pooled original observations, awareness preconditions and different reports of the same study remain explicit dependencies.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
