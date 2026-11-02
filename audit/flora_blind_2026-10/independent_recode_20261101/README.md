@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-283 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+285 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -68,6 +68,8 @@ Document_0274 has named prediction and mediation agreements alongside a divergen
 Documents_0280 and 0281 are unconfident. The former separates a confirmatory all-pairs test from exploratory detected-only comparisons and uncertain original handling of non-detects. The latter needs a joint record-type and outcome decision across changed data, training settings and model variants. Document_0282's reproduction covers only nine of more than seventy models; repaired code, coefficient labels and differing intervals remain relevant limits. Its missing original bibliography also needs positive identity evidence. None enters the proposed batch.
 
 Document_0283 is abstract-only and unconfident about numerical discrepancies and historical reconstruction. Document_0284 separates agreeing experiments, a confounded contrast and an experiment unable to address the original observation. Document_0285 keeps original-data robustness checks distinct from a new NIBRS outcome source; a baseline column label alone cannot establish numerical recovery. These readings remain outside the proposed batch pending independent comparison and source review.
+
+Document_0286's mixed result has explicit accuracy agreement and speed/recall exceptions, with inconsistent original-speed descriptions and a changed VR design. Document_0287 gives an original-specific failure statement alongside policy-boundary qualifications. Neither design adaptation nor a shared recruitment panel settles empirical target correspondence; both await independent comparison and source review.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
