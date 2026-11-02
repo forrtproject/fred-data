@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-355 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+358 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -116,6 +116,8 @@ Document_0351 keeps Kees 2006's possible additional target separate from the nam
 Document_0357 compares a new corpus of practitioner articles with earlier training materials. Similar-pattern wording and category-specific contrasts require verdict-scope review. Its raw files are preserved; a separately hashed parent projection moves extra boundary descriptions into metadata labels without changing coding or evidence. Reported packet-local hashing and Git commands violated prompt controls and remain recorded process limits. The report stays outside the proposed batch.
 
 Document_0358's zero-target reading distinguishes repetition within the paper from retesting a published finding. The named Kahn and Geer backlash comparison remains a possible counterexample requiring independent review. Agreement with a literature baseline and a purposeful retest must be distinguished before any whole-record exclusion; no removal is proposed yet.
+
+Document_0359's failed verdict concerns the chapter-reported adjective-association finding, rather than the broader gender theory. Document_0360 gives a final pooled SCORE failure but lacks full report-identifying front matter. Document_0361's successful code remains held over broad hypothesis support versus a specific paradigm failure, and Dunn 2008's possible target role. All three require independent comparison and source review.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
