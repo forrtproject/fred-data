@@ -2405,3 +2405,12 @@ Fresh141,155and156pass all73proofs and48,685registeredcharacters,bringingfreshSo
 Rootcompared155targetreasoningsonly: bothmixedbutdifferentconfidence;previouslysignificant-subsetfailureversusanauthor-labelledreplicationofanoriginalnonsignificanteffectmustnotbedecidedbypvaluetally. Rootreadthewhole156abstract/previewpacketandbothcodes: bothsuccessful/truefromtheconclusionsstatement,withnontraditionalstudentabsencepreserved. Missingfullresults/originalbibliographypreventanunqualifiedcomplete-recordremedy.162targetreasoningsalsoagreeonreproducednumbersandrobustness,butmodel/index/infantsubsampleexceptionsremainforspecificfinding-scopeassessment;readingqualificationdoesnotsettlethatjudgment.
 
 Source141andfresh159/161areactive. Exportstays39cases/42fields plusthreerecordexclusions,37individualholdsandzeroapproved/appliedcanonicalchanges.198implementationcheckspreviouslypass;no newcodechangesorpaidspend. OriginalfourOpusretriesremainattheend;privateignoredproofsremainlocal.
+
+
+## 2026-11-02 — Overall recipe verdict checked against specific exceptions
+
+Fresh 161 passes five ordered chunks, 50,781 registered characters and 20 literal proofs, with exact metadata, schema and hash checks. Totals are 96 fresh Sol readings and 769 ordinary validations. Both eligible coders judge Köbach et al. (2014) successful with true confidence. Root compared target reasons and focused primary passages, not both complete coding JSONs or the full current/original papers.
+
+Replication-recipe item 33 explicitly judges the whole attempt a Success based on similar importance patterns and acceptable model fits. The caption and limitations separately identify nonreplicated findings. Those exceptions remain visible; the opening claim about the most important findings does not itself establish agreement for every result. Event-list, sample-timing, model-fit and causal-interpretation limits are preserved. No automatic correction follows from the same-label agreement.
+
+Source review 141, fresh reading 159 and archive group 28 are active. The scope count remains 162 across 27 groups. Export remains 39 cases/42 fields plus three record exclusions, with 37 individual holds and no approved or applied canonical changes. The 198 implementation checks previously passed; this checkpoint changes evidence and state only. There is no paid spend. The original four Opus retries remain reserved for the end; private ignored evidence remains local.
