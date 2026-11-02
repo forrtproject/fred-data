@@ -2,9 +2,9 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-368 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+368 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty-one fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-Groups_0157 and 0160 stopped at provider safeguards. The parent retained Opus 5.5 when the first offered an automatic model switch; the second returned a terminal API failure. Documents_0366, 0367, 0374 and 0375 have no coding outputs or validated scientific result. Charged attempts and source holds remain recorded. Preflight blocks new Opus dispatches and blocks held packet IDs or identical source hashes across roles, preventing automatic retries or rerouting. The remaining Opus group has completed. Required second blind readings continue on Sol for unflagged documents_0044, 0069 and 0370, which already have complete Opus readings and lack usable prior Sol codings.
+Groups_0157 and 0160 stopped at provider safeguards. The parent retained Opus 5.5 when the first offered an automatic model switch; the second returned a terminal API failure. Documents_0366, 0367, 0374 and 0375 have no coding outputs or validated scientific result. Charged attempts and source holds remain recorded. Preflight blocks new Opus dispatches and blocks held packet IDs or identical source hashes across roles, preventing automatic retries or rerouting. No Opus group remains active. Required second blind readings continue on Sol for unflagged documents_0069, 0096 and 0370, which already have complete Opus readings and lack usable prior Sol codings.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -126,6 +126,8 @@ Document_0364's mixed code requires comparison of journal and time-window differ
 Document_0362's success is unconfident over partial predictive support and the separate NOSQ extension. Document_0363's whole-attempt failure concerns the magpie mark test. Document_0371 separates six loci and partly shared pedigrees; documents_0372 and 0373 have only abstract-level evidence, with the latter's original-null attribution inferred and unconfident. All remain outside the proposed batch.
 
 Document_0368 keeps two fear-development targets separate, including age-specific outcomes and model changes. Document_0369 distinguishes recovery of worker-equity estimates from errors in the data and stated implementation; productivity is outside its reanalysis. Document_0370 needs trial-report and secondary-outcome scope aligned with its overall verdict. All remain outside the proposed batch, and its fresh Sol comparison is pending.
+
+Document_0044 now has two complete blind readings agreeing confidently on Parrish et al. (2015), Experiment 2, and failed. Its original-identity field remains held for separate source review, including cross-species claim scope and conflicting preprint dates. Agreement on outcome alone cannot authorize the bibliographic correction or its dependent fields.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
