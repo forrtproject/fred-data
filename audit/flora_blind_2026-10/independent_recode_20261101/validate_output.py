@@ -159,24 +159,35 @@ def command_chunk_utf8_wrap_loss(command, displayed, text, filename):
     return None
 
 
+def native_read_bom_loss(item, chunk_path, chunk_raw):
+    """Read may omit one UTF-8 signature; every other returned byte must match."""
+    if item.get('type') != 'dynamic_tool' or item.get('textTruncated', True):
+        return None
+    try:
+        call = json.loads(item.get('text', ''))
+        output = call['output']['file']
+        if not (call['toolName'] == 'Read'
+                and Path(call['input']['file_path']).resolve() == chunk_path.resolve()
+                and Path(output['filePath']).resolve() == chunk_path.resolve()
+                and output['startLine'] == 1
+                and output['numLines'] == output['totalLines']):
+            return None
+        shown = output['content'].encode()
+        if shown == chunk_raw:
+            return 0
+        if chunk_raw.startswith(b'\xef\xbb\xbf') and shown == chunk_raw[3:]:
+            return 1
+    except (KeyError, TypeError, ValueError, AttributeError):
+        return None
+    return None
+
+
 def contains_exact_chunk(item, packet, chunk_path, chunk_raw):
     if item.get('textTruncated', True):
         return False
     body = item.get('text', '')
     if item.get('type') == 'dynamic_tool':
-        # Native Read's durable record includes raw file content, without line
-        # decoration. Verify actual returned content, not just input path/length.
-        try:
-            call = json.loads(body)
-            output = call['output']['file']
-            return (call['toolName'] == 'Read'
-                    and Path(call['input']['file_path']).resolve() == chunk_path.resolve()
-                    and Path(output['filePath']).resolve() == chunk_path.resolve()
-                    and output['startLine'] == 1
-                    and output['numLines'] == output['totalLines']
-                    and output['content'].encode() == chunk_raw)
-        except (KeyError, TypeError, ValueError):
-            return False
+        return native_read_bom_loss(item, chunk_path, chunk_raw) is not None
     if item.get('type') == 'command_execution':
         command, _, displayed = body.partition('\n')
         if packet.name not in command or chunk_path.relative_to(packet).as_posix() not in command:
@@ -255,7 +266,9 @@ def validate(packet, output, receipts, expected_inputs=None):
         p, item = matches[0]
         leading, trailing = (0, 0)
         inserted_breaks = 0
-        if item.get('type') == 'command_execution':
+        if item.get('type') == 'dynamic_tool':
+            leading = native_read_bom_loss(item, chunk_path, chunk_raw)
+        elif item.get('type') == 'command_execution':
             command, _, displayed = item['text'].partition('\n')
             trim = command_chunk_trim_loss(command, displayed, chunk_raw.decode(), chunk_path.name)
             if trim is not None:

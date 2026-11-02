@@ -8,7 +8,7 @@ from pathlib import Path
 
 from prepare_packets import B
 from project_prior_sol import literal_whitespace_span, project
-from validate_output import command_chunk_trim_loss, command_chunk_utf8_wrap_loss, contains_exact_chunk, validate
+from validate_output import command_chunk_trim_loss, command_chunk_utf8_wrap_loss, contains_exact_chunk, native_read_bom_loss, validate
 
 
 class EvidenceValidation(unittest.TestCase):
@@ -255,6 +255,79 @@ class EvidenceValidation(unittest.TestCase):
     def test_native_read_missing_content_rejected_despite_line_counts(self):
         self.native_read_receipt('We retest the original claim.')
         with self.assertRaises(ValueError): self.run_validation()
+
+    def test_native_read_single_utf8_signature_is_only_allowed_omission(self):
+        path = self.packet / 'chunks/one.txt'
+        self.native_read_receipt('Complete α text.\n')
+        raw = '\ufeffComplete α text.\n'.encode()
+        self.assertEqual(native_read_bom_loss(self.receipt, path, raw), 1)
+        self.assertTrue(contains_exact_chunk(self.receipt, self.packet, path, raw))
+        self.assertEqual(native_read_bom_loss(self.receipt, path, raw[3:]), 0)
+
+    def test_native_read_bom_rule_rejects_source_edits_and_other_whitespace_loss(self):
+        path = self.packet / 'chunks/one.txt'
+        raw = '\ufeff\nComplete α text.\n'.encode()
+        for shown in ('Complete α text.\n', '\nComplete text.\n', '\nComplete α text.', '\nComplete α text. extra\n'):
+            self.native_read_receipt(shown)
+            with self.subTest(shown=shown):
+                self.assertIsNone(native_read_bom_loss(self.receipt, path, raw))
+
+    def test_native_read_bom_rule_cannot_strip_multiple_or_interior_markers(self):
+        path = self.packet / 'chunks/one.txt'
+        self.native_read_receipt('Complete text.\n')
+        for text in ('\ufeff\ufeffComplete text.\n', 'Complete\ufeff text.\n'):
+            with self.subTest(text=text):
+                self.assertIsNone(native_read_bom_loss(self.receipt, path, text.encode()))
+
+    def test_native_read_bom_still_requires_exact_paths_and_complete_line_range(self):
+        path = self.packet / 'chunks/one.txt'
+        raw = '\ufeffComplete text.\n'.encode()
+        for mutation in ('input-path', 'output-path', 'start-line', 'partial-lines'):
+            self.native_read_receipt('Complete text.\n')
+            call = json.loads(self.receipt['text'])
+            if mutation == 'input-path':
+                call['input']['file_path'] = '/other/source'
+            elif mutation == 'output-path':
+                call['output']['file']['filePath'] = '/other/source'
+            elif mutation == 'start-line':
+                call['output']['file']['startLine'] = 2
+            else:
+                call['output']['file']['numLines'] = 2
+            self.receipt['text'] = json.dumps(call)
+            with self.subTest(mutation=mutation):
+                self.assertIsNone(native_read_bom_loss(self.receipt, path, raw))
+
+    def test_native_read_bom_does_not_override_truncation(self):
+        self.native_read_receipt('Complete text.\n')
+        self.receipt['textTruncated'] = True
+        self.assertIsNone(native_read_bom_loss(self.receipt, self.packet / 'chunks/one.txt',
+                                              '\ufeffComplete text.\n'.encode()))
+
+    def test_native_read_bom_receipt_records_loss_without_changing_frozen_bytes(self):
+        raw = b'\xef\xbb\xbf' + (self.packet / 'article.txt').read_bytes()
+        source_hash = hashlib.sha256(raw).hexdigest()
+        for path in (self.packet / 'article.txt', self.packet / 'chunks/one.txt'):
+            path.write_bytes(raw)
+        self.coding['text_sha256'] = source_hash
+        meta = json.loads((self.packet / 'metadata.json').read_text())
+        meta['text_sha256'] = source_hash
+        self.write(self.packet / 'metadata.json', meta)
+        self.write(self.output / 'coding.json', self.coding)
+        self.proof.update(character_start=1, character_end=1 + len(self.proof['quote']),
+                          utf8_start=3, utf8_end=3 + len(self.proof['quote'].encode()), source_sha256=source_hash)
+        for name in ('quote_spans.json', 'evidence_map.json'):
+            self.write(self.output / name, dict(text_sha256=source_hash, spans=[self.proof]))
+        self.write(self.output / 'reading_manifest.json', dict(text_sha256=source_hash,
+                   model_visible_character_ranges=[[0, len(raw.decode())]], full_source_read=True,
+                   untruncated_tool_evidence=['fixture receipt']))
+        self.write(self.packet / 'chunks.json', dict(chunks=[dict(file='chunks/one.txt', character_start=0,
+                   character_end=len(raw.decode()), sha256=source_hash)]))
+        self.expected_inputs = {p.relative_to(self.packet).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                                for p in self.packet.rglob('*') if p.is_file()}
+        self.native_read_receipt(raw[3:].decode())
+        result = self.run_validation()
+        self.assertEqual(result['reading_receipts'][0]['leading_whitespace_or_bom_not_preserved_by_timeline'], 1)
+        self.assertEqual((self.packet / 'article.txt').read_bytes(), raw)
 
     def test_plain_cat_exact_output_accepted(self):
         text = (self.packet / 'article.txt').read_bytes().decode()
