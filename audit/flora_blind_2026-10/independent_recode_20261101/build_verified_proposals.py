@@ -65,6 +65,23 @@ def review_field_dispositions(review):
     """Read explicit field identities; conflicting aliases cannot authorize a fix."""
     case_table = 'reviews' not in review and 'field_reviews' not in review and 'cases' in review
     entries = review.get('reviews', review.get('field_reviews', review.get('cases')))
+    if 'field_dispositions' in review:
+        assert entries is None and 'assigned_fields' not in review, 'Conflicting source review field tables'
+        assert (review.get('kind') == 'nonblind_primary_source_adjudication'
+                and review.get('status') == 'completed'), 'Unrecognized native adjudication table'
+        row = review.get('input_row_index_zero_based')
+        assert type(row) is int and row >= 0, 'Invalid native adjudication row'
+        entries = review['field_dispositions']
+        assert isinstance(entries, list) and entries, 'Missing native field dispositions'
+        forbidden = {'row', 'row_id', 'row_index', 'input_row_index', 'input_row_index_zero_based',
+                     'field_review_id', 'case_id', 'requested_fields'}
+        assert all(isinstance(entry, dict) and not forbidden.intersection(entry) for entry in entries), \
+            'Native field overrides review identity'
+        fields = [entry.get('field') for entry in entries]
+        assert all(isinstance(field, str) and re.fullmatch(r'[a-z_]+', field) for field in fields), \
+            'Invalid native adjudication field'
+        assert len(set(fields)) == len(fields), 'Duplicate native field disposition'
+        entries = [dict(entry, input_row_index=row) for entry in entries]
     if 'assigned_fields' in review:
         assert entries is None, 'Conflicting source review field tables'
         entries = review['assigned_fields']
@@ -127,6 +144,24 @@ def review_row_binding(review, row_index, rows, receipt=None, review_sha256=None
     snapshots = review.get('baseline_snapshot', {})
     csv_reference = review.get('frozen_csv')
     external_name = csv_reference.get('baseline_snapshot') if isinstance(csv_reference, dict) else None
+    if 'field_dispositions' in review:
+        review_field_dispositions(review)
+        assert 'baseline_snapshot' not in review and external_name is None, 'Conflicting native review baseline'
+        assert review['input_row_index_zero_based'] == row_index, 'Native review belongs to another frozen row'
+        baseline = review.get('baseline', {})
+        assert set(baseline) == {'csv_sha256', 'row_count', 'rows'}, 'Incomplete native review baseline'
+        assert baseline['csv_sha256'] == BASELINE_SHA and baseline['row_count'] == len(rows), \
+            'Native review baseline belongs to another input'
+        snapshots_list = baseline['rows']
+        assert isinstance(snapshots_list, list) and len(snapshots_list) == 1, 'Ambiguous native review baseline'
+        snapshot = snapshots_list[0]
+        assert set(snapshot) == {'input_row_index_zero_based', 'row'}, 'Incomplete native row snapshot'
+        assert type(snapshot['input_row_index_zero_based']) is int and snapshot['input_row_index_zero_based'] == row_index, \
+            'Native snapshot belongs to another frozen row'
+        assert snapshot['row'] == rows[row_index], 'Native review baseline differs from the frozen record'
+        for entry in review['field_dispositions']:
+            assert entry['field'] in rows[row_index] and entry.get('baseline_value') == rows[row_index][entry['field']], \
+                'Native field baseline differs from the frozen record'
     if external_name is not None:
         assert not snapshots, 'Conflicting embedded and external review snapshots'
         assert isinstance(external_name, str) and Path(external_name).name == external_name, \

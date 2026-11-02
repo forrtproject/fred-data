@@ -113,6 +113,93 @@ class ProposalDependencies(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, 'Conflicting source review field tables'):
             review_field_dispositions(review)
 
+    def native_review_fixture(self):
+        row = dict(type='replication', outcome='successful', doi_o='original', doi_r='current')
+        review = dict(kind='nonblind_primary_source_adjudication', status='completed',
+                      input_row_index_zero_based=0,
+                      baseline=dict(csv_sha256=BASELINE_SHA, row_count=1,
+                                    rows=[dict(input_row_index_zero_based=0, row=dict(row))]),
+                      field_dispositions=[dict(field=field, disposition='supported_correction',
+                                               baseline_value=row[field]) for field in ('type', 'outcome')])
+        return row, review
+
+    def test_native_dispositions_bind_both_fields_to_one_complete_frozen_record(self):
+        row, review = self.native_review_fixture()
+        self.assertEqual(review_field_dispositions(review),
+                         [(0, 'type', 'supported_correction'), (0, 'outcome', 'supported_correction')])
+        review_row_binding(review, 0, [row])
+
+    def test_native_dispositions_reject_competing_review_tables(self):
+        for key in ('reviews', 'field_reviews', 'cases', 'assigned_fields'):
+            row, review = self.native_review_fixture()
+            review[key] = []
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, 'Conflicting'):
+                review_field_dispositions(review)
+
+    def test_native_dispositions_reject_nested_identity_overrides(self):
+        for key in ('row', 'row_id', 'row_index', 'input_row_index', 'input_row_index_zero_based',
+                    'field_review_id', 'case_id', 'requested_fields'):
+            row, review = self.native_review_fixture()
+            review['field_dispositions'][0][key] = 1
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, 'overrides'):
+                review_field_dispositions(review)
+
+    def test_native_dispositions_reject_invalid_top_level_identity_or_state(self):
+        for changes in (dict(input_row_index_zero_based='0'), dict(input_row_index_zero_based=True),
+                        dict(input_row_index_zero_based=-1), dict(status='running'), dict(kind='other')):
+            row, review = self.native_review_fixture()
+            review.update(changes)
+            with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                review_field_dispositions(review)
+
+    def test_native_dispositions_preserve_uncertainty_and_reject_conflicting_statuses(self):
+        row, review = self.native_review_fixture()
+        review['field_dispositions'][1]['disposition'] = 'policy_boundary'
+        self.assertEqual(review_field_dispositions(review)[1], (0, 'outcome', 'policy_boundary'))
+        review['field_dispositions'][1]['status'] = 'supported_correction'
+        with self.assertRaisesRegex(AssertionError, 'Conflicting'):
+            review_field_dispositions(review)
+        row, review = self.native_review_fixture()
+        review['field_dispositions'].append(dict(review['field_dispositions'][0]))
+        with self.assertRaisesRegex(AssertionError, 'Duplicate'):
+            review_field_dispositions(review)
+
+    def test_native_baseline_cannot_change_an_unproposed_identifier_or_input(self):
+        row, review = self.native_review_fixture()
+        with self.assertRaisesRegex(AssertionError, 'frozen record'):
+            review_row_binding(review, 0, [dict(row, doi_o='another-original')])
+        for key, value in (('csv_sha256', 'wrong'), ('row_count', 2)):
+            row, review = self.native_review_fixture()
+            review['baseline'][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, 'another input'):
+                review_row_binding(review, 0, [row])
+
+    def test_native_baseline_rejects_missing_or_multiple_rows_and_wrong_field_values(self):
+        for mutation in ('missing-row', 'multiple-rows', 'wrong-row', 'missing-column', 'wrong-field-value'):
+            row, review = self.native_review_fixture()
+            if mutation == 'missing-row':
+                review['baseline']['rows'] = []
+            elif mutation == 'multiple-rows':
+                review['baseline']['rows'] *= 2
+            elif mutation == 'wrong-row':
+                review['baseline']['rows'][0]['input_row_index_zero_based'] = 1
+            elif mutation == 'missing-column':
+                del review['baseline']['rows'][0]['row']['doi_o']
+            else:
+                review['field_dispositions'][0]['baseline_value'] = 'reproduction'
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                review_row_binding(review, 0, [row])
+
+    def test_native_baseline_cannot_hide_behind_an_existing_snapshot_format(self):
+        row, review = self.native_review_fixture()
+        review['baseline_snapshot'] = {}
+        with self.assertRaisesRegex(AssertionError, 'Conflicting'):
+            review_row_binding(review, 0, [row])
+        del review['baseline_snapshot']
+        review['input_row_index_zero_based'] = 1
+        with self.assertRaisesRegex(AssertionError, 'another frozen row'):
+            review_row_binding(review, 0, [row, row])
+
     def test_named_baseline_snapshot_must_match_the_entire_frozen_record(self):
         row = {'doi_o': 'original', 'doi_r': 'current'}
         review = {'baseline_snapshot': {'0': {'input_row_index_zero_based': 0, 'row': row,
