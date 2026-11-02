@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-331 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+333 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -98,6 +98,8 @@ Documents_0320–0327 remain outside the proposed batch. Their dependencies incl
 Document_0332 is abstract-only and does not establish reconstructed-data identity. Document_0333's success concerns a focal SCORE claim; the role of its secondary null and a lost wording correction need review. Document_0334 lacks front matter and appendices, with unresolved correspondence between a tested developmental sequence and broader model support. All remain outside the proposed batch.
 
 Document_0328's reproduction covers main pricing regressions in rebuilt samples, with causal-identification challenges and surviving alternatives kept distinct. Document_0329 is cut off before the conclusion, so absence of an overall verdict cannot be established. Documents_0330 and 0331 need joint target/type/outcome review: a verdict against a theory does not by itself show a failed retest of a published empirical finding. Their raw codings remain unchanged.
+
+Document_0335 combines original-cohort reanalysis, a new cohort and a scaling-validity critique, requiring joint classification and outcome scope. Document_0336 explicitly contrasts two SNP results, with the original status of its secondary, sub-genome-wide association still needing verification. Both complete readings were checked against actual native tool returns despite unavailable tool-call IDs in the child's own manifest. Neither enters the proposed batch.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
