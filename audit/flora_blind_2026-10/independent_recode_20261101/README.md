@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-344 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+347 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -108,6 +108,8 @@ Documents_0337 and 0338 are unconfident. The former has path-layer comparisons a
 Documents_0342 and 0343 are abstract-only. Their apparent comparisons need original-finding correspondence and a distinction between a result verdict and attempt language. Document_0344 combines original-wave models and a sparse new wave, with an unconfident outcome. A shared U-shape cannot establish agreement unless the same measured outcome is compared; its type and result axes require joint review.
 
 Document_0345 is unconfident, combines new RCTs with the original in pooled estimates, and lacks front matter. Document_0346 keeps a target-specific partial result separate from broader failure wording and another target's failed result; task versions and age differences remain relevant. Document_0347's explicit failure concerns the hill-paradigm helper preference, with the video-model and original-version roles still requiring comparison. None enters the proposed batch.
+
+Document_0348 preserves four separate intensity comparisons, including an unconfident success where the original did not test the overall intensity effect. Document_0349's failed curvilinear ownership claim remains separate from new family-director hypotheses; its numerical tables are unavailable. Document_0350 requires alignment of neural timing and scalp region before its mixed label is adopted. All three await independent comparison and source review.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
