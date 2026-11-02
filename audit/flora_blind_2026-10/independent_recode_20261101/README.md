@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-298 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+301 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -80,6 +80,8 @@ Document_0294's repeated success verdict concerns pooled correlational results; 
 Document_0296 separates general free-will belief from agent-specific attribution, including the different role of a novel theory test. Document_0297 separates anxiety associations from the original specificity claim. Document_0298 has a “largely replicated” conclusion alongside an unreplicated anxiety correlation and an untested body-sway measure. Their confident labels remain single blind results; the extent of each verdict still needs review.
 
 Document_0304's mixed coding follows named supported and failed effects, with a “Mostly Successful” title, outlier sensitivity and conflicting effect-size descriptions still requiring review. Its three vignettes share one sample. The original DOI is truncated and remains unverified; extension measures and untested studies do not receive an original-outcome verdict.
+
+Document_0300 maps thirteen effects to twelve papers. Its use of a collection verdict by complement needs exhaustive target attribution, and imagined contact is unconfident because summary sections count it differently. Document_0302 covers one original-data table, with varied robustness results across claims. Document_0303 is unconfident about a small formal-criterion miss and has dollar/log-mean ambiguity. All remain outside the proposed batch.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
