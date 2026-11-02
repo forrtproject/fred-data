@@ -2,9 +2,9 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-360 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+365 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-Group_0157 was interrupted by a provider safeguard. The parent retained the requested Opus 5.5 model instead of enabling the offered automatic model switch. Documents_0366 and 0367 have no coding outputs or validated scientific result. Their charged attempt and source hold remain recorded, with no automatic retry or model reroute. Unrelated groups continue.
+Groups_0157 and 0160 stopped at provider safeguards. The parent retained Opus 5.5 when the first offered an automatic model switch; the second returned a terminal API failure. Documents_0366, 0367, 0374 and 0375 have no coding outputs or validated scientific result. Charged attempts and source holds remain recorded. Preflight blocks new Opus dispatches and blocks held packet IDs or identical source hashes across roles, preventing automatic retries or rerouting. The already-running unrelated group_0158 may complete.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -123,6 +123,8 @@ Document_0359's failed verdict concerns the chapter-reported adjective-associati
 
 Document_0364's mixed code requires comparison of journal and time-window differences, with author findings kept separate from appended peer reviews. Document_0365 requires alignment of model offsets and neighborhood outcomes before combining direct and conceptual comparisons. The primary association failure and retained predictors remain separate. Neither report enters the proposed batch.
 
+Document_0362's success is unconfident over partial predictive support and the separate NOSQ extension. Document_0363's whole-attempt failure concerns the magpie mark test. Document_0371 separates six loci and partly shared pedigrees; documents_0372 and 0373 have only abstract-level evidence, with the latter's original-null attribution inferred and unconfident. All remain outside the proposed batch.
+
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
 A separate gap in document_0147 is resolved by the complete published PDF registered as document_0688, including the repository cover and article pages 61–74. Both fresh blind roles pass complete reading and literal-evidence checks, agreeing on successful. The source review raises an unresolved objection about the original deliberate-control and measurement claims, so the case stays outside the automatic set. Each role has exhausted its single fresh read across aliases of this PDF. Earlier body-only labels confer no approval. This recovery is outside the finite 60-item queue.
@@ -158,7 +160,7 @@ The export also checks authoritative DOI/title/author/year correspondence and co
 
 A JATS `etal` element lost in text extraction can bind a flattened author prefix and its rendered form only with the hashed XML, exact current/original DOIs, reference, title, ordered named authors and initials. The exporter checks supplied author evidence even if all surnames appear in a coding. This leaves the raw coding strings unchanged.
 
-Run the 149 validation and dependency controls, then rebuild the guarded export:
+Run the 154 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v

@@ -12,6 +12,21 @@ def read(path):
     return json.loads(path.read_text())
 
 
+def check_provider_hold(provider, state):
+    instance = 'claudeAgent' if provider == 'opus' else 'codex'
+    if state.get('provider_limits', {}).get(instance, {}).get('automatic_new_dispatches_blocked'):
+        raise ValueError('Provider safeguard hold blocks new dispatches')
+
+
+def check_source_holds(document_ids, state, registry):
+    documents = set(document_ids)
+    hashes = {registry.get(doc, {}).get('article.txt') for doc in documents} - {None}
+    for hold in state.get('provider_safeguard_holds', {}).values():
+        if (documents.intersection(hold['packet_ids'])
+                or hashes.intersection(hold['article_sha256'])):
+            raise ValueError('Provider safeguard source hold blocks retry or reroute')
+
+
 def identical_source_budget(document_ids, role, tasks, registry, upgrades):
     """Charge byte-identical registered articles to one role/source budget."""
     documents = set(document_ids)
@@ -49,6 +64,7 @@ def prepare(group_id, provider, attempt):
     if attempt not in (1, 2):
         raise ValueError('Two attempts maximum')
     state = read(OUT / 'state.json')
+    check_provider_hold(provider, state)
     upgrade = None
     plan = read(OUT / 'dispatch_plan.json')['groups']
     group = next((g for g in plan if g['group_id'] == group_id), None)
@@ -103,6 +119,7 @@ def prepare(group_id, provider, attempt):
     if occupied_slots >= state['max_active_model_children']:
         raise ValueError('No free model slot')
     registry = read(OUT / 'packet_input_receipts.json')['documents']
+    check_source_holds(group['document_ids'], state, registry)
     identical_documents, identical_limit, identical_limits = identical_source_budget(
         group['document_ids'], role, state['tasks'], registry,
         read(OUT / 'source_upgrades.json')['upgrades'])

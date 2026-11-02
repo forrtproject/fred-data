@@ -2,7 +2,44 @@
 import unittest
 from unittest.mock import patch
 
-from prepare_dispatch import identical_source_budget, prepare
+from prepare_dispatch import check_source_holds, identical_source_budget, prepare
+
+
+class SafeguardDispatchHold(unittest.TestCase):
+    def setUp(self):
+        self.state = {
+            'provider_limits': {'claudeAgent': {'automatic_new_dispatches_blocked': True}},
+            'provider_safeguard_holds': {
+                'interrupted': {'packet_ids': ['held'], 'article_sha256': ['a' * 64]}}}
+        self.registry = {'held': {'article.txt': 'b' * 64},
+                         'alias': {'article.txt': 'a' * 64},
+                         'other': {'article.txt': 'c' * 64}}
+
+    def read(self, path):
+        if path.name == 'state.json':
+            return self.state
+        raise ReachedFrozenInputCheck
+
+    def test_blocked_provider_stops_before_plan_or_input_reads(self):
+        with patch('prepare_dispatch.read', side_effect=self.read):
+            with self.assertRaisesRegex(ValueError, 'Provider safeguard hold blocks new'):
+                prepare('any_group', 'opus', 1)
+
+    def test_unblocked_provider_still_reaches_normal_plan_checks(self):
+        with patch('prepare_dispatch.read', side_effect=self.read):
+            with self.assertRaises(ReachedFrozenInputCheck):
+                prepare('any_group', 'sol', 1)
+
+    def test_held_packet_cannot_be_retried_with_a_different_hash(self):
+        with self.assertRaisesRegex(ValueError, 'source hold blocks retry or reroute'):
+            check_source_holds(['held'], self.state, self.registry)
+
+    def test_exact_source_alias_cannot_bypass_hold(self):
+        with self.assertRaisesRegex(ValueError, 'source hold blocks retry or reroute'):
+            check_source_holds(['alias'], self.state, self.registry)
+
+    def test_unrelated_source_is_not_held(self):
+        check_source_holds(['other'], self.state, self.registry)
 
 
 class IdenticalArticleBudget(unittest.TestCase):
