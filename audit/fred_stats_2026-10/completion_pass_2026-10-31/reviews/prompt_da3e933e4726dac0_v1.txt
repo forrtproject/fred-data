@@ -1,0 +1,90 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "2044": {
+      "source_key": "da3e933e4726dac0",
+      "side": "replication",
+      "input": {
+        "ref_o": "Humphrey, J. L., & Root, E. D. (2017). Spatio-temporal neighborhood impacts on internalizing and externalizing behaviors in U.S. elementary school children: Effect modification by child and family socio-demographics. Social Science &amp; Medicine, 180, 52–61. https://doi.org/10.1016/j.socscimed.2017.03.014",
+        "doi_o": "10.1016/j.socscimed.2017.03.014",
+        "study_o": null,
+        "ref_r": "Parsons, E. S., Miske, O., Luis, B., Loomas, Z., Fox, N. W., Tyner, A. H., … Reed, W. R. (2025, November 18). Humphrey_SocSciMed_2017_Eb2N - Reed - Secondary Data Replication - 23yw2. Retrieved from osf.io/rywgh",
+        "doi_r": null,
+        "url_r": "https://osf.io/3d97y",
+        "study_r": null,
+        "es_type_o": "ser_method",
+        "es_type_r": "Cohen's f^2",
+        "description": null,
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 2044,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afc94f26a761e8792df9bf39.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "The sole single-trace claim in the supplied replication report: OLS coefficient on Hispanic relative to white for externalizing behavior of fifth-grade children; coded original claim 4, Table 3a High Poverty.",
+      "worker_notes": "Identity assessment: supplied canonical text is a short primary replication claim-evaluation report, not a preregistration or secondary original-study report. Paragraphs 1–4 identify Humphrey_SocSciMed_2017_Eb2N, replication team Bob Reed/Jianhua Duan/Sanghyun Hong, SCORE RR ID 23yw2, and OSF project rywgh, matching the neutral reference project and identifier. Paragraph 32 supplies the matching Humphrey and Root title, journal, year and DOI. The neutral reference lists project-level authors different from the explicitly named replication team; no independent date verification is available in this text. The report contains one single-trace claim and its replication result, supporting target identity without row-order or numeric matching. It names separate estimation output and data files that were not supplied or inspected. Analytic N and exclusions cannot be established. Retained the printed OLS coefficient rather than deriving Cohen's f^2. The same-test p is printed as 0.017895 in paragraph 12, retained here as context only because p_r is unassigned. Original side and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afc94f26a761e8792df9bf39.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": null,
+        "es_repr_o": null,
+        "es_repr_r": null,
+        "es_type_o": "ser_method",
+        "es_type_r": "Cohen's f^2",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2",
+        "pval_tails_r": "2",
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "NB: SCORE relied on statistical significance and direction as the leading success criterion - so reported_success coded based on that"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 2044,
+      "field": "es_value_r",
+      "blind": {
+        "value": "-0.21836630",
+        "metric": "OLS coefficient on Hispanic",
+        "test_statistic": null,
+        "location": "Paragraph 12; coefficient identity in paragraph 10",
+        "quote": "The overall effect (the coefficient on Hispanic) is -0.21836630 and its p-value is 0.017895.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afc94f26a761e8792df9bf39.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 2044,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "The single-trace replication report identifies the target as the Hispanic-versus-white externalizing-behavior OLS coefficient and prints its result. Preserve this coefficient as printed; requested Cohen's f^2 is not supplied in the result paragraph and no conversion is performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afc94f26a761e8792df9bf39.txt",
+        "location": "Paragraphs 10 and 12",
+        "quote": "The OLS coefficient is negative (the externalizing behavior of 5th grade Hispanic children is lower relative to white children) ... The overall effect (the coefficient on Hispanic) is -0.21836630 and its p-value is 0.017895.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.0357095096827598",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/da3e933e4726dac0. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_da3e933e4726dac0_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
