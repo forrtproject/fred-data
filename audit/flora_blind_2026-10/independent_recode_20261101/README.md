@@ -2,7 +2,7 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-259 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+260 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -52,6 +52,8 @@ Document_0247's reproduction axes are unconfident, and document_0248 has abstrac
 Documents_0251, 0255 and 0257 have unconfident outcomes or axes. The merged-reference DOI in 0251 is unverified; 0255 is abstract-level; 0257's closing theory-support statement may not cover its mixed original-specific comparisons. Document_0253's zero targets do not authorize exclusion: its five-case series may repeat only within-study interventions, but the missing front matter and relationship to earlier published findings require positive source review and independent comparison.
 
 Document_0256 combines a successful new-data IIA replication with original-data reproduction and robustness challenges. Those components need joint scope review. Document_0260 has a confident delayed-keyword verdict but no positively identified single original; likely Thiede citations cannot bind a frozen pair. The other new confident results remain single blind readings: original-specific chain questions, pooled original observations, awareness preconditions and different reports of the same study remain explicit dependencies.
+
+Document_0262 reports obtaining Ashraf/Galor's implemented numbers before correcting specification coding and changing data constructions. Its confident reproduction axes remain one blind result. Legal-origin coding errors do not by themselves establish a failure to recover published numbers. Added heterozygosity observations, replacement population estimates and largely untested contemporary GDP analyses require explicit scope review before any joint record conversion or robustness attribution.
 
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
