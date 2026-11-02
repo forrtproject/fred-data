@@ -82,6 +82,24 @@ def review_field_dispositions(review):
             'Invalid native adjudication field'
         assert len(set(fields)) == len(fields), 'Duplicate native field disposition'
         entries = [dict(entry, input_row_index=row) for entry in entries]
+    if 'assigned_field' in review:
+        assert entries is None and 'assigned_fields' not in review, 'Conflicting source review field tables'
+        assert (review.get('kind') == 'independent_nonblind_primary_source_adjudication'
+                and review.get('index_basis') == 'zero-based'), 'Unrecognized single-field adjudication'
+        row = review.get('input_row_index')
+        assert type(row) is int and row >= 0, 'Invalid single-field adjudication row'
+        assert review['assigned_field'] == 'outcome', 'Unsupported single-field adjudication field'
+        aliases = {'row_index', 'row_id', 'row', 'input_row_index_zero_based', 'field',
+                   'field_reviewed', 'requested_fields', 'field_review_id', 'case_id', 'disposition'}
+        assert not aliases.intersection(review), 'Single-field review has competing identity or disposition'
+        assert review.get('status') in {'supported_correction', 'retain_current', 'policy_boundary',
+                                       'evidence_limit'}, 'Unknown single-field disposition'
+        if review['status'] == 'supported_correction':
+            assert review.get('confidence') == 'high' and review.get('outcome_confident') is True, \
+                'Single-field correction is uncertain'
+            assert isinstance(review.get('recommended_value'), str) and review['recommended_value'] \
+                and review.get('current_value') != review['recommended_value'], 'Invalid single-field replacement'
+        entries = [dict(review, field=review['assigned_field'])]
     if 'assigned_fields' in review:
         assert entries is None, 'Conflicting source review field tables'
         entries = review['assigned_fields']
@@ -144,6 +162,34 @@ def review_row_binding(review, row_index, rows, receipt=None, review_sha256=None
     snapshots = review.get('baseline_snapshot', {})
     csv_reference = review.get('frozen_csv')
     external_name = csv_reference.get('baseline_snapshot') if isinstance(csv_reference, dict) else None
+    if 'assigned_field' in review:
+        review_field_dispositions(review)
+        assert 'baseline_snapshot' not in review and external_name is None, 'Conflicting single-field baseline'
+        assert review['input_row_index'] == row_index, 'Single-field review belongs to another frozen row'
+        baseline = review.get('full_frozen_baseline', {})
+        assert set(baseline) == {'csv_sha256', 'row_count', 'rows'}, 'Incomplete single-field frozen baseline'
+        assert baseline['csv_sha256'] == BASELINE_SHA and baseline['row_count'] == len(rows), \
+            'Single-field baseline belongs to another input'
+        snapshots_list = baseline['rows']
+        assert isinstance(snapshots_list, list) and len(snapshots_list) == 1, 'Ambiguous single-field baseline'
+        snapshot = snapshots_list[0]
+        assert set(snapshot) == {'input_row_index_zero_based', 'row'}, 'Incomplete single-field row snapshot'
+        assert type(snapshot['input_row_index_zero_based']) is int and snapshot['input_row_index_zero_based'] == row_index, \
+            'Single-field snapshot belongs to another frozen row'
+        assert snapshot['row'] == rows[row_index], 'Single-field baseline differs from frozen record'
+        verified = review.get('baseline_verification', {})
+        assert verified.get('frozen_row_count') == verified.get('expected_row_count') == len(rows), \
+            'Single-field baseline belongs to another input'
+        assert verified.get('columns') == list(rows[row_index]) and verified.get('all_rows_parsed') is True, \
+            'Single-field baseline has incomplete columns or scan'
+        assert review.get('current_value') == rows[row_index]['outcome'], 'Single-field current value differs'
+        if review['status'] == 'supported_correction':
+            remedy = review.get('atomic_remedy', {})
+            assert remedy.get('apply_together') is True, 'Single-field remedy is not atomic'
+            assert remedy.get('before') == {key: rows[row_index][key] for key in (
+                'outcome', 'outcome_quote', 'outcome_quote_source')}, 'Single-field quote dependencies differ'
+            assert remedy.get('after', {}).get('outcome') == review['recommended_value'], \
+                'Single-field remedy contradicts recommendation'
     if 'field_dispositions' in review:
         review_field_dispositions(review)
         assert 'baseline_snapshot' not in review and external_name is None, 'Conflicting native review baseline'

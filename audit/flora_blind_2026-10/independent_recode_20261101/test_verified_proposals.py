@@ -113,6 +113,101 @@ class ProposalDependencies(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, 'Conflicting source review field tables'):
             review_field_dispositions(review)
 
+    def single_field_review_fixture(self):
+        row = dict(doi_o='original', doi_r='current', type='replication', outcome='mixed',
+                   outcome_quote='old quote', outcome_quote_source='abstract')
+        review = dict(kind='independent_nonblind_primary_source_adjudication', index_basis='zero-based',
+                      input_row_index=0, assigned_field='outcome', status='supported_correction',
+                      confidence='high', outcome_confident=True, current_value='mixed', recommended_value='failed',
+                      full_frozen_baseline=dict(csv_sha256=BASELINE_SHA, row_count=1,
+                                                rows=[dict(input_row_index_zero_based=0, row=dict(row))]),
+                      baseline_verification=dict(
+                          frozen_row_count=1, expected_row_count=1, columns=list(row), all_rows_parsed=True),
+                      atomic_remedy=dict(apply_together=True, before={key: row[key] for key in (
+                          'outcome', 'outcome_quote', 'outcome_quote_source')}, after=dict(outcome='failed')))
+        return row, review
+
+    def test_single_field_review_binds_explicit_outcome_and_all_dependencies(self):
+        row, review = self.single_field_review_fixture()
+        self.assertEqual(review_field_dispositions(review), [(0, 'outcome', 'supported_correction')])
+        review_row_binding(review, 0, [row])
+
+    def test_single_field_review_rejects_competing_tables(self):
+        for key in ('reviews', 'field_reviews', 'cases', 'assigned_fields', 'field_dispositions'):
+            row, review = self.single_field_review_fixture()
+            review[key] = []
+            with self.subTest(key=key), self.assertRaises(AssertionError):
+                review_field_dispositions(review)
+
+    def test_single_field_review_rejects_ambiguous_identity_and_unknown_status(self):
+        for changes in (dict(input_row_index=True), dict(input_row_index='0'), dict(input_row_index=-1),
+                        dict(index_basis='one-based'), dict(kind='other'), dict(assigned_field='type'),
+                        dict(status='unknown')):
+            row, review = self.single_field_review_fixture()
+            review.update(changes)
+            with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                review_field_dispositions(review)
+
+    def test_single_field_review_cannot_hide_redundant_identity_or_disposition(self):
+        for key in ('row_index', 'row_id', 'row', 'input_row_index_zero_based', 'field',
+                    'field_reviewed', 'requested_fields', 'field_review_id', 'case_id', 'disposition'):
+            row, review = self.single_field_review_fixture()
+            review[key] = 'conflicting'
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, 'competing'):
+                review_field_dispositions(review)
+
+    def test_single_field_review_preserves_policy_boundary_and_rejects_uncertain_correction(self):
+        row, review = self.single_field_review_fixture()
+        review.update(status='policy_boundary', confidence='moderate', outcome_confident=False)
+        self.assertEqual(review_field_dispositions(review), [(0, 'outcome', 'policy_boundary')])
+        for changes in (dict(confidence='moderate'), dict(outcome_confident=False),
+                        dict(recommended_value='mixed'), dict(recommended_value='')):
+            row, review = self.single_field_review_fixture()
+            review.update(changes)
+            with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                review_field_dispositions(review)
+
+    def test_single_field_baseline_cannot_change_unproposed_identifier_or_omit_full_scan(self):
+        for mutation in ('doi', 'columns', 'count', 'scan', 'competing-snapshot', 'wrong-row', 'current-value',
+                         'hash', 'multiple-rows', 'snapshot-row'):
+            row, review = self.single_field_review_fixture()
+            if mutation == 'doi':
+                review['full_frozen_baseline']['rows'][0]['row']['doi_o'] = 'another-original'
+            elif mutation == 'columns':
+                review['baseline_verification']['columns'].pop()
+            elif mutation == 'count':
+                review['baseline_verification']['frozen_row_count'] = 2
+            elif mutation == 'scan':
+                review['baseline_verification']['all_rows_parsed'] = False
+            elif mutation == 'competing-snapshot':
+                review['baseline_snapshot'] = {}
+            elif mutation == 'wrong-row':
+                review['input_row_index'] = 1
+            elif mutation == 'hash':
+                review['full_frozen_baseline']['csv_sha256'] = 'other-input'
+            elif mutation == 'multiple-rows':
+                review['full_frozen_baseline']['rows'] *= 2
+            elif mutation == 'snapshot-row':
+                review['full_frozen_baseline']['rows'][0]['input_row_index_zero_based'] = True
+            else:
+                review['current_value'] = 'successful'
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                review_row_binding(review, 0, [row])
+
+    def test_single_field_remedy_cannot_split_or_change_quote_dependencies(self):
+        for mutation in ('not-atomic', 'old-quote', 'old-source', 'after-value'):
+            row, review = self.single_field_review_fixture()
+            if mutation == 'not-atomic':
+                review['atomic_remedy']['apply_together'] = False
+            elif mutation == 'old-quote':
+                review['atomic_remedy']['before']['outcome_quote'] = 'another quote'
+            elif mutation == 'old-source':
+                review['atomic_remedy']['before']['outcome_quote_source'] = 'discussion'
+            else:
+                review['atomic_remedy']['after']['outcome'] = 'successful'
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                review_row_binding(review, 0, [row])
+
     def native_review_fixture(self):
         row = dict(type='replication', outcome='successful', doi_o='original', doi_r='current')
         review = dict(kind='nonblind_primary_source_adjudication', status='completed',
