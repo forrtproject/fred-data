@@ -28,7 +28,7 @@ const statePath = cohort + '/state.json';
 // hundreds of task records and must never be truncated while reading JSON.
 const snapshot = JSON.parse(await command('python3 -c ' + quote(`import pathlib,json,hashlib
 p=pathlib.Path(${JSON.stringify(statePath)});raw=p.read_bytes();s=json.loads(raw)
-keys=['taskId','childThreadId','clientRequestId','role','output_dir','output_layout','packet_ids']
+keys=['taskId','childThreadId','clientRequestId','role','output_dir','output_layout','packet_ids','prompt_sha256','identical_source_budgets']
 pending=[{k:t.get(k) for k in keys} for t in s['tasks'] if t['status']=='completed_pending_parent_validation' and t['role'] in ['blind_coder','blind_comparison_coder']]
 print(json.dumps({'sha256':hashlib.sha256(raw).hexdigest(),'pending':pending}))
 `), 18000));
@@ -45,6 +45,7 @@ for (const task of pending) {
   if (!task.packet_ids?.every(id => /^document_\d{4}$/.test(id))) throw Error('Invalid packet IDs');
   const dir = privateRoot + '/parent_receipts/' + task.clientRequestId;
   const items = [];
+  let hasRelativeReads = false;
   let afterPosition;
   // Pagination through one completed timeline, never waiting or polling.
   for (let page = 0; page < 3; page++) {
@@ -54,6 +55,7 @@ for (const task of pending) {
       throw Error('Task notification does not establish terminal completion: ' + task.taskId);
     for (const item of data.items) {
       let sourceRead = false;
+      let relativeBinding;
       if (item.type === 'dynamic_tool' && !item.textTruncated) {
         try {
           const call = JSON.parse(item.text);
@@ -64,11 +66,26 @@ for (const task of pending) {
         const firstLine = item.text?.split('\n', 1)[0] ?? '';
         sourceRead = firstLine.includes('cat ') && firstLine.includes('chunk_')
           && task.packet_ids.some(id => firstLine.includes(id));
+        if (!sourceRead && task.packet_ids.length === 1
+            && /^\$ \/bin\/(?:bash|sh) -lc 'cat chunks\/chunk_\d{5}\.txt'$/.test(firstLine)) {
+          const hashes = Object.keys(task.identical_source_budgets ?? {});
+          if (hashes.length !== 1 || !/^[0-9a-f]{64}$/.test(task.prompt_sha256 ?? '')
+              || !task.identical_source_budgets[hashes[0]].document_ids.includes(task.packet_ids[0]))
+            throw Error('Relative chunk read lacks sole frozen task/source binding');
+          sourceRead = true;
+          relativeBinding = {packet_ids: task.packet_ids,
+            packet_path: privateRoot + '/' + task.packet_ids[0], source_sha256: hashes[0],
+            taskId: task.taskId, childThreadId: task.childThreadId, prompt_sha256: task.prompt_sha256};
+        }
       }
       if (sourceRead) {
         if (item.textTruncated) throw Error('Recover the full source-read item before validation: ' + item.itemId);
         const receipt = {threadId: data.thread.threadId, model: data.thread.model,
           terminal_status: data.thread.status, ...item};
+        if (relativeBinding) {
+          receipt.parent_single_packet_binding = relativeBinding;
+          hasRelativeReads = true;
+        }
         await writeImmutable(dir + '/item_' + item.position + '.json', receipt);
         items.push({itemId: item.itemId, position: item.position, type: item.type});
       }
@@ -77,7 +94,9 @@ for (const task of pending) {
     if (page === 2) throw Error('Timeline exceeds finite collection budget; inspect explicitly');
     afterPosition = data.nextPosition;
   }
-  await writeImmutable(dir + '/index.json', {taskId: task.taskId, items});
+  // Preserve an earlier empty index from a failed absolute-path-only collection.
+  const indexName = hasRelativeReads ? '/command_read_index.json' : '/index.json';
+  await writeImmutable(dir + indexName, {taskId: task.taskId, items});
   const docs = [];
   for (const id of task.packet_ids) {
     const output = task.output_dir + '/' + id;

@@ -182,6 +182,24 @@ def native_read_bom_loss(item, chunk_path, chunk_raw):
     return None
 
 
+def parent_bound_relative_cat(item, packet, chunk_path, command):
+    """Bind a literal relative cat to its sole assigned frozen packet.
+
+    Native command receipts omit exec's workdir. The parent records task identity;
+    contains_exact_chunk still requires every displayed source byte. This does not
+    assert that a working directory was present in the native receipt.
+    """
+    binding = item.get('parent_single_packet_binding', {})
+    return (binding.get('packet_ids') == [packet.name]
+            and binding.get('packet_path') == str(packet.resolve())
+            and binding.get('source_sha256') == sha((packet / 'article.txt').read_bytes())
+            and binding.get('childThreadId') == item.get('threadId') == item.get('sourceThreadId')
+            and binding.get('taskId') == item.get('threadId', '').replace('thread:', 'node:', 1)
+            and bool(re.fullmatch(r'[0-9a-f]{64}', binding.get('prompt_sha256', '')))
+            and bool(re.fullmatch(r"\$ /bin/(?:bash|sh) -lc 'cat "
+                                  + re.escape(chunk_path.relative_to(packet).as_posix()) + "'", command)))
+
+
 def contains_exact_chunk(item, packet, chunk_path, chunk_raw):
     if item.get('textTruncated', True):
         return False
@@ -190,7 +208,8 @@ def contains_exact_chunk(item, packet, chunk_path, chunk_raw):
         return native_read_bom_loss(item, chunk_path, chunk_raw) is not None
     if item.get('type') == 'command_execution':
         command, _, displayed = body.partition('\n')
-        if packet.name not in command or chunk_path.relative_to(packet).as_posix() not in command:
+        absolute_context = packet.name in command and chunk_path.relative_to(packet).as_posix() in command
+        if not absolute_context and not parent_bound_relative_cat(item, packet, chunk_path, command):
             return False
         if 'Output truncated' in body:
             return False

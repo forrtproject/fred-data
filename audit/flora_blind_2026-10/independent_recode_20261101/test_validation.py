@@ -61,6 +61,52 @@ class EvidenceValidation(unittest.TestCase):
         self.assertFalse(result['automatic_scientific_acceptance'])
         self.assertTrue(result['full_model_visible_reading_receipts_verified'])
 
+    def bound_relative_receipt(self):
+        thread = 'thread:fixture'
+        return dict(self.receipt, threadId=thread, sourceThreadId=thread,
+                    text="$ /bin/bash -lc 'cat chunks/one.txt'\n" + (self.packet / 'chunks/one.txt').read_text(),
+                    parent_single_packet_binding=dict(packet_ids=[self.packet.name],
+                        packet_path=str(self.packet.resolve()), source_sha256=self.source_hash,
+                        taskId='node:fixture', childThreadId=thread, prompt_sha256='a' * 64))
+
+    def test_bound_relative_chunk_has_full_mechanical_coverage(self):
+        self.write(self.receipts / 'item_1.json', self.bound_relative_receipt())
+        self.assertTrue(self.run_validation()['full_model_visible_reading_receipts_verified'])
+
+    def test_relative_chunk_without_parent_binding_is_rejected(self):
+        item = self.bound_relative_receipt(); item.pop('parent_single_packet_binding')
+        self.write(self.receipts / 'item_1.json', item)
+        with self.assertRaises(ValueError): self.run_validation()
+
+    def test_relative_binding_cannot_cross_packets_or_task_threads(self):
+        for changes in [dict(packet_ids=['another']), dict(packet_ids=[self.packet.name, 'another']),
+                        dict(packet_path='/elsewhere'), dict(childThreadId='thread:other'),
+                        dict(taskId='node:other'), dict(source_sha256='0' * 64), dict(prompt_sha256='')]:
+            with self.subTest(changes=changes):
+                item = self.bound_relative_receipt(); item['parent_single_packet_binding'].update(changes)
+                self.write(self.receipts / 'item_1.json', item)
+                with self.assertRaises(ValueError): self.run_validation()
+
+    def test_relative_cat_cannot_hide_missing_or_changed_interior_source(self):
+        for transform in [lambda t: t[3:], lambda t: t.replace('failed', 'passed'),
+                          lambda t: t.replace('\u00a0', ' ')]:
+            item = self.bound_relative_receipt(); command, _, body = item['text'].partition('\n')
+            item['text'] = command + '\n' + transform(body)
+            self.write(self.receipts / 'item_1.json', item)
+            with self.assertRaises(ValueError): self.run_validation()
+
+    def test_relative_cat_rejects_extra_shell_operations_and_wrong_file(self):
+        for command in ["$ /bin/bash -lc 'cat chunks/one.txt; cat other.txt'",
+                        "$ /bin/bash -lc 'cat chunks/two.txt'", "$ cat chunks/one.txt"]:
+            item = self.bound_relative_receipt(); item['text'] = command + '\n' + (self.packet / 'chunks/one.txt').read_text()
+            self.write(self.receipts / 'item_1.json', item)
+            with self.assertRaises(ValueError): self.run_validation()
+
+    def test_relative_cat_still_rejects_truncated_native_item(self):
+        item = self.bound_relative_receipt(); item['textTruncated'] = True
+        self.write(self.receipts / 'item_1.json', item)
+        with self.assertRaises(ValueError): self.run_validation()
+
     def test_named_reading_range_still_requires_actual_complete_receipts(self):
         path=self.output/'reading_manifest.json'
         data=json.loads(path.read_text());n=len((self.packet/'article.txt').read_text())
