@@ -2,9 +2,9 @@
 
 This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
 
-368 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty-one fresh Sol views pass the same checks. These counts describe text packets, including reports split from collections, rather than unique papers.
+368 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Thirty-five fresh Sol views pass the mechanical checks; document_0096 remains excluded from scientific comparison under its source-order hold. These counts describe text packets, including reports split from collections, rather than unique papers.
 
-Groups_0157 and 0160 stopped at provider safeguards. The parent retained Opus 5.5 when the first offered an automatic model switch; the second returned a terminal API failure. Documents_0366, 0367, 0374 and 0375 have no coding outputs or validated scientific result. Charged attempts and source holds remain recorded. Preflight blocks new Opus dispatches and blocks held packet IDs or identical source hashes across roles, preventing automatic retries or rerouting. No Opus group remains active. Required second blind readings continue on Sol for unflagged documents_0069, 0096 and 0370, which already have complete Opus readings and lack usable prior Sol codings.
+Groups_0157 and 0160 stopped at provider safeguards. The parent retained Opus 5.5 when the first offered an automatic model switch; the second returned a terminal API failure. Documents_0366, 0367, 0374 and 0375 have no coding outputs or validated scientific result. Charged attempts and source holds remain recorded. Preflight blocks new Opus dispatches and blocks held packet IDs or identical source hashes across roles, preventing automatic retries or rerouting. No Opus group remains active. The required second blind reading continues on Sol for unflagged document_0226, which already has complete Opus readings and lacks a usable prior Sol coding. It shares one source budget with its exact alias 0305.
 
 The current export contains **32 cases covering 34 proposed fields, plus two whole-record exclusions**. All remain unapproved and unapplied. They are checkpoint proposals for later batch approval. The legacy outcome batches remain suspended.
 
@@ -129,6 +129,10 @@ Document_0368 keeps two fear-development targets separate, including age-specifi
 
 Document_0044 now has two complete blind readings agreeing confidently on Parrish et al. (2015), Experiment 2, and failed. Its original-identity field remains held for separate source review, including cross-species claim scope and conflicting preprint dates. Agreement on outcome alone cannot authorize the bibliographic correction or its dependent fields.
 
+Document_0069's fresh Sol reading differs from Opus on the temporal effect and adds Yan et al. (2016) as an original-data reproduction candidate. Each claim and relationship needs separate review. Document_0370 has two successful codings but unresolved class-wide front matter versus high-risk-student body and companion-report identity. Document_0096's fresh reading was dispatched despite an existing instruction to verify column order first. The parent records that error, preserves and charges the raw attempt, and excludes the comparison from scientific acceptance. Preflight now enforces the source-continuity hold across packet IDs and identical hashes. Matching mixed labels cannot repair the unresolved published reading order.
+
+Document_0372 has two matching mixed codings of a publisher preview. The individual supported and unsupported governance relationships remain unidentified, so complete preview reading does not establish claim correspondence or full-paper coverage. It stays held.
+
 The finite 60-item source-recovery pass recovered one verified full report, whose simulation classification remains unresolved. Fifty-nine completeness gaps remain. Access failures are route limits, not evidence that reports do not exist. No broad third recovery pass is scheduled.
 
 A separate gap in document_0147 is resolved by the complete published PDF registered as document_0688, including the repository cover and article pages 61–74. Both fresh blind roles pass complete reading and literal-evidence checks, agreeing on successful. The source review raises an unresolved objection about the original deliberate-control and measurement claims, so the case stays outside the automatic set. Each role has exhausted its single fresh read across aliases of this PDF. Earlier body-only labels confer no approval. This recovery is outside the finite 60-item queue.
@@ -164,7 +168,7 @@ The export also checks authoritative DOI/title/author/year correspondence and co
 
 A JATS `etal` element lost in text extraction can bind a flattened author prefix and its rendered form only with the hashed XML, exact current/original DOIs, reference, title, ordered named authors and initials. The exporter checks supplied author evidence even if all surnames appear in a coding. This leaves the raw coding strings unchanged.
 
-Run the 154 validation and dependency controls, then rebuild the guarded export:
+Run the 157 validation and dependency controls, then rebuild the guarded export:
 
 ```sh
 python3 -m unittest discover -s audit/flora_blind_2026-10/independent_recode_20261101 -p 'test_*.py' -v

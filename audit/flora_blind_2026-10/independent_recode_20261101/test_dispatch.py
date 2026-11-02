@@ -42,6 +42,26 @@ class SafeguardDispatchHold(unittest.TestCase):
         check_source_holds(['other'], self.state, self.registry)
 
 
+class SourceContinuityDispatchHold(unittest.TestCase):
+    def setUp(self):
+        self.state = {'source_continuity_holds': {
+            'layout': {'packet_ids': ['held'], 'article_sha256': ['a' * 64]}}}
+        self.registry = {'held': {'article.txt': 'b' * 64},
+                         'alias': {'article.txt': 'a' * 64},
+                         'other': {'article.txt': 'c' * 64}}
+
+    def test_held_packet_blocks_another_blind_reading(self):
+        with self.assertRaisesRegex(ValueError, 'source continuity hold'):
+            check_source_holds(['held'], self.state, self.registry)
+
+    def test_source_alias_cannot_skip_the_reading_order_prerequisite(self):
+        with self.assertRaisesRegex(ValueError, 'source continuity hold'):
+            check_source_holds(['alias'], self.state, self.registry)
+
+    def test_unrelated_source_can_reach_its_own_checks(self):
+        check_source_holds(['other'], self.state, self.registry)
+
+
 class IdenticalArticleBudget(unittest.TestCase):
     def setUp(self):
         self.registry = {doc: {'article.txt': digest} for doc, digest in

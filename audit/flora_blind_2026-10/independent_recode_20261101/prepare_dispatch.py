@@ -25,6 +25,10 @@ def check_source_holds(document_ids, state, registry):
         if (documents.intersection(hold['packet_ids'])
                 or hashes.intersection(hold['article_sha256'])):
             raise ValueError('Provider safeguard source hold blocks retry or reroute')
+    for hold in state.get('source_continuity_holds', {}).values():
+        if (documents.intersection(hold['packet_ids'])
+                or hashes.intersection(hold['article_sha256'])):
+            raise ValueError('Unresolved source continuity hold blocks another blind reading')
 
 
 def identical_source_budget(document_ids, role, tasks, registry, upgrades):
