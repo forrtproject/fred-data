@@ -1,0 +1,89 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1881": {
+      "source_key": "6fbe272947f47f74",
+      "side": "replication",
+      "input": {
+        "ref_o": "Hsee, C. K. (1998). Less is better: when low-value options are valued more highly than high-value options. Journal of Behavioral Decision Making, 11(2), 107–121. https://doi.org/10.1002/(sici)1099-0771(199806)11:2<107::aid-bdm292>3.0.co;2-y",
+        "doi_o": "10.1002/(sici)1099-0771(199806)11:2<107::aid-bdm292>3.0.co;2-y",
+        "study_o": "1",
+        "ref_r": "Vonasch, A. J., Hung, W. Y., Leung, W. Y., Nguyen, A. T. B., Chan, S., Cheng, B. L., & Feldman, G. (2023). ‎“Less Is Better” in Separate Evaluations Versus “More Is Better” in Joint Evaluations: Mostly ‎Successful Close Replication and Extension of Hsee (1998)‎. Collabra: Psychology, 9(1). https://doi.org/10.1525/collabra.77859",
+        "doi_r": "10.1525/collabra.77859",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Perceived generosity of a friend after receiving a $45 scarf versus a $55 coat.",
+        "locators_o": "p.3",
+        "locators_r": "p.3",
+        "audit_id": 1881,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a28fd01e1126f40679543205.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1 separate-evaluations perceived generosity comparison of $45 scarf versus $55 coat; randomized mutually exclusive scarf and coat groups, excluding the joint-evaluation extension.",
+      "worker_notes": "Identity inspected independently: publisher HTML excerpt bears the exact replication title, DOI 10.1525/collabra.77859, Collabra: Psychology (2023) 9 (1): 77859, and matching visible author names Anna Thao Bich Nguyen, Bo Ley Cheng, and Gilad Feldman. It contains primary report methods/results, not a preregistration or secondary account. The cached parse is partial (visible author list incomplete and excerpt ends during Study 2); no inference of full-work absence is made. Target identified by gift amounts, perceived-generosity measure, and explicitly labeled Study 1 separate-evaluations results, not input order or numerical matching. Analytic N derivation: 135 coat + 131 scarf = 266 participants, from explicitly randomized mutually exclusive final groups after three overall refusal exclusions. The joint extension is outside this test; its inconsistent printed counts (134 overall versus 133 in the Study 1 vignette description) do not enter the sum. N is not inferred from Welch degrees of freedom. Only n_r assigned; all other fields are placeholders and must not overwrite existing verified values.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a28fd01e1126f40679543205.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants receiving the $45 scarf will consider their friend more generous than those receiving the $55 coat.",
+        "es_repr_o": "p.3",
+        "es_repr_r": "p.3",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We found support for “less is better” across all studies (N = 403; Study 1 original d = 0.70\n[0.24,1.15], replication d = 0.99 [0.72,1.26]; Study 2 original d = 0.74 [0.12,1.35],\nreplication d = 0.32 [0.07,0.56]; Study 4 original d = 0.97 [0.43,1.50], replication d = 0.76\n[0.50,1.02]), with weaker support for “more is better”."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1881,
+      "field": "n_r",
+      "blind": {
+        "value": "266",
+        "sample_role": "Participants in the two mutually exclusive final separate-evaluation groups: coat 135 and scarf 131.",
+        "exclusions": "403 recruited; three refusing participation excluded, leaving 400 across all conditions. Joint-evaluation extension excluded from this target comparison. No additional Study 1 exclusions stated in the supplied methods/results excerpt.",
+        "location": "Publisher HTML canonical lines L303–L315 (Participants; Replication of Study 1: The Gift scenario), L326–L328 (main measure), L346–L347 (separate-evaluations generosity test)",
+        "quote": "Coat condition presented a coat on the lower end of a $50- $500 price range (N = 135): ... The Scarf condition was similar, but instead of a coat they were given a scarf which was on the higher end of a much lower price range $5 to $50 (N = 131):",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a28fd01e1126f40679543205.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1881,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "The primary Study 1 report identifies the randomized coat and scarf groups and their final participant counts. Target is the main generosity comparison across those separate-evaluation groups. Overall recruitment N and joint extension are not the target analytic N.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a28fd01e1126f40679543205.txt",
+        "location": "Publisher HTML canonical lines L303–L315 (Participants; Replication of Study 1: The Gift scenario), L326–L328 (main measure), L346–L347 (separate-evaluations generosity test)",
+        "quote": "Coat condition presented a coat on the lower end of a $50- $500 price range (N = 135): ... The Scarf condition was similar, but instead of a coat they were given a scarf which was on the higher end of a much lower price range $5 to $50 (N = 131):",
+        "calculation": "135 coat participants + 131 scarf participants = 266 participants. Three refusal exclusions precede the reported final group sizes; joint-evaluation participants excluded from this between-group target. No df-based N inference."
+      },
+      "supported": true,
+      "shipped": "400",
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/6fbe272947f47f74. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_6fbe272947f47f74_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
