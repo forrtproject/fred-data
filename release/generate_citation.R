@@ -43,7 +43,7 @@ contributors1_clean <- contributors1 |>
 
 contributors2_clean <- contributors2 |>
   select(
-    rank = `#`,
+    rank = 1, # order column (first column; its header is blank in the sheet)
     given = `First name`,
     middle = `Middle name`,
     family = Surname,
@@ -63,7 +63,9 @@ clean_name <- function(x) {
 all_contributors <- bind_rows(contributors1_clean, contributors2_clean) |>
   mutate(
     family = clean_name(family),
-    given = clean_name(given)
+    given = clean_name(given),
+    # Drop placeholder text such as "[no contributions yet]"
+    orcid = if_else(grepl("\\d{4}-\\d{4}-\\d{4}-\\d{3}[0-9X]", orcid), orcid, NA_character_)
   ) |>
   filter(!is.na(family), !is.na(given)) |>
   group_by(given, family) |>
@@ -139,7 +141,7 @@ if (length(other_apa) > 0) {
 # Generate APA citation
 apa_citation <- glue(
  "{apa_authors} ({current_year}). ",
-  "FORRT Library of Replication Attempts (FLoRA) [Data set]. ",
+  "FORRT Library of Reproduction and Replication Attempts (FLoRA) [Data set]. ",
   "OSF. https://doi.org/10.17605/OSF.IO/9R62X"
 )
 
@@ -193,7 +195,7 @@ cff_content <- list(
   `cff-version` = "1.2.0",
   message = "If you use this dataset, please cite it using the metadata from this file.",
   type = "dataset",
-  title = "FORRT Library of Replication Attempts (FLoRA)",
+  title = "FORRT Library of Reproduction and Replication Attempts (FLoRA)",
   authors = cff_authors,
   `date-released` = current_date,
   version = "1.0.0",
@@ -201,7 +203,7 @@ cff_content <- list(
   license = "CC-BY-4.0",
   repository = "https://osf.io/9r62x/",
   url = "https://osf.io/9r62x/",
-  abstract = "A comprehensive database of replication studies in the social and behavioural sciences.",
+  abstract = "A comprehensive database of reproduction and replication studies in the social and behavioural sciences.",
   keywords = c("replication", "reproducibility", "meta-science", "open science")
 )
 
