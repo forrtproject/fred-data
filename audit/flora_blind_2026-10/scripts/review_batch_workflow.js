@@ -123,5 +123,5 @@ function restoreBatchBackup(data){
   for(const [key,value] of Object.entries(data.approved_missing_pairs||{})){if(!items.has(key))continue;const old=store.pairs[key];if(!old||String(value.recorded_at)>String(old.recorded_at))store.pairs[key]=value}
   // Keep this browser's current step. Imported approvals must be downloaded here.
 }
-QUEUES.unshift({id:'remaining',label:'Remaining decisions',test:c=>{const p=profile(c);return inView(c,'ready','record_exclusion','pending_read','rule')||(!ledgerOf(c)&&p.missingOpen)},note:'Cases with proposals or an unresolved decision. Batch-approved rows disappear when “Not decided” is selected.'});
+QUEUES.unshift({id:'remaining',label:'Remaining decisions',test:c=>{const p=profile(c);return inView(c,'ready','record_exclusion','needs_reference','pending_read','rule')||(!ledgerOf(c)&&p.missingOpen)},note:'Cases with proposals or an unresolved decision. Batch-approved rows disappear when “Not decided” is selected.'});
 queueById.remaining=QUEUES[0];

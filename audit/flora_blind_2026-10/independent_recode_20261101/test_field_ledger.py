@@ -49,6 +49,8 @@ class PlantedFailures(unittest.TestCase):
         review = dict(verdict='supported', quote_verified=True, authoritative_metadata_verified=False, confidence='high')
         self.assertEqual(with_(adversary=review)[0], 'adversary_supported_candidate')
         self.assertIn('adversary_below_high_confidence', self.assert_state('adversary_held', adversary=dict(review, confidence='medium')))
+        for status in ('flip', 'softened', 'unusable'):
+            self.assertIn('qa_second_read_not_upheld', self.assert_state('adversary_held', adversary=dict(review, qa_status=status)))
         self.assert_state('adversary_held', adversary=dict(review, verdict='policy_boundary'))
         self.assert_state('adversary_held', adversary=dict(review, verdict='not_supported'))
         self.assert_state('adversary_held', adversary=dict(review, quote_verified=False))

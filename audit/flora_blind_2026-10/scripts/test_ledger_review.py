@@ -19,7 +19,7 @@ class LedgerReviewTests(unittest.TestCase):
         self.assertEqual(sum(s['fields'] for s in self.data['statement']), 562)
         self.assertEqual(len(self.bundles), 515)
         listed = [i for s in self.data['sets'] for i in s['items']] + self.data['record_exclusions'] + self.data['no_edit'] \
-            + self.data['withdraw'] + self.data['rebind'] + self.data['pending_read'] + self.data['blocked']['items'] \
+            + self.data['withdraw'] + self.data['rebind'] + self.data['needs_reference'] + self.data['pending_read'] + self.data['blocked']['items'] \
             + [i for g in self.data['rule_groups'] for i in g['items']]
         self.assertEqual(sorted(listed), sorted(self.bundles))
 

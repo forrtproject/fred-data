@@ -92,7 +92,7 @@ PRIMARY_REASONS = {
     'unconfident_opus', 'unconfident_sol', 'both_confident_on_frozen', 'both_confident_third_value',
     'confident_disagreement', 'cannot_be_determined_value', 'full_text_gap', 'in_protected_export',
     'in_protected_record_actions', 'adversary_pending', 'adversary_supported', 'adversary_not_supported',
-    'adversary_quote_failed', 'adversary_below_high_confidence', 'needs_authoritative_bibliography', 'type_change_needs_axes',
+    'adversary_quote_failed', 'adversary_below_high_confidence', 'qa_second_read_not_upheld', 'needs_authoritative_bibliography', 'type_change_needs_axes',
     'parent_scope_flag', 'parent_hold_flag', 'literal_recheck_failed', 'validator_unproved_evidence',
     'prior_reading_differs', 'record_exclusion_rule', 'relink_would_duplicate_pair',
 }
@@ -318,6 +318,8 @@ def classify_field(f):
             return out('adversary_held', 'adversary_not_supported')
         if review.get('confidence') != 'high':
             return out('adversary_held', 'adversary_below_high_confidence')
+        if review.get('qa_status') in ('flip', 'softened', 'unusable'):
+            return out('adversary_held', 'qa_second_read_not_upheld')
         if f['field'] == 'original' and not review['authoritative_metadata_verified']:
             return out('agreement_needs_authoritative_metadata', 'needs_authoritative_bibliography')
         return out('adversary_supported_candidate', 'adversary_supported')
@@ -865,7 +867,8 @@ def build_ledger(art=None):
         if review:
             bundle_review = dict(verdict=review['verdict'], quote_verified=review['quote_verified'],
                                  authoritative_metadata_verified=str(row_index) in art.authoritative,
-                                 confidence=review.get('confidence'), policy_group=review.get('policy_group'))
+                                 confidence=review.get('confidence'), policy_group=review.get('policy_group'),
+                                 qa_status=(review.get('qa') or {}).get('status'))
         partner_fields = {c['field']: c['proposed_value'] for c in by_row[row_index]}
         relink_duplicate = False
         if field == 'original' and relink:

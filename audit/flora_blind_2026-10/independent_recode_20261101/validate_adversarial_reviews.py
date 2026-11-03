@@ -84,8 +84,9 @@ def collect():
             bundles['row:%d' % item['row']] = record
         else:
             canaries[request_id] = dict(record, kind=item['kind'], row=item['row'])
+    qa = collect_qa(bundles)
     outcome = dict(
-        schema_version=1, protocol_sha256=hashlib.sha256((L.T / 'adversarial_review_protocol.json').read_bytes()).hexdigest(),
+        qa=qa, schema_version=1, protocol_sha256=hashlib.sha256((L.T / 'adversarial_review_protocol.json').read_bytes()).hexdigest(),
         states=dict(states), verdicts=dict(Counter(b['verdict'] for b in bundles.values())),
         stop_rule_S3_mechanical_failure_rate=round(states['failed'] / max(1, states['valid'] + states['failed']), 3),
         stop_rule_S3_note='Counts broken reviews only: unread chunks, nonliteral quotes, wrong identity or schema. Medium confidence is a valid result that fails the ready gate.',
@@ -96,6 +97,43 @@ def collect():
     return outcome
 
 
+def collect_qa(bundles):
+    """QA can only hold a bundle. It cannot promote one, and failed QA reviews do not count as agreement."""
+    qa_dir = L.P / 'adversarial_qa_20261103'
+    if not (qa_dir / 'parent_map.json').exists():
+        return dict(sample=0, completed=0, flips=[], softened=[], unusable=[], s5_stop=False)
+    plan = json.loads((qa_dir / 'parent_map.json').read_text())
+    flips, softened, unusable, agreed, done = [], [], [], [], 0
+    for request_id, item in sorted(plan.items()):
+        directory = qa_dir / request_id
+        path = directory / 'review.json'
+        if not path.exists():
+            continue
+        done += 1
+        request = json.loads((directory / 'request.json').read_text())
+        review = json.loads(path.read_text())
+        source = L.spaced((L.resolve(_packet(request['document_id'])) / 'article.txt').read_text())
+        receipts_path = directory / 'read_receipts.jsonl'
+        receipts = [json.loads(line) for line in receipts_path.read_text().splitlines()] if receipts_path.exists() else []
+        failures = validate(review, request, source, receipts)
+        status = classify_qa(review, failures)
+        dict(flip=flips, softened=softened, unusable=unusable, agreed=agreed)[status].append(item['bundle'])
+        if item['bundle'] in bundles:
+            bundles[item['bundle']]['qa'] = dict(request_id=request_id, status=status, verdict=review.get('verdict'),
+                                                 confidence=review.get('confidence'), failures=failures,
+                                                 review_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+    return dict(sample=len(plan), completed=done, agreed=len(agreed), flips=flips, softened=softened, unusable=unusable,
+                s5_stop=len(flips) >= 2, s5_double_sample=len(flips) == 1)
+
+
+def classify_qa(review, failures):
+    if failures:
+        return 'unusable'
+    if review.get('verdict') != 'supported':
+        return 'flip'
+    return 'agreed' if review.get('confidence') == 'high' else 'softened'
+
+
 def _packet(document):
     upgrades = {u['document_id']: u for u in L.read(L.T / 'source_upgrades.json')['upgrades']}
     inventory = {d['document_id']: d for d in L.read(L.T / 'source_inventory.json')['documents']}
@@ -104,4 +142,4 @@ def _packet(document):
 
 if __name__ == '__main__':
     result = collect()
-    print(json.dumps({k: result[k] for k in ('states', 'verdicts', 'stop_rule_S1_tripped', 'positive_canaries_rejected')}, indent=1))
+    print(json.dumps({k: result[k] for k in ('states', 'verdicts', 'stop_rule_S1_tripped', 'positive_canaries_rejected', 'qa')}, indent=1))

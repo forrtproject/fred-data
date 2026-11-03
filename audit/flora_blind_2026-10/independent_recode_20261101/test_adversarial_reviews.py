@@ -63,5 +63,14 @@ class Planted(unittest.TestCase):
         self.assertEqual(V.validate(dict(good(), confidence='medium'), REQUEST, SOURCE, RECEIPTS), [])
 
 
+class QualityCheck(unittest.TestCase):
+    def test_qa_status(self):
+        self.assertEqual(V.classify_qa(good(), []), 'agreed')
+        self.assertEqual(V.classify_qa(dict(good(), confidence='medium'), []), 'softened')
+        self.assertEqual(V.classify_qa(dict(good(), verdict='not_supported'), []), 'flip')
+        self.assertEqual(V.classify_qa(dict(good(), verdict='policy_boundary'), []), 'flip')
+        self.assertEqual(V.classify_qa(good(), ['incomplete_read']), 'unusable')
+
+
 if __name__ == '__main__':
     unittest.main()

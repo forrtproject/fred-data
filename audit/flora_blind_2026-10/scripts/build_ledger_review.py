@@ -18,13 +18,14 @@ SOURCE_BLOCKED = {'provider_hold', 'source_order_hold', 'header_only_hold', 'sou
 WITHDRAW = {'withdrawn_source_adjudicated', 'withdraw_both_roles_confirm_frozen'}
 CANDIDATE = {'reviewed_export_candidate', 'adversary_supported_candidate', 'agreement_pending_adversarial_review',
              'agreement_needs_authoritative_metadata'}
-VIEW_ORDER = ['ready', 'record_exclusion', 'no_edit', 'withdraw', 'rebind', 'pending_read', 'rule', 'source_blocked']
+VIEW_ORDER = ['ready', 'record_exclusion', 'no_edit', 'withdraw', 'rebind', 'needs_reference', 'pending_read', 'rule', 'source_blocked']
 VIEW_TEXT = {
     'ready': ('Ready for a set decision', 'Two independent readings and a source review support the change, and current FLoRA still holds the old value.'),
     'record_exclusion': ('Whole-record exclusions', 'Evidence supports removing the record. These stay apart from field edits.'),
     'no_edit': ('Already right in current FLoRA', 'Current FLoRA already holds the proposed value, so no edit is needed.'),
     'withdraw': ('Proposal should be withdrawn', 'Source review or both readings keep the original value.'),
     'rebind': ('Current FLoRA changed', 'The row now holds a third value, or could not be matched with certainty. These need checking against current data.'),
+    'needs_reference': ('Corrected original needs a reference', 'The source review supports a different original, but the proposal has no DOI to confirm its reference against an authoritative record.'),
     'pending_read': ('Awaiting a source review', 'Two readings agree with the proposal, but nobody has yet tried to break it against the source.'),
     'rule': ('Waiting on a rule or a person', 'Readers disagree, are unsure, or a coding rule needs settling.'),
     'source_blocked': ('Blocked by the source', 'The available text cannot settle this.'),
@@ -140,8 +141,8 @@ def bundle_view(members):
         return 'rebind'
     if all(m['ready'] for m in members):
         return 'ready'
-    if states & {'agreement_needs_authoritative_metadata'}:
-        return 'pending_read'
+    if 'agreement_needs_authoritative_metadata' in states and 'agreement_pending_adversarial_review' not in states:
+        return 'needs_reference'
     return 'pending_read'
 
 
@@ -246,6 +247,8 @@ def build():
         sets.append(dict(id=key, title=title, rule=rule, route_blocked=route.get('status') == 'blocked_no_route',
                          route_note=route.get('note', '') if route.get('status') == 'blocked_no_route' else '', rows=len(members), fields=sum(len(b['changes']) for b in members),
                          fingerprint=fingerprint([[b['id'], b['changes']] for b in members]), items=[b['id'] for b in members]))
+    for row in views['rule']:
+        bundles[row]['policy_group'] = bundles[row]['policy_group'] or 'other_individual'
     groups = []
     for key, question in ledger['policy_questions'].items():
         members = [bundles[r] for r in views['rule'] if bundles[r]['policy_group'] == key]
@@ -257,10 +260,6 @@ def build():
                     questions[clean(review['policy_question'])[:220]] += 1
             groups.append(dict(id=key, question=question, rows=len(members), fields=sum(len(b['changes']) for b in members),
                                items=[b['id'] for b in members], reviewer_questions=[q for q, _ in questions.most_common(3)]))
-    ungrouped = [bundles[r] for r in views['rule'] if not bundles[r]['policy_group']]
-    if ungrouped:
-        groups.append(dict(id='other_individual', question=ledger['policy_questions']['other_individual'], rows=len(ungrouped),
-                           fields=sum(len(b['changes']) for b in ungrouped), items=[b['id'] for b in ungrouped], reviewer_questions=[]))
     groups.sort(key=lambda g: -g['rows'])
     blocked_kinds = Counter()
     for row in views['source_blocked']:
@@ -281,7 +280,7 @@ def build():
         blocked=dict(kinds=dict(blocked_kinds), items=[f'row:{r}' for r in views['source_blocked']],
                      labels={k: STATE_TEXT[k] for k in SOURCE_BLOCKED}),
         no_edit=[f'row:{r}' for r in views['no_edit']], withdraw=[f'row:{r}' for r in views['withdraw']],
-        rebind=[f'row:{r}' for r in views['rebind']], pending_read=[f'row:{r}' for r in views['pending_read']],
+        rebind=[f'row:{r}' for r in views['rebind']], needs_reference=[f'row:{r}' for r in views['needs_reference']], pending_read=[f'row:{r}' for r in views['pending_read']],
         outside_scope=dict(confirmed_missing_pairs=outside['pairs']['confirmed_missing_pair'],
                            unresolved_candidates=outside['pairs']['unresolved_missing_candidate']['items'],
                            planned_pairs=outside['pairs']['planned_study_pair']['items'],

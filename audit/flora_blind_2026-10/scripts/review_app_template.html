@@ -304,7 +304,7 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
 .batch-button{font:inherit;font-weight:650;padding:12px 18px;border:1px solid #203b32;background:#203b32;color:white;border-radius:7px;cursor:pointer}
 .batch-button.secondary{background:white;color:#203b32}.batch-button:disabled{opacity:.5;cursor:default}
 .batch-list{max-height:340px;overflow:auto;margin-top:14px}.batch-list li{margin:12px 0;line-height:1.45}.batch-list small{display:block;color:#52615b}.workflow footer{display:flex;gap:12px;flex-wrap:wrap;padding:16px 0 30px}.workflow [hidden],#workspace[hidden],#queues[hidden]{display:none}
-@media(max-width:760px){.workflow{padding:20px 16px}.workflow h2{font-size:25px}.batch-card{padding:16px}.workflow-nav button{padding:8px 10px}.masthead .lede{font-size:14px}}
+@media(max-width:760px){.workflow-nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}.workflow-nav button{flex:none}.shared-tools small{display:none}.statement td.n{width:3.2em;font-size:16px}.workflow{padding:20px 16px}.workflow h2{font-size:25px}.batch-card{padding:16px}.workflow-nav button{padding:8px 10px}.masthead .lede{font-size:14px}}
 .shared-tools{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.shared-tools input{font:inherit;padding:7px;border:1px solid var(--rule-strong);border-radius:5px;min-width:220px}.shared-tools small{color:var(--muted)}#shared-conflicts{overflow:auto;max-height:38vh;padding:0 24px;background:#fff5dd}#shared-conflicts[hidden]{display:none}#shared-conflicts pre{white-space:pre-wrap;max-height:250px;overflow:auto}
 
 .batch-item-title{display:block;text-align:left;white-space:normal;overflow-wrap:anywhere;max-width:100%;font:inherit;font-weight:600;border:0;background:transparent;color:var(--link,#234f70);text-decoration:underline;text-underline-offset:3px;padding:0;cursor:pointer}.batch-item-evidence{font:inherit;font-size:14px;color:var(--link,#234f70);background:white;border:1px solid #bccfc5;border-radius:5px;padding:5px 10px;margin-top:8px;cursor:pointer}.batch-list{max-height:min(65vh,560px)}.batch-list li{padding:10px 0;border-bottom:1px solid #e4e9e5}
@@ -528,7 +528,7 @@ const ledger=CONTEXT.ledger_review||{bundles:{},statement:[],sets:[],rule_groups
 const ledgerOf=c=>ledger.bundles[c.id]||null;
 const inView=(c,...views)=>{const b=ledgerOf(c);return !!b&&views.includes(b.view)};
 const QUEUES=[
-  {id:'candidates',label:'Candidates',test:c=>inView(c,'ready','record_exclusion','pending_read'),note:'Corrections that two independent readings support, grouped by how far they have come. Recording a decision here never changes FLoRA.'},
+  {id:'candidates',label:'Candidates',test:c=>inView(c,'ready','record_exclusion','needs_reference','pending_read'),note:'Corrections that two independent readings support, grouped by how far they have come. Recording a decision here never changes FLoRA.'},
   {id:'rules',label:'Rule questions',test:c=>inView(c,'rule'),note:'Cases waiting on a coding rule or an individual judgement, grouped by the question they share.'},
   {id:'blocked',label:'Source blocked',test:c=>inView(c,'source_blocked'),note:'The available text cannot settle these. Nothing here is a verdict about the study.'},
   {id:'settled',label:'No edit needed',test:c=>inView(c,'withdraw','no_edit','rebind'),note:'Proposals to withdraw, values current FLoRA already holds, and rows that changed in current FLoRA and need checking first.'},
@@ -539,7 +539,7 @@ const QUEUES=[
 const queueById=Object.fromEntries(QUEUES.map(q=>[q.id,q]));
 function groupOf(c,qid){
   const p=profile(c),b=ledgerOf(c);
-  if(qid==='candidates'){const order={ready:[0,'Ready for a set decision'],record_exclusion:[1,'Whole-record exclusions'],pending_read:[2,'Awaiting a source review']};return order[b?.view]||[3,'Other']}
+  if(qid==='candidates'){const order={ready:[0,'Ready for a set decision'],record_exclusion:[1,'Whole-record exclusions'],needs_reference:[2,'Corrected original needs a reference'],pending_read:[3,'Awaiting a source review']};return order[b?.view]||[3,'Other']}
   if(qid==='rules'){const g=(ledger.rule_groups||[]).find(x=>x.id===(b?.policy_group||'other_individual'));const i=(ledger.rule_groups||[]).indexOf(g);return [i<0?99:i,g?.question||'Case-specific question']}
   if(qid==='blocked'){const s=b?.changes?.[0]?.state;return s==='source_gap'?[1,'Abstract or incomplete text']:[0,'Source could not be used']}
   if(qid==='settled'){const order={withdraw:[0,'Proposal should be withdrawn'],no_edit:[1,'Already right in current FLoRA'],rebind:[2,'Current FLoRA changed']};return order[b?.view]||[3,'Other']}

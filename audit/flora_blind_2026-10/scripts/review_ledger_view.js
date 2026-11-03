@@ -23,9 +23,8 @@ function renderStanding(b){
   return h('section',{class:'standing'},h('h3',{},b.status),...b.provenance.map(x=>h('p',{},x)),b.scope_question?h('p',{},'Question raised during comparison: '+b.scope_question+'.'):null,(b.limits||[]).length?h('ul',{},b.limits.slice(0,4).map(x=>h('li',{},x))):null);
 }
 function renderOverview(root){
-  const short=x=>x.slice(0,10);
   root.append(h('h2',{},'Where things stand'),h('p',{class:'since'},`Every one of the ${ledger.totals.fields} proposed field changes, across ${ledger.totals.rows} rows, is counted once below. Nothing here has been approved or applied.`));
-  const target={ready:'sets',record_exclusion:'sets',no_edit:'settled',withdraw:'settled',rebind:'settled',pending_read:'pending',rule:'rules',source_blocked:'blocked'};
+  const target={ready:'sets',record_exclusion:'sets',no_edit:'settled',withdraw:'settled',rebind:'settled',needs_reference:'pending',pending_read:'pending',rule:'rules',source_blocked:'blocked'};
   const body=h('tbody');
   for(const line of ledger.statement){
     const go=target[line.id];
@@ -51,8 +50,9 @@ function renderSets(root){
 }
 function renderPending(root){
   const reviews=ledger.adversary?.reviews||{};
-  root.append(h('h2',{},'Awaiting a source review'),h('p',{class:'since'},`Two confident readings agree with these proposals. A separate review now reads each complete source looking for reasons to reject the change; only then can a row join a candidate set. ${reviews.valid||0} reviews have passed their checks so far.`));
-  root.append(h('section',{class:'batch-card'},h('div',{},ledger.pending_read.map(bundleLine))));
+  root.append(h('h2',{},'Awaiting a source review'),h('p',{class:'since'},ledger.pending_read.length?`Two confident readings agree with these proposals. A separate review reads each complete source looking for reasons to reject the change; only then can a row join a candidate set.`:'Every candidate has now had its source review.'));
+  if(ledger.pending_read.length)root.append(h('section',{class:'batch-card'},h('div',{},ledger.pending_read.map(bundleLine))));
+  if(ledger.needs_reference?.length)root.append(h('section',{class:'batch-card'},h('h3',{},'Corrected original needs a reference'),h('p',{},'The source review supports these different originals, but their proposals have no DOI. They need an authoritative record before they can join a set.'),h('div',{},ledger.needs_reference.map(bundleLine))));
 }
 function renderRules(root){
   root.append(h('h2',{},'Rule questions'),h('p',{class:'since'},'One decision on a question can settle every case that shares it. No rule has been decided; these are listed so you can see the questions and the cases behind them.'));

@@ -1,6 +1,31 @@
 # Independent recoding of proposed corrections
 
-This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. It remains in progress.
+This reassessment covers 562 proposed fields across 515 frozen rows and 469 works. Coding and source review are finished for every source that could be read; nothing is approved or applied.
+
+## Field ledger
+
+`field_ledger.json` is the single current account of those fields. `build_field_ledger.py` derives it from the artifacts below and asserts its totals. It separates coverage, parent comparison, confidence, agreement, relation to the proposal and current-data status, and gives every field one closed state with reason codes. Status labels in the comparison queue are kept as flags and never decide a state.
+
+- `adversarial_review_protocol.json` declares the source-review rule, stop rules, canaries and QA definition. They were committed before any reviewer ran.
+- `adversarial_review_registry.json` records each review, canary and QA result. The reviews, reading receipts and complete quotations stay private.
+- `authoritative_original_metadata.json` holds the verified Crossref records for corrected originals.
+- `flora_validation_application_route.json` names the route for each family of change, with preconditions, audit log, dry run, regression checks and rollback.
+- `application_plan_summary.json` summarises the dry-run plan against current FLoRA. Nothing has been run.
+
+Rebuild from the repository root, then run the tests:
+
+```bash
+python3 audit/flora_blind_2026-10/independent_recode_20261101/validate_adversarial_reviews.py
+python3 audit/flora_blind_2026-10/independent_recode_20261101/build_field_ledger.py
+python3 audit/flora_blind_2026-10/independent_recode_20261101/build_application_plan.py
+python3 -m pytest -q audit/flora_blind_2026-10/independent_recode_20261101/test_field_ledger.py audit/flora_blind_2026-10/independent_recode_20261101/test_adversarial_reviews.py audit/flora_blind_2026-10/independent_recode_20261101/test_sol_completion.py
+```
+
+The frozen baseline has 2,818 rows and 35 columns. FLoRA now comes from flora-validation, and the release checked here (fred-data commit `1204ec81f`) has 2,850 rows and 51 columns. No shared stable ID exists across the two. A frozen row binds to a current record only through both study identifiers with a unique match each way, exact titles, or the original's identifier plus the report's exact title or URL. Anything else stays held. Old row numbers, hashes and approvals do not carry over.
+
+Agreement between readings, a source review and a QA sample each narrow the candidates; none is a certificate. Formal holds, provider-refused sources and qualified comparators cannot pass these gates. `automatically_verified_proposals.json` remains the protected export of 39 cases, 42 fields and 194 operations.
+
+## History of the reassessment
 
 667 of 677 initial source packets and seven additional source views have passed Opus schema, literal-quote and actual reading checks. Three further packet views are covered by verified metadata-only projections of byte-identical sources already read: initial 0499 from upgrade 0689, upgrade 0690 from initial 0471, and comparison wrapper 0691 from legacy packet 0001. They add no model reading or vote. Four hundred and thirty-one fresh Sol views pass the mechanical checks; document_0096 remains excluded from scientific comparison under its source-order hold. There are 1104 ordinary validation entries, 467 archived document scope checks and 686 frozen packet views. These counts describe text packets, including reports split from collections, rather than unique papers.
 
