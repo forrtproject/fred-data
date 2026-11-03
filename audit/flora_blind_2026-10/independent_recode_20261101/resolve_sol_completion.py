@@ -4,7 +4,6 @@ Existing audited comparisons are reused with their exact qualifications. A
 superseded view is explicitly distinct from a literal comparison of that view.
 No source, original coding, export or acceptance decision is rewritten.
 """
-import copy
 import hashlib
 import json
 import subprocess
@@ -12,6 +11,7 @@ from collections import Counter
 from pathlib import Path
 
 from project_prior_sol import project
+from validate_output import coding_quotes
 
 T = Path(__file__).resolve().parent
 P = T.parent / 'evidence_followup/private/independent_recode_20261101'
@@ -33,6 +33,11 @@ FRESH = ['document_0011', 'document_0012', 'document_0013', 'document_0384',
 ALIASES = {'document_0001': 'document_0691', 'document_0471': 'document_0690',
            'document_0499': 'document_0689'}
 SUPERSEDED = {'document_0047': 'document_0686', 'document_0115': 'document_0479'}
+RESOLVED_STATUSES = {
+    'comparison_available_with_recorded_qualification', 'existing_comparison_reused',
+    'superseded_view_resolved_to_current_report', 'new_comparison_parent_validated',
+    'comparison_available_from_verified_identical_report_body',
+}
 
 
 def read(path):
@@ -176,10 +181,13 @@ def build():
             if 'document_0660' in state['validated_fresh_sol_documents']:
                 a, b = (P / 'document_0660/article.txt').read_text(), (P / 'document_0661/article.txt').read_text()
                 assert a[185:] == b[185:]
+                representative = current_comparison('document_0660', queue, state)
+                assert all(quote in a[185:] for _, quote in coding_quotes(read(representative['sol_coding_path'])))
                 entry.update(status='comparison_available_from_verified_identical_report_body',
-                             representative_comparison=current_comparison('document_0660', queue, state),
+                             representative_comparison=representative,
                              identical_body_sha256=hashlib.sha256(a[185:].encode()).hexdigest(),
-                             body_character_start=185, registered_wrapper_itself_read=False)
+                             body_character_start=185, all_scientific_quotes_verified_in_identical_body=True,
+                             registered_wrapper_itself_read=False)
         else:
             task = next((t for t in state['tasks'] if t.get('role') == 'blind_comparison_coder'
                          and doc in t.get('packet_ids', [])), None)
@@ -192,8 +200,8 @@ def build():
                 entry.update(status='new_comparison_parent_validated',
                              comparison=current_comparison(doc, queue, state))
         entries[doc] = entry
-    pending = [d for d, x in entries.items() if x['status'] in {
-        'pending_fresh_comparison', 'running', 'queued', 'waiting', 'waiting_for_representative_comparison'}]
+    # A terminal task failure is still a coverage gap. Unknown states fail closed.
+    pending = [d for d, x in entries.items() if x['status'] not in RESOLVED_STATUSES]
     return {'schema_version': 1, 'scope': 'User-requested reconciliation of 46 apparent Sol gaps, 2026-11-03',
             'user_instruction': 'fix the 46 missing Sol. then get an opus thread to take over and build the full ledger and updated app',
             'baseline_commit': BASE_COMMIT, 'original_document_ids': missing,

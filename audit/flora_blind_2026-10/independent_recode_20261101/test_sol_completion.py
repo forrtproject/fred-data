@@ -78,6 +78,24 @@ class PriorCoverageTests(unittest.TestCase):
         self.assertFalse(result['all_fields_scientifically_accepted'])
         self.assertTrue(all(not x['scientific_acceptance'] for x in result['documents'].values()))
 
+    def test_terminal_failure_and_unknown_state_do_not_complete_coverage(self):
+        real_read = coverage.read
+        for status in ['failed', 'unexpected_status']:
+            state = real_read(coverage.T / 'state.json')
+            state['validated_fresh_sol_documents'] = [
+                d for d in state['validated_fresh_sol_documents'] if d != 'document_0477']
+            task = next(t for t in state['tasks'] if t.get('role') == 'blind_comparison_coder'
+                        and 'document_0477' in t.get('packet_ids', []))
+            task['status'] = status
+
+            def seeded_read(path):
+                return state if Path(path) == coverage.T / 'state.json' else real_read(path)
+
+            with self.subTest(status=status), patch.object(coverage, 'read', seeded_read):
+                result = coverage.build()
+                self.assertIn('document_0477', result['pending_document_ids'])
+                self.assertFalse(result['coverage_work_complete'])
+
 
 if __name__ == '__main__':
     unittest.main()
