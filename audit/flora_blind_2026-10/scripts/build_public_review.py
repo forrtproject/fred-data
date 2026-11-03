@@ -30,7 +30,7 @@ drop_keys = {'source_path', 'source_read_manifest', 'relevant_context_reads', 'p
              'prior_review_artifact', 'prior_full_source_Sol_review_artifact',
              'prior_full_source_Sol_review_read_manifest', 'primary_metadata_receipt',
              'input_sha256'}
-private_path = re.compile(r'(?:/home/lukas/|audit/flora_blind_2026-10/(?:evidence_followup/)?private/)[^\s<>"\']+')
+private_path = re.compile(r'(?:/home/lukas/|(?:audit/flora_blind_2026-10/)?evidence_followup/private/|audit/flora_blind_2026-10/private/)[^\s<>"\']+')
 token = re.compile(r'(?:view_only|access_token|api_key)=[A-Za-z0-9_-]{8,}')
 
 def clean_text(text):

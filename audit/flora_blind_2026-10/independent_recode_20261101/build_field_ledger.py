@@ -664,7 +664,7 @@ STATE_POLICY = {
 EXTRA_POLICY_QUESTIONS = {
     'review_confidence': 'The source review leans towards the proposal but is not highly confident. Should these wait for a person?',
     'comparator_qualification': 'May a reading verified through a normalization chain or alternate layout count as a complete comparator?',
-    'confidence_policy': 'Should a value be correctable when the two roles agree but one is unconfident?',
+    'confidence_policy': 'Should a value be corrected when the two readings agree but one is unsure?',
     'determinability': 'When should a record say cannot_be_determined rather than keep its value?',
 }
 TERMINAL_STATES = READY_STATES | {'withdrawn_source_adjudicated', 'withdraw_both_roles_confirm_frozen', 'provider_hold',

@@ -23,11 +23,11 @@ VIEW_TEXT = {
     'ready': ('Ready for a set decision', 'Two independent readings and a source review support the change, and current FLoRA still holds the old value.'),
     'record_exclusion': ('Whole-record exclusions', 'Evidence supports removing the record. These stay apart from field edits.'),
     'no_edit': ('Already right in current FLoRA', 'Current FLoRA already holds the proposed value, so no edit is needed.'),
-    'withdraw': ('Proposal should be withdrawn', 'Source review or both readings keep the original value.'),
+    'withdraw': ('Proposal should be withdrawn', 'Source review or both readings keep the existing value.'),
     'rebind': ('Current FLoRA changed', 'The row now holds a third value, or could not be matched with certainty. These need checking against current data.'),
     'needs_reference': ('Corrected original needs a reference', 'The source review supports a different original, but the proposal has no DOI to confirm its reference against an authoritative record.'),
     'pending_read': ('Awaiting a source review', 'Two readings agree with the proposal, but nobody has yet tried to break it against the source.'),
-    'rule': ('Waiting on a rule or a person', 'Readers disagree, are unsure, or a coding rule needs settling.'),
+    'rule': ('Waiting on a rule or a person', 'The readings disagree or are unsure, or a coding rule needs settling.'),
     'source_blocked': ('Blocked by the source', 'The available text cannot settle this.'),
 }
 STATE_TEXT = {
@@ -257,7 +257,7 @@ def build():
             for row in (b['row'] for b in members):
                 _, review = adversary_review(row, registry)
                 if review and review.get('policy_question'):
-                    questions[clean(review['policy_question'])[:220]] += 1
+                    questions[sentences(clean(review['policy_question']), 260)] += 1
             groups.append(dict(id=key, question=question, rows=len(members), fields=sum(len(b['changes']) for b in members),
                                items=[b['id'] for b in members], reviewer_questions=[q for q, _ in questions.most_common(3)]))
     groups.sort(key=lambda g: -g['rows'])
