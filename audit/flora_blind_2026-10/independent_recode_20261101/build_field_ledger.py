@@ -958,4 +958,7 @@ def build_ledger(art=None):
 if __name__ == '__main__':
     ledger = build_ledger()
     OUTPUT.write_text(json.dumps(ledger, ensure_ascii=False, indent=1) + '\n')
+    progress = read(T / 'progress.json')
+    progress['field_ledger'] = dict(path=OUTPUT.name, sha256=sha_bytes(OUTPUT.read_bytes()), **ledger['totals'])
+    (T / 'progress.json').write_text(json.dumps(progress, indent=2) + '\n')
     print(json.dumps(ledger['totals'], indent=1))

@@ -3,12 +3,13 @@
 import datetime
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
 import build_field_ledger as L
 
-OUT = L.P / 'adversarial_20261103'
+OUT = L.P / os.environ.get('ADVERSARY_FOLDER', 'adversarial_20261103')
 CHUNK = 30000
 
 

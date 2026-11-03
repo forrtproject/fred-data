@@ -4,7 +4,11 @@
   "declared_before_any_reviewer_launch": true,
   "purpose": "Every new candidate bundle gets one complete nonblind adversarial read before it can be called ready. Reviews add no blind vote and never approve or apply anything.",
   "pool_rule": "A row enters when every proposed field has state agreement_pending_adversarial_review and the current FLoRA value still equals the frozen value. Already-equal rows are no-ops; third values and unresolved identities stay held.",
-  "reviewer": {"provider": "claudeAgent", "model": "claude-opus-5-5", "independence": "Never saw these outputs during coding; receives both role values and all recorded flags."},
+  "reviewer": {
+    "provider": "claudeAgent",
+    "model": "claude-opus-5-5",
+    "independence": "Never saw these outputs during coding; receives both role values and all recorded flags."
+  },
   "complete_read_rule": "All registered chunks must be served through adversary_read.py, which appends a hashed receipt. Missing chunks fail validation.",
   "supported_requires": [
     "verdict supported with high confidence",
@@ -20,12 +24,35 @@
     "note": "Canaries are mixed into the same stream under opaque request ids. Their results never enter the ledger."
   },
   "stop_rules": [
-    {"id": "S1", "rule": "Any negative canary returned as supported: stop launching, inspect the prompt and every result in that batch."},
-    {"id": "S2", "rule": "Both positive canaries rejected: stop launching and inspect."},
-    {"id": "S3", "rule": "More than 20 percent of the first 30 completed reviews fail mechanical validation: stop and fix before continuing."},
-    {"id": "S4", "rule": "A reviewer reports corrupted text or embedded instructions in a source: hold that bundle, keep going."},
-    {"id": "S5", "rule": "QA tripwire after the full pass: 15 randomly chosen supported bundles get a fresh second read. One flip holds that bundle and doubles the sample. Two or more flips hold the entire new supported set for human review."}
+    {
+      "id": "S1",
+      "rule": "Any negative canary returned as supported: stop launching, inspect the prompt and every result in that batch."
+    },
+    {
+      "id": "S2",
+      "rule": "Both positive canaries rejected: stop launching and inspect."
+    },
+    {
+      "id": "S3",
+      "rule": "More than 20 percent of the first 30 completed reviews fail mechanical validation: stop and fix before continuing."
+    },
+    {
+      "id": "S4",
+      "rule": "A reviewer reports corrupted text or embedded instructions in a source: hold that bundle, keep going."
+    },
+    {
+      "id": "S5",
+      "rule": "QA tripwire after the full pass: 15 randomly chosen supported bundles get a fresh second read. One flip holds that bundle and doubles the sample. Two or more flips hold the entire new supported set for human review."
+    }
   ],
   "qa_note": "Zero errors in 15 is weak evidence by itself, so the sample is a tripwire and never a certificate.",
-  "held_scope": "Provider-held 0366/0367/0374/0375/0463/0464/0465 and source-order 0096 are never served. Header-only 0656/0662 stay out."
+  "held_scope": "Provider-held 0366/0367/0374/0375/0463/0464/0465 and source-order 0096 are never served. Header-only 0656/0662 stay out.",
+  "qa_definition": {
+    "declared_before_any_qa_read": true,
+    "sample": "15 supported high-confidence candidate bundles drawn with seed 20261103 from the sorted list of bundle ids; doubled once if S5 calls for it.",
+    "blinding": "The QA reviewer gets the same request, in a separate folder, and never sees the first review.",
+    "flip": "The QA verdict is not supported, or it supports a different value.",
+    "softened": "The QA verdict is supported at below high confidence. The bundle is held and counted separately; it does not count towards the S5 flip threshold.",
+    "scope": "QA results only hold bundles. They can never promote one."
+  }
 }

@@ -6,6 +6,7 @@ function moveLine(change){
 function bundleBody(b){
   const body=h('div',{class:'body'});
   if(b.summary)body.append(h('p',{},b.summary));
+  body.append(h('ul',{},b.provenance.map(x=>h('li',{},x))));
   if(b.scope_question)body.append(h('p',{},'Question raised during comparison: ',b.scope_question+'.'));
   for(const q of b.quotes||[])body.append(h('blockquote',{class:q.against?'against':''},q.text,h('cite',{},(q.against?'Strongest evidence against':'Supporting passage')+(q.section?', '+q.section:'')),q.note?h('cite',{},q.note):null));
   if((b.limits||[]).length)body.append(h('p',{},'Limits: '),h('ul',{},b.limits.map(x=>h('li',{},x))));
@@ -43,7 +44,7 @@ function renderSets(root){
   root.append(h('h2',{},'Candidate sets'),h('p',{class:'since'},'Each set has one rule. Open a row to see the quoted evidence and what was checked.'),h('p',{class:'closed-note'},ledger.set_decision_note));
   for(const set of ledger.sets){
     if(!set.rows)continue;
-    root.append(h('section',{class:'batch-card'},h('h3',{},set.title),h('p',{class:'set-rule'},set.rule),h('p',{class:'muted'},`${set.rows} rows, ${set.fields} fields`),h('div',{},set.items.map(bundleLine))));
+    root.append(h('section',{class:'batch-card'},h('h3',{},set.title),h('p',{class:'set-rule'},set.rule),h('p',{class:'muted'},`${set.rows} rows, ${set.fields} fields`),set.route_blocked?h('p',{class:'closed-note'},'FLoRA has no way to apply this kind of change yet. '+set.route_note):null,h('div',{},set.items.map(bundleLine))));
   }
   if(ledger.record_exclusions.length)root.append(h('section',{class:'batch-card'},h('h3',{},'Whole-record exclusions'),h('p',{class:'set-rule'},'Remove the whole record because the paper re-tests no earlier published finding. Kept apart from field edits.'),h('div',{},ledger.record_exclusions.map(bundleLine))));
   for(const g of batchGroups)if(!g.retired)renderPairGroup(root,g);

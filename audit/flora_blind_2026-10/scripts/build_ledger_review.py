@@ -94,6 +94,15 @@ def clean(text):
     return re.sub(r'(?:/home/lukas/|audit/flora_blind_2026-10/)[^\s<>"\']+', '[audit file]', str(text or ''))
 
 
+def sentences(text, limit):
+    """Shorten at a sentence or word boundary so a note never ends mid-word."""
+    if len(text) <= limit:
+        return text
+    cut = text[:limit]
+    stop = max(cut.rfind('. '), cut.rfind('; '))
+    return cut[:stop + 1] if stop > limit // 2 else cut[:cut.rfind(' ')] + ' …'
+
+
 def show_value(value):
     if value in (None, '', 'NA'):
         return 'No value'
@@ -202,7 +211,7 @@ def build():
             counter = review.get('strongest_counterevidence') or {}
             if counter.get('quote'):
                 quotes.append(dict(text=excerpt(counter['quote']), section=clean(counter.get('section', '')), against=True,
-                                   note=clean(counter.get('why_not_decisive', ''))[:300]))
+                                   note=sentences(clean(counter.get('why_not_decisive', '')), 320)))
             provenance.append('A source review read the complete text looking for reasons to reject this.')
         flag = next((m['reported_status_label'] for m in members if {'parent_hold_flag', 'parent_scope_flag'} & set(m['reasons'])), None)
         group = next((m['policy_group'] for m in members if m['policy_group']), None)
@@ -216,7 +225,7 @@ def build():
                           current=show_value(m['current']['value']) if m['current']['relation'] not in ('identity_unresolved', 'record_action_not_comparable') else 'Not matched',
                           state=m['state'], relation=m['current']['relation']) for m in members],
             status=VIEW_TEXT[view][0], provenance=provenance, limits=limits, quotes=[q for q in quotes if q['text']],
-            summary=summary[:700], scope_question=humanize_flag(flag) if flag and view not in ('ready',) else '',
+            summary=sentences(summary, 700), scope_question=humanize_flag(flag) if flag and view in ('rule', 'pending_read', 'rebind') else '',
             policy_group=group if view == 'rule' else None,
             record_action=(record_cases[row]['action'] if row in record_cases else None), operations=(len(case['operations']) if row in export_cases else None))
 
@@ -229,10 +238,13 @@ def build():
     assert sum(s['fields'] for s in statement) == ledger['totals']['fields'] == 562
     assert sum(s['rows'] for s in statement) == ledger['totals']['rows'] == 515
 
+    route_status = read(T / 'flora_validation_application_route.json')['families']
     sets = []
     for key, title, rule, _ in SETS:
         members = [bundles[r] for r in views['ready'] if bundles[r]['family'] == key]
-        sets.append(dict(id=key, title=title, rule=rule, rows=len(members), fields=sum(len(b['changes']) for b in members),
+        route = route_status.get(key, {})
+        sets.append(dict(id=key, title=title, rule=rule, route_blocked=route.get('status') == 'blocked_no_route',
+                         route_note=route.get('note', '') if route.get('status') == 'blocked_no_route' else '', rows=len(members), fields=sum(len(b['changes']) for b in members),
                          fingerprint=fingerprint([[b['id'], b['changes']] for b in members]), items=[b['id'] for b in members]))
     groups = []
     for key, question in ledger['policy_questions'].items():
