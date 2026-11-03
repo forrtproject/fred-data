@@ -6,14 +6,12 @@ library(googlesheets4)
 library(glue)
 library(yaml)
 
-# Google Sheets URLs for contributor lists
-sheet1_url <- "https://docs.google.com/spreadsheets/d/1NpLZYFO0F-EIwbbP9bLmcvYVZOEIwYxktHgJ3BmVjXA/edit?gid=1455439772#gid=1455439772"
-sheet2_url <- "https://docs.google.com/spreadsheets/d/1ioY_RTYQJezb744LFoB6zMRL9YqnSYG9iQv0uGvSDEk/edit?gid=736935521#gid=736935521"
+# Google Sheets URL for contributor list
+sheet_url <- "https://docs.google.com/spreadsheets/d/1ioY_RTYQJezb744LFoB6zMRL9YqnSYG9iQv0uGvSDEk/edit?gid=736935521#gid=736935521"
 
-# Read both sheets
+# Read sheet
 gs4_deauth()
-contributors1 <- read_sheet(sheet1_url)
-contributors2 <- read_sheet(sheet2_url)
+contributors <- read_sheet(sheet_url)
 
 # Helper to safely extract numeric from potentially list column
 safe_numeric <- function(x) {
@@ -28,20 +26,7 @@ safe_numeric <- function(x) {
 }
 
 # Standardize column names and select relevant columns
-contributors1_clean <- contributors1 |>
-  select(
-    rank = `Order in publication`,
-    given = `First name`,
-    middle = `Middle name`,
-    family = Surname,
-    orcid = `ORCID iD`
-  ) |>
-  mutate(
-    rank = safe_numeric(rank),
-    across(where(is.character), as.character)
-  )
-
-contributors2_clean <- contributors2 |>
+contributors_clean <- contributors |>
   select(
     rank = 1, # order column (first column; its header is blank in the sheet)
     given = `First name`,
@@ -59,8 +44,8 @@ clean_name <- function(x) {
   gsub("\\*$", "", x)
 }
 
-# Merge contributors - keep minimum rank for each person
-all_contributors <- bind_rows(contributors1_clean, contributors2_clean) |>
+# Clean names and keep one row per person
+all_contributors <- contributors_clean |>
   mutate(
     family = clean_name(family),
     given = clean_name(given),
