@@ -46,14 +46,15 @@ class PlantedFailures(unittest.TestCase):
         self.assertEqual(with_()[0], 'agreement_pending_adversarial_review')
 
     def test_supported_review_with_verified_quote_is_the_only_new_ready_route(self):
-        review = dict(verdict='supported', quote_verified=True, authoritative_metadata_verified=False)
+        review = dict(verdict='supported', quote_verified=True, authoritative_metadata_verified=False, confidence='high')
         self.assertEqual(with_(adversary=review)[0], 'adversary_supported_candidate')
+        self.assertIn('adversary_below_high_confidence', self.assert_state('adversary_held', adversary=dict(review, confidence='medium')))
         self.assert_state('adversary_held', adversary=dict(review, verdict='policy_boundary'))
         self.assert_state('adversary_held', adversary=dict(review, verdict='not_supported'))
         self.assert_state('adversary_held', adversary=dict(review, quote_verified=False))
 
     def test_original_relink_needs_authoritative_metadata_after_review(self):
-        review = dict(verdict='supported', quote_verified=True, authoritative_metadata_verified=False)
+        review = dict(verdict='supported', quote_verified=True, authoritative_metadata_verified=False, confidence='high')
         self.assert_state('agreement_needs_authoritative_metadata', field='original', adversary=review)
         ok = dict(review, authoritative_metadata_verified=True)
         self.assertEqual(with_(field='original', adversary=ok)[0], 'adversary_supported_candidate')

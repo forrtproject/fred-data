@@ -32,8 +32,6 @@ def validate(review, request, source, receipts):
         failures.append('policy_group')
     if verdict != 'supported':
         return failures
-    if review.get('confidence') != 'high':
-        failures.append('supported_without_high_confidence')
     if review.get('same_finding') is not True:
         failures.append('same_finding')
     named = {c['field']: c['proposed_value'] for c in request['proposed_changes']}
@@ -76,6 +74,8 @@ def collect():
         receipts = [json.loads(line) for line in receipts_path.read_text().splitlines()] if receipts_path.exists() else []
         failures = validate(review, request, source, receipts)
         states['valid' if not failures else 'failed'] += 1
+        if review.get('verdict') == 'supported' and not failures and review.get('confidence') != 'high':
+            states['supported_below_high_confidence'] += 1
         record = dict(request_id=request_id, document_id=request['document_id'], verdict=review.get('verdict'),
                       confidence=review.get('confidence'), policy_group=review.get('policy_group'),
                       quote_verified=not failures, failures=failures, summary=review.get('plain_language_summary', '')[:600],
@@ -87,6 +87,8 @@ def collect():
     outcome = dict(
         schema_version=1, protocol_sha256=hashlib.sha256((L.T / 'adversarial_review_protocol.json').read_bytes()).hexdigest(),
         states=dict(states), verdicts=dict(Counter(b['verdict'] for b in bundles.values())),
+        stop_rule_S3_mechanical_failure_rate=round(states['failed'] / max(1, states['valid'] + states['failed']), 3),
+        stop_rule_S3_note='Counts broken reviews only: unread chunks, nonliteral quotes, wrong identity or schema. Medium confidence is a valid result that fails the ready gate.',
         stop_rule_S1_tripped=[r for r, c in canaries.items() if c['kind'].startswith('negative') and c['verdict'] == 'supported'],
         positive_canaries_rejected=[r for r, c in canaries.items() if c['kind'] == 'positive_canary' and c['verdict'] != 'supported'],
         canaries=canaries, bundles=bundles, adds_blind_votes=False, user_approval_recorded=False)

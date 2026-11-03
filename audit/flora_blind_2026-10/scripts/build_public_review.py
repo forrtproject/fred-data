@@ -16,7 +16,7 @@ out = args.output.resolve()
 out.mkdir(parents=True, exist_ok=True)
 assert not any(out.iterdir()), 'Use an empty staging directory.'
 
-json_files = ['review_reliability.json', 'batch_evidence.json', 'batch_review.json', 'review_queue.json', 'audit_overview.json', 'correction_proposals.json',
+json_files = ['ledger_review.json', 'review_reliability.json', 'batch_evidence.json', 'batch_review.json', 'review_queue.json', 'audit_overview.json', 'correction_proposals.json',
               'evidence_provenance_fixes.json', 'review_required.json',
               'sol_review_decisions.json', 'missing_pair_review_decisions.json']
 if (H / 'record_actions.json').exists():

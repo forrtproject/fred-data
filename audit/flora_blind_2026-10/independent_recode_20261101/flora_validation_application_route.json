@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "status": "proposed_route_not_executed",
+  "repository": "https://github.com/forrtproject/flora-validation",
+  "inspected_commit": "617b14f210c6c791f056da0b279759165a7a0cf7",
+  "why_this_repository": "fred-data's README says FLoRA processing and data corrections belong in flora-validation; output/flora.csv on main is synced from its release.",
+  "identity": "Corrections key on the permanent published id (flora_data.id, the FLORA-###### value in flora.csv). Row positions and full-record hashes are not identities.",
+  "families": {
+    "outcome_only": {"route": "PATCH /api/admin/flora/{id}", "fields": ["outcome", "outcome_quote", "outcome_quote_source"], "status": "supported"},
+    "reproduction_axis": {"route": "PATCH /api/admin/flora/{id}", "fields": ["outcome_computation", "outcome_computational_quote", "out_quote_computational_source", "outcome_robustness", "outcome_robustness_quote", "out_quote_robust_source"], "status": "supported", "note": "The combined outcome, quote and source are derived from the axes, so only the changed axis is sent."},
+    "original_reference": {"route": "PATCH /api/admin/flora/{id}", "fields": ["doi_o", "url_o", "title_o", "author_o", "journal_o", "year_o", "volume_o", "issue_o", "pages_o"], "status": "supported", "note": "A corrected doi_o re-joins metadata in the build. Dry-run the result against the authoritative record."},
+    "type_and_outcome": {"route": null, "status": "blocked_no_route", "note": "type is not an editable field in flora_edits.FIELD_GROUPS, and axes are only editable on a reproduction. A conversion needs a maintainer-agreed route, such as a source-record correction plus a new mapping. Ask before designing it."},
+    "record_exclusion": {"route": "admin row in transform_exclusions, keyed by doi_r or url_r", "status": "needs_check_per_row", "note": "Exclusions apply to the whole replication key. Check that the key has no other row that should stay, then expect the published record to retire rather than vanish."},
+    "merge_split_relink_with_duplicate": {"route": null, "status": "no_automatic_route", "note": "Duplicate rulings and manual records are separate workflows in flora-validation; none of these belongs in a scalar batch."}
+  },
+  "preconditions": [
+    "Fetch the record through GET /api/admin/flora/{id} and read its version.",
+    "Require the ledger's current values to equal the record's values for every field in the bundle; on any difference, stop that bundle and rebuild the ledger.",
+    "Send the version with the PATCH; a stale version returns 409 and that bundle stops.",
+    "Apply every field of a bundle in one request. A set stops at its first unexplained failure."
+  ],
+  "audit_log": "flora_record_changes is append-only and records who, when, before and after, plus a note per field. Each note cites the ledger field id and the ledger hash.",
+  "dry_run": "Build application_plan_dryrun.json, then run it against a disposable database (the flora-validation README warns that importing app.py can start jobs against the configured database) and diff the exported CSV: only the planned fields and derived columns may change.",
+  "regression_checks": ["python -m pytest -q in flora-validation", "validate_flora.py on the exported frame", "row and id counts unchanged except planned exclusions", "the ledger rebuilt against the new export shows every applied field as already_equal"],
+  "rollback": "POST /api/admin/flora/{id}/restore with the change_id recorded before the batch (0 returns to the derived value). Corrections are overlays, so source records are untouched.",
+  "authorization": "Nothing here has been run. It needs an explicit user decision on the concrete rule and set, and admin access to flora-validation.",
+  "canonical_changes_applied": false
+}

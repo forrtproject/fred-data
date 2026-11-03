@@ -29,9 +29,8 @@ class BatchEvidenceTests(unittest.TestCase):
                     self.assertTrue(item['already_in_flora'])
                     self.assertNotIn('outcome',item['original'])
 
-    def test_decisive_end_of_quoted_passage_is_accessible(self):
-        quotes=self.data['items']['row:936']['fields']['outcome']['quoted_passages']
-        self.assertTrue(any('strong and replicable association' in p['quote'] for p in quotes))
-        self.assertTrue(any(p.get('source_verified') for p in self.data['items']['row:1751']['fields']['outcome']['proofs']))
+    def test_retired_outcome_batches_are_gone(self):
+        self.assertEqual({g['id'] for g in self.batch['groups']},{'confirmed_missing_pairs'})
+        self.assertFalse([k for k,v in self.data['items'].items() if v['kind']=='row'])
 
 if __name__=='__main__':unittest.main()

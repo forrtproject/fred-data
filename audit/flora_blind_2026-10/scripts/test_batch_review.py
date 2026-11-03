@@ -2,12 +2,12 @@
 import copy
 import json
 import unittest
-from build_batch_review import H, build, eligible_case
+from build_batch_review import H, build, candidate_groups, eligible_case
 
 class BatchReviewTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.data=build()
+        cls.data=candidate_groups()
         cls.queue={c['id']:c for c in json.loads((H/'review_queue.json').read_text())}
         cls.proposals=json.loads((H/'correction_proposals.json').read_text())['changes']
 

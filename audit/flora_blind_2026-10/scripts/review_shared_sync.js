@@ -10,7 +10,7 @@ function createSharedReview(config){
   let carryover=readJSON(legacyKey,null);
   if(store.shared_scope!==scope){
     if(Object.keys(store.records||{}).length||Object.keys(store.pairs||{}).length){carryover={...store};try{localStorage.setItem(legacyKey,JSON.stringify(carryover))}catch(e){}}
-    store={version:4,shared_scope:scope,records:{},pairs:{},batch_approvals:{},resolutions:{},workflow:{stage:'batch'}};persist();
+    store={version:4,shared_scope:scope,records:{},pairs:{},batch_approvals:{},resolutions:{},workflow:{stage:'overview'}};persist();
   }
   function writeOutbox(value){const payload=JSON.stringify(value);localStorage.setItem(key,payload);if(localStorage.getItem(key)!==payload)throw Error('Pending-write storage failed');outbox=value}
   function pendingAll(){const seen=new Set(),all=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(!k.startsWith(prefix))continue;for(const event of readJSON(k,[])||[]){if(!seen.has(event.id)){seen.add(event.id);all.push(event)}}}return all.sort((a,b)=>a.created_at.localeCompare(b.created_at))}

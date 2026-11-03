@@ -92,7 +92,7 @@ PRIMARY_REASONS = {
     'unconfident_opus', 'unconfident_sol', 'both_confident_on_frozen', 'both_confident_third_value',
     'confident_disagreement', 'cannot_be_determined_value', 'full_text_gap', 'in_protected_export',
     'in_protected_record_actions', 'adversary_pending', 'adversary_supported', 'adversary_not_supported',
-    'adversary_quote_failed', 'needs_authoritative_bibliography', 'type_change_needs_axes',
+    'adversary_quote_failed', 'adversary_below_high_confidence', 'needs_authoritative_bibliography', 'type_change_needs_axes',
     'parent_scope_flag', 'parent_hold_flag', 'literal_recheck_failed', 'validator_unproved_evidence',
     'prior_reading_differs', 'record_exclusion_rule', 'relink_would_duplicate_pair',
 }
@@ -312,12 +312,15 @@ def classify_field(f):
         return out('agreement_qualified_comparator', 'comparator_' + qualification)
     review = f.get('adversary')
     if review:
-        if review['verdict'] == 'supported' and review['quote_verified']:
-            if f['field'] == 'original' and not review['authoritative_metadata_verified']:
-                return out('agreement_needs_authoritative_metadata', 'needs_authoritative_bibliography')
-            return out('adversary_supported_candidate', 'adversary_supported')
-        return out('adversary_held', 'adversary_not_supported' if review['verdict'] != 'supported'
-                   else 'adversary_quote_failed')
+        if not review['quote_verified']:
+            return out('adversary_held', 'adversary_quote_failed')
+        if review['verdict'] != 'supported':
+            return out('adversary_held', 'adversary_not_supported')
+        if review.get('confidence') != 'high':
+            return out('adversary_held', 'adversary_below_high_confidence')
+        if f['field'] == 'original' and not review['authoritative_metadata_verified']:
+            return out('agreement_needs_authoritative_metadata', 'needs_authoritative_bibliography')
+        return out('adversary_supported_candidate', 'adversary_supported')
     return out('agreement_pending_adversarial_review', 'adversary_pending')
 
 
@@ -657,6 +660,7 @@ STATE_POLICY = {
     'policy_cannot_be_determined': 'determinability',
 }
 EXTRA_POLICY_QUESTIONS = {
+    'review_confidence': 'The source review leans towards the proposal but is not highly confident. Should these wait for a person?',
     'comparator_qualification': 'May a reading verified through a normalization chain or alternate layout count as a complete comparator?',
     'confidence_policy': 'Should a value be correctable when the two roles agree but one is unconfident?',
     'determinability': 'When should a record say cannot_be_determined rather than keep its value?',
@@ -670,6 +674,8 @@ def policy_group(state, label, reasons):
     """Group recurring open questions so one rule can settle many cases."""
     if state in TERMINAL_STATES:
         return None
+    if 'adversary_below_high_confidence' in reasons:
+        return 'review_confidence'
     if state in STATE_POLICY:
         return STATE_POLICY[state]
     for key, (_, pattern) in POLICY_GROUPS.items():

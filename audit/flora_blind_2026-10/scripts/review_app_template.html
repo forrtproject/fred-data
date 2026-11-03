@@ -46,6 +46,33 @@ button,input,select,textarea{font:inherit;color:inherit}
 .notice{grid-column:1/-1;margin:0;min-height:0;font-size:13.5px;color:var(--hold)}
 .notice:not(:empty){padding:4px 0 8px}
 
+
+/* Reconciliation statement */
+.statement{width:100%;max-width:880px;border-collapse:collapse;margin:18px 0 8px;font-variant-numeric:tabular-nums;background:#fff}
+.statement th{font-weight:600;text-align:right;font-size:14px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--rule-strong)}
+.statement th:first-child{text-align:left}
+.statement td{padding:11px 12px;vertical-align:top;border-bottom:1px solid var(--rule)}
+.statement td.n{text-align:right;width:5.5em;font-size:18px}
+.statement .line-title{font-weight:600;display:block;background:none;border:0;padding:0;text-align:left;color:var(--link);cursor:pointer;font-size:16px}
+.statement .line-title:hover{text-decoration:underline}
+.statement .line-title.plain{color:var(--ink);cursor:default;text-decoration:none}
+.statement .line-note{display:block;color:var(--muted);font-size:14px;max-width:62ch}
+.statement tfoot td{border-bottom:3px double var(--ink);border-top:1px solid var(--ink);font-weight:650}
+.since{max-width:76ch;margin:0 0 6px;line-height:1.55}
+.set-rule{font-size:15.5px;max-width:70ch;margin:4px 0 10px}
+.closed-note{margin:10px 0;padding:10px 14px;background:var(--wash);border-left:3px solid var(--rule-strong);max-width:76ch;font-size:14.5px}
+.bundle{border-top:1px solid var(--rule);padding:13px 0}.bundle:first-of-type{border-top:0}
+.bundle>summary{cursor:pointer;list-style-position:outside;font-weight:600;line-height:1.4}
+.bundle .moves{margin:6px 0 0;padding:0;list-style:none;font-size:14.5px}
+.bundle .moves li{margin:2px 0}.bundle .from{color:var(--strike);text-decoration:line-through;text-decoration-thickness:1px}.bundle .to{color:var(--insert);font-weight:600}
+.bundle .body{margin:10px 0 2px 0;max-width:76ch;font-size:14.5px;line-height:1.5}
+.bundle blockquote{margin:6px 0;padding:2px 0 2px 12px;border-left:3px solid var(--insert);font-family:var(--serif)}
+.bundle blockquote.against{border-left-color:var(--hold-rule)}
+.bundle blockquote cite{display:block;font:normal 13px var(--sans);color:var(--muted)}
+.standing{margin:14px 0 0;padding:12px 16px;border:1px solid var(--rule-strong);background:var(--wash);border-radius:3px;max-width:76ch}
+.standing h3{margin:0 0 4px;font-size:15px}.standing p{margin:4px 0;font-size:14.5px}.standing ul{margin:4px 0 0;padding-left:20px;font-size:14px}
+.row-jump{border:0;background:none;color:var(--link);padding:0;cursor:pointer;font:inherit;text-decoration:underline}
+
 /* Workspace */
 .workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(290px,350px) minmax(0,1fr)}
 .index{display:flex;flex-direction:column;min-height:0;background:var(--wash);border-right:1px solid var(--rule)}
@@ -266,8 +293,9 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 
-.workflow-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.workflow-nav button{border:1px solid var(--line,#cbd5e1);border-radius:8px;background:white;padding:9px 15px;font:inherit;cursor:pointer}
+.workflow-nav,.masthead>#save-status{grid-column:1/-1}.masthead>#save-status{margin:2px 0}
+.workflow-nav{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.workflow-nav button{border:1px solid var(--line,#cbd5e1);border-radius:8px;background:white;padding:7px 13px;font:inherit;font-size:15px;cursor:pointer}
 .workflow-nav button[aria-current="step"]{background:#203b32;color:white;border-color:#203b32}
 .workflow{flex:1;overflow:auto;padding:30px max(20px,calc((100% - 1120px)/2));background:#f7f8f5}
 .workflow h2{font-size:30px;margin:0 0 10px}.workflow .intro{max-width:76ch;line-height:1.6}
@@ -290,7 +318,7 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
 <header class="masthead">
   <div>
     <h1>FLoRA audit decisions</h1>
-    <p class="lede">Review proposed fixes and cases needing your judgement. Inspect grouped proposals, review outcomes individually, then download approved changes. Decisions save to a shared review log for all reviewers; FLoRA changes only when the download is implemented.</p>
+    <p class="lede">The status of every proposed FLoRA correction, with its evidence. Decisions save to a shared log for all reviewers. Nothing here changes FLoRA.</p>
   </div>
   <div class="tools">
     <p class="overall" id="overall"></p>
@@ -339,7 +367,7 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
     <button class="tool about-close" id="about-close" type="button">Close</button>
     <h2 id="about-title">About this review</h2>
     <p>Explore field decisions, supporting evidence, and correction proposals. Each case shows what is wrong with a FLoRA record, the current and proposed values, the evidence, and any dependency that must be settled first.</p>
-    <p>Current values come from the frozen FLoRA snapshot that was audited. Recording a decision never changes FLoRA: decisions are saved in a shared Google-backed change log, and an exported file is a list of decisions for whoever applies the changes. The browser keeps pending writes until the shared service confirms them. Other reviewers’ changes load automatically or with Refresh shared decisions. In audit notes, “parent” means the integrating reviewer who applies decisions.</p>
+    <p>“Audited” values come from the frozen FLoRA snapshot that was audited; “current” values come from the FLoRA release named on the Where things stand page. Recording a decision never changes FLoRA: decisions are saved in a shared Google-backed change log, and an exported file is a list of decisions for whoever applies the changes. The browser keeps pending writes until the shared service confirms them. Other reviewers’ changes load automatically or with Refresh shared decisions. In audit notes, “parent” means the integrating reviewer who applies decisions.</p>
     <p id="evidence-status" class="muted">Shortened evidence excerpts are embedded in this page.</p>
     <p id="data-status" class="muted hash"></p>
     <h3>Downloads</h3>
@@ -496,27 +524,34 @@ function caseTitle(c){const rc=rowCtx(c);if(rc&&rc.r.title)return rc.r.title;con
 function levelOf(c){const rc=rowCtx(c);return LEVEL[c.level]?c.level:rc?.level||c.level}
 
 /* ---------- queues ---------- */
+const ledger=CONTEXT.ledger_review||{bundles:{},statement:[],sets:[],rule_groups:[],blocked:{items:[]}};
+const ledgerOf=c=>ledger.bundles[c.id]||null;
+const inView=(c,...views)=>{const b=ledgerOf(c);return !!b&&views.includes(b.view)};
 const QUEUES=[
-  {id:'needs',label:'Needs decision',test:c=>profile(c).needs,note:'Policy choices, record-level actions, corrections with holds and full-text evidence limits that the audit could not settle on its own.'},
-  {id:'changes',label:'Proposed changes',test:c=>profile(c).items.length>0,note:'Source-checked corrections to field values, plus verified replacements for evidence quotes. Approve, keep FLoRA as it is, or ask for follow-up.'},
+  {id:'candidates',label:'Candidates',test:c=>inView(c,'ready','record_exclusion','pending_read'),note:'Corrections that two independent readings support, grouped by how far they have come. Recording a decision here never changes FLoRA.'},
+  {id:'rules',label:'Rule questions',test:c=>inView(c,'rule'),note:'Cases waiting on a coding rule or an individual judgement, grouped by the question they share.'},
+  {id:'blocked',label:'Source blocked',test:c=>inView(c,'source_blocked'),note:'The available text cannot settle these. Nothing here is a verdict about the study.'},
+  {id:'settled',label:'No edit needed',test:c=>inView(c,'withdraw','no_edit','rebind'),note:'Proposals to withdraw, values current FLoRA already holds, and rows that changed in current FLoRA and need checking first.'},
   {id:'missing',label:'Possible omissions',test:c=>profile(c).missing,note:'Study–original pairs that FLoRA may be missing. Confirmed missing pairs are listed in the downloads.'},
-  {id:'limits',label:'Evidence limits',test:c=>{const p=profile(c);return !p.missing&&!p.items.length&&(p.unknown.length>0||p.unverified.length>0)},note:'The available source could not verify FLoRA’s values. No change is proposed; decide whether to keep the value or seek the source.'},
+  {id:'limits',label:'Evidence limits',test:c=>{const p=profile(c);return !ledgerOf(c)&&!p.missing&&(p.unknown.length>0||p.unverified.length>0)},note:'Rows outside the proposed corrections where the available source could not verify FLoRA’s value.'},
   {id:'all',label:'Everything',test:()=>true,note:'Every audit case.'}
 ];
 const queueById=Object.fromEntries(QUEUES.map(q=>[q.id,q]));
 function groupOf(c,qid){
-  const p=profile(c);
-  if(qid==='needs'){if(p.type==='policy')return [0,'Policy choices'];if(p.ra)return [1,'Record-level actions'];if(p.holds.length||p.conditional.length)return [2,'Corrections with holds'];if(p.unknown.length)return [3,'Evidence limits after full-text review'];return [4,'Other review cases']}
-  if(qid==='changes'){const v=Object.values(c.changes||{});if(v.some(x=>x&&x.action==='remove_row'))return [0,'Row removals'];if('original' in (c.changes||{}))return [1,'Original study replacements'];if('type' in (c.changes||{}))return [2,'Record type changes'];if('outcome' in (c.changes||{}))return [3,'Outcome changes'];if(p.changeFields.length)return [4,'Reproduction result changes'];return [5,'Evidence quote updates']}
+  const p=profile(c),b=ledgerOf(c);
+  if(qid==='candidates'){const order={ready:[0,'Ready for a set decision'],record_exclusion:[1,'Whole-record exclusions'],pending_read:[2,'Awaiting a source review']};return order[b?.view]||[3,'Other']}
+  if(qid==='rules'){const g=(ledger.rule_groups||[]).find(x=>x.id===(b?.policy_group||'other_individual'));const i=(ledger.rule_groups||[]).indexOf(g);return [i<0?99:i,g?.question||'Case-specific question']}
+  if(qid==='blocked'){const s=b?.changes?.[0]?.state;return s==='source_gap'?[1,'Abstract or incomplete text']:[0,'Source could not be used']}
+  if(qid==='settled'){const order={withdraw:[0,'Proposal should be withdrawn'],no_edit:[1,'Already right in current FLoRA'],rebind:[2,'Current FLoRA changed']};return order[b?.view]||[3,'Other']}
   if(qid==='missing')return p.missingOpen?[0,'Unresolved candidates']:[1,'Settled by source review'];
   if(qid==='limits'){const l=levelOf(c);return l==='full_text'?[0,'Full text does not settle it']:l==='abstract'?[1,'Abstract only']:[2,'No usable text']}
-  if(qid==='all'){if(p.needs)return [0,'Needs decision'];if(p.items.length)return [1,'Proposed changes'];if(p.missing)return [2,'Possible missing pairs'];if(p.type==='limit')return [3,'Evidence limits'];return [4,'Confirmed; no change proposed']}
+  if(qid==='all'){if(b)return [0,b.status];if(p.missing)return [1,'Possible missing pairs'];if(p.type==='limit')return [2,'Evidence limits'];return [3,'Audit confirmed the value']}
   return [0,''];
 }
 function searchText(c){let s=searchCache.get(c.id);if(s)return s;const rc=rowCtx(c);const parts=[c.id,c.row!=null?'row '+c.row:'',caseTitle(c),c.work,c.file_key,c.route,changeSummary(c),JSON.stringify(c.changes||{})];if(rc)parts.push(rc.o.title,rc.o.authors,rc.o.doi,rc.r.authors,rc.type,rc.outcome);for(const e of Object.values(c.evidence||{}))parts.push(e.reason||'');const cand=(CONTEXT.candidates||{})[c.id];if(cand)parts.push(JSON.stringify(cand));if(profile(c).ra)parts.push(JSON.stringify(profile(c).ra.action||''));s=parts.join(' ').toLowerCase();searchCache.set(c.id,s);return s}
 
 /* ---------- state ---------- */
-const state={queue:prefs.queue&&queueById[prefs.queue]?prefs.queue:'needs',show:'all',search:'',selected:null,included:new Map(),noteOpen:false,lastByQueue:{}};
+const state={queue:prefs.queue&&queueById[prefs.queue]?prefs.queue:'candidates',show:'all',search:'',selected:null,included:new Map(),noteOpen:false,lastByQueue:{}};
 let visible=[],evidenceComplete=false,toastTimer=null,lastUndo=null;
 function queueCases(qid){const q=queueById[qid];const list=cases.filter(q.test);return list.map(c=>[groupOf(c,qid),c]).sort((a,b)=>a[0][0]-b[0][0]||(a[1].row??1e9)-(b[1].row??1e9)||a[1].id.localeCompare(b[1].id))}
 function computeVisible(){const q=state.search.trim().toLowerCase();return queueCases(state.queue).filter(([,c])=>{if(q&&!searchText(c).includes(q))return false;const s=statusOf(c);if(state.show==='open')return !isDecided(c);if(state.show==='decided')return isDecided(c);if(state.show==='follow_up')return s==='follow_up';return true})}
@@ -785,8 +820,9 @@ function renderCase(){
   const art=$('case');art.replaceChildren();const c=caseById.get(state.selected);
   if(!c){art.append(h('p',{class:'empty'},visible.length?'Choose a case from the list.':'No cases match this view.'));return}
   const p=profile(c);
-  if(c.review_hold)art.append(h('section',{class:'callout'},h('h3',{},'Correction withheld after a review objection'),h('p',{},c.review_hold.reason),...c.review_hold.evidence.map(e=>quoteBlock(e.quote,[e.section,'Excerpt from the current report']))));
+  if(c.review_hold)art.append(h('section',{class:'callout'},h('h3',{},c.review_hold.title||'Correction withheld after a review objection'),h('p',{},c.review_hold.reason),...c.review_hold.evidence.map(e=>quoteBlock(e.quote,[e.section,'Excerpt from the current report']))));
   art.append(kicker(c,p),h('h2',{class:'case-title'},caseTitle(c)),byline(c),h('p',{class:'issue'},issue(c,p)));
+  const standing=ledgerOf(c);if(standing)art.append(renderStanding(standing));
   if(p.policies.length)art.append(renderPolicy(c,p));
   if(p.ra)art.append(renderRecordAction(c,p.ra,p.type==='record'?splitLead(p.ra.reason||'',260)[0]:''));
   art.append(p.missing?renderMissingCard(c,p):renderCard(c,p));
@@ -907,6 +943,7 @@ async function loadCompleteEvidence(text){const hash=await reviewHash(text);if(h
 $('load').onchange=async e=>{try{await loadCompleteEvidence(await e.target.files[0].text())}catch(error){notice(error.message)}};
 
 /*flora-shared-state*/
+/*flora-ledger-view*/
 /*flora-workflow*/
 /*flora-batch-evidence*/
 /*flora-shared-sync*/

@@ -23,7 +23,7 @@ def eligible_case(case, proposals):
         return False
     return all(p['proposed_value'] == case['changes'][p['field']] for p in proposals)
 
-def build():
+def candidate_groups():
     changes = json.loads((H/'correction_proposals.json').read_text())
     cases = json.loads((H/'review_queue.json').read_text())
     quote_rows = {x['input_row_index'] for x in json.loads((H/'evidence_provenance_fixes.json').read_text())['changes']}
@@ -61,6 +61,12 @@ def build():
     result=dict(schema_version=1,baseline_sha256=changes['baseline_sha256'],groups=groups,
         exclusions=['Record inclusion, source replacements, duplicates and linked changes','Coding-policy choices and unresolved evidence or identity','Quote replacements: public excerpts must not be applied as full source quotations','Original-study relinks and incomplete missing-pair citations'],
         rule='Approve complete unheld bundles only. Preserve existing user decisions. Apply only after frozen baseline and full-record preconditions pass.',canonical_changes_applied=False)
+    return result
+def build():
+    """The field ledger now owns correction sets. Only missing-pair identities remain batchable."""
+    result=candidate_groups()
+    result['groups']=[g for g in result['groups'] if g['id']=='confirmed_missing_pairs']
+    result['retired_groups']='Outcome and reproduction batches were retired. Their earlier selections are kept as history and approve nothing.'
     (H/'batch_review.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     return result
 if __name__=='__main__':

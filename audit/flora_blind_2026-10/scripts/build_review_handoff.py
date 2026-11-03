@@ -12,6 +12,8 @@ def save(n,x):(O/n).write_text(json.dumps(x,ensure_ascii=False,indent=2)+'\n')
 source=Path('/home/lukas/audit_inputs_2026-10/flora_b48a7d6.csv')
 with source.open(encoding='utf-8-sig') as f:frozen=list(csv.DictReader(f))
 fixes=[];cases=[]
+# Their private metadata files are not in every checkout; keep the recorded links when absent.
+previous_urls={c['id']:c.get('primary_evidence_urls',[]) for c in (json.loads((O/'review_queue.json').read_text()) if (O/'review_queue.json').exists() else [])}
 for r in read('results.csv'):
  i=int(r['input_row_index']); changes=json.loads(r['suggested_correction']); evidence=json.loads(r['correction_evidence'])
  if changes:fixes.append(dict(id=f'fix:{i}',input_row_index=i,work_key=r['work_key'],file_key=r['file_key'],expected_before=frozen[i],proposed_changes=changes,evidence=json.loads(json.dumps(evidence)),status='proposed_not_applied',signoff='pending'))
@@ -67,7 +69,7 @@ for c in cases:
     if path.name=='article.txt' and path.parent.name.startswith('sanitized_') and meta.exists():
      url=json.loads(meta.read_text()).get('source_url','')
      if urlsplit(url).scheme=='https' and not urlsplit(url).query:urls.append(url)
-  c['primary_evidence_urls']=list(dict.fromkeys(urls))
+  c['primary_evidence_urls']=list(dict.fromkeys(urls)) or previous_urls.get(c['id'],[])
   for f,v in d['fields'].items():
    proof=v['proofs'][0]
    c['evidence'][f]={'quote':proof['quote'],'location':proof.get('section','Primary source')+'; character '+str(proof['character_start']),'reason':v['rationale'],'method':'Final GPT-6.1 Sol source review'}
@@ -108,6 +110,13 @@ enrich_cases(cases,frozen)
 m['final_review_required_rows']=len(json.loads((O/'review_required.json').read_text())['cases'])
 m['status']='final_source_review_complete_proposals_not_applied' if m['final_Sol_reviewed_fulltext_rows']==109 else 'final_source_review_active_proposals_not_applied'
 reliability=json.loads((O/'review_reliability.json').read_text()) if (O/'review_reliability.json').exists() else {}
+from build_ledger_review import build as build_ledger_review
+ledger_review=build_ledger_review()
+for c in cases:
+ b=ledger_review['bundles'].get(c['id'])
+ if b and b['view'] in ('withdraw','source_blocked') and not c.get('review_hold'):
+  if b['view']=='withdraw' or any(x['state'] in ('provider_hold','source_order_hold','header_only_hold') for x in b['changes']):
+   c['review_hold']=dict(title=b['status'],reason=' '.join(b['provenance'][:1]),evidence=[])
 for c in cases:
  if c['id'] in reliability.get('holds',{}):
   c['requires_review']=True;c['review_hold']=reliability['holds'][c['id']]
@@ -229,7 +238,7 @@ from build_batch_evidence import build as build_batch_evidence
 build_batch_evidence()
 shared_config=json.loads((Path.home()/'.claude/html-comments.config.json').read_text())
 shared_review=dict(endpoint=shared_config['endpoint'],project='flora-audit-decisions-2026-10',protocol=1)
-context=dict(review_reliability=safe(reliability),batch_evidence_sha256=sha(O/'batch_evidence.json'),shared_review=shared_review,batch_review=batch_review,baseline_sha256=sha(source),rows=rows,proposals=proposals,limits=limits,contrary=contrary,review_notes=review_notes,candidates=candidates,works=works,quote_fixes=quote_fixes,record_actions={k:safe(a) for k,a in record_actions.items() if not caseids.get(k,{}).get('record_action')})
+context=dict(ledger_review=safe(ledger_review),review_reliability=safe(reliability),batch_evidence_sha256=sha(O/'batch_evidence.json'),shared_review=shared_review,batch_review=batch_review,baseline_sha256=sha(source),rows=rows,proposals=proposals,limits=limits,contrary=contrary,review_notes=review_notes,candidates=candidates,works=works,quote_fixes=quote_fixes,record_actions={k:safe(a) for k,a in record_actions.items() if not caseids.get(k,{}).get('record_action')})
 if derived:print(f'Review app: {len(derived)} proposal statuses derived because correction_proposals.json is missing or differs, e.g. {derived[:5]}',file=sys.stderr)
 DOWNLOADS=[('correction_proposals.json','Correction proposals (JSON)'),('record_actions.json','Record-level actions (JSON)'),
  ('evidence_provenance_fixes.json','Evidence quote updates (JSON)'),('review_required.json','Limits, policy choices and holds (JSON)'),
@@ -237,7 +246,7 @@ DOWNLOADS=[('correction_proposals.json','Correction proposals (JSON)'),('record_
  ('unresolved_missing_pairs.csv','Unresolved missing candidates (CSV)'),('audit_rows.csv','Status of every input row (CSV)'),
  ('sol_review_decisions.json','Field-level source decisions (JSON)'),('current_source_decisions.json','Current-source decisions (JSON)'),
  ('missing_pair_review_decisions.json','Missing-pair source decisions (JSON)'),('review_queue.json','Complete review queue (JSON)'),
- ('review_reliability.json','Current objections and bulk-approval restrictions (JSON)'),('batch_evidence.json','Supporting evidence for batch items (JSON)'),('audit_overview.json','Audit overview (JSON)')]
+ ('ledger_review.json','Current status of every proposed field (JSON)'),('review_reliability.json','Current objections and bulk-approval restrictions (JSON)'),('batch_evidence.json','Supporting evidence for batch items (JSON)'),('audit_overview.json','Audit overview (JSON)')]
 # The public builder inserts its report link before the first anchor of this paragraph.
 downloads='<p>'+''.join(f'<a href="{n}">{label}</a>' for n,label in DOWNLOADS if n=='correction_proposals.json' or (O/n).exists())+'</p>'
 display=json.loads(json.dumps(cases))
@@ -250,7 +259,7 @@ def embed(x):return json.dumps(x,ensure_ascii=False,separators=(',',':')).replac
 blob=embed(context)
 assert not PRIVATE_PATH.search(blob) and not ACCESS_TOKEN.search(blob) and '.t3/worktrees/' not in blob
 template=Path(__file__).with_name('review_app_template.html').read_text()
-fill={'/*flora-batch-evidence*/':(B/'scripts'/'review_batch_evidence.js').read_text(),'/*flora-shared-state*/':(B/'scripts'/'review_shared_state.js').read_text(),'/*flora-shared-sync*/':(B/'scripts'/'review_shared_sync.js').read_text(),'/*flora-workflow*/':(B/'scripts'/'review_batch_workflow.js').read_text(),'/*flora-sha256*/':(O/'review_sha256.js').read_text(),'__DATA__':embed(display),'__CONTEXT__':blob,'__HASH__':json.dumps(m['input_sha256']['results.csv']),'__QUEUEHASH__':json.dumps(sha(O/'review_queue.json')),'<!--flora-downloads-->':downloads}
+fill={'/*flora-batch-evidence*/':(B/'scripts'/'review_batch_evidence.js').read_text(),'/*flora-ledger-view*/':(B/'scripts'/'review_ledger_view.js').read_text(),'/*flora-shared-state*/':(B/'scripts'/'review_shared_state.js').read_text(),'/*flora-shared-sync*/':(B/'scripts'/'review_shared_sync.js').read_text(),'/*flora-workflow*/':(B/'scripts'/'review_batch_workflow.js').read_text(),'/*flora-sha256*/':(O/'review_sha256.js').read_text(),'__DATA__':embed(display),'__CONTEXT__':blob,'__HASH__':json.dumps(m['input_sha256']['results.csv']),'__QUEUEHASH__':json.dumps(sha(O/'review_queue.json')),'<!--flora-downloads-->':downloads}
 assert all(template.count(k)==1 for k in fill)
 html=re.sub('|'.join(map(re.escape,fill)),lambda x:fill[x.group(0)],template)
 (O/'review.html').write_text(html)
