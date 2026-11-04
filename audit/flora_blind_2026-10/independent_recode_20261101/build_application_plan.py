@@ -31,6 +31,9 @@ def review_of(row, registry):
 def reader_quote(member, frozen_row, art):
     """The literal quote behind a change settled by one more read of the paper."""
     field, close = member['field'], member['close_read']
+    if close.get('request_id'):
+        review = L.read(L.P / 'final_read_20261104' / close['request_id'] / 'review.json')
+        return review['replacement_quote'], review['replacement_quote_section']
     role = close.get('quote_role') or next((r for r in ('sol', 'opus') if member[r]['literal_quote_ok']), None)
     assert role and member[role]['literal_quote_ok'], member['field_id']
     targets = [t for t in art.coding(member[role]['path'])['targets'] if t.get(field) == member['proposed_value']]
@@ -81,7 +84,7 @@ def plan_bundle(row, members, current, export_case, review, metadata, frozen_row
         if isinstance(value, str):
             if key.endswith(('_quote', '_o')):
                 # PDF line breaks and soft hyphens are not part of the quote a reader sees in FLoRA.
-                fields[key] = re.sub(r'\s+', ' ', re.sub(r'\u00ad\s*', '', value)).strip()
+                fields[key] = R.clean_quote(value)
             continue
         return dict(status='blocked_unexpected_value', reason=key, fields={}, preconditions={})
     unknown = sorted(k for k in fields if k not in current)
@@ -98,6 +101,7 @@ def write_corrections(ledger, bundles, exclusions, ledger_sha):
     data = dict(
         schema_version=1,
         status='Not applied. Check each expected value against the live record first, because the database may be ahead of this release.',
+        quote_note='Each new quote is a literal passage from the paper. The only edits repair PDF damage: line breaks, broken characters and, in three quotes, text from a neighbouring column or page header.',
         audit_ledger_sha256=ledger_sha, checked_against=dict(release_commit=ledger['current']['commit'], flora_csv_sha256=ledger['current']['sha256']),
         how_to_apply='Read the record through GET /api/admin/flora/{id}. If every expected value matches, send all fields of that entry in one PATCH with the record version and the note. If any value differs, skip that entry and report it.',
         corrections=[dict(flora_id=b['flora_id'], source_record_id=b['source_record_id'], audit_row=int(b['bundle_id'].split(':')[1]),

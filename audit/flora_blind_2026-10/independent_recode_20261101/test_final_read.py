@@ -8,6 +8,28 @@ def answer(**changes):
     return {**dict(field='outcome', better='B', other_value='contradicted', confidence='high'), **changes}
 
 
+class FinalDecisions(unittest.TestCase):
+    def test_every_read_field_is_decided_and_no_record_waits(self):
+        import sys
+        sys.path.insert(0, str(V.L.B / 'scripts'))
+        import build_ledger_review as R
+        decisions = V.L.read(V.L.T / 'final_read_decisions.json')['reviews']
+        self.assertEqual(sum(r['verdict'] == 'correct' for r in decisions.values()), 17)
+        built = R.build()
+        self.assertEqual(built['pending_read'], [])
+        for row in (292, 726, 1729, 195):
+            self.assertNotIn(built['bundles'][f'row:{row}']['view'], ('ready', 'pending_read'))
+
+    def test_quotes_on_the_list_are_clean(self):
+        data = V.L.read(V.L.B / 'handoff/corrections_to_apply.json')
+        bad = __import__('re').compile('[\ufb00-\ufb04\ue01e\u2afd\u2429\u00ad]|Hum Genet \\(2014\\)|Ethnicity-education .14')
+        for correction in data['corrections']:
+            for key, value in correction['set']['new'].items():
+                if 'quote' in key:
+                    self.assertFalse(bad.search(value), (correction['flora_id'], key))
+                    self.assertLessEqual(len(value), 1500)
+
+
 class FieldRule(unittest.TestCase):
     def test_clear_answer_is_a_correction(self):
         self.assertEqual(V.field_verdict(answer(), 'B', True, True), 'correct')

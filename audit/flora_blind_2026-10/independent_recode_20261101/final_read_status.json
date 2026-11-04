@@ -1,22 +1,14 @@
 {
  "schema_version": 1,
  "date": "2026-11-04",
- "status": "Paused by stop rule S3. Nothing has been changed in the ledger, the app or the corrections list as a result of these reads.",
+ "status": "Finished. Every record that was waiting for one more read has a decision. Nothing has been applied to FLoRA.",
  "stop_rule": {
-  "S3": "Fewer than 6 of the 8 earlier-read rows agreed: 4 of 8. Rows 726, 1554, 313 and 1246 agreed on keeping the value. On rows 1927, 1537, 577 and 2655 the reader preferred the same value as the earlier read, but with medium confidence, so the rule keeps the existing value.",
-  "other_stop_rules": "S1 did not fire: rows 802 and 1868 both kept their values. S2 did not fire: 1 of 95 finished reads had a mechanical failure (non-literal quotes). S4 was not reached."
+  "S3": "Fired: 4 of the 8 earlier-read rows agreed under the predeclared rule. On rows 1927, 1537, 577 and 2655 the reader preferred the same value as the earlier read, but with medium confidence.",
+  "resolution": "Lukas Wallrich told the lead session on 2026-11-04 to read the values the blind reader called contradicted and decide. That replaced the confidence threshold and the 12 second reads, which were not run. The earlier reads of the four rows stand."
  },
- "records_read": {"planned": 98, "valid": 84, "mechanical_failure": 1, "stopped_by_safeguards_not_retried": 3, "not_started": 10},
- "stopped_by_safeguards": {"audit_rows": [121, 292, 928], "note": "A safeguards flag ended the reader for this batch. All three sources had been served to it and the flag does not say which caused it, so all three stay on hold."},
- "fields_in_valid_reads": {
-  "total": 89,
-  "preferred_proposed": 79,
-  "preferred_existing": 10,
-  "proposed_existing_contradicted_high_confidence": 18,
-  "proposed_existing_contradicted_medium_confidence": 3,
-  "proposed_existing_defensible_high_confidence": 14,
-  "proposed_existing_defensible_medium_or_low_confidence": 44
- },
- "second_read_started": false,
+ "records": {"planned": 98, "read_by_opus": 97, "read_by_deepseek_v4_flash": 1},
+ "safeguards": {"first_batch_stopped": [121, 292, 928], "second_try_one_at_a_time": {"121": "read", "928": "read", "292": "refused again, sent to DeepSeek V4 Flash at Lukas Wallrich's instruction"}, "deepseek_result_row_292": "Prefers the proposal but calls the existing value defensible. Not a clear error, so not flagged, and the value stays."},
+ "lead_read": {"fields_read": 23, "changed": 17, "kept": 6},
+ "not_retried": "The seven provider-held sources from the earlier audit stay held. They were not part of this instruction.",
  "applied": false
 }

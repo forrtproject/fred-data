@@ -131,6 +131,35 @@ PROCESS_NOTE = re.compile(r'packet|parser|attempt|receipt|\brole|redact|current\
 PROCESS_SENTENCE = re.compile(r'\b(blind|frozen|adversar\w*|comparator|packet|parent|lead reviewer|narrative attribution)\b', re.I)
 
 
+# PDF artefacts only. Words are never changed. Each quote stays the literal passage apart from these repairs.
+GLYPHS = {'ﬀ': 'ff', 'ﬁ': 'fi', 'ﬂ': 'fl', 'ﬃ': 'ffi', 'ﬄ': 'ffl', '': 'Th', '⫽': '=', '␩': 'η',
+          '\U0001d6fd': 'β', '\U0001d45d': 'p', '\U0001d441': 'N', '‐': '-'}
+LINE_BREAKS = {'Ger- rit': 'Gerrit', 'breastfeed- ing': 'breastfeeding', 'com- pared': 'compared', 'condi- tions': 'conditions',
+               'dem- onstrating': 'demonstrating', 'differ- ences': 'differences', 'exceed- ing': 'exceeding', 'incon- sistency': 'inconsistency',
+               'indi- cates': 'indicates', 'mod- ules': 'modules', 'out- comes': 'outcomes', 'perfor- mance': 'performance', 'sum- marize': 'summarize',
+               'introversion- extraversion': 'introversion-extraversion', 'participant- level': 'participant-level', '3-yearold': '3-year-old',
+               'main indings': 'main findings', '. ese findings': '. These findings'}
+# Two page columns or a page header ran together here. The repaired text was checked against the paper.
+SCRAMBLED = {
+    "We have replicated Lenski's findings to the Religion-occupation .14 .04 Ethnicity-education .14 .09 extent that we have demonstrated statisti- Ethnicity-occupation .14 .07 cally significant results due to status incon- sistency net of the main effects of status Multiple r = .31. variables.":
+    "We have replicated Lenski's findings to the extent that we have demonstrated statistically significant results due to status inconsistency net of the main effects of status variables.",
+    'We were able to replicate SNA96’s finding of above- ses conducted by SNA96 First, their use of t-tests on accu- chance recognition of words in a statistical learning racy data violates core assumptions of t-tests: that the data paradigm. However, we are not able to conclude that this are continuous and error is normally distributed. Violation of learning would generalize to other stimuli – a question that these assumptions can lead both to false positives and false SNA96 did not address. We were unable to confirm any of negatives Jaeger (2008). Logit models are more appropriate SNA96’s other observations. This is despite having a sample Jaeger (2008).6 size over 4x larger than the original.':
+    'We were able to replicate SNA96’s finding of above-chance recognition of words in a statistical learning paradigm. However, we are not able to conclude that this learning would generalize to other stimuli – a question that SNA96 did not address. We were unable to confirm any of SNA96’s other observations. This is despite having a sample size over 4x larger than the original.',
+    'per se in 13 Hum Genet (2014) 133:1525–1532 the Prata Village': 'per se in the Prata Village',
+}
+
+
+def clean_quote(value):
+    value = re.sub(r'\s+', ' ', re.sub('­\\s*', '', value or '')).strip()
+    for wrong, right in SCRAMBLED.items():
+        value = value.replace(wrong, right)
+    for wrong, right in LINE_BREAKS.items():
+        value = value.replace(wrong, right)
+    for wrong, right in GLYPHS.items():
+        value = value.replace(wrong, right)
+    return value
+
+
 def plain(text):
     """Audit shorthand reads badly on a public page; say the same thing in ordinary words."""
     text = clean(text)
@@ -202,6 +231,27 @@ def first_author(value):
     return value[:80]
 
 
+def close_read_quotes(members):
+    """A short supporting passage for a change settled by one more read."""
+    quotes = []
+    for m in members:
+        close = m.get('close_read')
+        if not close or close['verdict'] != 'correct' or m['field'] == 'original' or m['state'] in KEEP:
+            continue
+        if close.get('request_id'):
+            final = read(P / 'final_read_20261104' / close['request_id'] / 'review.json')
+            quotes.append(dict(text=excerpt(final.get('replacement_quote', '')), section=final.get('replacement_quote_section', '')))
+            continue
+        role = close.get('quote_role') or next((r for r in ('sol', 'opus') if m[r].get('literal_quote_ok')), None)
+        key = {'outcome': 'outcome_quote', 'outcome_computation': 'outcome_computational_quote', 'outcome_robustness': 'outcome_robustness_quote'}.get(m['field'])
+        if role and key:
+            for target in read(m[role]['path']).get('targets', []):
+                if target.get(m['field']) == m['proposed_value'] and target.get(key):
+                    quotes.append(dict(text=excerpt(target[key]), section=target.get('outcome_quote_section', '')))
+                    break
+    return quotes
+
+
 def adversary_review(row, registry):
     entry = registry.get('bundles', {}).get(f'row:{row}')
     if not entry:
@@ -248,9 +298,10 @@ def build():
         summary = plain(case.get('rationale', '')) if case else ''
         close_reasons = [m['close_read']['reason'] for m in members if m.get('close_read') and m['field'] != 'original' or (m.get('close_read') and len(members) == 1)]
         if close_reasons:
-            summary = ' '.join(close_reasons)
+            summary = ' '.join(dict.fromkeys(close_reasons))
             provenance.append('One more read of the paper settled this.')
             review = None
+            quotes = close_read_quotes(members) if view == 'ready' else []
         if review:
             summary = plain(review.get('plain_language_summary', '')) or summary
             quotes = [dict(text=excerpt(q.get('quote', '')), section=clean(q.get('section', ''))) for q in (review.get('supporting_quotes') or [])[:2]]
@@ -269,7 +320,7 @@ def build():
                           proposed=show_value(m['proposed_value']),
                           current=show_value(m['current']['value']) if m['current']['relation'] not in ('identity_unresolved', 'record_action_not_comparable') else 'Not matched',
                           state=m['state'], relation=m['current']['relation']) for m in members if m['state'] not in KEEP or view == 'withdraw'],
-            status=VIEW_TEXT[view][0], provenance=provenance, limits=limits, quotes=[q for q in quotes if q['text']],
+            status=VIEW_TEXT[view][0], provenance=provenance, limits=limits, quotes=[dict(q, text=clean_quote(q['text'])) for q in quotes if q['text']],
             summary=sentences(summary, 700),
             kept=[FIELD_LABEL[m['field']] for m in members if m['state'] in KEEP and view != 'withdraw'],
             to_change=sorted(edits),
@@ -282,6 +333,7 @@ def build():
     for row, bundle in bundles.items():
         views[bundle['view']].append(row)
     statement = [dict(id=v, label=VIEW_TEXT[v][0], note=VIEW_TEXT[v][1], rows=len(views[v]), fields=fields_in(views[v])) for v in VIEW_ORDER]
+    final_reviews = read(T / 'final_read_decisions.json')['reviews']
     assert sum(s['fields'] for s in statement) == ledger['totals']['fields'] == 562
     assert sum(s['rows'] for s in statement) == ledger['totals']['rows'] == 515
 
@@ -327,6 +379,7 @@ def build():
                      labels={k: STATE_TEXT[k] for k in SOURCE_BLOCKED}),
         no_edit=[f'row:{r}' for r in views['no_edit']], withdraw=[f'row:{r}' for r in views['withdraw']],
         close_read=dict((lambda c: (('sample', c['sample']), ('decisions', c['decisions'])))(read(T / 'close_read_20261104.json'))),
+        final_read=dict(changed=sum(r['verdict'] == 'correct' for r in final_reviews.values()), kept=sum(r['verdict'] == 'keep_existing' for r in final_reviews.values())),
         rebind=[f'row:{r}' for r in views['rebind']], needs_reference=[f'row:{r}' for r in views['needs_reference']], pending_read=[f'row:{r}' for r in views['pending_read']],
         outside_scope=dict(confirmed_missing_pairs=outside['pairs']['confirmed_missing_pair'],
                            unresolved_candidates=outside['pairs']['unresolved_missing_candidate']['items'],

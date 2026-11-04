@@ -546,6 +546,9 @@ class Artifacts:
         self.authoritative = read(metadata)['rows'] if metadata.exists() else {}
         close = T / 'close_read_20261104.json'
         self.close_read = read(close)['reviews'] if close.exists() else {}
+        final = T / 'final_read_decisions.json'
+        if final.exists():
+            self.close_read = {**self.close_read, **read(final)['reviews']}
 
     def coding(self, path):
         path = resolve(path)

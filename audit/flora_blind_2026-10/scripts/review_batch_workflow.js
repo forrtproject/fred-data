@@ -97,7 +97,7 @@ function renderWorkflow(){
   const known=[...LEDGER_STAGES,'individual','download'],stage=known.includes(store.workflow.stage)?store.workflow.stage:'overview',individual=stage==='individual';
   $('workspace').hidden=!individual;$('queues').hidden=!individual;$('workflow').hidden=individual;
   const nav=$('workflow-nav');nav.replaceChildren();
-  for(const [id,title] of [['overview','Overview'],['sets','Ready to apply'],['pending','Waiting for a read'],['rules','Needs a decision'],['blocked','Not enough text'],['settled','No change needed'],['individual','All cases'],['download','Export decisions']])nav.append(h('button',{type:'button','aria-current':stage===id?'step':null,onclick:()=>setStage(id)},title));
+  for(const [id,title] of [['overview','Overview'],['sets','Ready to apply'],['pending','Needs a reference'],['rules','Needs a decision'],['blocked','Not enough text'],['settled','No change needed'],['individual','All cases'],['download','Export decisions']])nav.append(h('button',{type:'button','aria-current':stage===id?'step':null,onclick:()=>setStage(id)},title));
   renderSaveStatus();if(individual)return;
   const root=$('workflow'),scroll=root.scrollTop,windowScroll=window.scrollY,keepScroll=lastWorkflowStage===stage;
   const openBundles=new Set([...root.querySelectorAll('details.bundle[open]')].map(d=>d.querySelector('summary')?.textContent));

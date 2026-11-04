@@ -29,7 +29,7 @@ function renderOverview(root){
   root.append(h('h2',{},'What should change in FLoRA'),h('p',{class:'since'},`The audit re-read the papers behind FLoRA and proposed ${ledger.totals.fields} changes to values across ${ledger.totals.rows} records. A record is one row in FLoRA: a report paired with the original study it re-tests. Every proposed change is counted once below. None has been applied.`));
   const target={ready:'sets',record_exclusion:'sets',no_edit:'settled',withdraw:'settled',rebind:'settled',needs_reference:'pending',pending_read:'pending',rule:'rules',source_blocked:'blocked'};
   const body=h('tbody');
-  for(const line of ledger.statement){
+  for(const line of ledger.statement.filter(s=>s.rows)){
     const go=target[line.id];
     body.append(h('tr',{},h('td',{},h('button',{type:'button',class:'line-title',onclick:()=>setStage(go)},line.label),h('span',{class:'line-note'},line.note)),h('td',{class:'n'},String(line.rows)),h('td',{class:'n'},String(line.fields))));
   }
@@ -42,10 +42,11 @@ function renderOverview(root){
   root.append(h('h3',{},'How a change was checked'),h('ol',{},
     h('li',{},'Two AI models, Claude Opus and GPT Sol, each read the full paper separately, without seeing the value in FLoRA.'),
     h('li',{},'A change went forward only if both backed the same new value.'),
-    h('li',{},'A further AI read of the complete paper looked for reasons to reject it. Where a reader was unsure, one more read asked whether the paper actually contradicts the existing value. If it does not, the value stays.'),
+    h('li',{},'A further AI read of the complete paper looked for reasons to reject it.'),
+    h('li',{},'Where a reader was unsure, or that read was not confident, the paper got one more read that showed the two values without saying which was in FLoRA. The value changed only if the paper contradicted it.'),
     h('li',{},'A corrected original study also had to match its record in Crossref.'),
     h('li',{},'Current FLoRA had to still hold the old value.')),
-  h('p',{class:'since'},`No person has read every record. As a spot check, one more read of 16 randomly chosen changes where a reader was unsure found ${ledger.close_read.sample.results.correct} real corrections, ${ledger.close_read.sample.results.existing_value_defensible} where the existing value was defensible and ${ledger.close_read.sample.results.would_add_an_error} that would have added an error. That is why those changes each get their own read.`));
+  h('p',{class:'since'},`No person has read every record. As a spot check, one more read of 16 randomly chosen changes where a reader was unsure found ${ledger.close_read.sample.results.correct} real corrections, ${ledger.close_read.sample.results.existing_value_defensible} where the existing value was defensible and ${ledger.close_read.sample.results.would_add_an_error} that would have added an error. That is why those changes each got their own read. In the final round, ${ledger.final_read.changed} values changed and ${ledger.final_read.kept} stayed, most of them close calls between labels.`));
   root.append(h('h3',{},'FLoRA has moved on since the audit'),h('p',{class:'since'},`The audit read a saved copy of FLoRA with ${ledger.baseline.rows.toLocaleString('en')} records. The current release has ${ledger.current.rows.toLocaleString('en')}, so audit row numbers do not match it. Each audited record was matched to its current FLoRA record by study identifiers and titles, and any uncertain match is held back. The database may be ahead of the release, which is why each value must be re-checked just before editing.`));
   const outside=ledger.outside_scope;
   root.append(h('h3',{},'Also to cover in the plan'),h('ul',{},
@@ -66,7 +67,7 @@ function renderSets(root){
   for(const g of batchGroups)if(!g.retired)renderPairGroup(root,g);
 }
 function renderPending(root){
-  root.append(h('h2',{},'Waiting for one more read'),h('p',{class:'since'},ledger.pending_read.length?'Both AI readers back these changes, but one was unsure or the final check was not confident. One more read of each paper decides: the value changes only if the paper contradicts it. These reads are still in progress, so there is nothing to apply yet.':'Every change here has had its read.'));
+  root.append(h('h2',{},'Needs a verified reference'));
   if(ledger.pending_read.length)root.append(h('section',{class:'batch-card'},h('div',{},ledger.pending_read.map(bundleLine))));
   if(ledger.needs_reference?.length)root.append(h('section',{class:'batch-card'},h('h3',{},'Right study, no verified reference'),h('p',{},'The evidence supports a different original study, but Crossref has no exact record for it. Someone needs to confirm the reference by hand.'),h('div',{},ledger.needs_reference.map(bundleLine))));
 }

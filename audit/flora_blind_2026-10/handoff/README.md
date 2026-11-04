@@ -42,6 +42,8 @@ python3 audit/flora_blind_2026-10/scripts/validate_review_handoff.py
 python3 audit/flora_blind_2026-10/scripts/validate_record_review.py
 ```
 
+**Final position, 4 November 2026:** of 515 records with proposed changes (562 values), 151 are ready to apply, 4 need a route for changing the study type, 3 should be removed, 139 keep their existing value, 17 are already correct in FLoRA, 129 need a coding decision, 8 changed in FLoRA since the audit, 1 needs a verified reference and 63 cannot be settled from the text available.
+
 **To apply corrections, start with [`corrections_to_apply.csv`](corrections_to_apply.csv)** (one row per column to change) or [`corrections_to_apply.json`](corrections_to_apply.json) (the same changes per record, plus study-type changes that need a route and record removals). Both are keyed on the permanent FLoRA id and give the expected current value, the new value and the note to log. The [route](../independent_recode_20261101/flora_validation_application_route.json) covers the checks and rollback. Nothing has been applied.
 
 **Handover:** the app and these corrections are being handed to the `flora-validation` maintainer, who is also asked to review the other changes and plan how to address them. The live app and its shared decision log work from any browser. Rebuilding it needs this folder plus the private audit files and the audited FLoRA copy, which exist only on the audit machine. Publishing it uses the audit owner's Cloudflare account.
