@@ -38,7 +38,7 @@ function renderOverview(root){
     h('li',{},`Apply ${apply} corrections through flora-validation, re-checking each value first. `,h('a',{href:CORRECTIONS_URL},'The corrections list'),' gives the record, the expected value and the new value.'),
     h('li',{},`Remove ${ledger.record_exclusions.length} records that do not re-test an earlier finding.`),
     h('li',{},`Agree a way to change the study type on ${types.rows} records. flora-validation cannot edit it yet.`),
-    h('li',{},'Leave everything else for now. The audit team is still working through the rest.')));
+    h('li',{},'Review the other changes on this page and make a plan for how to address them. Please agree that plan with Lukas before applying any of them.')));
   root.append(h('h3',{},'How a change was checked'),h('ol',{},
     h('li',{},'Two AI models, Claude Opus and GPT Sol, each read the full paper separately, without seeing the value in FLoRA.'),
     h('li',{},'A change went forward only if both backed the same new value.'),
@@ -48,7 +48,7 @@ function renderOverview(root){
   h('p',{class:'since'},`No person has read every record. As a spot check, one more read of 16 randomly chosen changes where a reader was unsure found ${ledger.close_read.sample.results.correct} real corrections, ${ledger.close_read.sample.results.existing_value_defensible} where the existing value was defensible and ${ledger.close_read.sample.results.would_add_an_error} that would have added an error. That is why those changes each get their own read.`));
   root.append(h('h3',{},'FLoRA has moved on since the audit'),h('p',{class:'since'},`The audit read a saved copy of FLoRA with ${ledger.baseline.rows.toLocaleString('en')} records. The current release has ${ledger.current.rows.toLocaleString('en')}, so audit row numbers do not match it. Each audited record was matched to its current FLoRA record by study identifiers and titles, and any uncertain match is held back. The database may be ahead of the release, which is why each value must be re-checked just before editing.`));
   const outside=ledger.outside_scope;
-  root.append(h('h3',{},'Not part of these corrections'),h('ul',{},
+  root.append(h('h3',{},'Also to cover in the plan'),h('ul',{},
     h('li',{},`${outside.confirmed_missing_pairs.items} missing links, checked: a report re-tests an original study, but FLoRA has no record pairing them. ${outside.confirmed_missing_pairs.current.already_in_current||0} have since appeared in current FLoRA.`),
     h('li',{},`${outside.unresolved_candidates} possible missing links that could not be confirmed, and ${outside.planned_pairs} planned studies with no results yet.`),
     h('li',{},`${outside.quote_updates} records whose value is right but whose supporting quote should be replaced.`),
@@ -66,12 +66,12 @@ function renderSets(root){
   for(const g of batchGroups)if(!g.retired)renderPairGroup(root,g);
 }
 function renderPending(root){
-  root.append(h('h2',{},'Waiting for one more read'),h('p',{class:'since'},ledger.pending_read.length?'Both AI readers back these changes, but one was unsure or the final check was not confident. One more read of each paper decides: the value changes only if the paper contradicts it. The audit team will do these, so there is nothing to apply yet.':'Every change here has had its read.'));
+  root.append(h('h2',{},'Waiting for one more read'),h('p',{class:'since'},ledger.pending_read.length?'Both AI readers back these changes, but one was unsure or the final check was not confident. One more read of each paper decides: the value changes only if the paper contradicts it. These reads are still in progress, so there is nothing to apply yet.':'Every change here has had its read.'));
   if(ledger.pending_read.length)root.append(h('section',{class:'batch-card'},h('div',{},ledger.pending_read.map(bundleLine))));
   if(ledger.needs_reference?.length)root.append(h('section',{class:'batch-card'},h('h3',{},'Right study, no verified reference'),h('p',{},'The evidence supports a different original study, but Crossref has no exact record for it. Someone needs to confirm the reference by hand.'),h('div',{},ledger.needs_reference.map(bundleLine))));
 }
 function renderRules(root){
-  root.append(h('h2',{},'Needs a coding decision'),h('p',{class:'since'},'The AI readers disagree on these, or the answer depends on how FLoRA should code the case. Each group shares one question. These are for the audit team and are not ready to apply.'));
+  root.append(h('h2',{},'Needs a coding decision'),h('p',{class:'since'},'The AI readers disagree on these, or the answer depends on how FLoRA should code the case. Each group shares one question. These are not ready to apply. The plan needs to say how each question gets settled.'));
   for(const g of ledger.rule_groups){
     root.append(h('section',{class:'batch-card'},h('h3',{},g.question),h('p',{class:'muted'},`${g.rows} records, ${g.fields} values`),g.reviewer_questions.length?h('ul',{},g.reviewer_questions.map(q=>h('li',{},q))):null,h('details',{},h('summary',{},'See the cases'),h('div',{},g.items.map(bundleLine)))));
   }
