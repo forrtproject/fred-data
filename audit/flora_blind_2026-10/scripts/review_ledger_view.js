@@ -84,7 +84,7 @@ function renderBlocked(root){
   root.append(h('section',{class:'batch-card'},h('details',{},h('summary',{},`See all ${ledger.blocked.items.length} records`),h('div',{},ledger.blocked.items.map(bundleLine)))));
 }
 function renderSettled(root){
-  root.append(h('h2',{},'No change needed'));
+  root.append(h('h2',{},'Proposals dropped'));
   for(const [title,note,items] of [['Changed in FLoRA since the audit','The record now holds a value the audit did not see, or could not be matched for certain. Check these by hand before editing.',ledger.rebind],['Keep the existing value','The evidence does not show the existing value is wrong, so the proposal is dropped.',ledger.withdraw],['Already correct in FLoRA','Current FLoRA already holds the proposed value. Nothing to do.',ledger.no_edit]])
     if(items.length)root.append(h('section',{class:'batch-card'},h('h3',{},title),h('p',{},note),h('div',{},items.map(bundleLine))));
 }
