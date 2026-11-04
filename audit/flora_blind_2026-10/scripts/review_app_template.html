@@ -530,7 +530,7 @@ const inView=(c,...views)=>{const b=ledgerOf(c);return !!b&&views.includes(b.vie
 const QUEUES=[
   {id:'candidates',label:'Corrections',test:c=>inView(c,'ready','record_exclusion','needs_reference','pending_read'),note:'Corrections the AI readers support, grouped by how far they have come. Recording a decision here never changes FLoRA.'},
   {id:'rules',label:'Needs a decision',test:c=>inView(c,'rule'),note:'Cases that depend on how FLoRA should code them, grouped by the question they share.'},
-  {id:'blocked',label:'Not enough text',test:c=>inView(c,'source_blocked'),note:'The text we have cannot settle these. This says nothing about the study itself.'},
+  {id:'blocked',label:'On hold',test:c=>inView(c,'source_blocked'),note:'On hold: the text we have cannot settle these, and no action is needed now.'},
   {id:'settled',label:'No change needed',test:c=>inView(c,'withdraw','no_edit','rebind'),note:'Proposals dropped, values FLoRA already holds, and records that changed in FLoRA and need checking first.'},
   {id:'missing',label:'Possible omissions',test:c=>profile(c).missing,note:'Study–original pairs that FLoRA may be missing. Confirmed missing pairs are listed in the downloads.'},
   {id:'limits',label:'Evidence limits',test:c=>{const p=profile(c);return !ledgerOf(c)&&!p.missing&&(p.unknown.length>0||p.unverified.length>0)},note:'Rows outside the proposed corrections where the available source could not verify FLoRA’s value.'},

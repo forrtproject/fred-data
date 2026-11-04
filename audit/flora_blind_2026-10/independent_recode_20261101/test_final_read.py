@@ -20,6 +20,23 @@ class FinalDecisions(unittest.TestCase):
         for row in (292, 726, 1729, 195):
             self.assertNotIn(built['bundles'][f'row:{row}']['view'], ('ready', 'pending_read'))
 
+    def test_changed_records_are_settled(self):
+        import sys
+        sys.path.insert(0, str(V.L.B / 'scripts'))
+        import build_ledger_review as R
+        built = R.build()
+        self.assertEqual(built['rebind'], [])
+        self.assertEqual(built['needs_reference'], [])
+        data = V.L.read(V.L.B / 'handoff/corrections_to_apply.json')
+        by_id = {c['flora_id']: c for c in data['corrections']}
+        current = {c['id']: c for c in V.L.Artifacts().current}
+        for row, checked in R.CHECKED.items():
+            if checked['decision'] == 'apply':
+                self.assertEqual(by_id[checked['flora_id']]['set']['new'][next(iter(checked['new']))], next(iter(checked['new'].values())))
+                self.assertTrue(all(current[checked['flora_id']][k] == v for k, v in by_id[checked['flora_id']]['set']['expected'].items()))
+            else:
+                self.assertNotIn(checked['flora_id'], by_id)
+
     def test_quotes_on_the_list_are_clean(self):
         data = V.L.read(V.L.B / 'handoff/corrections_to_apply.json')
         bad = __import__('re').compile('[\ufb00-\ufb04\ue01e\u2afd\u2429\u00ad]|Hum Genet \\(2014\\)|Ethnicity-education .14')

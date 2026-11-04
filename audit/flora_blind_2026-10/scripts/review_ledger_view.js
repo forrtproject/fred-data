@@ -50,10 +50,10 @@ function renderOverview(root){
   root.append(h('h3',{},'FLoRA has moved on since the audit'),h('p',{class:'since'},`The audit read a saved copy of FLoRA with ${ledger.baseline.rows.toLocaleString('en')} records. The current release has ${ledger.current.rows.toLocaleString('en')}, so audit row numbers do not match it. Each audited record was matched to its current FLoRA record by study identifiers and titles, and any uncertain match is held back. The database may be ahead of the release, which is why each value must be re-checked just before editing.`));
   const outside=ledger.outside_scope;
   root.append(h('h3',{},'Also to cover in the plan'),h('ul',{},
-    h('li',{},`${outside.confirmed_missing_pairs.items} missing links, checked: a report re-tests an original study, but FLoRA has no record pairing them. ${outside.confirmed_missing_pairs.current.already_in_current||0} have since appeared in current FLoRA.`),
-    h('li',{},`${outside.unresolved_candidates} possible missing links that could not be confirmed, and ${outside.planned_pairs} planned studies with no results yet.`),
+    h('li',{},`Missing links are reports that re-test an original study, where FLoRA has no record pairing the two. ${outside.confirmed_missing_pairs.items} are confirmed against the paper.`),
+    h('li',{},`${outside.unresolved_candidates} more were checked, but the paper did not show clearly that it re-tests the study. ${outside.planned_pairs} further studies are planned, with no results yet.`),
     h('li',{},`${outside.quote_updates} records whose value is right but whose supporting quote should be replaced.`),
-    h('li',{},`${outside.unreviewed_two_reader_targets} more possible missing links, not checked: both AI readers said a report re-tests a study that FLoRA does not pair it with, but nobody has reviewed these.`)));
+    h('li',{},`${outside.unreviewed_two_reader_targets} more were named by both AI readers later on and have not been checked. About 29 of them look to be in FLoRA already under a different link.`)));
   root.append(h('p',{class:'since'},h('a',{href:BRANCH_URL},'All audit files are on this branch.')));
 }
 function renderSets(root){
@@ -79,12 +79,12 @@ function renderRules(root){
 }
 function renderBlocked(root){
   const labels=ledger.blocked.labels,kinds=ledger.blocked.kinds;
-  root.append(h('h2',{},'Cannot be settled from the text we have'),h('p',{class:'since'},'These values stay as they are unless a better copy of the paper turns up. This says nothing about the study itself.'));
+  root.append(h('h2',{},'On hold: not enough text'),h('p',{class:'since'},'No action needed now. These values stay as they are, and could be checked in future if a better copy of the paper turns up. This says nothing about the study itself.'));
   root.append(h('ul',{},Object.entries(kinds).map(([k,n])=>h('li',{},`${n} ${n===1?'value':'values'}: ${labels[k]}`))));
   root.append(h('section',{class:'batch-card'},h('details',{},h('summary',{},`See all ${ledger.blocked.items.length} records`),h('div',{},ledger.blocked.items.map(bundleLine)))));
 }
 function renderSettled(root){
-  root.append(h('h2',{},'No change needed, or check first'));
+  root.append(h('h2',{},'No change needed'));
   for(const [title,note,items] of [['Changed in FLoRA since the audit','The record now holds a value the audit did not see, or could not be matched for certain. Check these by hand before editing.',ledger.rebind],['Keep the existing value','The evidence does not show the existing value is wrong, so the proposal is dropped.',ledger.withdraw],['Already correct in FLoRA','Current FLoRA already holds the proposed value. Nothing to do.',ledger.no_edit]])
     if(items.length)root.append(h('section',{class:'batch-card'},h('h3',{},title),h('p',{},note),h('div',{},items.map(bundleLine))));
 }

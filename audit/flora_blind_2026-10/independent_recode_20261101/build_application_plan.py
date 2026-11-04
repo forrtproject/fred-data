@@ -132,6 +132,15 @@ def build():
     for row, members in sorted(by_row.items()):
         if R.bundle_view(members) != 'ready':
             continue
+        checked = R.CHECKED.get(str(row))
+        if checked:
+            current = current_by_id[checked['flora_id']]
+            fields = {k: R.clean_quote(v) if k.endswith('_quote') else v for k, v in checked['new'].items()}
+            assert set(fields) <= set(current), row
+            bundles.append(dict(bundle_id=f'row:{row}', flora_id=checked['flora_id'], source_record_id=current['source_record_id'],
+                                ledger_fields=[m['field_id'] for m in members if m['field'] == checked['field']] or [f'row:{row}:outcome'], status='patchable',
+                                fields=fields, preconditions={k: current[k] for k in fields}))
+            continue
         members = R.edits_of(members)
         flora_id = members[0]['current']['flora_id']
         current = current_by_id[flora_id]

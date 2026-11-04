@@ -26,7 +26,7 @@ VIEW_TEXT = {
     'needs_reference': ('Right study, no verified reference', 'The AI readers name a different original study, but no authoritative reference could be confirmed for it.'),
     'rule': ('Needs a coding decision', 'The AI readers disagree, or the case turns on how FLoRA should code it. Not ready to apply.'),
     'rebind': ('Changed in FLoRA since the audit', 'The record now holds a value the audit did not see, or could not be matched for certain. Check by hand before editing.'),
-    'source_blocked': ('Cannot be settled from the text we have', 'Only an abstract or incomplete text was available, or the source could not be processed.'),
+    'source_blocked': ('On hold: not enough text', 'Only an abstract or incomplete text was available, or the source could not be processed. These could be checked in future if a better copy turns up. No action now.'),
     'withdraw': ('Keep the existing value', 'The evidence does not show the existing value is wrong, so the proposal is dropped.'),
     'no_edit': ('Already correct in FLoRA', 'Current FLoRA already holds the proposed value. Nothing to do.'),
 }
@@ -192,6 +192,9 @@ def show_value(value):
     return str(value)
 
 
+CHECKED = read(T / 'current_check_decisions_20261104.json')['rows']
+
+
 def edits_of(members):
     """The fields a row still needs changed: not those kept as they are or already right in current FLoRA."""
     return [m for m in members if m['state'] not in KEEP and m['current']['relation'] != 'already_equal']
@@ -199,6 +202,9 @@ def edits_of(members):
 
 def bundle_view(members):
     """One place per row, so a change and its dependencies are never split."""
+    checked = CHECKED.get(str(members[0]['input_row_index']))
+    if checked:
+        return 'ready' if checked['decision'] == 'apply' else 'no_edit'
     states = {m['state'] for m in members}
     if states & SOURCE_BLOCKED:
         return 'source_blocked'
@@ -258,6 +264,12 @@ def adversary_review(row, registry):
         return None, None
     path = ADVERSARY / entry['request_id'] / 'review.json'
     return entry, read(path) if path.exists() else None
+
+
+def read_current():
+    """Current FLoRA at the commit the ledger was reconciled against."""
+    import build_field_ledger as L
+    return L.Artifacts().current
 
 
 def build():
@@ -326,6 +338,22 @@ def build():
             to_change=sorted(edits),
             policy_group=group if view == 'rule' else None,
             record_action=(record_cases[row]['action'] if row in record_cases else None), operations=(len(case['operations']) if row in export_cases else None))
+
+    for row, checked in CHECKED.items():
+        bundle = bundles[int(row)]
+        bundle.update(flora_id=checked['flora_id'], summary=checked['reason'], limits=[],
+                      provenance=['The audit read this against the paper and the current FLoRA record.'], kept=[])
+        if checked['decision'] == 'apply':
+            current = next(c for c in read_current() if c['id'] == checked['flora_id'])
+            field, new = checked['field'], checked['new']
+            if field == 'original':
+                before, after = f"{first_author(current['author_o'])} ({current['year_o']}) {current['title_o']}", f"{first_author(new['author_o'])} ({new['year_o']}) {new['title_o']}"
+            else:
+                before, after = current[field], new[field]
+            quote = next((v for k, v in new.items() if k.endswith('_quote')), None)
+            bundle.update(family=checked['family'], to_change=[field], quotes=[dict(text=excerpt(quote), section=next((v for k, v in new.items() if k.endswith(('_source',))), ''))] if quote else [],
+                          changes=[dict(field=field, label=checked['label'], audited=show_value(before), proposed=show_value(after), current=show_value(before),
+                                        state='checked_against_current', relation='unchanged_from_frozen')])
 
     def fields_in(rows_):
         return sum(len(by_row[r]) for r in rows_)
