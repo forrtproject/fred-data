@@ -37,6 +37,17 @@ class FinalDecisions(unittest.TestCase):
             else:
                 self.assertNotIn(checked['flora_id'], by_id)
 
+    def test_missing_link_list_has_no_known_duplicates(self):
+        import csv
+        check = V.L.read(V.L.T / 'missing_link_check_20261104.json')
+        with (V.L.B / 'handoff/missing_links_to_add.csv').open(encoding='utf-8') as f:
+            rows = list(csv.DictReader(f))
+        self.assertEqual(len(rows), check['totals']['to_add'])
+        known = {(a['work_key'], a['title']) for a in check['audit_list_already_in_flora']}
+        self.assertFalse(known & {(r['work_key'], r['title']) for r in rows})
+        totals = check['totals']
+        self.assertEqual(totals['later_candidates'], totals['later_already_by_title'] + totals['later_already_after_read'] + totals['later_confirmed'] + totals['later_unconfirmed'])
+
     def test_quotes_on_the_list_are_clean(self):
         data = V.L.read(V.L.B / 'handoff/corrections_to_apply.json')
         bad = __import__('re').compile('[\ufb00-\ufb04\ue01e\u2afd\u2429\u00ad]|Hum Genet \\(2014\\)|Ethnicity-education .14')

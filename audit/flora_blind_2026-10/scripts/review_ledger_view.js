@@ -1,5 +1,6 @@
 /* Views built from the field ledger. They show status and evidence; they record no approval. */
 const BRANCH_URL='https://github.com/forrtproject/fred-data/tree/audit/flora-blind-2026-10/audit/flora_blind_2026-10';
+const MISSING_URL='https://github.com/forrtproject/fred-data/blob/audit/flora-blind-2026-10/audit/flora_blind_2026-10/handoff/missing_links_to_add.csv';
 const CORRECTIONS_URL='https://github.com/forrtproject/fred-data/blob/audit/flora-blind-2026-10/audit/flora_blind_2026-10/handoff/corrections_to_apply.csv';
 function moveLine(change){
   const done=change.relation==='already_equal';
@@ -50,10 +51,9 @@ function renderOverview(root){
   root.append(h('h3',{},'FLoRA has moved on since the audit'),h('p',{class:'since'},`The audit read a saved copy of FLoRA with ${ledger.baseline.rows.toLocaleString('en')} records. The current release has ${ledger.current.rows.toLocaleString('en')}, so audit row numbers do not match it. Each audited record was matched to its current FLoRA record by study identifiers and titles, and any uncertain match is held back. The database may be ahead of the release, which is why each value must be re-checked just before editing.`));
   const outside=ledger.outside_scope;
   root.append(h('h3',{},'Also to cover in the plan'),h('ul',{},
-    h('li',{},`Missing links are reports that re-test an original study, where FLoRA has no record pairing the two. ${outside.confirmed_missing_pairs.items} are confirmed against the paper.`),
-    h('li',{},`${outside.unresolved_candidates} more were checked, but the paper did not show clearly that it re-tests the study. ${outside.planned_pairs} further studies are planned, with no results yet.`),
-    h('li',{},`${outside.quote_updates} records whose value is right but whose supporting quote should be replaced.`),
-    h('li',{},`${outside.unreviewed_two_reader_targets} more were named by both AI readers later on and have not been checked. About 29 of them look to be in FLoRA already under a different link.`)));
+    h('li',{},`${ledger.missing_links.to_add} replications are missing from FLoRA: a report re-tests an original study, but no record pairs them. `,h('a',{href:MISSING_URL},'The list'),' gives each one.'),
+    h('li',{},`${ledger.missing_links.unconfirmed_total} more were checked, but the paper did not show clearly that it re-tests the study. No action needed. ${outside.planned_pairs} further studies are planned, with no results yet.`),
+    h('li',{},`${outside.quote_updates} records whose value is right but whose supporting quote should be replaced.`),));
   root.append(h('p',{class:'since'},h('a',{href:BRANCH_URL},'All audit files are on this branch.')));
 }
 function renderSets(root){

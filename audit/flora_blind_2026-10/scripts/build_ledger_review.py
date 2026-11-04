@@ -409,6 +409,7 @@ def build():
         close_read=dict((lambda c: (('sample', c['sample']), ('decisions', c['decisions'])))(read(T / 'close_read_20261104.json'))),
         final_read=dict(changed=sum(r['verdict'] == 'correct' for r in final_reviews.values()), kept=sum(r['verdict'] == 'keep_existing' for r in final_reviews.values())),
         rebind=[f'row:{r}' for r in views['rebind']], needs_reference=[f'row:{r}' for r in views['needs_reference']], pending_read=[f'row:{r}' for r in views['pending_read']],
+        missing_links=read(T / 'missing_link_check_20261104.json')['totals'],
         outside_scope=dict(confirmed_missing_pairs=outside['pairs']['confirmed_missing_pair'],
                            unresolved_candidates=outside['pairs']['unresolved_missing_candidate']['items'],
                            planned_pairs=outside['pairs']['planned_study_pair']['items'],

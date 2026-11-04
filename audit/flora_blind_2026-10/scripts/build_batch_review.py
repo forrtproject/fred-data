@@ -53,6 +53,8 @@ def candidate_groups():
         group_map[group]['items'].append(dict(id=c['id'],case_id=c['id'],input_row_index=c['row'],title=c['title'],fields=sorted(fields),operations=operations))
     blocked_works={c['work'].lower() for c in cases if c.get('record_action') or any(v.get('disposition')=='policy_decision_required' for v in c.get('final_review_summary',{}).values())}
     with (H/'confirmed_missing_pairs.csv').open(encoding='utf-8-sig') as f:pairs=list(csv.DictReader(f))
+    in_flora={(x['work_key'],x['title']) for x in json.loads((H.parent/'independent_recode_20261101/missing_link_check_20261104.json').read_text())['audit_list_already_in_flora']}
+    pairs=[p for p in pairs if (p['work_key'],p['title']) not in in_flora]
     for p in pairs:
         if p['work_key'].lower() in blocked_works or not all(p[k].strip() and p[k].strip().lower() not in {'na','unknown'} for k in ['title','authors','year']):continue
         group_map['confirmed_missing_pairs']['items'].append(dict(id='pair:'+p['file_key']+':'+p['target_index'],title=p['title'],linked_case_id=('missing:'+p['file_key']+':'+p['target_index']) if any(c['id']=='missing:'+p['file_key']+':'+p['target_index'] for c in cases) else None,operations=[dict(operation='add_confirmed_pair',work_key=p['work_key'],file_key=p['file_key'],original={k:p[k] for k in ['doi','title','authors','year']},outcome=None,outcome_status='not_adjudicated',evidence_reference='confirmed_missing_pairs.csv',audit_source_confirmation_sha256=digest(p),target_index=p['target_index'])]))
