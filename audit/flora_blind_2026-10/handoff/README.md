@@ -42,7 +42,9 @@ python3 audit/flora_blind_2026-10/scripts/validate_review_handoff.py
 python3 audit/flora_blind_2026-10/scripts/validate_record_review.py
 ```
 
-The review app's status, candidate sets, rule questions and source-blocked lists come from `independent_recode_20261101/field_ledger.json`, through [`ledger_review.json`](ledger_review.json). Rebuild the ledger first when any review changes. `batch_review.json` now holds missing-pair identities only: the earlier outcome and reproduction batches were retired, and earlier selections approve nothing. `correction_proposals.json` and the row numbers in this folder describe the frozen snapshot, not current FLoRA.
+**To apply corrections, start with [`corrections_to_apply.csv`](corrections_to_apply.csv)** (one row per column to change) or [`corrections_to_apply.json`](corrections_to_apply.json) (the same changes per record, plus study-type changes that need a route and record removals). Both are keyed on the permanent FLoRA id and give the expected current value, the new value and the note to log. The [route](../independent_recode_20261101/flora_validation_application_route.json) covers the checks and rollback. Nothing has been applied.
+
+The review app's status, ready lists, coding questions and source-blocked lists come from `independent_recode_20261101/field_ledger.json`, through [`ledger_review.json`](ledger_review.json). Rebuild the ledger first when any review changes. `batch_review.json` now holds missing-pair identities only: the earlier outcome and reproduction batches were retired, and earlier selections approve nothing. `correction_proposals.json` and the row numbers in this folder describe the frozen snapshot, not current FLoRA.
 
 Build and publish the public app with the installed `deploy-html` helper:
 

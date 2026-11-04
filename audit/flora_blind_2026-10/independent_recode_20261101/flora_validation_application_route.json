@@ -23,6 +23,7 @@
   "dry_run": "Build application_plan_dryrun.json, then run it against a disposable database (the flora-validation README warns that importing app.py can start jobs against the configured database) and diff the exported CSV: only the planned fields and derived columns may change.",
   "regression_checks": ["python -m pytest -q in flora-validation", "validate_flora.py on the exported frame", "row and id counts unchanged except planned exclusions", "the ledger rebuilt against the new export shows every applied field as already_equal"],
   "rollback": "POST /api/admin/flora/{id}/restore with the change_id recorded before the batch (0 returns to the derived value). Corrections are overlays, so source records are untouched.",
-  "authorization": "Nothing here has been run. It needs an explicit user decision on the concrete rule and set, and admin access to flora-validation.",
+  "corrections_list": "../handoff/corrections_to_apply.json",
+  "authorization": "Nothing here has been run. It needs an explicit instruction from Lukas Wallrich on the list, and admin access to flora-validation.",
   "canonical_changes_applied": false
 }

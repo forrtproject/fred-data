@@ -54,13 +54,15 @@ STATES = {
     'adversary_supported_candidate': 'Two confident readings and a completed adversarial read support it',
     'agreement_pending_adversarial_review': 'Two confident readings agree with the proposal; adversarial read outstanding',
     'agreement_needs_authoritative_metadata': 'Two readings agree on a different original; authoritative bibliography outstanding',
-    'agreement_qualified_comparator': 'Readings agree, but the comparator has a recorded source qualification',
+    'close_read_supported_candidate': 'Both readers back the change, and one more read of the paper finds the existing value wrong',
+    'close_read_keep_existing': 'One more read of the paper finds the existing value defensible, so it stays',
+    'agreement_needs_close_read': 'Both readers back the change, but one is unsure or the check was not confident; one more read decides',
+    'no_agreement_keep_existing': 'The readers do not agree on a new value and at least one is unsure, so the existing value stays',
     'adversary_held': 'Adversarial read did not support an automatic correction',
     'withdraw_both_roles_confirm_frozen': 'Both roles confidently keep the frozen value, so the proposal should be withdrawn',
     'withdrawn_source_adjudicated': 'Already withdrawn after source review',
     'third_value_agreement': 'Both roles agree on a value that is neither frozen nor proposed',
     'disagreement_confident': 'Both roles are confident and disagree',
-    'unconfident': 'At least one role is unconfident on the bound original',
     'policy_cannot_be_determined': 'Proposal is cannot_be_determined, which is never an automatic fix',
     'individual_policy_hold': 'Formal individual-case hold',
     'record_level_rule': 'Needs a whole-record rule: removal, merge, split or rebinding',
@@ -72,7 +74,7 @@ STATES = {
     'source_order_hold': 'Source-order continuity hold',
     'header_only_hold': 'Header-only source view',
 }
-READY_STATES = {'reviewed_export_candidate', 'adversary_supported_candidate'}
+READY_STATES = {'reviewed_export_candidate', 'adversary_supported_candidate', 'close_read_supported_candidate'}
 # Parent labels that only record a pending step. All other labels stay visible as flags.
 CLEAN_PENDING_LABELS = {
     'missing_sol_completed_scientific_comparison_pending',
@@ -95,6 +97,7 @@ PRIMARY_REASONS = {
     'adversary_quote_failed', 'adversary_below_high_confidence', 'qa_second_read_not_upheld', 'needs_authoritative_bibliography', 'type_change_needs_axes',
     'parent_scope_flag', 'parent_hold_flag', 'literal_recheck_failed', 'validator_unproved_evidence',
     'prior_reading_differs', 'record_exclusion_rule', 'relink_would_duplicate_pair',
+    'close_read_correct', 'close_read_keep_existing',
 }
 
 
@@ -291,35 +294,48 @@ def classify_field(f):
     if f['proposed_is_cannot_be_determined']:
         return out('policy_cannot_be_determined', 'cannot_be_determined_value')
     relation_opus, relation_sol = opus['relation'], sol['relation']
+    close = f.get('close_read')
+    if close:
+        if close['verdict'] == 'keep_existing':
+            return out('close_read_keep_existing', 'close_read_keep_existing')
+        assert close['verdict'] == 'correct' and relation_opus == relation_sol == 'proposed', f['field']
+        if f['field'] == 'original' and not close.get('authoritative_metadata_verified'):
+            return out('agreement_needs_authoritative_metadata', 'needs_authoritative_bibliography')
+        return out('close_read_supported_candidate', 'close_read_correct')
     unconfident = [r for r, c in (('opus', opus), ('sol', sol)) if not c['confident']]
     if relation_opus == relation_sol == 'frozen' and not unconfident:
         return out('withdraw_both_roles_confirm_frozen', 'both_confident_on_frozen')
     if unconfident:
-        return out('unconfident', *['unconfident_' + r for r in unconfident])
+        codes = ['unconfident_' + r for r in unconfident]
+        if relation_opus == relation_sol == 'proposed':
+            return out('agreement_needs_close_read', *codes)
+        return out('no_agreement_keep_existing', *codes)
     if relation_opus != relation_sol or (relation_opus == 'other' and not f['coders_agree_exactly']):
         return out('disagreement_confident', 'confident_disagreement')
     if relation_opus == 'other':
         return out('third_value_agreement', 'both_confident_third_value')
     if relation_opus != 'proposed':
-        return out('unconfident')
+        return out('no_agreement_keep_existing')
     # Both confident and exact on the proposed value from here on.
     if not (opus['literal_quote_ok'] and sol['literal_quote_ok']):
         return out('no_eligible_comparator', 'literal_recheck_failed')
     if not (opus['validator_clean'] and sol['validator_clean']):
         return out('no_eligible_comparator', 'validator_unproved_evidence')
-    qualification = sol.get('qualification')
-    if qualification:
-        return out('agreement_qualified_comparator', 'comparator_' + qualification)
+    if sol.get('qualification'):
+        # Recorded for transparency only: how the text was extracted does not hold back a correction.
+        reasons.append('comparator_' + sol['qualification'])
     review = f.get('adversary')
     if review:
         if not review['quote_verified']:
             return out('adversary_held', 'adversary_quote_failed')
         if review['verdict'] != 'supported':
             return out('adversary_held', 'adversary_not_supported')
-        if review.get('confidence') != 'high':
-            return out('adversary_held', 'adversary_below_high_confidence')
-        if review.get('qa_status') in ('flip', 'softened', 'unusable'):
+        if review.get('qa_status') == 'flip':
             return out('adversary_held', 'qa_second_read_not_upheld')
+        if review.get('qa_status') in ('softened', 'unusable'):
+            return out('agreement_needs_close_read', 'qa_second_read_not_upheld')
+        if review.get('confidence') != 'high':
+            return out('agreement_needs_close_read', 'adversary_below_high_confidence')
         if f['field'] == 'original' and not review['authoritative_metadata_verified']:
             return out('agreement_needs_authoritative_metadata', 'needs_authoritative_bibliography')
         return out('adversary_supported_candidate', 'adversary_supported')
@@ -528,6 +544,8 @@ class Artifacts:
         self.adversary = read(registry)['bundles'] if registry.exists() else {}
         metadata = T / 'authoritative_original_metadata.json'
         self.authoritative = read(metadata)['rows'] if metadata.exists() else {}
+        close = T / 'close_read_20261104.json'
+        self.close_read = read(close)['reviews'] if close.exists() else {}
 
     def coding(self, path):
         path = resolve(path)
@@ -658,26 +676,21 @@ POLICY_GROUPS = {
 STATE_POLICY = {
     'record_level_rule': 'record_inclusion', 'source_gap': 'source_completeness',
     'binding_unresolved_document': 'which_original', 'target_not_bound': 'which_original',
-    'agreement_qualified_comparator': 'comparator_qualification', 'unconfident': 'confidence_policy',
     'policy_cannot_be_determined': 'determinability',
 }
 EXTRA_POLICY_QUESTIONS = {
-    'review_confidence': 'The source review leans towards the proposal but is not highly confident. Should these wait for a person?',
-    'comparator_qualification': 'May a reading verified through a normalization chain or alternate layout count as a complete comparator?',
-    'confidence_policy': 'Should a value be corrected when the two readings agree but one is unsure?',
-    'determinability': 'When should a record say cannot_be_determined rather than keep its value?',
+    'determinability': 'When should a record say the outcome cannot be determined, rather than keep its value?',
 }
 TERMINAL_STATES = READY_STATES | {'withdrawn_source_adjudicated', 'withdraw_both_roles_confirm_frozen', 'provider_hold',
                                   'source_order_hold', 'header_only_hold', 'record_action_candidate',
-                                  'agreement_pending_adversarial_review', 'agreement_needs_authoritative_metadata'}
+                                  'agreement_pending_adversarial_review', 'agreement_needs_authoritative_metadata',
+                                  'agreement_needs_close_read', 'close_read_keep_existing', 'no_agreement_keep_existing'}
 
 
 def policy_group(state, label, reasons):
     """Group recurring open questions so one rule can settle many cases."""
     if state in TERMINAL_STATES:
         return None
-    if 'adversary_below_high_confidence' in reasons:
-        return 'review_confidence'
     if state in STATE_POLICY:
         return STATE_POLICY[state]
     for key, (_, pattern) in POLICY_GROUPS.items():
@@ -894,7 +907,9 @@ def build_ledger(art=None):
             coders_agree_exactly=opus_facts.get('value') == sol_facts.get('value') and opus_facts.get('value') is not None,
             proposed_is_cannot_be_determined=proposed == 'cannot_be_determined' or (
                 isinstance(proposed, dict) and 'cannot_be_determined' in proposed.values()),
-            adversary=bundle_review)
+            adversary=bundle_review,
+            close_read=(dict(art.close_read[f'row:{row_index}:{field}'], authoritative_metadata_verified=str(row_index) in art.authoritative)
+                        if f'row:{row_index}:{field}' in art.close_read else None))
         state, reasons = classify_field(facts)
         assert state in STATES and set(reasons) <= PRIMARY_REASONS, (state, reasons)
         recheck_state, recheck_reasons = classify_field(dict(facts, in_export=False, in_record_actions=False))
@@ -925,7 +940,7 @@ def build_ledger(art=None):
             gate_recheck=dict(state=recheck_state, reasons=recheck_reasons) if accepted or row_index in record_cases else None,
             dimensions=dimensions(document, opus_facts, sol_facts, art.queue.get(document, {}) if document else {}),
             policy_group=policy_group(state, label, reasons),
-            adversarial_review=bundle_review, current=current_block,
+            adversarial_review=bundle_review, close_read=facts['close_read'], current=current_block,
             bundle_id=f'row:{row_index}'))
 
     bundles = []

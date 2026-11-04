@@ -85,10 +85,10 @@ function batchItemLine(item,group){
 }
 function renderPairGroup(root,g){
   const pending=g.items.filter(untouched),approved=g.items.filter(i=>approvedItem(i,g)),protectedCount=g.items.length-pending.length-approved.length;
-  const card=h('section',{class:'batch-card'},h('h3',{},g.title),h('p',{},g.description),h('p',{},`${g.items.length} items, ${approved.length} approved, ${pending.length} available`+(protectedCount?`, ${protectedCount} kept as individual decisions`:'')));
+  const card=h('section',{class:'batch-card'},h('h3',{},g.title),h('p',{},g.description),h('p',{},`${g.items.length} links, ${approved.length} approved, ${pending.length} not yet decided`+(protectedCount?`, ${protectedCount} kept as individual decisions`:'')));
   if(store.batch_approvals[g.id]&&store.batch_approvals[g.id].fingerprint!==g.fingerprint)card.append(h('p',{class:'notice'},'This set changed after your earlier approval. Earlier choices are kept where they still apply.'));
   const list=h('ol',{class:'batch-list','data-batch-group':g.id,onscroll:e=>{if(e.target.isConnected)batchScroll.set(g.id,e.target.scrollTop)}});for(const item of g.items)list.append(batchItemLine(item,g));
-  card.append(h('div',{class:'batch-controls'},h('button',{type:'button',class:'batch-button',disabled:!pending.length,onclick:()=>approveBatch(g)},`Approve ${pending.length} available`),store.batch_approvals[g.id]?h('button',{type:'button',class:'batch-button secondary',onclick:()=>undoBatch(g)},'Undo this set'):null),list);
+  card.append(h('div',{class:'batch-controls'},h('button',{type:'button',class:'batch-button',disabled:!pending.length,onclick:()=>approveBatch(g)},`Approve ${pending.length} links`),store.batch_approvals[g.id]?h('button',{type:'button',class:'batch-button secondary',onclick:()=>undoBatch(g)},'Undo this set'):null),list);
   root.append(card);
   if(batchScroll.has(g.id))list.scrollTop=batchScroll.get(g.id);
 }
@@ -97,7 +97,7 @@ function renderWorkflow(){
   const known=[...LEDGER_STAGES,'individual','download'],stage=known.includes(store.workflow.stage)?store.workflow.stage:'overview',individual=stage==='individual';
   $('workspace').hidden=!individual;$('queues').hidden=!individual;$('workflow').hidden=individual;
   const nav=$('workflow-nav');nav.replaceChildren();
-  for(const [id,title] of [['overview','Where things stand'],['sets','Candidate sets'],['pending','Awaiting review'],['rules','Rule questions'],['blocked','Source blocked'],['settled','No edit needed'],['individual','Individual cases'],['download','Export decisions']])nav.append(h('button',{type:'button','aria-current':stage===id?'step':null,onclick:()=>setStage(id)},title));
+  for(const [id,title] of [['overview','Overview'],['sets','Ready to apply'],['pending','Waiting for a read'],['rules','Needs a decision'],['blocked','Not enough text'],['settled','No change needed'],['individual','All cases'],['download','Export decisions']])nav.append(h('button',{type:'button','aria-current':stage===id?'step':null,onclick:()=>setStage(id)},title));
   renderSaveStatus();if(individual)return;
   const root=$('workflow'),scroll=root.scrollTop,windowScroll=window.scrollY,keepScroll=lastWorkflowStage===stage;
   const openBundles=new Set([...root.querySelectorAll('details.bundle[open]')].map(d=>d.querySelector('summary')?.textContent));
@@ -123,5 +123,5 @@ function restoreBatchBackup(data){
   for(const [key,value] of Object.entries(data.approved_missing_pairs||{})){if(!items.has(key))continue;const old=store.pairs[key];if(!old||String(value.recorded_at)>String(old.recorded_at))store.pairs[key]=value}
   // Keep this browser's current step. Imported approvals must be downloaded here.
 }
-QUEUES.unshift({id:'remaining',label:'Remaining decisions',test:c=>{const p=profile(c);return inView(c,'ready','record_exclusion','needs_reference','pending_read','rule')||(!ledgerOf(c)&&p.missingOpen)},note:'Cases with proposals or an unresolved decision. Batch-approved rows disappear when “Not decided” is selected.'});
+QUEUES.unshift({id:'remaining',label:'Remaining decisions',test:c=>{const p=profile(c);return inView(c,'ready','record_exclusion','needs_reference','pending_read','rule')||(!ledgerOf(c)&&p.missingOpen)},note:'Cases with a proposed change or an open decision. Approved cases disappear when “Not decided” is selected.'});
 queueById.remaining=QUEUES[0];

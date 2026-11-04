@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Fetch authoritative Crossref records for adversary-supported original corrections. Reruns reuse saved records."""
+import difflib
 import hashlib
 import json
 import sys
@@ -30,13 +31,33 @@ def check(proposed, message):
     problems = []
     if L.identifier(message.get('DOI')) != L.identifier(proposed.get('doi')):
         problems.append('doi')
-    if norm(metadata_title(message)) != norm(proposed.get('title')) and not (
-            norm(proposed.get('title')) and norm(proposed['title']) in norm(metadata_title(message))):
+    # The DOI must match exactly, so a title may differ only by a typo carried over from a reference list.
+    title, found = norm(proposed.get('title')), norm(metadata_title(message))
+    if title != found and not (title and title in found) and difflib.SequenceMatcher(None, title, found).ratio() < 0.97:
         problems.append('title')
     families = [a.get('family', '') for a in message.get('author', [])]
     if not families or norm(L.surname(proposed.get('authors'))) != norm(families[0]):
         problems.append('first_author')
     return problems
+
+
+def search_by_title(proposed):
+    """Find a DOI for a proposal without one. Only an exact title, first author and year match counts."""
+    title = str(proposed.get('title') or '')
+    key = hashlib.sha256(('search:' + title).encode()).hexdigest()[:16]
+    path = OUT / (key + '.json')
+    if not path.exists():
+        query = urllib.parse.urlencode({'query.bibliographic': f"{title} {proposed.get('authors', '')[:60]}", 'rows': 8})
+        request = urllib.request.Request('https://api.crossref.org/works?' + query, headers={'User-Agent': 'flora-audit-metadata-check'})
+        path.write_bytes(urllib.request.urlopen(request, timeout=40).read())
+        time.sleep(0.2)
+    for item in json.loads(path.read_text())['message']['items']:
+        families = [a.get('family', '') for a in item.get('author', [])]
+        issued = (item.get('issued', {}).get('date-parts') or [[None]])[0][0]
+        if norm(metadata_title(item)) == norm(title) and families and norm(L.surname(proposed.get('authors'))) == norm(families[0]) \
+                and str(issued) == str(proposed.get('year')):
+            return item['DOI']
+    return None
 
 
 def main():
@@ -47,15 +68,18 @@ def main():
         if field['field'] != 'original' or 'adversary_pending' in field['reasons']:
             continue
         review = field.get('adversarial_review')
-        proposed = field['proposed_value'] or {}
-        if not review or review['verdict'] != 'supported' or review.get('confidence') != 'high' or field['state'] not in (
-                'agreement_needs_authoritative_metadata', 'adversary_supported_candidate'):
+        close = field.get('close_read') or {}
+        proposed = dict(field['proposed_value'] or {})
+        supported = (review and review['verdict'] == 'supported' and review.get('confidence') == 'high') or close.get('verdict') == 'correct'
+        if not supported or field['state'] not in ('agreement_needs_authoritative_metadata', 'adversary_supported_candidate', 'close_read_supported_candidate'):
             continue
         row = str(field['input_row_index'])
-        if not L.identifier(proposed.get('doi')):
-            skipped[row] = 'no_doi_in_proposal'
-            continue
         try:
+            if not L.identifier(proposed.get('doi')):
+                proposed['doi'] = search_by_title(proposed)
+                if not proposed['doi']:
+                    skipped[row] = 'no_doi_in_proposal_and_no_exact_crossref_match'
+                    continue
             path = fetch(proposed['doi'])
             message = json.loads(path.read_text())['message']
             problems = check(proposed, message)

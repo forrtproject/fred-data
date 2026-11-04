@@ -318,7 +318,7 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
 <header class="masthead">
   <div>
     <h1>FLoRA audit decisions</h1>
-    <p class="lede">The status of every proposed FLoRA correction, with its evidence. Decisions save to a shared log for all reviewers. Nothing here changes FLoRA.</p>
+    <p class="lede">Which FLoRA corrections are ready to apply, which are not, and the evidence for each. Nothing here changes FLoRA.</p>
   </div>
   <div class="tools">
     <p class="overall" id="overall"></p>
@@ -359,15 +359,15 @@ kbd.key{font:12.5px/1 var(--sans);border:1px solid var(--rule-strong);border-bot
   </main>
 </div>
 <dialog id="batch-evidence" class="batch-evidence-dialog" aria-labelledby="batch-evidence-title">
-  <header class="batch-evidence-head"><button type="button" class="tool" id="batch-evidence-close">Back to batch</button><p id="batch-evidence-position" class="muted"></p><h2 id="batch-evidence-title"></h2><div class="batch-evidence-navigation"><button type="button" class="tool" id="batch-evidence-prev">Previous item</button><button type="button" class="tool" id="batch-evidence-quotes">Jump to quotes</button><button type="button" class="tool" id="batch-evidence-next">Next item</button></div></header>
+  <header class="batch-evidence-head"><button type="button" class="tool" id="batch-evidence-close">Back to the list</button><p id="batch-evidence-position" class="muted"></p><h2 id="batch-evidence-title"></h2><div class="batch-evidence-navigation"><button type="button" class="tool" id="batch-evidence-prev">Previous item</button><button type="button" class="tool" id="batch-evidence-quotes">Jump to quotes</button><button type="button" class="tool" id="batch-evidence-next">Next item</button></div></header>
   <div id="batch-evidence-body"></div><footer id="batch-evidence-controls"></footer>
 </dialog>
 <dialog class="about" id="about" aria-labelledby="about-title">
   <div class="about-body">
     <button class="tool about-close" id="about-close" type="button">Close</button>
     <h2 id="about-title">About this review</h2>
-    <p>Explore field decisions, supporting evidence, and correction proposals. Each case shows what is wrong with a FLoRA record, the current and proposed values, the evidence, and any dependency that must be settled first.</p>
-    <p>“Audited” values come from the frozen FLoRA snapshot that was audited; “current” values come from the FLoRA release named on the Where things stand page. Recording a decision never changes FLoRA: decisions are saved in a shared Google-backed change log, and an exported file is a list of decisions for whoever applies the changes. The browser keeps pending writes until the shared service confirms them. Other reviewers’ changes load automatically or with Refresh shared decisions. In audit notes, “parent” means the integrating reviewer who applies decisions.</p>
+    <p>This page shows which FLoRA corrections are ready, which are not, and the evidence for each. Each case shows what is wrong with the record, the current and proposed values, the quotes, and anything to settle first.</p>
+    <p>“Audited” values come from the saved copy of FLoRA that the audit read; “current” values come from the FLoRA release named on the Overview page. Recording a decision never changes FLoRA: decisions are saved in a shared Google-backed change log, and an exported file is a list of decisions for whoever applies the changes. The browser keeps pending writes until the shared service confirms them. Other reviewers’ changes load automatically or with Refresh shared decisions. In audit notes, “parent” means the integrating reviewer who applies decisions.</p>
     <p id="evidence-status" class="muted">Shortened evidence excerpts are embedded in this page.</p>
     <p id="data-status" class="muted hash"></p>
     <h3>Downloads</h3>
@@ -448,7 +448,7 @@ const vocabKey=v=>{v=String(v??'').trim();return /^(computation|robustness) not 
 const FIELD={type:'record type',original:'original study',outcome:'outcome',outcome_computation:'computation result',outcome_robustness:'robustness result',missing_row:'missing pair',outcome_quote:'evidence quote'};
 const fieldName=f=>FIELD[f]||words(f);
 const COLUMN={doi_r:'Replication DOI',url_r:'Replication link',oa_url_r:'Open-access copy',title_r:'Replication title',author_r:'Replication authors',year_r:'Replication year',journal_r:'Replication journal',doi_o:'Original DOI',title_o:'Original title',author_o:'Original authors',year_o:'Original year',journal_o:'Original journal',url_o:'Original link',type:'Record type',outcome:'Outcome',outcome_quote:'Evidence quote',outcome_quote_source:'Quote source',study_status:'Study status',record_inclusion:'Dataset inclusion'};
-const DISPOSITION={confirmed_correct:['Confirmed by source review','tone-ok'],correction_supported:['Correction supported','tone-ok'],not_applicable:['Not applicable',''],reviewed_unknown:['Source does not settle this','tone-hold'],source_needed:['Source needed','tone-hold'],policy_decision_required:['Policy choice needed','tone-policy'],represented:['Already in FLoRA',''],genuinely_missing:['Confirmed missing','tone-ok']};
+const DISPOSITION={confirmed_correct:['Confirmed by the final check','tone-ok'],correction_supported:['Correction supported','tone-ok'],not_applicable:['Not applicable',''],reviewed_unknown:['Source does not settle this','tone-hold'],source_needed:['Source needed','tone-hold'],policy_decision_required:['Policy choice needed','tone-policy'],represented:['Already in FLoRA',''],genuinely_missing:['Confirmed missing','tone-ok']};
 const LEVEL={full_text:'Full text',abstract:'Abstract only',none:'No usable text'};
 
 /* ---------- decisions store ---------- */
@@ -528,10 +528,10 @@ const ledger=CONTEXT.ledger_review||{bundles:{},statement:[],sets:[],rule_groups
 const ledgerOf=c=>ledger.bundles[c.id]||null;
 const inView=(c,...views)=>{const b=ledgerOf(c);return !!b&&views.includes(b.view)};
 const QUEUES=[
-  {id:'candidates',label:'Candidates',test:c=>inView(c,'ready','record_exclusion','needs_reference','pending_read'),note:'Corrections that two independent readings support, grouped by how far they have come. Recording a decision here never changes FLoRA.'},
-  {id:'rules',label:'Rule questions',test:c=>inView(c,'rule'),note:'Cases waiting on a coding rule or an individual judgement, grouped by the question they share.'},
-  {id:'blocked',label:'Source blocked',test:c=>inView(c,'source_blocked'),note:'The available text cannot settle these. Nothing here is a verdict about the study.'},
-  {id:'settled',label:'No edit needed',test:c=>inView(c,'withdraw','no_edit','rebind'),note:'Proposals to withdraw, values current FLoRA already holds, and rows that changed in current FLoRA and need checking first.'},
+  {id:'candidates',label:'Corrections',test:c=>inView(c,'ready','record_exclusion','needs_reference','pending_read'),note:'Corrections the AI readers support, grouped by how far they have come. Recording a decision here never changes FLoRA.'},
+  {id:'rules',label:'Needs a decision',test:c=>inView(c,'rule'),note:'Cases that depend on how FLoRA should code them, grouped by the question they share.'},
+  {id:'blocked',label:'Not enough text',test:c=>inView(c,'source_blocked'),note:'The text we have cannot settle these. This says nothing about the study itself.'},
+  {id:'settled',label:'No change needed',test:c=>inView(c,'withdraw','no_edit','rebind'),note:'Proposals dropped, values FLoRA already holds, and records that changed in FLoRA and need checking first.'},
   {id:'missing',label:'Possible omissions',test:c=>profile(c).missing,note:'Study–original pairs that FLoRA may be missing. Confirmed missing pairs are listed in the downloads.'},
   {id:'limits',label:'Evidence limits',test:c=>{const p=profile(c);return !ledgerOf(c)&&!p.missing&&(p.unknown.length>0||p.unverified.length>0)},note:'Rows outside the proposed corrections where the available source could not verify FLoRA’s value.'},
   {id:'all',label:'Everything',test:()=>true,note:'Every audit case.'}
@@ -539,11 +539,11 @@ const QUEUES=[
 const queueById=Object.fromEntries(QUEUES.map(q=>[q.id,q]));
 function groupOf(c,qid){
   const p=profile(c),b=ledgerOf(c);
-  if(qid==='candidates'){const order={ready:[0,'Ready for a set decision'],record_exclusion:[1,'Whole-record exclusions'],needs_reference:[2,'Corrected original needs a reference'],pending_read:[3,'Awaiting a source review']};return order[b?.view]||[3,'Other']}
+  if(qid==='candidates'){const order={ready:[0,'Ready to apply'],record_exclusion:[1,'Remove the whole record'],needs_reference:[2,'Right study, no verified reference'],pending_read:[3,'Waiting for one more read']};return order[b?.view]||[3,'Other']}
   if(qid==='rules'){const g=(ledger.rule_groups||[]).find(x=>x.id===(b?.policy_group||'other_individual'));const i=(ledger.rule_groups||[]).indexOf(g);return [i<0?99:i,g?.question||'Case-specific question']}
   if(qid==='blocked'){const s=b?.changes?.[0]?.state;return s==='source_gap'?[1,'Abstract or incomplete text']:[0,'Source could not be used']}
   if(qid==='settled'){const order={withdraw:[0,'Proposal should be withdrawn'],no_edit:[1,'Already right in current FLoRA'],rebind:[2,'Current FLoRA changed']};return order[b?.view]||[3,'Other']}
-  if(qid==='missing')return p.missingOpen?[0,'Unresolved candidates']:[1,'Settled by source review'];
+  if(qid==='missing')return p.missingOpen?[0,'Unresolved candidates']:[1,'Settled by the final check'];
   if(qid==='limits'){const l=levelOf(c);return l==='full_text'?[0,'Full text does not settle it']:l==='abstract'?[1,'Abstract only']:[2,'No usable text']}
   if(qid==='all'){if(b)return [0,b.status];if(p.missing)return [1,'Possible missing pairs'];if(p.type==='limit')return [2,'Evidence limits'];return [3,'Audit confirmed the value']}
   return [0,''];
@@ -633,10 +633,10 @@ function quoteBlock(q,bits){bits=bits.map(locText);return frag(h('blockquote',{c
 /* ---------- rendering: case ---------- */
 function kicker(c,p){
   const bits=[h('b',{},c.row!=null?'Row '+c.row:'Possible missing pair')];
-  const kind={policy:['Policy choice','tone-policy'],record:['Record-level action','tone-hold'],change:['Proposed change','tone-ok'],'missing-open':['Unresolved candidate','tone-hold'],'missing-settled':['Settled by source review',''],limit:['Evidence limit','tone-hold'],confirmed:['No change proposed','']}[p.type];
+  const kind={policy:['Policy choice','tone-policy'],record:['Record-level action','tone-hold'],change:['Proposed change','tone-ok'],'missing-open':['Unresolved candidate','tone-hold'],'missing-settled':['Settled by the final check',''],limit:['Evidence limit','tone-hold'],confirmed:['No change proposed','']}[p.type];
   bits.push(h('span',{class:'chip '+kind[1]},kind[0]));
   const lvl=LEVEL[levelOf(c)];if(lvl)bits.push(h('span',{class:'chip'},lvl));
-  const review=c.signoff==='final_Sol_reviewed'||c.signoff==='final_Sol_missing_pair_reviewed'?'Final source review':c.signoff==='prior_source_adjudicated_proposal'?'Earlier source adjudication':null;
+  const review=c.signoff==='final_Sol_reviewed'||c.signoff==='final_Sol_missing_pair_reviewed'?'Final check of the paper':c.signoff==='prior_source_adjudicated_proposal'?'Earlier check of the paper':null;
   if(review)bits.push(h('span',{class:'chip'},review));
   if(p.holds.length||p.conditional.length)bits.push(h('span',{class:'chip tone-hold'},'Apply with conditions'));
   return h('p',{class:'kicker'},bits);
@@ -657,7 +657,7 @@ const POLICY_COPY={
 function issue(c,p){
   const rc=rowCtx(c);const lvl=levelOf(c);
   if(p.type==='policy'&&POLICY_COPY[c.row])return POLICY_COPY[c.row].question;
-  if(p.type==='policy')return ['The source review could not code this row without a policy decision about the ',listPhrase(unique(p.policies.flatMap(x=>x.fields)).map(fieldName)),'.'];
+  if(p.type==='policy')return ['The final check could not code this record without a policy decision about the ',listPhrase(unique(p.policies.flatMap(x=>x.fields)).map(fieldName)),'.'];
   if(p.type==='record'){const [lead]=splitLead(p.ra.reason||'',260);return lead||'A record-level change is proposed for this row.'}
   if(p.type==='change'){
     if(p.items.length>1)return `The audit proposes ${p.items.length} changes to this row: the ${listPhrase(p.items.map(fieldName))}.`;
@@ -670,9 +670,9 @@ function issue(c,p){
     return ['FLoRA records the ',fieldName(f),' as ',quoted(now),'; the audit supports ',quoted(v),'.'];
   }
   if(p.type==='missing-open'){const t=(CONTEXT.candidates||{})[c.id];return ['This replication may also re-test ',h('b',{},shortCite(t)||'an original the report does not name'),', which FLoRA does not list for it. The audit could not settle the original’s identity.']}
-  if(p.type==='missing-settled'){const s=p.summary.missing_row?.disposition;return s==='represented'?'The source review found that FLoRA already includes this study–original pair.':s==='genuinely_missing'?'The source review confirmed that FLoRA is missing this study–original pair.':'The source review could not identify this original.'}
+  if(p.type==='missing-settled'){const s=p.summary.missing_row?.disposition;return s==='represented'?'The final check found that FLoRA already includes this study–original pair.':s==='genuinely_missing'?'The final check confirmed that FLoRA is missing this study–original pair.':'The final check could not identify this original.'}
   if(p.type==='limit'){const fields=listPhrase((p.unknown.length?p.unknown:p.unverified).map(fieldName));if(lvl==='abstract')return `Only the abstract was available, so the audit could not verify the ${fields}.`;if(lvl==='none')return `No usable text of the report was available, so the audit could not verify the ${fields}.`;return `The full text does not establish the ${fields}.`}
-  return 'The source review confirmed FLoRA’s values for this row; no change is proposed.';
+  return 'The final check confirmed FLoRA’s values for this record; no change is proposed.';
 }
 function cardRows(c,p){
   const rc=rowCtx(c);const rows=['type','original'];const fs=new Set([...p.changeFields,...c.fields,...Object.keys(p.summary)]);
@@ -692,8 +692,8 @@ function rowStatus(c,p,f){
 function includeKey(c){if(!state.included.has(c.id))state.included.set(c.id,new Set(profile(c).items));return state.included.get(c.id)}
 function renderCard(c,p){
   const rc=rowCtx(c);const card=h('section',{class:'card','aria-label':'FLoRA record values'});
-  const legend=p.type==='record'&&p.items.length?'Field corrections behind the record-level action; not applied on their own':p.items.length?'Struck values are FLoRA’s; highlighted values are proposed':rc?'Values in the audited FLoRA snapshot':'';
-  card.append(h('header',{class:'card-head'},h('span',{class:'card-title'},c.row!=null?`FLoRA row ${c.row}`:'Record'),h('span',{class:'card-note'},legend)));
+  const legend=p.type==='record'&&p.items.length?'Field corrections behind the record-level action; not applied on their own':p.items.length?'Struck values are FLoRA’s; highlighted values are proposed':rc?'Values in the copy of FLoRA the audit read':'';
+  card.append(h('header',{class:'card-head'},h('span',{class:'card-title'},c.row!=null?`Audit row ${c.row}`:'Record'),h('span',{class:'card-note'},legend)));
   if(!rc){card.append(h('div',{class:'card-row'},h('div',{class:'card-label'},'Values'),h('div',{},'Current values are not available for this case.')));return card}
   const multi=p.type==='change'&&p.items.length>1,inc=includeKey(c);
   for(const f of cardRows(c,p)){
@@ -708,7 +708,7 @@ function renderCard(c,p){
       if(multi){const box=h('input',{type:'checkbox',checked:inc.has(f)?true:null,onchange:e=>{e.target.checked?inc.add(f):inc.delete(f);renderDock()}});vals.append(h('label',{class:'include'},box,'Include in approval'))}
     }else{
       const now=current(c,f);vals.append(h('div',{class:'val'},f==='original'?citation(now):codeValue(now)));
-      const s=p.summary[f];if(s&&s.confirmed_value!=null&&s.confirmed_value!==''&&typeof s.confirmed_value!=='object'&&String(s.confirmed_value)!==String(now??''))vals.append(h('span',{class:'def'},'Source review value: '+words(s.confirmed_value)));
+      const s=p.summary[f];if(s&&s.confirmed_value!=null&&s.confirmed_value!==''&&typeof s.confirmed_value!=='object'&&String(s.confirmed_value)!==String(now??''))vals.append(h('span',{class:'def'},'Final check value: '+words(s.confirmed_value)));
     }
     if(f==='outcome'&&rc.quote&&!p.qf)vals.append(h('p',{class:'flora-quote'},'“'+rc.quote+'”',h('span',{},'FLoRA’s supporting quote'+(rc.quote_source?` (${rc.quote_source})`:''))));
     row.append(vals);card.append(row);
@@ -809,7 +809,7 @@ function renderEvidence(c,p){
 }
 function renderTechnical(c,p){
   const rc=rowCtx(c);
-  const facts={'Case ID':c.id,'Row':c.row,'File key':c.file_key,'Work key':c.work,'Triage route':c.route,'Review status':c.signoff,'Evidence level':c.level,'Decision file':c.final_review_reference||meta(c,p.changeFields[0])?.review,'Full-record SHA-256':rc?.sha,'Queue SHA-256':QUEUE_HASH,'Baseline SHA-256':CONTEXT.baseline_sha256,'Evidence loaded':evidenceComplete?'Complete queue, hash verified':'Shortened excerpts embedded in this page'};
+  const facts={'Case ID':c.id,'Row':c.row,'File key':c.file_key,'Work key':c.work,'Triage route':c.route,'Review status':c.signoff,'Evidence level':c.level,'Decision file':c.final_review_reference||meta(c,p.changeFields[0])?.review,'Full-record SHA-256':rc?.sha,'Queue SHA-256':QUEUE_HASH,'Baseline SHA-256':CONTEXT.baseline_sha256,'Evidence loaded':evidenceComplete?'Evidence loaded.':'Shortened excerpts embedded in this page'};
   const dl=h('dl',{class:'detail-list'});for(const [k,v] of Object.entries(facts))if(v!=null&&v!=='')dl.append(h('dt',{},k),h('dd',{class:/SHA/.test(k)?'hash':''},String(v)));
   for(const f of p.changeFields){const m=meta(c,f);if(m)dl.append(h('dt',{},'Proposal: '+fieldName(f)),h('dd',{},[m.status==='decision_required'?'Decision required':'Evidence-checked',m.review==='final_source_review'?'final source review':'earlier source adjudication',m.conditional?'conditional':''].filter(Boolean).join('; ')))}
   if(rc&&rc.omitted&&rc.omitted.length)dl.append(h('dt',{},'Omitted values'),h('dd',{},'Private link fields omitted: '+rc.omitted.join(', ')));
@@ -939,7 +939,7 @@ $('import-file').onchange=async e=>{const file=e.target.files[0];e.target.value=
   restoreBatchBackup(data);const imported=store;store=JSON.parse(beforeImport);if(!transaction(()=>{store=imported}))throw Error('Import not recorded; shared review must be loaded and your name entered.');profiles=new Map();renderAll();const n=added+replaced;notice(`Imported ${n} ${n===1?'record':'records'}: ${added} new, ${replaced} replacing older local entries, ${skipped} skipped as older, ${unknown} not in this queue.`+(data.input_hash&&data.input_hash!==INPUT_HASH?' The file comes from a different audit version; decisions on changed proposals are marked for re-checking.':''))}catch(err){notice('Import failed: '+err.message)}};
 
 /* ---------- evidence ---------- */
-async function loadCompleteEvidence(text){const hash=await reviewHash(text);if(hash!==QUEUE_HASH)throw Error('This file does not match the current handoff. Reload the page and try again.');const loaded=JSON.parse(text);if(loaded.length!==cases.length)throw Error('Case count mismatch');if(new Set(loaded.map(c=>c.id)).size!==loaded.length)throw Error('Duplicate cases');cases=loaded;indexCases();evidenceComplete=true;notice('Complete evidence loaded and hash verified.');$('evidence-status').textContent='Complete evidence loaded and hash verified.';renderAll()}
+async function loadCompleteEvidence(text){const hash=await reviewHash(text);if(hash!==QUEUE_HASH)throw Error('This file does not match the current handoff. Reload the page and try again.');const loaded=JSON.parse(text);if(loaded.length!==cases.length)throw Error('Case count mismatch');if(new Set(loaded.map(c=>c.id)).size!==loaded.length)throw Error('Duplicate cases');cases=loaded;indexCases();evidenceComplete=true;notice('Complete evidence loaded.');$('evidence-status').textContent='Complete evidence loaded.';renderAll()}
 $('load').onchange=async e=>{try{await loadCompleteEvidence(await e.target.files[0].text())}catch(error){notice(error.message)}};
 
 /*flora-shared-state*/

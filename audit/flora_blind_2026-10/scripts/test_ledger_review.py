@@ -42,7 +42,19 @@ class LedgerReviewTests(unittest.TestCase):
 
     def test_ready_needs_old_value_still_in_current(self):
         for i in (i for s in self.data['sets'] for i in s['items']):
-            self.assertEqual({c['relation'] for c in self.bundles[i]['changes']}, {'unchanged_from_frozen'})
+            relations = {c['relation'] for c in self.bundles[i]['changes'] if c['field'] in self.bundles[i]['to_change']}
+            self.assertEqual(relations, {'unchanged_from_frozen'})
+
+    def test_row_726_keeps_its_value_and_row_1858_changes_only_its_original(self):
+        self.assertEqual(self.bundles['row:726']['view'], 'withdraw')
+        self.assertEqual(self.bundles['row:1858']['view'], 'ready')
+        self.assertEqual(self.bundles['row:1858']['to_change'], ['original'])
+
+    def test_no_audit_shorthand_on_the_page(self):
+        shorthand = re.compile(r'\b(blind|frozen|adversar\w*|comparator|packet|parent)\b', re.I)
+        for bundle in self.bundles.values():
+            text = ' '.join([bundle['summary'], bundle['status'], *bundle['provenance'], *bundle['limits']])
+            self.assertFalse(shorthand.search(text), (bundle['id'], text[:300]))
 
     def test_public_quotes_are_short(self):
         for bundle in self.bundles.values():

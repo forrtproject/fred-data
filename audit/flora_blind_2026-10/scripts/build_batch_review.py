@@ -32,7 +32,7 @@ def candidate_groups():
     groups = [dict(id='replication_outcomes',title='Replication outcomes',description='Outcome corrections with an unchanged study type and original-study identity.',items=[]),
               dict(id='reproduction_results',title='Reproduction results',description='Computation and robustness corrections, with the study type and original unchanged.',items=[]),
               dict(id='same_original_reference',title='Reference details for the same original',description='Citation corrections where the original DOI is unchanged; no study is relinked or removed.',items=[]),
-              dict(id='confirmed_missing_pairs',title='Confirmed missing-pair identities',description='Source-confirmed absent pairs with complete citation identities and no record-level hold. Outcomes remain unassigned.',items=[])]
+              dict(id='confirmed_missing_pairs',title='Confirmed missing links',description='Each report re-tests an original study that FLoRA does not pair it with. Each link has a full reference. Its outcome is left blank for now.',items=[])]
     group_map={g['id']:g for g in groups}
     for c in cases:
         ps=by_row.get(c.get('row'),[])

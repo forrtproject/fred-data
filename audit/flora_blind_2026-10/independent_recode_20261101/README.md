@@ -10,7 +10,8 @@ This reassessment covers 562 proposed fields across 515 frozen rows and 469 work
 - `adversarial_review_registry.json` records each review, canary and QA result. The reviews, reading receipts and complete quotations stay private.
 - `authoritative_original_metadata.json` holds the verified Crossref records for corrected originals.
 - `flora_validation_application_route.json` names the route for each family of change, with preconditions, audit log, dry run, regression checks and rollback.
-- `application_plan_summary.json` summarises the dry-run plan against current FLoRA. Nothing has been run.
+- `application_plan_summary.json` summarises the dry-run plan against current FLoRA. Nothing has been run. `build_application_plan.py` also writes the public correction list to `../handoff/corrections_to_apply.csv` and `.json`.
+- `close_read_20261104.json` records two decisions from 4 November 2026 and the verdicts behind them. How a paper's text was extracted no longer holds back a correction. When both readers back a change but one is unsure, one more read decides, and the value changes only if the paper contradicts it. When readers do not agree on the new value and one is unsure, the value stays.
 
 Rebuild from the repository root, then run the tests:
 

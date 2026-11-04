@@ -48,9 +48,10 @@ class PlantedFailures(unittest.TestCase):
     def test_supported_review_with_verified_quote_is_the_only_new_ready_route(self):
         review = dict(verdict='supported', quote_verified=True, authoritative_metadata_verified=False, confidence='high')
         self.assertEqual(with_(adversary=review)[0], 'adversary_supported_candidate')
-        self.assertIn('adversary_below_high_confidence', self.assert_state('adversary_held', adversary=dict(review, confidence='medium')))
-        for status in ('flip', 'softened', 'unusable'):
-            self.assertIn('qa_second_read_not_upheld', self.assert_state('adversary_held', adversary=dict(review, qa_status=status)))
+        self.assertIn('adversary_below_high_confidence', self.assert_state('agreement_needs_close_read', adversary=dict(review, confidence='medium')))
+        for status in ('softened', 'unusable'):
+            self.assertIn('qa_second_read_not_upheld', self.assert_state('agreement_needs_close_read', adversary=dict(review, qa_status=status)))
+        self.assertIn('qa_second_read_not_upheld', self.assert_state('adversary_held', adversary=dict(review, qa_status='flip')))
         self.assert_state('adversary_held', adversary=dict(review, verdict='policy_boundary'))
         self.assert_state('adversary_held', adversary=dict(review, verdict='not_supported'))
         self.assert_state('adversary_held', adversary=dict(review, quote_verified=False))
@@ -62,8 +63,8 @@ class PlantedFailures(unittest.TestCase):
         self.assertEqual(with_(field='original', adversary=ok)[0], 'adversary_supported_candidate')
 
     def test_unconfident_role_blocks(self):
-        self.assert_state('unconfident', opus__confident=False)
-        self.assert_state('unconfident', sol__confident=False)
+        self.assert_state('agreement_needs_close_read', opus__confident=False)
+        self.assert_state('agreement_needs_close_read', sol__confident=False)
 
     def test_model_disagreement_blocks(self):
         self.assert_state('disagreement_confident', sol__relation='frozen', sol__value='failed', coders_agree_exactly=False)
@@ -78,7 +79,7 @@ class PlantedFailures(unittest.TestCase):
         self.assert_state('withdraw_both_roles_confirm_frozen', opus__relation='frozen', sol__relation='frozen')
 
     def test_frozen_agreement_with_low_confidence_does_not_withdraw(self):
-        self.assert_state('unconfident', opus__relation='frozen', sol__relation='frozen', opus__confident=False)
+        self.assert_state('no_agreement_keep_existing', opus__relation='frozen', sol__relation='frozen', opus__confident=False)
 
     def test_abstract_evidence_blocks_even_when_confident(self):
         self.assert_state('source_gap', sol__evidence_level='abstract')
@@ -94,12 +95,39 @@ class PlantedFailures(unittest.TestCase):
         self.assert_state('no_eligible_comparator', opus__present=False)
         self.assert_state('no_eligible_comparator', sol__eligible_for_comparison=False)
 
-    def test_qualified_comparators_do_not_turn_green(self):
+    def test_text_extraction_does_not_hold_back_a_correction(self):
         for qualification, code in (('alternate_layout', 'comparator_alternate_layout'),
                                     ('normalization_chain', 'comparator_normalization_chain')):
-            reasons = self.assert_state('agreement_qualified_comparator', sol__qualification=qualification,
-                                        adversary=dict(verdict='supported', quote_verified=True, authoritative_metadata_verified=True))
+            state, reasons = with_(sol__qualification=qualification, adversary=dict(
+                verdict='supported', quote_verified=True, confidence='high', authoritative_metadata_verified=True))
+            self.assertEqual(state, 'adversary_supported_candidate')
             self.assertIn(code, reasons)
+
+    def test_one_more_read_decides_an_unsure_agreement(self):
+        self.assertEqual(with_(opus__confident=False, close_read=dict(verdict='correct'))[0], 'close_read_supported_candidate')
+        self.assert_state('agreement_needs_authoritative_metadata', field='original', opus__confident=False,
+                          close_read=dict(verdict='correct', authoritative_metadata_verified=False))
+        self.assert_state('close_read_keep_existing', opus__confident=False, close_read=dict(verdict='keep_existing'))
+        self.assert_state('no_agreement_keep_existing', opus__relation='frozen', opus__confident=False)
+
+    def test_unsure_final_check_goes_to_one_more_read(self):
+        self.assert_state('agreement_needs_close_read', adversary=dict(verdict='supported', quote_verified=True, confidence='medium', authoritative_metadata_verified=True))
+
+    def test_every_close_read_verdict_takes_effect(self):
+        reviews = L.read(L.T / 'close_read_20261104.json')['reviews']
+        fields = {f['field_id']: f for f in L.read(L.OUTPUT)['fields']}
+        for field_id, review in reviews.items():
+            expected = {'keep_existing': {'close_read_keep_existing'},
+                        'correct': {'close_read_supported_candidate', 'agreement_needs_authoritative_metadata'}}[review['verdict']]
+            self.assertIn(fields[field_id]['state'], expected, field_id)
+
+    def test_close_read_sample_counts_match_verdicts(self):
+        data = L.read(L.T / 'close_read_20261104.json')
+        sampled = [r for r in data['reviews'].values() if r['sampled']]
+        self.assertEqual(len(sampled), 16)
+        self.assertEqual(sum(r['verdict'] == 'correct' for r in sampled), data['sample']['results']['correct'])
+        self.assertEqual(sum(r['verdict'] == 'keep_existing' for r in sampled),
+                         data['sample']['results']['existing_value_defensible'] + data['sample']['results']['would_add_an_error'])
 
     def test_failed_literal_recheck_blocks(self):
         reasons = self.assert_state('no_eligible_comparator', sol__literal_quote_ok=False)
@@ -239,19 +267,11 @@ class RealLedger(unittest.TestCase):
             if field['document_id'] == 'document_0662':
                 self.assertEqual(field['state'], 'header_only_hold')
 
-    def test_alternate_layout_never_ready(self):
-        for field in self.fields:
-            if field['document_id'] in ('document_0022', 'document_0023'):
-                self.assertFalse(field['ready'], field['field_id'])
-                if field['sol']['present']:
-                    self.assertEqual(field['sol']['qualification'], 'alternate_layout')
-
-    def test_normalization_comparators_keep_qualification(self):
-        for document in ('document_0190', 'document_0234', 'document_0240', 'document_0264', 'document_0336'):
+    def test_extraction_differences_stay_recorded(self):
+        for document, kind in (('document_0022', 'alternate_layout'), ('document_0190', 'normalization_chain')):
             for field in self.fields:
-                if field['document_id'] == document:
-                    self.assertFalse(field['ready'])
-                    self.assertEqual(field['sol']['qualification'], 'normalization_chain')
+                if field['document_id'] == document and field['sol']['present']:
+                    self.assertEqual(field['sol']['qualification'], kind)
 
     def test_duplicate_views_are_one_pair(self):
         for field in self.fields:
@@ -263,7 +283,7 @@ class RealLedger(unittest.TestCase):
     def test_no_new_ready_without_review(self):
         for field in self.fields:
             if field['ready']:
-                self.assertTrue(field['state'] == 'reviewed_export_candidate' or field['adversarial_review'], field['field_id'])
+                self.assertTrue(field['state'] == 'reviewed_export_candidate' or field['adversarial_review'] or field['close_read'], field['field_id'])
 
     def test_formal_holds_cover_their_rows(self):
         art = L.Artifacts()
