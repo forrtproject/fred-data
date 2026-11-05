@@ -1,7 +1,7 @@
 import json,sys,tempfile,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from concurrency_limits import live_count,slot_ceiling,review_launch_paused,recorded_quota_failure,review_capacity_available,ordinary_review_ceiling
+from concurrency_limits import live_count,slot_ceiling,review_launch_paused,recorded_quota_failure,review_capacity_available,ordinary_review_ceiling,awaits_native_callback
 
 class ConcurrencyLimits(unittest.TestCase):
  def test_service_hold_pauses_only_the_named_review_service(self):
@@ -46,5 +46,10 @@ class ConcurrencyLimits(unittest.TestCase):
   self.assertEqual(ordinary_review_ceiling(6,1,config),3)
   self.assertEqual(ordinary_review_ceiling(8,1,config),1)
   self.assertEqual(ordinary_review_ceiling(0,4,config),0)
+ def test_native_callback_contract_is_not_a_fresh_status_check(self):
+  task={'taskId':'native-child','status':'running','next':'Completion wakes this thread, so end your turn. Do not wait on it or poll it.'}
+  self.assertTrue(awaits_native_callback(task))
+  for change in [{'status':'completed'},{'status':'cancel_requested'},{'taskId':None},{'next':None},{'hasPendingChildRuns':True}]:
+   with self.subTest(change=change):self.assertFalse(awaits_native_callback({**task,**change}))
 
 if __name__=='__main__':unittest.main()

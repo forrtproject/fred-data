@@ -1,7 +1,7 @@
 """Fail closed before handing off: cached 'running' labels do not establish liveness."""
 import argparse,datetime,hashlib,json,subprocess,sys
 from pathlib import Path
-from concurrency_limits import limits,review_launch_paused,recorded_quota_failure,review_capacity_available
+from concurrency_limits import limits,review_launch_paused,recorded_quota_failure,review_capacity_available,awaits_native_callback
 F=Path(__file__).resolve().parent;B=F.parent
 TERMINAL={'completed','failed','cancelled','interrupted'}
 def read(path,default=None):return json.loads(path.read_text()) if path.exists() else default
@@ -27,7 +27,7 @@ def main():
   subprocess.run([sys.executable,str(F/'check_preservation.py')],check=True)
   preserved=read(F/'preservation_check.json');assert not preserved['changed_protected_fields'] and not preserved['unscoped_gains']
   (F/'export_fingerprint.json').write_text(json.dumps({'scientific_inputs_sha256':before,'exported_at':read(B/'progress.json')['updated_at'],'results_sha256':hashlib.sha256((B/'results.csv').read_bytes()).hexdigest()},indent=2)+'\n');return
- now=datetime.datetime.now(datetime.timezone.utc);problems=[];active={'tasks':0,'reviews':0}
+ now=datetime.datetime.now(datetime.timezone.utc);problems=[];active={'tasks':0,'reviews':0};callbacks={'tasks':0,'reviews':0}
  for folder,pattern in [('tasks','*.json'),('reviews','task_*.json')]:
   for path in (F/folder).glob(pattern):
    task=read(path)
@@ -35,7 +35,8 @@ def main():
    if task.get('hasPendingChildRuns'):problems.append('Resolve unexpected nested child work: '+path.name)
    if task.get('status') not in TERMINAL and task.get('taskId'):
     checked=task.get('last_checked_at') or task.get('started_at');age=(now-datetime.datetime.fromisoformat(checked.replace('Z','+00:00'))).total_seconds() if checked else 999999
-    if age>30:problems.append('Refresh stale live-task status: '+path.name)
+    if awaits_native_callback(task):callbacks[folder]+=1
+    elif age>30:problems.append('Refresh stale live-task status: '+path.name)
     active[folder]+=1
    elif folder=='reviews' and task.get('status')=='completed' and not (F/'reviews'/path.name.replace('task_','validated_',1)).exists():
     answer=F/'reviews'/path.name.replace('task_','answer_',1)
@@ -65,6 +66,6 @@ def main():
  if read(F/'export_fingerprint.json',{}).get('scientific_inputs_sha256')!=scientific_fingerprint():problems.append('Recompute and validate export after scientific changes')
  if read(F/'export_fingerprint.json',{}).get('results_sha256')!=hashlib.sha256((B/'results.csv').read_bytes()).hexdigest():problems.append('Validate current exported results hash')
  if not sum(active.values()) and read(F/'state.json',{}).get('status') not in ['checkpoint_ready','complete']:problems.append('No live children: continue parent work or explicitly record an idle checkpoint; do not claim active continuation')
- result={'ready_to_yield':not problems,'live_tasks_freshly_checked':active,'queued_sources':queued,'queued_reviews':review_queued,'review_launches_paused':review_launch_paused(),'actionable_work':sorted(set(problems))}
+ result={'ready_to_yield':not problems,'live_tasks_freshly_checked':{k:active[k]-callbacks[k] for k in active},'live_tasks_awaiting_native_callbacks':callbacks,'queued_sources':queued,'queued_reviews':review_queued,'review_launches_paused':review_launch_paused(),'actionable_work':sorted(set(problems))}
  (F/'yield_readiness.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result));assert not problems
 if __name__=='__main__':main()

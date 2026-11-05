@@ -40,3 +40,8 @@ def review_capacity_available(review_active,source_active,config=None):
 def ordinary_review_ceiling(source_active,focused_active,config=None):
  d=config or limits()
  return max(0,min(d['review_slots']-focused_active,d['max_combined_children']-source_active-focused_active))
+
+def awaits_native_callback(task):
+ return (bool(task.get('taskId')) and task.get('status') in ['queued','running','waiting']
+         and not task.get('hasPendingChildRuns')
+         and task.get('next')=='Completion wakes this thread, so end your turn. Do not wait on it or poll it.')
