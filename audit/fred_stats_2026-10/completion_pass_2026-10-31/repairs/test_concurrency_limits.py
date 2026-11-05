@@ -1,7 +1,7 @@
 import json,sys,tempfile,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from concurrency_limits import live_count,slot_ceiling,review_launch_paused,recorded_quota_failure,review_capacity_available
+from concurrency_limits import live_count,slot_ceiling,review_launch_paused,recorded_quota_failure,review_capacity_available,ordinary_review_ceiling
 
 class ConcurrencyLimits(unittest.TestCase):
  def test_service_hold_pauses_only_the_named_review_service(self):
@@ -40,5 +40,11 @@ class ConcurrencyLimits(unittest.TestCase):
    (p/'task_identity_v2.json').write_text(json.dumps({'taskId':'identity','status':'completed'}))
    self.assertTrue(review_capacity_available(live_count(p,'task_*.json'),0,config))
    self.assertFalse(review_capacity_available(3,7,config))
+ def test_ordinary_dispatch_subtracts_focused_review_slots(self):
+  config={'review_slots':4,'source_slots':6,'max_combined_children':10}
+  self.assertEqual(ordinary_review_ceiling(0,1,config),3)
+  self.assertEqual(ordinary_review_ceiling(6,1,config),3)
+  self.assertEqual(ordinary_review_ceiling(8,1,config),1)
+  self.assertEqual(ordinary_review_ceiling(0,4,config),0)
 
 if __name__=='__main__':unittest.main()

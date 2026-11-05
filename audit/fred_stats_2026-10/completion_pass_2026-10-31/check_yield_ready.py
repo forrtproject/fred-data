@@ -50,6 +50,7 @@ def main():
     if not output.exists() or saved.get('output_sha256')!=hashlib.sha256(output.read_bytes()).hexdigest():problems.append('Collect completed source: '+group['key']);break
  cap=limits();free=cap['max_combined_children']-sum(active.values())
  if free<0:problems.append('Combined child limit exceeded')
+ if active['reviews']>cap['review_slots']:problems.append('Review child limit exceeded')
  if queued and active['tasks']<cap['source_slots'] and free>0:problems.append('Dispatch queued sources into available slots')
  review_queued=sum(not (F/'reviews'/f"task_{g['key']}_v1.json").exists() for g in read(F/'review_queue.json',[]))
  if review_queued and review_capacity_available(active['reviews'],active['tasks'],cap) and not review_launch_paused():problems.append('Dispatch queued independent reviews')

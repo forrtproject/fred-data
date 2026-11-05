@@ -36,3 +36,7 @@ def slot_ceiling(kind,other_active,config=None):
 
 def review_capacity_available(review_active,source_active,config=None):
  return review_active<slot_ceiling('review',source_active,config)
+
+def ordinary_review_ceiling(source_active,focused_active,config=None):
+ d=config or limits()
+ return max(0,min(d['review_slots']-focused_active,d['max_combined_children']-source_active-focused_active))
