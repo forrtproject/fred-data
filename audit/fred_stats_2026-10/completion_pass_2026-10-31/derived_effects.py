@@ -5,6 +5,24 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent/'scripts'))
 from compare import metric,quote_ok
 
+def reviewed_standardized_beta_copy(receipt,row,decision,source_path):
+ """Copy an explicitly standardized reviewed coefficient, without rescaling."""
+ assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
+ assert decision.get('target_match_confirmed') is True and decision.get('verdict')=='shipped_right'
+ field=receipt['field'];assert field in ['es_value_o','es_value_r']
+ assert metric(row['es_type_'+field[-1]])==metric(decision.get('correct_metric'))=='beta (std)'
+ assert Path(decision['source_path']).resolve()==Path(source_path).resolve()
+ value=str(decision['correct_value']);assert re.fullmatch(r'-?\d+\.\d+',value)
+ assert 'All other variables are standardized.' in receipt['standardization_quote']
+ interpretation=receipt['sd_interpretation_quote']
+ assert '1-SD higher perceived similarity' in interpretation and value+'-SD higher concurrent life satisfaction' in interpretation
+ assert value+'-SD higher concurrent life satisfaction' in decision['quote']
+ for quote in [receipt['standardization_quote'],interpretation,decision['quote']]:
+  assert quote_ok({'quote':quote,'source_path':source_path,'value':value,'confident':True,'location':decision['location']})
+ printed=receipt['printed_value'];assert re.fullmatch(r'\d*\.\d+',printed)
+ assert round(float(value),len(printed.split('.')[1]))==float(printed)
+ return value
+
 def documented_proportion_h(receipt,row,decision,source_path):
  """Reproduce an existing signed Cohen's h formula from quoted percentages."""
  assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
@@ -109,10 +127,18 @@ def documented_equal_group_d(receipt,row,decision,source_path):
    pattern=r'(?<![\d.])'+re.escape(number)+r'(?![\d.])'
    assert re.search(pattern,g['mean_sd_quote']) and re.search(pattern,decision['quote'])
  a,b=groups
- expression=f"=({a['mean']}-{b['mean']})/SQRT(({a['sd']}^2+{b['sd']}^2)/2)"
+ reverse=receipt.get('coding_convention')=='sample_weighted_recorded_sign_reversal'
+ if reverse:
+  tokens=receipt['coding_mean_tokens'];assert len(tokens)==2
+  assert all(Fraction(token)==Fraction(group['mean']) for token,group in zip(tokens,groups))
+  expression=f"MANUALLY REVERSED FROM =({tokens[0]}-{tokens[1]})/SQRT((({a['n']}-1)*{a['sd']}^2+({b['n']}-1)*{b['sd']}^2)/({a['n']}+{b['n']}-2)))"
+ else:
+  assert receipt.get('coding_convention') is None
+  expression=f"=({a['mean']}-{b['mean']})/SQRT(({a['sd']}^2+{b['sd']}^2)/2)"
  assert receipt['expected_coding_expression']==expression
  assert expression in row['es_repr_'+field[-1]],'Calculation is not documented in original coding'
  result=float(Fraction(a['mean'])-Fraction(b['mean']))/math.sqrt(float((Fraction(a['sd'])**2+Fraction(b['sd'])**2)/2))
+ if reverse:result=-result
  value=str(decision['correct_value']);assert re.fullmatch(r'-?\d+\.\d+',value)
  assert round(result,len(value.split('.')[1]))==float(value),'Reviewed value does not reproduce the documented calculation'
  return result
