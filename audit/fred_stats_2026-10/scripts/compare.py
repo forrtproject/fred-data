@@ -251,15 +251,15 @@ def fresh_proportion_fraction_review(a,field,row,blind):
  return Fraction(numerator,denominator)==Fraction(percent)/100
 
 def fresh_scientific_p_review(a,field,row,blind):
- """Confirm reviewed p notation whose HTML exponent lost superscript styling."""
+ """Confirm reviewed scientific p notation with a flattened exponent."""
  if field not in ['pval_value_o','pval_value_r'] or not blind:return False
  if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict')!='shipped_right':return False
  if a.get('correct_bound')!='e' or blind.get('bound')!='e':return False
  value=str(blind.get('value') or '').strip()
- match=re.fullmatch(r'(\d+(?:\.\d+)?)\s*×\s*10−(\d+)',value)
+ match=re.fullmatch(r'(\d+(?:\.\d+)?)\s*[×x]\s*10[−-](\d+)',value)
  if not match:return False
  quote=str(a.get('quote') or '')
- if not re.search(r'\bp\s*=\s*'+re.escape(value),quote):return False
+ if not re.search(r'\bp\s*=\s*'+re.escape(value)+r'(?!\d|\.\d)',quote):return False
  if a.get('source_path')!=blind.get('source_path') or not quote_ok({**a,'value':'reviewed scientific p','confident':True}):return False
  printed=p_parts(match[1]+'e-'+match[2],'e')
  shipped=p_parts(row.get(field),row.get('pval_type_'+field[-1]))
