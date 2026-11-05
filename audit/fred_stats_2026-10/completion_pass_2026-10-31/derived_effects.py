@@ -72,6 +72,50 @@ def documented_proportion_odds_ratio(receipt,row,decision,source_path):
  assert round(float(result),len(value.split('.')[1]))==float(value),'Reviewed OR does not reproduce the documented calculation'
  return result
 
+def _unique_binary_event_count(n,event_percent,other_percent):
+ """Require a unique integer count within half a percentage point of both labels.
+
+ Endpoints include either rounding tie choice; no tie convention is inferred.
+ """
+ assert type(n) is int and n>1
+ assert all(type(p) is int and 0<=p<=100 for p in [event_percent,other_percent])
+ candidates=[k for k in range(1,n) if abs(Fraction(100*k,n)-event_percent)<=Fraction(1,2) and abs(Fraction(100*(n-k),n)-other_percent)<=Fraction(1,2)]
+ assert len(candidates)==1,'Rounded percentages do not identify unique binary counts'
+ return candidates[0]
+
+def documented_count_odds_ratio(receipt,row,decision,source_path):
+ """Validate the existing Study 1 positive/negative count-odds calculation."""
+ assert receipt.get('audit_id')==decision.get('audit_id')==1099
+ assert receipt['field']=='es_value_o'
+ assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
+ assert decision.get('target_match_confirmed') is True and decision.get('verdict')=='both_wrong'
+ assert metric(row['es_type_o'])==metric(decision.get('correct_metric'))=='or'
+ assert Path(decision['source_path']).resolve()==Path(source_path).resolve()
+ groups=receipt['groups'];assert len(groups)==2
+ assert [g['source_label'] for g in groups]==['Positive','Negative']
+ assert all(g['n']==24 and type(g['n']) is int for g in groups)
+ allocation=' '.join(receipt['allocation_quote'].split())
+ assert 'randomly assigned to one of three conditions, with 24 participants in each condition and each participant receiving only one vignette' in allocation
+ assert all(s in receipt['binary_choice_quote'] for s in ['Remain connected','Go back to reality'])
+ assert re.search(r'N\s*(?:¼|=)\s*72\b',receipt['complete_n_quote'])
+ for q in [receipt['allocation_quote'],receipt['binary_choice_quote'],receipt['complete_n_quote'],decision['quote']]:
+  assert quote_ok({'quote':q,'source_path':source_path,'value':'documented count input','confident':True,'location':decision['location']})
+ for g in groups:
+  assert type(g['event']) is int and type(g['other']) is int and g['event']+g['other']==g['n']
+  assert g['source_label']+' scenario' in g['response_quote']
+  assert 'reality' in g['response_quote'] and 'remain connected' in g['response_quote']
+  assert quote_ok({'quote':g['response_quote'],'source_path':source_path,'value':'binary response','confident':True,'location':decision['location']})
+  for p in [g['event_percent'],g['other_percent']]:
+   assert re.search(r'(?<![\d.])'+str(p)+r'%',g['response_quote'])
+  assert g['event']==_unique_binary_event_count(g['n'],g['event_percent'],g['other_percent'])
+ a,b=groups
+ expression=f"({a['event']}/{a['other']}) / ({b['event']}/{b['other']})"
+ assert receipt['expected_coding_expression']==expression and expression in row['es_repr_o']
+ result=Fraction(a['event'],a['other'])/Fraction(b['event'],b['other'])
+ assert re.fullmatch(r'\d+\.\d+',str(decision['correct_value']))
+ assert Fraction(decision['correct_value'])==result
+ return result
+
 def reviewed_ocr_minus_copy(receipt,row,decision,source_path):
  """Normalize one reviewed numeric token; do not alter the global parser."""
  assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True

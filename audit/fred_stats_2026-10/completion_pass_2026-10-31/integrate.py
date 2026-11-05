@@ -6,7 +6,7 @@ from schema import validate
 from compare import quote_ok,metric
 from consistency import number
 from validate_adjudication import validate_batch
-from derived_effects import documented_equal_group_d,documented_f_to_r_to_d,documented_proportion_odds_ratio,documented_proportion_h,reviewed_ocr_minus_copy,reviewed_standardized_beta_copy
+from derived_effects import documented_equal_group_d,documented_f_to_r_to_d,documented_proportion_odds_ratio,documented_count_odds_ratio,documented_proportion_h,reviewed_ocr_minus_copy,reviewed_standardized_beta_copy
 
 def atomic(p,x):
  t=p.with_suffix('.tmp');t.write_text(json.dumps(x,indent=2,ensure_ascii=False)+'\n');t.replace(p)
@@ -93,6 +93,7 @@ def main():
    assert receipt['expected_coding_expression'] in row['es_repr_'+field[-1]],'Calculation is not documented in original coding'
   if receipt['calculation']=='reported_proportion_odds_ratio':
    result=documented_proportion_odds_ratio(receipt,row,decision,item['blind']['source_path'])
+  elif receipt['calculation']=='documented_count_odds_ratio':result=documented_count_odds_ratio(receipt,row,decision,item['blind']['source_path'])
   elif receipt['calculation']=='documented_proportion_cohens_h':result=documented_proportion_h(receipt,row,decision,item['blind']['source_path'])
   elif receipt['calculation']=='documented_equal_group_cohens_d':result=documented_equal_group_d(receipt,row,decision,item['blind']['source_path'])
   elif receipt['calculation']=='documented_f_to_r_to_d':result=documented_f_to_r_to_d(receipt,row,decision,item['blind']['source_path'])
