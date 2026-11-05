@@ -159,6 +159,12 @@ def fresh_test_review(a,field,row):
  if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
  if a.get('verdict') not in ['shipped_right','blind_right','both_wrong']:return False
  parsed=parsed_stat(a.get('correct_value'));kind=metric(a.get('correct_metric'))
+ if not parsed and kind=='t' and a.get('verdict') in ['blind_right','both_wrong']:
+  # A scalar correction may copy an explicitly labelled source t statistic.
+  # Keep the raw review and OCR equality glyph; infer no df or conversion.
+  value=number(a.get('correct_value'))
+  printed=re.search(r'(?i)\bt\s*(?:\([^)]*\))?\s*(?:=|¼)\s*([+-]?(?:\d*\.\d+|\d+\.?\d*))',str(a.get('quote') or ''))
+  return bool(value is not None and printed and value==number(printed[1]))
  if kind=='binomial z' and a.get('verdict')=='shipped_right':
   # Confirm the same co-reported z copied in the data, not a conversion of
   # the blind worker's chi-square statistic or a general metric alias.
