@@ -5,6 +5,29 @@ from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent/'scripts'))
 from compare import metric,quote_ok
 
+def documented_proportion_h(receipt,row,decision,source_path):
+ """Reproduce an existing signed Cohen's h formula from quoted percentages."""
+ assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
+ assert decision.get('target_match_confirmed') is True and decision.get('verdict') in ['shipped_right','blind_right','both_wrong']
+ field=receipt['field'];assert field in ['es_value_o','es_value_r']
+ assert metric(row['es_type_'+field[-1]])==metric(decision.get('correct_metric'))=="cohen's h"
+ assert Path(decision['source_path']).resolve()==Path(source_path).resolve()
+ values=receipt['proportions'];percentages=receipt['percentages']
+ assert len(values)==len(percentages)==len(receipt['input_roles'])==2
+ assert all(isinstance(role,str) and role.strip() for role in receipt['input_roles'])
+ assert all(re.fullmatch(r'0\.\d+',v) for v in values)
+ expression=f'2 * (asin(sqrt({values[0]})) - asin(sqrt({values[1]})))'
+ assert receipt['expected_coding_expression']==expression and expression in row['es_repr_'+field[-1]]
+ assert quote_ok({**decision,'value':'documented proportions','confident':True})
+ for value,percent in zip(values,percentages):
+  assert re.fullmatch(r'\d+(?:\.\d+)?',percent) and 0<Fraction(value)<1
+  assert Fraction(value)==Fraction(percent)/100
+  assert re.search(r'(?<![\d.])'+re.escape(percent)+r'\s*%',decision['quote'])
+ p,q=map(float,values);result=2*(math.asin(math.sqrt(p))-math.asin(math.sqrt(q)))
+ value=str(decision['correct_value']);assert re.fullmatch(r'-?\d+\.\d+',value)
+ assert round(result,len(value.split('.')[1]))==float(value),'Reviewed h does not reproduce the documented calculation'
+ return result
+
 def documented_proportion_odds_ratio(receipt,row,decision,source_path):
  """Reproduce an existing coding formula from explicitly quoted percentages."""
  assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
