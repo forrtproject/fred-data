@@ -1,0 +1,99 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+Every object needs target_match_confirmed/effect_specific_verdict_confirmed booleans, correct_metric/correct_bound nullable strings, null correct_value if undeterminable, and shortest literal ordered quote.
+FOCUSED FINAL AUTHOR-VERDICT TARGET REVIEW, row1530 reported_success only. The source worker explicitly left the exact critical test unidentified on p8/journalp967: unconditioned valence main effect across target types, Target x Valence interaction, positive/neutral and negative/neutral background-recall contrasts, versus conditionalized-for-successful-item-recognition Valence effect. First reviewer acknowledges these remain candidates, but certifies success because they share significance/direction and a general replication sentence. That does NOT establish individual-row correspondence for this single-statistic entry. Actual neutral/coding description is recall of associated BACKGROUNDS for emotional versus neutral items, study_r=2, requested partial eta-squared, locatorp8; no named condition/analysis beyond that. Nonnumeric coding labels are valid provenance, so assess whether this wording and source structure positively select an exact test. Do not default to omnibus/main effect, use shared significance, numeric agreement, row order or paper-wide success. Distinguish conditionalized versus unconditioned outcome, background-cued object recall versus object-cued background recall, target interaction versus valence main effect and separate positive/negative contrasts. Source prints no partial eta for the background t tests; do not invent a conversion. If source plus actual metadata cannot select a single target, false target/effect flags and undeterminable, explaining why shared general replication narrative cannot certify it. If selected, quote precise nonnumeric distinguishing evidence and source author conclusion for that test. No new acquisition/external sources or original-paper search. Final changed-input round; retain uncertainty if unresolved.
+Full flat payload:
+[
+  {
+    "source_key": "cac025805a174df8",
+    "audit_id": 1530,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Mickley Steinmetz, K. R., Knight, A. G., & Kensinger, E. A. (2015). Neutral details associated with emotional events are encoded: evidence from a cued recall paradigm. Cognition and Emotion, 30(7), 1352–1360. https://doi.org/10.1080/02699931.2015.1059317",
+      "doi_o": "10.1080/02699931.2015.1059317",
+      "study_o": null,
+      "ref_r": "Madan, C. R., Knight, A. G., Kensinger, E. A., & Mickley Steinmetz, K. R. (2020). Affect enhances object-background associations: evidence from behaviour and mathematical modelling. Cognition and Emotion, 34(5), 960–969. https://doi.org/10.1080/02699931.2019.1710110",
+      "doi_r": "10.1080/02699931.2019.1710110",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "description": "Recall of associated backgrounds for emotional versus neutral items.",
+      "locators_o": "p. 6",
+      "locators_r": "p. 8",
+      "audit_id": 1530,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4936f0616187a9b9daa9c61b.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "successful",
+      "location": "General discussion, printed p. 967 (PDF/text p. 8)",
+      "quote": "These results generally replicated those of ... Mickley Steinmetz et al. (2016), but shed new light on ... the inﬂuence of emotion on associative memory.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4936f0616187a9b9daa9c61b.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 1530,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Authors explicitly state that their findings generally replicated the original study; successful is a narrative-verdict mapping, independent of statistical significance or unresolved choice among tests.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4936f0616187a9b9daa9c61b.txt",
+      "location": "General discussion, printed p. 967 (PDF/text p. 8)",
+      "quote": "These results generally replicated those of ... Mickley Steinmetz et al. (2016), but shed new light on ... the inﬂuence of emotion on associative memory.",
+      "calculation": ""
+    },
+    "worker_target_match": null,
+    "worker_target_description": "Experiment 2: cued recall of backgrounds associated with emotional versus neutral objects. The locator p. 8 (printed p. 967) contains multiple related tests and does not uniquely identify an omnibus interaction, valence main effect, conditionalized analysis, or positive/negative background-recall contrast.",
+    "worker_notes": "Identity verified independently from title page: title, all four authors, DOI 10.1080/02699931.2019.1710110, journal 34(5), 960–969 and year 2020 match the assigned replication reference. This is the full primary research article text, with methods, results, discussion and references, not an abstract or preregistration. No PDF was supplied; no rendering or acquisition performed. Original reference is cited as 2016 in this report (input lists 2015 online publication); original side is unassigned. Target ambiguity: unconditioned Experiment 2 cued recall reports Valence F(2,52)=4.66, p=.014, partial eta squared=.152, and Target×Valence F(2,52)=3.95, p=.025, partial eta squared=.132. Background-specific positive-versus-neutral and negative-versus-neutral contrasts print t(26)=3.65 and t(26)=3.22, respectively, both p<.001, without a printed partial eta squared for those contrasts. Conditionalized cued recall instead prints Valence F(2,52)=6.50, p=.003, partial eta squared=.200, across target types. These candidates cannot be selected from the broad description and page alone. The canonical text represents the partial eta-squared glyph as h2p; metric interpretation follows the ANOVA report. Candidate common participant count is 27 explicitly collected participants, not 30; not inferred from df and no N sum performed. Kept only as candidate evidence because exact critical test is unresolved. Authors explicitly describe replication of the prior findings, supporting the narrative success field independently of selecting a particular statistical contrast.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4936f0616187a9b9daa9c61b.txt",
+    "shipped": "successful",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "Emotional items were more likely than neutral items to trigger recall of the associated background.",
+      "es_repr_o": "p. 6",
+      "es_repr_r": "p. 8",
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "These results generally replicated those of Mickley Steinmetz et al. (2016), but shed new light on the influence of emotion on associative memory."
+    },
+    "prior_adjudication": {
+      "audit_id": 1530,
+      "field": "reported_success",
+      "verdict": "shipped_right",
+      "correct_value": "successful",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": true,
+      "location": "Experiment 2 Results & discussion and General discussion, printed p. 967 (PDF/text p. 8)",
+      "quote": "backgrounds were more likely to be recalled when ... cued with emotional objects compared to neutral ... objects. These results generally replicated those of ... Mickley Steinmetz et al. (2016), but shed new light on ... the inﬂuence of emotion on associative memory.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4936f0616187a9b9daa9c61b.txt",
+      "reason": "Primary source identity is verified (Madan, Knight, Kensinger, & Mickley Steinmetz, 2020, Cognition and Emotion, 34(5), 960-969, DOI 10.1080/02699931.2019.1710110). Although multiple Experiment 2 statistical tests on p. 967 (unconditioned Valence main effect, TargetxValence interaction, positive/negative vs. neutral background-recall t-tests, and conditionalized Valence effect) remain candidates for the numerical statistics, all are significant in the predicted direction and the authors explicitly state that enhanced cued recall of backgrounds cued with emotional versus neutral objects replicated Mickley Steinmetz et al. (2016)."
+    },
+    "parent_response": "FOCUSED FINAL AUTHOR-VERDICT TARGET REVIEW, row1530 reported_success only. The source worker explicitly left the exact critical test unidentified on p8/journalp967: unconditioned valence main effect across target types, Target x Valence interaction, positive/neutral and negative/neutral background-recall contrasts, versus conditionalized-for-successful-item-recognition Valence effect. First reviewer acknowledges these remain candidates, but certifies success because they share significance/direction and a general replication sentence. That does NOT establish individual-row correspondence for this single-statistic entry. Actual neutral/coding description is recall of associated BACKGROUNDS for emotional versus neutral items, study_r=2, requested partial eta-squared, locatorp8; no named condition/analysis beyond that. Nonnumeric coding labels are valid provenance, so assess whether this wording and source structure positively select an exact test. Do not default to omnibus/main effect, use shared significance, numeric agreement, row order or paper-wide success. Distinguish conditionalized versus unconditioned outcome, background-cued object recall versus object-cued background recall, target interaction versus valence main effect and separate positive/negative contrasts. Source prints no partial eta for the background t tests; do not invent a conversion. If source plus actual metadata cannot select a single target, false target/effect flags and undeterminable, explaining why shared general replication narrative cannot certify it. If selected, quote precise nonnumeric distinguishing evidence and source author conclusion for that test. No new acquisition/external sources or original-paper search. Final changed-input round; retain uncertainty if unresolved."
+  }
+]
