@@ -1,13 +1,12 @@
 """Merge only unfinished fields, retaining every baseline-verified field and scope."""
 import copy,csv,hashlib,json,sys
-from fractions import Fraction
 from pathlib import Path
 F=Path(__file__).resolve().parent;B=F.parent;sys.path.insert(0,str(B/'scripts'))
 from schema import validate
 from compare import quote_ok,metric
 from consistency import number
 from validate_adjudication import validate_batch
-from derived_effects import documented_equal_group_d,documented_f_to_r_to_d,reviewed_ocr_minus_copy
+from derived_effects import documented_equal_group_d,documented_f_to_r_to_d,documented_proportion_odds_ratio,reviewed_ocr_minus_copy
 
 def atomic(p,x):
  t=p.with_suffix('.tmp');t.write_text(json.dumps(x,indent=2,ensure_ascii=False)+'\n');t.replace(p)
@@ -90,8 +89,7 @@ def main():
   else:
    assert receipt['expected_coding_expression'] in row['es_repr_'+field[-1]],'Calculation is not documented in original coding'
   if receipt['calculation']=='reported_proportion_odds_ratio':
-   p,q=map(Fraction,receipt['proportions']);result=(p/(1-p))/(q/(1-q));assert abs(result-Fraction(decision['correct_value']))<Fraction(1,10**9)
-   assert '70%' in decision['quote'] and '65%' in decision['quote'],'Primary reported input proportions missing'
+   result=documented_proportion_odds_ratio(receipt,row,decision,item['blind']['source_path'])
   elif receipt['calculation']=='documented_equal_group_cohens_d':result=documented_equal_group_d(receipt,row,decision,item['blind']['source_path'])
   elif receipt['calculation']=='documented_f_to_r_to_d':result=documented_f_to_r_to_d(receipt,row,decision,item['blind']['source_path'])
   elif receipt['calculation']!='reviewed_ocr_minus_copy':raise AssertionError('Unsupported documented calculation')

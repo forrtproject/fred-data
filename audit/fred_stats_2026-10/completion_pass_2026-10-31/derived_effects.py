@@ -1,9 +1,35 @@
-"""Validate a documented equal-group standardized mean difference against its source."""
+"""Validate documented field-specific calculations against reviewed source inputs."""
 import math,re,sys
 from fractions import Fraction
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent/'scripts'))
 from compare import metric,quote_ok
+
+def documented_proportion_odds_ratio(receipt,row,decision,source_path):
+ """Reproduce an existing coding formula from explicitly quoted percentages."""
+ assert decision.get('completion_pass')=='2026-10-31' and decision.get('replaces_unverified') is True
+ assert decision.get('target_match_confirmed') is True and decision.get('verdict') in ['shipped_right','blind_right','both_wrong']
+ field=receipt['field'];assert field in ['es_value_o','es_value_r']
+ assert metric(row['es_type_'+field[-1]])==metric(decision.get('correct_metric'))=='or'
+ assert Path(decision['source_path']).resolve()==Path(source_path).resolve()
+ values=receipt['proportions'];inputs=receipt['quoted_inputs']
+ assert len(values)==len(inputs)==len(receipt['input_roles'])==2
+ assert all(isinstance(role,str) and role.strip() for role in receipt['input_roles'])
+ assert all(re.fullmatch(r'0\.\d+',v) for v in values)
+ expression=f'({values[0]}/(1-{values[0]}))/({values[1]}/(1-{values[1]}))'
+ assert receipt['expected_coding_expression']==expression and expression in row['es_repr_'+field[-1]]
+ assert quote_ok({**decision,'value':'documented proportions','confident':True})
+ probabilities=list(map(Fraction,values))
+ for probability,item in zip(probabilities,inputs):
+  assert 0<probability<1 and isinstance(item['complement'],bool)
+  assert re.fullmatch(r'\d+(?:\.\d+)?',item['percent'])
+  percent=Fraction(item['percent'])/100;assert 0<percent<1
+  assert probability==(1-percent if item['complement'] else percent)
+  assert re.search(r'(?<![\d.])'+re.escape(item['percent'])+r'\s*%',decision['quote'])
+ p,q=probabilities;result=(p/(1-p))/(q/(1-q))
+ value=str(decision['correct_value']);assert re.fullmatch(r'\d+\.\d+',value)
+ assert round(float(result),len(value.split('.')[1]))==float(value),'Reviewed OR does not reproduce the documented calculation'
+ return result
 
 def reviewed_ocr_minus_copy(receipt,row,decision,source_path):
  """Normalize one reviewed numeric token; do not alter the global parser."""
