@@ -196,8 +196,15 @@ def fresh_printed_effect_review(a,field,row,blind):
  """Copy a directly printed requested coefficient over a wrongly stored statistic."""
  if not field.startswith('es_value_') or not blind:return False
  if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
- if a.get('verdict') not in ['blind_right','both_wrong']:return False
  requested=metric(row.get('es_type_'+field[-1]))
+ if requested=='bayes factor' and a.get('verdict')=='shipped_right':
+  # Preserve an explicitly reviewed BF01 direction under the generic coding
+  # label. This exact-copy check neither inverts a BF nor aliases BF10 to BF01.
+  if metric(a.get('correct_metric'))!='bayes factor bf01' or metric(blind.get('metric'))!='bayes factor bf01 (null / alternative)':return False
+  value=number(a.get('correct_value'))
+  printed=re.search(r'\bBF01\s*=\s*(\d+(?:\.\d+)?)\b',str(a.get('quote') or ''))
+  return bool(value is not None and value>0 and value==number(row.get(field))==number(blind.get('value')) and printed and value==number(printed[1]))
+ if a.get('verdict') not in ['blind_right','both_wrong']:return False
  if not requested or requested in ['test statistic','f','t','z','chi2','x2','g']:return False
  if metric(a.get('correct_metric'))!=requested or metric(blind.get('metric'))!=requested:return False
  value=number(a.get('correct_value'))
