@@ -1,5 +1,6 @@
 import json,csv,re,collections,datetime,hashlib,unicodedata
 from functools import lru_cache
+from fractions import Fraction
 from pathlib import Path
 from consistency import number,analytic_n,rounding,pinterval,p_parts
 from schema import validate
@@ -232,6 +233,23 @@ def fresh_printed_effect_review(a,field,row,blind):
  value=number(a.get('correct_value'))
  return bool(parsed_stat(row.get(field)) and value is not None and value==number(blind.get('value')))
 
+def fresh_proportion_fraction_review(a,field,row,blind):
+ """Confirm an exact fraction/percentage identity under a current source review."""
+ if not field.startswith('es_value_') or not blind:return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict')!='shipped_right':return False
+ if metric(row.get('es_type_'+field[-1]))!='proportion' or metric(a.get('correct_metric'))!='proportion':return False
+ if metric(blind.get('metric'))!='percentage of choices':return False
+ raw=str(row.get(field) or '').strip()
+ fraction=re.sub(r'^proportion:\s*','',raw,flags=re.I);parts=re.fullmatch(r'(\d+)/(\d+)',fraction)
+ if not parts or str(a.get('correct_value') or '').strip()!=fraction:return False
+ numerator,denominator=map(int,parts.groups())
+ if denominator<=0 or not 0<=numerator<=denominator:return False
+ percent=str(blind.get('value') or '').strip()
+ if not re.fullmatch(r'\d+(?:\.\d+)?',percent):return False
+ if not re.search(r'(?<![\d.])'+re.escape(percent)+r'\s*%',str(a.get('quote') or '')):return False
+ if a.get('source_path')!=blind.get('source_path') or not quote_ok({**a,'value':'reviewed percentage','confident':True}):return False
+ return Fraction(numerator,denominator)==Fraction(percent)/100
+
 def fresh_quoted_p_review(a,field,row):
  """Confirm literal quoted bound metadata only under a current source review."""
  if field not in ['pval_value_o','pval_value_r']:return False
@@ -355,7 +373,7 @@ def main():
    primary_adjud=bool(secondary and adjud.get((aid,f)) and original_primary_evidence(adjud[(aid,f)],r))
    if primary_adjud:
     comparison=comp(f,raw,effective_e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
-   fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e) or fresh_quoted_p_review(adjud.get((aid,f),{}),f,r)))
+   fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e) or fresh_proportion_fraction_review(adjud.get((aid,f),{}),f,r,e) or fresh_quoted_p_review(adjud.get((aid,f),{}),f,r)))
    sample_annotation_review=bool(comparison in ['agree','identical','compatible'] and fresh_sample_annotation_review(adjud.get((aid,f),{}),f,r))
    if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_review or sample_annotation_review:
     a=adjud.get((aid,f))
