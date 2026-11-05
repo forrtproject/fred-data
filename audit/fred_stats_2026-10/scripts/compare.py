@@ -172,6 +172,7 @@ def fresh_test_review(a,field,row):
   bounded=bounded_stat(a.get('correct_value'))
   if bounded and bounded==bounded_stat(row.get(field)) and kind in ['test statistic',bounded[0]]:return True
  if kind=='x2':kind='chi2'
+ if kind=='chi-square' and parsed and parsed[0]=='chi2':kind='chi2'
  if kind=='chi-square (1 df)' and parsed and parsed[0]=='chi2' and parsed[1]==(1.0,):kind='chi2'
  if kind=='f-ratio':
   # A target-confirmed current review may preserve a table's explicit F-Ratio

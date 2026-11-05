@@ -1,0 +1,98 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+FOCUSED FINAL EFFECT-TARGET CHECK1401 reported_success only. V1 accepts the Study2 central-argument conclusion because all agreement correlations are high, but neutral description only says agreement among intentionality judgments, locatorp3/section4.1 and metricr. That section reports multiple distinct targets:average inter-rater r=.59, rater-whole r=.77, condition-specific .75–.79, ICC=.58,alpha=.99. Study2 label excludes Study1 but may not distinguish the r measures, as V1 itself noted for1400. The exact coding_context quotation says high inter-rater agreement across perspectives and no definition differences. Establish whether this NONNUMERIC provenance/source definitions uniquely identify one coded r statistic rather than a broad claim across several separate r tests. No numeric matching, row order, or default preference for a focal measure. If an explicitly named aggregate claim is the coded target, demonstrate it from source/coding_context independently of the shipped r, and distinguish that from changing a single-statistic entry to an omnibus narrative. Shared high-agreement support across candidate targets does not certify unidentified individual effect. If unresolved return undeterminable/null,target_match_confirmed=false,effect_specific_verdict_confirmed=false. Study1 already undeterminable and outside scope. Every output MUST include both required booleans, correct_metric/correct_bound(null where irrelevant), correct_value(null if undeterminable), literal quote/location/source_path and reason. Preserve raw source and V1. No acquisition, repo/dataset search, paid APIs, Git or delegation.
+FULL FIELD PAYLOAD:
+[
+  {
+    "source_key": "a20d5d3b6b6e7ce5",
+    "audit_id": 1401,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Malle, B. F., & Knobe, J. (1997). The Folk Concept of Intentionality. Journal of Experimental Social Psychology, 33(2), 101\u2013121. https://doi.org/10.1006/jesp.1996.1314",
+      "doi_o": "10.1006/jesp.1996.1314",
+      "study_o": "1",
+      "ref_r": "Chandrashekar, S. P., Chan, Y. Y., Cheng, K. L., Yao, D., Lo, C. Y. S., Cheung, T. C. A., Tang, H. Y. S., Leung, Y. T. A., Tsoi, C. N., Cheng, B. L., Ng, K. W., & Feldman, G. (2022). Revisiting the folk concept of intentionality: Replications of. Journal of Experimental Social Psychology, 102, 104372. https://doi.org/10.1016/j.jesp.2022.104372",
+      "doi_r": "10.1016/j.jesp.2022.104372",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "r",
+      "es_type_r": "r",
+      "description": "Agreement among people in judgments of intentionality.",
+      "locators_o": "p.4",
+      "locators_r": "p.3",
+      "audit_id": 1401,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c374dc8cb521bde5b80e53c7.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "successful",
+      "location": "Main article p. 4, section 5 Discussion; footnote 6 qualifies main conclusions as based on Study 2",
+      "quote": "Our replication results support the ... original study's central argument.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c374dc8cb521bde5b80e53c7.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 1401,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Authors explicitly support the original central argument of substantial agreement; this is their joint qualitative replication verdict, not significance-based inference. Footnote 6 (p. 4) bases main conclusions on Study 2; p. 6 cautions that Study 1 cannot support independent conclusions because of its small sample.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c374dc8cb521bde5b80e53c7.txt",
+      "location": "Main article p. 4, section 5 Discussion; footnote 6",
+      "quote": "Our replication results support the ... original study's central argument.",
+      "calculation": null
+    },
+    "worker_target_match": null,
+    "worker_target_description": "Replication Study 2: agreement among participants on intentionality ratings of 20 behaviors. Study/outcome located, but description and p. 3 locator do not distinguish average inter-rater correlation from average rater\u2013whole correlation or condition-specific estimates. Exact test correspondence unresolved.",
+    "worker_notes": "Identity independently checked: supplied text has the title Revisiting the folk concept of intentionality: Replications of Malle and Knobe (1997), Chandrashekar and the named coauthors including Feldman, Journal of Experimental Social Psychology 102 (2022) 104372, and DOI 10.1016/j.jesp.2022.104372. It is a published primary replication report with main article pp. 1\u20137 and supplementary materials, not an abstract-only excerpt or preregistration. No PDF was supplied; no layout rendering performed. Average inter-rater correlation r = .59; average rater\u2013whole correlation r = .77. Table 2 also prints condition-specific inter-rater correlations .59, .59, .63, .56 and rater\u2013whole correlations .77, .77, .79, .75. Exact coefficient not selected because supplied locator cannot distinguish the two r measures or condition strata. Inspected section 4.1 and the complete Table 2: they report average inter-rater and rater\u2013whole correlations, ICC and alpha, including condition estimates, without p-values for these agreement measures. No candidate agreement r has a printed same-test p. Supplementary p. 17 p-values concern cross-sample correlations; ANOVA, t-test and mixed-model p-values concern condition differences and cannot be transferred. Authors explicitly support the original central argument of substantial agreement; this is their joint qualitative replication verdict, not significance-based inference. Footnote 6 (p. 4) bases main conclusions on Study 2; p. 6 cautions that Study 1 cannot support independent conclusions because of its small sample. No conversions or analytic N derivations. Original side and replication n are unassigned placeholders.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c374dc8cb521bde5b80e53c7.txt",
+    "shipped": "successful",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "people agree substantially in their judgments of intentionality",
+      "es_repr_o": "p.4",
+      "es_repr_r": "p.3",
+      "es_type_o": "r",
+      "es_type_r": "r",
+      "pval_type_o": null,
+      "pval_type_r": null,
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The replication results provide support for the findings of the original study. Consistent with the original study, we found high inter-rater agreement across perspective (actor vs. observer) experimental conditions; and no evidence for differences in intentionality ratings depending on whether a definition of intentionality was provided."
+    },
+    "prior_adjudication": {
+      "audit_id": 1401,
+      "field": "reported_success",
+      "verdict": "shipped_right",
+      "correct_value": "successful",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": true,
+      "location": "Main article p. 3, section 4.1; p. 4, section 5 Discussion and footnote 6",
+      "quote": "In Study 2, any two participants showed an average intercorrelation ... of r = .59, and any one person showed a high average correlation of r = ... .77 with the remaining group. ... All ... correlations were relatively high. ... Our replication results support the ... original study's central argument.6 ... Our main conclusions are based on the results of Study 2 because of the ... smaller sample size in Study 1.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c374dc8cb521bde5b80e53c7.txt",
+      "reason": "Primary source identity is confirmed (Chandrashekar et al., 2022, JESP 102, 104372), and Section 4.1 (p. 3) locates Study 2 agreement on intentionality ratings where the authors explicitly judge all Study 2 agreement correlations (.59 inter-rater, .77 rater-whole, and .75-.79 across conditions) to be relatively high. Section 5 Discussion and Footnote 6 (p. 4) explicitly base the main conclusion supporting the original study's central argument of substantial agreement on Study 2."
+    },
+    "parent_response": "FOCUSED FINAL EFFECT-TARGET CHECK1401 reported_success only. V1 accepts the Study2 central-argument conclusion because all agreement correlations are high, but neutral description only says agreement among intentionality judgments, locatorp3/section4.1 and metricr. That section reports multiple distinct targets:average inter-rater r=.59, rater-whole r=.77, condition-specific .75\u2013.79, ICC=.58,alpha=.99. Study2 label excludes Study1 but may not distinguish the r measures, as V1 itself noted for1400. The exact coding_context quotation says high inter-rater agreement across perspectives and no definition differences. Establish whether this NONNUMERIC provenance/source definitions uniquely identify one coded r statistic rather than a broad claim across several separate r tests. No numeric matching, row order, or default preference for a focal measure. If an explicitly named aggregate claim is the coded target, demonstrate it from source/coding_context independently of the shipped r, and distinguish that from changing a single-statistic entry to an omnibus narrative. Shared high-agreement support across candidate targets does not certify unidentified individual effect. If unresolved return undeterminable/null,target_match_confirmed=false,effect_specific_verdict_confirmed=false. Study1 already undeterminable and outside scope. Every output MUST include both required booleans, correct_metric/correct_bound(null where irrelevant), correct_value(null if undeterminable), literal quote/location/source_path and reason. Preserve raw source and V1. No acquisition, repo/dataset search, paid APIs, Git or delegation."
+  }
+]
+Write complete strict JSON array only to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_a20d5d3b6b6e7ce5_v2.json and include same array under ## Answer.

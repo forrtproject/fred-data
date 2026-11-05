@@ -35,6 +35,16 @@ class ReviewedScalarStatistic(unittest.TestCase):
   self.assertTrue(compare.fresh_test_review(decision,'es_value_o',row))
   self.assertFalse(compare.fresh_test_review({**decision,'completion_pass':'old'},'es_value_o',row))
   self.assertFalse(compare.fresh_test_review({**decision,'correct_value':'X2(2) = 5.50'},'es_value_o',row))
+ def test_current_chi_square_label_preserves_reviewed_sample_annotation(self):
+  row={'es_type_o':'test statistic','es_value_o':'X2(1, N = 72) = 0.0'}
+  decision={'completion_pass':'2026-10-31','replaces_unverified':True,'target_match_confirmed':True,'verdict':'both_wrong','correct_value':'X2(1, N = 48) = 0.0','correct_metric':'chi-square'}
+  self.assertTrue(compare.fresh_test_review(decision,'es_value_o',row))
+  self.assertEqual(compare.comp('es_value_o',row['es_value_o'],{'value':decision['correct_value'],'test_statistic':decision['correct_value']},row),'differ')
+  for changes in [{'completion_pass':'old'},{'target_match_confirmed':False},{'replaces_unverified':False},{'verdict':'undeterminable'},{'correct_value':'F(1, 48) = 0.0'},{'correct_value':'0.0'}]:
+   self.assertFalse(compare.fresh_test_review({**decision,**changes},'es_value_o',row),changes)
+  self.assertFalse(compare.fresh_test_review(decision,'es_value_o',{**row,'es_type_o':'r'}))
+  self.assertEqual(compare.metric('chi-square'),'chi-square')
+  self.assertIsNone(compare.parsed_stat('chi-square = 0.0'))
  def test_current_review_confirms_identical_bounded_statistic_only(self):
   row={'es_type_o':'test statistic','es_value_o':'t(49) > 3'}
   decision={'completion_pass':'2026-10-31','replaces_unverified':True,'target_match_confirmed':True,'verdict':'shipped_right','correct_value':'t(49) > 3','correct_metric':'test statistic'}
