@@ -117,12 +117,24 @@ def documented_equal_group_d(receipt,row,decision,source_path):
  groups=receipt['groups'];assert len(groups)==2
  assert all(isinstance(g['n'],int) and not isinstance(g['n'],bool) and g['n']>1 for g in groups)
  assert groups[0]['n']==groups[1]['n'],'Pooled SD requires explicit equal group sizes'
+ half_allocation=receipt.get('allocation_basis')
+ if half_allocation is not None:
+  # This source spells out the total and assigns one half to each condition.
+  # Keep the evidence proof local to the reviewed Study 1a field.
+  assert receipt.get('audit_id')==871 and field=='es_value_o'
+  assert half_allocation['kind']=='study_1a_explicit_halves' and all(g['n']==32 for g in groups)
+  assert 'Sixty-four economics and business administration students' in half_allocation['total_quote']
+  allocation=' '.join(half_allocation['allocation_quote'].split())
+  assert 'Half of the participants received an organization chart where the line was rather short' in allocation
+  assert 'whereas the other half of the participants received an organization chart where the line was rather long' in allocation
+  for key in ['total_quote','allocation_quote']:
+   assert quote_ok({'quote':half_allocation[key],'source_path':source_path,'value':'equal allocation','confident':True,'location':'Study 1a Method'})
  for g in groups:
   assert Fraction(g['sd'])>0
   for key in ['mean_sd_quote','sample_quote']:
    assert g['source_label'].lower() in g[key].lower()
    assert quote_ok({'quote':g[key],'source_path':source_path,'value':'documented input','confident':True,'location':'documented '+key})
-  assert re.search(r'\bn\s*(?:=|5)\s*'+str(g['n'])+r'\b',g['sample_quote'])
+  if half_allocation is None:assert re.search(r'\bn\s*(?:=|5)\s*'+str(g['n'])+r'\b',g['sample_quote'])
   for number in [g['mean'],g['sd']]:
    pattern=r'(?<![\d.])'+re.escape(number)+r'(?![\d.])'
    assert re.search(pattern,g['mean_sd_quote']) and re.search(pattern,decision['quote'])
@@ -134,7 +146,9 @@ def documented_equal_group_d(receipt,row,decision,source_path):
   expression=f"MANUALLY REVERSED FROM =({tokens[0]}-{tokens[1]})/SQRT((({a['n']}-1)*{a['sd']}^2+({b['n']}-1)*{b['sd']}^2)/({a['n']}+{b['n']}-2)))"
  else:
   assert receipt.get('coding_convention') is None
-  expression=f"=({a['mean']}-{b['mean']})/SQRT(({a['sd']}^2+{b['sd']}^2)/2)"
+  sd_tokens=receipt.get('coding_sd_tokens',[a['sd'],b['sd']]);assert len(sd_tokens)==2
+  assert all(Fraction(token)==Fraction(group['sd']) for token,group in zip(sd_tokens,groups))
+  expression=f"=({a['mean']}-{b['mean']})/SQRT(({sd_tokens[0]}^2+{sd_tokens[1]}^2)/2)"
  assert receipt['expected_coding_expression']==expression
  assert expression in row['es_repr_'+field[-1]],'Calculation is not documented in original coding'
  result=float(Fraction(a['mean'])-Fraction(b['mean']))/math.sqrt(float((Fraction(a['sd'])**2+Fraction(b['sd'])**2)/2))

@@ -24,6 +24,24 @@ class DocumentedEffect(unittest.TestCase):
   for change in [{'n':None},{'n':19},{'n':True},{'mean':'4.99'},{'sd':'0'},{'sample_quote':'Cleanliness priming (n = 21)'}]:
    r=copy.deepcopy(self.receipt);r['groups'][0].update(change)
    with self.subTest(change=change),self.assertRaises(AssertionError):documented_equal_group_d(r,self.row,self.decision,self.source)
+ def test_reviewed_study_1a_explicit_halves_support_equal_counts(self):
+  r=copy.deepcopy(self.receipt);r['audit_id']=871
+  r['allocation_basis']={'kind':'study_1a_explicit_halves','total_quote':'Sixty-four economics and business administration students participated.','allocation_quote':'Half of the participants received an organization chart where the line was rather short whereas the other half of the participants received an organization chart where the line was rather long.'}
+  for g in r['groups']:g['n']=32;g['sample_quote']=g['source_label']+' participants'
+  Path(self.source).write_text('\n'.join([*(g[k] for g in r['groups'] for k in ['mean_sd_quote','sample_quote']),r['allocation_basis']['total_quote'],r['allocation_basis']['allocation_quote']]))
+  self.assertAlmostEqual(documented_equal_group_d(r,self.row,self.decision,self.source),-0.60627,places=5)
+  r['coding_sd_tokens']=['1.260','1.47'];r['expected_coding_expression']='=(4.98-5.81)/SQRT((1.260^2+1.47^2)/2)'
+  row={**self.row,'es_repr_o':r['expected_coding_expression']}
+  self.assertAlmostEqual(documented_equal_group_d(r,row,self.decision,self.source),-0.60627,places=5)
+  bad=copy.deepcopy(r);bad['coding_sd_tokens'][0]='1.25'
+  with self.assertRaises(AssertionError):documented_equal_group_d(bad,row,self.decision,self.source)
+  for total,allocation in [('Sixty-five economics and business administration students participated.',r['allocation_basis']['allocation_quote']),(r['allocation_basis']['total_quote'],'Half of the participants received an organization chart where the line was rather short.')]:
+   bad=copy.deepcopy(r);bad['allocation_basis'].update(total_quote=total,allocation_quote=allocation)
+   with self.subTest(total=total,allocation=allocation),self.assertRaises(AssertionError):documented_equal_group_d(bad,row,self.decision,self.source)
+  bad=copy.deepcopy(r);bad['audit_id']=872
+  with self.assertRaises(AssertionError):documented_equal_group_d(bad,self.row,self.decision,self.source)
+  bad=copy.deepcopy(r);bad['groups'][0]['n']=31
+  with self.assertRaises(AssertionError):documented_equal_group_d(bad,self.row,self.decision,self.source)
 
 class DocumentedF(unittest.TestCase):
  setUp=DocumentedEffect.setUp
