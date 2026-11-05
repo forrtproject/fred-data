@@ -1,7 +1,7 @@
 import json,sys,tempfile,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from concurrency_limits import live_count,slot_ceiling,review_launch_paused,recorded_quota_failure
+from concurrency_limits import live_count,slot_ceiling,review_launch_paused,recorded_quota_failure,review_capacity_available
 
 class ConcurrencyLimits(unittest.TestCase):
  def test_service_hold_pauses_only_the_named_review_service(self):
@@ -30,5 +30,15 @@ class ConcurrencyLimits(unittest.TestCase):
     (p/name).write_text(json.dumps({'taskId':name,'status':status}))
    self.assertEqual(live_count(p,'task_*.json'),2)
    self.assertEqual(live_count(p,'task_*.json',exclude_suffix='_v1.json'),1)
+ def test_handoff_requires_dispatch_only_with_total_review_capacity(self):
+  config={'review_slots':4,'source_slots':6,'max_combined_children':10}
+  with tempfile.TemporaryDirectory() as directory:
+   p=Path(directory)
+   for name in ['task_a_v1.json','task_b_v1.json','task_c_v1.json','task_identity_v2.json']:
+    (p/name).write_text(json.dumps({'taskId':name,'status':'running'}))
+   self.assertFalse(review_capacity_available(live_count(p,'task_*.json'),0,config))
+   (p/'task_identity_v2.json').write_text(json.dumps({'taskId':'identity','status':'completed'}))
+   self.assertTrue(review_capacity_available(live_count(p,'task_*.json'),0,config))
+   self.assertFalse(review_capacity_available(3,7,config))
 
 if __name__=='__main__':unittest.main()

@@ -1,7 +1,7 @@
 """Fail closed before handing off: cached 'running' labels do not establish liveness."""
 import argparse,datetime,hashlib,json,subprocess,sys
 from pathlib import Path
-from concurrency_limits import limits,review_launch_paused,recorded_quota_failure
+from concurrency_limits import limits,review_launch_paused,recorded_quota_failure,review_capacity_available
 F=Path(__file__).resolve().parent;B=F.parent
 TERMINAL={'completed','failed','cancelled','interrupted'}
 def read(path,default=None):return json.loads(path.read_text()) if path.exists() else default
@@ -52,8 +52,7 @@ def main():
  if free<0:problems.append('Combined child limit exceeded')
  if queued and active['tasks']<cap['source_slots'] and free>0:problems.append('Dispatch queued sources into available slots')
  review_queued=sum(not (F/'reviews'/f"task_{g['key']}_v1.json").exists() for g in read(F/'review_queue.json',[]))
- ordinary_live=sum(read(path).get('taskId') is not None and read(path).get('status') not in TERMINAL for path in (F/'reviews').glob('task_*_v1.json'))
- if review_queued and ordinary_live<cap['review_slots'] and free>0 and not review_launch_paused():problems.append('Dispatch queued independent reviews')
+ if review_queued and review_capacity_available(active['reviews'],active['tasks'],cap) and not review_launch_paused():problems.append('Dispatch queued independent reviews')
  for name in ['collection_blockers.json','integration_blockers.json']:
   if read(F/name,[]):problems.append('Resolve '+name)
  ledger=read(F/'integration.json',{});holds={(h['audit_id'],h['field']) for h in read(B/'adjudication_holds.json',[]) if h.get('completion_pass')=='2026-10-31-unresolved'}

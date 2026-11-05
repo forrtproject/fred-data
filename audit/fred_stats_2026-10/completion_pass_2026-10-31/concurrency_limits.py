@@ -33,3 +33,6 @@ def live_count(folder,pattern,exclude_suffix=None):
 def slot_ceiling(kind,other_active,config=None):
  d=config or limits()
  return max(0,min(d[kind+'_slots'],d['max_combined_children']-other_active))
+
+def review_capacity_available(review_active,source_active,config=None):
+ return review_active<slot_ceiling('review',source_active,config)
