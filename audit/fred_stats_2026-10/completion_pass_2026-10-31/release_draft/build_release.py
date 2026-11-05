@@ -3,7 +3,7 @@ import collections,csv,hashlib,json,re,subprocess,sys
 from pathlib import Path
 P=Path(__file__).resolve().parent;B=P.parents[1]
 sys.path.insert(0,str(B/'scripts'))
-from compare import load_adjudications,combine_obvious,metric,parsed_stat,quote_ok,fresh_test_review
+from compare import load_adjudications,combine_obvious,metric,parsed_stat,quote_ok,fresh_test_review,reviewed_correction_value
 from consistency import p_parts,number,analytic_n,pinterval,stat_interval
 KEY=['entry_id','effect_id','fred_id']
 GUARD=KEY+['ref_o','doi_o','study_o','ref_r','doi_r','url_r','study_r','description','es_type_o','es_type_r','nested_o','nested_r','pval_tails_o','pval_tails_r']
@@ -40,7 +40,7 @@ def build():
   key=(row['input_row_index'],column);assert key not in seen,key;seen.add(key)
   patches.append({'correction_id':cid,'audit_id':row['input_row_index'],**{k:row[k] for k in KEY},'audit_field':e['field'],'target_column':column,'old_value':old,'new_value':new,'role':role,'source_url':source_url,'source_location':d['location']})
  for e in progress['confirmed_errors']:
-  aid,field=e['audit_id'],e['field'];row=parent[aid-1];d=decisions[aid,field];assert results[aid][field+'_final_verdict']=='error';assert e['correction']==d['correct_value'];assert quote_ok({**d,'value':d['correct_value'],'confident':True})
+  aid,field=e['audit_id'],e['field'];row=parent[aid-1];d=decisions[aid,field];assert results[aid][field+'_final_verdict']=='error';assert e['correction']==reviewed_correction_value(d,field);assert quote_ok({**d,'value':d['correct_value'],'confident':True})
   x=json.loads((B/'extractions'/f'{aid}.json').read_text());blind=x['reported_success'] if field=='reported_success' else x['original' if field.endswith('_o') else 'replication']['n' if field.startswith('n_') else 'es' if field.startswith('es_') else 'p']
   source_url='https://doi.org/'+e['doi'] if e.get('doi') else e.get('primary_source_url') or txt(row['url_r'])
   source_ref=row['ref_o'] if field.endswith('_o') else row['ref_r'];new=e['correction'];pbound='';esmetric='';cid=f'FRED202610-{aid:04d}-{field}';before_count=len(patches)

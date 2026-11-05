@@ -198,6 +198,22 @@ def fresh_test_review(a,field,row):
   return value is not None and raw==value
  return bool(parsed and kind in ['test statistic',parsed[0]])
 
+def reviewed_correction_value(a,field):
+ """Render a reviewed success label in the dataset's canonical vocabulary."""
+ value=a.get('correct_value')
+ if field=='reported_success' and value=='success' and a.get('completion_pass')=='2026-10-31' and a.get('replaces_unverified') is True and a.get('target_match_confirmed') is True and a.get('effect_specific_verdict_confirmed') is True and a.get('verdict') in ['shipped_right','blind_right','both_wrong']:
+  return 'successful'
+ return value
+
+def fresh_sample_annotation_review(a,field,row):
+ """A current review may correct N even when the blind z omitted that annotation."""
+ if not field.startswith('es_value_') or metric(row.get('es_type_'+field[-1]))!='test statistic':return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict') not in ['blind_right','both_wrong']:return False
+ before=parsed_stat(row.get(field));after=parsed_stat(a.get('correct_value'))
+ if not before or not after or before[0]!='z' or after[0]!='z' or metric(a.get('correct_metric'))!='z':return False
+ if before[1]!=after[1] or number(before[2])!=number(after[2]):return False
+ return bool(all(n is not None and n>0 and float(n).is_integer() for n in [before[3],after[3]]) and before[3]!=after[3])
+
 def fresh_printed_effect_review(a,field,row,blind):
  """Copy a directly printed requested coefficient over a wrongly stored statistic."""
  if not field.startswith('es_value_') or not blind:return False
@@ -340,11 +356,12 @@ def main():
    if primary_adjud:
     comparison=comp(f,raw,effective_e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
    fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e) or fresh_quoted_p_review(adjud.get((aid,f),{}),f,r)))
-   if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_review:
+   sample_annotation_review=bool(comparison in ['agree','identical','compatible'] and fresh_sample_annotation_review(adjud.get((aid,f),{}),f,r))
+   if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_review or sample_annotation_review:
     a=adjud.get((aid,f))
     if (aid,f) in holds:a=None
     if a:
-     resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=a.get('correct_value','');location=a.get('location','');reason=a.get('reason','')
+     resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=reviewed_correction_value(a,f);location=a.get('location','');reason=a.get('reason','')
      if comparison=='mismatched_target':
       if broad_success and a.get('effect_specific_verdict_confirmed') is not True:verdict='unverified';reason='Paper-level narrative scope remains unresolved; '+reason
       elif broad_success:reason='Independent review establishes an effect-specific author verdict; '+reason
