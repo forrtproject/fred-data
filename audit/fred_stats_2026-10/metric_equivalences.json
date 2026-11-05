@@ -2565,5 +2565,44 @@
       "exact_result": "1.7676742663162734"
     },
     "completion_pass": "2026-10-31"
+  },
+  {
+    "audit_id": 852,
+    "field": "es_value_o",
+    "printed_value": "27.2",
+    "printed_metric": "chi-square (printed X2)",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/35813cd128ad501d7bb71d80.txt",
+    "comparison_metric": "OR",
+    "comparison_value": "15.251",
+    "reason": "The canonical text is verified as Knobe (2003), Experiment 1 (p. 192). The blind extraction improperly substituted the test statistic (X2 = 27.2) for the requested odds ratio (OR), whereas the shipped value (15.251) is reproducibly derived from the reported response proportions (82% intentional in harm vs. 1 - 0.77 = 23% intentional in help) via the documented coding formula (0.82/(1-0.82))/(0.23/(1-0.23)) = 15.251208.",
+    "location": "p. 192, Section 1. First experiment, final paragraph",
+    "quote": "In the harm condition, most subjects (82%) said that the agent brought about the side effect intentionally, whereas in the help condition, most subjects (77%) said that the agent did not bring about the side effect intentionally. This difference was highly statistically significant, X2(1, N = 78) = 27.2, p < .001.",
+    "derivation": {
+      "audit_id": 852,
+      "field": "es_value_o",
+      "calculation": "reported_proportion_odds_ratio",
+      "proportions": [
+        "0.82",
+        "0.23"
+      ],
+      "quoted_inputs": [
+        {
+          "percent": "82",
+          "complement": false
+        },
+        {
+          "percent": "77",
+          "complement": true
+        }
+      ],
+      "expected_coding_expression": "(0.82/(1-0.82))/(0.23/(1-0.23))",
+      "input_roles": [
+        "Intentional side-effect judgment in the harm condition",
+        "Intentional side-effect judgment in the help condition, complement of printed77% unintentional judgments"
+      ],
+      "reason": "Reproduce the existing explicit coding formula from the primary Experiment1 reported percentages and independently reviewed condition/outcome labels. No conversion from chi-square, inferred cell counts or new calculation convention.",
+      "exact_result": "3157/207"
+    },
+    "completion_pass": "2026-10-31"
   }
 ]
