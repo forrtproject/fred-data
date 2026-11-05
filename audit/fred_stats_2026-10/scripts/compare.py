@@ -250,6 +250,22 @@ def fresh_proportion_fraction_review(a,field,row,blind):
  if a.get('source_path')!=blind.get('source_path') or not quote_ok({**a,'value':'reviewed percentage','confident':True}):return False
  return Fraction(numerator,denominator)==Fraction(percent)/100
 
+def fresh_scientific_p_review(a,field,row,blind):
+ """Confirm reviewed p notation whose HTML exponent lost superscript styling."""
+ if field not in ['pval_value_o','pval_value_r'] or not blind:return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict')!='shipped_right':return False
+ if a.get('correct_bound')!='e' or blind.get('bound')!='e':return False
+ value=str(blind.get('value') or '').strip()
+ match=re.fullmatch(r'(\d+(?:\.\d+)?)\s*×\s*10−(\d+)',value)
+ if not match:return False
+ quote=str(a.get('quote') or '')
+ if not re.search(r'\bp\s*=\s*'+re.escape(value),quote):return False
+ if a.get('source_path')!=blind.get('source_path') or not quote_ok({**a,'value':'reviewed scientific p','confident':True}):return False
+ printed=p_parts(match[1]+'e-'+match[2],'e')
+ shipped=p_parts(row.get(field),row.get('pval_type_'+field[-1]))
+ reviewed=p_parts(a.get('correct_value'),'e')
+ return printed is not None and printed==shipped==reviewed
+
 def fresh_quoted_p_review(a,field,row):
  """Confirm literal quoted bound metadata only under a current source review."""
  if field not in ['pval_value_o','pval_value_r']:return False
@@ -373,7 +389,7 @@ def main():
    primary_adjud=bool(secondary and adjud.get((aid,f)) and original_primary_evidence(adjud[(aid,f)],r))
    if primary_adjud:
     comparison=comp(f,raw,effective_e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
-   fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e) or fresh_proportion_fraction_review(adjud.get((aid,f),{}),f,r,e) or fresh_quoted_p_review(adjud.get((aid,f),{}),f,r)))
+   fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e) or fresh_proportion_fraction_review(adjud.get((aid,f),{}),f,r,e) or fresh_scientific_p_review(adjud.get((aid,f),{}),f,r,e) or fresh_quoted_p_review(adjud.get((aid,f),{}),f,r)))
    sample_annotation_review=bool(comparison in ['agree','identical','compatible'] and fresh_sample_annotation_review(adjud.get((aid,f),{}),f,r))
    if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_review or sample_annotation_review:
     a=adjud.get((aid,f))
