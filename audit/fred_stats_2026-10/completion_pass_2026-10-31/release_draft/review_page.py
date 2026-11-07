@@ -18,7 +18,8 @@ B = P.parents[1]
 REPO = B.parents[1]
 sys.path.insert(0, str(B / 'scripts'))
 sys.path.insert(0, str(P))
-from compare import load_adjudications, combine_obvious, SOURCE_PROVENANCE  # noqa: E402
+from compare import load_adjudications, combine_obvious, parsed_stat, SOURCE_PROVENANCE  # noqa: E402
+from consistency import pinterval, stat_interval  # noqa: E402
 import policy_ledger  # noqa: E402
 
 CLOUD = Path('/home/lukas/cloud-data')
@@ -343,145 +344,239 @@ def side_table(row, res, s):
     return f"<tr><th>{label}<br><span class='muted'>study {html.escape(txt(row['study_' + s]))}</span></th>{''.join(cells)}</tr>"
 
 
+class Evidence:
+    """Find and render the source view for one quote; web and table views are rendered in one batch at the end."""
+
+    def __init__(self, out, pdfs, html_targets):
+        self.out, self.pdfs, self.html_targets = out, pdfs, html_targets
+        self.jobs, self.pending, self.stats = [], {}, collections.Counter()
+
+    def view(self, key, source, quote, location, doi, label):
+        if not quote or not source:
+            return ''
+        extra = list(context_probes(source, quote))
+        ensure_pdf(header_url(source), Path(source).stem)
+        tried, shot = [], None
+        for pdf in self.pdfs.candidates(source, doi):
+            local = self.pdfs.local(pdf); tried.append(local)
+            page, probe = find_page(self.pdfs.page_texts(local), quote, extra)
+            if page:
+                shot = crop(local, page, probe, self.out / 'shots' / f'{key}.png')
+                if shot:
+                    break
+        head = f"<div class='panel-h'>{label}</div>"
+        if shot:
+            self.stats['pdf page with quote'] += 1
+            return (f"<figure class='shot'>{head}<div class='imgwrap'><img loading='lazy' src='shots/{key}.png' alt='Source page {shot['page']} around the quote'>"
+                    f"<span class='hl' style='left:{shot['left']*100:.1f}%;top:{shot['top']*100:.1f}%;width:{shot['width']*100:.1f}%;height:{max(shot['height'],0.04)*100:.1f}%'></span></div>"
+                    f"<figcaption>Source PDF, page {shot['page']}</figcaption></figure>")
+        url = header_url(source) or self.html_targets.get(Path(source).name)
+        if url and not re.search(r'osf\.io/download|drive\.google|\.pdf($|\?)', url):
+            target = resolve_html(url, Path(source).stem)
+            if target:
+                self.jobs.append({'id': key, 'url': target, 'probes': [*probes(quote), *extra], 'out': str(self.out / 'shots' / f'{key}.png'), 'shown': url, 'stem': Path(source).stem})
+        if table_view(source, quote, self.out / 'tables' / f'{key}.html', location):
+            self.jobs.append({'id': key + '#table', 'url': (self.out / 'tables' / f'{key}.html').as_uri(), 'selector': 'tr.hit', 'out': str(self.out / 'shots' / f'{key}.png')})
+        best = fallback = None
+        for local in tried:
+            best = best_page_view(local, quote, self.out / 'shots' / f'{key}-page.png')
+            if best:
+                break
+        for local in tried if not best else []:
+            fallback = location_page(local, location, self.out / 'shots' / f'{key}-page.png')
+            if fallback:
+                break
+        self.pending[key] = {'source': source, 'quote': quote, 'page': fallback, 'best': best, 'head': head}
+        return f'@@EVIDENCE:{key}@@'
+
+    def finish(self, cards):
+        rendered = {}
+        if self.jobs:
+            jobfile = self.out / 'render_jobs.json'; jobfile.write_text(json.dumps(self.jobs))
+            subprocess.run(['uvx', '--with', 'playwright', 'python', str(P / 'render_html.py'), str(jobfile), str(self.out / 'render_results.json')], check=True)
+            rendered = json.loads((self.out / 'render_results.json').read_text()); jobfile.unlink()
+        shown = {j['id']: j.get('shown') for j in self.jobs}
+        for j in self.jobs:
+            res = rendered.get(j['id']) or {}
+            if 'Download is starting' in res.get('error', '') and j.get('stem'):
+                # The 'web page' was a file download: keep the PDF for the next run.
+                dest = REVIEW_SOURCES / f"{j['stem']}.pdf"; tmp = dest.with_suffix('.part')
+                subprocess.run(['curl', '-sSL', '--max-time', '120', '-A', UA, '-o', str(tmp), j['url']])
+                if tmp.exists() and tmp.read_bytes()[:5] == b'%PDF-' and not dest.exists():
+                    tmp.replace(dest); self.stats['downloaded for next run'] += 1
+                tmp.unlink(missing_ok=True)
+        fill = {}
+        for key, info in self.pending.items():
+            web, table, head = rendered.get(key), rendered.get(key + '#table'), info['head']
+            if web and 'error' not in web:
+                self.stats['web page with quote'] += 1
+                ev = (f"<figure class='shot'>{head}<div class='imgwrap'><img loading='lazy' src='shots/{key}.png' alt='Source web page around the quote'></div>"
+                      f"<figcaption>Source web page: <a href='{html.escape(shown[key])}' target='_blank' rel='noopener'>{html.escape(shown[key][:90])}</a></figcaption></figure>")
+            elif table and 'error' not in table:
+                self.stats['spreadsheet row'] += 1
+                ev = f"<figure class='shot'>{head}<div class='imgwrap'><img loading='lazy' src='shots/{key}.png' alt='Spreadsheet row'></div><figcaption>Source spreadsheet row (highlighted cells appear in the quote)</figcaption></figure>"
+            elif info['best']:
+                self.stats['pdf page best match'] += 1
+                b = info['best']
+                boxes = ''.join(f"<span class='hl' style='left:{x['left']*100:.2f}%;top:{x['top']*100:.2f}%;width:{x['width']*100:.2f}%;height:{x['height']*100:.2f}%'></span>" for x in b['boxes'])
+                ev = (f"<figure class='shot'>{head}<div class='imgwrap'><img loading='lazy' src='shots/{key}-page.png' alt='Source page best matching the quote'>{boxes}</div>"
+                      f"<figcaption>Source PDF, page {b['page']}: best match to the quote ({b['score']:.0%} of quote words); quoted numbers highlighted.</figcaption></figure>")
+            elif info['page']:
+                self.stats['pdf page from locator'] += 1
+                ex = excerpt(info['source'], info['quote'])
+                ev = (f"<figure class='shot'>{head}<div class='imgwrap'><img loading='lazy' src='shots/{key}-page.png' alt='Source page from locator'></div>"
+                      f"<figcaption>Source PDF, page {info['page']} (from the page locator); the quote itself was not located automatically.</figcaption></figure>"
+                      + (f"<div class='excerpt'><div class='muted'>Private source text:</div>{ex}</div>" if ex else ''))
+            else:
+                ex = excerpt(info['source'], info['quote'])
+                self.stats['text excerpt only' if ex else 'no evidence view'] += 1
+                ev = (f"<div class='excerpt'>{head}<div class='muted'>No source page found; private source text:</div>{ex}</div>" if ex
+                      else f"<div class='excerpt'>{head}<div class='muted'>No source page or text excerpt located.</div></div>")
+            fill[f'@@EVIDENCE:{key}@@'] = ev
+        pattern = re.compile(r'@@EVIDENCE:[^@]+@@')
+        for k in cards:
+            cards[k] = [pattern.sub(lambda m: fill.get(m[0], ''), c) for c in cards[k]]
+
+
+def consistency_table(row, row_after, s):
+    """N, effect, p and what the statistic implies, before and after the row's audit corrections."""
+    def cells(r):
+        interval, kind = stat_interval(txt(r['es_value_' + s]).replace('–', '-'), r['es_type_' + s], r['n_' + s], r['nested_' + s], r['pval_tails_' + s])
+        parsed = parsed_stat(txt(r['es_value_' + s]).replace('–', '-'))
+        df = parsed[1][-1] if parsed and parsed[1] else None
+        implied = f"{interval[0]:.3g}–{interval[1]:.3g}" if interval else '—'
+        if interval and interval[1] - interval[0] < 1e-12:
+            implied = f"{interval[0]:.3g}"
+        tails = '' if not kind or 'tails_assumed_two' not in kind else ' (two-tailed assumed)'
+        p = pinterval(r['pval_value_' + s], txt(r['pval_type_' + s]).split(' ')[0])
+        fits = '' if not interval or p is None else ('✓ fits' if max(interval[0], float(p[0])) <= min(interval[1], float(p[1])) else '✗ does not fit')
+        return (f"<td>{html.escape(txt(r['n_' + s]))}</td><td>{html.escape(txt(r['es_value_' + s]))}</td><td>{html.escape(txt(r['pval_value_' + s]))} {html.escape(txt(r['pval_type_' + s]))}</td>"
+                f"<td>{implied}{tails} <b>{fits}</b></td><td>{'' if df is None else f'{df:g}'}</td>")
+    label = 'Original' if s == 'o' else 'Replication'
+    return (f"<table class='cons'><tr><th>{label}</th><th>N</th><th>Effect</th><th>p (coded)</th><th>p implied by statistic</th><th>error df</th></tr>"
+            f"<tr><th>Coded</th>{cells(row)}</tr><tr><th>After this row's audit corrections</th>{cells(row_after)}</tr></table>")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--out', required=True)
     out = Path(ap.parse_args().out).resolve()
     assert not out.is_relative_to(REPO.resolve()), 'Review output holds private source material; keep it outside the repository'
-    (out / 'shots').mkdir(parents=True, exist_ok=True)
+    (out / 'shots').mkdir(parents=True, exist_ok=True); (out / 'tables').mkdir(exist_ok=True)
     ledger = list(csv.DictReader((P / 'application_decisions.csv').open(encoding='utf-8-sig')))
+    by_key = {(int(r['audit_id']), r['field']): r for r in ledger}
     parent = json.loads((B / 'parent_rows.json').read_text())
     results = {int(r['input_row_index']): r for r in csv.DictReader((B / 'results.csv').open(encoding='utf-8-sig'))}
     decisions = combine_obvious(load_adjudications(B), json.loads((B / 'obvious_resolutions.json').read_text()))
+    errors = json.loads((B / 'progress.json').read_text())['confirmed_errors']
+    row_errors = collections.defaultdict(list)
+    for e in errors:
+        row_errors[e['audit_id']].append(e)
     groups = collections.defaultdict(list)
     for i, row in enumerate(parent, 1):
         groups[policy_ledger.study_key(row)].append(i)
-    pdfs = Pdfs(Path(os.environ.get('FRED_REVIEW_PDF_WORK', '/tmp/claude-1000/fred-review-pdfs')))
-    cards = collections.defaultdict(list); stats = collections.Counter()
-    (out / 'tables').mkdir(exist_ok=True)
     targets_file = REVIEW_SOURCES / 'html_targets.json'
     html_targets = {t['source']: t['url'] for t in json.loads(targets_file.read_text())} if targets_file.exists() else {}
-    jobs, pending = [], {}
+    ev = Evidence(out, Pdfs(Path(os.environ.get('FRED_REVIEW_PDF_WORK', '/tmp/claude-1000/fred-review-pdfs'))), html_targets)
+    cards = collections.defaultdict(list); counts = collections.Counter()
+
+    def extraction(aid):
+        path = B / 'extractions' / f'{aid}.json'
+        return json.loads(path.read_text()) if path.exists() else {}
+
+    def side_doi(row, s, source):
+        return (SOURCE_PROVENANCE.get(source) or {}).get('work_doi') or row['doi_o' if s == 'o' else 'doi_r'] or ''
+
+    def es_panel(cid, aid, row, s, what):
+        x = extraction(aid).get('original' if s == 'o' else 'replication', {}).get('es') or {}
+        if not x.get('quote'):
+            return f"<p class='muted'>{what}: no located quote in the blind extraction.</p>"
+        src = x.get('source_path') or ''
+        return (f"<div class='panel'><p><b>{what}</b> (blind extraction): {html.escape(txt(x.get('test_statistic') or x.get('value')))} "
+                f"<span class='muted'>{html.escape(txt(x.get('metric')))} · {html.escape(txt(x.get('location')))}</span><br><q>{html.escape(txt(x.get('quote')))}</q></p>"
+                + ev.view(f"{cid}--{s}es", src, x.get('quote'), x.get('location'), side_doi(row, s, src), what) + "</div>")
+
+    def conclusion_panel(cid, aid, row):
+        """What the replication authors concluded: the coded verdict and quote, the blind extraction and the audit verdict."""
+        x = extraction(aid); rs = x.get('reported_success') or {}
+        res = results[aid]
+        src = rs.get('source_path') or (x.get('replication', {}).get('es') or {}).get('source_path') or ''
+        doi = side_doi(row, 'r', src)
+        verdict = res['reported_success_final_verdict']
+        audit = {'correct': 'confirmed by the audit', 'error': f"audit finding: should be <b>{html.escape(txt(res['reported_success_suggested_correction']))}</b> "
+                 f"(ledger: {html.escape(by_key.get((aid, 'reported_success'), {}).get('final_decision', '—'))})", 'unverified': 'not verified by the audit',
+                 'not_comparable': 'not comparable'}.get(verdict, verdict)
+        parts = [f"<div class='panel'><div class='panel-h'>Replication authors' conclusion</div>"
+                 f"<p>Coded <b>{html.escape(txt(row['reported_success']))}</b> ({audit}). Coded quote ({html.escape(txt(row['reported_success_quote_source']))}): "
+                 f"<q>{html.escape(txt(row['reported_success_quote']))}</q></p>",
+                 ev.view(f"{cid}--coded", src, txt(row['reported_success_quote']), '', doi, 'Coded author quote in the replication source')]
+        if rs.get('quote') and compact(rs['quote']) != compact(row['reported_success_quote']):
+            parts += [f"<p>Blind extraction: <b>{html.escape(txt(rs.get('value')))}</b> <span class='muted'>{html.escape(txt(rs.get('location')))}</span><br><q>{html.escape(txt(rs['quote']))}</q></p>",
+                      ev.view(f"{cid}--blindrs", rs.get('source_path') or src, rs['quote'], rs.get('location'), doi, 'Blind-extracted author verdict')]
+        if verdict == 'error' and (aid, 'reported_success') in decisions:
+            a = decisions[(aid, 'reported_success')]
+            parts += [f"<p>Audit's verdict quote: <q>{html.escape(txt(a.get('quote')))}</q> <span class='muted'>{html.escape(txt(a.get('location')))}</span></p>"]
+        return ''.join(parts) + '</div>'
+
     for r in ledger:
         sec = section(r)
         if not sec:
             continue
         aid, field = int(r['audit_id']), r['field']; row = parent[aid - 1]; res = results[aid]; d = decisions[(aid, field)]
-        s = 'r' if field == 'reported_success' else field[-1]
-        source = d.get('source_path') or ''
-        doi = (SOURCE_PROVENANCE.get(source) or {}).get('work_doi') or row['doi_o' if s == 'o' else 'doi_r'] or ''
-        evidence, shot = '', None
-        cid = r['correction_id']
-        if sec != 'na':
-            extra = list(context_probes(source, d.get('quote')))
-            ensure_pdf(header_url(source), Path(source).stem)
-            tried = []
-            for pdf in pdfs.candidates(source, doi):
-                local = pdfs.local(pdf); tried.append(local)
-                page, probe = find_page(pdfs.page_texts(local), d.get('quote'), extra)
-                if page:
-                    shot = crop(local, page, probe, out / 'shots' / f'{cid}.png')
-                    if shot:
-                        break
-            if shot:
-                stats['pdf page with quote'] += 1
-                evidence = (f"<figure class='shot'><div class='imgwrap'><img loading='lazy' src='shots/{cid}.png' alt='Source page {shot['page']} around the quote'>"
-                            f"<span class='hl' style='left:{shot['left']*100:.1f}%;top:{shot['top']*100:.1f}%;width:{shot['width']*100:.1f}%;height:{max(shot['height'],0.04)*100:.1f}%'></span></div>"
-                            f"<figcaption>Source PDF, page {shot['page']}</figcaption></figure>")
-            else:
-                url = header_url(source) or html_targets.get(Path(source).name)
-                if url and not re.search(r'osf\.io/download|drive\.google|\.pdf($|\?)', url):
-                    target = resolve_html(url, Path(source).stem)
-                    if target:
-                        jobs.append({'id': cid, 'url': target, 'probes': [*probes(d.get('quote')), *extra], 'out': str(out / 'shots' / f'{cid}.png'), 'shown': url, 'stem': Path(source).stem})
-                if table_view(source, d.get('quote'), out / 'tables' / f'{cid}.html', d.get('location')):
-                    jobs.append({'id': cid + '#table', 'url': (out / 'tables' / f'{cid}.html').as_uri(), 'selector': 'tr.hit', 'out': str(out / 'shots' / f'{cid}.png')})
-                fallback_page, best = None, None
-                for local in tried:
-                    best = best_page_view(local, d.get('quote'), out / 'shots' / f'{cid}-page.png')
-                    if best:
-                        break
-                for local in tried if not best else []:
-                    fallback_page = location_page(local, d.get('location'), out / 'shots' / f'{cid}-page.png')
-                    if fallback_page:
-                        break
-                pending[cid] = {'source': source, 'quote': d.get('quote'), 'page': fallback_page, 'best': best, 'stem': Path(source).stem}
-                evidence = f'@@EVIDENCE:{cid}@@'
-        doi_link = f"<a href='https://doi.org/{html.escape(doi)}' target='_blank' rel='noopener'>doi:{html.escape(doi)}</a>" if doi else ''
-        rs_block = ''
-        if field == 'reported_success':
+        cid = r['correction_id']; s = 'r' if field == 'reported_success' else field[-1]
+        source = d.get('source_path') or ''; doi = side_doi(row, s, source)
+        main_ev = ev.view(cid, source, d.get('quote'), d.get('location'), doi, 'Evidence for the proposed value') if sec != 'na' else ''
+        panels = []
+        if field != 'reported_success':
+            side_errs = [e for e in row_errors[aid] if e['field'].endswith('_' + s) and e['field'] != 'reported_success']
+            after = policy_ledger.patched(row, side_errs, decisions)
+            panels.append("<div class='panel'><div class='panel-h'>Do N, statistic and p fit together?</div>" + consistency_table(row, after, s) + "</div>")
+            other = 'o' if s == 'r' else 'r'
+            if sec in ('d1', 't2', 'coh', 'hold', 't1'):
+                panels.append(es_panel(cid, aid, row, other, 'Original effect' if other == 'o' else 'Replication effect'))
+            if sec in ('d1',) or 'conceptual_adaptation' in r['tags'] or sec == 't2':
+                panels.append(conclusion_panel(cid, aid, row))
+        else:
             members = groups[policy_ledger.study_key(row)]
-            lis = ''.join(f"<li>{j}: {html.escape(txt(parent[j-1]['reported_success']))} <span class='v v-{results[j]['reported_success_final_verdict']}'>{results[j]['reported_success_final_verdict']}</span>"
-                          + (f" → {html.escape(results[j]['reported_success_suggested_correction'])}" if results[j]['reported_success_final_verdict'] == 'error' else '')
-                          + f" <span class='muted'>{html.escape(txt(parent[j-1]['description'])[:110])}</span></li>" for j in members)
-            rs_block = (f"<details><summary>Study has {len(members)} effect(s)</summary><ul>{lis}</ul></details>"
-                        f"<p><b>Coded author quote</b> ({html.escape(txt(row['reported_success_quote_source']))}): <q>{html.escape(txt(row['reported_success_quote']))}</q></p>")
+            lis = []
+            for j in members:
+                v = results[j]['reported_success_final_verdict']
+                q = decisions.get((j, 'reported_success'), {}).get('quote') if v == 'error' else ''
+                lis.append(f"<li><b>{j}</b>: {html.escape(txt(parent[j-1]['reported_success']))} <span class='v v-{v}'>{v}</span>"
+                           + (f" → <b>{html.escape(results[j]['reported_success_suggested_correction'])}</b> <span class='muted'>({html.escape(by_key.get((j, 'reported_success'), {}).get('final_decision', ''))})</span>" if v == 'error' else '')
+                           + f" <span class='muted'>{html.escape(txt(parent[j-1]['description'])[:120])}</span>" + (f"<br><q>{html.escape(q)}</q>" if q else '') + "</li>")
+            panels.append(f"<div class='panel'><div class='panel-h'>All {len(members)} effect(s) of this study (reported_success is coded per study)</div><ul>{''.join(lis)}</ul></div>")
+            if sec != 'na':
+                src = (extraction(aid).get('reported_success') or {}).get('source_path') or source
+                panels.append(f"<div class='panel'><div class='panel-h'>Currently coded verdict</div><p><b>{html.escape(txt(row['reported_success']))}</b> "
+                              f"({html.escape(txt(row['reported_success_quote_source']))}): <q>{html.escape(txt(row['reported_success_quote']))}</q></p>"
+                              + ev.view(f"{cid}--coded", src, txt(row['reported_success_quote']), '', side_doi(row, 'r', src), 'Coded author quote in the replication source') + "</div>")
+        claim = '' if compact(row['claim_text_o']) == compact(row['description']) or not txt(row['claim_text_o']) else \
+            f"<p class='muted'><b>Original claim</b> (p. {html.escape(txt(row['claim_page_o']))}): {html.escape(txt(row['claim_text_o']))}</p>"
+        doi_link = f"<a href='https://doi.org/{html.escape(doi)}' target='_blank' rel='noopener'>doi:{html.escape(doi)}</a>" if doi else ''
         cards[sec].append(f"""
-<article class="card" id="{r['correction_id']}" data-id="{r['correction_id']}" data-auto="{r['final_decision']}">
- <header><h3>{html.escape(r['correction_id'])}</h3><span class="pill">{html.escape(r['policy'])}</span><span class="pill auto-{r['final_decision']}">{r['final_decision']}</span></header>
- <p class="desc">{html.escape(txt(row['description']))}</p>
+<article class="card" id="{cid}" data-id="{cid}" data-auto="{r['final_decision']}">
+ <header><h3>{html.escape(cid)}</h3><span class="pill">{html.escape(r['policy'])}</span><span class="pill auto-{r['final_decision']}">{r['final_decision']}</span></header>
+ <p class="desc">{html.escape(txt(row['description']))}</p>{claim}
  <p class="muted">{html.escape(txt(row['fred_id']))} · {html.escape(txt(row['ref_o'] if s == 'o' else row['ref_r'])[:160])} {doi_link}</p>
  <div class="change"><span class="old">{html.escape(r['old_value']) or '<i>blank</i>'}</span> → <span class="new">{html.escape(r['new_value'])}</span> <span class="muted">({field})</span></div>
  <table class="sides">{side_table(row, res, 'o')}{side_table(row, res, 'r')}</table>
- {rs_block}
  <p><b>Why flagged:</b> {html.escape(r['manual_note'] or r['auto_reason'])} <span class="muted">{html.escape(r['tags'])}</span></p>
  <p><b>Review reason:</b> {html.escape(txt(d.get('reason')))}</p>
- <p><b>Location:</b> {html.escape(txt(d.get('location')))}</p>
- <p><b>Quote:</b> <q>{html.escape(txt(d.get('quote')))}</q></p>
- {evidence}
+ <p><b>Location:</b> {html.escape(txt(d.get('location')))} · <b>Quote:</b> <q>{html.escape(txt(d.get('quote')))}</q></p>
+ {main_ev}
+ {''.join(panels)}
  <div class="decide"><button data-d="apply">Apply</button><button data-d="reject">Reject</button><button data-d="hold">Hold</button>
  <input class="note" placeholder="Note (optional)"><span class="state"></span></div>
 </article>""")
-        stats[sec] += 1
-    rendered = {}
-    if jobs:
-        jobfile = out / 'render_jobs.json'; jobfile.write_text(json.dumps(jobs))
-        subprocess.run(['uvx', '--with', 'playwright', 'python', str(P / 'render_html.py'), str(jobfile), str(out / 'render_results.json')], check=True)
-        rendered = json.loads((out / 'render_results.json').read_text()); jobfile.unlink()
-    shown = {j['id']: j.get('shown') for j in jobs}
-    for j in jobs:
-        res = rendered.get(j['id']) or {}
-        if 'Download is starting' in res.get('error', '') and j.get('stem'):
-            dest = REVIEW_SOURCES / f"{j['stem']}.pdf"; tmp = dest.with_suffix('.part')
-            subprocess.run(['curl', '-sSL', '--max-time', '120', '-A', UA, '-o', str(tmp), j['url']])
-            if tmp.exists() and tmp.read_bytes()[:5] == b'%PDF-':
-                tmp.replace(dest); stats['downloaded for next run'] += 1
-            else:
-                tmp.unlink(missing_ok=True)
-    for cid, info in pending.items():
-        web, table = rendered.get(cid), rendered.get(cid + '#table')
-        if web and 'error' not in web:
-            stats['web page with quote'] += 1
-            ev = (f"<figure class='shot'><div class='imgwrap'><img loading='lazy' src='shots/{cid}.png' alt='Source web page around the quote'></div>"
-                  f"<figcaption>Source web page: <a href='{html.escape(shown[cid])}' target='_blank' rel='noopener'>{html.escape(shown[cid][:90])}</a></figcaption></figure>")
-        elif table and 'error' not in table:
-            stats['spreadsheet row'] += 1
-            ev = f"<figure class='shot'><div class='imgwrap'><img loading='lazy' src='shots/{cid}.png' alt='Spreadsheet row'></div><figcaption>Source spreadsheet row (highlighted cells appear in the quote)</figcaption></figure>"
-        elif info['best']:
-            stats['pdf page best match'] += 1
-            b = info['best']
-            boxes = ''.join(f"<span class='hl' style='left:{x['left']*100:.2f}%;top:{x['top']*100:.2f}%;width:{x['width']*100:.2f}%;height:{x['height']*100:.2f}%'></span>" for x in b['boxes'])
-            ev = (f"<figure class='shot'><div class='imgwrap'><img loading='lazy' src='shots/{cid}-page.png' alt='Source page best matching the quote'>{boxes}</div>"
-                  f"<figcaption>Source PDF, page {b['page']}: best match to the quote ({b['score']:.0%} of quote words); quoted numbers highlighted.</figcaption></figure>")
-        elif info['page']:
-            stats['pdf page from locator'] += 1
-            ex = excerpt(info['source'], info['quote'])
-            ev = (f"<figure class='shot'><div class='imgwrap'><img loading='lazy' src='shots/{cid}-page.png' alt='Source page from locator'></div>"
-                  f"<figcaption>Source PDF, page {info['page']} (from the reviewer's page locator); the quote itself was not located automatically.</figcaption></figure>"
-                  + (f"<div class='excerpt'><div class='muted'>Private source text:</div>{ex}</div>" if ex else ''))
-        else:
-            ex = excerpt(info['source'], info['quote'])
-            stats['text excerpt only' if ex else 'no evidence view'] += 1
-            ev = (f"<div class='excerpt'><div class='muted'>No source page found; private source text:</div>{ex}</div>" if ex
-                  else "<div class='muted'>No source page or text excerpt located.</div>")
-        for k in cards:
-            cards[k] = [c.replace(f'@@EVIDENCE:{cid}@@', ev) for c in cards[k]]
+        counts[sec] += 1
+    ev.finish(cards)
     nav = ''.join(f"<a href='#sec-{k}'>{t} <span class='count' data-sec='{k}'>{len(cards[k])}</span></a>" for k, t, _ in SECTIONS if cards[k])
     body = ''.join(f"<section id='sec-{k}'><h2>{t} <span class='muted'>({len(cards[k])})</span></h2><p class='lead'>{lead}</p>{''.join(cards[k])}</section>"
                    for k, t, lead in SECTIONS if cards[k])
-    page = TEMPLATE.replace('__NAV__', nav).replace('__BODY__', body).replace('__STATS__', html.escape(json.dumps(dict(stats))))
+    page = TEMPLATE.replace('__NAV__', nav).replace('__BODY__', body).replace('__STATS__', html.escape(json.dumps({**counts, **ev.stats})))
     (out / 'index.html').write_text(page)
-    print(json.dumps(dict(stats)))
+    print(json.dumps({**counts, **ev.stats}))
 
 
 TEMPLATE = r"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -505,6 +600,7 @@ main{max-width:1000px;margin:0 auto;padding:16px}section,.card{scroll-margin-top
 .v{font-size:11px;border-radius:4px;padding:0 4px}.v-error{color:var(--bad)}.v-correct{color:var(--ok)}.v-unverified,.v-not_comparable{color:var(--warn)}
 .shot{margin:8px 0}.imgwrap{position:relative;display:inline-block;max-width:100%;border:1px solid var(--line)}.imgwrap img{display:block;max-width:100%;height:auto;background:#fff}
 .hl{position:absolute;background:var(--hl);outline:2px solid rgba(255,170,0,.8);pointer-events:none}
+.panel{border-left:3px solid var(--line);padding:2px 0 2px 12px;margin:12px 0}.panel-h{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin:4px 0}.cons{border-collapse:collapse;font-size:13px;width:100%}.cons th,.cons td{border-top:1px solid var(--line);padding:3px 6px;text-align:left}
 .excerpt{font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px;overflow-wrap:anywhere}mark{background:var(--hl);color:inherit}
 .decide{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}.decide button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:4px 12px;cursor:pointer}
 .decide button.on[data-d=apply]{background:var(--ok);color:#fff}.decide button.on[data-d=reject]{background:var(--bad);color:#fff}.decide button.on[data-d=hold]{background:var(--warn);color:#000}
