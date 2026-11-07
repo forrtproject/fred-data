@@ -1,0 +1,60 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 955,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "3.25",
+    "shipped_metric": "d",
+    "shipped_bound": null,
+    "blind": {
+      "value": "2.22",
+      "metric": "d",
+      "test_statistic": "t(11) = 3.68",
+      "location": "Article p. 344 (PDF p. 6), fMRI Results: Accepting Unfair Offers, final paragraph, right column; Figure 4d.",
+      "quote": "VLPFC (x 5 50, y 5 24, z 5 8), t(11) 5 3.68, prep > .99, d 5 ... 2.22",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_ba3917c04695ac44d9139390.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Tabibnia, G., Satpute, A. B., & Lieberman, M. D. (2008). The Sunny Side of Fairness. Psychological Science, 19(4), 339–347. https://doi.org/10.1111/j.1467-9280.2008.02091.x",
+      "doi_o": "10.1111/j.1467-9280.2008.02091.x",
+      "study_o": "2",
+      "ref_r": "(2015). Estimating the reproducibility of psychological science. Science, 349(6251). https://doi.org/10.1126/science.aac4716",
+      "doi_r": "10.1126/science.aac4716",
+      "url_r": "https://osf.io/nxp9w",
+      "study_r": null,
+      "es_type_o": "d",
+      "es_type_r": "test statistic",
+      "audit_id": 955,
+      "description": "Relationship between accepting unfair offers and right ventrolateral prefrontal cortex activation.",
+      "locators_o": "p. 5, 6",
+      "locators_r": "p. 5",
+      "text_paths": {}
+    },
+    "work_key": "10.1126/science.aac4716",
+    "coding_context": {
+      "es_repr": "p. 5, 6; t(11) = 5.39",
+      "description": "Accepting unfair offers increases right ventrolateral prefrontal cortex activation",
+      "reported_success_quote": "The replication study replicated the pattern of behavioral results and the main neural findings\nfrom the original study which are noted in the title of the original article (Planned",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "12",
+        "es_value_o": "3.25",
+        "es_type_o": "d",
+        "pval_value_o": null,
+        "pval_type_o": null
+      }
+    },
+    "source_version_note": "Published article supplied by licensed EBSCO all-database service; Visually inspected exact title/subtitle, Tabibnia/Satpute/Lieberman and2008 firstpage. Complete9articlepages339–347 plus separately checked non-article copy/copyright notices; twostudiesmethod/resultsPDF2–7, discussion7–8, references8–9. RequestedDOI/title/authors/year/range independently matchCrossref. End-page appearance checked with render/OCR; see end_page_checks.json.",
+    "source_identity_and_completeness": "Visually inspected exact title/subtitle, Tabibnia/Satpute/Lieberman and2008 firstpage. Complete9articlepages339–347 plus separately checked non-article copy/copyright notices; twostudiesmethod/resultsPDF2–7, discussion7–8, references8–9. RequestedDOI/title/authors/year/range independently matchCrossref. End-page appearance checked with render/OCR; see end_page_checks.json."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

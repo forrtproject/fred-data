@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 757,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.00001",
+    "shipped_metric": "d",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "0.59",
+      "bound": "e",
+      "location": "Study 5 Results, final prediction, Fig.2",
+      "quote": "Indeed, stereotypes of white and black individuals from desperate ecologies did not differ ( P = 0.59), nor did stereotypes of white and black individuals from hopeful ecologies ( P = 0.69).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/811ff578a07eba30a35dff98.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Williams, K. E. G., Sng, O., & Neuberg, S. L. (2015). Ecology-driven stereotypes override race stereotypes. Proceedings of the National Academy of Sciences, 113(2), 310–315. https://doi.org/10.1073/pnas.1519401113",
+      "doi_o": "10.1073/pnas.1519401113",
+      "study_o": "5",
+      "ref_r": "Holzmeister, F., Johannesson, M., Camerer, C. F., Chen, Y., Ho, T.-H., Hoogeveen, S., Huber, J., Imai, N., Imai, T., Jin, L., Kirchler, M., Ly, A., Mandl, B., Manfredi, D., Nave, G., Nosek, B. A., Pfeiffer, T., Sarafoglou, A., Schwaiger, R., … Dreber, A. (2024). Examining the replicability of online experiments selected by a decision market. Nature Human Behaviour, 9(2), 316–330. https://doi.org/10.1038/s41562-024-02062-9",
+      "doi_r": "10.1038/s41562-024-02062-9",
+      "url_r": "https://osf.io/sejyp",
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 757,
+      "description": "Ecology-related stereotypes and their relationship to race stereotypes, including application of race stereotypes when immediate cues to a target’s home ecology are present.",
+      "locators_o": "p. 3",
+      "locators_r": "p.3",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/811ff578a07eba30a35dff98.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e32821a9655733390446fb2b.txt"
+      }
+    },
+    "work_key": "10.1038/s41562-024-02062-9",
+    "coding_context": {
+      "es_repr": null,
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

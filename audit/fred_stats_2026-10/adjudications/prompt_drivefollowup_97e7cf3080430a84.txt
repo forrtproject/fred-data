@@ -1,0 +1,122 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 249,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 1, Abstract",
+      "quote": "Results replicated the four patterns of negative emotional eating",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": "The numeric target is unresolved or explicitly mismatched; the author label was retained as an observation. Require unique individual-effect mapping; do not transfer an agreeing overall paper/study label.",
+    "locator": {
+      "ref_o": "He, J., Chen, G., Wu, S., Niu, R., & Fan, X. (2020). Patterns of negative emotional eating among Chinese young adults: A latent class analysis. Appetite, 155, 104808. https://doi.org/10.1016/j.appet.2020.104808",
+      "doi_o": "10.1016/j.appet.2020.104808",
+      "study_o": null,
+      "ref_r": "Xu, Y., Song, J., Ren, Y., Barnhart, W. R., Dixit, U., Ji, F., Chen, C., & He, J. (2024). Negative emotional eating patterns in general Chinese adults: A replication and expansion study examining group differences in eating disorder symptomatology, psychosocial impairment, and emotion regulation difficulties. Eating Behaviors, 54, 101899. https://doi.org/10.1016/j.eatbeh.2024.101899",
+      "doi_r": "10.1016/j.eatbeh.2024.101899",
+      "url_r": null,
+      "study_r": "10.1016/j.eatbeh.2024.101899",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 249,
+      "description": "Negative emotional eating patterns and their relationship to disordered eating behaviors in Chinese young adults aged 17–24 years, examined using a person-oriented latent class analysis (LCA), including emotional over-eating and under-eating.",
+      "locators_o": "p.4",
+      "locators_r": "p.4",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt"
+      },
+      "target_side": "replication",
+      "source_version_note": "Published article copy from private Google Drive archive; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Xu,Song,Ren,Barnhart,Dixit,Ji,Chen,He. PDF has9pages; published range=101899; source endmatter checked in model review. Methods-related material pages[2, 3, 4, 5, 6, 7]; results-related material pages[1, 2, 3, 4, 5, 6, 7]; references atPDFpages[7]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f0eb6d5ebd63474b5475d4dd_drive.pdf"
+    },
+    "work_key": "10.1016/j.eatbeh.2024.101899",
+    "coding_context": {
+      "description": "negative emotional eating is closely related to disordered eating behaviors...In this study, we used a person-oriented approach, latent class analysis (LCA), to examine the negative emotional eating patterns and to characterize these patterns in a sample of 1,068 Chinese young adults (52.6% females, aged 17–24 years)...Overall, this study identified four distinct negative emotional eating patterns, among which, the emotional over- and under-eating was the most problematic.",
+      "es_repr": "p.4",
+      "reported_success_quote": "Results replicated the four patterns of negative emotional eating\nin previous research",
+      "coded_statistics_for_target_selection": {
+        "n_r": "600",
+        "es_value_r": "X2(3, N = 600) = 47.78",
+        "es_type_r": "test statistic",
+        "pval_value_r": "0.001",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "prior_findings": [],
+    "blind_target_description": "Supplied page 4 and broad description identify multiple LCA and group-comparison tests; no unique target test or outcome distinguishes the two assigned rows.",
+    "blind_extraction_notes": "Original: reused existing terminal acquisition miss cf5ce45ded0e480c8147bdd5.miss; no original primary full text available. Replication: No parent cache text. DOI landing page identified the matching title and publisher PII. Publisher full article returned HTTP 403; not retried. Unpaywall reports closed with no OA locations. OpenAlex reports closed with no best_oa_location or repository full text. Europe PMC reports no PMC/Europe PMC full text or PDF. Targeted title/DOI PDF and OSF/PsyArXiv/preprint searches yielded no accessible full primary paper. OSF files endpoint returned 404. Promising alternative Elsevier article API returned metadata only, without article body. Abstracts and section snippets were not accepted as full text. No signed-in or paid acquisition used. Supplied descriptions and page locators are identical for audit_ids 249 and 250 and do not specify a unique outcome or statistical comparison; no statistic selected or inferred. Recruited sample totals in abstracts were not treated as analytic sample sizes.\nSource follow-up: Fresh blind extraction from the named published-article text only. All five assigned original-side inputs have the same broad description and p.4 locator, with no test-specific outcome or contrast. No inference from audit_id or input order was made. The source is available, but a unique target test cannot be established; statistics therefore remain null. Table 1 labels its N as total sample; section 2.3 states missingness varies by variable and incomplete data were not imputed, so total sample size was not assigned as analytic N for an unidentified test. Original-only assignment: replication and reported_success are unassigned placeholders.\nSource follow-up: Both assigned rows have identical broad descriptions and p. 4 locators. Page 4 includes class-solution fit comparisons, sex differences, typical and muscularity-oriented eating disorder symptomatology and other outcomes. Selecting one statistic would require an unsupplied test/outcome locator. Replication sample is general Chinese adults aged 18–75, not exclusively the young adults aged 17–24 in the neutral original-study description.",
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f0eb6d5ebd63474b5475d4dd_drive.pdf",
+    "parent_objection": "An agreement with a printed number or broad author label cannot resolve a different contrast, sample, model or outcome. Independently establish a documented mapping using target metadata and primary evidence, otherwise undeterminable. For1596/1597 distinguish initial intervention within all participants from a no-intervention control comparison; do not select the slope by numeric coincidence. For1552/1553 distinguish all instructed participants from Tseltal-only follow-up models and the original study4 replication portion from extension manipulations."
+  },
+  {
+    "audit_id": 250,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 1, Abstract",
+      "quote": "Results replicated the four patterns of negative emotional eating",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": "The numeric target is unresolved or explicitly mismatched; the author label was retained as an observation. Require unique individual-effect mapping; do not transfer an agreeing overall paper/study label.",
+    "locator": {
+      "ref_o": "He, J., Chen, G., Wu, S., Niu, R., & Fan, X. (2020). Patterns of negative emotional eating among Chinese young adults: A latent class analysis. Appetite, 155, 104808. https://doi.org/10.1016/j.appet.2020.104808",
+      "doi_o": "10.1016/j.appet.2020.104808",
+      "study_o": null,
+      "ref_r": "Xu, Y., Song, J., Ren, Y., Barnhart, W. R., Dixit, U., Ji, F., Chen, C., & He, J. (2024). Negative emotional eating patterns in general Chinese adults: A replication and expansion study examining group differences in eating disorder symptomatology, psychosocial impairment, and emotion regulation difficulties. Eating Behaviors, 54, 101899. https://doi.org/10.1016/j.eatbeh.2024.101899",
+      "doi_r": "10.1016/j.eatbeh.2024.101899",
+      "url_r": null,
+      "study_r": "10.1016/j.eatbeh.2024.101899",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 250,
+      "description": "Negative emotional eating patterns and their relationship to disordered eating behaviors in Chinese young adults aged 17–24 years, examined using a person-oriented latent class analysis (LCA), including emotional over-eating and under-eating.",
+      "locators_o": "p.4",
+      "locators_r": "p.4",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt"
+      },
+      "target_side": "replication",
+      "source_version_note": "Published article copy from private Google Drive archive; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Xu,Song,Ren,Barnhart,Dixit,Ji,Chen,He. PDF has9pages; published range=101899; source endmatter checked in model review. Methods-related material pages[2, 3, 4, 5, 6, 7]; results-related material pages[1, 2, 3, 4, 5, 6, 7]; references atPDFpages[7]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f0eb6d5ebd63474b5475d4dd_drive.pdf"
+    },
+    "work_key": "10.1016/j.eatbeh.2024.101899",
+    "coding_context": {
+      "description": "negative emotional eating is closely related to disordered eating behaviors...In this study, we used a person-oriented approach, latent class analysis (LCA), to examine the negative emotional eating patterns and to characterize these patterns in a sample of 1,068 Chinese young adults (52.6% females, aged 17–24 years)...Overall, this study identified four distinct negative emotional eating patterns, among which, the emotional over- and under-eating was the most problematic.",
+      "es_repr": "p.4",
+      "reported_success_quote": "Results replicated the four patterns of negative emotional eating\nin previous research",
+      "coded_statistics_for_target_selection": {
+        "n_r": "600",
+        "es_value_r": "X2(3, N = 600) = 115.88",
+        "es_type_r": "test statistic",
+        "pval_value_r": "0.001",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "prior_findings": [],
+    "blind_target_description": "Supplied page 4 and broad description identify multiple LCA and group-comparison tests; no unique target test or outcome distinguishes the two assigned rows.",
+    "blind_extraction_notes": "Original: reused existing terminal acquisition miss cf5ce45ded0e480c8147bdd5.miss; no original primary full text available. Replication: No parent cache text. DOI landing page identified the matching title and publisher PII. Publisher full article returned HTTP 403; not retried. Unpaywall reports closed with no OA locations. OpenAlex reports closed with no best_oa_location or repository full text. Europe PMC reports no PMC/Europe PMC full text or PDF. Targeted title/DOI PDF and OSF/PsyArXiv/preprint searches yielded no accessible full primary paper. OSF files endpoint returned 404. Promising alternative Elsevier article API returned metadata only, without article body. Abstracts and section snippets were not accepted as full text. No signed-in or paid acquisition used. Supplied descriptions and page locators are identical for audit_ids 249 and 250 and do not specify a unique outcome or statistical comparison; no statistic selected or inferred. Recruited sample totals in abstracts were not treated as analytic sample sizes.\nSource follow-up: Fresh blind extraction from the named published-article text only. All five assigned original-side inputs have the same broad description and p.4 locator, with no test-specific outcome or contrast. No inference from audit_id or input order was made. The source is available, but a unique target test cannot be established; statistics therefore remain null. Table 1 labels its N as total sample; section 2.3 states missingness varies by variable and incomplete data were not imputed, so total sample size was not assigned as analytic N for an unidentified test. Original-only assignment: replication and reported_success are unassigned placeholders.\nSource follow-up: Both assigned rows have identical broad descriptions and p. 4 locators. Page 4 includes class-solution fit comparisons, sex differences, typical and muscularity-oriented eating disorder symptomatology and other outcomes. Selecting one statistic would require an unsupplied test/outcome locator. Replication sample is general Chinese adults aged 18–75, not exclusively the young adults aged 17–24 in the neutral original-study description.",
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f0eb6d5ebd63474b5475d4dd_drive.pdf",
+    "parent_objection": "An agreement with a printed number or broad author label cannot resolve a different contrast, sample, model or outcome. Independently establish a documented mapping using target metadata and primary evidence, otherwise undeterminable. For1596/1597 distinguish initial intervention within all participants from a no-intervention control comparison; do not select the slope by numeric coincidence. For1552/1553 distinguish all instructed participants from Tseltal-only follow-up models and the original study4 replication portion from extension manipulations."
+  }
+]
+
+FOCUSED SCOPE ROUND: Carry forward original brief, prior findings and unresolved objections. For reported_success return effect_specific_verdict_confirmed true ONLY with a unique defensible row/outcome mapping and the authors own applicable narrative. Include exact primary quotations. Numeric agreement alone never establishes sample/contrast identity. No commands or writes; whole reply under ## Answer.

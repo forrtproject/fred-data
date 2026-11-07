@@ -1,0 +1,183 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item carrying scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1317,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "2697",
+    "shipped_metric": "IRR",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "1,479",
+      "location": "p. 19, Participants",
+      "quote": "Our final samples of 1,479 people for testing H1",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/29127de04fbb81de3b0c984d.txt",
+      "confident": true,
+      "sample_role": "participants in final Hypothesis 1 analytic sample",
+      "exclusions": "837 failed preregistered data-quality criteria; incomplete celebrity responses excluded; only three H1 forms; 15 H1 participants from failed MTurk recruitment removed. H1 required three names per category."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Stahlberg, D., Sczesny, S., & Braun, F. (2001). Name Your Favorite Musician. Journal of Language and Social Psychology, 20(4), 464–469. https://doi.org/10.1177/0261927x01020004004",
+      "doi_o": "10.1177/0261927x01020004004",
+      "study_o": "2",
+      "ref_r": "Brohmer, H., Hofer, G., Bauch, S. A., Beitner, J., Berkessel, J., Corcoran, K., Garcia, D., Gruber, F. M., Giuliani, F., Jauk, E., Krammer, G., Malkoc, S., Metzler, H., Mües, H. M., Otto, K., Rahal, R.-M., Salwender, M., Stahlberg, D., Sczesny, S., … Athenstaedt, U. (2024). Effects of the Generic Masculine and its Alternatives in Germanophone countries - A Multi-lab Replication and Extension of Stahlberg, Sczesny, and Braun, 2001. https://doi.org/10.31219/osf.io/q56rk",
+      "doi_r": "10.31219/osf.io/q56rk",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "IRR",
+      "audit_id": 1317,
+      "description": "Comparison of generic masculine prompts with the other language-form groups on the number of women named.",
+      "locators_o": "p. 4",
+      "locators_r": "p. 13",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9951c2f4a65a6ce5b5ae9923.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/29127de04fbb81de3b0c984d.txt"
+      }
+    },
+    "work_key": "10.31219/osf.io/q56rk",
+    "coding_context": {
+      "es_repr": "p. 13",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1317,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "1.5",
+    "shipped_metric": "IRR",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "1.75",
+      "location": "p. 22, Hypothesis 1 random-intercept multilevel model",
+      "quote": "1.75, 95% CI [1.64, 1.87], p < .001)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/29127de04fbb81de3b0c984d.txt",
+      "confident": true,
+      "metric": "incidence rate ratio (IRR)",
+      "test_statistic": null
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Stahlberg, D., Sczesny, S., & Braun, F. (2001). Name Your Favorite Musician. Journal of Language and Social Psychology, 20(4), 464–469. https://doi.org/10.1177/0261927x01020004004",
+      "doi_o": "10.1177/0261927x01020004004",
+      "study_o": "2",
+      "ref_r": "Brohmer, H., Hofer, G., Bauch, S. A., Beitner, J., Berkessel, J., Corcoran, K., Garcia, D., Gruber, F. M., Giuliani, F., Jauk, E., Krammer, G., Malkoc, S., Metzler, H., Mües, H. M., Otto, K., Rahal, R.-M., Salwender, M., Stahlberg, D., Sczesny, S., … Athenstaedt, U. (2024). Effects of the Generic Masculine and its Alternatives in Germanophone countries - A Multi-lab Replication and Extension of Stahlberg, Sczesny, and Braun, 2001. https://doi.org/10.31219/osf.io/q56rk",
+      "doi_r": "10.31219/osf.io/q56rk",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "IRR",
+      "audit_id": 1317,
+      "description": "Comparison of generic masculine prompts with the other language-form groups on the number of women named.",
+      "locators_o": "p. 4",
+      "locators_r": "p. 13",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9951c2f4a65a6ce5b5ae9923.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/29127de04fbb81de3b0c984d.txt"
+      }
+    },
+    "work_key": "10.31219/osf.io/q56rk",
+    "coding_context": {
+      "es_repr": "p. 13",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1318,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "2697",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "1,479",
+      "location": "p. 19, Participants",
+      "quote": "Our final samples of 1,479 people for testing H1",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/29127de04fbb81de3b0c984d.txt",
+      "confident": true,
+      "sample_role": "participants in final Hypothesis 1 analytic sample",
+      "exclusions": "837 failed preregistered data-quality criteria; incomplete celebrity responses excluded; only three H1 forms; 15 H1 participants from failed MTurk recruitment removed. H1 required three names per category."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Stahlberg, D., Sczesny, S., & Braun, F. (2001). Name Your Favorite Musician. Journal of Language and Social Psychology, 20(4), 464–469. https://doi.org/10.1177/0261927x01020004004",
+      "doi_o": "10.1177/0261927x01020004004",
+      "study_o": "2",
+      "ref_r": "Brohmer, H., Hofer, G., Bauch, S. A., Beitner, J., Berkessel, J., Corcoran, K., Garcia, D., Gruber, F. M., Giuliani, F., Jauk, E., Krammer, G., Malkoc, S., Metzler, H., Mües, H. M., Otto, K., Rahal, R.-M., Salwender, M., Stahlberg, D., Sczesny, S., … Athenstaedt, U. (2024). Effects of the Generic Masculine and its Alternatives in Germanophone countries - A Multi-lab Replication and Extension of Stahlberg, Sczesny, and Braun, 2001. https://doi.org/10.31219/osf.io/q56rk",
+      "doi_r": "10.31219/osf.io/q56rk",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "test statistic",
+      "audit_id": 1318,
+      "description": "Comparison of capital I forms and masculine generics on the number of women named.",
+      "locators_o": "p. 4",
+      "locators_r": "p. 14",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9951c2f4a65a6ce5b5ae9923.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/29127de04fbb81de3b0c984d.txt"
+      }
+    },
+    "work_key": "10.31219/osf.io/q56rk",
+    "coding_context": {
+      "es_repr": "p. 14",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1319,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "2697",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "1,479",
+      "location": "p. 19, Participants",
+      "quote": "Our final samples of 1,479 people for testing H1",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/29127de04fbb81de3b0c984d.txt",
+      "confident": true,
+      "sample_role": "participants in final Hypothesis 1 analytic sample",
+      "exclusions": "837 failed preregistered data-quality criteria; incomplete celebrity responses excluded; only three H1 forms; 15 H1 participants from failed MTurk recruitment removed. H1 required three names per category."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Stahlberg, D., Sczesny, S., & Braun, F. (2001). Name Your Favorite Musician. Journal of Language and Social Psychology, 20(4), 464–469. https://doi.org/10.1177/0261927x01020004004",
+      "doi_o": "10.1177/0261927x01020004004",
+      "study_o": "2",
+      "ref_r": "Brohmer, H., Hofer, G., Bauch, S. A., Beitner, J., Berkessel, J., Corcoran, K., Garcia, D., Gruber, F. M., Giuliani, F., Jauk, E., Krammer, G., Malkoc, S., Metzler, H., Mües, H. M., Otto, K., Rahal, R.-M., Salwender, M., Stahlberg, D., Sczesny, S., … Athenstaedt, U. (2024). Effects of the Generic Masculine and its Alternatives in Germanophone countries - A Multi-lab Replication and Extension of Stahlberg, Sczesny, and Braun, 2001. https://doi.org/10.31219/osf.io/q56rk",
+      "doi_r": "10.31219/osf.io/q56rk",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "test statistic",
+      "audit_id": 1319,
+      "description": "Comparison of feminine-masculine word pairs and masculine generics on the number of women named.",
+      "locators_o": "",
+      "locators_r": "p. 14",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9951c2f4a65a6ce5b5ae9923.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/29127de04fbb81de3b0c984d.txt"
+      }
+    },
+    "work_key": "10.31219/osf.io/q56rk",
+    "coding_context": {
+      "es_repr": "p. 14",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

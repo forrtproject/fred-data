@@ -1,0 +1,91 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1409,
+    "field": "pval_value_r",
+    "comparison": "differ",
+    "shipped": "0.501",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".395",
+      "location": "manuscript p.14 (PDF p.16), Key Results: Pricing",
+      "quote": "t(309) = .85, p = .395, d = 0.10",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/637d8d9d582bcce0212cb619.txt",
+      "confident": true,
+      "bound": "e"
+    },
+    "locator": {
+      "ref_o": "Irmak, C., Wakslak, C. J., & Trope, Y. (2013). Selling the Forest, Buying the Trees: The Effect of Construal Level on Seller-Buyer Price Discrepancy. Journal of Consumer Research, 40(2), 284–297. https://doi.org/10.1086/670020",
+      "doi_o": "10.1086/670020",
+      "study_o": "2",
+      "ref_r": "Ziano, I., Yao, J. D., Gao, Y., & Feldman, G. (2020). Impact of ownership on liking and value: Replications and extensions of three ownership effect experiments. Journal of Experimental Social Psychology, 89, 103972. https://doi.org/10.1016/j.jesp.2020.103972",
+      "doi_r": "10.1016/j.jesp.2020.103972",
+      "url_r": null,
+      "study_r": "2a",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1409,
+      "description": "Comparison of seller and buyer prices.",
+      "locators_o": "p.5",
+      "locators_r": "p.6",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/79c1d25aa512a40b14daf27a.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/637d8d9d582bcce0212cb619.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.103972",
+    "coding_context": {
+      "es_repr": "p.6",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1410,
+    "field": "pval_value_r",
+    "comparison": "differ",
+    "shipped": "0.016",
+    "shipped_metric": "etasq (partial)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".001",
+      "location": "manuscript p.21 (PDF p.23), Results",
+      "quote": "t(295.06) = 5.71, p < .001, d = .65",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/637d8d9d582bcce0212cb619.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "locator": {
+      "ref_o": "Mandel, D. R. (2002). Beyond mere ownership: transaction demand as a moderator of the endowment effect. Organizational Behavior and Human Decision Processes, 88(2), 737–747. https://doi.org/10.1016/s0749-5978(02)00013-4",
+      "doi_o": "10.1016/s0749-5978(02)00013-4",
+      "study_o": "1",
+      "ref_r": "Ziano, I., Yao, J. D., Gao, Y., & Feldman, G. (2020). Impact of ownership on liking and value: Replications and extensions of three ownership effect experiments. Journal of Experimental Social Psychology, 89, 103972. https://doi.org/10.1016/j.jesp.2020.103972",
+      "doi_r": "10.1016/j.jesp.2020.103972",
+      "url_r": null,
+      "study_r": "3a",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 1410,
+      "description": "Comparison of seller and buyer prices.",
+      "locators_o": "p.4",
+      "locators_r": "p.8",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f0c752fac3e94e2a372f9efe.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/637d8d9d582bcce0212cb619.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.103972",
+    "coding_context": {
+      "es_repr": "p.8",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

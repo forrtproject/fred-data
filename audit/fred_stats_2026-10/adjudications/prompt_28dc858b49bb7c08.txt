@@ -1,0 +1,165 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1210,
+    "field": "n_r",
+    "comparison": "mismatched_target",
+    "shipped": "18",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "18",
+      "sample_role": "Participants contributing to the within-subject day-2 theta contrast; analytic sample corroborated by the paired-test degrees of freedom.",
+      "exclusions": "21 recruited; three excluded for complete absence of explicit CS–US contingency awareness after acquisition.",
+      "location": "Materials and Methods, Subjects; target test Results, Electrophysiological Brain Correlates of Day 2 Recall, first paragraph; Fig. 3A",
+      "quote": "final sample of 18",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/56b394ddfc5fe4d7e0d50f40.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Mueller, E. M., Panitz, C., Hermann, C., & Pizzagalli, D. A. (2014). Prefrontal Oscillations during Recall of Conditioned and Extinguished Fear in Humans. The Journal of Neuroscience, 34(21), 7059–7066. https://doi.org/10.1523/jneurosci.3427-13.2014",
+      "doi_o": "10.1523/jneurosci.3427-13.2014",
+      "study_o": "1",
+      "ref_r": "Sperl, M. F. J., Panitz, C., Rosso, I. M., Dillon, D. G., Kumar, P., Hermann, A., Whitton, A. E., Hermann, C., Pizzagalli, D. A., & Mueller, E. M. (2018). Fear Extinction Recall Modulates Human Frontomedial Theta and Amygdala Activity. Cerebral Cortex, 29(2), 701–715. https://doi.org/10.1093/cercor/bhx353",
+      "doi_r": "10.1093/cercor/bhx353",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1210,
+      "description": "Relationship between AMC theta and fear expression.",
+      "locators_o": "p.2&3",
+      "locators_r": "p.2",
+      "text_paths": {}
+    },
+    "work_key": "10.1093/cercor/bhx353",
+    "coding_context": {
+      "es_repr": "p.2 to 7",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1210,
+    "field": "es_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "F(1, 17) = 6.88",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "2.31",
+      "metric": "t",
+      "test_statistic": "t(17) = 2.31",
+      "location": "Results, Electrophysiological Brain Correlates of Day 2 Recall, first paragraph; Fig. 3A",
+      "quote": "t(17) = 2.31",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/56b394ddfc5fe4d7e0d50f40.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Mueller, E. M., Panitz, C., Hermann, C., & Pizzagalli, D. A. (2014). Prefrontal Oscillations during Recall of Conditioned and Extinguished Fear in Humans. The Journal of Neuroscience, 34(21), 7059–7066. https://doi.org/10.1523/jneurosci.3427-13.2014",
+      "doi_o": "10.1523/jneurosci.3427-13.2014",
+      "study_o": "1",
+      "ref_r": "Sperl, M. F. J., Panitz, C., Rosso, I. M., Dillon, D. G., Kumar, P., Hermann, A., Whitton, A. E., Hermann, C., Pizzagalli, D. A., & Mueller, E. M. (2018). Fear Extinction Recall Modulates Human Frontomedial Theta and Amygdala Activity. Cerebral Cortex, 29(2), 701–715. https://doi.org/10.1093/cercor/bhx353",
+      "doi_r": "10.1093/cercor/bhx353",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1210,
+      "description": "Relationship between AMC theta and fear expression.",
+      "locators_o": "p.2&3",
+      "locators_r": "p.2",
+      "text_paths": {}
+    },
+    "work_key": "10.1093/cercor/bhx353",
+    "coding_context": {
+      "es_repr": "p.2 to 7",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1210,
+    "field": "pval_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.018",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.017",
+      "bound": "e",
+      "location": "Results, Electrophysiological Brain Correlates of Day 2 Recall, first paragraph; Fig. 3A",
+      "quote": "P = 0.017, one-sided",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/56b394ddfc5fe4d7e0d50f40.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Mueller, E. M., Panitz, C., Hermann, C., & Pizzagalli, D. A. (2014). Prefrontal Oscillations during Recall of Conditioned and Extinguished Fear in Humans. The Journal of Neuroscience, 34(21), 7059–7066. https://doi.org/10.1523/jneurosci.3427-13.2014",
+      "doi_o": "10.1523/jneurosci.3427-13.2014",
+      "study_o": "1",
+      "ref_r": "Sperl, M. F. J., Panitz, C., Rosso, I. M., Dillon, D. G., Kumar, P., Hermann, A., Whitton, A. E., Hermann, C., Pizzagalli, D. A., & Mueller, E. M. (2018). Fear Extinction Recall Modulates Human Frontomedial Theta and Amygdala Activity. Cerebral Cortex, 29(2), 701–715. https://doi.org/10.1093/cercor/bhx353",
+      "doi_r": "10.1093/cercor/bhx353",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1210,
+      "description": "Relationship between AMC theta and fear expression.",
+      "locators_o": "p.2&3",
+      "locators_r": "p.2",
+      "text_paths": {}
+    },
+    "work_key": "10.1093/cercor/bhx353",
+    "coding_context": {
+      "es_repr": "p.2 to 7",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1210,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "Results, Electrophysiological Brain Correlates of Day 2 Recall, opening sentence; Discussion, paragraph beginning Replicating previous findings in humans",
+      "quote": "Replicating our prior human EEG study",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/56b394ddfc5fe4d7e0d50f40.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Mueller, E. M., Panitz, C., Hermann, C., & Pizzagalli, D. A. (2014). Prefrontal Oscillations during Recall of Conditioned and Extinguished Fear in Humans. The Journal of Neuroscience, 34(21), 7059–7066. https://doi.org/10.1523/jneurosci.3427-13.2014",
+      "doi_o": "10.1523/jneurosci.3427-13.2014",
+      "study_o": "1",
+      "ref_r": "Sperl, M. F. J., Panitz, C., Rosso, I. M., Dillon, D. G., Kumar, P., Hermann, A., Whitton, A. E., Hermann, C., Pizzagalli, D. A., & Mueller, E. M. (2018). Fear Extinction Recall Modulates Human Frontomedial Theta and Amygdala Activity. Cerebral Cortex, 29(2), 701–715. https://doi.org/10.1093/cercor/bhx353",
+      "doi_r": "10.1093/cercor/bhx353",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1210,
+      "description": "Relationship between AMC theta and fear expression.",
+      "locators_o": "p.2&3",
+      "locators_r": "p.2",
+      "text_paths": {}
+    },
+    "work_key": "10.1093/cercor/bhx353",
+    "coding_context": {
+      "es_repr": "p.2 to 7",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

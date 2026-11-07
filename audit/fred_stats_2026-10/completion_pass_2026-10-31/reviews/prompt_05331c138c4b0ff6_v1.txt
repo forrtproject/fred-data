@@ -1,0 +1,371 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "173": {
+      "source_key": "05331c138c4b0ff6",
+      "side": "replication",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "description": "This effect examines how block type (switch vs. non-switch) affects reaction times (global switch cost condition)",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 173,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Global-switch-cost reaction-time ANOVA: nonswitch trials in switch blocks versus pure blocks; main effect of block type.",
+      "worker_notes": "Identity independently verified in supplied Cambridge Core primary research-article text: Bilingualism and flexibility in task switching, A close replication study; Rebecca Ward and Justin Awani; published 23 May 2024; Studies in Second Language Acquisition 46(4), 996–1012; DOI 10.1017/S0272263124000378. Text includes Methods, Results, Discussion and references, rather than an abstract-only excerpt. No PDF supplied. Only assigned unfinished fields examined; all other fields are placeholders. Printed metric is partial eta squared, retained without conversion to eta squared. Target matched by the named outcome, block/trial contrast and interaction/main-effect role, independently of row ordering. No analytic N assigned.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This effect examines how block type (switch vs. non-switch) affects reaction times (global switch cost condition)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "10",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    },
+    "175": {
+      "source_key": "05331c138c4b0ff6",
+      "side": "replication",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "description": "This interaction effect investigates how block type (switch vs. non-switch) and language status interact to affect global switch costs (global switch cost condition)",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 175,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Global-switch-cost reaction-time ANOVA: interaction of block type and bilingual/monolingual language status.",
+      "worker_notes": "Identity independently verified in supplied Cambridge Core primary research-article text: Bilingualism and flexibility in task switching, A close replication study; Rebecca Ward and Justin Awani; published 23 May 2024; Studies in Second Language Acquisition 46(4), 996–1012; DOI 10.1017/S0272263124000378. Text includes Methods, Results, Discussion and references, rather than an abstract-only excerpt. No PDF supplied. Only assigned unfinished fields examined; all other fields are placeholders. Printed metric is partial eta squared, retained without conversion to eta squared. Target matched by the named outcome, block/trial contrast and interaction/main-effect role, independently of row ordering. No analytic N assigned.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This interaction effect investigates how block type (switch vs. non-switch) and language status interact to affect global switch costs (global switch cost condition)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "10",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    },
+    "176": {
+      "source_key": "05331c138c4b0ff6",
+      "side": "replication",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "description": "This effect examines the difference in reaction times between switch and non-switch trials within the switch block (local switch cost)",
+        "locators_o": "p. 6",
+        "locators_r": "",
+        "audit_id": 176,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Local-switch-cost reaction-time ANOVA within switching block: main effect of switch versus nonswitch trials.",
+      "worker_notes": "Identity independently verified in supplied Cambridge Core primary research-article text: Bilingualism and flexibility in task switching, A close replication study; Rebecca Ward and Justin Awani; published 23 May 2024; Studies in Second Language Acquisition 46(4), 996–1012; DOI 10.1017/S0272263124000378. Text includes Methods, Results, Discussion and references, rather than an abstract-only excerpt. No PDF supplied. Only assigned unfinished fields examined; all other fields are placeholders. Printed metric is partial eta squared, retained without conversion to eta squared. Target matched by the named outcome, block/trial contrast and interaction/main-effect role, independently of row ordering. No analytic N assigned.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This effect examines the difference in reaction times between switch and non-switch trials within the switch block (local switch cost)",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "11",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    },
+    "178": {
+      "source_key": "05331c138c4b0ff6",
+      "side": "replication",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": null,
+        "es_type_r": "etasq",
+        "description": "This interaction effect examines whether the relationship between switch status (switch vs. non-switch trials) and local switch costs is moderated by language status (local switch cost condition)",
+        "locators_o": "p. 6",
+        "locators_r": "",
+        "audit_id": 178,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Local-switch-cost reaction-time ANOVA within switching block: switch status by bilingual/monolingual language status interaction.",
+      "worker_notes": "Identity independently verified in supplied Cambridge Core primary research-article text: Bilingualism and flexibility in task switching, A close replication study; Rebecca Ward and Justin Awani; published 23 May 2024; Studies in Second Language Acquisition 46(4), 996–1012; DOI 10.1017/S0272263124000378. Text includes Methods, Results, Discussion and references, rather than an abstract-only excerpt. No PDF supplied. Only assigned unfinished fields examined; all other fields are placeholders. Printed metric is partial eta squared, retained without conversion to eta squared. Target matched by the named outcome, block/trial contrast and interaction/main-effect role, independently of row ordering. No analytic N assigned.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This interaction effect examines whether the relationship between switch status (switch vs. non-switch trials) and local switch costs is moderated by language status (local switch cost condition)",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "11",
+        "es_type_o": null,
+        "es_type_r": "etasq",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 173,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".62",
+        "metric": "partial eta squared (η 2 p)",
+        "test_statistic": "F(1,76) = 125.97",
+        "location": "Results, GSC 2 x 2 ANOVA, main effect of block type",
+        "quote": "A main effect of block type was found [F(1,76) = 125.97, p < .001, η 2 p =.62]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 173,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Named reaction-time factorial effect matches the description; retain printed partial eta squared and, where assigned, the p value/bound from the identical ANOVA test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "location": "Results, GSC 2 x 2 ANOVA, main effect of block type",
+        "quote": "A main effect of block type was found [F(1,76) = 125.97, p < .001, η 2 p =.62]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.62",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 175,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".051",
+        "metric": "partial eta squared (η 2 p)",
+        "test_statistic": "F (1, 76) = 4.063",
+        "location": "Results, GSC 2 x 2 ANOVA, block type by language status interaction",
+        "quote": "A significant interaction was found between block type and language status [ F (1, 76) = 4.063, p =.047, η 2 p =.051]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 175,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Named reaction-time factorial effect matches the description; retain printed partial eta squared and, where assigned, the p value/bound from the identical ANOVA test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "location": "Results, GSC 2 x 2 ANOVA, block type by language status interaction",
+        "quote": "A significant interaction was found between block type and language status [ F (1, 76) = 4.063, p =.047, η 2 p =.051]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.051",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 175,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".047",
+        "bound": "e",
+        "location": "Results, GSC 2 x 2 ANOVA, block type by language status interaction",
+        "quote": "A significant interaction was found between block type and language status [ F (1, 76) = 4.063, p =.047, η 2 p =.051]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 175,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Named reaction-time factorial effect matches the description; retain printed partial eta squared and, where assigned, the p value/bound from the identical ANOVA test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "location": "Results, GSC 2 x 2 ANOVA, block type by language status interaction",
+        "quote": "A significant interaction was found between block type and language status [ F (1, 76) = 4.063, p =.047, η 2 p =.051]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.047",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 176,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".418",
+        "metric": "partial eta squared (η 2 p)",
+        "test_statistic": "F (1, 76) = 54.66",
+        "location": "Results, LSC 2 x 2 ANOVA, main effect of switch status",
+        "quote": "A main effect of switch status was observed [ F (1, 76) = 54.66, p < .001, η 2 p =.418]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 176,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Named reaction-time factorial effect matches the description; retain printed partial eta squared and, where assigned, the p value/bound from the identical ANOVA test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "location": "Results, LSC 2 x 2 ANOVA, main effect of switch status",
+        "quote": "A main effect of switch status was observed [ F (1, 76) = 54.66, p < .001, η 2 p =.418]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.418",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 176,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "Results, LSC 2 x 2 ANOVA, main effect of switch status",
+        "quote": "A main effect of switch status was observed [ F (1, 76) = 54.66, p < .001, η 2 p =.418]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 176,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Named reaction-time factorial effect matches the description; retain printed partial eta squared and, where assigned, the p value/bound from the identical ANOVA test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "location": "Results, LSC 2 x 2 ANOVA, main effect of switch status",
+        "quote": "A main effect of switch status was observed [ F (1, 76) = 54.66, p < .001, η 2 p =.418]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 178,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".015",
+        "metric": "partial eta squared (η 2 p)",
+        "test_statistic": "F(1,76) = 1.174",
+        "location": "Results, LSC 2 x 2 ANOVA, switch status by language status interaction",
+        "quote": "nor was there a significant interaction [F(1,76) = 1.174, p =.282, η 2 p =.015]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 178,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Named reaction-time factorial effect matches the description; retain printed partial eta squared and, where assigned, the p value/bound from the identical ANOVA test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3384fcb29eb904120f912997.txt",
+        "location": "Results, LSC 2 x 2 ANOVA, switch status by language status interaction",
+        "quote": "nor was there a significant interaction [F(1,76) = 1.174, p =.282, η 2 p =.015]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.015",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/05331c138c4b0ff6. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_05331c138c4b0ff6_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

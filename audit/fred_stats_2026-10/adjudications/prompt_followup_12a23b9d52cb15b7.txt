@@ -1,0 +1,434 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1078,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "F(1, 112) = 4.94",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "4.94",
+      "metric": "F",
+      "test_statistic": "F( 1, 112) = 4.94",
+      "location": "Printed p. 738 (PDF page 6), Results and Discussion",
+      "quote": "socials versus individualists and competitors, F( 1, 112) = 4.94,\n                                                                                  Given repeated experience with situations of intermediate or\np < .05, and between individualists and competitors, F( 1, 112)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "1",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1078,
+      "description": "Social value orientation (SLM) and secure attachment (AAS), comparing prosocials and competitors in sample 2.",
+      "locators_o": "p.6",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.6",
+      "description": "social value orientation (SLM); secure attachment (AAS); sample 2 - prosocials have a higher level of secure attachment than competitors",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1078,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".05",
+      "bound": "l",
+      "location": "Printed p. 738 (PDF page 6), Results and Discussion",
+      "quote": "socials versus individualists and competitors, F( 1, 112) = 4.94,\n                                                                                  Given repeated experience with situations of intermediate or\np < .05, and between individualists and competitors, F( 1, 112)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "1",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1078,
+      "description": "Social value orientation (SLM) and secure attachment (AAS), comparing prosocials and competitors in sample 2.",
+      "locators_o": "p.6",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.6",
+      "description": "social value orientation (SLM); secure attachment (AAS); sample 2 - prosocials have a higher level of secure attachment than competitors",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1079,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "F(1, 444) = 4.88",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "2.76",
+      "metric": "F",
+      "test_statistic": "F(2, 444) = 2.76",
+      "location": "Printed p. 736 (PDF page 4), Results and Discussion",
+      "quote": "of anxious-ambivalent attachment, F(2, 444) = 2.76, p < .10.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "1",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1079,
+      "description": "Anxious-ambivalent attachment among prosocials, individualists, and competitors.",
+      "locators_o": "p.4",
+      "locators_r": "p. 5 & 6",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.4",
+      "description": "Prosocials had significantly lower anxious-ambivalent attachment when compared with individualists and competitors",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1080,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "F(1, 535) = 9.14",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "4.82",
+      "metric": "F",
+      "test_statistic": "F(2, 535) = 4.82",
+      "location": "Printed p. 739 (PDF page 7), Results and Discussion",
+      "quote": "orientation, F(2, 535) = 4.82, p < .01.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1080,
+      "description": "Social value orientation (TDM) and total number of siblings, comparing prosocials and competitors in sample 2.",
+      "locators_o": "p.7",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.7",
+      "description": "social value orientation (TDM); total siblings; sample 2 - prosocials have more siblings than competitors",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1080,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".01",
+      "bound": "l",
+      "location": "Printed p. 739 (PDF page 7), Results and Discussion",
+      "quote": "orientation, F(2, 535) = 4.82, p < .01.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1080,
+      "description": "Social value orientation (TDM) and total number of siblings, comparing prosocials and competitors in sample 2.",
+      "locators_o": "p.7",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.7",
+      "description": "social value orientation (TDM); total siblings; sample 2 - prosocials have more siblings than competitors",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1081,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "F(1, 535) = 12.27",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "12.27",
+      "metric": "F",
+      "test_statistic": "F( 1, 535) = 12.27",
+      "location": "Printed p. 740 (PDF page 8), Results and Discussion",
+      "quote": "versus individualists and competitors, F( 1, 535) = 12.27, p <         that are characteristic of later life phases call for tendencies\n.001. Differences between individualists and competitors were",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1081,
+      "description": "Social value orientation (TDM) and number of sisters, comparing prosocials and individualists in sample 2.",
+      "locators_o": "p.8",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.8",
+      "description": "social value orientation (TDM); sister; sample 2 - prosocials have more sisters than individualists",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1081,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.001",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".001",
+      "bound": "l",
+      "location": "Printed p. 740 (PDF page 8), Results and Discussion",
+      "quote": "versus individualists and competitors, F( 1, 535) = 12.27, p <         that are characteristic of later life phases call for tendencies\n.001. Differences between individualists and competitors were",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1081,
+      "description": "Social value orientation (TDM) and number of sisters, comparing prosocials and individualists in sample 2.",
+      "locators_o": "p.8",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.8",
+      "description": "social value orientation (TDM); sister; sample 2 - prosocials have more sisters than individualists",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1082,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "F(2, 535) = 3.64",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "4.94",
+      "metric": "F",
+      "test_statistic": "F{\\, 535) = 4.94",
+      "location": "Printed p. 740 (PDF page 8), Results and Discussion",
+      "quote": "versus individualists and competitors, F{\\, 535) = 4.94, p <           viduals tend to establish themselves (e.g., in terms of careers\n.05. Differences between individualists and competitors (M =",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1082,
+      "description": "Social value orientation (TDM) and number of older siblings, comparing prosocials and individualists in sample 2.",
+      "locators_o": "p.8",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.8",
+      "description": "social value orientation (TDM); older siblings; sample 2 - prosocials have more older siblings than individualists",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1082,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".05",
+      "bound": "l",
+      "location": "Printed p. 740 (PDF page 8), Results and Discussion",
+      "quote": "versus individualists and competitors, F{\\, 535) = 4.94, p <           viduals tend to establish themselves (e.g., in terms of careers\n.05. Differences between individualists and competitors (M =",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1082,
+      "description": "Social value orientation (TDM) and number of older siblings, comparing prosocials and individualists in sample 2.",
+      "locators_o": "p.8",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.8",
+      "description": "social value orientation (TDM); older siblings; sample 2 - prosocials have more older siblings than individualists",
+      "reported_success_quote": "we replicated earlier findings that prosociality was associated with a greater level of secure attachment and a lower level of avoidant attachment. Moreover, prosociality was positively related to the number of siblings, especially sisters, as discovered by Study 3 of the original study. However, we failed to replicate the significant relation between SVO and age. Generally, we conclude that prosocial orientation is associated—even if modestly—with secure and avoidant attachment and the number of siblings, but the link with age is a question open to future investigation.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  },
+  {
+    "audit_id": 1083,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "X2(3, N = 1593) = 166.88",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "62.25",
+      "metric": "partial chi-square",
+      "test_statistic": "partial x2 ( 6 , # = 1593) = 62.25",
+      "location": "Printed p. 741 (PDF page 9), Results and Discussion",
+      "quote": "interaction, partial x2 ( 6 , # = 1593) = 62.25,/? < .001.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_eee966862079d125e91cb12c.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "4",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1083,
+      "description": "Relationship between age and social value orientation (main effect).",
+      "locators_o": "p.9",
+      "locators_r": "p. 5 & 6",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.9",
+      "description": "The association of age with Social value orienatation-main effect",
+      "reported_success_quote": "we failed to replicate the association between\nSVO and age that discovered by the Original Study 4.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

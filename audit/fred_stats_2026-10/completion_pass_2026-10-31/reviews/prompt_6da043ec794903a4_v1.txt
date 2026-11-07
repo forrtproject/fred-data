@@ -1,0 +1,257 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1552": {
+      "source_key": "6da043ec794903a4",
+      "side": "replication",
+      "input": {
+        "ref_o": "Haun, D. B. M., Rapold, C. J., Janzen, G., & Levinson, S. C. (2011). Plasticity of human spatial cognition: Spatial language and cognition covary across cultures. Cognition, 119(1), 70–80. https://doi.org/10.1016/j.cognition.2010.12.009",
+        "doi_o": "10.1016/j.cognition.2010.12.009",
+        "study_o": "4",
+        "ref_r": "Li, P., & Abarbanell, L. (2018). Competing perspectives on frames of reference in language and thought. Cognition, 170, 9–24. https://doi.org/10.1016/j.cognition.2017.09.005",
+        "doi_r": "10.1016/j.cognition.2017.09.005",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Cognitive strategy preferences across task complexity and instruction conditions (simple versus complex trials).",
+        "locators_o": "p.10",
+        "locators_r": "p.5",
+        "audit_id": 1552,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt"
+        },
+        "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/21d592bbdaac7076a72e1335_drive.pdf",
+        "source_version_note": "Published article copy from private Google Drive archive"
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Li and Abarbanell (2018), Experiment 1 instructed conditions, percentage-correct ANOVA main effect of trial difficulty (easy versus hard), across English/Tseltal children and both counterbalanced block orders. Matched by the named contrast and p.5 locator (printed p.13), not row ordering or statistic matching.",
+      "worker_notes": "Only assigned n_r and reported_success completed. Original side and replication es/p are unassigned placeholders, not findings of absence. Analytic N derivation: 25 English-speaking + 32 Tseltal-speaking = 57 distinct children (Fig.2), mutually exclusive language groups in the instructed-condition analysis. Methods cross-check: English Ego-to-Geo 13 + Geo-to-Ego 12 = 25; Tseltal Ego-to-Geo 16 + Geo-to-Ego 16 = 32. Repeated egocentric/geocentric and easy/hard measurements are not summed. N is not inferred from df or whole-study recruitment. Reported success is mixed at the Experiment 1 replication-and-extension level: the authors say the replication portion mirrored Haun et al., while added manipulations did not favor the linguistic enculturation account. This is not a separate author verdict on each ANOVA main effect. The instructed-condition outcome is percentage correct, distinct from open-ended strategy classification. Rendered PDF pages 4–7 inspected for layout.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "cognitive strategy preferences across different levels of task-complexity and instruction (simple versus complex trials)",
+        "es_repr_o": "p.10",
+        "es_repr_r": "p.5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "no",
+        "reported_success_quote": "Although our results from the replication portion of the experiment mirrored those from Haun et al.,\ndata from our additional manipulations (counterbalancing the order of\nthe egocentric and geocentric blocks for the English-speakers and as-\nsessing the Tseltal-speaking children’s left/right language comprehen-\nsion) did not favor the linguistic enculturation account."
+      }
+    },
+    "1553": {
+      "source_key": "6da043ec794903a4",
+      "side": "replication",
+      "input": {
+        "ref_o": "Haun, D. B. M., Rapold, C. J., Janzen, G., & Levinson, S. C. (2011). Plasticity of human spatial cognition: Spatial language and cognition covary across cultures. Cognition, 119(1), 70–80. https://doi.org/10.1016/j.cognition.2010.12.009",
+        "doi_o": "10.1016/j.cognition.2010.12.009",
+        "study_o": "4",
+        "ref_r": "Li, P., & Abarbanell, L. (2018). Competing perspectives on frames of reference in language and thought. Cognition, 170, 9–24. https://doi.org/10.1016/j.cognition.2017.09.005",
+        "doi_r": "10.1016/j.cognition.2017.09.005",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Cognitive strategy preferences across task complexity and instruction conditions (geocentric versus egocentric instructions).",
+        "locators_o": "p.10",
+        "locators_r": "p.5",
+        "audit_id": 1553,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt"
+        },
+        "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/21d592bbdaac7076a72e1335_drive.pdf",
+        "source_version_note": "Published article copy from private Google Drive archive"
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Li and Abarbanell (2018), Experiment 1 instructed conditions, percentage-correct ANOVA main effect of trial type (egocentric versus geocentric), across English/Tseltal children and both counterbalanced block orders. Matched by the named contrast and p.5 locator (printed p.13), not row ordering or statistic matching.",
+      "worker_notes": "Only assigned n_r and reported_success completed. Original side and replication es/p are unassigned placeholders, not findings of absence. Analytic N derivation: 25 English-speaking + 32 Tseltal-speaking = 57 distinct children (Fig.2), mutually exclusive language groups in the instructed-condition analysis. Methods cross-check: English Ego-to-Geo 13 + Geo-to-Ego 12 = 25; Tseltal Ego-to-Geo 16 + Geo-to-Ego 16 = 32. Repeated egocentric/geocentric and easy/hard measurements are not summed. N is not inferred from df or whole-study recruitment. Reported success is mixed at the Experiment 1 replication-and-extension level: the authors say the replication portion mirrored Haun et al., while added manipulations did not favor the linguistic enculturation account. This is not a separate author verdict on each ANOVA main effect. The instructed-condition outcome is percentage correct, distinct from open-ended strategy classification. Rendered PDF pages 4–7 inspected for layout.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "cognitive strategy preferences across different levels of task-complexity and instruction (geocentric versus egocentric instructions)",
+        "es_repr_o": "p.10",
+        "es_repr_r": "p.5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "no",
+        "reported_success_quote": "Although our results from the replication portion of the experiment mirrored those from Haun et al.,\ndata from our additional manipulations (counterbalancing the order of\nthe egocentric and geocentric blocks for the English-speakers and as-\nsessing the Tseltal-speaking children’s left/right language comprehen-\nsion) did not favor the linguistic enculturation account."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1552,
+      "field": "n_r",
+      "blind": {
+        "value": "57",
+        "sample_role": "Children contributing percentage-correct scores to the Experiment 1 instructed-condition ANOVA: 25 English-speaking and 32 Tseltal-speaking participants. Difficulty and trial type are repeated measures.",
+        "exclusions": "Separate open-ended groups (14 English and 14 Tseltal) are outside this critical ANOVA. No further instructed-condition exclusions reported. Three Tseltal children not given the additional language-comprehension task are not excluded from this spatial analysis.",
+        "location": "Printed p.14 (PDF p.6), Fig.2 caption; p.13 (PDF p.5), section 2.2.1.2; p.12, section 2.1.1.",
+        "quote": "comparing the English (N = 25) and Tseltal speakers (N = 32).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1552,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named trial difficulty (easy versus hard) and locator identify the common instructed-condition percentage-correct ANOVA (section 2.2.1.2). Fig.2 explicitly identifies its final mutually exclusive language groups. Open-ended groups and the separate language-comprehension sample are outside this target. No additional instructed-condition exclusions stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "location": "Printed p.14 (PDF p.6), Fig.2 caption; p.13 (PDF p.5), section 2.2.1.2; p.12, section 2.1.1.",
+        "quote": "comparing the English (N = 25) and Tseltal speakers (N = 32).",
+        "calculation": "25 English-speaking + 32 Tseltal-speaking = 57 analytic participants; cross-check (13 + 12) + (16 + 16) = 57. Repeated trials/blocks are not added."
+      },
+      "supported": true,
+      "shipped": "55",
+      "comparison": "near",
+      "prior_adjudication": {
+        "audit_id": 1552,
+        "field": "n_r",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "Published p. 11 (PDF p. 3), Section 1; p. 12 (PDF p. 4), Section 2.1.1; pp. 13–15 (PDF pp. 5–7), Sections 2.2.1.2 & 2.3",
+        "quote": "replication portion of the experiment mirrored those from Haun et al., … data from our additional manipulations",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "reason": "Haun et al. (2011) Study 4 tested only the geocentric-language group (Hai||om) in counterbalanced instructed blocks, whereas Li & Abarbanell (2018) Experiment 1 explicitly separates that Study 4 replication portion (Tseltal instructed N = 32: 16 Ego-to-Geo + 16 Geo-to-Ego) from the extension manipulation adding counterbalanced English blocks (English instructed N = 25: 13 Ego-to-Geo + 12 Geo-to-Ego; total Experiment 1 recruitment N = 85 including 28 open-ended children). Because Experiment 1 reports easy-versus-hard trial difficulty only in the pooled 2 × 2 × 2 × 2 omnibus ANOVA across all instructed participants (N = 57, F(1, 53) = 114.80, p < 0.001, ηp2 = 0.68) and between-language simple-effect follow-ups (F(1, 55) = 31.56 and F(1, 55) = 5.96, whose residual df = 55 the shipped n_r = 55 mistakes for sample size) without a separate Experiment 1 Tseltal-only difficulty test, selecting N = 57 over the Study 4 replication sample (N = 32) relies on numeric coincidence with the shipped effect size and leaves the target analytic sample undeterminable.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 1552,
+      "field": "reported_success",
+      "blind": {
+        "value": "mixed",
+        "location": "Printed p.15 (PDF p.7), section 2.3, first paragraph, Experiment 1 Discussion.",
+        "quote": "Although our results from the ... replication portion of the experiment mirrored those from Haun et al., ... data from our additional manipulations (counterbalancing the order of ... did not favor the linguistic enculturation account.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1552,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Mixed encodes the authors' explicit Experiment 1 narrative: replication portion mirrored prior findings, while added manipulations did not favor the original linguistic enculturation account. Scope is the experiment-level author verdict, not significance of the target main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "location": "Printed p.15 (PDF p.7), section 2.3, first paragraph, Experiment 1 Discussion.",
+        "quote": "Although our results from the ... replication portion of the experiment mirrored those from Haun et al., ... data from our additional manipulations (counterbalancing the order of ... did not favor the linguistic enculturation account.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "differ",
+      "prior_adjudication": {
+        "audit_id": 1552,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Published pp. 13–15 (PDF pp. 5–7), Sections 2.2.1.2 & 2.3",
+        "quote": "replication portion of the experiment mirrored those from Haun et al., … data from our additional manipulations",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "reason": "Experiment 1 tests the easy-versus-hard trial difficulty contrast only in the pooled English-plus-Tseltal omnibus ANOVA (F(1, 53) = 114.80) and cross-language interactions without reporting a separate test for the Tseltal-only Study 4 replication sample, leaving the target sample/model unresolved without numerical matching. Moreover, the Experiment 1 Discussion never evaluates trial difficulty specifically, offering only a broad contrast between the replication portion and extension manipulations from which an effect-specific replication verdict for simple-versus-complex trials cannot be inferred.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 1553,
+      "field": "n_r",
+      "blind": {
+        "value": "57",
+        "sample_role": "Children contributing percentage-correct scores to the Experiment 1 instructed-condition ANOVA: 25 English-speaking and 32 Tseltal-speaking participants. Difficulty and trial type are repeated measures.",
+        "exclusions": "Separate open-ended groups (14 English and 14 Tseltal) are outside this critical ANOVA. No further instructed-condition exclusions reported. Three Tseltal children not given the additional language-comprehension task are not excluded from this spatial analysis.",
+        "location": "Printed p.14 (PDF p.6), Fig.2 caption; p.13 (PDF p.5), section 2.2.1.2; p.12, section 2.1.1.",
+        "quote": "comparing the English (N = 25) and Tseltal speakers (N = 32).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1553,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named trial type (egocentric versus geocentric) and locator identify the common instructed-condition percentage-correct ANOVA (section 2.2.1.2). Fig.2 explicitly identifies its final mutually exclusive language groups. Open-ended groups and the separate language-comprehension sample are outside this target. No additional instructed-condition exclusions stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "location": "Printed p.14 (PDF p.6), Fig.2 caption; p.13 (PDF p.5), section 2.2.1.2; p.12, section 2.1.1.",
+        "quote": "comparing the English (N = 25) and Tseltal speakers (N = 32).",
+        "calculation": "25 English-speaking + 32 Tseltal-speaking = 57 analytic participants; cross-check (13 + 12) + (16 + 16) = 57. Repeated trials/blocks are not added."
+      },
+      "supported": true,
+      "shipped": "55",
+      "comparison": "near",
+      "prior_adjudication": {
+        "audit_id": 1553,
+        "field": "n_r",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "location": "Published p. 12 (PDF p. 4), Section 2.1.1; pp. 13–15 (PDF pp. 5–7), Sections 2.2.1.2 & 2.3",
+        "quote": "In fact, both language groups performed better … on the geocentric than the egocentric trials (English: 75.39% vs. … 64.89%, F(1, 24) = 4.46, p = 0.05 ηp2 = 0.16; Tseltal: 73.05% vs. … 29.97%, F(1, 31) = 71.05, p < 0.001, ηp2 = 0.70).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "reason": "Without relying on numeric agreement with the shipped partial eta-squared (0.520), target metadata cannot uniquely resolve whether the geocentric-versus-egocentric contrast maps to the omnibus 4-way ANOVA pooling all instructed participants including the English counterbalanced extension manipulation (N = 57 = 25 English + 32 Tseltal, F(1, 53) = 56.91, p < 0.001, ηp2 = 0.52; between-language follow-ups F(1, 55) = 27.22 and F(1, 55) = 0.48 with residual df = 55) or to the Tseltal-only instructed follow-up model that directly corresponds to Haun et al. Study 4's geocentric-language replication sample (N = 32, F(1, 31) = 71.05, p < 0.001, ηp2 = 0.70; vs. English-only N = 25, F(1, 24) = 4.46).",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 1553,
+      "field": "reported_success",
+      "blind": {
+        "value": "mixed",
+        "location": "Printed p.15 (PDF p.7), section 2.3, first paragraph, Experiment 1 Discussion.",
+        "quote": "Although our results from the ... replication portion of the experiment mirrored those from Haun et al., ... data from our additional manipulations (counterbalancing the order of ... did not favor the linguistic enculturation account.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1553,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Mixed encodes the authors' explicit Experiment 1 narrative: replication portion mirrored prior findings, while added manipulations did not favor the original linguistic enculturation account. Scope is the experiment-level author verdict, not significance of the target main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "location": "Printed p.15 (PDF p.7), section 2.3, first paragraph, Experiment 1 Discussion.",
+        "quote": "Although our results from the ... replication portion of the experiment mirrored those from Haun et al., ... data from our additional manipulations (counterbalancing the order of ... did not favor the linguistic enculturation account.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "differ",
+      "prior_adjudication": {
+        "audit_id": 1553,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Published pp. 15–16 (PDF pp. 7–8), Section 2.3 Discussion",
+        "quote": "With respect to the Tseltal-speaking children, we found that they, … like the Hai||om-speaking children, could easily solve the geocentric … but not the egocentric trials.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_21d592bbdaac7076a72e1335.txt",
+        "reason": "Without relying on numerical coincidence with the shipped partial eta-squared (0.520), neutral locator metadata cannot resolve whether the geocentric-versus-egocentric contrast targets the Tseltal-only Study 4 replication sample (N = 32, F(1, 31) = 71.05) or the pooled English-plus-Tseltal omnibus ANOVA including the counterbalanced English extension (N = 57, F(1, 53) = 56.91). Because the authors' narrative explicitly diverges between those two scopes—reporting that Tseltal children mirrored Haun et al. Study 4's Hai||om children by solving geocentric but not egocentric trials (while questioning whether unfamiliar left/right vocabulary caused that difficulty), whereas English children solved both frames and even performed better on geocentric than egocentric trials against the linguistic enculturation account—no unique effect-specific verdict can be established.",
+        "resolution": "argon"
+      }
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/6da043ec794903a4. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_6da043ec794903a4_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

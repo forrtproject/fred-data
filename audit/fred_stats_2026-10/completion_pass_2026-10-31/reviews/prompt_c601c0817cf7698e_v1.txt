@@ -1,0 +1,296 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "49": {
+      "source_key": "c601c0817cf7698e",
+      "side": "original",
+      "input": {
+        "ref_o": "Darcy, I., Mora, J. C., & Daidone, D. (2016). The Role of Inhibitory Control in Second Language Phonological Processing. Language Learning, 66(4), 741–773. Portico. https://doi.org/10.1111/lang.12161",
+        "doi_o": "10.1111/lang.12161",
+        "study_o": "1",
+        "ref_r": "Huensch, A. (2024). Clarifying the role of inhibitory control in L2 phonological processing: A preregistered, close replication of Darcy et al. (2016). Studies in Second Language Acquisition, 46(5), 1392–1412. https://doi.org/10.1017/s0272263124000238",
+        "doi_r": "10.1017/s0272263124000238",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "partial r",
+        "es_type_r": "partial r",
+        "description": "Role of inhibitory control in L2 phonological processing (ABX error (vowels))",
+        "locators_o": "p. 23",
+        "locators_r": "p. 15; Table 10",
+        "audit_id": 49,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Role of inhibitory control in L2 phonological processing (ABX error (vowels)); Analysis 4, pooled L2 learners, inhibition association controlling for X-Lex proficiency, Table 7 partial Pearson correlation. Table 5 and p. 30 identify vowel production as a z score and consonant production as a score out of eight.",
+      "worker_notes": "Identity verified from the supplied source: title The Role of Inhibitory Control in Second Language Phonological Processing; Isabelle Darcy, Joan C. Mora, and Danielle Daidone; 2016 Language Learning 66(4), 741–773; DOI 10.1111/lang.12161. The opening self-archiving notice identifies this as the peer reviewed version of the article. This is a full primary manuscript with methods, results, tables, references, and supporting-information list, not an abstract or preregistration. No PDF supplied. Targets matched by named phonological outcomes and requested partial-r test, not row order or numeric matching. Table 7 is the inhibition partial-correlation table; Table 6 instead correlates production/perception measures with one another, and Table 8 gives hierarchical regression results, so those tests are not substituted. Only assigned original es and p fields examined; n, replication, and reported_success are placeholders. P is a one-tailed significance bound attached to this same Table 7 coefficient, as defined by its star marker; no exact p is inferred.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Role of inhibitory control in L2 phonological processing (ABX error (vowels))",
+        "es_repr_o": "p. 23",
+        "es_repr_r": "p. 15, Table 10",
+        "es_type_o": "partial r",
+        "es_type_r": "partial r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "1 (one)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "However, results of the partial correlation analyses in the current\nreplication did not indicate clear relationships between phonological variables and inhibi-\ntory control."
+      }
+    },
+    "50": {
+      "source_key": "c601c0817cf7698e",
+      "side": "original",
+      "input": {
+        "ref_o": "Darcy, I., Mora, J. C., & Daidone, D. (2016). The Role of Inhibitory Control in Second Language Phonological Processing. Language Learning, 66(4), 741–773. Portico. https://doi.org/10.1111/lang.12161",
+        "doi_o": "10.1111/lang.12161",
+        "study_o": "1",
+        "ref_r": "Huensch, A. (2024). Clarifying the role of inhibitory control in L2 phonological processing: A preregistered, close replication of Darcy et al. (2016). Studies in Second Language Acquisition, 46(5), 1392–1412. https://doi.org/10.1017/s0272263124000238",
+        "doi_r": "10.1017/s0272263124000238",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "partial r",
+        "es_type_r": "partial r",
+        "description": "Role of inhibitory control in L2 phonological processing (Vowel production z score)",
+        "locators_o": "p. 23",
+        "locators_r": "p. 15; Table 10",
+        "audit_id": 50,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Role of inhibitory control in L2 phonological processing (Vowel production z score); Analysis 4, pooled L2 learners, inhibition association controlling for X-Lex proficiency, Table 7 partial Pearson correlation. Table 5 and p. 30 identify vowel production as a z score and consonant production as a score out of eight.",
+      "worker_notes": "Identity verified from the supplied source: title The Role of Inhibitory Control in Second Language Phonological Processing; Isabelle Darcy, Joan C. Mora, and Danielle Daidone; 2016 Language Learning 66(4), 741–773; DOI 10.1111/lang.12161. The opening self-archiving notice identifies this as the peer reviewed version of the article. This is a full primary manuscript with methods, results, tables, references, and supporting-information list, not an abstract or preregistration. No PDF supplied. Targets matched by named phonological outcomes and requested partial-r test, not row order or numeric matching. Table 7 is the inhibition partial-correlation table; Table 6 instead correlates production/perception measures with one another, and Table 8 gives hierarchical regression results, so those tests are not substituted. Only assigned original es and p fields examined; n, replication, and reported_success are placeholders. Table 7 prints vowel production partial r = –0.04 without a significance marker or numerical p. Its note defines starred thresholds only; no p bound is inferred for the unstarred coefficient. The accompanying results state: \"No clear pattern emerged between vowel production and inhibition scores.\"",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Role of inhibitory control in L2 phonological processing (Vowel production z score)",
+        "es_repr_o": "p. 23",
+        "es_repr_r": "p. 15, Table 10",
+        "es_type_o": "partial r",
+        "es_type_r": "partial r",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "1 (one)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "However, results of the partial correlation analyses in the current\nreplication did not indicate clear relationships between phonological variables and inhibi-\ntory control."
+      }
+    },
+    "51": {
+      "source_key": "c601c0817cf7698e",
+      "side": "original",
+      "input": {
+        "ref_o": "Darcy, I., Mora, J. C., & Daidone, D. (2016). The Role of Inhibitory Control in Second Language Phonological Processing. Language Learning, 66(4), 741–773. Portico. https://doi.org/10.1111/lang.12161",
+        "doi_o": "10.1111/lang.12161",
+        "study_o": "1",
+        "ref_r": "Huensch, A. (2024). Clarifying the role of inhibitory control in L2 phonological processing: A preregistered, close replication of Darcy et al. (2016). Studies in Second Language Acquisition, 46(5), 1392–1412. https://doi.org/10.1017/s0272263124000238",
+        "doi_r": "10.1017/s0272263124000238",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "partial r",
+        "es_type_r": "partial r",
+        "description": "Role of inhibitory control in L2 phonological processing (Consonant production (max. 8))",
+        "locators_o": "p. 23",
+        "locators_r": "p. 15; Table 10",
+        "audit_id": 51,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Role of inhibitory control in L2 phonological processing (Consonant production (max. 8)); Analysis 4, pooled L2 learners, inhibition association controlling for X-Lex proficiency, Table 7 partial Pearson correlation. Table 5 and p. 30 identify vowel production as a z score and consonant production as a score out of eight.",
+      "worker_notes": "Identity verified from the supplied source: title The Role of Inhibitory Control in Second Language Phonological Processing; Isabelle Darcy, Joan C. Mora, and Danielle Daidone; 2016 Language Learning 66(4), 741–773; DOI 10.1111/lang.12161. The opening self-archiving notice identifies this as the peer reviewed version of the article. This is a full primary manuscript with methods, results, tables, references, and supporting-information list, not an abstract or preregistration. No PDF supplied. Targets matched by named phonological outcomes and requested partial-r test, not row order or numeric matching. Table 7 is the inhibition partial-correlation table; Table 6 instead correlates production/perception measures with one another, and Table 8 gives hierarchical regression results, so those tests are not substituted. Only assigned original es and p fields examined; n, replication, and reported_success are placeholders. P is a one-tailed significance bound attached to this same Table 7 coefficient, as defined by its star marker; no exact p is inferred.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Role of inhibitory control in L2 phonological processing (Consonant production (max. 8))",
+        "es_repr_o": "p. 23",
+        "es_repr_r": "p. 15, Table 10",
+        "es_type_o": "partial r",
+        "es_type_r": "partial r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "1 (one)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "However, results of the partial correlation analyses in the current\nreplication did not indicate clear relationships between phonological variables and inhibi-\ntory control."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 49,
+      "field": "es_value_o",
+      "blind": {
+        "value": "–0.42",
+        "metric": "partial Pearson r (controlling for proficiency with X-Lex scores)",
+        "test_statistic": null,
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  ABX error (vowels)              –0.42** ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 49,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named outcome matched to the inhibition partial Pearson correlation in Table 7; printed metric retained.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  ABX error (vowels)              –0.42** ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.42",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 49,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".01",
+        "bound": "l",
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  ABX error (vowels)              –0.42** ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 49,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "The star marker on this same Table 7 coefficient is defined by the note as a one-tailed p bound; retain the printed bound rather than substitute a regression p from Table 8.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  ABX error (vowels)              –0.42** ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 50,
+      "field": "es_value_o",
+      "blind": {
+        "value": "–0.04",
+        "metric": "partial Pearson r (controlling for proficiency with X-Lex scores)",
+        "test_statistic": null,
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  Vowel production                –0.04 ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 50,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named outcome matched to the inhibition partial Pearson correlation in Table 7; printed metric retained.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  Vowel production                –0.04 ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.04",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 51,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.34",
+        "metric": "partial Pearson r (controlling for proficiency with X-Lex scores)",
+        "test_statistic": null,
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  Consonant production              0.34* ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 51,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named outcome matched to the inhibition partial Pearson correlation in Table 7; printed metric retained.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  Consonant production              0.34* ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.34",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 51,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  Consonant production              0.34* ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 51,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "The star marker on this same Table 7 coefficient is defined by the note as a one-tailed p bound; retain the printed bound rather than substitute a regression p from Table 8.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/690c1cdf84ce0520bd9de25a.txt",
+        "location": "Peer-reviewed manuscript p. 32, Table 7 (partial correlations with inhibition, controlling for proficiency); printed journal-page locator p. 23 differs from manuscript pagination.",
+        "quote": "Table 7 Partial correlations (Pearson) between phonological performance and inhibition scores ...  Consonant production              0.34* ... Note. n = 33. *p < .05, **p < .01, one-tailed.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/c601c0817cf7698e. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_c601c0817cf7698e_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

@@ -1,0 +1,187 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+FOCUSED FINAL DETECTION-VERSUS-RATING AND PREDICTOR CHECK:
+Final target-construct correspondence review1546/1547 replication ES. V1 correctly locates explicit standardized slopes in Study1A Japanese and1B American samples, but the neutral and coding descriptions specifically name believer-group identification of previously defined face-like regions. The source instead regresses mean face-likeness ratings across images on continuous religiosity. The source Introduction distinguishes detecting/identifying illusory faces (liberal reporting criterion) from face-likeness ratings, noting the latter original difference was small and nonsignificant. Establish solely from NONNUMERIC source statements whether the coded Study1A/1B/country provenance positively establishes an intentional operational adaptation of the exact described original detection outcome, or whether this instead substitutes a distinct original finding/estimand. Do not assume a sole available country-specific regression repairs the outcome wording, equate detection accuracy/predefined regions with mean ratings, or select by the shipped coefficients. Explicitly reconcile the original detection statement, original face-likeness finding, continuous-versus-group predictor and replication procedure. If target correspondence is established by source definitions, quote the adaptation and separately verify the standardized metric. If ambiguity remains, return undeterminable with false target flags and preserve the distinct roles. No description edits, dataset/repository search, source acquisition, paid APIs, Git or delegation.
+Every item MUST include boolean target_match_confirmed/effect_specific_verdict_confirmed,correct_value(null if undeterminable),correct_metric/correct_bound(null if irrelevant),literal source quote/location/source_path and reason. Raw V1 and source unchanged.
+FULL ORIGINAL PAYLOAD AND PRIOR FINDINGS:
+[
+  {
+    "source_key": "9a84bda71d38f070",
+    "audit_id": 1546,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Riekki, T., Lindeman, M., Aleneff, M., Halme, A., & Nuortimo, A. (2012). Paranormal and Religious Believers Are More Prone to Illusory Face Perception than Skeptics and Non\u2010believers. Applied Cognitive Psychology, 27(2), 150\u2013155. Portico. https://doi.org/10.1002/acp.2874",
+      "doi_o": "10.1002/acp.2874",
+      "study_o": "1",
+      "ref_r": "Miyazaki, Y. (2017). Being Watched by Anthropomorphized Objects Affects Charitable Donation in Religious People. Japanese Psychological Research, 59(3), 221\u2013229. Portico. https://doi.org/10.1111/jpr.12158",
+      "doi_r": "10.1111/jpr.12158",
+      "url_r": null,
+      "study_r": "1A",
+      "es_type_o": "etasq",
+      "es_type_r": "beta (std)",
+      "description": "Identification of predefined face-like regions in images in relation to believer-group membership (Japanese sample).",
+      "locators_o": "p. 154",
+      "locators_r": "p. 4",
+      "audit_id": 1546,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "0.35",
+      "metric": "standardized slope (\u03b2)",
+      "test_statistic": null,
+      "location": "Study 1, Results and Discussion, canonical text L126; supplied locator p. 4 (no PDF supplied)",
+      "quote": "A simple linear regression revealed that religiosity significantly predicted perceived face-likeness of stimulus images in Study 1A, F(1, 95)\u2009=\u200913.28, p\u2009< .001, and the standardized slope was statistically significant from zero, \u03b2\u2009=\u20090.35, t(95)\u2009=\u20093.64, p\u2009< .001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1546,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Primary report identity verified from title, author, journal, publication date and DOI. Study 1A explicitly identifies the Japanese sample and prints this standardized slope. No conversion. Exact target correspondence is flagged false: the supplied description specifies predefined-region identification and believer-group membership, whereas the source documents mean face-likeness ratings and continuous religiosity (L110\u2013121). Retain this explicitly named study coefficient for parent review; no coefficient for a categorical region-identification test is established here.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt",
+      "location": "Study 1, Results and Discussion, canonical text L126; supplied locator p. 4 (no PDF supplied)",
+      "quote": "A simple linear regression revealed that religiosity significantly predicted perceived face-likeness of stimulus images in Study 1A, F(1, 95)\u2009=\u200913.28, p\u2009< .001, and the standardized slope was statistically significant from zero, \u03b2\u2009=\u20090.35, t(95)\u2009=\u20093.64, p\u2009< .001",
+      "calculation": null
+    },
+    "worker_target_match": false,
+    "worker_target_description": "Study 1A, Japanese sample: simple linear regression of mean face-likeness ratings over 35 test trials on continuous importance-of-religion score. Supplied outcome/predictor description differs as detailed in notes.",
+    "worker_notes": "Identity independently checked: title Being Watched by Anthropomorphized Objects Affects Charitable Donation in Religious People, author Yuki Miyazaki, first published 10 June 2017, Japanese Psychological Research 59(3), 221\u2013229, DOI 10.1111/jpr.12158 (L15\u201348). Supplied Wiley HTML parse labels this an Original Article and contains Study 1 methods and results, not abstract-only evidence. No PDF supplied. Mapping uses explicit Study 1A/Japan and Study 1B/United States labels (L97\u201398, L106, L125\u2013127), not input order or numeric matching. Study 1A explicitly identifies the Japanese sample and prints this standardized slope. No conversion. Exact target correspondence is flagged false: the supplied description specifies predefined-region identification and believer-group membership, whereas the source documents mean face-likeness ratings and continuous religiosity (L110\u2013121). Retain this explicitly named study coefficient for parent review; no coefficient for a categorical region-identification test is established here. Confidence denotes literal coefficient transcription, not exact target equivalence. Same-test p < .001 is preserved in the evidence quote. Only es_value_r assigned; all other fields/sides are unassessed placeholders. No N calculation.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt",
+    "shipped": "0.35",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Believer groups were better at identifying the previously defined face-like regions in the images (Japenese sample)",
+      "es_repr_o": "p. 154",
+      "es_repr_r": "p. 4",
+      "es_type_o": "etasq",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "These results suggest that\nthe religious participants were more prone to perceive a face in everyday objects than less-religious participants, which is consistent with a past finding (Riekki et al., 2013)."
+    },
+    "prior_adjudication": {
+      "audit_id": 1546,
+      "field": "es_value_r",
+      "verdict": "shipped_right",
+      "correct_value": "0.35",
+      "correct_metric": "beta (std)",
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": false,
+      "location": "Study 1, Results and Discussion, canonical text L126 (supplied locator p. 4)",
+      "quote": "A simple linear regression revealed that religiosity significantly predicted perceived face-likeness of stimulus images in Study 1A, F(1, 95)\u2009=\u200913.28, p\u2009< .001, and the standardized slope was statistically significant from zero, \u03b2\u2009=\u20090.35, t(95)\u2009=\u20093.64, p\u2009< .001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt",
+      "reason": "Primary source identity (Miyazaki, 2017, DOI 10.1111/jpr.12158) is verified. Study 1A is the sole Japanese replication test of Riekki et al. (2013) on illusory face perception (operationalized as regressing mean face-likeness ratings on continuous religiosity rather than original believer groups and predefined regions), and its reported standardized slope is \u03b2 = 0.35, matching both shipped and blind."
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+    "parent_objection": "Final target-construct correspondence review1546/1547 replication ES. V1 correctly locates explicit standardized slopes in Study1A Japanese and1B American samples, but the neutral and coding descriptions specifically name believer-group identification of previously defined face-like regions. The source instead regresses mean face-likeness ratings across images on continuous religiosity. The source Introduction distinguishes detecting/identifying illusory faces (liberal reporting criterion) from face-likeness ratings, noting the latter original difference was small and nonsignificant. Establish solely from NONNUMERIC source statements whether the coded Study1A/1B/country provenance positively establishes an intentional operational adaptation of the exact described original detection outcome, or whether this instead substitutes a distinct original finding/estimand. Do not assume a sole available country-specific regression repairs the outcome wording, equate detection accuracy/predefined regions with mean ratings, or select by the shipped coefficients. Explicitly reconcile the original detection statement, original face-likeness finding, continuous-versus-group predictor and replication procedure. If target correspondence is established by source definitions, quote the adaptation and separately verify the standardized metric. If ambiguity remains, return undeterminable with false target flags and preserve the distinct roles. No description edits, dataset/repository search, source acquisition, paid APIs, Git or delegation."
+  },
+  {
+    "source_key": "9a84bda71d38f070",
+    "audit_id": 1547,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Riekki, T., Lindeman, M., Aleneff, M., Halme, A., & Nuortimo, A. (2012). Paranormal and Religious Believers Are More Prone to Illusory Face Perception than Skeptics and Non\u2010believers. Applied Cognitive Psychology, 27(2), 150\u2013155. Portico. https://doi.org/10.1002/acp.2874",
+      "doi_o": "10.1002/acp.2874",
+      "study_o": "1",
+      "ref_r": "Miyazaki, Y. (2017). Being Watched by Anthropomorphized Objects Affects Charitable Donation in Religious People. Japanese Psychological Research, 59(3), 221\u2013229. Portico. https://doi.org/10.1111/jpr.12158",
+      "doi_r": "10.1111/jpr.12158",
+      "url_r": null,
+      "study_r": "1B",
+      "es_type_o": "etasq",
+      "es_type_r": "beta (std)",
+      "description": "Identification of predefined face-like regions in images in relation to believer-group membership (American sample).",
+      "locators_o": "p. 154",
+      "locators_r": "p. 4",
+      "audit_id": 1547,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "0.36",
+      "metric": "standardized slope (\u03b2)",
+      "test_statistic": null,
+      "location": "Study 1, Results and Discussion, canonical text L127; supplied locator p. 4 (no PDF supplied)",
+      "quote": "Similarly, in Study 1B religiosity significantly predicted perceived face-likeness of stimulus images, F(1, 92)\u2009=\u200913.48, p\u2009< .001, and the standardized slope was statistically significant from zero, \u03b2\u2009=\u20090.36, t(92)\u2009=\u20093.67, p\u2009< .001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1547,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Primary report identity verified from title, author, journal, publication date and DOI. Study 1B explicitly identifies the American sample and prints this standardized slope. No conversion. Exact target correspondence is flagged false: the supplied description specifies predefined-region identification and believer-group membership, whereas the source documents mean face-likeness ratings and continuous religiosity (L110\u2013121). Retain this explicitly named study coefficient for parent review; no coefficient for a categorical region-identification test is established here.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt",
+      "location": "Study 1, Results and Discussion, canonical text L127; supplied locator p. 4 (no PDF supplied)",
+      "quote": "Similarly, in Study 1B religiosity significantly predicted perceived face-likeness of stimulus images, F(1, 92)\u2009=\u200913.48, p\u2009< .001, and the standardized slope was statistically significant from zero, \u03b2\u2009=\u20090.36, t(92)\u2009=\u20093.67, p\u2009< .001",
+      "calculation": null
+    },
+    "worker_target_match": false,
+    "worker_target_description": "Study 1B, American sample: simple linear regression of mean face-likeness ratings over 35 test trials on continuous importance-of-religion score. Supplied outcome/predictor description differs as detailed in notes.",
+    "worker_notes": "Identity independently checked: title Being Watched by Anthropomorphized Objects Affects Charitable Donation in Religious People, author Yuki Miyazaki, first published 10 June 2017, Japanese Psychological Research 59(3), 221\u2013229, DOI 10.1111/jpr.12158 (L15\u201348). Supplied Wiley HTML parse labels this an Original Article and contains Study 1 methods and results, not abstract-only evidence. No PDF supplied. Mapping uses explicit Study 1A/Japan and Study 1B/United States labels (L97\u201398, L106, L125\u2013127), not input order or numeric matching. Study 1B explicitly identifies the American sample and prints this standardized slope. No conversion. Exact target correspondence is flagged false: the supplied description specifies predefined-region identification and believer-group membership, whereas the source documents mean face-likeness ratings and continuous religiosity (L110\u2013121). Retain this explicitly named study coefficient for parent review; no coefficient for a categorical region-identification test is established here. Confidence denotes literal coefficient transcription, not exact target equivalence. Same-test p < .001 is preserved in the evidence quote. Only es_value_r assigned; all other fields/sides are unassessed placeholders. No N calculation.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt",
+    "shipped": "0.36",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Believer groups were better at identifying the previously defined face-like regions in the images (American sample)",
+      "es_repr_o": "p. 154",
+      "es_repr_r": "p. 4",
+      "es_type_o": "etasq",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "These results suggest that\nthe religious participants were more prone to perceive a face in everyday objects than less-religious participants, which is consistent with a past finding (Riekki et al., 2013)."
+    },
+    "prior_adjudication": {
+      "audit_id": 1547,
+      "field": "es_value_r",
+      "verdict": "shipped_right",
+      "correct_value": "0.36",
+      "correct_metric": "beta (std)",
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": false,
+      "location": "Study 1, Results and Discussion, canonical text L127 (supplied locator p. 4)",
+      "quote": "Similarly, in Study 1B religiosity significantly predicted perceived face-likeness of stimulus images, F(1, 92)\u2009=\u200913.48, p\u2009< .001, and the standardized slope was statistically significant from zero, \u03b2\u2009=\u20090.36, t(92)\u2009=\u20093.67, p\u2009< .001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5ad19d1e993bd505844d6cb5.txt",
+      "reason": "Study 1B is the sole American replication test of Riekki et al. (2013) on illusory face perception in Miyazaki (2017), and its reported standardized regression slope predicting mean face-likeness ratings from religiosity is \u03b2 = 0.36, matching both shipped and blind."
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+    "parent_objection": "Final target-construct correspondence review1546/1547 replication ES. V1 correctly locates explicit standardized slopes in Study1A Japanese and1B American samples, but the neutral and coding descriptions specifically name believer-group identification of previously defined face-like regions. The source instead regresses mean face-likeness ratings across images on continuous religiosity. The source Introduction distinguishes detecting/identifying illusory faces (liberal reporting criterion) from face-likeness ratings, noting the latter original difference was small and nonsignificant. Establish solely from NONNUMERIC source statements whether the coded Study1A/1B/country provenance positively establishes an intentional operational adaptation of the exact described original detection outcome, or whether this instead substitutes a distinct original finding/estimand. Do not assume a sole available country-specific regression repairs the outcome wording, equate detection accuracy/predefined regions with mean ratings, or select by the shipped coefficients. Explicitly reconcile the original detection statement, original face-likeness finding, continuous-versus-group predictor and replication procedure. If target correspondence is established by source definitions, quote the adaptation and separately verify the standardized metric. If ambiguity remains, return undeterminable with false target flags and preserve the distinct roles. No description edits, dataset/repository search, source acquisition, paid APIs, Git or delegation."
+  }
+]

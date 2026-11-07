@@ -1,0 +1,89 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1596": {
+      "source_key": "e79161d05188a3f5",
+      "side": "original",
+      "input": {
+        "ref_o": "Thoolen, B., de Ridder, D., Bensing, J., Gorter, K., & Rutten, G. (2007). Beyond Good Intentions: the development and evaluation of a proactive self-management course for patients recently diagnosed with Type 2 diabetes. Health Education Research, 23(1), 53–61. https://doi.org/10.1093/her/cyl160",
+        "doi_o": "10.1093/her/cyl160",
+        "study_o": "1",
+        "ref_r": "Kroese, F. M., Adriaanse, M. A., Vinkers, C. D. W., van de Schoot, R., & de Ridder, D. T. D. (2013). The effectiveness of a proactive coping intervention targeting self-management in diabetes patients. Psychology &amp; Health, 29(1), 110–125. https://doi.org/10.1080/08870446.2013.841911",
+        "doi_r": "10.1080/08870446.2013.841911",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "beta (std)",
+        "description": "Changes in proactive coping among course participants versus a control group.",
+        "locators_o": "p.7",
+        "locators_r": "p.10",
+        "audit_id": 1596,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5cedbd0456c204e16b4a864b.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1: change in proactive coping for Beyond Good Intentions course participants versus control patients, assessed by the group × time repeated-measures ANOVA. Analytic participants stated a goal at both T1 and T2.",
+      "worker_notes": "Identity checked independently in the supplied text: title Beyond Good Intentions: the development and evaluation of a proactive self-management course for patients recently diagnosed with Type 2 diabetes; full author heading names Bart Thoolen, Denise de Ridder, Jozien Bensing, Kees Gorter and Guy Rutten; DOI 10.1093/her/cyl160 matches the assigned original reference. Document identifies itself as NIVEL certified Post Print Version 1.0 and prints Health Education Research 2008, 23(1), 53–61, whereas the supplied reference uses 2007. It contains primary methods, results and discussion, not merely an abstract; appended tables are not represented in canonical text. No PDF supplied. Target identified by the proactive-coping outcome and course-versus-control longitudinal test, not numeric matching or row order. Analytic N arithmetic: 64 + 73 = 137; mutually exclusive final intervention and control groups explicitly named for this analysis. No N inferred from degrees of freedom. Only n_o was assigned; all other value fields are unassessed placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5cedbd0456c204e16b4a864b.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Compared with the control group, course participants improved significantly in terms of proactive coping",
+        "es_repr_o": "p.7",
+        "es_repr_r": "p.10",
+        "es_type_o": "test statistic",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The original intervention is effective,"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1596,
+      "field": "n_o",
+      "blind": {
+        "value": "137",
+        "sample_role": "Participants in the proactive-coping repeated-measures analysis: 64 course participants and 73 control patients.",
+        "exclusions": "Restricted to patients stating a goal at both T1 and T2; the 180 questionnaire completers (78 intervention, 102 control) are not the target analytic sample. Recruitment allocated 119 intervention and 108 control; intervention dropouts were 30 before and 11 during the course, and control dropouts were four due to ill-health and two due to form-completion difficulties.",
+        "location": "Postprint pp. 6–7, Analysis and Results; final proactive-coping/goal-attainment analysis sample stated across the page break.",
+        "quote": "64 course ... participants were compared with 73 control patients who had stated a goal at both T1 and T2.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5cedbd0456c204e16b4a864b.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1596,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "Primary postprint explicitly names the final course and control participant groups used for proactive coping and goal attainment, restricted to patients with goals at both time points. Their mutually exclusive group counts establish the target analytic participant N. Identity matches title, authors and DOI; publication year discrepancy documented in checkpoint notes.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5cedbd0456c204e16b4a864b.txt",
+        "location": "Postprint pp. 6–7, Analysis and Results; final proactive-coping/goal-attainment analysis sample stated across the page break.",
+        "quote": "64 course ... participants were compared with 73 control patients who had stated a goal at both T1 and T2.",
+        "calculation": "64 course participants + 73 control patients = 137 analytic participants. Excludes questionnaire completers without a stated goal at both T1 and T2; 180 questionnaire completers is a broader sample, not the analytic N."
+      },
+      "supported": true,
+      "shipped": "180",
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/e79161d05188a3f5. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_e79161d05188a3f5_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

@@ -1,0 +1,50 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 45,
+    "field": "pval_value_o",
+    "comparison": "differ",
+    "shipped": null,
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".01",
+      "location": "Printed p. 94 (PDF p. 16), Problem 11 results",
+      "quote": "The number of people who choose the more risky Plan N doubles when\npeople have a specific rather than a ‘‘do your best’’ goal (p ⬍ .01 by χ 2 ).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_70261a7726352a0c4136073d.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Heath, C., Larrick, R. P., & Wu, G. (1999). Goals as Reference Points. Cognitive Psychology, 38(1), 79–109. https://doi.org/10.1006/cogp.1998.0708",
+      "doi_o": "10.1006/cogp.1998.0708",
+      "study_o": "1",
+      "ref_r": "Au, I. N. Y., &amp; Feldman, G. (2024). Revisiting \"Goals as Reference Points\": Replication and extensions of Heath et al. (1999). <i>OSF</i>. https://doi.org/10.17605/OSF.IO/WMQTB",
+      "doi_r": "10.17605/osf.io/wmqtb",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "cohen's h",
+      "audit_id": 45,
+      "description": "Risk taking when falling behind specific goals versus when no specific goals are present (part 2 of Problem 11).",
+      "locators_o": "p.16",
+      "locators_r": "p. 41",
+      "text_paths": {}
+    },
+    "work_key": "10.17605/osf.io/wmqtb",
+    "coding_context": {
+      "es_repr": "p.16 , χ² = 2*((ABS(31 - 66/2) - 0.5)^2)/(66/2)",
+      "description": "People are more risk taking when falling behind specific goals than when no specific goals are present (part 2 of Problem 11)",
+      "reported_success_quote": "Among the\nvarious findings on the multiple hypotheses, we found strong empirical support for more\nwillingness to exert effort on proximal goals than distal ones, together with higher likelihood in\nachieving the overall goal with closer subgoals as hypothesized.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

@@ -1,0 +1,93 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item carrying scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1293,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "9131",
+    "shipped_metric": "r",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "82",
+      "sample_role": "Independent samples (k), not participant count",
+      "exclusions": "Participant-level analytic N not printed for this overall factor row.",
+      "location": "p. 209 (PDF p. 13), Table 6, Extraversion row; table note",
+      "quote": "82",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4e9b0725b95b19c78a48c518.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124(2), 197–229. https://doi.org/10.1037/0033-2909.124.2.197",
+      "doi_o": "10.1037/0033-2909.124.2.197",
+      "study_o": "1",
+      "ref_r": "Soto, C. J. (2019). How Replicable Are Links Between Personality Traits and Consequential Life Outcomes? The Life Outcomes of Personality Replication Project. Psychological Science, 30(5), 711–727. https://doi.org/10.1177/0956797619831612",
+      "doi_r": "10.1177/0956797619831612",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "r",
+      "es_type_r": "r",
+      "audit_id": 1293,
+      "description": "Subjective well-being in relation to extraversion.",
+      "locators_o": "p. 13",
+      "locators_r": "Table 1, p",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e57359ad7a5ed1ac4a227220.txt"
+      }
+    },
+    "work_key": "10.1177/0956797619831612",
+    "coding_context": {
+      "es_repr": "p. 13",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1294,
+    "field": "n_o",
+    "comparison": "differ",
+    "shipped": "7869",
+    "shipped_metric": "r",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "74",
+      "sample_role": "Independent samples (k), not participant count",
+      "exclusions": "Participant-level analytic N not printed for this overall factor row.",
+      "location": "p. 209 (PDF p. 13), Table 6, Neuroticism row; table note",
+      "quote": "74",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4e9b0725b95b19c78a48c518.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "DeNeve, K. M., & Cooper, H. (1998). The happy personality: A meta-analysis of 137 personality traits and subjective well-being. Psychological Bulletin, 124(2), 197–229. https://doi.org/10.1037/0033-2909.124.2.197",
+      "doi_o": "10.1037/0033-2909.124.2.197",
+      "study_o": "1",
+      "ref_r": "Soto, C. J. (2019). How Replicable Are Links Between Personality Traits and Consequential Life Outcomes? The Life Outcomes of Personality Replication Project. Psychological Science, 30(5), 711–727. https://doi.org/10.1177/0956797619831612",
+      "doi_r": "10.1177/0956797619831612",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "r",
+      "es_type_r": "r",
+      "audit_id": 1294,
+      "description": "Subjective well-being in relation to negative emotionality.",
+      "locators_o": "p. 13",
+      "locators_r": "Table 1, p",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e57359ad7a5ed1ac4a227220.txt"
+      }
+    },
+    "work_key": "10.1177/0956797619831612",
+    "coding_context": {
+      "es_repr": "p. 13",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

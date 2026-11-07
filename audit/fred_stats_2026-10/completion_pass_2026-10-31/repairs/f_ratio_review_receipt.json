@@ -1,0 +1,21 @@
+{
+  "trigger": "Independently confirmed Table1 F-Ratio values were not comparable solely because the legacy statistic parser requires a plain F label.",
+  "red": "test_fresh_review_accepts_explicit_f_ratio_table_label failed before fix.",
+  "fix": "Within fresh_test_review only, target-confirmed current completion adjudications may recognise their explicit F-Ratio table label as an F statistic. Raw values and legacy parsed_stat remain unchanged; old or target-unconfirmed reviews cannot use this path.",
+  "evidence": "web_ad_table_receipt.json documents the parent visual check and source row/column mapping.",
+  "scope": [
+    {
+      "audit_id": 1667,
+      "field": "es_value_o",
+      "printed": "F-Ratio = 3.145"
+    },
+    {
+      "audit_id": 1668,
+      "field": "es_value_o",
+      "printed": "F-Ratio = 0.522"
+    }
+  ],
+  "guard": "Full preservation export required after fix: no previously verified field/correction may change and no gain may fall outside integration ledger.",
+  "release_red": "Full build_release.py failed at1667 es_value_o because it required a parsed plain-F label despite the current reviewed explicit F-Ratio label.",
+  "release_fix": "Release metric validation now uses the same narrow fresh_test_review confirmation and exports generic test-statistic metadata while preserving the printed F-Ratio correction string."
+}

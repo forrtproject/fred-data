@@ -1,0 +1,90 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1026": {
+      "source_key": "086d414c39842c8a",
+      "side": "original",
+      "input": {
+        "ref_o": "Henderson, M. D., de Liver, Y., & Gollwitzer, P. M. (2008). The effects of an implemental mind-set on attitude strength. Journal of Personality and Social Psychology, 94(3), 396–411. https://doi.org/10.1037/0022-3514.94.3.396",
+        "doi_o": "10.1037/0022-3514.94.3.396",
+        "study_o": "5",
+        "ref_r": "(2015). Estimating the reproducibility of psychological science. Science, 349(6251). https://doi.org/10.1126/science.aac4716",
+        "doi_r": "10.1126/science.aac4716",
+        "url_r": "https://osf.io/79dey",
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Ambivalence under one-sided versus two-sided focus conditions.",
+        "locators_o": "p. 11",
+        "locators_r": "p. 4",
+        "audit_id": 1026,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c6469a618358ca8608bdc70c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 5, attitude ambivalence toward public availability of convicted sex-offender lists: implemental one-sided focus versus implemental two-sided focus; specific between-group comparison on journal p. 406 (article p. 11).",
+      "worker_notes": "Identity independently checked: title The Effects of an Implemental Mind-Set on Attitude Strength; authors Marlone D. Henderson, Yaël de Liver, and Peter M. Gollwitzer; Journal of Personality and Social Psychology 2008, 94(3), 396–411; printed DOI 10.1037/0022-3514.94.3.396. Supplied canonical text is a primary journal article parse with methods, results, references and appendices, rather than an abstract or secondary report. No PDF was supplied; no rendering was possible. Only assigned fields are completed; other fields/sides are placeholders. The requested printed test statistic is t(28) = 2.46. The same comparison prints p < .05 and d = 0.93; p is unassigned and retained here with its bound. Canonical two-column text interleaves the comparison introduction near the bottom of p. 406 with its continuation at the top of that page; es.quote is an exact literal statistic span. Comparison identification evidence (ordered fragments within the introduction): Specific ... comparisons revealed that the implemental mind-set one-sided group ... evidenced a significantly lower amount of ambivalence (M ⫽ 0.16, ... SD ⫽ 1.85) compared to the implemental mind-set two-sided group Allocation candidate 15 + 15 = 30 participants in the two implemental conditions is not certified as final analytic N: the source also excludes one participant but does not specify her condition. Recruitment/allocation total 46 and ANOVA df are not used to resolve this inconsistency or derive N. Printed denominator df 28 is retained only as part of the test statistic.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c6469a618358ca8608bdc70c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants in the one-sided focus condition had less ambivalence than participants in the two-sided focus condition.",
+        "es_repr_o": "p. 11",
+        "es_repr_r": "p. 4",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "no marked in Replicate column"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1026,
+      "field": "es_value_o",
+      "blind": {
+        "value": "2.46",
+        "metric": "t",
+        "test_statistic": "t(28) ⫽ 2.46",
+        "location": "p. 406 (article p. 11), Results, Attitude Ambivalence; left-column paragraph continues at top of right column",
+        "quote": "t(28) ⫽ 2.46, p ⬍ .05, d ⫽ 0.93.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c6469a618358ca8608bdc70c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1026,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "The one-sided versus two-sided attitude-ambivalence contrast matches the description and article p. 11. Requested test statistic retained as printed; same-test p < .05 and d = 0.93 recorded in notes.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c6469a618358ca8608bdc70c.txt",
+        "location": "p. 406 (article p. 11), Results, Attitude Ambivalence, continuation at top of right column",
+        "quote": "t(28) ⫽ 2.46, p ⬍ .05, d ⫽ 0.93.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 43) = 3.36",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/086d414c39842c8a. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_086d414c39842c8a_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

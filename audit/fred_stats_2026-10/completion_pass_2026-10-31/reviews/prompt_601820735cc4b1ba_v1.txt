@@ -1,0 +1,1252 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "629": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Ackerman, J. M., Nocera, C. C., & Bargh, J. A. (2010). Incidental Haptic Sensations Influence Social Judgments and Decisions. Science, 328(5986), 1712–1715. https://doi.org/10.1126/science.1189993",
+        "doi_o": "10.1126/science.1189993",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/9hn4c",
+        "study_r": "1",
+        "es_type_o": "d",
+        "es_type_r": "r",
+        "description": "Incidental haptic sensations in relation to social judgments and decisions.",
+        "locators_o": "",
+        "locators_r": "p. 55",
+        "audit_id": 629,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Heavy versus light clipboard effect on overall resume ratings, final pooled replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p. Stage 1 yes changes to pooled no. Authors explain a first-analysis error led to Stage 2 even though the corrected Stage 1 result met the criterion (pp. 15, 36); final pooled verdict retained.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Incidental Haptic Sensations Influence Social Judgments and Decisions",
+        "es_repr_o": "=(5.8-5.38)/SQRT(((26-1)*0.76^2+(28-1)*0.79^2)/(26+28-2)))",
+        "es_repr_r": "p. 55",
+        "es_type_o": "d",
+        "es_type_r": "r",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[stated yes In supplementary table 3, under 'replicated' column] https://osf.io/sva2k"
+      }
+    },
+    "630": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Karpicke, J. D., & Blunt, J. R. (2011). Retrieval Practice Produces More Learning than Elaborative Studying with Concept Mapping. Science, 331(6018), 772–775. https://doi.org/10.1126/science.1199327",
+        "doi_o": "10.1126/science.1199327",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/mgjxv",
+        "study_r": "10",
+        "es_type_o": "d",
+        "es_type_r": "r",
+        "description": "Learning following retrieval practice versus elaborative studying with concept mapping.",
+        "locators_o": "p. S4",
+        "locators_r": "p. 54",
+        "audit_id": 630,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Retrieval Practice versus Concept Mapping: correct information recalled one week after learning, Stage 1 replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Retrieval practice produces more learning than elaborative studying with concept mapping",
+        "es_repr_o": "p. S4",
+        "es_repr_r": "p. 54",
+        "es_type_o": "d",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Yes stated in the Rep. s1 column"
+      }
+    },
+    "632": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kovács, Á. M., Téglás, E., & Endress, A. D. (2010). The Social Sense: Susceptibility to Others’ Beliefs in Human Infants and Adults. Science, 330(6012), 1830–1834. https://doi.org/10.1126/science.1190792",
+        "doi_o": "10.1126/science.1190792",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/jnq7e",
+        "study_r": "12",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Responses to others’ beliefs in human infants and adults.",
+        "locators_o": "p. 1832",
+        "locators_r": "p. 54",
+        "audit_id": 632,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1 within-subject reaction time comparison of P-A- and P-A+ treatments, Stage 1 adult replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "susceptibility to others’ beliefs in human infants and adults",
+        "es_repr_o": "p. 1832",
+        "es_repr_r": "p. 54",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Yes stated in the Rep. s1 column"
+      }
+    },
+    "634": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Morewedge, C. K., Huh, Y. E., & Vosgerau, J. (2010). Thought for Food: Imagined Consumption Reduces Actual Consumption. Science, 330(6010), 1530–1533. https://doi.org/10.1126/science.1195701",
+        "doi_o": "10.1126/science.1195701",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/k2teb",
+        "study_r": "14",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Imagined consumption and actual consumption.",
+        "locators_o": "p. 1531; Table 1",
+        "locators_r": "p. 4",
+        "audit_id": 634,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1 imagined consumption: 30 repetitions versus control, Stage 1 replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p. Authors’ printed standardized replication correlation coefficient r retained. Requested test statistic is not supplied for this replication in the inspected study-result tables and relevant methods/protocol text; original-test statistics in Table 1 are not replication statistics. No conversion performed. The effect and p-value in the quoted replication columns describe the same test; p is unassigned and remains a placeholder. The r metric is explicitly documented in the table header and p. 18: 'We used the same measure of standardized effect sizes and transformed effect\\nsizes into correlation coefficients (r) in the same way as done for the RPP 7 .'",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "imagined consumption reduces actual consumption",
+        "es_repr_o": "p. 1531, though inconsistent with descriptive stats in Table 1 (at least if that table actually reports SD as stated)",
+        "es_repr_r": "p. 4",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Given the criteria and procedure outlinedabove, the hypothesis of interest has beenreplicated at a significance level ofα  <5%(p= 0.0006) with a powerπ= 90% to detect75% of the original effect size."
+      }
+    },
+    "636": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Pyc, M. A., & Rawson, K. A. (2010). Why Testing Improves Memory: Mediator Effectiveness Hypothesis. Science, 330(6002), 335–335. https://doi.org/10.1126/science.1191465",
+        "doi_o": "10.1126/science.1191465",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/zj5n3",
+        "study_r": "16",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Testing and memory.",
+        "locators_o": "p. 50; Table 1; p.1",
+        "locators_r": "p. 55",
+        "audit_id": 636,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Test-restudy versus restudy mediator retrieval within the cmr treatment, pooled replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p. Stage 1 no changes to pooled yes; final pooled verdict retained.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "testing improves memory",
+        "es_repr_o": "p. 50 (of Camerer SMs, Supplementary Table 1), and p.1 of post-data collection report",
+        "es_repr_r": "p. 55",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Yes stated in the Rep. s1+s2 column"
+      }
+    },
+    "637": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Ramirez, G., & Beilock, S. L. (2011). Writing About Testing Worries Boosts Exam Performance in the Classroom. Science, 331(6014), 211–213. https://doi.org/10.1126/science.1199427",
+        "doi_o": "10.1126/science.1199427",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/j8pbk",
+        "study_r": "17",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Writing about testing worries and classroom exam performance.",
+        "locators_o": "p. S11",
+        "locators_r": "p. 55",
+        "audit_id": 637,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1 high-pressure in-lab math-test improvement after expressive writing versus sitting quietly, pooled replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p. The broad neutral description mentions classroom performance, but supplied study 1 and p. S11 identify the high-pressure laboratory test in Table 1 (p. 50); no classroom-test statistic is substituted.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Writing about testing worries boosts exam performance in the classroom",
+        "es_repr_o": "p. S11",
+        "es_repr_r": "p. 55",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "No stated in the Rep. s1+s2 column"
+      }
+    },
+    "638": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Rand, D. G., Greene, J. D., & Nowak, M. A. (2012). Spontaneous giving and calculated greed. Nature, 489(7416), 427–430. https://doi.org/10.1038/nature11467",
+        "doi_o": "10.1038/nature11467",
+        "study_o": "8",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/szcuk",
+        "study_r": "18",
+        "es_type_o": "beta (std)",
+        "es_type_r": "r",
+        "description": "Spontaneous versus calculated decision-making in relation to giving and self-interested choices.",
+        "locators_o": "p. S21",
+        "locators_r": "p. 55",
+        "audit_id": 638,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 8 intuition-good/reflection-bad versus intuition-bad/reflection-good public-good contributions, pooled replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Spontaneous giving and calculated greed",
+        "es_repr_o": "p. S21",
+        "es_repr_r": "p. 55",
+        "es_type_o": "beta (std)",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "No stated in the Rep. s1+s2 column"
+      }
+    },
+    "640": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Aviezer, H., Trope, Y., & Todorov, A. (2012). Body Cues, Not Facial Expressions, Discriminate Between Intense Positive and Negative Emotions. Science, 338(6111), 1225–1229. https://doi.org/10.1126/science.1224313",
+        "doi_o": "10.1126/science.1224313",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/367yu",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Body cues versus facial expressions in discrimination of intense positive and negative emotions.",
+        "locators_o": "p. 1; https://osf.io/367yu",
+        "locators_r": "p. 54",
+        "audit_id": 640,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1 winning versus losing bodies: paired valence ratings in the body treatment, Stage 1 replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p. Authors’ printed standardized replication correlation coefficient r retained. Requested test statistic is not supplied for this replication in the inspected study-result tables and relevant methods/protocol text; original-test statistics in Table 1 are not replication statistics. No conversion performed. The effect and p-value in the quoted replication columns describe the same test; p is unassigned and remains a placeholder. The r metric is explicitly documented in the table header and p. 18: 'We used the same measure of standardized effect sizes and transformed effect\\nsizes into correlation coefficients (r) in the same way as done for the RPP 7 .'",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Body cues, not facial expressions, discriminate between intense positive and negative emotions",
+        "es_repr_o": "p. 1 of post-data collection report (https://osf.io/367yu)",
+        "es_repr_r": "p. 54",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "yes",
+        "nested_r": null,
+        "reported_success_quote": "Based on a paired-samplet-test,the difference between the average valence rat-ings for winning and losing bodies is statisti-cally significant withp= 0.0001338(t(13) =5.3420). The original result is thus replicated"
+      }
+    },
+    "641": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sparrow, B., Liu, J., & Wegner, D. M. (2011). Google Effects on Memory: Cognitive Consequences of Having Information at Our Fingertips. Science, 333(6043), 776–778. https://doi.org/10.1126/science.1207745",
+        "doi_o": "10.1126/science.1207745",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/84fyw",
+        "study_r": "20",
+        "es_type_o": "d",
+        "es_type_r": "test statistic",
+        "description": "Access to information through Google and memory.",
+        "locators_o": "",
+        "locators_r": "p. 5",
+        "audit_id": 641,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1 paired Modified Stroop color-naming reaction times after hard trivia: computer versus general terms, pooled replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p. Authors’ printed standardized replication correlation coefficient r retained. Requested test statistic is not supplied for this replication in the inspected study-result tables and relevant methods/protocol text; original-test statistics in Table 1 are not replication statistics. No conversion performed. The effect and p-value in the quoted replication columns describe the same test; p is unassigned and remains a placeholder. The r metric is explicitly documented in the table header and p. 18: 'We used the same measure of standardized effect sizes and transformed effect\\nsizes into correlation coefficients (r) in the same way as done for the RPP 7 .'",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Google effects on memory: cognitive consequences of having information at our fingertips",
+        "es_repr_o": "=(712-591)/SQRT((413^2+204^2)/2)",
+        "es_repr_r": "p. 5",
+        "es_type_o": "d",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We conclude that the original result did not replicate in the first round of data collection(p= 0.2647; point estimate in the same direc-tion as in the original study) nor in the first and second rounds of data collection pooled(p= 0.4493; point estimate in the same direc-tion as original study), given the criteria and procedure outlined above."
+      }
+    },
+    "642": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Wilson, T. D., Reinhard, D. A., Westgate, E. C., Gilbert, D. T., Ellerbeck, N., Hahn, C., Brown, C. L., & Shaked, A. (2014). Just think: The challenges of the disengaged mind. Science, 345(6192), 75–77. https://doi.org/10.1126/science.1250830",
+        "doi_o": "10.1126/science.1250830",
+        "study_o": "8",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/qwked",
+        "study_r": "21",
+        "es_type_o": "d",
+        "es_type_r": "r",
+        "description": "Enjoyment of spending 6 to 15 minutes alone in a room with nothing to do but think.",
+        "locators_o": "",
+        "locators_r": "p. 54",
+        "audit_id": 642,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 8 enjoyment of external activity versus standard thought instructions, Stage 1 replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "participants typically do not enjoy spending 6 to 15 minutes in a room by themselves with nothing to do but think",
+        "es_repr_o": "MANUALLY REVERSED FROM =(3.2-6.87)/SQRT(((15-1)*2.23^2+(15-1)*1.91^2)/(15+15-2)))",
+        "es_repr_r": "p. 54",
+        "es_type_o": "d",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Yes stated in the Rep. s1 column"
+      }
+    },
+    "643": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Balafoutas, L., & Sutter, M. (2012). Affirmative Action Policies Promote Women and Do Not Harm Efficiency in the Laboratory. Science, 335(6068), 579–582. https://doi.org/10.1126/science.1211180",
+        "doi_o": "10.1126/science.1211180",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/drvhe",
+        "study_r": "3",
+        "es_type_o": "OR",
+        "es_type_r": "r",
+        "description": "Affirmative-action policies in relation to women’s advancement and efficiency.",
+        "locators_o": "",
+        "locators_r": "p. 54",
+        "audit_id": 643,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Women choosing tournament versus piece rate: preferential treatment one versus control, Stage 1 replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Affirmative action policies promote women and do not harm effciency",
+        "es_repr_o": "=1/((0.306/(1-0.306))/(0.583/(1-0.583))) (flipped to align with replication)",
+        "es_repr_r": "p. 54",
+        "es_type_o": "OR",
+        "es_type_r": "r",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Yes stated in the Rep. s1 column"
+      }
+    },
+    "644": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Derex, M., Beugin, M.-P., Godelle, B., & Raymond, M. (2013). Experimental evidence for the influence of group size on cultural complexity. Nature, 503(7476), 389–391. https://doi.org/10.1038/nature12774",
+        "doi_o": "10.1038/nature12774",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/kchf9",
+        "study_r": "4",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Group size and cultural complexity.",
+        "locators_o": "p. 389",
+        "locators_r": "p. 54",
+        "audit_id": 644,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Probability of maintaining both cultural tasks as a function of group size, Stage 1 replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "infuence of group size on cultural complexity",
+        "es_repr_o": "p. 389",
+        "es_repr_r": "p. 54",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "1 (one)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Yes stated in the Rep. s1 column"
+      }
+    },
+    "645": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Duncan, K., Sadanand, A., & Davachi, L. (2012). Memory’s Penumbra: Episodic Memory Decisions Induce Lingering Mnemonic Biases. Science, 337(6093), 485–487. https://doi.org/10.1126/science.1221936",
+        "doi_o": "10.1126/science.1221936",
+        "study_o": "1b",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/s48ht",
+        "study_r": "5",
+        "es_type_o": "OR",
+        "es_type_r": "r",
+        "description": "Episodic-memory decisions and subsequent mnemonic biases.",
+        "locators_o": "",
+        "locators_r": "p. 55",
+        "audit_id": 645,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1b similar-object identification following new versus old objects, pooled replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p. Stage 1 no changes to pooled yes; final pooled verdict retained.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "episodic memory decisions induce lingering mnemonic biases",
+        "es_repr_o": "=(0.677/(1-0.677))/(0.617/(1-0.617))",
+        "es_repr_r": "p. 55",
+        "es_type_o": "OR",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Yes stated in the Rep. s1+s2 column"
+      }
+    },
+    "646": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Gervais, W. M., & Norenzayan, A. (2012). Analytic Thinking Promotes Religious Disbelief. Science, 336(6080), 493–496. https://doi.org/10.1126/science.1215647",
+        "doi_o": "10.1126/science.1215647",
+        "study_o": "2",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/r4dve",
+        "study_r": "6",
+        "es_type_o": "d",
+        "es_type_r": "test statistic",
+        "description": "Analytic thinking and religious belief or disbelief.",
+        "locators_o": "p. 495",
+        "locators_r": "",
+        "audit_id": 646,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 2 belief in God after Thinker images versus control artwork, pooled replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p. Authors’ printed standardized replication correlation coefficient r retained. Requested test statistic is not supplied for this replication in the inspected study-result tables and relevant methods/protocol text; original-test statistics in Table 1 are not replication statistics. No conversion performed. The effect and p-value in the quoted replication columns describe the same test; p is unassigned and remains a placeholder. The r metric is explicitly documented in the table header and p. 18: 'We used the same measure of standardized effect sizes and transformed effect\\nsizes into correlation coefficients (r) in the same way as done for the RPP 7 .'",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Analytic thinking promotes religious disbelief",
+        "es_repr_o": "p. 495",
+        "es_repr_r": "3",
+        "es_type_o": "d",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Despite high-power and careful adherence to the original study design with feedback from the original authors, we did not observe an effect consistent with the original study"
+      }
+    },
+    "647": {
+      "source_key": "601820735cc4b1ba",
+      "side": "replication",
+      "input": {
+        "ref_o": "Gneezy, U., Keenan, E. A., & Gneezy, A. (2014). Avoiding overhead aversion in charity. Science, 346(6209), 632–635. https://doi.org/10.1126/science.1253932",
+        "doi_o": "10.1126/science.1253932",
+        "study_o": "1",
+        "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+        "doi_r": "10.1038/s41562-018-0399-z",
+        "url_r": "https://osf.io/7ch92",
+        "study_r": "7",
+        "es_type_o": "OR",
+        "es_type_r": "r",
+        "description": "Charitable giving and overhead aversion.",
+        "locators_o": "",
+        "locators_r": "p. 54",
+        "audit_id": 647,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Choosing charity: water: 50% overhead covered versus 50% overhead paid by donors, Stage 1 replication.",
+      "worker_notes": "Identity verified from cover: Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015; Colin F. Camerer, Anna Dreber, Felix Holzmeister and the listed coauthors; DOI 10.1038/s41562-018-0399-z. Document is the authors’ Supplementary Information (methods, references, Tables 1–7, Figures 1–9), not an abstract or secondary report. No source PDF supplied. Target mapped by author/year and Table 1 hypothesis, not study-number equivalence or numeric matching. Only assigned unfinished fields completed; other fields are placeholders. Final outcome uses Stage 1 when replication stopped there and pooled Stage 1+2 when reported (two-stage procedure, p. 15). Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Avoiding overhead aversion in charity",
+        "es_repr_o": "=(0.493/(1-0.493))/(0.7143/(1-0.7143))",
+        "es_repr_r": "p. 54",
+        "es_type_o": "OR",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Given the criteria and procedure outlined above, the hypothesis of interest was repli-cated at a significance level of α <5%"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 629,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Supplementary Table 4, printed p. 54, Ackerman et al. (2010), Science, Rep. column; footnote †",
+        "quote": "Ackerman et al. (2010), Science                        0.270           0.049        54    (54)    0.063         0.125     599    (599)       no      0.904      0.232 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 629,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Ackerman et al. (2010), Science, Rep. column; footnote †",
+        "quote": "Ackerman et al. (2010), Science                        0.270           0.049        54    (54)    0.063         0.125     599    (599)       no      0.904      0.232 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 630,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 3, printed p. 53, Karpicke and Blunt (2011), Science, Rep. column; footnote †",
+        "quote": "Karpicke and Blunt (2011), Science                     0.602         < 0.001        40    (40)    0.384         0.006      49        (49)    yes     0.922      0.638 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 630,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Karpicke and Blunt (2011), Science, Rep. column; footnote †",
+        "quote": "Karpicke and Blunt (2011), Science                     0.602         < 0.001        40    (40)    0.384         0.006      49        (49)    yes     0.922      0.638 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 632,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 3, printed p. 53, Kovacs et al. (2010), Science, Rep. column; footnote †",
+        "quote": "Kovacs et al. (2010), Science                          0.450           0.024        24    (24)    0.586       < 0.001      95        (95)    yes     0.923      1.301 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 632,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Kovacs et al. (2010), Science, Rep. column; footnote †",
+        "quote": "Kovacs et al. (2010), Science                          0.450           0.024        24    (24)    0.586       < 0.001      95        (95)    yes     0.923      1.301 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 634,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.355",
+        "metric": "r",
+        "test_statistic": null,
+        "location": "Supplementary Table 3, printed p. 53, Morewedge et al. (2010), Science, Replication Stage 1 Effect Size (r) column; standardisation explained p. 18",
+        "quote": "Morewedge et al. (2010), Science                       0.453           0.009        32    (32)    0.355       < 0.001      89        (89)    yes     0.904      0.783",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 634,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Authors’ printed standardized replication correlation coefficient r retained. Requested test statistic is not supplied for this replication in the inspected study-result tables and relevant methods/protocol text; original-test statistics in Table 1 are not replication statistics. No conversion performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Morewedge et al. (2010), Science, Replication Stage 1 Effect Size (r) column; standardisation explained p. 18",
+        "quote": "Morewedge et al. (2010), Science                       0.453           0.009        32    (32)    0.355       < 0.001      89        (89)    yes     0.904      0.783",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "t(30) = 2.78",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 634,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 3, printed p. 53, Morewedge et al. (2010), Science, Rep. column; footnote †",
+        "quote": "Morewedge et al. (2010), Science                       0.453           0.009        32    (32)    0.355       < 0.001      89        (89)    yes     0.904      0.783 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 634,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Morewedge et al. (2010), Science, Rep. column; footnote †",
+        "quote": "Morewedge et al. (2010), Science                       0.453           0.009        32    (32)    0.355       < 0.001      89        (89)    yes     0.904      0.783 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 636,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 4, printed p. 54, Pyc and Rawson (2010), Science, Rep. column; footnote †",
+        "quote": "Pyc and Rawson (2010), Science                         0.377           0.024        36    (36)    0.150         0.009     306    (306)       yes     0.901      0.398 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 636,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Pyc and Rawson (2010), Science, Rep. column; footnote †",
+        "quote": "Pyc and Rawson (2010), Science                         0.377           0.024        36    (36)    0.150         0.009     306    (306)       yes     0.901      0.398 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 637,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Supplementary Table 4, printed p. 54, Ramirez and Beilock (2011), Science, Rep. column; footnote †",
+        "quote": "Ramirez and Beilock (2011), Science                    0.793         < 0.001        20    (20)   −0.098         0.394      79    (131)       no      0.949     −0.124 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 637,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Ramirez and Beilock (2011), Science, Rep. column; footnote †",
+        "quote": "Ramirez and Beilock (2011), Science                    0.793         < 0.001        20    (20)   −0.098         0.394      79    (131)       no      0.949     −0.124 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 638,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Supplementary Table 4, printed p. 54, Rand et al. (2012), Nature, Rep. column; footnote †",
+        "quote": "Rand et al. (2012), Nature                             0.141           0.009       343 (343)      0.026         0.234    2136 (2136)         no      0.901      0.183 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 638,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Rand et al. (2012), Nature, Rep. column; footnote †",
+        "quote": "Rand et al. (2012), Nature                             0.141           0.009       343 (343)      0.026         0.234    2136 (2136)         no      0.901      0.183 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 640,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.829",
+        "metric": "r",
+        "test_statistic": null,
+        "location": "Supplementary Table 3, printed p. 53, Aviezer et al. (2012), Science, Replication Stage 1 Effect Size (r) column; standardisation explained p. 18",
+        "quote": "Aviezer et al. (2012), Science                         0.961         < 0.001        15    (15)    0.829       < 0.001      14        (14)    yes     0.930      0.862",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 640,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Authors’ printed standardized replication correlation coefficient r retained. Requested test statistic is not supplied for this replication in the inspected study-result tables and relevant methods/protocol text; original-test statistics in Table 1 are not replication statistics. No conversion performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Aviezer et al. (2012), Science, Replication Stage 1 Effect Size (r) column; standardisation explained p. 18",
+        "quote": "Aviezer et al. (2012), Science                         0.961         < 0.001        15    (15)    0.829       < 0.001      14        (14)    yes     0.930      0.862",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "t(13) = 5.342",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 640,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 3, printed p. 53, Aviezer et al. (2012), Science, Rep. column; footnote †",
+        "quote": "Aviezer et al. (2012), Science                         0.961         < 0.001        15    (15)    0.829       < 0.001      14        (14)    yes     0.930      0.862 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 640,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Aviezer et al. (2012), Science, Rep. column; footnote †",
+        "quote": "Aviezer et al. (2012), Science                         0.961         < 0.001        15    (15)    0.829       < 0.001      14        (14)    yes     0.930      0.862 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 641,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.050",
+        "metric": "r",
+        "test_statistic": null,
+        "location": "Supplementary Table 4, printed p. 54, Sparrow et al. (2011), Science, Replication Stage 2 Effect Size (r) column; standardisation explained p. 18",
+        "quote": "Sparrow et al. (2011), Science                         0.368           0.002        69    (69)    0.050         0.449     234    (234)       no      0.807      0.135",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 641,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Authors’ printed standardized replication correlation coefficient r retained. Requested test statistic is not supplied for this replication in the inspected study-result tables and relevant methods/protocol text; original-test statistics in Table 1 are not replication statistics. No conversion performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Sparrow et al. (2011), Science, Replication Stage 2 Effect Size (r) column; standardisation explained p. 18",
+        "quote": "Sparrow et al. (2011), Science                         0.368           0.002        69    (69)    0.050         0.449     234    (234)       no      0.807      0.135",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "t(233) = 0.7579",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 641,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Supplementary Table 4, printed p. 54, Sparrow et al. (2011), Science, Rep. column; footnote †",
+        "quote": "Sparrow et al. (2011), Science                         0.368           0.002        69    (69)    0.050         0.449     234    (234)       no      0.807      0.135 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 641,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Sparrow et al. (2011), Science, Rep. column; footnote †",
+        "quote": "Sparrow et al. (2011), Science                         0.368           0.002        69    (69)    0.050         0.449     234    (234)       no      0.807      0.135 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 642,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 3, printed p. 53, Wilson et al. (2014), Science, Rep. column; footnote †",
+        "quote": "Wilson et al. (2014), Science                          0.674         < 0.001        30    (30)    0.594       < 0.001      39        (39)    yes     0.930      0.880 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 642,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Wilson et al. (2014), Science, Rep. column; footnote †",
+        "quote": "Wilson et al. (2014), Science                          0.674         < 0.001        30    (30)    0.594       < 0.001      39        (39)    yes     0.930      0.880 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 643,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 3, printed p. 53, Balafoutas and Sutter (2012), Science, Rep. column; footnote †",
+        "quote": "Balafoutas and Sutter (2012), Science                  0.278           0.018        72    (72)    0.146         0.022     243    (243)       yes     0.898      0.527 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 643,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Balafoutas and Sutter (2012), Science, Rep. column; footnote †",
+        "quote": "Balafoutas and Sutter (2012), Science                  0.278           0.018        72    (72)    0.146         0.022     243    (243)       yes     0.898      0.527 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 644,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 3, printed p. 53, Derex et al. (2013), Nature, Rep. column; footnote †",
+        "quote": "Derex et al. (2013), Nature                            0.525         < 0.001        51 (366)      0.361         0.003      65    (482)       yes     0.902      0.687 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 644,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Derex et al. (2013), Nature, Rep. column; footnote †",
+        "quote": "Derex et al. (2013), Nature                            0.525         < 0.001        51 (366)      0.361         0.003      65    (482)       yes     0.902      0.687 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 645,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 4, printed p. 54, Duncan et al. (2012), Science, Rep. column; footnote †",
+        "quote": "Duncan et al. (2012), Science                          0.674           0.004        15    (15)    0.436       < 0.001      92        (92)    yes     0.906      0.648 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 645,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Duncan et al. (2012), Science, Rep. column; footnote †",
+        "quote": "Duncan et al. (2012), Science                          0.674           0.004        15    (15)    0.436       < 0.001      92        (92)    yes     0.906      0.648 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 646,
+      "field": "es_value_r",
+      "blind": {
+        "value": "−0.035",
+        "metric": "r",
+        "test_statistic": null,
+        "location": "Supplementary Table 4, printed p. 54, Gervais and Norenzayan (2012), Science, Replication Stage 2 Effect Size (r) column; standardisation explained p. 18",
+        "quote": "Gervais and Norenzayan (2012), Science                 0.289           0.029        57    (57)   −0.035         0.415     531    (531)       no      0.910     −0.123",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 646,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Authors’ printed standardized replication correlation coefficient r retained. Requested test statistic is not supplied for this replication in the inspected study-result tables and relevant methods/protocol text; original-test statistics in Table 1 are not replication statistics. No conversion performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Gervais and Norenzayan (2012), Science, Replication Stage 2 Effect Size (r) column; standardisation explained p. 18",
+        "quote": "Gervais and Norenzayan (2012), Science                 0.289           0.029        57    (57)   −0.035         0.415     531    (531)       no      0.910     −0.123",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "t(529) = -0.8172",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 646,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Supplementary Table 4, printed p. 54, Gervais and Norenzayan (2012), Science, Rep. column; footnote †",
+        "quote": "Gervais and Norenzayan (2012), Science                 0.289           0.029        57    (57)   −0.035         0.415     531    (531)       no      0.910     −0.123 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 646,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'no' for this named study in the pooled Stage 1+2 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 4, printed p. 54, Gervais and Norenzayan (2012), Science, Rep. column; footnote †",
+        "quote": "Gervais and Norenzayan (2012), Science                 0.289           0.029        57    (57)   −0.035         0.415     531    (531)       no      0.910     −0.123 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 647,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Supplementary Table 3, printed p. 53, Gneezy et al. (2014), Science, Rep. column; footnote †",
+        "quote": "Gneezy et al. (2014), Science                          0.223           0.003       178 (178)      0.182       < 0.001     407    (407)       yes     0.922      0.818 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 647,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly mark Rep. as 'yes' for this named study in the Stage 1 results. This is their tabulated replication verdict, not a verdict inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt",
+        "location": "Supplementary Table 3, printed p. 53, Gneezy et al. (2014), Science, Rep. column; footnote †",
+        "quote": "Gneezy et al. (2014), Science                          0.223           0.003       178 (178)      0.182       < 0.001     407    (407)       yes     0.922      0.818 ... † Replicated; significant effect (p < 0.05) in the same direction as in original study.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/601820735cc4b1ba. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_601820735cc4b1ba_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+Large-batch reply override: write the COMPLETE strict JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_601820735cc4b1ba_v1.json, but reply ONLY with its path and item count. Do not echo the array. This overrides earlier reply-format instructions only; all source/evidence/target requirements still apply.

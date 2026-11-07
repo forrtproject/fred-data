@@ -1,0 +1,41 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 723,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "105",
+    "shipped_metric": "Cohen's f^2",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "219",
+      "sample_role": "Participants analyzed in target regression (Table 1 sample N).",
+      "exclusions": "No exclusions documented for Sample 1.",
+      "location": "p. 2129 (PDF p. 2), Table 1, Current studies / Sample 1, N column",
+      "quote": "Sample 1 219",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2d42ffdb1361df4024b4ab8c.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Vess, M. (2012). Warm Thoughts. Psychological Science, 23(5), 472–474. https://doi.org/10.1177/0956797611435919",
+      "doi_o": "10.1177/0956797611435919",
+      "study_o": "1",
+      "ref_r": "LeBel, E. P., & Campbell, L. (2013). Heightened Sensitivity to Temperature Cues in Individuals With High Anxious Attachment. Psychological Science, 24(10), 2128–2130. https://doi.org/10.1177/0956797613486983",
+      "doi_r": "10.1177/0956797613486983",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "Cohen's f^2",
+      "audit_id": 723,
+      "description": "Attachment anxiety and sensitivity to temperature cues (first study).",
+      "locators_o": "p. 1",
+      "locators_r": "p.2",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/0956797613486983"
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.
