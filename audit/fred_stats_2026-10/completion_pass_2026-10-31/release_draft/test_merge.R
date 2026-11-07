@@ -20,9 +20,11 @@ again <- apply(result$data)
 expect(identical(again$data,result$data) && all(again$changes$status=="already_applied"),"second application is a no-op")
 reordered <- apply(original[2164:1,])$data
 expect(identical(reordered,result$data[2164:1,]),"reordered rows matched by identity, not row position")
-bad <- original;bad$es_value_o[9] <- "CONFLICT";copy <- bad
+first <- match(.fred_key(fixes[1,]),.fred_key(original))
+bad <- original;bad[[fixes$target_column[1]]][first] <- "CONFLICT";copy <- bad
 expect(reject(apply(bad)) && identical(bad,copy),"changed old value rejected without mutation")
-bad <- original;bad$description[9] <- "different outcome"
+guards <- .fred_read_csv(file.path(P,"row_guard.csv"))
+bad <- original;bad$description[match(.fred_key(guards[1,]),.fred_key(original))] <- "different outcome"
 expect(reject(apply(bad)),"changed outcome identity rejected")
 bad <- original;bad[2,c("entry_id","effect_id","fred_id")]<-bad[1,c("entry_id","effect_id","fred_id")]
 expect(reject(apply(bad)),"duplicate record key rejected")
@@ -38,11 +40,20 @@ expect(digest::digest(file=input,algo="sha256")==FRED_INPUT_SHA256,"original wor
 status <- system2(file.path(R.home("bin"),"Rscript"),shQuote(c(file.path(P,"merge_fred_fixes.R"),input,output)),stdout=FALSE,stderr=FALSE)
 expect(status!=0L,"CLI refuses an existing output path")
 # Check every primary correction and every attached inequality against the ledger.
-confirmed <- .fred_read_csv(file.path(P,"confirmed_corrections.csv"))
+findings <- .fred_read_csv(file.path(P,"confirmed_corrections.csv"))
+decisions <- .fred_read_csv(file.path(P,"application_decisions.csv"))
+expect(setequal(findings$correction_id,decisions$correction_id) && all(findings$application_status==decisions$final_decision[match(findings$correction_id,decisions$correction_id)]),"every audit finding carries its ledger decision")
+expect(all(fixes$correction_id %in% decisions$correction_id[decisions$final_decision=="apply"]) && setequal(unique(fixes$correction_id),decisions$correction_id[decisions$final_decision=="apply"]),"patch contains exactly the applied decisions")
+confirmed <- findings[findings$application_status=="apply",]
+rs <- confirmed$field=="reported_success"
+study <- function(d) paste(tolower(gsub("\\s","",.fred_text(d$doi_o))),ifelse(.fred_text(d$url_r)!="",.fred_text(d$url_r),tolower(gsub("\\s","",.fred_text(d$doi_r)))),.fred_text(d$study_o),.fred_text(d$study_r),sep="\037")
+keys <- study(result$data)
+rsrows <- match(.fred_key(confirmed[rs,]),.fred_key(original))
+expect(all(vapply(seq_along(rsrows),function(i){same <- keys==keys[rsrows[i]] & .fred_text(original$reported_success)==.fred_text(original$reported_success[rsrows[i]]);all(.fred_text(result$data$reported_success[same])==.fred_text(confirmed$new_value[rs][i]))},logical(1))),"study-level reported_success applied to every effect of the study")
 idx <- match(.fred_key(confirmed),.fred_key(result$data))
 expect(all(vapply(seq_len(nrow(confirmed)),function(i).fred_text(result$data[[confirmed$field[i]]][idx[i]])==.fred_text(confirmed$new_value[i]),logical(1))),"all confirmed field replacements represented")
 p <- which(confirmed$new_p_bound!="")
 expect(all(vapply(p,function(i)startsWith(result$data[[paste0("pval_type_",substr(confirmed$field[i],nchar(confirmed$field[i]),nchar(confirmed$field[i]))) ]][idx[i]], confirmed$new_p_bound[i]),logical(1))),"all confirmed p-value bounds retained")
-receipt <- list(checks_passed=length(checks),checks=checks,confirmed_field_errors=nrow(confirmed),physical_cell_updates=nrow(fixes),original_unchanged=TRUE,temporary_test_directory=cache,R=R.version.string,packages=vapply(c("readxl","writexl","digest"),function(p)as.character(packageVersion(p)),character(1)))
+receipt <- list(checks_passed=length(checks),checks=checks,audit_findings=nrow(findings),applied_corrections=nrow(confirmed),physical_cell_updates=nrow(fixes),original_unchanged=TRUE,temporary_test_directory=cache,R=R.version.string,packages=vapply(c("readxl","writexl","digest"),function(p)as.character(packageVersion(p)),character(1)))
 jsonlite::write_json(receipt,file.path(P,"r_validation.json"),pretty=TRUE,auto_unbox=TRUE)
 cat(length(checks),"merge checks passed\n")
