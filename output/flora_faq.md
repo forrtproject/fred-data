@@ -43,6 +43,12 @@ Then it will be listed twice in FLoRA, once as a replication and once as a repro
 
 Each row is one pair of references. A replication study can have multiple studies but their results are aggregated (e.g., based on the authors’ judgment, who may report aggregated results or conflicting results, which we consider as mixed).
 
+For reproductions, the same aggregation applies to each outcome axis separately, in that axis’s own vocabulary: conflicting results across several analyses mean *computational issues* on the computational axis, and *robustness challenges* on the robustness axis. There is no *mixed* value for reproductions.
+
+### Which study is the target when a finding has already been replicated by others?
+
+The target is the study the replication actually re-tests — the one closest to it in the chain of replications — not the chain’s original source. For example, a 2024 paper re-testing a 2010 finding as it was measured in a 2018 replication is entered against the 2018 study.
+
 ### When is a finding mixed?
 
 We rely on what replication authors say in the abstract or the report, subject to our interpretation of this. If studies are part of a meta-paper, we still rely on the individual reports where available, and otherwise on the main criterion used by the paper authors.
