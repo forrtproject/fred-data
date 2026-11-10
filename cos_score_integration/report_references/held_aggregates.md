@@ -16,6 +16,16 @@ The seven are held from the next FReD build. Restore them only after reviewing h
 | `8wZ0_single-trace` | [6o4o5](https://osf.io/fxcey/) | [276](https://osf.io/tdr6s/), [2y486](https://osf.io/vt6ga/) | [R code](https://osf.io/download/uq37e/) |
 | `AgO1_single-trace` | [6o4z5](https://osf.io/hfdxs/) | [895g](https://osf.io/5tk2e/), [23m12](https://osf.io/z9emg/) | [R code](https://osf.io/download/68810ee734519150da84fe65/) |
 
+## Are the component attempts already included?
+
+No. Checked against both current repository exports (also verified byte-identical to their latest `origin/main` versions):
+
+- **FReD: 0 of 14** component attempts have individual rows. Its matching original-study rows are the seven aggregates themselves.
+- **FLoRA: 1 of 14** component attempts is included: `24716`, Schmidt/Clark’s Alves replication in project `bx4hy`, as `FLORA-002670`.
+- **FLoRA: 13 of 14** component attempts are absent. The Hanel, Martončik, Berry and Chen reproduction rows for four of the same original papers are different attempts and do not fill this gap.
+
+The user’s condition for permanently excluding these aggregates as already-represented results is therefore unmet. Keep the seven release holds and the issue open. First recover/code the missing individual attempts (and add their individual FReD rows); then resolve whether the pooled rows can be permanently excluded without losing the only available representation. `component_coverage.csv` records all fourteen projects, matched component IDs and other rows for the same original. `component_coverage_sources.json` pins the checked exports and matching method.
+
 ## Why the earlier report matches were insufficient
 
 A match on the original paper alone cannot identify a pooled result. For example, the Alves row combines projects `jxd7b` and `bx4hy`; assigning only the Schmidt/Clark report from `bx4hy` would omit the other attempt. The Ohtsubo, Pastötter and Rodriguez-Lara reproduction reports previously found in FLoRA are different attempts, not references for these aggregates. The supposed FReD/FLoRA coverage discrepancy therefore conflated pooled result rows with individual-report rows. A strict superset still needs an explicit definition at those two levels.
