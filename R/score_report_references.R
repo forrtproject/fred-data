@@ -2,9 +2,12 @@
 # contributor lists are not report authors; these verified rows take priority.
 apply_score_report_references <- function(data,
     audit_file = here::here('cos_score_integration', 'report_references', 'audit.csv'),
-    manual_file = here::here('cache', 'manual_references.xlsx')) {
+    manual_file = here::here('cache', 'manual_references.xlsx'),
+    component_file = here::here('cos_score_integration', 'report_references', 'entry_sheet_intake.csv')) {
   audit <- read.csv(audit_file, stringsAsFactors = FALSE)
-  keys <- unique(audit$url_r[audit$dataset == 'FReD' & audit$status == 'corrected'])
+  components <- read.csv(component_file, stringsAsFactors = FALSE)
+  keys <- unique(c(audit$url_r[audit$dataset == 'FReD' & audit$status == 'corrected'],
+                   components$report_url))
   normalize <- function(x) tolower(sub('/+$', '', trimws(x)))
   refs <- readxl::read_excel(manual_file)
   refs <- refs[normalize(refs$key) %in% normalize(keys), ]
