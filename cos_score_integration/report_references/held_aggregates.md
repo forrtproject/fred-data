@@ -1,10 +1,10 @@
-# Seven SCORE aggregate rows held from release
+# Seven SCORE aggregate rows superseded by their individual attempts
 
 All seven entries previously lacking report identifiers have been traced to COS posthoc aggregations, each combining two replication attempts. They are not seven unidentified individual replications. COS explicitly labels them `is_manylabs = posthoc` and `manylabs_type = aggregation` in the [published replication outcomes](https://osf.io/download/2c8gh/).
 
 The imported claim IDs, sample sizes, p-values and converted correlations match those records (absolute tolerance 0.000001). Their scripts explicitly fit fixed-effect meta-analytic models and name **Andrew Tyner** as code author, with June 2024 dates. This identifies the aggregation code author; it does not assign that author to the constituent replication reports.
 
-The seven are held from the next FReD build. Restore them only after reviewing how pooled results belong in FReD and supplying attribution to the aggregation and constituent reports. The hold does not imply their numerical results are invalid. No source row, outcome, reported-success value or effect size has been edited.
+The seven pooled rows are **superseded**: each is replaced by separate FReD rows for its two individual attempts, and they stay excluded from FReD builds. Releasing them as well would count the same participants twice. The archived source files keep their unmodified values. The supersession does not imply the pooled numerical results are invalid.
 
 | FReD claim | Aggregate ID / project | Component attempts and projects | Aggregation script |
 |---|---|---|---|
@@ -16,19 +16,15 @@ The seven are held from the next FReD build. Restore them only after reviewing h
 | `8wZ0_single-trace` | [6o4o5](https://osf.io/fxcey/) | [276](https://osf.io/tdr6s/), [2y486](https://osf.io/vt6ga/) | [R code](https://osf.io/download/uq37e/) |
 | `AgO1_single-trace` | [6o4z5](https://osf.io/hfdxs/) | [895g](https://osf.io/5tk2e/), [23m12](https://osf.io/z9emg/) | [R code](https://osf.io/download/68810ee734519150da84fe65/) |
 
-## Are the component attempts already included?
+## Individual attempts that supersede the pooled rows
 
-No. Checked against both current repository exports (also verified byte-identical to their latest `origin/main` versions):
+All fourteen completed results reports have been retrieved and checked; see [the report-status ledger](component_reports.md) for links, bylines, stages and import checks.
 
-- **FReD: 0 of 14** component attempts have individual rows. Its matching original-study rows are the seven aggregates themselves.
-- **FLoRA: 1 of 14** component attempts is included: `24716`, Schmidt/Clark’s Alves replication in project `bx4hy`, as `FLORA-002670`.
-- **FLoRA: 13 of 14** component attempts are absent. The Hanel, Martončik, Berry and Chen reproduction rows for four of the same original papers are different attempts and do not fill this gap.
+- **FReD:** each attempt has its own row in `COS coding` (rows 5484–5497, effect IDs fe05482–fe05495), marked `validated - chosen` by Lukas Wallrich on 10 November 2026. Their statistical, effect-size and outcome fields have not yet been coded.
+- **FLoRA:** twelve new rows (4247–4258) and the repaired Hoeppner/Hippel/Nax entry (row 2135) await validation. Schmidt/Clark’s report was already published as `FLORA-002670` (row 598, unchanged).
+- `entry_sheet_intake.csv` maps each attempt to its report and rows.
 
-The user’s condition for permanently excluding these aggregates as already-represented results is therefore unmet. Keep the seven release holds and the issue open. First recover/code the missing individual attempts (and add their individual FReD rows); then resolve whether the pooled rows can be permanently excluded without losing the only available representation. `component_coverage.csv` records all fourteen projects, matched component IDs and other rows for the same original. `component_coverage_sources.json` pins the checked exports and matching method.
-
-## Individual reports are now located
-
-All fourteen completed results reports have been retrieved and checked. See [the report-status ledger](component_reports.md) for links, bylines, stages and import checks. All fourteen attempts are now represented in both entry sheets: fourteen new FReD intake rows, twelve new FLoRA rows, one repaired unvalidated FLoRA entry and one retained validated FLoRA entry. The remaining work is coding, validation and two author confirmations; these additions do not publish the records. See `entry_sheet_intake.csv` for exact row links.
+The Hanel, Martončik, Berry and Chen reproduction rows for four of the same original papers are different attempts.
 
 ## Why the earlier report matches were insufficient
 
@@ -39,8 +35,8 @@ A match on the original paper alone cannot identify a pooled result. For example
 - [Published outcomes](https://osf.io/download/2c8gh/) connect each FReD claim to the aggregate report ID and supply the `posthoc` / `aggregation` flags and matching numeric values.
 - [All replication cases](https://osf.io/download/2k9ht/) confirm the aggregate report IDs. [Project tracking](https://osf.io/download/2e5nk/) maps aggregate and component attempt IDs to their OSF projects. The current aggregate projects contain data and R scripts, rather than standalone authored replication reports.
 - [COS’s SCORE page](https://www.cos.io/score) links to the authoritative [data project](https://osf.io/dtzx4/). The [central analysis-code project](https://osf.io/uqegb/) contains the seven scripts. Downloaded scripts were inspected as text; they were not executed.
-- `holds_evidence.json` records the primary-source hashes, aggregate and component IDs/links, code headers, script hashes, and the three numeric cross-checks per row. `holds.csv` is the reversible release hold manifest.
-- `R/score_report_holds.R` reads the manifest in the SCORE integration step before binding to FReD. It accepts only explicit `hold` / `released` states. The raw CSV and prepared workbook remain complete (132 rows); the next build imports 125 SCORE rows. Changing a row to `released` restores its unmodified source values.
+- `holds_evidence.json` records the primary-source hashes, aggregate and component IDs/links, code headers, script hashes, and the three numeric cross-checks per row. `holds.csv` is the exclusion manifest; all seven rows are `superseded`.
+- `R/score_report_holds.R` reads the manifest in the SCORE integration step before binding to FReD. It accepts only `hold`, `superseded` or `released`; `hold` and `superseded` rows are excluded. The raw CSV and prepared workbook remain complete (132 rows); the build imports 125 SCORE rows.
 - `Rscript tests/score_report_holds.R` tests both real source files, exact preservation of every retained field, the actual notebook integration chunk, and explicit restoration. `Rscript tests/score_report_references.R` continues to test the 116 corrected references.
 
-Tracking: [issue #168](https://github.com/forrtproject/fred-data/issues/168), [PR #167](https://github.com/forrtproject/fred-data/pull/167). Existing generated exports were not rewritten; the hold takes effect on the next pipeline build. API cost: US$0.
+Tracking: [issue #168](https://github.com/forrtproject/fred-data/issues/168), [PR #167](https://github.com/forrtproject/fred-data/pull/167). Existing generated exports were not rewritten; the exclusion takes effect on the next pipeline build. API cost: US$0.

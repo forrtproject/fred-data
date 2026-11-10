@@ -1,4 +1,5 @@
 # Run from the repository root: Rscript tests/score_report_holds.R
+# The seven pooled SCORE rows are superseded by their individual attempts and stay excluded.
 source('R/score_report_holds.R')
 raw <- read.csv('cos_score_integration/cos_test_set_phase1.csv', check.names=FALSE)
 prepared <- readxl::read_excel('cos_score_integration/cos_test_set_phase1_prepared.xlsx')
@@ -38,4 +39,5 @@ write.csv(manifest, tmp, row.names=FALSE)
 stopifnot(inherits(try(filter_score_report_holds(raw, tmp), silent=TRUE), 'try-error'))
 unlink(tmp)
 stopifnot(nrow(restored)==126L, manifest$claim_id[1] %in% restored$claim_id)
-cat('Seven holds verified on both sources and actual integration; retained values unchanged; restoration verified.\n')
+stopifnot(all(read.csv('cos_score_integration/report_references/holds.csv')$status == 'superseded'))
+cat('Seven superseded aggregates verified on both sources and actual integration; retained values unchanged; restoration verified.\n')

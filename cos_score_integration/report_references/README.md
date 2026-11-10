@@ -4,7 +4,7 @@ The references credit the named replication teams or reproduction analysts print
 
 ## Follow-up: seven source gaps traced
 
-The seven FReD rows formerly lacking report links are now identified as COS posthoc aggregations of two attempts each. They are held from the next release while aggregate inclusion and attribution are reviewed. See [the seven-row investigation](held_aggregates.md), `holds.csv` and `holds_evidence.json`. The snapshot audit still contains all 132 input FReD rows; `shipping_status` identifies the seven held rows. The next build imports 125 SCORE rows (116 corrected references and nine other unresolved cases). All fourteen constituent results reports have now been found and represented in both entry sheets for review; see [their report and intake status](component_reports.md) and `entry_sheet_intake.csv`.
+The seven FReD rows formerly lacking report links are COS posthoc aggregations of two attempts each. They are superseded by separate FReD rows for their fourteen individual attempts and stay excluded from releases. See [the seven-row investigation](held_aggregates.md), `holds.csv` and `holds_evidence.json`. The snapshot audit still contains all 132 input FReD rows; `shipping_status` identifies the seven superseded rows. The next build imports 125 SCORE rows (116 corrected references and nine other unresolved cases). For the individual reports and their entry-sheet rows, see [their report and intake status](component_reports.md) and `entry_sheet_intake.csv`.
 
 ## Coverage and delivery
 
@@ -33,7 +33,7 @@ FReD: x0pA_single-trace, FReD: DEqr_single-trace, FReD: eg3p_single-trace, FReD:
 
 FReD: mJDj_single-trace, FReD: G1Lr_single-trace, FReD: Q1dl_single-trace, FReD: YpZZ_single-trace, FLoRA: FLORA-002867, FLoRA: FLORA-002886, FLoRA: FLORA-002893, FLoRA: FLORA-002906
 
-**Seven entries identified as posthoc aggregations and held from release; see the follow-up above.**
+**Seven entries identified as posthoc aggregations and superseded by their individual attempts; see the follow-up above.**
 
 FReD: AvOr_single-trace, FReD: LyLd_single-trace, FReD: zlm2_single-trace, FReD: plLK_single-trace, FReD: EQxa_single-trace, FReD: 8wZ0_single-trace, FReD: AgO1_single-trace
 
