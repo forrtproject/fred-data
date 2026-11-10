@@ -17,6 +17,6 @@ The small post-join override is necessary because the existing manual URL helper
 
 `Rscript tests/score_report_references.R` checks all 130 report citations, author metadata, unresolved-row preservation, numerical-field preservation and idempotency. Generated exports, effect sizes and success coding are outside this PR. A full notebook build was not run (`rcrossref` is unavailable here).
 
-FLoRA uses its own sources and correction log; its corrections are in [flora-validation PR #26](https://github.com/forrtproject/flora-validation/pull/26). The seven superseded pooled rows are handled separately. Remaining reference problems are tracked in [issue #168](https://github.com/forrtproject/fred-data/issues/168), implementing the decision in [issue #162](https://github.com/forrtproject/fred-data/issues/162).
+FLoRA uses its own sources and correction log; its corrections are in [flora-validation PR #26](https://github.com/forrtproject/flora-validation/pull/26). The seven superseded pooled rows are excluded in [PR #169](https://github.com/forrtproject/fred-data/pull/169). Remaining reference problems are tracked in [issue #168](https://github.com/forrtproject/fred-data/issues/168), implementing the decision in [issue #162](https://github.com/forrtproject/fred-data/issues/162).
 
 The [full investigation at the pre-trim commit](https://github.com/forrtproject/fred-data/tree/a3d0f8f3e/cos_score_integration/report_references) preserves the raw evidence, aggregate investigation, entry-sheet links and approved coding records without including them in this change.
