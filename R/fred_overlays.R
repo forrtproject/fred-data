@@ -12,8 +12,10 @@ library(stringr)
 # Each overlay row stores the value it was judged against. If the current value
 # differs, the overlay still applies and the build lists the effect for re-checking.
 #
-# For now this handles one overlay: the chi-squared conversion flags
-# (forrtproject/fred-data#66).
+# Overlays:
+# - audit_corrections.csv: confirmed corrections from the 2026-10 statistics audit
+#   (forrtproject/fred-data#155), applied first so later overlays see corrected values.
+# - x2_conversion_flags.csv: chi-squared conversion flags (forrtproject/fred-data#66).
 
 #' Parse APA chi-squared strings as normalised by clean_fred_data().
 #' @return data frame with df, n and chi2 (NA when x is not a chi-squared string)
@@ -80,5 +82,58 @@ apply_x2_conversion_flags <- function(data, flags_file) {
   # Flags whose effect is no longer in the data (e.g., status changed in the sheet)
   missing <- flags[!flags$effect_uid %in% data$effect_uid, ]
   report$missing <- if (nrow(missing) > 0) paste0(missing$effect_uid, " (", missing$side, ")") else character(0)
+  list(data = data, report = report)
+}
+
+#' Apply the confirmed statistics-audit corrections (forrtproject/fred-data#155).
+#'
+#' One row per effect_uid and field, with the value the audit judged (judged_value)
+#' and its correction (new_value). A cell that already holds new_value is left as
+#' it is, so applying twice changes nothing. A cell that holds neither value is
+#' still corrected and listed for re-checking. Corrections whose effect is not in
+#' the build (e.g., SCORE rows without include_score, or a changed status) are listed.
+#'
+#' @param data FReD data with effect_uid and the corrected columns
+#' @param corrections_file path to audit_corrections.csv
+#' @return list(data = corrected data, report = list of counts and listings)
+apply_audit_corrections <- function(data, corrections_file) {
+  fixes <- read.csv(corrections_file, colClasses = "character", na.strings = character(),
+                    encoding = "UTF-8")
+  stopifnot(!anyDuplicated(fixes[c("effect_uid", "field")]),
+            all(fixes$effect_uid != ""), all(fixes$new_value != ""))
+  absent <- setdiff(fixes$field, names(data))
+  if (length(absent) > 0) stop("Audit corrections target missing columns: ", paste(absent, collapse = ", "))
+  uids <- data$effect_uid[!is.na(data$effect_uid)]
+  if (anyDuplicated(uids)) stop("effect_uid must be unique before overlays are applied.")
+  txt <- function(x) { x <- str_squish(as.character(x)); x[is.na(x)] <- ""; x }
+
+  row <- match(fixes$effect_uid, data$effect_uid)
+  found <- !is.na(row)
+  current <- rep(NA_character_, nrow(fixes))
+  for (f in unique(fixes$field[found])) {
+    k <- found & fixes$field == f
+    current[k] <- txt(data[[f]][row[k]])
+  }
+  already <- found & current == txt(fixes$new_value)
+  changed <- found & !already & current != txt(fixes$judged_value)
+
+  for (f in unique(fixes$field[found & !already])) {
+    k <- which(found & !already & fixes$field == f)
+    value <- fixes$new_value[k]
+    if (is.numeric(data[[f]])) value <- as.numeric(value)
+    data[[f]][row[k]] <- value
+  }
+
+  report <- list(
+    rows = nrow(fixes),
+    effects = length(unique(fixes$effect_uid)),
+    effects_matched = length(unique(fixes$effect_uid[found])),
+    applied = sum(found & !already),
+    already_applied = sum(already),
+    changed = if (any(changed)) paste0(fixes$effect_uid[changed], " ", fixes$field[changed], ": judged '",
+                                       fixes$judged_value[changed], "', found '", current[changed],
+                                       "' (", fixes$correction_id[changed], ")") else character(0),
+    missing = sort(unique(fixes$effect_uid[!found]))
+  )
   list(data = data, report = report)
 }
