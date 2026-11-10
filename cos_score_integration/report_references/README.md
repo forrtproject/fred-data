@@ -4,7 +4,7 @@ The references credit the named replication teams or reproduction analysts print
 
 ## Follow-up: seven source gaps traced
 
-The seven FReD rows formerly lacking report links are now identified as COS posthoc aggregations of two attempts each. They are held from the next release while aggregate inclusion and attribution are reviewed. See [the seven-row investigation](held_aggregates.md), `holds.csv` and `holds_evidence.json`. The snapshot audit still contains all 132 input FReD rows; `shipping_status` identifies the seven held rows. The next build imports 125 SCORE rows (116 corrected references and nine other unresolved cases).
+The seven FReD rows formerly lacking report links are now identified as COS posthoc aggregations of two attempts each. They are held from the next release while aggregate inclusion and attribution are reviewed. See [the seven-row investigation](held_aggregates.md), `holds.csv` and `holds_evidence.json`. The snapshot audit still contains all 132 input FReD rows; `shipping_status` identifies the seven held rows. The next build imports 125 SCORE rows (116 corrected references and nine other unresolved cases). All fourteen constituent results reports have now been found; see [their actual report and ingestion status](component_reports.md).
 
 ## Coverage and delivery
 

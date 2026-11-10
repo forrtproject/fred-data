@@ -26,6 +26,10 @@ No. Checked against both current repository exports (also verified byte-identica
 
 The user’s condition for permanently excluding these aggregates as already-represented results is therefore unmet. Keep the seven release holds and the issue open. First recover/code the missing individual attempts (and add their individual FReD rows); then resolve whether the pooled rows can be permanently excluded without losing the only available representation. `component_coverage.csv` records all fourteen projects, matched component IDs and other rows for the same original. `component_coverage_sources.json` pins the checked exports and matching method.
 
+## Individual reports are now located
+
+All fourteen completed results reports have been retrieved and checked. See [the report-status ledger](component_reports.md) for links, bylines, stages and import checks. Twelve attempts have no matching public-sheet entry, one has a pending registration-based entry, and one is already published in FLoRA. The remaining work is curation and attribution, not finding or waiting for results.
+
 ## Why the earlier report matches were insufficient
 
 A match on the original paper alone cannot identify a pooled result. For example, the Alves row combines projects `jxd7b` and `bx4hy`; assigning only the Schmidt/Clark report from `bx4hy` would omit the other attempt. The Ohtsubo, Pastötter and Rodriguez-Lara reproduction reports previously found in FLoRA are different attempts, not references for these aggregates. The supposed FReD/FLoRA coverage discrepancy therefore conflated pooled result rows with individual-report rows. A strict superset still needs an explicit definition at those two levels.
