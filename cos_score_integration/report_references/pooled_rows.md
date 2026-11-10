@@ -6,4 +6,4 @@ The manifest records the published claim/report IDs, aggregate projects, aggrega
 
 The filter excludes these seven identities when optional SCORE integration runs, leaving the archived source files and every retained value unchanged. This reduces the imported source from 132 to 125 rows. Citation corrections are separate in [PR #167](https://github.com/forrtproject/fred-data/pull/167).
 
-Validation: `Rscript tests/score_report_holds.R` checks both real source files and executes the notebook’s integration chunk. All retained fields are compared exactly; no generated exports or entry-sheet values are edited.
+One-off verification checked both real source files and executed the notebook’s integration chunk, comparing every retained field exactly. No generated exports or entry-sheet values are edited.
