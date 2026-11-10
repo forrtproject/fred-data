@@ -1,126 +1,22 @@
-# SCORE report authors (10 November 2026)
+# SCORE report-author corrections
 
-The references credit the named replication teams or reproduction analysts printed in the reports. SCORE staff remain only where the report itself credits them as contributors. No DOI was added or changed.
+`cache/manual_references.xlsx` supplies verified author, title, year, APA and BibTeX metadata for 130 FReD rows: 116 existing rows and 14 newly entered individual attempts. Multiple rows can cite the same report. The workbook also preserves the original-study author’s compound surname **De Neys** for DOI `10.1016/j.cognition.2012.05.011`.
 
-## Follow-up: seven source gaps traced
+## Method and audit
 
-The seven FReD rows formerly lacking report links are COS posthoc aggregations of two attempts each. They are superseded by separate FReD rows for their fourteen individual attempts and stay excluded from releases. See [the seven-row investigation](held_aggregates.md), `holds.csv` and `holds_evidence.json`. The snapshot audit still contains all 132 input FReD rows; `shipping_status` identifies the seven superseded rows. The next build imports 125 SCORE rows (116 corrected references and nine other unresolved cases). For the individual reports and their entry-sheet rows, see [their report and intake status](component_reports.md) and `entry_sheet_intake.csv`.
+1. Identify SCORE rows in the read-only export and follow their OSF project/report links.
+2. Retrieve the reports through OSF’s public API and read their bylines. Credit the report writers rather than the project’s SCORE administrators.
+3. Use a report date where available; otherwise use its file deposit year. Supply bracketed descriptive titles identifying the original study, rather than presenting internal codes as publication titles.
+4. Store the verified metadata in the manual workbook. `audit.csv` retains each FReD row ID, lookup key, before/after citation, API endpoint, byline evidence, year basis and report SHA-256. All records were checked on 10 November 2026; incremental API cost was US$0.
 
-## Coverage and delivery
+Two individual reports have no printed byline. With approval, `score_component_9977` is attributed to John E. Edlund using document-author metadata and the OSF contributors; `score_component_276` is attributed to Bence Bago and Balazs Aczel using the file name, PDF metadata and OSF contributors. Their evidence is explicit in the audit. Nine other rows remain unresolved: five lack an established byline and four have deleted report files without identified replacements. No authors or DOIs were invented.
 
-- FReD: 116 source corrections prepared; 16 unresolved rows; 0 discovery candidates excluded as unrelated to SCORE.
-- FLoRA: 277 source corrections prepared; 12 unresolved rows; 1 discovery candidates excluded as unrelated to SCORE.
+The small post-join override is necessary because the existing manual URL helper only fills missing values: it would retain cached project citations over corrected report citations. The override uses only the corrected report keys in this audit and changes bibliographic fields.
 
-FReD corrections are in `cache/manual_references.xlsx`. `R/score_report_references.R`, called after the reference join in `pipelines/fred/prepare_fred.qmd`, overrides cached project metadata only for corrected FReD URLs listed in this audit. `output/FReD.xlsx` and `output/flora.csv` were read only.
+## Scope and checks
 
-FLoRA now uses its own sheet sources (`score_2025`, replications and reproductions) and Python reference pipeline in **forrtproject/flora-validation**. It does not inherit subsequent edits to this workbook. Its own `data/manual_references.xlsx` is a separate seed. The companion PR supplies a reviewed batch and an application script that calls `flora_service.update_record()` → `flora_edits.save()`. The batch has not been applied to the live database. SCORE IDs and existing reference text match both repositories’ exports.
+`Rscript tests/score_report_references.R` checks all 130 report citations, author metadata, unresolved-row preservation, numerical-field preservation and idempotency. Generated exports, effect sizes and success coding are outside this PR. A full notebook build was not run (`rcrossref` is unavailable here).
 
-## Evidence and conventions
+FLoRA uses its own sources and correction log; its corrections are in [flora-validation PR #26](https://github.com/forrtproject/flora-validation/pull/26). The seven superseded pooled rows are handled separately. Remaining reference problems are tracked in [issue #168](https://github.com/forrtproject/fred-data/issues/168), implementing the decision in [issue #162](https://github.com/forrtproject/fred-data/issues/162).
 
-- `audit.csv` lists every candidate, its permanent row ID, file row number (header is row 1), original study, current reference, corrected reference or unresolved reason. Discovery uses the prepared COS claim IDs, FLoRA SCORE provenance, SCORE staff metadata, and the manual reproduction keys from the earlier repairs. One unrelated reproduction was excluded after checking its report.
-- `evidence.json` records public OSF API and report links, report headers/bylines, file hashes, and date evidence. Metadata was retrieved through the free public API, reusing cached responses. Incremental cost: US$0.
-- Bracketed titles are supplied descriptive titles identifying the original paper; they replace opaque internal codes. Printed titles remain in the evidence headers. Named author order follows the report, including explicit data-finder/data-analyst credits. Titles are not presented as literal transcriptions.
-- Use the date printed in the report header where available; otherwise use the OSF report file deposit year, explicitly labelled in the evidence. Project update dates were not used. Corrected references link the report file; existing dataset DOI and URL columns are preserved.
-- A project contributor list that mixes researchers with SCORE administrators cannot by itself establish who wrote an unsigned report. These cases remain unresolved. Do not infer an author from a project code.
-
-## Unresolved rows
-
-**No named authors in report byline (or placeholder only); project contributors do not distinguish report writers from SCORE staff.**
-
-FReD: x0pA_single-trace, FReD: DEqr_single-trace, FReD: eg3p_single-trace, FReD: mxyQ_single-trace, FReD: qXX2_single-trace, FLoRA: FLORA-002648, FLoRA: FLORA-002655, FLoRA: FLORA-002692, FLoRA: FLORA-002841, FLoRA: FLORA-002881, FLoRA: FLORA-002883, FLoRA: FLORA-002891, FLoRA: FLORA-002895
-
-**OSF report GUID returns HTTP 410 (deleted file); cited project storage has no identifiable replacement report.**
-
-FReD: mJDj_single-trace, FReD: G1Lr_single-trace, FReD: Q1dl_single-trace, FReD: YpZZ_single-trace, FLoRA: FLORA-002867, FLoRA: FLORA-002886, FLoRA: FLORA-002893, FLoRA: FLORA-002906
-
-**Seven entries identified as posthoc aggregations and superseded by their individual attempts; see the follow-up above.**
-
-FReD: AvOr_single-trace, FReD: LyLd_single-trace, FReD: zlm2_single-trace, FReD: plLK_single-trace, FReD: EQxa_single-trace, FReD: 8wZ0_single-trace, FReD: AgO1_single-trace
-
-## Ten before/after spot checks
-
-### 1. FReD — e3G7_single-trace
-
-Before: Parsons, E. S., Miske, O., Luis, B., Loomas, Z., Kline Struhl, M., Fox, N. W., … Baskin, E. (2025, November 18). Lammers_JournPerSocPsy_2018_e3G7 - Baskin - New Data Replication - 6o442. Retrieved from osf.io/23ghe
-
-After: Baskin, E. (2021). [Replication report for “Past-focused temporal communication overcomes conservatives’ resistance to liberal political ideas”]. OSF. https://osf.io/36w4c/
-
-Evidence: https://osf.io/36w4c/
-
-### 2. FReD — YWep_single-trace
-
-Before: Bokhove, C., Nast, C., Tyner, A. H., Abatayo, A., Loomas, Z., Miske, O., … Bokhove, C. (2025, November 18). Kim_CompEdu_2014_YWep - Nast/Bokhove - Secondary Data Replication - 75g6. Retrieved from osf.io/u52y3
-
-After: Bokhove, C., Nast, C., & SCORE team (2021). [Replication report for “An analysis of variables affecting the ICT literacy level of Korean elementary school students”]. OSF. https://osf.io/2wfgv/
-
-Evidence: https://osf.io/2wfgv/
-
-### 3. FLoRA — FLORA-001441
-
-Before: Parsons, E. S., Miske, O., Luis, B., Loomas, Z., Fox, N., Tyner, A. H., Hahn, K., Maier, M., Bartoš, F., & Savi, A. O. (2022). Reproduction (with author data): Hansen & Melzner (2014, Journal of Experimental Social Psychology). OSF. https://doi.org/10.17605/osf.io/akubt
-
-After: Bartoš, F., Maier, M., & Savi, A. (2022). [Reproduction report for “What you hear shapes how you think: Sound patterns change level of construal”]. OSF. https://osf.io/39g7q/
-
-Evidence: https://osf.io/39g7q/
-
-### 4. FLoRA — FLORA-001499
-
-Before: Fox, N., Loomas, Z., Miske, O., Luis, B., & Tutor, M. (2020). Reproduction (with author data & code): Wang (2013, American Economic Journal: Applied Economics). OSF. https://doi.org/10.17605/osf.io/ezx2k
-
-After: Tutor, M. (2020). [Reproduction report for “Marriage Networks, Nepotism, and Labor Market Outcomes in China”]. OSF. https://osf.io/2yndk/
-
-Evidence: https://osf.io/2yndk/
-
-### 5. FLoRA — FLORA-001519
-
-Before: Miske, O., Loomas, Z., Luis, B., Tyner, A. H., Fox, N., Struhl, M. K., & Talbert, E. (2020). Reproduction (with author data & code): Chen & van Ours (2018, Demography). OSF. https://doi.org/10.17605/osf.io/kup8x
-
-After: Talbert, E. (2020). [Reproduction report for “Subjective Well-being and Partnership Dynamics: Are Same-Sex Relationships Different?”]. OSF. https://osf.io/u3qpy/
-
-Evidence: https://osf.io/u3qpy/
-
-### 6. FLoRA — FLORA-001523
-
-Before: Huntington-Klein, N., Tyner, A. H., Loomas, Z., Miske, O., Fox, N., & Luis, B. (2020). Reproduction (without author data): Horowitz (2018, American Sociological Review). OSF. https://doi.org/10.17605/osf.io/6ye5m
-
-After: Huntington-Klein, N. (2020). [Reproduction report for “Relative Education and the Advantage of a College Degree”]. OSF. https://osf.io/wrdvs/
-
-Evidence: https://osf.io/wrdvs/
-
-### 7. FLoRA — FLORA-002742
-
-Before: Miske, O., Loomas, Z., Luis, B., Fox, N. W., & Talbert, E. (2026, February 11). Malik_covid_wx5k - Talbert - Reproduction (with author data & code) - 36mz. Retrieved from osf.io/yrnmv
-
-After: Talbert, E. (2020). [Reproduction report for “COVID-19 related social distancing measures and reduction in city mobility”]. OSF. https://osf.io/x7jrb/
-
-Evidence: https://osf.io/x7jrb/
-
-### 8. FReD — d24p_single-trace
-
-Before: Baskin, E., Parsons, E. S., Miske, O., Luis, B., Loomas, Z., Kline Struhl, M., … Hahn, K. (2025, November 18). Ritov_OrgBehavior_2014_d24p - Baskin - New Data Replication - 67z12. Retrieved from osf.io/cwmb5
-
-After: Baskin, E. (2021). [Replication report for “Affirmative action and other group tradeoff policies: Identifiability of those adversely affected”]. OSF. https://osf.io/9hjxc/
-
-Evidence: https://osf.io/9hjxc/
-
-### 9. FReD — 5XEE_single-trace
-
-Before: Parsons, E. S., Miske, O., Luis, B., Loomas, Z., Kline Struhl, M., Fox, N. W., … Baskin, E. (2025, November 18). Kausel_OrgBehavior_2015_5XEE - Baskin - New Data Replication - 21z56. Retrieved from osf.io/n35c2
-
-After: Baskin, E. (2021). [Replication report for “Too arrogant for their own good? Why and when narcissists dismiss advice”]. OSF. https://osf.io/r58ch/
-
-Evidence: https://osf.io/r58ch/
-
-### 10. FReD — N8pB_single-trace
-
-Before: Parsons, E. S., Miske, O., Luis, B., Loomas, Z., Kline Struhl, M., Fox, N. W., … Baskin, E. (2025, November 18). Lu_OrgBehavior_2017_N8pB - Baskin - New Data Replication - 2ggz2. Retrieved from osf.io/ujg2c
-
-After: Baskin, E. (2021). [Replication report for ““Switching On” creativity: Task switching can increase creativity by reducing cognitive fixation”]. OSF. https://osf.io/ahgfx/
-
-Evidence: https://osf.io/ahgfx/
-
-## Verification
-
-- `Rscript tests/score_report_references.R`: all corrected FReD rows override stale references, unresolved rows are preserved, protected values are unchanged, and reruns are identical.
-- FLoRA: the batch validates all fields through `flora_edits.clean_value`; tests cover stale-reference rejection before any save, correction-log routing, version checks and safe reruns. The full suite on the updated base passed (2,856 passed, 412 skipped); JavaScript syntax check passed.
-- Full FReD regeneration was not run: generated outputs are outside this source correction, and this environment lacks the notebook’s `rcrossref` dependency. The actual overlay was executed against every audited FReD row.
+The [full investigation at the pre-trim commit](https://github.com/forrtproject/fred-data/tree/a3d0f8f3e/cos_score_integration/report_references) preserves the raw evidence, aggregate investigation, entry-sheet links and approved coding records without including them in this change.
