@@ -546,6 +546,10 @@ fred_augmented <- success_join$data
 sj <- success_join$report
 cat(sprintf("✓ Reported success: %d usable entries; matched %d effects by DOI, %d by URL; %d unmatched\n",
             sj$entries, sj$matched[["doi"]], sj$matched[["url"]], sj$unmatched))
+if (sj$doi_url_differs > 0) {
+  cat(sprintf("  Note: %d DOI match(es) where the two sheets give different replication URLs; check new ones are the same report\n",
+              sj$doi_url_differs))
+}
 if (length(sj$ambiguous) > 0) {
   cat(sprintf("  ⚠ %d effect(s) with disagreeing success-sheet entries:\n    %s\n",
               length(sj$ambiguous), paste(sj$ambiguous, collapse = "\n    ")))

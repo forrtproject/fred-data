@@ -84,10 +84,15 @@ join_reported_success <- function(data, success) {
       inner_join(unique_by(s, key) %>% filter(ambiguous == as.logical(tier[2])),
                  by = setNames(c("doi_o", key, "study_o", "study_r"), c(".doi_o", dkey, ".study_o", ".study_r"))) %>%
       mutate(reported_success_match = tier[3])
-    matched <- bind_rows(matched, m %>% select(.row, all_of(cols), reported_success_match))
+    matched <- bind_rows(matched, m %>% select(.row, all_of(cols), reported_success_match, any_of("rep_url")))
   }
   stopifnot(!anyDuplicated(matched$.row))
   ambiguous <- d %>% filter(.row %in% matched$.row[grepl("ambiguous", matched$reported_success_match)])
+  # DOI matches whose replication URLs differ: right when a sheet uses another link for the same report
+  # (e.g. an OSF DOI), wrong if the effect is a different report under a shared paper DOI.
+  url_differs <- matched %>% filter(startsWith(reported_success_match, "doi")) %>%
+    inner_join(d %>% select(.row, .rep_url), by = ".row") %>% filter(!is.na(rep_url), !is.na(.rep_url), rep_url != .rep_url)
+  matched <- matched %>% select(-any_of("rep_url"))
 
   out <- d %>%
     select(-any_of(c(cols, "reported_success_match"))) %>%
@@ -98,6 +103,7 @@ join_reported_success <- function(data, success) {
     entries = nrow(s),
     matched = table(factor(matched$reported_success_match, c("doi", "url", "doi_ambiguous", "url_ambiguous"))),
     unmatched = nrow(data) - nrow(matched),
+    doi_url_differs = nrow(url_differs),
     ambiguous = sprintf("%s (%s, %s): success-sheet entries disagree; first validated entry used",
                         ambiguous$effect_uid, ambiguous$.doi_o, coalesce(ambiguous$.rep_doi, ambiguous$.rep_url)))
   list(data = out, report = report)
