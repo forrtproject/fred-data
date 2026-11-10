@@ -120,7 +120,7 @@ if (SCORE_INTEGRATION_ENABLED) {
 
     # Ensure column compatibility - convert all common columns to character to avoid type mismatches
     # Also include statistical_success for deriving reported_success later
-    common_cols <- intersect(names(fred_raw), names(score_data))
+    common_cols <- unique(c(intersect(names(fred_raw), names(score_data)), "effect_uid"))
     if ("statistical_success" %in% names(score_data)) {
       common_cols <- unique(c(common_cols, "statistical_success"))
     }
@@ -134,6 +134,8 @@ if (SCORE_INTEGRATION_ENABLED) {
       score_data %>%
         select(any_of(common_cols)) %>%
         mutate(across(everything(), as.character)) %>%
+        # Permanent effect ID for SCORE rows (the sheet's IDs are in column effect_uid)
+        mutate(effect_uid = paste0("score_", id)) %>%
         mutate(score_entry = TRUE)
     )
 
@@ -257,6 +259,17 @@ fred_with_ids <- fred_cleaned %>%
   group_by(ref_o, study_o, ref_r, study_r) %>%
   mutate(entry_id = first(row_number())) %>%
   ungroup()
+
+# effect_uid is the permanent effect ID that overlays are keyed on
+uid_missing <- sum(is.na(fred_with_ids$effect_uid))
+uid_dup <- unique(fred_with_ids$effect_uid[duplicated(fred_with_ids$effect_uid) & !is.na(fred_with_ids$effect_uid)])
+if (length(uid_dup) > 0) {
+  stop("Duplicate effect_uid values in the source sheet: ", paste(uid_dup, collapse = ", "))
+}
+if (uid_missing > 0) {
+  cat(sprintf("  ⚠ %d row(s) without effect_uid; overlays cannot target them. Add the next fe-number in the sheet:\n    %s\n",
+              uid_missing, paste(fred_with_ids$id[is.na(fred_with_ids$effect_uid)], collapse = ", ")))
+}
 
 cat(sprintf("✓ Generated identifiers\n"))
 cat(sprintf("  Unique fred_ids: %d\n", n_distinct(fred_with_ids$fred_id)))
@@ -627,11 +640,14 @@ cat(sprintf("  Rows with reported_success: %d (%.1f%%)\n",
 
 ## Step 8b: Apply Verified Overlays
 
-Corrections reach FReD through verified overlay files in `pipelines/fred/overlays/`,
-never by editing `output/FReD.xlsx`. The chi-squared conversion flags
-(forrtproject/fred-data#66) record why a χ² effect must not be converted to r:
-only χ²(1) from a contingency table, with N = the units in that table, is convertible.
-`build_x2_flags.R` documents each decision.
+Rows of the FReD sheet that existed on 2026-11-10 are locked. Corrections and
+classifications reach FReD through verified overlay files in
+`pipelines/fred/overlays/`, keyed on the permanent `effect_uid` and re-applied on
+every build, never by editing the sheet or `output/FReD.xlsx`.
+
+The chi-squared conversion flags (forrtproject/fred-data#66) record why a χ² effect
+must not be converted to r: only χ²(1) from a contingency table, with N = the units
+in that table, is convertible.
 
 ```{r overlays}
 cat("\n### Step 8b: Applying verified overlays\n")
@@ -642,18 +658,23 @@ x2_overlay <- apply_x2_conversion_flags(
 )
 fred_augmented <- x2_overlay$data
 
+list_items <- function(x) paste(x, collapse = "\n    ")
 for (s in c("o", "r")) {
   r <- x2_overlay$report[[s]]
   cat(sprintf("  ✓ χ² flags (%s): %d effects matched, %d not convertible (%d by automatic rules for new effects)\n",
               s, r$matched, r$flagged, r$new_auto_flagged))
   if (length(r$unclassified) > 0) {
-    cat(sprintf("  ⚠ %d new χ²(1) effect(s) need manual classification in build_x2_flags.R:\n    %s\n",
-                length(r$unclassified), paste(r$unclassified, collapse = "\n    ")))
+    cat(sprintf("  ⚠ %d new χ²(1) effect(s) need a row in x2_conversion_flags.csv:\n    %s\n",
+                length(r$unclassified), list_items(r$unclassified)))
+  }
+  if (length(r$changed) > 0) {
+    cat(sprintf("  ⚠ %d flagged effect(s) changed since classification; re-check:\n    %s\n",
+                length(r$changed), list_items(r$changed)))
   }
 }
-if (length(x2_overlay$report$stale) > 0) {
-  cat(sprintf("  ⚠ %d χ² flag(s) no longer match an effect (check for source edits):\n    %s\n",
-              length(x2_overlay$report$stale), paste(x2_overlay$report$stale, collapse = "\n    ")))
+if (length(x2_overlay$report$missing) > 0) {
+  cat(sprintf("  Note: %d χ² flag(s) refer to effects not in this build: %s\n",
+              length(x2_overlay$report$missing), paste(x2_overlay$report$missing, collapse = ", ")))
 }
 ```
 
@@ -672,7 +693,7 @@ fred_augmented <- fred_augmented %>%
 # Define final columns (aligned with COS codebook + new augmentation columns)
 final_cols <- c(
   # IDs
-  "entry_id", "effect_id", "fred_id",
+  "effect_uid", "entry_id", "effect_id", "fred_id",
   # Original study
   "ref_o", "doi_o", "study_o",
   # Replication study
