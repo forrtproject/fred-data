@@ -394,6 +394,10 @@ if ("url_r" %in% names(fred_augmented)) {
   cat(sprintf("  bibtex recovered:   %d\n", before_bib_r_missing   - count_missing(fred_augmented$bibtex_r)))
 }
 
+# Verified report bylines override cached OSF project contributor metadata.
+source(here::here("R", "score_report_references.R"))
+fred_augmented <- apply_score_report_references(fred_augmented)
+
 # Fill missing author_r from bibtex_r (for DataCite/OSF entries where API didn't return authors)
 if (all(c("author_r", "bibtex_r") %in% names(fred_augmented))) {
   needs_author <- which(
