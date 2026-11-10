@@ -527,41 +527,29 @@ cat("\n### Step 8: Fetching reported success from success coding sheet\n")
 # URL for success coding (same as FLoRA uses)
 SUCCESS_CODING_URL <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vSlPVImL7kjzMfpfX08JtAikvEiBg8uQ3HyEJs-YvuQMUa2RMvip-4v8-DilWl2PdwOD_UTD8gJ5wKA/pub?gid=984458430&single=true&output=csv"
 
-reported_success <- tryCatch({
-  read_csv(SUCCESS_CODING_URL, show_col_types = FALSE, skip = 1) %>%
-    mutate(
-      # Apply same DOI cleaning as main data: lowercase + remove all whitespace
-      doi_o = tolower(gsub("\\s", "", doi_o)),
-      doi_r_clean = tolower(gsub("\\s", "", doi_r)),
-      id_r = coalesce(url_r, doi_r_clean)
-    ) %>%
-    filter(!is.na(outcome), validation != "validated - discarded") %>%
-    group_by(doi_o, id_r, study_o, study_r) %>%
-    arrange(desc(validation == "validated - chosen")) %>%
-    slice_head(n = 1) %>%
-    ungroup() %>%
-    select(
-      doi_o, id_r, study_o, study_r,
-      reported_success = outcome,
-      reported_success_quote = outcome_quote,
-      reported_success_quote_source = out_quote_source
-    )
-}, error = function(e) {
-  warning("Failed to fetch reported success data: ", e$message)
-  tibble(doi_o = character(), id_r = character(), study_o = character(),
-         study_r = character(), reported_success = character(),
-         reported_success_quote = character(), reported_success_quote_source = character())
-})
+source(here::here("R", "reported_success_join.R"))
 
-cat(sprintf("✓ Fetched %d reported success entries\n", nrow(reported_success)))
+success_sheet <- tryCatch(
+  read_csv(SUCCESS_CODING_URL, show_col_types = FALSE, skip = 1,
+           col_types = cols(.default = col_character())),
+  error = function(e) {
+    warning("Failed to fetch reported success data: ", e$message)
+    tibble(doi_o = character(), doi_r = character(), url_r = character(), study_o = character(),
+           study_r = character(), validation = character(), outcome = character(),
+           outcome_quote = character(), out_quote_source = character())
+  })
 
-# Create id_r for joining (apply same cleaning as success coding sheet)
-fred_augmented <- fred_augmented %>%
-  mutate(id_r = coalesce(url_r, tolower(gsub("\\s", "", doi_r))))
-
-# Join reported success to data
-fred_augmented <- fred_augmented %>%
-  left_join(reported_success, by = c("doi_o", "id_r", "study_o", "study_r"))
+# Join on the original DOI, the replication DOI (doi_r or a doi.org link in url_r) and the
+# study numbers; replications without a usable DOI key are joined on their URL.
+success_join <- join_reported_success(fred_augmented, success_sheet)
+fred_augmented <- success_join$data
+sj <- success_join$report
+cat(sprintf("✓ Reported success: %d usable entries; matched %d effects by DOI, %d by URL; %d unmatched\n",
+            sj$entries, sj$matched[["doi"]], sj$matched[["url"]], sj$unmatched))
+if (length(sj$ambiguous) > 0) {
+  cat(sprintf("  ⚠ %d effect(s) with disagreeing success-sheet entries:\n    %s\n",
+              length(sj$ambiguous), paste(sj$ambiguous, collapse = "\n    ")))
+}
 
 # Fill in from existing outcome column where reported_success is missing
 if ("outcome" %in% names(fred_augmented)) {
