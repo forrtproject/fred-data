@@ -2,6 +2,10 @@
 
 The references credit the named replication teams or reproduction analysts printed in the reports. SCORE staff remain only where the report itself credits them as contributors. No DOI was added or changed.
 
+## Follow-up: seven source gaps traced
+
+The seven FReD rows formerly lacking report links are now identified as COS posthoc aggregations of two attempts each. They are held from the next release while aggregate inclusion and attribution are reviewed. See [the seven-row investigation](held_aggregates.md), `holds.csv` and `holds_evidence.json`. The snapshot audit still contains all 132 input FReD rows; `shipping_status` identifies the seven held rows. The next build imports 125 SCORE rows (116 corrected references and nine other unresolved cases).
+
 ## Coverage and delivery
 
 - FReD: 116 source corrections prepared; 16 unresolved rows; 0 discovery candidates excluded as unrelated to SCORE.
@@ -29,7 +33,7 @@ FReD: x0pA_single-trace, FReD: DEqr_single-trace, FReD: eg3p_single-trace, FReD:
 
 FReD: mJDj_single-trace, FReD: G1Lr_single-trace, FReD: Q1dl_single-trace, FReD: YpZZ_single-trace, FLoRA: FLORA-002867, FLoRA: FLORA-002886, FLoRA: FLORA-002893, FLoRA: FLORA-002906
 
-**No report URL or DOI in the FReD export or prepared COS source; original DOI alone does not identify the replication.**
+**Seven entries identified as posthoc aggregations and held from release; see the follow-up above.**
 
 FReD: AvOr_single-trace, FReD: LyLd_single-trace, FReD: zlm2_single-trace, FReD: plLK_single-trace, FReD: EQxa_single-trace, FReD: 8wZ0_single-trace, FReD: AgO1_single-trace
 

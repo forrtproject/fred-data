@@ -117,6 +117,10 @@ if (SCORE_INTEGRATION_ENABLED) {
     score_data <- readxl::read_excel(SCORE_DATA_PATH)
     cat(sprintf("✓ Loaded SCORE data: %d rows\n", nrow(score_data)))
 
+    # Explicit holds retain archived source rows but exclude them from releases.
+    source(here::here("R", "score_report_holds.R"))
+    score_data <- filter_score_report_holds(score_data)
+
     # Ensure column compatibility - convert all common columns to character to avoid type mismatches
     # Also include statistical_success for deriving reported_success later
     common_cols <- intersect(names(fred_raw), names(score_data))
