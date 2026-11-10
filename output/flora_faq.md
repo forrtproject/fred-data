@@ -82,8 +82,8 @@ Additional studies are included in FLoRA that are not in the FORRT Replication D
 
 * We are not including **registrations** as they cannot reliably be linked to a publication and may lead to duplications. Also, they do not have enough info.  
 * We are not including reports that are on Google docs.  
-* Websites/blog posts like [Psychfiledrawer.org](http://Psychfiledrawer.org) are not persistent and we cannot ensure that links keep working. Reports on Zenodo or OSF, however, can be included.
-* Ideally, both the original and replication study should have a DOI or a stable URL (e.g., handle, URI, Pubmed ID). For example, blog post URLs can change, break, and there is no versionising.  
+* Blog posts and other web pages (e.g., [Psychfiledrawer.org](http://Psychfiledrawer.org)) are included. Because such pages can change or disappear, every link in FLoRA is checked automatically and broken links are flagged for repair. We encourage authors to deposit their reports in a repository such as Zenodo or OSF, which gives them a DOI and a stable, citable version.
+* Ideally, both the original and replication study should have a DOI or a stable URL (e.g., handle, URI, PubMed ID).  
 * We are not assessing the quality of replications.
 
 
