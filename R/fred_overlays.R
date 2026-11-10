@@ -14,7 +14,8 @@ library(stringr)
 #
 # Overlays:
 # - audit_corrections.csv: confirmed corrections from the 2026-10 statistics audit
-#   (forrtproject/fred-data#155), applied first so later overlays see corrected values.
+#   (forrtproject/fred-data#155) as accepted on review, plus the row changes those review
+#   decisions required; applied first so later overlays see corrected values.
 # - x2_conversion_flags.csv: chi-squared conversion flags (forrtproject/fred-data#66).
 
 #' Parse APA chi-squared strings as normalised by clean_fred_data().
