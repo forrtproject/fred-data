@@ -15,7 +15,7 @@ The small post-join override is necessary because the existing manual URL helper
 
 ## Scope and checks
 
-`Rscript tests/score_report_references.R` checks all 130 report citations, author metadata, unresolved-row preservation, numerical-field preservation and idempotency. Generated exports, effect sizes and success coding are outside this PR. A full notebook build was not run (`rcrossref` is unavailable here).
+One-off verification covered all 130 report citations, author metadata, unresolved-row preservation, numerical-field preservation and idempotency. Generated exports, effect sizes and success coding are outside this PR. A full notebook build was not run (`rcrossref` is unavailable here).
 
 FLoRA uses its own sources and correction log; its corrections are in [flora-validation PR #26](https://github.com/forrtproject/flora-validation/pull/26). The seven superseded pooled rows are excluded in [PR #169](https://github.com/forrtproject/fred-data/pull/169). Remaining reference problems are tracked in [issue #168](https://github.com/forrtproject/fred-data/issues/168), implementing the decision in [issue #162](https://github.com/forrtproject/fred-data/issues/162).
 
