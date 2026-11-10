@@ -61,6 +61,7 @@ source(here::here("R", "data_cleaning.R"))
 source(here::here("R", "crossref_cache.R"))
 source(here::here("R", "augmentation.R"))
 source(here::here("R", "openalex_cache.R"))
+source(here::here("R", "fred_overlays.R"))
 
 cat("✓ Helper functions loaded\n")
 cat("  - Data cleaning\n")
@@ -624,6 +625,38 @@ cat(sprintf("  Rows with reported_success: %d (%.1f%%)\n",
             100 * sum(!is.na(fred_augmented$reported_success)) / nrow(fred_augmented)))
 ```
 
+## Step 8b: Apply Verified Overlays
+
+Corrections reach FReD through verified overlay files in `pipelines/fred/overlays/`,
+never by editing `output/FReD.xlsx`. The chi-squared conversion flags
+(forrtproject/fred-data#66) record why a χ² effect must not be converted to r:
+only χ²(1) from a contingency table, with N = the units in that table, is convertible.
+`build_x2_flags.R` documents each decision.
+
+```{r overlays}
+cat("\n### Step 8b: Applying verified overlays\n")
+
+x2_overlay <- apply_x2_conversion_flags(
+  fred_augmented,
+  here::here("pipelines", "fred", "overlays", "x2_conversion_flags.csv")
+)
+fred_augmented <- x2_overlay$data
+
+for (s in c("o", "r")) {
+  r <- x2_overlay$report[[s]]
+  cat(sprintf("  ✓ χ² flags (%s): %d effects matched, %d not convertible (%d by automatic rules for new effects)\n",
+              s, r$matched, r$flagged, r$new_auto_flagged))
+  if (length(r$unclassified) > 0) {
+    cat(sprintf("  ⚠ %d new χ²(1) effect(s) need manual classification in build_x2_flags.R:\n    %s\n",
+                length(r$unclassified), paste(r$unclassified, collapse = "\n    ")))
+  }
+}
+if (length(x2_overlay$report$stale) > 0) {
+  cat(sprintf("  ⚠ %d χ² flag(s) no longer match an effect (check for source edits):\n    %s\n",
+              length(x2_overlay$report$stale), paste(x2_overlay$report$stale, collapse = "\n    ")))
+}
+```
+
 ## Step 9: Final Column Selection and Cleanup
 
 ```{r column-cleanup}
@@ -649,11 +682,11 @@ final_cols <- c(
   "discipline", "tags", "description",
   # Original effect
   "claim_text_o", "claim_page_o", "n_o",
-  "es_value_o", "es_type_o", "es_repr_o",
+  "es_value_o", "es_type_o", "es_repr_o", "es_not_convertible_o",
   "pval_value_o", "pval_type_o", "pval_tails_o",
   "nested_o", "prereg_o",
   # Replication effect
-  "n_r", "es_value_r", "es_type_r", "es_repr_r",
+  "n_r", "es_value_r", "es_type_r", "es_repr_r", "es_not_convertible_r",
   "pval_value_r", "pval_type_r", "pval_tails_r",
   "nested_r", "prereg_r",
   # Outcomes
