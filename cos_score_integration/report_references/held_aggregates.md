@@ -28,7 +28,7 @@ The user’s condition for permanently excluding these aggregates as already-rep
 
 ## Individual reports are now located
 
-All fourteen completed results reports have been retrieved and checked. See [the report-status ledger](component_reports.md) for links, bylines, stages and import checks. Twelve attempts have no matching public-sheet entry, one has a pending registration-based entry, and one is already published in FLoRA. The remaining work is curation and attribution, not finding or waiting for results.
+All fourteen completed results reports have been retrieved and checked. See [the report-status ledger](component_reports.md) for links, bylines, stages and import checks. All fourteen attempts are now represented in both entry sheets: fourteen new FReD intake rows, twelve new FLoRA rows, one repaired unvalidated FLoRA entry and one retained validated FLoRA entry. The remaining work is coding, validation and two author confirmations; these additions do not publish the records. See `entry_sheet_intake.csv` for exact row links.
 
 ## Why the earlier report matches were insufficient
 

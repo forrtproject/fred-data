@@ -2,9 +2,11 @@
 
 All fourteen constituent attempts have publicly accessible reports containing results. Each report was retrieved through the public OSF API and read on 10 November 2026. None of these fourteen is merely a registration awaiting results.
 
-**Current FLoRA ingestion:** one is published (`24716`, `FLORA-002670`); one has an unvalidated entry pointing to a registration (`23m12`); twelve have no matching entry in the checked enabled public sheets. No individual component row is currently in FReD. This is a source-entry/curation gap, not a lack of completed reports.
+**Entry-sheet intake completed:** all fourteen attempts are now represented in both entry sheets. Fourteen unvalidated FReD intake rows were added in `COS coding`, rows 5484–5497. Twelve FLoRA rows were added in `replication list`, rows 4247–4258; the unvalidated Hoeppner/Hippel/Nax entry in row 2135 was updated to its completed report, and validated Schmidt/Clark row 598 was retained unchanged. Two unsigned reports are marked `help needed`. Statistical and reported-success fields were left blank in the new rows; coding and validation remain pending. See `entry_sheet_intake.csv` for report-to-row links and `entry_sheet_intake_verification.json` for verification.
 
-| Original / attempt | Results report | Authors printed in report | Kind and completion | FLoRA source status |
+**Before intake:** one report was published in FLoRA, one had an unvalidated registration-based entry and twelve had no matching entry. The table and `component_report_status.csv` below preserve that pre-intake status. None of the new entries has been published by this action.
+
+| Original / attempt | Results report | Authors printed in report | Kind and completion | FLoRA source status before intake |
 |---|---|---|---|---|
 | AvOr / `92g` | [Report](https://osf.io/4hkyn/) | Ilka Gleibs; Nihan Albayrak-Aydemir | direct; completed | No matching entry found |
 | AvOr / `24716` | [Report](https://osf.io/tybxg/) | Kathleen Schmidt; Bruce M. Clark | direct; completed | Published as FLORA-002670 |
@@ -41,4 +43,4 @@ All fourteen constituent attempts have publicly accessible reports containing re
 - `component_report_status.csv`: fourteen attempts, preferred report URLs, bylines or attribution gaps, report kinds, focal published flags, current dataset membership and import notes.
 - `component_report_evidence.json`: report metadata endpoints, SHA-256 hashes, byline evidence, focal COS records, source-sheet hashes and the existing pending-entry identifier. The checked public sheets were all enabled sources in flora-validation’s `sources.yml`; matches used project/report GUIDs and normalized original DOIs. No claim is made about unpublished work outside those sheets.
 - [COS replication outcomes](https://osf.io/download/2c8gh/) and [project tracking](https://osf.io/download/2e5nk/) provide the claim/report mappings and flags. `holds_evidence.json` pins those source files.
-- The [seven pooled rows remain held](held_aggregates.md). Their individual reports can be curated; they have not been imported by this investigation. FLoRA changes must use its normal intake/validation and correction-log paths; FReD rows require appropriate claim/effect coding. Generated datasets, outcomes and effect sizes were not edited. API cost: US$0.
+- The [seven pooled rows remain held](held_aggregates.md). Their individual reports have now been added to the entry sheets for curation; they have not been published by this investigation. FLoRA changes must use its normal intake/validation and correction-log paths; FReD rows require appropriate claim/effect coding. Generated datasets, outcomes and effect sizes were not edited. API cost: US$0.
