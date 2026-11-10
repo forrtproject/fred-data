@@ -20,7 +20,7 @@ The seven pooled rows are **superseded**: each is replaced by separate FReD rows
 
 All fourteen completed results reports have been retrieved and checked; see [the report-status ledger](component_reports.md) for links, bylines, stages and import checks.
 
-- **FReD:** each attempt has its own row in `COS coding` (rows 5484–5497, effect IDs fe05482–fe05495), marked `validated - chosen` by Lukas Wallrich on 10 November 2026. Their statistical, effect-size and outcome fields have not yet been coded.
+- **FReD:** each attempt has its own row in `COS coding` (rows 5484–5497, effect IDs fe05482–fe05495), marked `validated - chosen` by Lukas Wallrich on 10 November 2026, with sample sizes, effect sizes and p-values coded from each report (`component_fred_coding.csv`). Their reported success comes from the authors’ own statements, entered in the replication success sheet (rows 1982–1995).
 - **FLoRA:** twelve new rows (4247–4258) and the repaired Hoeppner/Hippel/Nax entry (row 2135) await validation. Schmidt/Clark’s report was already published as `FLORA-002670` (row 598, unchanged).
 - `entry_sheet_intake.csv` maps each attempt to its report and rows.
 
