@@ -18,10 +18,11 @@ library(stringr)
 #   decisions required; applied first so later overlays see corrected values.
 # - x2_conversion_flags.csv: chi-squared conversion flags (forrtproject/fred-data#66).
 
-#' Parse APA chi-squared strings as normalised by clean_fred_data().
+#' Parse APA chi-squared strings as normalised by clean_fred_data(). Text after the
+#' statistic (e.g. ", p = .01") is ignored.
 #' @return data frame with df, n and chi2 (NA when x is not a chi-squared string)
 parse_x2 <- function(x) {
-  m <- str_match(x, "^X2\\((\\d+(?:\\.\\d+)?)(?:, (?:N = )?(\\d+(?:\\.\\d+)?))?\\) = (\\d*\\.?\\d+)$")
+  m <- str_match(x, "^X2\\((\\d+(?:\\.\\d+)?)(?:, (?:N = )?(\\d+(?:\\.\\d+)?))?\\) = (\\d*\\.?\\d+)(?![\\d.])")
   data.frame(df = as.numeric(m[, 2]), n = as.numeric(m[, 3]), chi2 = as.numeric(m[, 4]))
 }
 
@@ -31,8 +32,8 @@ parse_x2 <- function(x) {
 #' converted to r. The flag file holds one classification per effect_uid and side,
 #' with a reason for every chi-squared that must not be converted. Chi-squared
 #' effects missing from the file get the automatic rules (df > 1, no N,
-#' chi2 / N > 1); a remaining chi2(1) is left unflagged and reported so that a
-#' row can be added to the file.
+#' chi2 / N > 1); a remaining chi2(1) is marked not convertible until it is
+#' classified, and reported so that a row can be added to the file.
 #'
 #' @param data FReD data with effect_uid, es_value_o and es_value_r
 #' @param flags_file path to x2_conversion_flags.csv
@@ -66,6 +67,7 @@ apply_x2_conversion_flags <- function(data, flags_file) {
     reason[new_x2 & p$df == 1 & !is.na(p$n) & p$chi2 / p$n > 1] <-
       "chi-squared / N > 1: cannot come from a 2 x 2 contingency table with N units"
     unclassified <- new_x2 & is.na(reason)
+    reason[unclassified] <- "chi-squared(1) not yet classified in x2_conversion_flags.csv"
 
     data[[paste0("es_not_convertible_", s)]] <- reason
     describe <- function(i) {
