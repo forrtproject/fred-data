@@ -35,6 +35,9 @@ VALID_REPRODUCTION_OUTCOMES <- c(
   "computational issues, robust",
   "computational issues, robustness challenges",
   "computational issues, robustness not checked",
+  "technical failure, robust",
+  "technical failure, robustness challenges",
+  "technical failure, robustness not checked",
   "computation not checked, robust",
   "computation not checked, robustness challenges",
   "computation not checked, robustness not checked"
@@ -80,6 +83,7 @@ REPRO_COMPUTATIONAL_ALIASES <- c(
   "computationally reproducible" = "computationally reproducible",
   "computationally successful"   = "computationally reproducible",
   "computational issues"         = "computational issues",
+  "technical failure"            = "technical failure",
   "computation not checked"      = "computation not checked",
   "not checked"                  = "computation not checked"
 )
@@ -122,7 +126,7 @@ canonical_reproduction_label <- function(keys) {
 #'
 #' Each axis is mapped onto its canonical wording. A blank axis on a row whose
 #' other axis is coded counts as "not checked"; a row with both axes blank gets
-#' NA. An unrecognised axis value (e.g. "technical failure") is kept verbatim so
+#' NA. An unrecognised axis value (e.g. "computationally failed") is kept verbatim so
 #' validate_flora.R flags the combined label for re-coding at source.
 #'
 #' @param computational,robustness Character vectors of raw axis values.
