@@ -374,6 +374,8 @@ To change cache locations, edit `R/cache_config.R` and update the paths.
 
 ## Contributing
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request. FLoRA changes belong in [flora-validation](https://github.com/forrtproject/flora-validation).
+
 ### Running with Debug Output
 
 ```bash
