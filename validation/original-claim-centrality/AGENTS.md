@@ -28,7 +28,7 @@ Do not launch Opus from a Sol coding worker or apply a recovery overlay yourself
 ## Claim-text replacements
 
 Use verbatim source evidence linking the substantive and statistical claim. Quote length is not a target. Do not shorten clear existing claims. Propose changes only to fill missing claims or identify genuinely missing target/context, preserving relevant existing wording and qualifiers. Supporting excerpts for clear claims are evidence only.
-A faithful labelled table excerpt is allowed with omissions marked; a bare statistic,
+Table excerpts keep the original labels; generic omission notices are unnecessary. Mark omissions inside prose quotations. A bare statistic,
 table title or generated prose is insufficient. Store proposals in effect_uid-keyed
 overlays with old/new text, original locator/hash and independent records. Keep clarification proposals separate until human review; never rewrite frozen source or raw coding. Preserve full raw outputs and earlier source snapshots in the private archive, not as duplicate public files.
 Do not overwrite blinded labels after comparison. No numeric correction or changed
