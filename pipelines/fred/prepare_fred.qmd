@@ -645,6 +645,15 @@ classifications reach FReD through verified overlay files in
 `pipelines/fred/overlays/`, keyed on the permanent `effect_uid` and re-applied on
 every build, never by editing the sheet or `output/FReD.xlsx`.
 
+The statistics-audit corrections (forrtproject/fred-data#155) are the confirmed
+field corrections that pass FReD's coding rules (effect sizes relative to the
+original effect, `reported_success` per study from author statements, coherent row
+sides, N counted in units of observation). They include the maintainer's decisions on
+the findings that needed individual review, some with a value other than the audit's,
+and the further row changes those decisions required (`correction_id` starting
+`REVIEW202611`). Findings still held are not included. They are applied first, so the
+chi-squared flags below are checked against corrected values.
+
 The chi-squared conversion flags (forrtproject/fred-data#66) record why a χ² effect
 must not be converted to r: only χ²(1) from a contingency table, with N = the units
 in that table, is convertible.
@@ -652,13 +661,31 @@ in that table, is convertible.
 ```{r overlays}
 cat("\n### Step 8b: Applying verified overlays\n")
 
+list_items <- function(x) paste(x, collapse = "\n    ")
+
+audit_overlay <- apply_audit_corrections(
+  fred_augmented,
+  here::here("pipelines", "fred", "overlays", "audit_corrections.csv")
+)
+fred_augmented <- audit_overlay$data
+ar <- audit_overlay$report
+cat(sprintf("  ✓ Audit corrections: %d of %d effects matched; %d cells corrected, %d already correct\n",
+            ar$effects_matched, ar$effects, ar$applied, ar$already_applied))
+if (length(ar$changed) > 0) {
+  cat(sprintf("  ⚠ %d corrected cell(s) changed since the audit judged them; re-check:\n    %s\n",
+              length(ar$changed), list_items(ar$changed)))
+}
+if (length(ar$missing) > 0) {
+  cat(sprintf("  Note: %d corrected effect(s) not in this build: %s\n",
+              length(ar$missing), paste(ar$missing, collapse = ", ")))
+}
+
 x2_overlay <- apply_x2_conversion_flags(
   fred_augmented,
   here::here("pipelines", "fred", "overlays", "x2_conversion_flags.csv")
 )
 fred_augmented <- x2_overlay$data
 
-list_items <- function(x) paste(x, collapse = "\n    ")
 for (s in c("o", "r")) {
   r <- x2_overlay$report[[s]]
   cat(sprintf("  ✓ χ² flags (%s): %d effects matched, %d not convertible (%d new effects flagged automatically)\n",
