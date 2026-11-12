@@ -61,6 +61,7 @@ source(here::here("R", "data_cleaning.R"))
 source(here::here("R", "crossref_cache.R"))
 source(here::here("R", "augmentation.R"))
 source(here::here("R", "openalex_cache.R"))
+source(here::here("R", "fred_overlays.R"))
 
 cat("✓ Helper functions loaded\n")
 cat("  - Data cleaning\n")
@@ -123,7 +124,7 @@ if (SCORE_INTEGRATION_ENABLED) {
 
     # Ensure column compatibility - convert all common columns to character to avoid type mismatches
     # Also include statistical_success for deriving reported_success later
-    common_cols <- intersect(names(fred_raw), names(score_data))
+    common_cols <- unique(c(intersect(names(fred_raw), names(score_data)), "effect_uid"))
     if ("statistical_success" %in% names(score_data)) {
       common_cols <- unique(c(common_cols, "statistical_success"))
     }
@@ -137,6 +138,8 @@ if (SCORE_INTEGRATION_ENABLED) {
       score_data %>%
         select(any_of(common_cols)) %>%
         mutate(across(everything(), as.character)) %>%
+        # Permanent effect ID for SCORE rows (the sheet's IDs are in column effect_uid)
+        mutate(effect_uid = paste0("score_", id)) %>%
         mutate(score_entry = TRUE)
     )
 
@@ -260,6 +263,17 @@ fred_with_ids <- fred_cleaned %>%
   group_by(ref_o, study_o, ref_r, study_r) %>%
   mutate(entry_id = first(row_number())) %>%
   ungroup()
+
+# effect_uid is the permanent effect ID that overlays are keyed on
+uid_missing <- sum(is.na(fred_with_ids$effect_uid))
+uid_dup <- unique(fred_with_ids$effect_uid[duplicated(fred_with_ids$effect_uid) & !is.na(fred_with_ids$effect_uid)])
+if (length(uid_dup) > 0) {
+  stop("Duplicate effect_uid values in the source sheet: ", paste(uid_dup, collapse = ", "))
+}
+if (uid_missing > 0) {
+  cat(sprintf("  ⚠ %d row(s) without effect_uid; overlays cannot target them. Add the next fe-number in the sheet:\n    %s\n",
+              uid_missing, paste(fred_with_ids$id[is.na(fred_with_ids$effect_uid)], collapse = ", ")))
+}
 
 cat(sprintf("✓ Generated identifiers\n"))
 cat(sprintf("  Unique fred_ids: %d\n", n_distinct(fred_with_ids$fred_id)))
@@ -624,6 +638,46 @@ cat(sprintf("  Rows with reported_success: %d (%.1f%%)\n",
             100 * sum(!is.na(fred_augmented$reported_success)) / nrow(fred_augmented)))
 ```
 
+## Step 8b: Apply Verified Overlays
+
+Rows of the FReD sheet that existed on 2026-11-10 are locked. Corrections and
+classifications reach FReD through verified overlay files in
+`pipelines/fred/overlays/`, keyed on the permanent `effect_uid` and re-applied on
+every build, never by editing the sheet or `output/FReD.xlsx`.
+
+The chi-squared conversion flags (forrtproject/fred-data#66) record why a χ² effect
+must not be converted to r: only χ²(1) from a contingency table, with N = the units
+in that table, is convertible.
+
+```{r overlays}
+cat("\n### Step 8b: Applying verified overlays\n")
+
+x2_overlay <- apply_x2_conversion_flags(
+  fred_augmented,
+  here::here("pipelines", "fred", "overlays", "x2_conversion_flags.csv")
+)
+fred_augmented <- x2_overlay$data
+
+list_items <- function(x) paste(x, collapse = "\n    ")
+for (s in c("o", "r")) {
+  r <- x2_overlay$report[[s]]
+  cat(sprintf("  ✓ χ² flags (%s): %d effects matched, %d not convertible (%d new effects flagged automatically)\n",
+              s, r$matched, r$flagged, r$new_auto_flagged))
+  if (length(r$unclassified) > 0) {
+    cat(sprintf("  ⚠ %d new χ²(1) effect(s) marked not convertible until classified; add a row to x2_conversion_flags.csv:\n    %s\n",
+                length(r$unclassified), list_items(r$unclassified)))
+  }
+  if (length(r$changed) > 0) {
+    cat(sprintf("  ⚠ %d flagged effect(s) changed since classification; re-check:\n    %s\n",
+                length(r$changed), list_items(r$changed)))
+  }
+}
+if (length(x2_overlay$report$missing) > 0) {
+  cat(sprintf("  Note: %d χ² flag(s) refer to effects not in this build: %s\n",
+              length(x2_overlay$report$missing), paste(x2_overlay$report$missing, collapse = ", ")))
+}
+```
+
 ## Step 9: Final Column Selection and Cleanup
 
 ```{r column-cleanup}
@@ -639,7 +693,7 @@ fred_augmented <- fred_augmented %>%
 # Define final columns (aligned with COS codebook + new augmentation columns)
 final_cols <- c(
   # IDs
-  "entry_id", "effect_id", "fred_id",
+  "effect_uid", "entry_id", "effect_id", "fred_id",
   # Original study
   "ref_o", "doi_o", "study_o",
   # Replication study
@@ -649,11 +703,11 @@ final_cols <- c(
   "discipline", "tags", "description",
   # Original effect
   "claim_text_o", "claim_page_o", "n_o",
-  "es_value_o", "es_type_o", "es_repr_o",
+  "es_value_o", "es_type_o", "es_repr_o", "es_not_convertible_o",
   "pval_value_o", "pval_type_o", "pval_tails_o",
   "nested_o", "prereg_o",
   # Replication effect
-  "n_r", "es_value_r", "es_type_r", "es_repr_r",
+  "n_r", "es_value_r", "es_type_r", "es_repr_r", "es_not_convertible_r",
   "pval_value_r", "pval_type_r", "pval_tails_r",
   "nested_r", "prereg_r",
   # Outcomes
