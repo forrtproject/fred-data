@@ -38,6 +38,11 @@ jobs:
           [ "$rows" -ge 1000 ] || { echo "Too few rows ($rows)"; exit 1; }
           cp /tmp/flora.csv output/flora.csv
 
+      - name: Mark coding notes in outcome_quote_source
+        # Prefixes coder-written notes with "coding note:" (FReD-data#173) until the
+        # FLoRA entry sheets carry the prefix themselves.
+        run: python3 scripts/mark_coding_notes.py output/flora.csv
+
       - name: Set up R
         id: setup-r
         uses: r-lib/actions/setup-r@v2
