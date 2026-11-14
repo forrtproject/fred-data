@@ -1,0 +1,1107 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "122": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers recorded the time the participant took to respond.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 4",
+        "audit_id": 122,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; Description specifies reaction time but no ANOVA term. TASK, EMOTION, TASK × EMOTION and collectively reported GROUP effects are distinct candidates; p. 4 does not uniquely identify one. Repeated descriptions cannot be assigned by row order or requested metric.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. Description specifies reaction time but no ANOVA term. TASK, EMOTION, TASK × EMOTION and collectively reported GROUP effects are distinct candidates; p. 4 does not uniquely identify one. Repeated descriptions cannot be assigned by row order or requested metric. RT candidate tests: TASK F1,72=405.55, p<0.001, partial eta-squared=0.849; EMOTION F3.53,254.18=131.98, p<0.001, partial eta-squared=0.647; TASK × EMOTION F3.20,230.38=105.87, p<0.001, partial eta-squared=0.595; all GROUP main/interaction effects are reported only collectively as Fs<1, without exact Fs, p values or partial eta-squared. No test selected from these candidates. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers recorded the time the participant took to respond. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 4",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "123": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers recorded the time the participant took to respond.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 4",
+        "audit_id": 123,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; Description specifies reaction time but no ANOVA term. TASK, EMOTION, TASK × EMOTION and collectively reported GROUP effects are distinct candidates; p. 4 does not uniquely identify one. Repeated descriptions cannot be assigned by row order or requested metric.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. Description specifies reaction time but no ANOVA term. TASK, EMOTION, TASK × EMOTION and collectively reported GROUP effects are distinct candidates; p. 4 does not uniquely identify one. Repeated descriptions cannot be assigned by row order or requested metric. RT candidate tests: TASK F1,72=405.55, p<0.001, partial eta-squared=0.849; EMOTION F3.53,254.18=131.98, p<0.001, partial eta-squared=0.647; TASK × EMOTION F3.20,230.38=105.87, p<0.001, partial eta-squared=0.595; all GROUP main/interaction effects are reported only collectively as Fs<1, without exact Fs, p values or partial eta-squared. No test selected from these candidates. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers recorded the time the participant took to respond. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 4",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "124": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers recorded the time the participant took to respond.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 4",
+        "audit_id": 124,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; Description specifies reaction time but no ANOVA term. TASK, EMOTION, TASK × EMOTION and collectively reported GROUP effects are distinct candidates; p. 4 does not uniquely identify one. Repeated descriptions cannot be assigned by row order or requested metric.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. Description specifies reaction time but no ANOVA term. TASK, EMOTION, TASK × EMOTION and collectively reported GROUP effects are distinct candidates; p. 4 does not uniquely identify one. Repeated descriptions cannot be assigned by row order or requested metric. RT candidate tests: TASK F1,72=405.55, p<0.001, partial eta-squared=0.849; EMOTION F3.53,254.18=131.98, p<0.001, partial eta-squared=0.647; TASK × EMOTION F3.20,230.38=105.87, p<0.001, partial eta-squared=0.595; all GROUP main/interaction effects are reported only collectively as Fs<1, without exact Fs, p values or partial eta-squared. No test selected from these candidates. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers recorded the time the participant took to respond. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 4",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "125": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers recorded the time the participant took to respond.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 4",
+        "audit_id": 125,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; Description specifies reaction time but no ANOVA term. TASK, EMOTION, TASK × EMOTION and collectively reported GROUP effects are distinct candidates; p. 4 does not uniquely identify one. Repeated descriptions cannot be assigned by row order or requested metric.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. Description specifies reaction time but no ANOVA term. TASK, EMOTION, TASK × EMOTION and collectively reported GROUP effects are distinct candidates; p. 4 does not uniquely identify one. Repeated descriptions cannot be assigned by row order or requested metric. RT candidate tests: TASK F1,72=405.55, p<0.001, partial eta-squared=0.849; EMOTION F3.53,254.18=131.98, p<0.001, partial eta-squared=0.647; TASK × EMOTION F3.20,230.38=105.87, p<0.001, partial eta-squared=0.595; all GROUP main/interaction effects are reported only collectively as Fs<1, without exact Fs, p values or partial eta-squared. No test selected from these candidates. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers recorded the time the participant took to respond. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 4",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "g (>)",
+        "pval_type_r": null,
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": null,
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "126": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to decide if the person depicted was male or female.",
+        "locators_o": "p.5",
+        "locators_r": "p. 2",
+        "audit_id": 126,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; Gender task is identified, but accuracy versus reaction time and the model term are unspecified. The p. 2 locator describes the design rather than a unique statistical result.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. Gender task is identified, but accuracy versus reaction time and the model term are unspecified. The p. 2 locator describes the design rather than a unique statistical result. Gender accuracy follow-up EMOTION F3.17,228.26=40.98, p<0.001, partial eta-squared=0.363; GROUP effects collectively Fs<1, with no exact p or effect size. Gender task also enters omnibus accuracy and RT models. RT candidate tests: TASK F1,72=405.55, p<0.001, partial eta-squared=0.849; EMOTION F3.53,254.18=131.98, p<0.001, partial eta-squared=0.647; TASK × EMOTION F3.20,230.38=105.87, p<0.001, partial eta-squared=0.595; all GROUP main/interaction effects are reported only collectively as Fs<1, without exact Fs, p values or partial eta-squared. No test selected from these candidates. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to decide if the person depicted was male or female. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p.5",
+        "es_repr_r": "online supplement; p. 2",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "127": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers analyzed the misclassification of faces.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 2",
+        "audit_id": 127,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected. Misclassification results are explicitly located in the unavailable Supplement; no printed candidate coefficients or p values for those models in the supplied report. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. Ther researchers analyzed the misclassification of faces. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "online supplement; p. 2",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "128": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers analyzed the misclassification of faces.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 2",
+        "audit_id": 128,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected. Misclassification results are explicitly located in the unavailable Supplement; no printed candidate coefficients or p values for those models in the supplied report. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. Ther researchers analyzed the misclassification of faces. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "online supplement; p. 2",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "129": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers analyzed the misclassification of faces.",
+        "locators_o": "p. 6",
+        "locators_r": "p. 2",
+        "audit_id": 129,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected. Misclassification results are explicitly located in the unavailable Supplement; no printed candidate coefficients or p values for those models in the supplied report. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. Ther researchers analyzed the misclassification of faces. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "online supplement; p. 2",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "130": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers analyzed the misclassification of faces.",
+        "locators_o": "p. 6",
+        "locators_r": "p. 2",
+        "audit_id": 130,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected. Misclassification results are explicitly located in the unavailable Supplement; no printed candidate coefficients or p values for those models in the supplied report. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. Ther researchers analyzed the misclassification of faces. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "online supplement; p. 2",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "131": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers analyzed the misclassification of faces.",
+        "locators_o": "p. 6",
+        "locators_r": "p. 2",
+        "audit_id": 131,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected. Misclassification results are explicitly located in the unavailable Supplement; no printed candidate coefficients or p values for those models in the supplied report. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. Ther researchers analyzed the misclassification of faces. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "online supplement; p. 2",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "132": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers analyzed the misclassification of faces.",
+        "locators_o": "p. 6",
+        "locators_r": "p. 2",
+        "audit_id": 132,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected. Misclassification results are explicitly located in the unavailable Supplement; no printed candidate coefficients or p values for those models in the supplied report. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. Ther researchers analyzed the misclassification of faces. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "online supplement; p. 2",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "133": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. The researchers analyzed the misclassification of faces.",
+        "locators_o": "p. 6",
+        "locators_r": "p. 2",
+        "audit_id": 133,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. The main report explicitly sends misclassification results to the Supplement, which is not supplied. The broad description also does not identify an emotion, error category or model term. No numeric target is selected. Misclassification results are explicitly located in the unavailable Supplement; no printed candidate coefficients or p values for those models in the supplied report. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the participants (adolescents with anorexia nervosa and adolescents with major depression) to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed. Ther researchers analyzed the misclassification of faces. The effects of the factors involved in the statistical test are presented.",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "online supplement; p. 2",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "134": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Researchers showed images to the adolescents with anorexia nervosa and adolescents with major depression to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 4",
+        "audit_id": 134,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; Emotion-identification description does not specify the response measure, ANOVA term or emotion contrast. Even restricting to accuracy, multiple printed model terms and afraid/sad contrasts remain. Requested metric alone does not uniquely identify the target.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. Emotion-identification description does not specify the response measure, ANOVA term or emotion contrast. Even restricting to accuracy, multiple printed model terms and afraid/sad contrasts remain. Requested metric alone does not uniquely identify the target. Accuracy omnibus candidates: TASK F1,72=23.05, p<0.001, partial eta-squared=0.243; EMOTION F3.60,259.32=87.04, p<0.001, partial eta-squared=0.547; TASK × GROUP F1,72=7.55, p=0.008, partial eta-squared=0.095; TASK × EMOTION F3.53,254.47=42.12, p<0.001, partial eta-squared=0.369; three-way interaction F3.53,254.47=3.08, p=0.021, partial eta-squared=0.041. GROUP and EMOTION × GROUP collectively Fs≤1.50, ps>0.1. Emotion-task follow-ups: EMOTION F3.33,239.86=72.19, p<0.001, partial eta-squared=0.501; GROUP F1,72=4.59, p=0.036, partial eta-squared=0.060; EMOTION × GROUP F3.33,239.86=2.79, p=0.036, partial eta-squared=0.037. Pairwise afraid t67.97=2.66, p=0.010, d=0.59; sad t72=2.20, p=0.031, d=0.51 (not significant after correction). Other emotions collectively ts≤1.54, ps>0.1. These are separate candidate tests, not mapped by input order. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the adolescents with anorexia nervosa and adolescents with major depression to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed.",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 4",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    },
+    "135": {
+      "source_key": "78a7663a8f5a20dc",
+      "side": "replication",
+      "input": {
+        "ref_o": "Sfärlea, A., Greimel, E., Platt, B., Dieler, A. C., & Schulte-Körne, G. (2018). Recognition of emotional facial expressions in adolescents with anorexia nervosa and adolescents with major depression. Psychiatry Research, 262, 586–594. https://doi.org/10.1016/j.psychres.2017.09.048",
+        "doi_o": "10.1016/j.psychres.2017.09.048",
+        "study_o": "1",
+        "ref_r": "Sfärlea, A., Buhl, C., Lukas, L., & Schulte‐Körne, G. (2024). Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study. European Eating Disorders Review, 32(5), 943–951. Portico. https://doi.org/10.1002/erv.3103",
+        "doi_r": "10.1002/erv.3103",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Researchers showed images to the adolescents with anorexia nervosa and adolescents with major depression to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 4",
+        "audit_id": 135,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication adolescents with AN versus healthy controls; Emotion-identification description does not specify the response measure, ANOVA term or emotion contrast. Even restricting to accuracy, multiple printed model terms and afraid/sad contrasts remain. Requested metric alone does not uniquely identify the target.",
+      "worker_notes": "Identity verified from the supplied document: title Superior facial emotion recognition in adolescents with anorexia nervosa – A replication study; Anca Sfärlea, Christina Buhl, Linda Lukas, Gerd Schulte‐Körne; DOI 10.1002/erv.3103; European Eating Disorders Review 2024, 32:943–951. This is a full primary brief report (abstract, methods, results, discussion, references), not an abstract-only parse. No PDF is assigned. The Supplement is referenced but is not contained in the supplied source. Emotion-identification description does not specify the response measure, ANOVA term or emotion contrast. Even restricting to accuracy, multiple printed model terms and afraid/sad contrasts remain. Requested metric alone does not uniquely identify the target. Accuracy omnibus candidates: TASK F1,72=23.05, p<0.001, partial eta-squared=0.243; EMOTION F3.60,259.32=87.04, p<0.001, partial eta-squared=0.547; TASK × GROUP F1,72=7.55, p=0.008, partial eta-squared=0.095; TASK × EMOTION F3.53,254.47=42.12, p<0.001, partial eta-squared=0.369; three-way interaction F3.53,254.47=3.08, p=0.021, partial eta-squared=0.041. GROUP and EMOTION × GROUP collectively Fs≤1.50, ps>0.1. Emotion-task follow-ups: EMOTION F3.33,239.86=72.19, p<0.001, partial eta-squared=0.501; GROUP F1,72=4.59, p=0.036, partial eta-squared=0.060; EMOTION × GROUP F3.33,239.86=2.79, p=0.036, partial eta-squared=0.037. Pairwise afraid t67.97=2.66, p=0.010, d=0.59; sad t72=2.20, p=0.031, d=0.51 (not significant after correction). Other emotions collectively ts≤1.54, ps>0.1. These are separate candidate tests, not mapped by input order. Candidate common main-report analytic sample: 33 AN + 41 HC = 74 adolescent participants in mutually exclusive included groups; not derived from degrees of freedom. Main report describes the mixed TASK × EMOTION × GROUP ANOVAs and no additional participant exclusions for those reported models. Eligibility excludes IQ <85, visual impairments, specified neurological/psychiatric disorders and substance abuse; HC excludes current/past mental disorders. Endnote 2 describes a separate sensitivity analysis excluding two AN participants above the 10th BMI percentile; this is not substituted for the main analysis. Model sample cannot be assigned to an unidentified row-specific test; retain only as a candidate. Misclassification model inclusion/exclusions cannot be verified without Supplement. Authors explicitly describe successful replication at whole-study level; reported_success preserves that narrative verdict only, not a claim of a uniquely identified row-specific test. The neutral description mentions major depression; the replication actually compares AN with HC, with depression sometimes comorbid within AN, not a separate major-depression group. No mapping is inferred from row order, original statistics or numeric agreement.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Researchers showed images to the adolescents with anorexia nervosa and adolescents with major depression to make decisions on the nature of the stimulus presented. They had to indicate which emotion (happy, sad, afraid, angry, or neutral) the face expressed.",
+        "es_repr_o": "5",
+        "es_repr_r": "p. 4",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "The results replicate those of a previous study and suggest that emotion\nrecognition impairments may arise with prolonged illness duration"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 122,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 122,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 123,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 123,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 124,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 124,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 125,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 125,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 126,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 126,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 127,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 127,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 128,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 128,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 129,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 129,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 130,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 130,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 131,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 131,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 132,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 132,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 133,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 133,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 134,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 134,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 135,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 948, §4 Discussion, limitations paragraph",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 135,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Explicit authors’ whole-study replication verdict; granularity is the overall pattern, not an individual unidentified statistical test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37e4cef9cf2b7c5cd28e791d.txt",
+        "location": "p. 948, §4 Discussion",
+        "quote": "explain why we succeeded in exactly replicating the ... pattern of results but may also limit the generalisability",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/78a7663a8f5a20dc. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_78a7663a8f5a20dc_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+Large-batch reply override: write the COMPLETE strict JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_78a7663a8f5a20dc_v1.json, but reply ONLY with its path and item count. Do not echo the array. This overrides earlier reply-format instructions only; all source/evidence/target requirements still apply.

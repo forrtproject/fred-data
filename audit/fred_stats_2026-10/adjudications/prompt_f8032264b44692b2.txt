@@ -1,0 +1,50 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 400,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "0.87",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "1.37",
+      "location": "PDF p. 11 (printed p. 10), Results",
+      "quote": "Honest (B = 1.37, SE = .34, p < .001) condition.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dd7258f91a5c1d2879a22501.txt",
+      "confident": true,
+      "metric": "B (unstandardized regression coefficient)",
+      "test_statistic": null
+    },
+    "locator": {
+      "ref_o": "Rogers, T., Zeckhauser, R., Gino, F., Norton, M. I., & Schweitzer, M. E. (2017). Artful paltering: The risks and rewards of using truthful statements to mislead others. Journal of Personality and Social Psychology, 112(3), 456–473. https://doi.org/10.1037/pspi0000081",
+      "doi_o": "10.1037/pspi0000081",
+      "study_o": "3",
+      "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+      "doi_r": "10.1098/rsos.231240",
+      "url_r": "https://rpubs.com/kagood/final-project-report",
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 400,
+      "description": "Comparison of perceived unethicality of lying by commission and honesty.",
+      "locators_o": "p. 11",
+      "locators_r": "p. 11; https://rpubs.com/kagood/final-project-report,",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dd7258f91a5c1d2879a22501.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2736b815e9f115a425e9220a.txt"
+      }
+    },
+    "work_key": "10.1098/rsos.231240",
+    "coding_context": {
+      "es_repr": "p. 11",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

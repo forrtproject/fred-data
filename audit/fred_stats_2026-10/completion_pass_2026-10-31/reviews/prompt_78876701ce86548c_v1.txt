@@ -1,0 +1,80 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "78876701ce86548c",
+    "audit_id": 880,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Rottenstreich, Y., & Hsee, C. K. (2001). Money, Kisses, and Electric Shocks: On the Affective Psychology of Risk. Psychological Science, 12(3), 185–190. https://doi.org/10.1111/1467-9280.00334",
+      "doi_o": "10.1111/1467-9280.00334",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Vianello, M., Hasselman, F., Adams, B. G., Adams, R. B., Alper, S., Aveyard, M., Axt, J. R., Babalola, M. T., Bahník, Š., Batra, R., Berkics, M., Bernstein, M. J., Berry, D. R., Bialobrzeska, O., Binan, E. D., Bocian, K., Brandt, M. J., Busching, R., … Nosek, B. A. (2018). Many Labs 2: Investigating Variation in Replicability Across Samples and Settings. Advances in Methods and Practices in Psychological Science, 1(4), 443–490. https://doi.org/10.1177/2515245918810225",
+      "doi_r": "10.1177/2515245918810225",
+      "url_r": null,
+      "study_r": "29",
+      "es_type_o": "OR",
+      "es_type_r": "d",
+      "description": "Preference for an affectively attractive option (a kiss from a favorite movie star) versus a financially attractive option ($50), as a function of certainty.",
+      "locators_o": "p. 187",
+      "locators_r": "p. 456",
+      "audit_id": 880,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_c745b852331c18d8de8692c2.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/continuation-1201/private_batch_02/artifacts/c745b852331c18d8de8692c2_ebsco.pdf",
+      "source_version_note": "Scanned copy of published article supplied by licensed EBSCO; copy notice retained"
+    },
+    "blind": {
+      "value": "4.91",
+      "metric": "chi-square",
+      "test_statistic": "χ²(1, N = 40) = 4.91",
+      "location": "p. 187, Experiment 1 Results and Discussion, opening paragraph (continued from p. 186); Figure 2",
+      "quote": "pants preferred the kiss lottery over the cash lottery, ␹2(1, N ⫽ 40) ⫽\n4.91, p ⬍ .05.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_c745b852331c18d8de8692c2.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 880,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Experiment 1 directly matches the supplied outcome and certainty comparison. The source reports chi-square = 4.91, not OR; retained the printed metric as required without conversion. Its same-test bound is p < .05. Figure 2 and the Results paragraph confirm the target.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_c745b852331c18d8de8692c2.txt",
+      "location": "p. 187, opening paragraph, Experiment 1 Results and Discussion; Figure 2",
+      "quote": "pants preferred the kiss lottery over the cash lottery, ␹2(1, N ⫽ 40) ⫽\n4.91, p ⬍ .05.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 1: preference for a favorite movie star kiss versus $50 cash in certainty versus 1% probability conditions; between-condition chi-square test of the probability-outcome interaction.",
+    "worker_notes": "Only es_value_o was assigned. Other fields and the replication side are unassigned placeholders. The requested OR is not printed for Experiment 1; retain the printed chi-square test statistic 4.91 without conversion. The same test is printed with p < .05 and N = 40. No OR has been computed from the reported choice percentages. Matched by the Experiment 1 kisses-versus-cash outcome and certainty manipulation, not by numeric correspondence. PDF p. 187 was rendered and visually checked against canonical text; canonical OCR uses ␹2, ⫽, and ⬍ for the corresponding printed mathematical symbols.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_c745b852331c18d8de8692c2.txt",
+    "shipped": "4.333333333",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Whether to prefer an affectively attractive option (a kiss from a favorite movie star) or a financially attractive option ($50) depends on certainty",
+      "es_repr_o": "p. 187: =(0.7/(1-0.7))/(0.35/(1-0.35))",
+      "es_repr_r": "p. 456",
+      "es_type_o": "OR",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The difference was significant, p =\n.002, odds ratio (OR) = 0.87, d = −0.08, 95% CI = [−0.13,\n−0.03], but in the direction opposite the prediction of\nthe hypothesis (i.e., that affectively attractive choices\nare more preferred when they are uncertain rather than\ndefinite). The overall effect was much smaller than in\nthe original study and in the opposite direction (d =\n−0.08, 95% CI = [−0.13, −0.03], vs. original d = 0.74)."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/78876701ce86548c. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_78876701ce86548c_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

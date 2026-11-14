@@ -1,0 +1,89 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "871": {
+      "source_key": "d85a090dc6e6656f",
+      "side": "original",
+      "input": {
+        "ref_o": "Giessner, S. R., & Schubert, T. W. (2007). High in the hierarchy: How vertical location and judgments of leaders’ power are interrelated. Organizational Behavior and Human Decision Processes, 104(1), 30–44. https://doi.org/10.1016/j.obhdp.2006.10.001",
+        "doi_o": "10.1016/j.obhdp.2006.10.001",
+        "study_o": "1A",
+        "ref_r": "Klein, R. A., Vianello, M., Hasselman, F., Adams, B. G., Adams, R. B., Alper, S., Aveyard, M., Axt, J. R., Babalola, M. T., Bahník, Š., Batra, R., Berkics, M., Bernstein, M. J., Berry, D. R., Bialobrzeska, O., Binan, E. D., Bocian, K., Brandt, M. J., Busching, R., … Nosek, B. A. (2018). Many Labs 2: Investigating Variation in Replicability Across Samples and Settings. Advances in Methods and Practices in Psychological Science, 1(4), 443–490. https://doi.org/10.1177/2515245918810225",
+        "doi_r": "10.1177/2515245918810225",
+        "url_r": null,
+        "study_r": "21",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Relationship between vertical position and power.",
+        "locators_o": "p. 33",
+        "locators_r": "p. 460",
+        "audit_id": 871,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6af33207fddeb3cf572c8795.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1a: independent-samples t-test of averaged perceived leader power, comparing large versus small vertical difference in the organization chart among Erasmus University economics and business administration students.",
+      "worker_notes": "Source identity independently inspected: matching title High in the Hierarchy: How Vertical Location and Judgments of Leaders' Power are Interrelated and authors Steffen R. Giessner and Thomas W. Schubert on manuscript title pages; source header supplies matching DOI 10.1016/j.obhdp.2006.10.001. Document is a primary author research manuscript in the February 2007 ERIM Report Series (ERS-2007-021-ORG), with full methods/results, references, tables and figure captions, rather than an abstract or secondary report. It is not the paginated journal version; Study 1a is identified from its study heading, manipulation, sample and outcome, not numeric matching. No PDF supplied for layout inspection. Assigned field only: es_value_o. Retained the printed eta squared .07 rather than converting to requested d; the same test prints t(62) = 2.20 and p = .03. Unassigned N, p, replication and success fields are null placeholders, not absence findings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6af33207fddeb3cf572c8795.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Relating vertical position with power",
+        "es_repr_o": "p. 33: =(5.01-4.62)/SQRT((0.6^2+0.81^2)/2)",
+        "es_repr_r": "p. 460",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "This result does not support the hypoth-\nesis that perceived power is higher with greater vertical distance. The replication effect was in the same direc-\ntion as, but much smaller than, the original (d = 0.03, 95% CI = [−0.01, 0.08], vs. original d = 0.55)."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 871,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".07",
+        "metric": "η2 (eta squared, printed as η2)",
+        "test_statistic": "t(62) = 2.20",
+        "location": "Manuscript p. 11, Study 1a, Results (journal locator p. 33; supplied manuscript has different pagination).",
+        "quote": "yielded the expected significant effect of vertical difference, t(62) = 2.20, p = .03, η2 = .07.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6af33207fddeb3cf572c8795.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 871,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Study 1a Results explicitly identifies the independent-samples t-test of averaged leader power for the large versus small vertical-difference manipulation. The printed effect size is eta squared .07; requested d is not supplied in this target result. Preserve the printed metric without conversion. Primary manuscript identity matches title, authors and DOI header, with pagination differing from the journal locator.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6af33207fddeb3cf572c8795.txt",
+        "location": "Manuscript p. 11, Study 1a, Results (journal locator p. 33; supplied manuscript has different pagination).",
+        "quote": "yielded the expected significant effect of vertical difference, t(62) = 2.20, p = .03, η2 = .07.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.547",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/d85a090dc6e6656f. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_d85a090dc6e6656f_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

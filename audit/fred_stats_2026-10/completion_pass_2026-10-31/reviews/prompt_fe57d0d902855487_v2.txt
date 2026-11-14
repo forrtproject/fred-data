@@ -1,0 +1,97 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+Each item MUST include target_match_confirmed/effect_specific_verdict_confirmed booleans, correct_metric/correct_bound nullable strings, null correct_value if undeterminable, and shortest literal ordered quote.
+FOCUSED FINAL SINGLE-MODEL AUTHOR-VERDICT RE-CHECK, row1979 reported_success only. Source worker explicitly leaves target model/sample unresolved: page7 has full-sample one-factor linguistic-expression ANOVA versus two-factor model with participant gender using a different analytic sample, and the Discussion also notes a feminine/masculine word-pair contrast that differs from original findings. First reviewer calls the omnibus main effect uniquely identified but simultaneously cites both different F tests. Actual neutral description names generic-masculine versus gender-inclusive representations, no participant-gender adjustment or sample restriction; study_r=null, p7, requested partial eta-squared. Coding es_repr_r gives F/df/value numbers but no model label; do not use them to select a test. Inspect actual source preregistration, named hypotheses, primary/extension roles and analytic structure: does any nonnumeric source/row evidence positively select one exact model/contrast, rather than default primary/overall or a shared maineffect name? A source-defined primary role could be valid if actually applicable, but do not assume it. Both analyses' significance and broad replicated conclusions alone cannot certify an unidentified single-statistic entry. If truly unresolved, false target/effect flags and undeterminable, preserving full versus gender-restricted sample roles and main-effect versus specific contrast interpretations separately. If identified, quote precise nonnumeric selection evidence and specific author verdict. No numbers/row order for target identity, no new source acquisition/external sources or original-paper retrieval. Final changed-input round; retain uncertainty when unresolved.
+Full flat payload:
+[
+  {
+    "source_key": "fe57d0d902855487",
+    "audit_id": 1979,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Stahlberg, D., Sczesny, S., & Braun, F. (2001). Name Your Favorite Musician. Journal of Language and Social Psychology, 20(4), 464–469. https://doi.org/10.1177/0261927x01020004004",
+      "doi_o": "10.1177/0261927x01020004004",
+      "study_o": "2",
+      "ref_r": "Keith, N., Hartwig, K., & Richter, T. (2022). Ladies First or Ladies Last: Do Masculine Generics Evoke a Reduced and Later Retrieval of Female Exemplars? Collabra: Psychology, 8(1). https://doi.org/10.1525/collabra.32964",
+      "doi_r": "10.1525/collabra.32964",
+      "url_r": "https://osf.io/rn96f/?view_only=4436a99bf52740ef84a97a4951c414eb",
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "description": "Gender representations evoked by generic masculine wording versus explicitly naming both sexes, in languages with a generic masculine.",
+      "locators_o": "p.4",
+      "locators_r": "p.7",
+      "audit_id": 1979,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8b1c966efb3f2f97a3d76a92.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "successful",
+      "location": "p.10 Discussion, opening paragraph (continued from p.9)",
+      "quote": "and found virtually the same results.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8b1c966efb3f2f97a3d76a92.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 1979,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Authors explicitly characterize the replication as finding virtually the same results. Encoded as successful for the overall core effect. Their discussion also identifies a discrepancy for feminine-masculine word pairs; this limits the overall verdict and is preserved in checkpoint notes.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8b1c966efb3f2f97a3d76a92.txt",
+      "location": "p.10 Discussion, opening paragraph (continued from p.9)",
+      "quote": "and found virtually the same results.",
+      "calculation": null
+    },
+    "worker_target_match": null,
+    "worker_target_description": "Published replication of Stahlberg et al. (2001), Study 2; percentage of women listed under masculine generics versus gender-inclusive forms. Page 7 gives both the one-factorial linguistic-expression ANOVA and the two-factorial ANOVA including participant gender, with distinct analytic samples. The neutral locator does not uniquely distinguish these tests.",
+    "worker_notes": "Identity independently checked: supplied text has the title Ladies First or Ladies Last: Do Masculine Generics Evoke a Reduced and Later Retrieval of Female Exemplars?, authors Nina Keith, Kristine Hartwig, Tobias Richter, Collabra: Psychology 8(1), 2022, and DOI 10.1525/collabra.32964, matching the neutral replication reference. Document is a repository published-PDF text parse with methods, results, discussion and references, not an abstract or preregistration. No PDF path supplied; no rendering performed. Only unfinished n_r and reported_success examined for completion; all other statistic fields and original side are unassigned placeholders. n_r unresolved: page 7 explicitly distinguishes full-sample one-factorial ANOVA (candidate N=344) and participant-gender two-factorial ANOVA (candidate N=340); neither chosen using metric or numeric correspondence. No N derived from degrees of freedom. Reported_success records the authors overall narrative verdict for the replicated core linguistic-expression effect, not an assertion that every contrast replicated. The discussion explicitly says the feminine-masculine word-pair contrast differed from the original (significant here, not significant originally).",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8b1c966efb3f2f97a3d76a92.txt",
+    "shipped": "successful",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "In languages with generic masculine, not explicitly naming both sexes makes people think of more masculine people",
+      "es_repr_o": "p.4 F(2, 84) = 9.97, p < .001.",
+      "es_repr_r": "p.7 F(3,340) = 20.50, p < .001, ηpartial2 = .15.",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Despite 20 years of societal changes, results were remarkably similar, underscoring the high degree of automaticity involved in language comprehension (large effects of 0.71 to 1.12 of a standard deviation)."
+    },
+    "prior_adjudication": {
+      "audit_id": 1979,
+      "field": "reported_success",
+      "verdict": "shipped_right",
+      "correct_value": "successful",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": true,
+      "location": "p.8 Results (Effects of Linguistic Expression of Gender and Participant Gender); pp.9-10 Discussion, opening paragraph",
+      "quote": "Taken together, our results replicate those found by ... Stahlberg et al. (2001). In particular, (1) the linguistic ex- ... pression of gender affected the extent to which women were ... listed by participants, with masculine generics leading to ... the lowest percentage of women listed ... and found virtually the same results.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8b1c966efb3f2f97a3d76a92.txt",
+      "reason": "Primary source identity is confirmed (Keith, Hartwig, & Richter, 2022, Collabra: Psychology, 8(1), DOI 10.1525/collabra.32964). The neutral description, p. 7 locator, and partial eta-squared metric uniquely identify the omnibus main effect of linguistic expression of gender on percentage of women listed (Hypothesis 1, F(3,340) = 20.50, p < .001, ηpartial2 = .15 in the full-sample one-way ANOVA, with the same main effect significant in the two-way ANOVA, F(3,332) = 23.99, p < .001, ηpartial2 = .18), which the authors explicitly report as replicating Stahlberg et al. (2001) Study 2."
+    },
+    "parent_response": "FOCUSED FINAL SINGLE-MODEL AUTHOR-VERDICT RE-CHECK, row1979 reported_success only. Source worker explicitly leaves target model/sample unresolved: page7 has full-sample one-factor linguistic-expression ANOVA versus two-factor model with participant gender using a different analytic sample, and the Discussion also notes a feminine/masculine word-pair contrast that differs from original findings. First reviewer calls the omnibus main effect uniquely identified but simultaneously cites both different F tests. Actual neutral description names generic-masculine versus gender-inclusive representations, no participant-gender adjustment or sample restriction; study_r=null, p7, requested partial eta-squared. Coding es_repr_r gives F/df/value numbers but no model label; do not use them to select a test. Inspect actual source preregistration, named hypotheses, primary/extension roles and analytic structure: does any nonnumeric source/row evidence positively select one exact model/contrast, rather than default primary/overall or a shared maineffect name? A source-defined primary role could be valid if actually applicable, but do not assume it. Both analyses' significance and broad replicated conclusions alone cannot certify an unidentified single-statistic entry. If truly unresolved, false target/effect flags and undeterminable, preserving full versus gender-restricted sample roles and main-effect versus specific contrast interpretations separately. If identified, quote precise nonnumeric selection evidence and specific author verdict. No numbers/row order for target identity, no new source acquisition/external sources or original-paper retrieval. Final changed-input round; retain uncertainty when unresolved."
+  }
+]

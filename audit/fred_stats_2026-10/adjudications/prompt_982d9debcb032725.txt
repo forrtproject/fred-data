@@ -1,0 +1,172 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1558,
+    "field": "pval_value_r",
+    "comparison": "differ",
+    "shipped": "0.06",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".007",
+      "location": "p. 7, Evaluating Rate of NOT Alerts; Table 1 note",
+      "quote": "p!.007",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt",
+      "confident": true,
+      "bound": "e"
+    },
+    "locator": {
+      "ref_o": "Burlingame, G. M., Whitcomb, K. E., Woodland, S. C., Olsen, J. A., Beecher, M., & Gleave, R. (2018). The effects of relationship and progress feedback in group psychotherapy using the Group Questionnaire and Outcome Questionnaire–45: A randomized clinical trial. Psychotherapy, 55(2), 116–131. https://doi.org/10.1037/pst0000133",
+      "doi_o": "10.1037/pst0000133",
+      "study_o": "1",
+      "ref_r": "Alldredge, C., Burlingame, G., Olsen, J., & Van Epps, J. (2020). Outcome Questionnaire-45 (OQ-45) progress alert rates in group versus individual treatment: An archival replication. Group Dynamics: Theory, Research, and Practice, 24(4), 247–260. https://doi.org/10.1037/gdn0000121",
+      "doi_r": "10.1037/gdn0000121",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1558,
+      "description": "Frequency of “not on track” alerts in group versus individual therapy.",
+      "locators_o": "p.10",
+      "locators_r": "p.8",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt"
+      }
+    },
+    "work_key": "10.1037/gdn0000121",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1558,
+      "field": "pval_value_r",
+      "verdict": "shipped_right",
+      "correct_value": "0.06",
+      "location": "p. 7, Evaluating Timing of First Alerts; p. 8, Table 2",
+      "quote": "1258) !3.55, p!.060.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt",
+      "reason": "The original and replication locators and metric (test statistic on p. 10 and p. 8, Table 2) show that audit_id 1558 codes the first-alert timing ANOVA, F(1, 1258) = 3.55, p = .060 (0.06), while the description strings for 1558 and 1834 were swapped in the metadata, causing blind to extract the Table 1 alert-rate test.",
+      "resolution": "argon"
+    },
+    "parent_response": "The blind locator for1558 explicitly names frequency/rate of NOT alerts (p.8, generic page only);1834 names timing/later alerts but its Table1/OR locator selects frequency. Earlier adjudication asserted descriptions were swapped and chose1558 timing from the SHIPPED F statistic, rather than following the neutral outcome. Do not infer intended target from numerical coincidence with shipped values. Inspect actual pagination/any cover offset, source table captions, study identifiers, and requested metric labels, and give both blind locator contexts in the analysis (1558 frequency;1834 timing). Can the intended effect be uniquely established independently of the shipped numeric values when neutral description, page/table and metric conflict? If yes, justify the locator precedence explicitly using primary-source construct/test labels, then adjudicate that exact effect. If not, return undeterminable/mismatched_target rather than calling coded statistics correct or erroneous or changing success labels based on the competing outcome. Distinguish a metadata/description mismatch from a confirmed statistical error. Authors success for frequency and timing differ, so scope is essential. Reconcile prior response explicitly.",
+    "coding_context": {
+      "es_repr": "p.8",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1558,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 9, Discussion, first finding",
+      "quote": "replicate",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Burlingame, G. M., Whitcomb, K. E., Woodland, S. C., Olsen, J. A., Beecher, M., & Gleave, R. (2018). The effects of relationship and progress feedback in group psychotherapy using the Group Questionnaire and Outcome Questionnaire–45: A randomized clinical trial. Psychotherapy, 55(2), 116–131. https://doi.org/10.1037/pst0000133",
+      "doi_o": "10.1037/pst0000133",
+      "study_o": "1",
+      "ref_r": "Alldredge, C., Burlingame, G., Olsen, J., & Van Epps, J. (2020). Outcome Questionnaire-45 (OQ-45) progress alert rates in group versus individual treatment: An archival replication. Group Dynamics: Theory, Research, and Practice, 24(4), 247–260. https://doi.org/10.1037/gdn0000121",
+      "doi_r": "10.1037/gdn0000121",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1558,
+      "description": "Frequency of “not on track” alerts in group versus individual therapy.",
+      "locators_o": "p.10",
+      "locators_r": "p.8",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt"
+      }
+    },
+    "work_key": "10.1037/gdn0000121",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1558,
+      "field": "reported_success",
+      "verdict": "both_wrong",
+      "correct_value": "failed",
+      "location": "p. 9, Discussion, paragraph 3",
+      "quote": "occurrence NOT alerts did not replicate",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt",
+      "reason": "For the first-alert timing test coded in 1558 (p. 8, Table 2), the authors state that timing differences did not replicate; shipped recorded the study-wide summary ('mixed') across both hypotheses, and blind coded 'successful' from the swapped alert-rate description.",
+      "resolution": "argon"
+    },
+    "parent_response": "The blind locator for1558 explicitly names frequency/rate of NOT alerts (p.8, generic page only);1834 names timing/later alerts but its Table1/OR locator selects frequency. Earlier adjudication asserted descriptions were swapped and chose1558 timing from the SHIPPED F statistic, rather than following the neutral outcome. Do not infer intended target from numerical coincidence with shipped values. Inspect actual pagination/any cover offset, source table captions, study identifiers, and requested metric labels, and give both blind locator contexts in the analysis (1558 frequency;1834 timing). Can the intended effect be uniquely established independently of the shipped numeric values when neutral description, page/table and metric conflict? If yes, justify the locator precedence explicitly using primary-source construct/test labels, then adjudicate that exact effect. If not, return undeterminable/mismatched_target rather than calling coded statistics correct or erroneous or changing success labels based on the competing outcome. Distinguish a metadata/description mismatch from a confirmed statistical error. Authors success for frequency and timing differ, so scope is essential. Reconcile prior response explicitly.",
+    "coding_context": {
+      "es_repr": "p.8",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1834,
+    "field": "pval_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.007",
+    "shipped_metric": "OR",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".060",
+      "location": "p. 7, Evaluating Timing of First Alerts",
+      "quote": "p!.060",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt",
+      "confident": true,
+      "bound": "e"
+    },
+    "locator": {
+      "ref_o": "Burlingame, G. M., Whitcomb, K. E., Woodland, S. C., Olsen, J. A., Beecher, M., & Gleave, R. (2018). The effects of relationship and progress feedback in group psychotherapy using the Group Questionnaire and Outcome Questionnaire–45: A randomized clinical trial. Psychotherapy, 55(2), 116–131. https://doi.org/10.1037/pst0000133",
+      "doi_o": "10.1037/pst0000133",
+      "study_o": "1",
+      "ref_r": "Alldredge, C., Burlingame, G., Olsen, J., & Van Epps, J. (2020). Outcome Questionnaire-45 (OQ-45) progress alert rates in group versus individual treatment: An archival replication. Group Dynamics: Theory, Research, and Practice, 24(4), 247–260. https://doi.org/10.1037/gdn0000121",
+      "doi_r": "10.1037/gdn0000121",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "audit_id": 1834,
+      "description": "Timing of \"not on track\" alerts among group therapy versus individual therapy participants.",
+      "locators_o": "p. 10",
+      "locators_r": "Table 1",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt"
+      }
+    },
+    "work_key": "10.1037/gdn0000121",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1834,
+      "field": "pval_value_r",
+      "verdict": "shipped_right",
+      "correct_value": "0.007",
+      "location": "p. 7, Evaluating Rate of NOT Alerts; Table 1 note",
+      "quote": "(1) !7.25, p!.007.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b27c32e72bdcd65d7bffbdaf.txt",
+      "reason": "For the Table 1 NOT alert rate comparison documented in locators_r and coding_context, chi-square(1) = 7.25, p = .007 matches shipped; blind extracted p = .060 from the Table 2 timing analysis.",
+      "resolution": "argon"
+    },
+    "parent_response": "The blind locator for1558 explicitly names frequency/rate of NOT alerts (p.8, generic page only);1834 names timing/later alerts but its Table1/OR locator selects frequency. Earlier adjudication asserted descriptions were swapped and chose1558 timing from the SHIPPED F statistic, rather than following the neutral outcome. Do not infer intended target from numerical coincidence with shipped values. Inspect actual pagination/any cover offset, source table captions, study identifiers, and requested metric labels, and give both blind locator contexts in the analysis (1558 frequency;1834 timing). Can the intended effect be uniquely established independently of the shipped numeric values when neutral description, page/table and metric conflict? If yes, justify the locator precedence explicitly using primary-source construct/test labels, then adjudicate that exact effect. If not, return undeterminable/mismatched_target rather than calling coded statistics correct or erroneous or changing success labels based on the competing outcome. Distinguish a metadata/description mismatch from a confirmed statistical error. Authors success for frequency and timing differ, so scope is essential. Reconcile prior response explicitly.",
+    "coding_context": {
+      "es_repr": "Table 1, =(46/100)/(1214/4279)",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

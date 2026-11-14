@@ -1,0 +1,923 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1040": {
+      "source_key": "bdb662fa0a4ff327",
+      "side": "replication",
+      "input": {
+        "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+        "doi_o": "10.1086/598971",
+        "study_o": "3",
+        "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+        "doi_r": "10.15626/mp.2020.2639",
+        "url_r": null,
+        "study_r": "3",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Candy variety, amount of candy poured, and perceived quantity.",
+        "locators_o": "p. 8",
+        "locators_r": "p. 16",
+        "audit_id": 1040,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3: Candy variety, amount of candy poured, and perceived quantity.",
+      "worker_notes": "Identity verified from masthead: Meta-Psychology, 2024, vol 8, MP.2020.2639, DOI 10.15626/MP.2020.2639; title The Effect of Variety on Perceived Quantity: Failures to Replicate Redden and Hoch (2009); authors Lukas Röseler, Georg Felser, Jana Asberger, Astrid Schütz; Article type File-Drawer Report. Full primary report text (16 printed pages), including Methods, Results, Discussions, tables and references. No PDF supplied. Locator pagination differs; targets identified by study, outcome and test, never by row order or numbers. Unassigned fields are placeholders. Study 3 contains three separate variety comparisons (seen-variety/estimation, seen-variety/pouring, poured-variety/pouring). Only narrative success assigned; authors explicitly characterize Study 3 as failing, so no numerical test selection needed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+        "es_repr_o": "p. 8",
+        "es_repr_r": "p. 16",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A\nmeta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity."
+      }
+    },
+    "1058": {
+      "source_key": "bdb662fa0a4ff327",
+      "side": "replication",
+      "input": {
+        "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+        "doi_o": "10.1086/598971",
+        "study_o": "1",
+        "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+        "doi_r": "10.15626/mp.2020.2639",
+        "url_r": null,
+        "study_r": "4",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Relationship between the presence of variety and perceived quantity.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 20",
+        "audit_id": 1058,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 4: Relationship between the presence of variety and perceived quantity.",
+      "worker_notes": "Identity verified from masthead: Meta-Psychology, 2024, vol 8, MP.2020.2639, DOI 10.15626/MP.2020.2639; title The Effect of Variety on Perceived Quantity: Failures to Replicate Redden and Hoch (2009); authors Lukas Röseler, Georg Felser, Jana Asberger, Astrid Schütz; Article type File-Drawer Report. Full primary report text (16 printed pages), including Methods, Results, Discussions, tables and references. No PDF supplied. Locator pagination differs; targets identified by study, outcome and test, never by row order or numbers. Unassigned fields are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "The presence of variety lowers the perceived quantity",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 20",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity."
+      }
+    },
+    "1059": {
+      "source_key": "bdb662fa0a4ff327",
+      "side": "replication",
+      "input": {
+        "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+        "doi_o": "10.1086/598971",
+        "study_o": "1",
+        "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+        "doi_r": "10.15626/mp.2020.2639",
+        "url_r": null,
+        "study_r": "5",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Relationship between the presence of variety and perceived quantity.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 21",
+        "audit_id": 1059,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 5: Relationship between the presence of variety and perceived quantity.",
+      "worker_notes": "Identity verified from masthead: Meta-Psychology, 2024, vol 8, MP.2020.2639, DOI 10.15626/MP.2020.2639; title The Effect of Variety on Perceived Quantity: Failures to Replicate Redden and Hoch (2009); authors Lukas Röseler, Georg Felser, Jana Asberger, Astrid Schütz; Article type File-Drawer Report. Full primary report text (16 printed pages), including Methods, Results, Discussions, tables and references. No PDF supplied. Locator pagination differs; targets identified by study, outcome and test, never by row order or numbers. Unassigned fields are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "The presence of variety lowers the perceived quantity",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 21",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity."
+      }
+    },
+    "1060": {
+      "source_key": "bdb662fa0a4ff327",
+      "side": "replication",
+      "input": {
+        "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+        "doi_o": "10.1086/598971",
+        "study_o": "1",
+        "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+        "doi_r": "10.15626/mp.2020.2639",
+        "url_r": null,
+        "study_r": "5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq",
+        "description": "Estimates as a function of the percentage filled.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 22",
+        "audit_id": 1060,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 5: Estimates as a function of the percentage filled.",
+      "worker_notes": "Identity verified from masthead: Meta-Psychology, 2024, vol 8, MP.2020.2639, DOI 10.15626/MP.2020.2639; title The Effect of Variety on Perceived Quantity: Failures to Replicate Redden and Hoch (2009); authors Lukas Röseler, Georg Felser, Jana Asberger, Astrid Schütz; Article type File-Drawer Report. Full primary report text (16 printed pages), including Methods, Results, Discussions, tables and references. No PDF supplied. Locator pagination differs; targets identified by study, outcome and test, never by row order or numbers. Unassigned fields are placeholders. Candidate N = 45 participants from study/aggregate paired comparison; not established as analytic N for factorial ANOVA. No derivation from degrees of freedom.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "People gave larger estimates as the percentage filled increased",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 22",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "1 (one)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity."
+      }
+    },
+    "1062": {
+      "source_key": "bdb662fa0a4ff327",
+      "side": "replication",
+      "input": {
+        "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+        "doi_o": "10.1086/598971",
+        "study_o": "1",
+        "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+        "doi_r": "10.15626/mp.2020.2639",
+        "url_r": null,
+        "study_r": "5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq",
+        "description": "Estimates as a function of the percentage filled and number of types.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 22",
+        "audit_id": 1062,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 5: Estimates as a function of the percentage filled and number of types.",
+      "worker_notes": "Identity verified from masthead: Meta-Psychology, 2024, vol 8, MP.2020.2639, DOI 10.15626/MP.2020.2639; title The Effect of Variety on Perceived Quantity: Failures to Replicate Redden and Hoch (2009); authors Lukas Röseler, Georg Felser, Jana Asberger, Astrid Schütz; Article type File-Drawer Report. Full primary report text (16 printed pages), including Methods, Results, Discussions, tables and references. No PDF supplied. Locator pagination differs; targets identified by study, outcome and test, never by row order or numbers. Unassigned fields are placeholders. Candidate N = 45 participants from study/aggregate paired comparison; not established as analytic N for factorial ANOVA. No derivation from degrees of freedom.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "People estimates depends on both the percentage filled and number of types",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 22",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": "1 (one)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity."
+      }
+    },
+    "1965": {
+      "source_key": "bdb662fa0a4ff327",
+      "side": "replication",
+      "input": {
+        "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+        "doi_o": "10.1086/598971",
+        "study_o": "1",
+        "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+        "doi_r": "10.15626/mp.2020.2639",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+        "locators_o": "p. 8",
+        "locators_r": "p. 3",
+        "audit_id": 1965,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1: Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "worker_notes": "Identity verified from masthead: Meta-Psychology, 2024, vol 8, MP.2020.2639, DOI 10.15626/MP.2020.2639; title The Effect of Variety on Perceived Quantity: Failures to Replicate Redden and Hoch (2009); authors Lukas Röseler, Georg Felser, Jana Asberger, Astrid Schütz; Article type File-Drawer Report. Full primary report text (16 printed pages), including Methods, Results, Discussions, tables and references. No PDF supplied. Locator pagination differs; targets identified by study, outcome and test, never by row order or numbers. Unassigned fields are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+        "es_repr_o": "p. 8",
+        "es_repr_r": "p. 3",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity."
+      }
+    },
+    "1966": {
+      "source_key": "bdb662fa0a4ff327",
+      "side": "replication",
+      "input": {
+        "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+        "doi_o": "10.1086/598971",
+        "study_o": "1",
+        "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+        "doi_r": "10.15626/mp.2020.2639",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+        "locators_o": "p. 8",
+        "locators_r": "p. 13",
+        "audit_id": 1966,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 2: Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "worker_notes": "Identity verified from masthead: Meta-Psychology, 2024, vol 8, MP.2020.2639, DOI 10.15626/MP.2020.2639; title The Effect of Variety on Perceived Quantity: Failures to Replicate Redden and Hoch (2009); authors Lukas Röseler, Georg Felser, Jana Asberger, Astrid Schütz; Article type File-Drawer Report. Full primary report text (16 printed pages), including Methods, Results, Discussions, tables and references. No PDF supplied. Locator pagination differs; targets identified by study, outcome and test, never by row order or numbers. Unassigned fields are placeholders. N arithmetic: 240 + 199 = 439 participants in mutually exclusive final comparison groups. Study 2 successfully replicated its own Study 1 opposite-direction finding but failed the original variety-reduces-quantity hypothesis. Body d = -0.218 versus Table 3 d = -0.217; body retained.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+        "es_repr_o": "p. 8",
+        "es_repr_r": "p. 13",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity."
+      }
+    },
+    "1967": {
+      "source_key": "bdb662fa0a4ff327",
+      "side": "replication",
+      "input": {
+        "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+        "doi_o": "10.1086/598971",
+        "study_o": "1",
+        "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+        "doi_r": "10.15626/mp.2020.2639",
+        "url_r": null,
+        "study_r": "6",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+        "locators_o": "p. 8",
+        "locators_r": "p. 13",
+        "audit_id": 1967,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 6: Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "worker_notes": "Identity verified from masthead: Meta-Psychology, 2024, vol 8, MP.2020.2639, DOI 10.15626/MP.2020.2639; title The Effect of Variety on Perceived Quantity: Failures to Replicate Redden and Hoch (2009); authors Lukas Röseler, Georg Felser, Jana Asberger, Astrid Schütz; Article type File-Drawer Report. Full primary report text (16 printed pages), including Methods, Results, Discussions, tables and references. No PDF supplied. Locator pagination differs; targets identified by study, outcome and test, never by row order or numbers. Unassigned fields are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+        "es_repr_o": "p. 8",
+        "es_repr_r": "p. 13",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1040,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Study 4 introduction retrospectively describing Study 3",
+        "quote": "and after the replication of Red- ... den and Hoch (2009) pouring studies failed to produce ... the hypothesized effect (Study 3)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1040,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ narrative verdict for original variety hypothesis.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 7, Study 4 introduction retrospectively describing Study 3",
+        "quote": "and after the replication of Red- ... den and Hoch (2009) pouring studies failed to produce ... the hypothesized effect (Study 3)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1058,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 8, Study 4 Discussion",
+        "quote": "1 by Redden and Hoch (2009), we failed to replicate the ... effect of variety on perceived quantity.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1058,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ narrative verdict for original variety hypothesis.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 8, Study 4 Discussion",
+        "quote": "1 by Redden and Hoch (2009), we failed to replicate the ... effect of variety on perceived quantity.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1059,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".574",
+        "bound": "e",
+        "location": "p. 9, Study 5 Results, paired variety t test",
+        "quote": "significant, t(44) = 0.57, p = .574 (two-tailed), dz = ... 0.084.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1059,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Two-tailed paired variety t test; same test prints dz = 0.084, while Table 3 separately supplies author-derived d = 0.042.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 9, Study 5 Results, paired variety t test",
+        "quote": "significant, t(44) = 0.57, p = .574 (two-tailed), dz = ... 0.084.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.574",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1059,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 9, Study 5 Discussion",
+        "quote": "Study 1 by Redden and Hoch (2009), we again failed to ... replicate the effect of variety on perceived quantity.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1059,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ narrative verdict for original variety hypothesis.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 9, Study 5 Discussion",
+        "quote": "Study 1 by Redden and Hoch (2009), we again failed to ... replicate the effect of variety on perceived quantity.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1060,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".777",
+        "metric": "η²",
+        "test_statistic": "F(1.44, 44.50) = 107.98",
+        "location": "p. 9, Study 5 Results, percentage-filled main effect",
+        "quote": "tity, F(1.44, 44.50) = 107.98, p < .001 (Greenhouse- ... Geisser-corrected due to sphericity), η² = .777.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1060,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Percentage-filled main effect; printed η² and same-test Greenhouse-Geisser-corrected p < .001.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 9, Study 5 Results, percentage-filled main effect",
+        "quote": "tity, F(1.44, 44.50) = 107.98, p < .001 (Greenhouse- ... Geisser-corrected due to sphericity), η² = .777.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.777",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1060,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 9, Study 5 Results, percentage-filled main effect",
+        "quote": "tity, F(1.44, 44.50) = 107.98, p < .001 (Greenhouse- ... Geisser-corrected due to sphericity), η² = .777.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1060,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Percentage-filled main effect; printed η² and same-test Greenhouse-Geisser-corrected p < .001.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 9, Study 5 Results, percentage-filled main effect",
+        "quote": "tity, F(1.44, 44.50) = 107.98, p < .001 (Greenhouse- ... Geisser-corrected due to sphericity), η² = .777.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1062,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".091",
+        "metric": "η²",
+        "test_statistic": "F(9.46, 293.20) = 3.10",
+        "location": "p. 9, Study 5 Results, percentage-filled × number-of-types interaction",
+        "quote": "objects interaction, F(9.46, 293.20) = 3.10, p = .001 ... (Greenhouse-Geisser-corrected due to sphericity), η² = ... .091.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1062,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Named interaction; printed η² and same-test Greenhouse-Geisser-corrected p = .001.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 9, Study 5 Results, percentage-filled × number-of-types interaction",
+        "quote": "objects interaction, F(9.46, 293.20) = 3.10, p = .001 ... (Greenhouse-Geisser-corrected due to sphericity), η² = ... .091.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.091",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1062,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "e",
+        "location": "p. 9, Study 5 Results, percentage-filled × number-of-types interaction",
+        "quote": "objects interaction, F(9.46, 293.20) = 3.10, p = .001 ... (Greenhouse-Geisser-corrected due to sphericity), η² = ... .091.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1062,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Named interaction; printed η² and same-test Greenhouse-Geisser-corrected p = .001.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 9, Study 5 Results, percentage-filled × number-of-types interaction",
+        "quote": "objects interaction, F(9.46, 293.20) = 3.10, p = .001 ... (Greenhouse-Geisser-corrected due to sphericity), η² = ... .091.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1965,
+      "field": "n_r",
+      "blind": {
+        "value": "206",
+        "sample_role": "Participants in final complete-case sample for averaged quantity estimates",
+        "exclusions": "276 recruited; excluded missing values on any quantity estimate; final 206.",
+        "location": "p. 3, Study 1 Method and Result, main comparison of averaged estimates",
+        "quote": "quantity estimates and thus ended up with a final sam- ... ple of 206 participants",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1965,
+        "field": "n_r",
+        "code": "extracted_printed",
+        "reason": "Study 1 main variety comparison of averaged estimates across bowls; final sample and same-test d/p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 3, Study 1 Method and Result, main comparison of averaged estimates",
+        "quote": "quantity estimates and thus ended up with a final sam- ... ple of 206 participants",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "206",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1965,
+      "field": "es_value_r",
+      "blind": {
+        "value": "-0.302",
+        "metric": "d",
+        "test_statistic": "t(204) = -2.17",
+        "location": "p. 3, Study 1 Method and Result, main comparison of averaged estimates",
+        "quote": "113.97, SD = 37.43, N = 104), t(204) = -2.17, p = ... .031 (two-tailed), d = -0.302.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1965,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Study 1 main variety comparison of averaged estimates across bowls; final sample and same-test d/p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 3, Study 1 Method and Result, main comparison of averaged estimates",
+        "quote": "113.97, SD = 37.43, N = 104), t(204) = -2.17, p = ... .031 (two-tailed), d = -0.302.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.302",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1965,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".031",
+        "bound": "e",
+        "location": "p. 3, Study 1 Method and Result, main comparison of averaged estimates",
+        "quote": "113.97, SD = 37.43, N = 104), t(204) = -2.17, p = ... .031 (two-tailed), d = -0.302.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1965,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Study 1 main variety comparison of averaged estimates across bowls; final sample and same-test d/p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 3, Study 1 Method and Result, main comparison of averaged estimates",
+        "quote": "113.97, SD = 37.43, N = 104), t(204) = -2.17, p = ... .031 (two-tailed), d = -0.302.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.31",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1965,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 3, Study 1 Discussion; p. 12, Future Direction",
+        "quote": "colored conditions. Contrary to our hypothesis, variety ... increased instead of decreased the perceived quantity. ... In six different studies, we failed to replicate the ef- ... fect that variety reduces perceived quantity.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1965,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ narrative verdict for original variety hypothesis.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 3, Study 1 Discussion; p. 12, Future Direction",
+        "quote": "colored conditions. Contrary to our hypothesis, variety ... increased instead of decreased the perceived quantity. ... In six different studies, we failed to replicate the ef- ... fect that variety reduces perceived quantity.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1966,
+      "field": "n_r",
+      "blind": {
+        "value": "439",
+        "sample_role": "Participants in mutually exclusive final single-colored and combined bi-/multicolored comparison groups",
+        "exclusions": "Incomplete cases and estimates beyond mean ±4 SD excluded; printed target-comparison group counts 240 and 199.",
+        "location": "pp. 4–5, Study 2 Result, main variety t test",
+        "quote": "240) than the multicolored quantities (M = 105.26, SD ... = 40.57, N = 199), t(437) = -2.28, p = .023 (two- ... tailed), d = -0.218. ... be smaller in number (M = 96.85, SD = 36.79, N =",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1966,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Explicit final mutually exclusive comparison groups; sum participant groups only, without repeated-container observations.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "pp. 4–5, Study 2 Result, main variety t test",
+        "quote": "240) than the multicolored quantities (M = 105.26, SD ... = 40.57, N = 199), t(437) = -2.28, p = .023 (two- ... tailed), d = -0.218. ... be smaller in number (M = 96.85, SD = 36.79, N =",
+        "calculation": "240 + 199 = 439 participants"
+      },
+      "supported": true,
+      "shipped": "439",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1966,
+      "field": "es_value_r",
+      "blind": {
+        "value": "-0.218",
+        "metric": "d",
+        "test_statistic": "t(437) = -2.28",
+        "location": "pp. 4–5, Study 2 Result, main variety t test",
+        "quote": "= 40.57, N = 199), t(437) = -2.28, p = .023 (two- ... tailed), d = -0.218.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1966,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Main variety t test. Body prints d = -0.218; Table 3 prints -0.217. Preserve body metric/precision and same-test p without reconciliation.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "pp. 4–5, Study 2 Result, main variety t test",
+        "quote": "= 40.57, N = 199), t(437) = -2.28, p = .023 (two- ... tailed), d = -0.218.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.217",
+      "comparison": "compatible",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1966,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".023",
+        "bound": "e",
+        "location": "pp. 4–5, Study 2 Result, main variety t test",
+        "quote": "= 40.57, N = 199), t(437) = -2.28, p = .023 (two- ... tailed), d = -0.218.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1966,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Main variety t test. Body prints d = -0.218; Table 3 prints -0.217. Preserve body metric/precision and same-test p without reconciliation.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "pp. 4–5, Study 2 Result, main variety t test",
+        "quote": "= 40.57, N = 199), t(437) = -2.28, p = .023 (two- ... tailed), d = -0.218.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.23",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1966,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "pp. 4–5, Study 2 Discussion; p. 12, Future Direction",
+        "quote": "Study 2 successfully replicated the effect from Study ... 1 because variety resulted in an increase rather than ... a decrease in perceived quantity ... In six different studies, we failed to replicate the ef- ... fect that variety reduces perceived quantity.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1966,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ narrative verdict for original variety hypothesis.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "pp. 4–5, Study 2 Discussion; p. 12, Future Direction",
+        "quote": "Study 2 successfully replicated the effect from Study ... 1 because variety resulted in an increase rather than ... a decrease in perceived quantity ... In six different studies, we failed to replicate the ef- ... fect that variety reduces perceived quantity.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1967,
+      "field": "es_value_r",
+      "blind": {
+        "value": "-0.301",
+        "metric": "d",
+        "test_statistic": "t(159) = -1.90",
+        "location": "p. 9, Study 6 Results, main variety t test",
+        "quote": "= 84), t(159) = -1.90, p = .059 (two-tailed), d = - ... 0.301.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1967,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Study 6 main quantity-estimation t test. Wilcoxon p = .037 belongs to another test and is not paired with d.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 9, Study 6 Results, main variety t test",
+        "quote": "= 84), t(159) = -1.90, p = .059 (two-tailed), d = - ... 0.301.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.301",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1967,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".059",
+        "bound": "e",
+        "location": "p. 9, Study 6 Results, main variety t test",
+        "quote": "= 84), t(159) = -1.90, p = .059 (two-tailed), d = - ... 0.301.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1967,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Study 6 main quantity-estimation t test. Wilcoxon p = .037 belongs to another test and is not paired with d.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 9, Study 6 Results, main variety t test",
+        "quote": "= 84), t(159) = -1.90, p = .059 (two-tailed), d = - ... 0.301.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.059",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1967,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 10, Study 6 Discussion",
+        "quote": "In this study, we again failed to replicate the hypoth- ... esized effect that variety would reduce perceived quan- ... tity.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1967,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ narrative verdict for original variety hypothesis.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt",
+        "location": "p. 10, Study 6 Discussion",
+        "quote": "In this study, we again failed to replicate the hypoth- ... esized effect that variety would reduce perceived quan- ... tity.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/bdb662fa0a4ff327. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_bdb662fa0a4ff327_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+Large-batch reply override: write the COMPLETE strict JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_bdb662fa0a4ff327_v1.json, but reply ONLY with its path and item count. Do not echo the array. This overrides earlier reply-format instructions only; all source/evidence/target requirements still apply.

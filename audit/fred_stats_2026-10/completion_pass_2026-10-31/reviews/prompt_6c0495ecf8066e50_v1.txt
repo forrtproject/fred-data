@@ -1,0 +1,246 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1043": {
+      "source_key": "6c0495ecf8066e50",
+      "side": "replication",
+      "input": {
+        "ref_o": "Duke, A. A., & Bègue, L. (2015). The drunk utilitarian: Blood alcohol concentration predicts utilitarian responses in moral dilemmas. Cognition, 134, 121–127. https://doi.org/10.1016/j.cognition.2014.09.006",
+        "doi_o": "10.1016/j.cognition.2014.09.006",
+        "study_o": "1",
+        "ref_r": "Paruzel-Czachura, M., Pypno, K., Everett, J. A. C., Białek, M., & Gawronski, B. (2021). The Drunk Utilitarian Revisited: Does Alcohol Really Increase Utilitarianism in Moral Judgment? Personality and Social Psychology Bulletin, 49(1), 20–31. https://doi.org/10.1177/01461672211052120",
+        "doi_r": "10.1177/01461672211052120",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "r",
+        "es_type_r": "etasq (partial)",
+        "description": "Alcohol and utilitarian judgment.",
+        "locators_o": "p. 3",
+        "locators_r": "p. 7",
+        "audit_id": 1043,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication experiment located, but row-specific outcome and critical test/contrast unresolved. Assigned description: Alcohol and utilitarian judgment.",
+      "worker_notes": "Identity verified from supplied canonical text: title The Drunk Utilitarian Revisited: Does Alcohol Really Increase Utilitarianism in Moral Judgment?; authors Mariola Paruzel-Czachura, Katarzyna Pypno, Jim A. C. Everett, Michał Białek, Bertram Gawronski; DOI 10.1177/01461672211052120. Full primary research article, journal pages 20–31, copyright/acceptance 2021 and volume publication 2023, consistent with the reference. Supplied PDF path is null; no PDF rendering possible or attempted. Printed page 26 (PDF page 7), Confirmatory Analyses, contains multiple potentially relevant tests. Trolley responses: Alcohol Group main effect F(2, 326) = 2.76, p = .065, partial eta squared .017; Alcohol Group × Dilemma Type interaction F(2, 326) = 1.57, p = .210, partial eta squared .010. CNI: Alcohol Group main effect F(2, 326) = 1.24, p = .291, partial eta squared .008; Group × Parameter F(4, 652) = 1.30, p = .269, partial eta squared .008. OUS: Alcohol Group main effect F(2, 326) = 0.005, p = .995, partial eta squared .000; Group × Dimension F(2, 326) = 3.04, p = .049, partial eta squared .018; relevant post hoc tests reported only as all ts < 1.35, all ps > .193. Description and locator do not establish which outcome and test/contrast belongs to this row. These are candidates only, with their same-test p values preserved; none selected by row order or numeric matching. Page 23 Participants explicitly gives final participants: alcohol 106, placebo 114, no alcohol 109, final total 329; 58 of 387 recruited participants excluded for failed attention checks. Group counts are candidate participant counts only: the target critical contrast/model is unresolved, so no row-specific analytic N or contrast sum is asserted and no N is inferred from df. Authors’ failed verdict concerns obtaining experimental effects of alcohol, not a claim that the original correlational association was disproved. Paper-level narrative verdict applies to this experiment; no separate condition-specific replication verdict is given. Qualification: the lack of experimen- ... tal effects of alcohol in this study and prior research ... (Arutyunova et al., 2017; Francis et al., 2019) does not neces- ... sarily question Duke and Bègue’s (2015) correlational find- ... ings. Unassigned fields are placeholders and must not overwrite prior verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "drunk utilitarian",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 7",
+        "es_type_o": "r",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "Despite the use of a\nsubstantially larger sample and higher doses of alcohol compared with the ones in prior studies, alcohol had no significant\neffect on moral judgments. The results pose a challenge to the idea that alcohol increases utilitarianism in moral judgments."
+      }
+    },
+    "1169": {
+      "source_key": "6c0495ecf8066e50",
+      "side": "replication",
+      "input": {
+        "ref_o": "Duke, A. A., & Bègue, L. (2015). The drunk utilitarian: Blood alcohol concentration predicts utilitarian responses in moral dilemmas. Cognition, 134, 121–127. https://doi.org/10.1016/j.cognition.2014.09.006",
+        "doi_o": "10.1016/j.cognition.2014.09.006",
+        "study_o": "1",
+        "ref_r": "Paruzel-Czachura, M., Pypno, K., Everett, J. A. C., Białek, M., & Gawronski, B. (2021). The Drunk Utilitarian Revisited: Does Alcohol Really Increase Utilitarianism in Moral Judgment? Personality and Social Psychology Bulletin, 49(1), 20–31. https://doi.org/10.1177/01461672211052120",
+        "doi_r": "10.1177/01461672211052120",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "r",
+        "es_type_r": "etasq (partial)",
+        "description": "Utilitarian judgment in a placebo control condition for an alcohol study.",
+        "locators_o": "p. 3",
+        "locators_r": "p. 7",
+        "audit_id": 1169,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication experiment located, but row-specific outcome and critical test/contrast unresolved. Assigned description: Utilitarian judgment in a placebo control condition for an alcohol study.",
+      "worker_notes": "Identity verified from supplied canonical text: title The Drunk Utilitarian Revisited: Does Alcohol Really Increase Utilitarianism in Moral Judgment?; authors Mariola Paruzel-Czachura, Katarzyna Pypno, Jim A. C. Everett, Michał Białek, Bertram Gawronski; DOI 10.1177/01461672211052120. Full primary research article, journal pages 20–31, copyright/acceptance 2021 and volume publication 2023, consistent with the reference. Supplied PDF path is null; no PDF rendering possible or attempted. Printed page 26 (PDF page 7), Confirmatory Analyses, contains multiple potentially relevant tests. Trolley responses: Alcohol Group main effect F(2, 326) = 2.76, p = .065, partial eta squared .017; Alcohol Group × Dilemma Type interaction F(2, 326) = 1.57, p = .210, partial eta squared .010. CNI: Alcohol Group main effect F(2, 326) = 1.24, p = .291, partial eta squared .008; Group × Parameter F(4, 652) = 1.30, p = .269, partial eta squared .008. OUS: Alcohol Group main effect F(2, 326) = 0.005, p = .995, partial eta squared .000; Group × Dimension F(2, 326) = 3.04, p = .049, partial eta squared .018; relevant post hoc tests reported only as all ts < 1.35, all ps > .193. Description and locator do not establish which outcome and test/contrast belongs to this row. These are candidates only, with their same-test p values preserved; none selected by row order or numeric matching. Page 23 Participants explicitly gives final participants: alcohol 106, placebo 114, no alcohol 109, final total 329; 58 of 387 recruited participants excluded for failed attention checks. Group counts are candidate participant counts only: the target critical contrast/model is unresolved, so no row-specific analytic N or contrast sum is asserted and no N is inferred from df. Authors’ failed verdict concerns obtaining experimental effects of alcohol, not a claim that the original correlational association was disproved. Paper-level narrative verdict applies to this experiment; no separate condition-specific replication verdict is given. Qualification: the lack of experimen- ... tal effects of alcohol in this study and prior research ... (Arutyunova et al., 2017; Francis et al., 2019) does not neces- ... sarily question Duke and Bègue’s (2015) correlational find- ... ings. Unassigned fields are placeholders and must not overwrite prior verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "drunk utilitarian(placebo control condition)",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 7",
+        "es_type_o": "r",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "Despite the use of a\nsubstantially larger sample and higher doses of alcohol compared with the ones in prior studies, alcohol had no significant\neffect on moral judgments. The results pose a challenge to the idea that alcohol increases utilitarianism in moral judgments."
+      }
+    },
+    "1170": {
+      "source_key": "6c0495ecf8066e50",
+      "side": "replication",
+      "input": {
+        "ref_o": "Duke, A. A., & Bègue, L. (2015). The drunk utilitarian: Blood alcohol concentration predicts utilitarian responses in moral dilemmas. Cognition, 134, 121–127. https://doi.org/10.1016/j.cognition.2014.09.006",
+        "doi_o": "10.1016/j.cognition.2014.09.006",
+        "study_o": "1",
+        "ref_r": "Paruzel-Czachura, M., Pypno, K., Everett, J. A. C., Białek, M., & Gawronski, B. (2021). The Drunk Utilitarian Revisited: Does Alcohol Really Increase Utilitarianism in Moral Judgment? Personality and Social Psychology Bulletin, 49(1), 20–31. https://doi.org/10.1177/01461672211052120",
+        "doi_r": "10.1177/01461672211052120",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "r",
+        "es_type_r": "etasq (partial)",
+        "description": "Utilitarian judgment in an alcohol condition in which participants drink 1.6 g of alcohol at 40% strength for each 1 kg of body weight.",
+        "locators_o": "p. 3",
+        "locators_r": "p. 7",
+        "audit_id": 1170,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Replication experiment located, but row-specific outcome and critical test/contrast unresolved. Assigned description: Utilitarian judgment in an alcohol condition in which participants drink 1.6 g of alcohol at 40% strength for each 1 kg of body weight.",
+      "worker_notes": "Identity verified from supplied canonical text: title The Drunk Utilitarian Revisited: Does Alcohol Really Increase Utilitarianism in Moral Judgment?; authors Mariola Paruzel-Czachura, Katarzyna Pypno, Jim A. C. Everett, Michał Białek, Bertram Gawronski; DOI 10.1177/01461672211052120. Full primary research article, journal pages 20–31, copyright/acceptance 2021 and volume publication 2023, consistent with the reference. Supplied PDF path is null; no PDF rendering possible or attempted. Printed page 26 (PDF page 7), Confirmatory Analyses, contains multiple potentially relevant tests. Trolley responses: Alcohol Group main effect F(2, 326) = 2.76, p = .065, partial eta squared .017; Alcohol Group × Dilemma Type interaction F(2, 326) = 1.57, p = .210, partial eta squared .010. CNI: Alcohol Group main effect F(2, 326) = 1.24, p = .291, partial eta squared .008; Group × Parameter F(4, 652) = 1.30, p = .269, partial eta squared .008. OUS: Alcohol Group main effect F(2, 326) = 0.005, p = .995, partial eta squared .000; Group × Dimension F(2, 326) = 3.04, p = .049, partial eta squared .018; relevant post hoc tests reported only as all ts < 1.35, all ps > .193. Description and locator do not establish which outcome and test/contrast belongs to this row. These are candidates only, with their same-test p values preserved; none selected by row order or numeric matching. Page 23 Participants explicitly gives final participants: alcohol 106, placebo 114, no alcohol 109, final total 329; 58 of 387 recruited participants excluded for failed attention checks. Group counts are candidate participant counts only: the target critical contrast/model is unresolved, so no row-specific analytic N or contrast sum is asserted and no N is inferred from df. Authors’ failed verdict concerns obtaining experimental effects of alcohol, not a claim that the original correlational association was disproved. Paper-level narrative verdict applies to this experiment; no separate condition-specific replication verdict is given. Qualification: the lack of experimen- ... tal effects of alcohol in this study and prior research ... (Arutyunova et al., 2017; Francis et al., 2019) does not neces- ... sarily question Duke and Bègue’s (2015) correlational find- ... ings. Unassigned fields are placeholders and must not overwrite prior verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "drunk utilitarian(alcohol condition (participants will drink 1.6 g of alcohol at 40% strength for each 1 kg of their body weight))",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 7",
+        "es_type_o": "r",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "Despite the use of a\nsubstantially larger sample and higher doses of alcohol compared with the ones in prior studies, alcohol had no significant\neffect on moral judgments. The results pose a challenge to the idea that alcohol increases utilitarianism in moral judgments."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1043,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Printed p. 27, Discussion (qualified later in same section)",
+        "quote": "Despite these improvements, we failed to obtain any sig- ... nificant effect of alcohol on moral judgments.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1043,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors state failure to obtain an experimental alcohol effect on moral judgments. Narrative classified failed at experiment level; this does not assert the original correlation was disproved or identify a row-specific test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+        "location": "Printed p. 27, Discussion",
+        "quote": "Despite these improvements, we failed to obtain any sig- ... nificant effect of alcohol on moral judgments.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1169,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Printed p. 27, Discussion (qualified later in same section)",
+        "quote": "Despite these improvements, we failed to obtain any sig- ... nificant effect of alcohol on moral judgments.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1169,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors state failure to obtain an experimental alcohol effect on moral judgments. Narrative classified failed at experiment level; this does not assert the original correlation was disproved or identify a row-specific test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+        "location": "Printed p. 27, Discussion",
+        "quote": "Despite these improvements, we failed to obtain any sig- ... nificant effect of alcohol on moral judgments.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1170,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Printed p. 27, Discussion (qualified later in same section)",
+        "quote": "Despite these improvements, we failed to obtain any sig- ... nificant effect of alcohol on moral judgments.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1170,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors state failure to obtain an experimental alcohol effect on moral judgments. Narrative classified failed at experiment level; this does not assert the original correlation was disproved or identify a row-specific test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d6fc9c6efb32135302fa1bb2.txt",
+        "location": "Printed p. 27, Discussion",
+        "quote": "Despite these improvements, we failed to obtain any sig- ... nificant effect of alcohol on moral judgments.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/6c0495ecf8066e50. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_6c0495ecf8066e50_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

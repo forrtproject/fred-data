@@ -1,0 +1,223 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 233,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "106",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "le (<=)",
+    "blind": {
+      "value": "11",
+      "sample_role": "Analytic observations per snippet × treatment cell; six cells; 2 blocks × 3 comment levels. Printed per-cell n, not total participant n.",
+      "exclusions": "Invalid answers removed (Table 2); additional observations randomly eliminated to balance design. Initial 106 students is not analytic n.",
+      "location": "PDF p.11, section 5.2",
+      "quote": "11 observations remained per cell.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a8a14f7870a16609225fdd2d.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Borstler, J., & Paech, B. (2016). The Role of Method Chains and Comments in Software Readability and Comprehension—An Experiment. IEEE Transactions on Software Engineering, 42(9), 886–898. https://doi.org/10.1109/tse.2016.2527791",
+      "doi_o": "10.1109/tse.2016.2527791",
+      "study_o": "1",
+      "ref_r": "Sampaio, I. B., & Sampaio, A. (2024). Replication of a Study about the Impact of Method Chaining and Comments on Readability and Comprehension. 2024 4th International Conference on Code Quality (ICCQ), 35–52. https://doi.org/10.1109/iccq60895.2024.10576941",
+      "doi_r": "10.1109/iccq60895.2024.10576941",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 233,
+      "description": "impact of code variants on code perceived readability",
+      "locators_o": "p. 7",
+      "locators_r": "p. 12",
+      "text_paths": {}
+    },
+    "work_key": "10.1109/iccq60895.2024.10576941",
+    "coding_context": {
+      "es_repr": "p. 12",
+      "description": "impact of code variants on code perceived readability",
+      "reported_success_quote": "The original study did find a\n\nsignificant difference for comments variants. In the case\nof comprehension, we found no significant differences\n\nbetween the method chaining variants but found a sig-\nnificant difference for an α = 0.1% among comments\n\nvariants, both as opposed to the original study.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "106",
+        "es_value_r": "F(2, 62) = 0.6243",
+        "es_type_r": "test statistic",
+        "pval_value_r": "0.53895",
+        "pval_type_r": "le (<=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "The broad phrase code variants is interpreted as comment variants, following the supplied printed-p. 7 locator. A distinct across-snippets S1–S5 readability test is on printed p. 8 (χ² = 22.8; α = 0.004); it is not merged with the p. 7 test. The original labels the achieved significance α rather than p. Original title and DOI verified in accepted manuscript. Replication full text could not be obtained via the publisher DOI route, Unpaywall, OpenAlex, Semantic Scholar, and targeted open-access searches; no statistics or replication verdict inferred from an abstract.\nSource follow-up: Published conference article, pp.35–52. Rendered primary PDF pages 9,11,12 checked, including exact ANOVA digits. Requested page locator used to select ANOVA treatment statistic. Distinct primary Mack-Skillings MS = 0.744, p = 0.6752 on PDF p.11.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a8a14f7870a16609225fdd2d_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Sampaio,Sampaio. PDF has18pages; published range=35-52; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4, 5, 6, 7, 8]; results-related material pages[2, 3, 4, 5, 6, 8, 9, 10]; references atPDFpages[16]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 234,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "106",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "11",
+      "sample_role": "Analytic observations per snippet × treatment cell; six cells; 2 blocks × 3 comment levels. Printed per-cell n, not total participant n.",
+      "exclusions": "Invalid answers removed (Table 2); additional observations randomly eliminated to balance design. Initial 106 students is not analytic n.",
+      "location": "PDF p.11, section 5.2",
+      "quote": "11 observations remained per cell.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a8a14f7870a16609225fdd2d.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Borstler, J., & Paech, B. (2016). The Role of Method Chains and Comments in Software Readability and Comprehension—An Experiment. IEEE Transactions on Software Engineering, 42(9), 886–898. https://doi.org/10.1109/tse.2016.2527791",
+      "doi_o": "10.1109/tse.2016.2527791",
+      "study_o": "1",
+      "ref_r": "Sampaio, I. B., & Sampaio, A. (2024). Replication of a Study about the Impact of Method Chaining and Comments on Readability and Comprehension. 2024 4th International Conference on Code Quality (ICCQ), 35–52. https://doi.org/10.1109/iccq60895.2024.10576941",
+      "doi_r": "10.1109/iccq60895.2024.10576941",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "test statistic",
+      "audit_id": 234,
+      "description": "impact of code variants on code comprehension",
+      "locators_o": "p. 8",
+      "locators_r": "p. 12",
+      "text_paths": {}
+    },
+    "work_key": "10.1109/iccq60895.2024.10576941",
+    "coding_context": {
+      "es_repr": "p. 12",
+      "description": "impact of code variants on code comprehension",
+      "reported_success_quote": "The original study did find a\n\nsignificant difference for comments variants. In the case\nof comprehension, we found no significant differences\n\nbetween the method chaining variants but found a sig-\nnificant difference for an α = 0.1% among comments\n\nvariants, both as opposed to the original study.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "106",
+        "es_value_r": "F(2, 62) = 2.3742",
+        "es_type_r": "test statistic",
+        "pval_value_r": "0.101498",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "No F statistic or named effect size is printed for the across-snippets answer-accuracy ANOVA. The p. 8 paragraph continues the Code snippets paragraph begun at the bottom of printed p. 7. This is distinct from the nonsignificant comparison of method-chain/comment variants on p. 7. Original title and DOI verified in accepted manuscript. Replication full text could not be obtained via the publisher DOI route, Unpaywall, OpenAlex, Semantic Scholar, and targeted open-access searches; no statistics or replication verdict inferred from an abstract.\nSource follow-up: Published conference article, pp.35–52. Rendered primary PDF pages 9,11,12 checked, including exact ANOVA digits. Requested page locator used to select ANOVA treatment statistic. Distinct primary Mack-Skillings MS = 4.685464, p = 0.0882 on PDF p.12. Subsequent prose also prints p = 0.0857. Abstract says alpha 0.1%, body/Table 27 says 10%; ANOVA p = 0.101498. Authors Table 27 marks agreement with original N.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a8a14f7870a16609225fdd2d_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Sampaio,Sampaio. PDF has18pages; published range=35-52; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4, 5, 6, 7, 8]; results-related material pages[2, 3, 4, 5, 6, 8, 9, 10]; references atPDFpages[16]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 235,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "106",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "9",
+      "sample_role": "Analytic observations per snippet × treatment cell; six cells; 3 blocks × 2 chaining levels. Printed per-cell n, not total participant n.",
+      "exclusions": "Invalid answers removed (Table 2); additional observations randomly eliminated to balance design. Initial 106 students is not analytic n.",
+      "location": "PDF p.9, section 5.1",
+      "quote": "each cell was left with 9 observations.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a8a14f7870a16609225fdd2d.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Borstler, J., & Paech, B. (2016). The Role of Method Chains and Comments in Software Readability and Comprehension—An Experiment. IEEE Transactions on Software Engineering, 42(9), 886–898. https://doi.org/10.1109/tse.2016.2527791",
+      "doi_o": "10.1109/tse.2016.2527791",
+      "study_o": "1",
+      "ref_r": "Sampaio, I. B., & Sampaio, A. (2024). Replication of a Study about the Impact of Method Chaining and Comments on Readability and Comprehension. 2024 4th International Conference on Code Quality (ICCQ), 35–52. https://doi.org/10.1109/iccq60895.2024.10576941",
+      "doi_r": "10.1109/iccq60895.2024.10576941",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "test statistic",
+      "audit_id": 235,
+      "description": "impact of method chains on code perceived readability",
+      "locators_o": "p. 7",
+      "locators_r": "p. 10",
+      "text_paths": {}
+    },
+    "work_key": "10.1109/iccq60895.2024.10576941",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "impact of method chains on code perceived readability",
+      "reported_success_quote": "The original study did find a\n\nsignificant difference for comments variants. In the case\nof comprehension, we found no significant differences\n\nbetween the method chaining variants but found a sig-\nnificant difference for an α = 0.1% among comments\n\nvariants, both as opposed to the original study.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "106",
+        "es_value_r": "F(1, 50) = 0.0184",
+        "es_type_r": "test statistic",
+        "pval_value_r": "0.8926",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "The paper gives a nonsignificant narrative result for MC/NoMC perceived readability, but prints no test statistic or exact/bounded p for that test. Nulls retained. Original title and DOI verified in accepted manuscript. Replication full text could not be obtained via the publisher DOI route, Unpaywall, OpenAlex, Semantic Scholar, and targeted open-access searches; no statistics or replication verdict inferred from an abstract.\nSource follow-up: Published conference article, pp.35–52. Rendered primary PDF pages 9,11,12 checked, including exact ANOVA digits. Requested page locator used to select ANOVA treatment statistic. Distinct Mack-Skillings MS = 0.0786, p = 0.777 on PDF p.9. Authors Table 27 explicitly marks findings equal Y.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a8a14f7870a16609225fdd2d_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Sampaio,Sampaio. PDF has18pages; published range=35-52; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4, 5, 6, 7, 8]; results-related material pages[2, 3, 4, 5, 6, 8, 9, 10]; references atPDFpages[16]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  },
+  {
+    "audit_id": 235,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "failed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "PDF p.14, Table 27, Chaining effect on readability row",
+      "quote": "Chaining effect on readability                   not significant                               not significant                              Y",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_a8a14f7870a16609225fdd2d.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Borstler, J., & Paech, B. (2016). The Role of Method Chains and Comments in Software Readability and Comprehension—An Experiment. IEEE Transactions on Software Engineering, 42(9), 886–898. https://doi.org/10.1109/tse.2016.2527791",
+      "doi_o": "10.1109/tse.2016.2527791",
+      "study_o": "1",
+      "ref_r": "Sampaio, I. B., & Sampaio, A. (2024). Replication of a Study about the Impact of Method Chaining and Comments on Readability and Comprehension. 2024 4th International Conference on Code Quality (ICCQ), 35–52. https://doi.org/10.1109/iccq60895.2024.10576941",
+      "doi_r": "10.1109/iccq60895.2024.10576941",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "test statistic",
+      "audit_id": 235,
+      "description": "impact of method chains on code perceived readability",
+      "locators_o": "p. 7",
+      "locators_r": "p. 10",
+      "text_paths": {}
+    },
+    "work_key": "10.1109/iccq60895.2024.10576941",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "impact of method chains on code perceived readability",
+      "reported_success_quote": "The original study did find a\n\nsignificant difference for comments variants. In the case\nof comprehension, we found no significant differences\n\nbetween the method chaining variants but found a sig-\nnificant difference for an α = 0.1% among comments\n\nvariants, both as opposed to the original study.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "106",
+        "es_value_r": "F(1, 50) = 0.0184",
+        "es_type_r": "test statistic",
+        "pval_value_r": "0.8926",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "The paper gives a nonsignificant narrative result for MC/NoMC perceived readability, but prints no test statistic or exact/bounded p for that test. Nulls retained. Original title and DOI verified in accepted manuscript. Replication full text could not be obtained via the publisher DOI route, Unpaywall, OpenAlex, Semantic Scholar, and targeted open-access searches; no statistics or replication verdict inferred from an abstract.\nSource follow-up: Published conference article, pp.35–52. Rendered primary PDF pages 9,11,12 checked, including exact ANOVA digits. Requested page locator used to select ANOVA treatment statistic. Distinct Mack-Skillings MS = 0.0786, p = 0.777 on PDF p.9. Authors Table 27 explicitly marks findings equal Y.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/a8a14f7870a16609225fdd2d_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Sampaio,Sampaio. PDF has18pages; published range=35-52; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4, 5, 6, 7, 8]; results-related material pages[2, 3, 4, 5, 6, 8, 9, 10]; references atPDFpages[16]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. Inspect the primary PDF for flagged glyph/sign discrepancies: PDF text extraction can drop minus signs. Do not reverse signs from the parsed text alone when the worker flagged visual disagreement. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

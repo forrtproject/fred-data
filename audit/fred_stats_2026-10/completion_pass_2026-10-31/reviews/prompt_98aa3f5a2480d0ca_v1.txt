@@ -1,0 +1,161 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1635": {
+      "source_key": "98aa3f5a2480d0ca",
+      "side": "original",
+      "input": {
+        "ref_o": "Kimonis, E. R., Fanti, K. A., Isoma, Z., & Donoghue, K. (2013). Maltreatment Profiles Among Incarcerated Boys With Callous-Unemotional Traits. Child Maltreatment, 18(2), 108–121. https://doi.org/10.1177/1077559513483002",
+        "doi_o": "10.1177/1077559513483002",
+        "study_o": "1",
+        "ref_r": "Awada, S. R., Ellis, R. A., Shelleby, E. C., & Orcutt, H. K. (2022). Gender Differences in Callous Unemotional Trait Profiles in an Undergraduate Sample. Journal of Aggression, Maltreatment &amp; Trauma, 31(7), 888–909. https://doi.org/10.1080/10926771.2022.2038753",
+        "doi_r": "10.1080/10926771.2022.2038753",
+        "url_r": null,
+        "study_r": "1, Replication-Male",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "description": "Comparison of adolescents' scores on measured variables.",
+        "locators_o": "p.8",
+        "locators_r": "p. 13",
+        "audit_id": 1635,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_1325e94891e0e206feeb60cf.txt"
+        },
+        "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/1325e94891e0e206feeb60cf_drive.pdf",
+        "source_version_note": "Publisher online-first article/proof from private Google Drive archive; final issue pagination retained separately"
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1: omnibus MANOVA comparing the three identified latent-profile groups of incarcerated adolescent boys on maltreatment, anxiety, and CU-trait variables included in the LPA. Description matches the source’s MANOVA wording; not an individual outcome or pairwise contrast.",
+      "worker_notes": "Only es_value_o is assigned. All other fields are unassigned placeholders and make no absence claim. Both original locators describe the same Study 1 omnibus comparison; replication sex labels do not identify distinct original tests. Mapping uses the near-verbatim description and PDF page 8, not row order or numeric matching. Rendered PDF page 8 confirms η² = .18 without a partial subscript (canonical text encodes η² as Z2); requested partial eta squared is not explicitly labelled in the source. No effect-size conversion or partial-metric assumption. Same-test printed p < .001 retained here as context; p is unassigned. Printed article page 8 (PDF page 10) is Discussion and continuation of a sexual-index-offense chi-square, whereas the supplied MANOVA description occurs on PDF page 8, printed page 6. No N extraction or arithmetic performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_1325e94891e0e206feeb60cf.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "comparing adolescents’ scores on each measured variable",
+        "es_repr_o": "p.8",
+        "es_repr_r": "p. 13",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We aimed to replicate findings that individuals in the secondary CU group demonstrate higher PTSS. [...] PTSS was highest in secondary CU variant groups."
+      }
+    },
+    "1636": {
+      "source_key": "98aa3f5a2480d0ca",
+      "side": "original",
+      "input": {
+        "ref_o": "Kimonis, E. R., Fanti, K. A., Isoma, Z., & Donoghue, K. (2013). Maltreatment Profiles Among Incarcerated Boys With Callous-Unemotional Traits. Child Maltreatment, 18(2), 108–121. https://doi.org/10.1177/1077559513483002",
+        "doi_o": "10.1177/1077559513483002",
+        "study_o": "1",
+        "ref_r": "Awada, S. R., Ellis, R. A., Shelleby, E. C., & Orcutt, H. K. (2022). Gender Differences in Callous Unemotional Trait Profiles in an Undergraduate Sample. Journal of Aggression, Maltreatment &amp; Trauma, 31(7), 888–909. https://doi.org/10.1080/10926771.2022.2038753",
+        "doi_r": "10.1080/10926771.2022.2038753",
+        "url_r": null,
+        "study_r": "1, Replication-Female",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "description": "Comparison of adolescents' scores on measured variables.",
+        "locators_o": "p.8",
+        "locators_r": "p. 13",
+        "audit_id": 1636,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_1325e94891e0e206feeb60cf.txt"
+        },
+        "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/1325e94891e0e206feeb60cf_drive.pdf",
+        "source_version_note": "Publisher online-first article/proof from private Google Drive archive; final issue pagination retained separately"
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1: omnibus MANOVA comparing the three identified latent-profile groups of incarcerated adolescent boys on maltreatment, anxiety, and CU-trait variables included in the LPA. Description matches the source’s MANOVA wording; not an individual outcome or pairwise contrast.",
+      "worker_notes": "Only es_value_o is assigned. All other fields are unassigned placeholders and make no absence claim. Both original locators describe the same Study 1 omnibus comparison; replication sex labels do not identify distinct original tests. Mapping uses the near-verbatim description and PDF page 8, not row order or numeric matching. Rendered PDF page 8 confirms η² = .18 without a partial subscript (canonical text encodes η² as Z2); requested partial eta squared is not explicitly labelled in the source. No effect-size conversion or partial-metric assumption. Same-test printed p < .001 retained here as context; p is unassigned. Printed article page 8 (PDF page 10) is Discussion and continuation of a sexual-index-offense chi-square, whereas the supplied MANOVA description occurs on PDF page 8, printed page 6. No N extraction or arithmetic performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_1325e94891e0e206feeb60cf.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "comparing adolescents’ scores on each measured variable",
+        "es_repr_o": "p.8",
+        "es_repr_r": "p. 13",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We aimed to replicate findings that individuals in the secondary CU group demonstrate higher PTSS. [...] PTSS was highest in secondary CU variant groups."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1635,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".18",
+        "metric": "η² (eta squared, printed without partial subscript)",
+        "test_statistic": "Wilks’s λ = 0.67; F(22, 227) = 3.72",
+        "location": "PDF page 8 / printed article page 6, Results: MANOVA comparing adolescents’ scores on each measured variable included in the LPA; paragraph spans left-column bottom and right-column top",
+        "quote": "Wilks’s l ¼ 0.67, F(22, 227) ¼ 3.72, p < .001, Z2 ¼ .18.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_1325e94891e0e206feeb60cf.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1635,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "The description matches the omnibus MANOVA comparing adolescents’ scores on each measured LPA variable on PDF page 8. Extracted the printed .18 and labelled it η² as printed, not partial η². Visual inspection confirms no partial subscript. Both assigned original fields identify this same test; no mapping from row order, replication gender, or numeric values. Unassigned fields remain placeholders.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_1325e94891e0e206feeb60cf.txt",
+        "location": "PDF page 8 / printed article page 6, Results: MANOVA comparing adolescents’ scores on each measured variable included in the LPA; paragraph spans left-column bottom and right-column top",
+        "quote": "Wilks’s l ¼ 0.67, F(22, 227) ¼ 3.72, p < .001, Z2 ¼ .18.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.18",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1636,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".18",
+        "metric": "η² (eta squared, printed without partial subscript)",
+        "test_statistic": "Wilks’s λ = 0.67; F(22, 227) = 3.72",
+        "location": "PDF page 8 / printed article page 6, Results: MANOVA comparing adolescents’ scores on each measured variable included in the LPA; paragraph spans left-column bottom and right-column top",
+        "quote": "Wilks’s l ¼ 0.67, F(22, 227) ¼ 3.72, p < .001, Z2 ¼ .18.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_1325e94891e0e206feeb60cf.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1636,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "The description matches the omnibus MANOVA comparing adolescents’ scores on each measured LPA variable on PDF page 8. Extracted the printed .18 and labelled it η² as printed, not partial η². Visual inspection confirms no partial subscript. Both assigned original fields identify this same test; no mapping from row order, replication gender, or numeric values. Unassigned fields remain placeholders.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_1325e94891e0e206feeb60cf.txt",
+        "location": "PDF page 8 / printed article page 6, Results: MANOVA comparing adolescents’ scores on each measured variable included in the LPA; paragraph spans left-column bottom and right-column top",
+        "quote": "Wilks’s l ¼ 0.67, F(22, 227) ¼ 3.72, p < .001, Z2 ¼ .18.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.18",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/98aa3f5a2480d0ca. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_98aa3f5a2480d0ca_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

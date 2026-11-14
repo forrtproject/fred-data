@@ -1,0 +1,275 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1276": {
+      "source_key": "41c1422473fd4ee4",
+      "side": "original",
+      "input": {
+        "ref_o": "Nicholls, M. E. R., Churches, O., & Loetscher, T. (2018). Perception of an ambiguous figure is affected by own-age social biases. Scientific Reports, 8(1). https://doi.org/10.1038/s41598-018-31129-7",
+        "doi_o": "10.1038/s41598-018-31129-7",
+        "study_o": "1",
+        "ref_r": "Brouwer, A., Jin, X., Waldi, A. H., & Verheyen, S. (2021). Age biases the judgment rather than the perception of an ambiguous figure. Scientific Reports, 11(1). https://doi.org/10.1038/s41598-021-88139-1",
+        "doi_r": "10.1038/s41598-021-88139-1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of the youngest and oldest participant groups.",
+        "locators_o": "p.4",
+        "locators_r": "p. 4",
+        "audit_id": 1276,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Independent-samples t-test of estimated woman age comparing very-youngest 10% (18–22 years) and very-oldest 10% (49–68 years).",
+      "worker_notes": "Identity independently verified in canonical text: matching title Perception of an ambiguous figure is affected by own-age social biases; authors Michael E. R. Nicholls, Owen Churches and Tobias Loetscher; Scientific Reports 8, 12661 (2018); DOI 10.1038/s41598-018-31129-7. Primary published article with Method, Results and Discussion, not abstract-only. No PDF supplied; locations refer to canonical HTML sections. Replication side and reported_success are unassigned placeholders. 40 + 45 = 85 participants. Explicit final groups ages 18–22 and 49–68 are mutually exclusive; USA eligibility/exclusions apply, middle ages omitted. Not inferred from df. Youngest/oldest description identifies this contrast independently of numeric matching or row order. Printed p retained without recalculation.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "A more extreme comparison of the very-youngest and very-oldest participants in the sample.",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p. 4",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "1 (one)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We replicate the difference in age estimates, but find no relationship between participants’ age and their perception of the ambiguous figure. This leads us to conclude that the positive relationship between participants’ age and their age estimates of the ambiguous ‘my wife/mother-in-law’ figure is better explained by the own-age anchor effect [...]. Our results disqualify the original finding as an example of cognitive penetrability: the participants’ age biases their judgment of the ambiguous figure, not its perception."
+      }
+    },
+    "1277": {
+      "source_key": "41c1422473fd4ee4",
+      "side": "original",
+      "input": {
+        "ref_o": "Nicholls, M. E. R., Churches, O., & Loetscher, T. (2018). Perception of an ambiguous figure is affected by own-age social biases. Scientific Reports, 8(1). https://doi.org/10.1038/s41598-018-31129-7",
+        "doi_o": "10.1038/s41598-018-31129-7",
+        "study_o": "1",
+        "ref_r": "Brouwer, A., Jin, X., Waldi, A. H., & Verheyen, S. (2021). Age biases the judgment rather than the perception of an ambiguous figure. Scientific Reports, 11(1). https://doi.org/10.1038/s41598-021-88139-1",
+        "doi_r": "10.1038/s41598-021-88139-1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "r",
+        "es_type_r": "r",
+        "description": "Relationship between the observer’s age and perception of an ambiguous figure’s age.",
+        "locators_o": "p.4",
+        "locators_r": "p. 4",
+        "audit_id": 1277,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Simple correlation between observer age and estimated age of the ambiguous woman across the final USA sample.",
+      "worker_notes": "Identity independently verified in canonical text: matching title Perception of an ambiguous figure is affected by own-age social biases; authors Michael E. R. Nicholls, Owen Churches and Tobias Loetscher; Scientific Reports 8, 12661 (2018); DOI 10.1038/s41598-018-31129-7. Primary published article with Method, Results and Discussion, not abstract-only. No PDF supplied; locations refer to canonical HTML sections. Replication side and reported_success are unassigned placeholders. Requested relationship is explicitly identified as simple correlation. N is explicitly the final sample with valid demographic and age-estimate responses, corroborated by printed r(393), not derived from df. No additional correlation-specific exclusions are described.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "The relationship between the observer’s age and their perception of the ambiguous figure's age.",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p. 4",
+        "es_type_o": "r",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": "1 (one)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We replicate the difference in age estimates, but find no relationship between participants’ age and their perception of the ambiguous figure. This leads us to conclude that the positive relationship between participants’ age and their age estimates of the ambiguous ‘my wife/mother-in-law’ figure is better explained by the own-age anchor effect [...]. Our results disqualify the original finding as an example of cognitive penetrability: the participants’ age biases their judgment of the ambiguous figure, not its perception."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1276,
+      "field": "n_o",
+      "blind": {
+        "value": "85",
+        "sample_role": "Participants in the two mutually exclusive final extreme-age groups in this t-test.",
+        "exclusions": "USA final sample after attention checks, valid demographic responses and estimated woman age older than 18 years; non-USA respondents excluded. Recruitment: 666 overall, 418 USA; final USA sample 393. Middle-age participants excluded from this contrast.",
+        "location": "Results, paragraph beginning “To obtain a stronger result”, very-youngest versus very-oldest 10% comparison.",
+        "quote": "we also selected the very-youngest 10% of participants (aged between 18 and 22 years,\nn\n= 40) and the very-oldest 10% of participants (aged between 49 and 68 years,\nn =\n45).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1276,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "Explicit mutually exclusive extreme-age participant groups in the same target test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "location": "Results, paragraph beginning “To obtain a stronger result”, very-youngest versus very-oldest 10% comparison.",
+        "quote": "we also selected the very-youngest 10% of participants (aged between 18 and 22 years,\nn\n= 40) and the very-oldest 10% of participants (aged between 49 and 68 years,\nn =\n45).",
+        "calculation": "40 + 45 = 85 participants. Explicit final groups ages 18–22 and 49–68 are mutually exclusive; USA eligibility/exclusions apply, middle ages omitted. Not inferred from df."
+      },
+      "supported": true,
+      "shipped": "85",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1276,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.659",
+        "metric": "Cohen’s d",
+        "test_statistic": "t(83) = 3.00",
+        "location": "Results, paragraph beginning “To obtain a stronger result”, very-youngest versus very-oldest 10% comparison.",
+        "quote": "the difference in estimated age for the very-young and -old groups was statistically significant [\nt\n(83) = 3.00,\np =\n0.007, Cohen’s\nd\n= 0.659].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1276,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed Cohen’s d for the youngest/oldest test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "location": "Results, paragraph beginning “To obtain a stronger result”, very-youngest versus very-oldest 10% comparison.",
+        "quote": "the difference in estimated age for the very-young and -old groups was statistically significant [\nt\n(83) = 3.00,\np =\n0.007, Cohen’s\nd\n= 0.659].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.659",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1276,
+      "field": "pval_value_o",
+      "blind": {
+        "value": "0.007",
+        "bound": "e",
+        "location": "Results, paragraph beginning “To obtain a stronger result”, very-youngest versus very-oldest 10% comparison.",
+        "quote": "the difference in estimated age for the very-young and -old groups was statistically significant [\nt\n(83) = 3.00,\np =\n0.007, Cohen’s\nd\n= 0.659].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1276,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed exact p for the same test as d.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "location": "Results, paragraph beginning “To obtain a stronger result”, very-youngest versus very-oldest 10% comparison.",
+        "quote": "the difference in estimated age for the very-young and -old groups was statistically significant [\nt\n(83) = 3.00,\np =\n0.007, Cohen’s\nd\n= 0.659].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.007",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1277,
+      "field": "n_o",
+      "blind": {
+        "value": "393",
+        "sample_role": "Final-sample participants contributing observer age and estimated woman age to the simple correlation.",
+        "exclusions": "USA final sample after attention checks, valid demographic responses and estimated woman age older than 18 years; non-USA respondents excluded. Recruitment: 666 overall, 418 USA; final USA sample 393.",
+        "location": "Results, paragraph beginning “The relation between the observer’s age”, Figure 3 simple correlation; Method > Participants, final sample.",
+        "quote": "There were therefore 393 participants (\nm =\n242,\nf =\n151) from the USA in the final sample. ... shows a positive correlation between the observer’s age and the estimated age of the bistable illusion, which was statistically significant [\nr\n(393) = 0.237,\np <\n0.001].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1277,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "Explicit final sample 393 with valid age responses, corroborated by the correlation report; not df-derived.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "location": "Results, paragraph beginning “The relation between the observer’s age”, Figure 3 simple correlation; Method > Participants, final sample.",
+        "quote": "There were therefore 393 participants (\nm =\n242,\nf =\n151) from the USA in the final sample. ... shows a positive correlation between the observer’s age and the estimated age of the bistable illusion, which was statistically significant [\nr\n(393) = 0.237,\np <\n0.001].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "393",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1277,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.237",
+        "metric": "r",
+        "test_statistic": "r(393) = 0.237",
+        "location": "Results, paragraph beginning “The relation between the observer’s age”, Figure 3 simple correlation; Method > Participants, final sample.",
+        "quote": "shows a positive correlation between the observer’s age and the estimated age of the bistable illusion, which was statistically significant [\nr\n(393) = 0.237,\np <\n0.001].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1277,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed simple correlation between observer age and estimated woman age.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "location": "Results, paragraph beginning “The relation between the observer’s age”, Figure 3 simple correlation; Method > Participants, final sample.",
+        "quote": "shows a positive correlation between the observer’s age and the estimated age of the bistable illusion, which was statistically significant [\nr\n(393) = 0.237,\np <\n0.001].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.237",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1277,
+      "field": "pval_value_o",
+      "blind": {
+        "value": "0.001",
+        "bound": "l",
+        "location": "Results, paragraph beginning “The relation between the observer’s age”, Figure 3 simple correlation; Method > Participants, final sample.",
+        "quote": "shows a positive correlation between the observer’s age and the estimated age of the bistable illusion, which was statistically significant [\nr\n(393) = 0.237,\np <\n0.001].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1277,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed upper bound p < 0.001 for the same r = 0.237 test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2ea348b422cd0e415cc3bb7f.txt",
+        "location": "Results, paragraph beginning “The relation between the observer’s age”, Figure 3 simple correlation; Method > Participants, final sample.",
+        "quote": "shows a positive correlation between the observer’s age and the estimated age of the bistable illusion, which was statistically significant [\nr\n(393) = 0.237,\np <\n0.001].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/41c1422473fd4ee4. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_41c1422473fd4ee4_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

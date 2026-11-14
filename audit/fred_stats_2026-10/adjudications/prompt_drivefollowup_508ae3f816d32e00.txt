@@ -1,0 +1,232 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 686,
+    "field": "n_o",
+    "comparison": "near",
+    "shipped": "104",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "103",
+      "sample_role": "Experimental anchored participants answering all 15 quantities; calibration group n=53 is separate.",
+      "exclusions": "No exclusions or item-specific missingness reported.",
+      "location": "p.1162 (PDF p.2), Method",
+      "quote": "Experimental subjects (n = 103) answered three con-",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Jacowitz, K. E., & Kahneman, D. (1995). Measures of Anchoring in Estimation Tasks. Personality and Social Psychology Bulletin, 21(11), 1161–1166. https://doi.org/10.1177/01461672952111004",
+      "doi_o": "10.1177/01461672952111004",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Ratliff, K. A., Vianello, M., Adams, R. B., Bahník, Š., Bernstein, M. J., Bocian, K., Brandt, M. J., Brooks, B., Brumbaugh, C. C., Cemalcilar, Z., Chandler, J., Cheong, W., Davis, W. E., Devos, T., Eisner, M., Frankowska, N., Furrow, D., Galliani, E. M., … Nosek, B. A. (2014). Investigating Variation in Replicability. Social Psychology, 45(3), 142–152. https://doi.org/10.1027/1864-9335/a000178",
+      "doi_r": "10.1027/1864-9335/a000178",
+      "url_r": "https://osf.io/y36m8",
+      "study_r": "03 (as labeled in the Many Labs supplement).",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 686,
+      "description": "Anchoring in estimates concerning Mt. Everest.",
+      "locators_o": "p. 3, n",
+      "locators_r": "p. 5",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9fae3aaf30064d5ab7875c7e.txt"
+      }
+    },
+    "work_key": "10.1027/1864-9335/a000178",
+    "coding_context": {
+      "es_repr": "p. 3, n based on df",
+      "description": "anchoring - mt. everest",
+      "reported_success_quote": "In the aggregate, 10 effects\nreplicated consistently. One effect – imagined contact reducing prejudice – showed weak support for replicability. And two effects – flag\npriming influencing conservatism and currency priming influencing system justification – did not replicate.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "104",
+        "es_value_o": "t(102) = 7.99",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.01",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Replication extracted independently from primary article Table 2. Original full paper unavailable after bounded open-access acquisition; no statistics substituted from replication article’s original-effect column. Acquisition routes and reasons recorded in DOI-keyed text-cache .miss file.\nSource follow-up: No item-specific test statistic or p is printed. Extracted the printed anchoring index instead of converting it. The t(102)=7.99, p<.01 in the page text tests pooled high-versus-low anchor asymmetry across 15 items, not this item. Table OCR omits decimal points and/or corrupts cells; es.value was verified directly on the rendered primary PDF page; the quote preserves canonical TXT including OCR errors.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f923f2aec2a3484d65c62b23_drive.pdf",
+    "source_identity_and_completeness": "DOI is not printed in the artifact front matter. Independent Crossref record matches exact requested title and author surname(s), year/issue and page range 1161-1166. PDF has6pages, complete main paper with methods/results and end references; model-reviewed first-page and final-substantive-page excerpts. First-page authors=Jacowitz,Kahneman; title coverage=1.0. No shipped audit-value comparison."
+  },
+  {
+    "audit_id": 687,
+    "field": "n_o",
+    "comparison": "near",
+    "shipped": "104",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "103",
+      "sample_role": "Experimental anchored participants answering all 15 quantities; calibration group n=53 is separate.",
+      "exclusions": "No exclusions or item-specific missingness reported.",
+      "location": "p.1162 (PDF p.2), Method",
+      "quote": "Experimental subjects (n = 103) answered three con-",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Jacowitz, K. E., & Kahneman, D. (1995). Measures of Anchoring in Estimation Tasks. Personality and Social Psychology Bulletin, 21(11), 1161–1166. https://doi.org/10.1177/01461672952111004",
+      "doi_o": "10.1177/01461672952111004",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Ratliff, K. A., Vianello, M., Adams, R. B., Bahník, Š., Bernstein, M. J., Bocian, K., Brandt, M. J., Brooks, B., Brumbaugh, C. C., Cemalcilar, Z., Chandler, J., Cheong, W., Davis, W. E., Devos, T., Eisner, M., Frankowska, N., Furrow, D., Galliani, E. M., … Nosek, B. A. (2014). Investigating Variation in Replicability. Social Psychology, 45(3), 142–152. https://doi.org/10.1027/1864-9335/a000178",
+      "doi_r": "10.1027/1864-9335/a000178",
+      "url_r": "https://osf.io/y36m8",
+      "study_r": "03 (as labeled in the Many Labs supplement).",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 687,
+      "description": "Anchoring in estimates concerning Chicago.",
+      "locators_o": "p. 3, n",
+      "locators_r": "p. 5",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9fae3aaf30064d5ab7875c7e.txt"
+      }
+    },
+    "work_key": "10.1027/1864-9335/a000178",
+    "coding_context": {
+      "es_repr": "p. 3, n based on df",
+      "description": "anchoring - chicago",
+      "reported_success_quote": "In the aggregate, 10 effects\nreplicated consistently. One effect – imagined contact reducing prejudice – showed weak support for replicability. And two effects – flag\npriming influencing conservatism and currency priming influencing system justification – did not replicate.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "104",
+        "es_value_o": "t(102) = 7.99",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.01",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Replication extracted independently from primary article Table 2. Original full paper unavailable after bounded open-access acquisition; no statistics substituted from replication article’s original-effect column. Acquisition routes and reasons recorded in DOI-keyed text-cache .miss file.\nSource follow-up: No item-specific test statistic or p is printed. Extracted the printed anchoring index instead of converting it. The t(102)=7.99, p<.01 in the page text tests pooled high-versus-low anchor asymmetry across 15 items, not this item. Table OCR omits decimal points and/or corrupts cells; es.value was verified directly on the rendered primary PDF page; the quote preserves canonical TXT including OCR errors.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f923f2aec2a3484d65c62b23_drive.pdf",
+    "source_identity_and_completeness": "DOI is not printed in the artifact front matter. Independent Crossref record matches exact requested title and author surname(s), year/issue and page range 1161-1166. PDF has6pages, complete main paper with methods/results and end references; model-reviewed first-page and final-substantive-page excerpts. First-page authors=Jacowitz,Kahneman; title coverage=1.0. No shipped audit-value comparison."
+  },
+  {
+    "audit_id": 688,
+    "field": "n_o",
+    "comparison": "near",
+    "shipped": "104",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "103",
+      "sample_role": "Experimental anchored participants answering all 15 quantities; calibration group n=53 is separate.",
+      "exclusions": "No exclusions or item-specific missingness reported.",
+      "location": "p.1162 (PDF p.2), Method",
+      "quote": "Experimental subjects (n = 103) answered three con-",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Jacowitz, K. E., & Kahneman, D. (1995). Measures of Anchoring in Estimation Tasks. Personality and Social Psychology Bulletin, 21(11), 1161–1166. https://doi.org/10.1177/01461672952111004",
+      "doi_o": "10.1177/01461672952111004",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Ratliff, K. A., Vianello, M., Adams, R. B., Bahník, Š., Bernstein, M. J., Bocian, K., Brandt, M. J., Brooks, B., Brumbaugh, C. C., Cemalcilar, Z., Chandler, J., Cheong, W., Davis, W. E., Devos, T., Eisner, M., Frankowska, N., Furrow, D., Galliani, E. M., … Nosek, B. A. (2014). Investigating Variation in Replicability. Social Psychology, 45(3), 142–152. https://doi.org/10.1027/1864-9335/a000178",
+      "doi_r": "10.1027/1864-9335/a000178",
+      "url_r": "https://osf.io/y36m8",
+      "study_r": "03 (as labeled in the Many Labs supplement).",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 688,
+      "description": "Anchoring in estimates of distance to NYC.",
+      "locators_o": "p. 3, n",
+      "locators_r": "p. 5",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9fae3aaf30064d5ab7875c7e.txt"
+      }
+    },
+    "work_key": "10.1027/1864-9335/a000178",
+    "coding_context": {
+      "es_repr": "p. 3, n based on df",
+      "description": "anchoring - distance to nyc",
+      "reported_success_quote": "In the aggregate, 10 effects\nreplicated consistently. One effect – imagined contact reducing prejudice – showed weak support for replicability. And two effects – flag\npriming influencing conservatism and currency priming influencing system justification – did not replicate.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "104",
+        "es_value_o": "t(102) = 7.99",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.01",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Replication extracted independently from primary article Table 2. Original full paper unavailable after bounded open-access acquisition; no statistics substituted from replication article’s original-effect column. Acquisition routes and reasons recorded in DOI-keyed text-cache .miss file.\nSource follow-up: No item-specific test statistic or p is printed. Extracted the printed anchoring index instead of converting it. The t(102)=7.99, p<.01 in the page text tests pooled high-versus-low anchor asymmetry across 15 items, not this item. Table OCR omits decimal points and/or corrupts cells; es.value was verified directly on the rendered primary PDF page; the quote preserves canonical TXT including OCR errors.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f923f2aec2a3484d65c62b23_drive.pdf",
+    "source_identity_and_completeness": "DOI is not printed in the artifact front matter. Independent Crossref record matches exact requested title and author surname(s), year/issue and page range 1161-1166. PDF has6pages, complete main paper with methods/results and end references; model-reviewed first-page and final-substantive-page excerpts. First-page authors=Jacowitz,Kahneman; title coverage=1.0. No shipped audit-value comparison."
+  },
+  {
+    "audit_id": 689,
+    "field": "n_o",
+    "comparison": "near",
+    "shipped": "104",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "103",
+      "sample_role": "Experimental anchored participants answering all 15 quantities; calibration group n=53 is separate.",
+      "exclusions": "No exclusions or item-specific missingness reported.",
+      "location": "p.1162 (PDF p.2), Method",
+      "quote": "Experimental subjects (n = 103) answered three con-",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f923f2aec2a3484d65c62b23.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Jacowitz, K. E., & Kahneman, D. (1995). Measures of Anchoring in Estimation Tasks. Personality and Social Psychology Bulletin, 21(11), 1161–1166. https://doi.org/10.1177/01461672952111004",
+      "doi_o": "10.1177/01461672952111004",
+      "study_o": "1",
+      "ref_r": "Klein, R. A., Ratliff, K. A., Vianello, M., Adams, R. B., Bahník, Š., Bernstein, M. J., Bocian, K., Brandt, M. J., Brooks, B., Brumbaugh, C. C., Cemalcilar, Z., Chandler, J., Cheong, W., Davis, W. E., Devos, T., Eisner, M., Frankowska, N., Furrow, D., Galliani, E. M., … Nosek, B. A. (2014). Investigating Variation in Replicability. Social Psychology, 45(3), 142–152. https://doi.org/10.1027/1864-9335/a000178",
+      "doi_r": "10.1027/1864-9335/a000178",
+      "url_r": "https://osf.io/y36m8",
+      "study_r": "03 (as labeled in the Many Labs supplement).",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 689,
+      "description": "Anchoring in estimates concerning babies born.",
+      "locators_o": "p. 3, n",
+      "locators_r": "p. 5",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9fae3aaf30064d5ab7875c7e.txt"
+      }
+    },
+    "work_key": "10.1027/1864-9335/a000178",
+    "coding_context": {
+      "es_repr": "p. 3, n based on df",
+      "description": "anchoring - babies born",
+      "reported_success_quote": "In the aggregate, 10 effects\nreplicated consistently. One effect – imagined contact reducing prejudice – showed weak support for replicability. And two effects – flag\npriming influencing conservatism and currency priming influencing system justification – did not replicate.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "104",
+        "es_value_o": "t(102) = 7.99",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.01",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Replication extracted independently from primary article Table 2. Original full paper unavailable after bounded open-access acquisition; no statistics substituted from replication article’s original-effect column. Acquisition routes and reasons recorded in DOI-keyed text-cache .miss file.\nSource follow-up: No item-specific test statistic or p is printed. Extracted the printed anchoring index instead of converting it. The t(102)=7.99, p<.01 in the page text tests pooled high-versus-low anchor asymmetry across 15 items, not this item. Table OCR omits decimal points and/or corrupts cells; es.value was verified directly on the rendered primary PDF page; the quote preserves canonical TXT including OCR errors.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f923f2aec2a3484d65c62b23_drive.pdf",
+    "source_identity_and_completeness": "DOI is not printed in the artifact front matter. Independent Crossref record matches exact requested title and author surname(s), year/issue and page range 1161-1166. PDF has6pages, complete main paper with methods/results and end references; model-reviewed first-page and final-substantive-page excerpts. First-page authors=Jacowitz,Kahneman; title coverage=1.0. No shipped audit-value comparison."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. Inspect the primary PDF for flagged glyph/sign discrepancies: PDF text extraction can drop minus signs. Do not reverse signs from the parsed text alone when the worker flagged visual disagreement. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

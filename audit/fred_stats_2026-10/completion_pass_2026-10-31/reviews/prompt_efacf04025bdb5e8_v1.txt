@@ -1,0 +1,90 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "efacf04025bdb5e8",
+    "audit_id": 953,
+    "field": "pval_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Marsh, J. E., Vachon, F., & Jones, D. M. (2008). When does between-sequence phonological similarity promote irrelevant sound disruption? Journal of Experimental Psychology: Learning, Memory, and Cognition, 34(1), 243–248. https://doi.org/10.1037/0278-7393.34.1.243",
+      "doi_o": "10.1037/0278-7393.34.1.243",
+      "study_o": "1",
+      "ref_r": "(2015). Estimating the reproducibility of psychological science. Science, 349(6251). https://doi.org/10.1126/science.aac4716",
+      "doi_r": "10.1126/science.aac4716",
+      "url_r": "https://osf.io/gxvd3",
+      "study_r": null,
+      "description": "Relationship between an irrelevant end-rhyme sound stream sharing phonological content with to-be-remembered items and free versus serial recall of lists of phonologically related items.",
+      "es_type_o": "d",
+      "es_type_r": "etasq (partial)",
+      "locators_o": "p. 3",
+      "locators_r": "p. 7",
+      "audit_id": 953,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "es_value_r",
+        "pval_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/689aec8a424360e5f712a7a7.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Primary text: verify document identity on use."
+    },
+    "blind": {
+      "value": "0.1986",
+      "bound": "e",
+      "location": "Author primary master table, Marsh/Vachon/Jones title, replicated study 1, Description of effect (O); Test statistic (R), P-value (R), Effect Size (R)",
+      "quote": "F(2, 232) = 1.63 ... 0.1986",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/689aec8a424360e5f712a7a7.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 953,
+      "field": "pval_value_r",
+      "code": "extracted_printed",
+      "reason": "Author-supplied P-value (R), paired with F(2, 232) = 1.63; not the recalculated value.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/689aec8a424360e5f712a7a7.txt",
+      "location": "Author primary master table, Marsh/Vachon/Jones title, replicated study 1, Description of effect (O); Test statistic (R), P-value (R), Effect Size (R)",
+      "quote": "F(2, 232) = 1.63 ... 0.1986",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Relationship between an irrelevant end-rhyme sound stream sharing phonological content with to-be-remembered items and free versus serial recall of lists of phonologically related items.",
+    "worker_notes": "Only assigned unfinished fields examined. Unassigned fields are placeholders. Matched by Marsh/Vachon/Jones title, study 1, and explicit free-recall/end-rhyme disruption interaction. Supplied URL gxvd3 differs from author table Project URL https://osf.io/7rtcz/. Author-derived effect .014 is retained with literal corrupted metric _2; partial eta-squared is not verified. P-value (R) 0.1986 is preserved, not recalculated 0.198165248.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/689aec8a424360e5f712a7a7.txt",
+    "shipped": "0.2",
+    "comparison": "compatible",
+    "coding_context": {
+      "description": "Free recall, but not serial recall, of lists of phonologically related to-be-remembered items are disrupted by an irrelevant sound stream (end rhymes) sharing similar phonological content",
+      "es_repr_o": "p. 3; F(2, 92) = 3.13",
+      "es_repr_r": "p. 7; F(2, 232) = 1.63",
+      "es_type_o": "d",
+      "es_type_r": "etasq (partial)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "no marked in Replicate column"
+    },
+    "prior_adjudication": {
+      "audit_id": 953,
+      "field": "pval_value_r",
+      "verdict": "blind_right",
+      "correct_value": "0.1986",
+      "location": "rpp_data.csv, line 15 (CSV data row 12, Study Num 12), columns P-value (R) and T_pval..R.",
+      "quote": "\"F(2, 232) = 1.63\",118,0.1986",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/689aec8a424360e5f712a7a7.txt",
+      "reason": "In the supplied primary RPP dataset, P-value (R) for Study Num 12 (F(2, 232) = 1.63) is reported as 0.1986, whereas shipped records the two-decimal rounded value 0.2.",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/efacf04025bdb5e8. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_efacf04025bdb5e8_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

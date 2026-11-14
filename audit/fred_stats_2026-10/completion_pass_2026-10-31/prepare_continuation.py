@@ -1,0 +1,70 @@
+"""Prepare source-grouped blind inputs without repeating assigned row/field pairs."""
+import argparse,collections,copy,csv,hashlib,json
+from pathlib import Path
+F=Path(__file__).resolve().parent;B=F.parent
+FIELDS=['n_o','es_value_o','pval_value_o','n_r','es_value_r','pval_value_r','reported_success']
+GATES_PATH=Path('/home/lukas/.cache/fred-audit-coverage-diagnostic/remaining_fields.csv')
+SOURCE_MANIFESTS=[Path('/home/lukas/work/fred-mac-recovery-20261030/final_box_source_manifest.json'),Path('/home/lukas/work/fred-mac-recovery-20261030/continuation-1201/final_box_source_manifest.json'),Path('/home/lukas/work/fred-mac-recovery-20261030/drive-check/final_box_source_manifest.json')]
+def main():
+ parser=argparse.ArgumentParser();parser.add_argument('--batch',default='continuation_01');parser.add_argument('--limit',type=int,default=12);parser.add_argument('--priority',choices=['literal','near_complete'],default='literal');parser.add_argument('--min-source-rows',type=int,default=1);parser.add_argument('--max-source-rows',type=int,default=30);args=parser.parse_args()
+ assert args.batch.startswith('continuation_') and args.limit>0
+ assert 1<=args.min_source_rows<=args.max_source_rows
+ with (B/'results.csv').open(encoding='utf-8-sig') as stream:results={int(r['input_row_index']):r for r in csv.DictReader(stream)}
+ neutral={}
+ for p in sorted((B/'inputs').glob('*.json')):
+  for r in json.loads(p.read_text()):neutral.setdefault(r['audit_id'],r)
+ provenance=json.loads((B/'source_provenance.json').read_text());bydoi=collections.defaultdict(list)
+ cache_names={p.name for p in (B/'texts').iterdir()} if (B/'texts').is_dir() else set()
+ for path,info in provenance.items():
+  if info.get('work_doi'):bydoi[str(info['work_doi']).lower()].append(path)
+ existing=json.loads((F/('work_queue.json' if (F/'work_queue.json').exists() else 'pilot_queue.json')).read_text());attempted=set();existing_keys={g['key'] for g in existing if g.get('phase')!=args.batch}
+ for group in existing:
+  if group.get('phase')==args.batch:continue
+  for record in json.loads(Path(group['input']).read_text()):
+   attempted.update((record['audit_id'],field) for field in record['unfinished_fields'])
+ gates={}
+ with GATES_PATH.open() as stream:
+  for r in csv.DictReader(stream):gates[int(r['audit_id']),r['field']]=r['gate']
+ pdfs={}
+ manifests=SOURCE_MANIFESTS
+ for manifest in manifests:
+  for entry in json.loads(manifest.read_text())['sources'].values():
+   doi=str(entry.get('doi') or '').lower();artifact=entry.get('artifact_path')
+   if doi and artifact:pdfs[doi]=(artifact,entry.get('source_version','Primary source'))
+ groups={};unavailable=[]
+ for aid,r in neutral.items():
+  if aid not in results:continue
+  for side,short in [('original','o'),('replication','r')]:
+   doi=str(r.get('doi_'+short) or '').strip().lower();source=doi or str(r.get('url_r') or '')
+   if not source:continue
+   fields=[f for f in FIELDS if (f.endswith('_'+short) or f=='reported_success' and short=='r') and results[aid][f+'_final_verdict'] not in ['correct','error'] and (aid,f) not in attempted]
+   if not fields:continue
+   candidates=[]
+   p=r.get('text_paths',{}).get(short)
+   if p and (not doi or str(provenance.get(p,{}).get('work_doi','')).lower()==doi):candidates.append(p)
+   candidates+=bydoi.get(doi,[])
+   # The original blind cache also contains DOI/URL-keyed files absent from the
+   # later provenance index. A matching filename routes inspection, never identity acceptance.
+   cached=B/'texts'/(hashlib.sha256(source.strip().lower().encode()).hexdigest()[:24]+'.txt')
+   if cached.name in cache_names and (str(cached) not in provenance or not doi or str(provenance[str(cached)].get('work_doi','')).lower()==doi):candidates.append(str(cached))
+   candidates=[p for p in dict.fromkeys(candidates) if Path(p).is_file()]
+   if not candidates:unavailable.append({'audit_id':aid,'side':side,'source':source});continue
+   sourcepath=candidates[0];key=hashlib.sha256((source+'|'+side).encode()).hexdigest()[:16]
+   if key in existing_keys:key=hashlib.sha256((source+'|'+side+'|'+args.batch).encode()).hexdigest()[:16]
+   g=groups.setdefault(key,{'key':key,'source':source,'side':side,'rows':[],'near_complete_rows':0,'literal_evidence_fields':0})
+   item={k:v for k,v in r.items() if k in ['ref_o','ref_r','doi_o','doi_r','url_r','study_o','study_r','description','es_type_o','es_type_r','locators_o','locators_r']};item.update(audit_id=aid,target_side=side,unfinished_fields=fields,text_paths={short:sourcepath},source_pdf_path=pdfs.get(doi,(None,None))[0],source_version_note=pdfs.get(doi,(None,'Canonical primary source provenance; independently inspect document identity on use.'))[1])
+   g['rows'].append(item);g['near_complete_rows']+=sum(results[aid][f+'_final_verdict'] in ['correct','error'] for f in FIELDS)==6;g['literal_evidence_fields']+=sum('fails literal evidence' in gates.get((aid,f),'') for f in fields)
+   item['source_identity_pending']=sourcepath not in provenance
+   if item['source_identity_pending']:item['source_identity_note']='Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work.'
+ priority=(lambda g:(-g['literal_evidence_fields'],-g['near_complete_rows'],len(g['rows']),g['key'])) if args.priority=='literal' else (lambda g:(-g['near_complete_rows'],-g['literal_evidence_fields'],len(g['rows']),g['key']))
+ queue=sorted(groups.values(),key=priority)
+ # Keep each source together. Larger sources are retained for a later deliberate whole-source assignment.
+ eligible=[g for g in queue if args.min_source_rows<=len(g['rows'])<=args.max_source_rows];selected=eligible[:args.limit]
+ out=F/args.batch;(out/'inputs').mkdir(parents=True,exist_ok=True);(out/'outputs').mkdir(exist_ok=True)
+ for g in selected:
+  p=out/'inputs'/f"{g['key']}.json";encoded=json.dumps(g['rows'],indent=2,ensure_ascii=False)+'\n'
+  if p.exists() and any((F/'tasks'/f"{g['key']}.json").exists() for g in selected):assert p.read_text()==encoded,'Inputs changed after dispatch'
+  else:p.write_text(encoded)
+  g.update(input=str(p),output=str(out/'outputs'/g['key']),audit_ids=[r['audit_id'] for r in g['rows']],unfinished_fields=sum(len(r['unfinished_fields']) for r in g['rows']),source_text=g['rows'][0]['text_paths'][g['side'][0]],all_source_rows=len(g['rows']),status='queued');del g['rows']
+ (out/'queue.json').write_text(json.dumps(selected,indent=2)+'\n');(out/'selection.json').write_text(json.dumps({'priority':args.priority,'min_source_rows':args.min_source_rows,'max_source_rows':args.max_source_rows,'candidate_source_groups':len(queue),'chosen_source_groups':len(selected),'oversized_source_groups_deferred':sum(len(g.get('rows',[]))>args.max_source_rows for g in queue),'unavailable_rows':unavailable,'rule':'Exclude every previously assigned row/field pair; preserve unattempted rows within previously read sources; all unfinished fields for every row in chosen source-side, prioritise the explicitly selected evidence-gap stratum; the configured source-size band and bounded source count selected by --limit. This prepares inputs only; no tasks launched.'},indent=2)+'\n');print(json.dumps({'sources':len(selected),'rows':sum(len(g['audit_ids']) for g in selected),'fields':sum(g['unfinished_fields'] for g in selected)}))
+if __name__=='__main__':main()

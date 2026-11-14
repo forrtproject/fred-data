@@ -1,0 +1,304 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1732,
+    "field": "es_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "-0.410",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "-0.41",
+      "metric": "B (unstandardized)",
+      "test_statistic": "t (1, 94) = -3.38 (as printed)",
+      "location": "p. 27, Parallel Mediation analysis; p. 28, Table 3, TST row",
+      "quote": "only the direct effect on Total Screen Time was negative and significant [B = -0.41, SE = 0.12, t (1, 94) = -3.38, p < .05]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37f22a155392c087d54d6556.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Bunz, U. (2021). Investigating the Relationship between Social Media Use, Big Five Personality, and Well-being. Journal of Communication Technology, 4(3). Internet Archive. https://doi.org/10.51548/joctec-2021-016",
+      "doi_o": "10.51548/joctec-2021-016",
+      "study_o": "1",
+      "ref_r": "Pruski, S. M. (2024). The impact of screen time, social media use and extraversion on life satisfaction among university students: An extended replication study (Bachelor's thesis, University of Twente). Retrieved from https://purl.utwente.nl/essays/100459",
+      "doi_r": "vonpruski_2024",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "beta (std)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1732,
+      "description": "Relationship between extraversion and time spent using social media.",
+      "locators_o": "p. 15",
+      "locators_r": "p. 27",
+      "text_paths": {}
+    },
+    "work_key": "vonpruski_2024",
+    "coding_context": {
+      "es_repr": "p. 27",
+      "description": "Extraversion positively influence the social media time",
+      "reported_success_quote": "As hypothesised, a significant positive correlation was found between extraversion and life satisfaction. Contrary to expectations, screen time and social media use did not significantly affect life satisfaction.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1732,
+    "field": "pval_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".001",
+      "bound": "e",
+      "location": "p. 28, Table 3, Direct effects of Extraversion on, TST row, p-value column",
+      "quote": "TST  -0.41  0.12  -3.38  .001*",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37f22a155392c087d54d6556.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Bunz, U. (2021). Investigating the Relationship between Social Media Use, Big Five Personality, and Well-being. Journal of Communication Technology, 4(3). Internet Archive. https://doi.org/10.51548/joctec-2021-016",
+      "doi_o": "10.51548/joctec-2021-016",
+      "study_o": "1",
+      "ref_r": "Pruski, S. M. (2024). The impact of screen time, social media use and extraversion on life satisfaction among university students: An extended replication study (Bachelor's thesis, University of Twente). Retrieved from https://purl.utwente.nl/essays/100459",
+      "doi_r": "vonpruski_2024",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "beta (std)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1732,
+      "description": "Relationship between extraversion and time spent using social media.",
+      "locators_o": "p. 15",
+      "locators_r": "p. 27",
+      "text_paths": {}
+    },
+    "work_key": "vonpruski_2024",
+    "coding_context": {
+      "es_repr": "p. 27",
+      "description": "Extraversion positively influence the social media time",
+      "reported_success_quote": "As hypothesised, a significant positive correlation was found between extraversion and life satisfaction. Contrary to expectations, screen time and social media use did not significantly affect life satisfaction.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1732,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "failed",
+      "status": "done",
+      "location": "p. 32, Discussion: comparison of extraversion/screen-time direction",
+      "quote": "instead of increasing extraversion levels leading to increased screen time, in the current study, the higher the extraversion level, the less time is spent on screens.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37f22a155392c087d54d6556.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Bunz, U. (2021). Investigating the Relationship between Social Media Use, Big Five Personality, and Well-being. Journal of Communication Technology, 4(3). Internet Archive. https://doi.org/10.51548/joctec-2021-016",
+      "doi_o": "10.51548/joctec-2021-016",
+      "study_o": "1",
+      "ref_r": "Pruski, S. M. (2024). The impact of screen time, social media use and extraversion on life satisfaction among university students: An extended replication study (Bachelor's thesis, University of Twente). Retrieved from https://purl.utwente.nl/essays/100459",
+      "doi_r": "vonpruski_2024",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "beta (std)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1732,
+      "description": "Relationship between extraversion and time spent using social media.",
+      "locators_o": "p. 15",
+      "locators_r": "p. 27",
+      "text_paths": {}
+    },
+    "work_key": "vonpruski_2024",
+    "coding_context": {
+      "es_repr": "p. 27",
+      "description": "Extraversion positively influence the social media time",
+      "reported_success_quote": "As hypothesised, a significant positive correlation was found between extraversion and life satisfaction. Contrary to expectations, screen time and social media use did not significantly affect life satisfaction.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1733,
+    "field": "n_r",
+    "comparison": "mismatched_target",
+    "shipped": "149",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "94",
+      "sample_role": "University student participants; authors’ stated sample size for moderation model; internally inconsistent with printed residual df",
+      "exclusions": "Missing values automatically removed from analyses (p. 35); around 50 participants excluded in most analyses (p. 36). Authors explicitly call 94 the moderation sample size, but also print F(3,94) and t(3,94); retained as stated and not verified by recalculation.",
+      "location": "p. 35, Strengths and limitations, moderation-analysis sample discussion",
+      "quote": "However, no significant effects were observed for the interaction term with a sample size of 94.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37f22a155392c087d54d6556.txt",
+      "confident": false
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Bunz, U. (2021). Investigating the Relationship between Social Media Use, Big Five Personality, and Well-being. Journal of Communication Technology, 4(3). Internet Archive. https://doi.org/10.51548/joctec-2021-016",
+      "doi_o": "10.51548/joctec-2021-016",
+      "study_o": "1",
+      "ref_r": "Pruski, S. M. (2024). The impact of screen time, social media use and extraversion on life satisfaction among university students: An extended replication study (Bachelor's thesis, University of Twente). Retrieved from https://purl.utwente.nl/essays/100459",
+      "doi_r": "vonpruski_2024",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "beta (std)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1733,
+      "description": "Relationship between social media use and positive well-being (life satisfaction).",
+      "locators_o": "p. 16",
+      "locators_r": "p. 29",
+      "text_paths": {}
+    },
+    "work_key": "vonpruski_2024",
+    "coding_context": {
+      "es_repr": "p. 29",
+      "description": "Positive well-being (life satisfaction) is positively predicted by social media use",
+      "reported_success_quote": "As hypothesised, a significant positive correlation was found between extraversion and life satisfaction. Contrary to expectations, screen time and social media use did not significantly affect life satisfaction.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1733,
+    "field": "es_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "-0.090",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "-0.09",
+      "metric": "B (unstandardized)",
+      "test_statistic": "t (3, 94) = -0.47 (as printed)",
+      "location": "p. 29, Moderation analysis, total screen time main effect",
+      "quote": "[B = -0.09, SE = 0.19, t (3, 94) = -0.47, p = .64]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37f22a155392c087d54d6556.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Bunz, U. (2021). Investigating the Relationship between Social Media Use, Big Five Personality, and Well-being. Journal of Communication Technology, 4(3). Internet Archive. https://doi.org/10.51548/joctec-2021-016",
+      "doi_o": "10.51548/joctec-2021-016",
+      "study_o": "1",
+      "ref_r": "Pruski, S. M. (2024). The impact of screen time, social media use and extraversion on life satisfaction among university students: An extended replication study (Bachelor's thesis, University of Twente). Retrieved from https://purl.utwente.nl/essays/100459",
+      "doi_r": "vonpruski_2024",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "beta (std)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1733,
+      "description": "Relationship between social media use and positive well-being (life satisfaction).",
+      "locators_o": "p. 16",
+      "locators_r": "p. 29",
+      "text_paths": {}
+    },
+    "work_key": "vonpruski_2024",
+    "coding_context": {
+      "es_repr": "p. 29",
+      "description": "Positive well-being (life satisfaction) is positively predicted by social media use",
+      "reported_success_quote": "As hypothesised, a significant positive correlation was found between extraversion and life satisfaction. Contrary to expectations, screen time and social media use did not significantly affect life satisfaction.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1733,
+    "field": "pval_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.64",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".64",
+      "bound": "e",
+      "location": "p. 29, Moderation analysis, total screen time main effect",
+      "quote": "[B = -0.09, SE = 0.19, t (3, 94) = -0.47, p = .64]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37f22a155392c087d54d6556.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Bunz, U. (2021). Investigating the Relationship between Social Media Use, Big Five Personality, and Well-being. Journal of Communication Technology, 4(3). Internet Archive. https://doi.org/10.51548/joctec-2021-016",
+      "doi_o": "10.51548/joctec-2021-016",
+      "study_o": "1",
+      "ref_r": "Pruski, S. M. (2024). The impact of screen time, social media use and extraversion on life satisfaction among university students: An extended replication study (Bachelor's thesis, University of Twente). Retrieved from https://purl.utwente.nl/essays/100459",
+      "doi_r": "vonpruski_2024",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "beta (std)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1733,
+      "description": "Relationship between social media use and positive well-being (life satisfaction).",
+      "locators_o": "p. 16",
+      "locators_r": "p. 29",
+      "text_paths": {}
+    },
+    "work_key": "vonpruski_2024",
+    "coding_context": {
+      "es_repr": "p. 29",
+      "description": "Positive well-being (life satisfaction) is positively predicted by social media use",
+      "reported_success_quote": "As hypothesised, a significant positive correlation was found between extraversion and life satisfaction. Contrary to expectations, screen time and social media use did not significantly affect life satisfaction.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1733,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "failed",
+      "status": "done",
+      "location": "pp. 29–30, Discussion, independent effects of screen time and comparison with Bunz (2021)",
+      "quote": "Counter to expectation neither total screen time nor active or passive social media use independently predicted life satisfaction. / These effects are generally not in line with the current literature (Bunz, 2021;",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/37f22a155392c087d54d6556.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Bunz, U. (2021). Investigating the Relationship between Social Media Use, Big Five Personality, and Well-being. Journal of Communication Technology, 4(3). Internet Archive. https://doi.org/10.51548/joctec-2021-016",
+      "doi_o": "10.51548/joctec-2021-016",
+      "study_o": "1",
+      "ref_r": "Pruski, S. M. (2024). The impact of screen time, social media use and extraversion on life satisfaction among university students: An extended replication study (Bachelor's thesis, University of Twente). Retrieved from https://purl.utwente.nl/essays/100459",
+      "doi_r": "vonpruski_2024",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "beta (std)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1733,
+      "description": "Relationship between social media use and positive well-being (life satisfaction).",
+      "locators_o": "p. 16",
+      "locators_r": "p. 29",
+      "text_paths": {}
+    },
+    "work_key": "vonpruski_2024",
+    "coding_context": {
+      "es_repr": "p. 29",
+      "description": "Positive well-being (life satisfaction) is positively predicted by social media use",
+      "reported_success_quote": "As hypothesised, a significant positive correlation was found between extraversion and life satisfaction. Contrary to expectations, screen time and social media use did not significantly affect life satisfaction.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

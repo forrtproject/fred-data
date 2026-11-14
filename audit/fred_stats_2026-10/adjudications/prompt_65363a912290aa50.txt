@@ -1,0 +1,178 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1604,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "38",
+    "shipped_metric": "d",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "38",
+      "location": "Proof p. 3, Experiment 1, Participants; p. 4, target F test denominator df = 37",
+      "quote": "38 participants took part in the experiment",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b02417bc8ee7a78ad04a83fc.txt",
+      "confident": true,
+      "sample_role": "Participants contributing repeated-measures test",
+      "exclusions": "No participant exclusions reported; all tests have denominator df 37. Trials with no response (0.34%) and RT <100 ms (0.05%) excluded from all analyses. Error trials (3.17%) and RT >1000 ms (0.92%) additionally excluded from RT analysis."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Cracco, E., De Coster, L., Andres, M., & Brass, M. (2015). Motor simulation beyond the dyad: Automatic imitation of multiple actors. Journal of Experimental Psychology: Human Perception and Performance, 41(6), 1488–1501. https://doi.org/10.1037/a0039737",
+      "doi_o": "10.1037/a0039737",
+      "study_o": "1",
+      "ref_r": "Cracco, E., & Brass, M. (2018). Automatic imitation of multiple agents: Simultaneous or random representation? Journal of Experimental Psychology: Human Perception and Performance, 44(5), 729–740. https://doi.org/10.1037/xhp0000489",
+      "doi_r": "10.1037/xhp0000489",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "dz",
+      "audit_id": 1604,
+      "description": "Response time when viewing conflicting actions.",
+      "locators_o": "p.4",
+      "locators_r": "",
+      "text_paths": {}
+    },
+    "work_key": "10.1037/xhp0000489",
+    "coding_context": {
+      "es_repr": "p.4",
+      "description": "Slower responses when seeing conflicting actions.",
+      "reported_success_quote": "In Experiments 1 and 2,\nwe replicate our results using a stimulus setup that made random sampling unlikely.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1605,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "38",
+    "shipped_metric": "d",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "38",
+      "location": "Proof p. 3, Experiment 1, Participants; p. 4, target F test denominator df = 37",
+      "quote": "38 participants took part in the experiment",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b02417bc8ee7a78ad04a83fc.txt",
+      "confident": true,
+      "sample_role": "Participants contributing repeated-measures test",
+      "exclusions": "No participant exclusions reported; all tests have denominator df 37. Trials with no response (0.34%) and RT <100 ms (0.05%) excluded from all analyses. Error trials retained."
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Cracco, E., De Coster, L., Andres, M., & Brass, M. (2015). Motor simulation beyond the dyad: Automatic imitation of multiple actors. Journal of Experimental Psychology: Human Perception and Performance, 41(6), 1488–1501. https://doi.org/10.1037/a0039737",
+      "doi_o": "10.1037/a0039737",
+      "study_o": "1",
+      "ref_r": "Cracco, E., & Brass, M. (2018). Automatic imitation of multiple agents: Simultaneous or random representation? Journal of Experimental Psychology: Human Perception and Performance, 44(5), 729–740. https://doi.org/10.1037/xhp0000489",
+      "doi_r": "10.1037/xhp0000489",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "dz",
+      "audit_id": 1605,
+      "description": "Error frequency when viewing conflicting actions.",
+      "locators_o": "p.4",
+      "locators_r": "",
+      "text_paths": {}
+    },
+    "work_key": "10.1037/xhp0000489",
+    "coding_context": {
+      "es_repr": "p.4",
+      "description": "More mistakes made when seeing conflicting actions.",
+      "reported_success_quote": "In Experiments 1 and 2,\nwe replicate our results using a stimulus setup that made random sampling unlikely.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1605,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "1.05",
+    "shipped_metric": "d",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "1.05",
+      "location": "Proof p. 4, Experiment 1, Motor simulation of two identical observed movements, Figure 3b",
+      "quote": "F(1, 37) ⫽41.89, p⬍.001, d⫽1.05",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b02417bc8ee7a78ad04a83fc.txt",
+      "confident": true,
+      "metric": "Cohen’s d",
+      "test_statistic": "F(1, 37) = 41.89"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Cracco, E., De Coster, L., Andres, M., & Brass, M. (2015). Motor simulation beyond the dyad: Automatic imitation of multiple actors. Journal of Experimental Psychology: Human Perception and Performance, 41(6), 1488–1501. https://doi.org/10.1037/a0039737",
+      "doi_o": "10.1037/a0039737",
+      "study_o": "1",
+      "ref_r": "Cracco, E., & Brass, M. (2018). Automatic imitation of multiple agents: Simultaneous or random representation? Journal of Experimental Psychology: Human Perception and Performance, 44(5), 729–740. https://doi.org/10.1037/xhp0000489",
+      "doi_r": "10.1037/xhp0000489",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "dz",
+      "audit_id": 1605,
+      "description": "Error frequency when viewing conflicting actions.",
+      "locators_o": "p.4",
+      "locators_r": "",
+      "text_paths": {}
+    },
+    "work_key": "10.1037/xhp0000489",
+    "coding_context": {
+      "es_repr": "p.4",
+      "description": "More mistakes made when seeing conflicting actions.",
+      "reported_success_quote": "In Experiments 1 and 2,\nwe replicate our results using a stimulus setup that made random sampling unlikely.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1605,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.001",
+    "shipped_metric": "d",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".001",
+      "location": "Proof p. 4, Experiment 1, Motor simulation of two identical observed movements, Figure 3b",
+      "quote": "F(1, 37) ⫽41.89, p⬍.001, d⫽1.05",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b02417bc8ee7a78ad04a83fc.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Cracco, E., De Coster, L., Andres, M., & Brass, M. (2015). Motor simulation beyond the dyad: Automatic imitation of multiple actors. Journal of Experimental Psychology: Human Perception and Performance, 41(6), 1488–1501. https://doi.org/10.1037/a0039737",
+      "doi_o": "10.1037/a0039737",
+      "study_o": "1",
+      "ref_r": "Cracco, E., & Brass, M. (2018). Automatic imitation of multiple agents: Simultaneous or random representation? Journal of Experimental Psychology: Human Perception and Performance, 44(5), 729–740. https://doi.org/10.1037/xhp0000489",
+      "doi_r": "10.1037/xhp0000489",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "dz",
+      "audit_id": 1605,
+      "description": "Error frequency when viewing conflicting actions.",
+      "locators_o": "p.4",
+      "locators_r": "",
+      "text_paths": {}
+    },
+    "work_key": "10.1037/xhp0000489",
+    "coding_context": {
+      "es_repr": "p.4",
+      "description": "More mistakes made when seeing conflicting actions.",
+      "reported_success_quote": "In Experiments 1 and 2,\nwe replicate our results using a stimulus setup that made random sampling unlikely.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

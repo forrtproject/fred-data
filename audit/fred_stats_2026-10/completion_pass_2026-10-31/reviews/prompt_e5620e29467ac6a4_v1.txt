@@ -1,0 +1,174 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1533": {
+      "source_key": "e5620e29467ac6a4",
+      "side": "replication",
+      "input": {
+        "ref_o": "Stevens, C., Lauinger, B., & Neville, H. (2009). Differences in the neural mechanisms of selective attention in children from different socioeconomic backgrounds: an event‐related brain potential study. Developmental Science, 12(4), 634–646. Portico. https://doi.org/10.1111/j.1467-7687.2009.00807.x",
+        "doi_o": "10.1111/j.1467-7687.2009.00807.x",
+        "study_o": null,
+        "ref_r": "Giuliano, R. J., Karns, C. M., Roos, L. E., Bell, T. A., Petersen, S., Skowron, E. A., Neville, H. J., & Pakulak, E. (2018). Effects of early adversity on neural mechanisms of distractor suppression are mediated by sympathetic nervous system activity in preschool-aged children. Developmental Psychology, 54(9), 1674–1686. https://doi.org/10.1037/dev0000499",
+        "doi_r": "10.1037/dev0000499",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Children’s ability to filter irrelevant information, measured by suppression of responses to unattended sounds, in relation to maternal educational attainment.",
+        "locators_o": "p. 640",
+        "locators_r": "p. 1679",
+        "audit_id": 1533,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": false,
+      "worker_target_description": "Giuliano et al. (2018), preschool children enrolled in Head Start; association of cumulative SES risk (income, maternal education, marital status) with mean frontocentral unattended-probe ERP amplitude, 150–200 ms post probe onset; Results, Hypothesis 1. Predictor differs from maternal educational attainment alone in supplied description.",
+      "worker_notes": "Identity independently checked: supplied cache identifies the exact title, all eight named authors, DOI 10.1037/dev0000499, and final publication Dev Psychol. 2018 Sep;54(9):1674–1686. Document is a PMC author manuscript with full Method, Results, Discussion and references, not an abstract-only excerpt or secondary account. No PDF was supplied; canonical text has no page markers, so section locations are used and the supplied p. 1679 cannot be visually verified. Target correspondence: the located test is cumulative SES risk versus unattended-probe ERP amplitude, not maternal educational attainment alone. Methods define cumulative risk using household income, maternal education and marital status. Discussion explicitly distinguishes the prior study’s maternal-education proxy from this study’s cumulative-risk framework. target_match=false records this known predictor difference; values describe the actual located conceptual replication test and must not be relabelled as a maternal-education-only correlation. N=100 is explicitly the final analysis sample, not inferred from r degrees of freedom. No N arithmetic or effect-size conversion performed. Results first mention age as a covariate in subsequent analyses, while Table 2 is explicitly zero-order and reproduces r=.21; the extracted statistic retains the authors’ r designation without reclassifying it as a partial correlation. Original and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Children whose mothers had lower levels of educational attainment showed a reduced ability to filter irrelevant information (suppress responses to unattended sounds) relative to children of mothers with higher education levels.",
+        "es_repr_o": "p. 640",
+        "es_repr_r": "p. 1679",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "First, we replicated a previous\nstudy from our lab: Increased socioeconomic risk was associated with larger ERP amplitudes elicited by\ndistracting sounds."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1533,
+      "field": "n_r",
+      "blind": {
+        "value": "100",
+        "sample_role": "Children in the explicitly stated final analyses; preschool participants, not trials, electrodes, or observations pooled across children. Applies to the located cumulative-SES-risk correlation.",
+        "exclusions": "EEG successfully obtained from 123 children; eight tested in Spanish excluded; among the remainder, 13 declined ECG electrodes, one had unusable impedance data, and one caregiver declined socioeconomic information. Task analysis required at least seven of 12 comprehension questions correct. ERP artifact-contaminated epochs were excluded. No further child exclusion count supplied for these criteria.",
+        "location": "Method, Participants; auditory selective attention task and EEG sections",
+        "quote": "Therefore, final analyses included 100 children (50 females) ranging in age from 3–5 years old ( M = 4.31, SD = .54, range = 3.18–5.37).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1533,
+        "field": "n_r",
+        "code": "extracted_printed",
+        "reason": "Explicit final analysis sample of 100 children for the located cumulative-SES-risk test; exclusions documented. No derivation from df or summation. Target correspondence: the located test is cumulative SES risk versus unattended-probe ERP amplitude, not maternal educational attainment alone. Methods define cumulative risk using household income, maternal education and marital status. Discussion explicitly distinguishes the prior study’s maternal-education proxy from this study’s cumulative-risk framework. target_match=false records this known predictor difference; values describe the actual located conceptual replication test and must not be relabelled as a maternal-education-only correlation.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "location": "Method, Participants; auditory selective attention task and EEG sections",
+        "quote": "Therefore, final analyses included 100 children (50 females) ranging in age from 3–5 years old ( M = 4.31, SD = .54, range = 3.18–5.37).",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "104",
+      "comparison": "near",
+      "prior_adjudication": {
+        "audit_id": 1533,
+        "field": "n_r",
+        "verdict": "blind_right",
+        "correct_value": "100",
+        "location": "Method, Participants, final sentence; Results, Hypothesis 1 (p. 1679)",
+        "quote": "Therefore, final analyses included 100 children (50 females) ranging in age from 3–5 years old",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "reason": "After exclusions from the initial 123 children with EEG data, the final analytic sample size is explicitly reported as N = 100, matching df = 98 in the critical correlation r(98) = .21; 104 does not appear as a sample count in the paper.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 1533,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".21",
+        "metric": "r",
+        "test_statistic": "r (98) = .21",
+        "location": "Results, Hypothesis 1: Early adversity impacts selective attention; corroborated by Table 2, SES risks × Unattended ERP amplitudes",
+        "quote": "SES risk was positively associated with mean amplitude of ERPs elicited by unattended probes during the dichotic listening task [ r (98) = .21, p = .037], such that children with more risk factors showed a larger positive deflection in ERPs to distractor sounds.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1533,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed r=.21 retained without conversion; tests cumulative SES risk against unattended ERP amplitude. Target correspondence: the located test is cumulative SES risk versus unattended-probe ERP amplitude, not maternal educational attainment alone. Methods define cumulative risk using household income, maternal education and marital status. Discussion explicitly distinguishes the prior study’s maternal-education proxy from this study’s cumulative-risk framework. target_match=false records this known predictor difference; values describe the actual located conceptual replication test and must not be relabelled as a maternal-education-only correlation.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "location": "Results, Hypothesis 1: Early adversity impacts selective attention; corroborated by Table 2, SES risks × Unattended ERP amplitudes",
+        "quote": "SES risk was positively associated with mean amplitude of ERPs elicited by unattended probes during the dichotic listening task [ r (98) = .21, p = .037], such that children with more risk factors showed a larger positive deflection in ERPs to distractor sounds.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.21",
+      "comparison": "differ",
+      "prior_adjudication": {
+        "audit_id": 1533,
+        "field": "es_value_r",
+        "verdict": "shipped_right",
+        "correct_value": "-0.21",
+        "location": "Results, Hypothesis 1 (p. 1679); Table 2, row 4, column 2",
+        "quote": "SES risk was positively associated with mean amplitude of ERPs elicited by unattended probes during the dichotic listening task [ r (98) = .21, p = .037], such that children with more risk factors showed a larger positive deflection in ERPs to distractor sounds.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "reason": "The paper reports r(98) = .21 between cumulative SES risk and unattended probe ERP amplitude (where larger amplitudes indicate less distractor suppression); reversing the sign to -0.21 validly aligns the effect with the coding_context direction (reduced ability to suppress unattended sounds with lower SES, matching the negative sign of the original t(30) = -2.87).",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 1533,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".037",
+        "bound": "e",
+        "location": "Results, Hypothesis 1: Early adversity impacts selective attention, same r (98) = .21 test",
+        "quote": "SES risk was positively associated with mean amplitude of ERPs elicited by unattended probes during the dichotic listening task [ r (98) = .21, p = .037], such that children with more risk factors showed a larger positive deflection in ERPs to distractor sounds.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1533,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed exact p=.037 from the same r(98)=.21 test, not a threshold from the correlation-table star. Target correspondence: the located test is cumulative SES risk versus unattended-probe ERP amplitude, not maternal educational attainment alone. Methods define cumulative risk using household income, maternal education and marital status. Discussion explicitly distinguishes the prior study’s maternal-education proxy from this study’s cumulative-risk framework. target_match=false records this known predictor difference; values describe the actual located conceptual replication test and must not be relabelled as a maternal-education-only correlation.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "location": "Results, Hypothesis 1: Early adversity impacts selective attention, same r (98) = .21 test",
+        "quote": "SES risk was positively associated with mean amplitude of ERPs elicited by unattended probes during the dichotic listening task [ r (98) = .21, p = .037], such that children with more risk factors showed a larger positive deflection in ERPs to distractor sounds.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.033",
+      "comparison": "differ",
+      "prior_adjudication": {
+        "audit_id": 1533,
+        "field": "pval_value_r",
+        "verdict": "blind_right",
+        "correct_value": "0.037",
+        "location": "Results, Hypothesis 1 (p. 1679)",
+        "quote": "SES risk was positively associated with mean amplitude of ERPs elicited by unattended probes during the dichotic listening task [ r (98) = .21, p = .037]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/95267cb275094a83d1439105.txt",
+        "reason": "The exact p-value reported in the text for the critical correlation r(98) = .21 is p = .037, whereas the shipped value 0.033 appears to have been recomputed using the incorrect sample size of 104.",
+        "resolution": "argon"
+      }
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/e5620e29467ac6a4. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_e5620e29467ac6a4_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

@@ -1,0 +1,50 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 701,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": null,
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "100",
+      "location": "Supplement p. 2, immediately before six confirmatory analyses",
+      "quote": "we tested 100 participants who each\ncontributed two sessions.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e7edb789d9489d5b0e0096c8_appendix.txt",
+      "confident": true,
+      "sample_role": "participants (women); two contiguous sessions per participant",
+      "exclusions": "No exclusions documented; supplement confirms 100 participants contributed two sessions."
+    },
+    "locator": {
+      "ref_o": "Bem, D. J. (2011). Feeling the future: Experimental evidence for anomalous retroactive influences on cognition and affect. Journal of Personality and Social Psychology, 100(3), 407–425. https://doi.org/10.1037/a0021524",
+      "doi_o": "10.1037/a0021524",
+      "study_o": "1",
+      "ref_r": "Wagenmakers, E.-J., Wetzels, R., Borsboom, D., van der Maas, H. L. J., & Kievit, R. A. (2012). An Agenda for Purely Confirmatory Research. Perspectives on Psychological Science, 7(6), 632–638. https://doi.org/10.1177/1745691612463078",
+      "doi_r": "10.1177/1745691612463078",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": null,
+      "audit_id": 701,
+      "description": "Accuracy in predicting the location of erotic pictures.",
+      "locators_o": "p. 409",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a79174e5672ac593fd773f5e.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e7edb789d9489d5b0e0096c8.txt"
+      }
+    },
+    "work_key": "10.1177/1745691612463078",
+    "coding_context": {
+      "es_repr": null,
+      "pval_tails": null,
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

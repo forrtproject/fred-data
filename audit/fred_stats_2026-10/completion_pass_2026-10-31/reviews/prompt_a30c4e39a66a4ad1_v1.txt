@@ -1,0 +1,820 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1755": {
+      "source_key": "a30c4e39a66a4ad1",
+      "side": "original",
+      "input": {
+        "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+        "doi_o": "10.1007/s00221-012-3266-6",
+        "study_o": null,
+        "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+        "doi_r": "10.1080/00222895.2014.898608",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Total time across tests.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5",
+        "audit_id": 1755,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Total time, omnibus Test main effect.",
+      "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this. The source prints the Test df as (2,30); retain as supplied. The parse uses a backslash for the less-than sign. No exact F value is printed; retain the <1 bound.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "There were no differences for Tests in total time",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks."
+      }
+    },
+    "1756": {
+      "source_key": "a30c4e39a66a4ad1",
+      "side": "original",
+      "input": {
+        "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+        "doi_o": "10.1007/s00221-012-3266-6",
+        "study_o": null,
+        "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+        "doi_r": "10.1080/00222895.2014.898608",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Group-by-test interaction in total time.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5",
+        "audit_id": 1756,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Total time, Group by Test interaction.",
+      "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "There were no differences in total time regarding the Group and Test interaction",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks."
+      }
+    },
+    "1759": {
+      "source_key": "a30c4e39a66a4ad1",
+      "side": "original",
+      "input": {
+        "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+        "doi_o": "10.1007/s00221-012-3266-6",
+        "study_o": null,
+        "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+        "doi_r": "10.1080/00222895.2014.898608",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Hit rates for the Impulse, Fitts and Sine groups.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5",
+        "audit_id": 1759,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Hit rate, omnibus Group main effect followed by Duncan comparisons.",
+      "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this. The neutral group comparison is interpreted as the omnibus Group effect supporting the following Duncan narrative; no pairwise effect is substituted.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "In the Impulse group the hit rates were lower compared to Fitts or Sine groups",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks."
+      }
+    },
+    "1760": {
+      "source_key": "a30c4e39a66a4ad1",
+      "side": "original",
+      "input": {
+        "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+        "doi_o": "10.1007/s00221-012-3266-6",
+        "study_o": null,
+        "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+        "doi_r": "10.1080/00222895.2014.898608",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Hits across tests.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5",
+        "audit_id": 1760,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Hits, omnibus Test main effect.",
+      "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "There were no differences for Tests in hits",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks."
+      }
+    },
+    "1761": {
+      "source_key": "a30c4e39a66a4ad1",
+      "side": "original",
+      "input": {
+        "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+        "doi_o": "10.1007/s00221-012-3266-6",
+        "study_o": null,
+        "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+        "doi_r": "10.1080/00222895.2014.898608",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Group-by-test interaction in hits.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5",
+        "audit_id": 1761,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Hits, Group by Test interaction.",
+      "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this. Retain the supplied printed p<.05 although the paragraph says the analysis failed to indicate the interaction and prints F<1. This apparent inconsistency is not corrected or converted. The parse uses backslash for < and [ for >.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "There were no differences in hits regarding the Group and Test interaction",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks."
+      }
+    },
+    "1765": {
+      "source_key": "a30c4e39a66a4ad1",
+      "side": "original",
+      "input": {
+        "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+        "doi_o": "10.1007/s00221-012-3266-6",
+        "study_o": null,
+        "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+        "doi_r": "10.1080/00222895.2014.898608",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Percent time to peak velocity for the Sine, Impulse and Fitts groups.",
+        "locators_o": "p. 6",
+        "locators_r": "p. 5",
+        "audit_id": 1765,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Percent time to peak velocity, omnibus Group main effect followed by Duncan comparisons.",
+      "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Percent time to peak velocity occurred later in the movement for the Sine group than for the Impulse and Fitts groups",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "p. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks."
+      }
+    },
+    "1767": {
+      "source_key": "a30c4e39a66a4ad1",
+      "side": "original",
+      "input": {
+        "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+        "doi_o": "10.1007/s00221-012-3266-6",
+        "study_o": null,
+        "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+        "doi_r": "10.1080/00222895.2014.898608",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Dwell time for the Fitts, Sine and Impulse groups.",
+        "locators_o": "p. 7",
+        "locators_r": "p. 5",
+        "audit_id": 1767,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Dwell time, omnibus Group main effect followed by Duncan comparisons.",
+      "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Dwell time was higher for Fitts group than the Sine and Impulse groups which did not differ from each other",
+        "es_repr_o": "p. 7",
+        "es_repr_r": "p. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks."
+      }
+    },
+    "1770": {
+      "source_key": "a30c4e39a66a4ad1",
+      "side": "original",
+      "input": {
+        "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377–387. https://doi.org/10.1007/s00221-012-3266-6",
+        "doi_o": "10.1007/s00221-012-3266-6",
+        "study_o": null,
+        "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277–285. https://doi.org/10.1080/00222895.2014.898608",
+        "doi_r": "10.1080/00222895.2014.898608",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Group-by-test interaction in peak velocity.",
+        "locators_o": "p. 7",
+        "locators_r": "p. 5",
+        "audit_id": 1770,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Peak velocity, Group by Test interaction.",
+      "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "There were no differences in Peak velocity regarding the Group and Test interaction",
+        "es_repr_o": "p. 7",
+        "es_repr_r": "p. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16° amplitude Fitts task was used than participants that had practiced either the 16° or 24° amplitude Fitts tasks."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1755,
+      "field": "es_value_o",
+      "blind": {
+        "value": "<1",
+        "metric": "F",
+        "test_statistic": "F(2,30) <1",
+        "location": "p. 5, Total time (TT), L813–815",
+        "quote": "or Test, F(2,30) \\1, p[.05.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1755,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Total time, omnibus Test main effect. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Total time (TT), L813–815",
+        "quote": "or Test, F(2,30) \\1, p[.05.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 30) < 1.03",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1756,
+      "field": "es_value_o",
+      "blind": {
+        "value": "4.90",
+        "metric": "F",
+        "test_statistic": "F(2,30) =4.90",
+        "location": "p. 5, Total time (TT), L817–819",
+        "quote": "However, the Group 9 Test interaction, F(2,30) =4.90,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1756,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Total time, Group by Test interaction.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Total time (TT), L817–819",
+        "quote": "However, the Group 9 Test interaction, F(2,30) =4.90,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 30) = 4.90",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1756,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 5, Total time (TT), L817–819",
+        "quote": "However, the Group 9 Test interaction, F(2,30) =4.90, ... p\\.05, was signiﬁcant.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1756,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Total time, Group by Test interaction. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Total time (TT), L817–819",
+        "quote": "However, the Group 9 Test interaction, F(2,30) =4.90, ... p\\.05, was signiﬁcant.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1759,
+      "field": "es_value_o",
+      "blind": {
+        "value": "3.84",
+        "metric": "F",
+        "test_statistic": "F(2,30) =3.84",
+        "location": "p. 5, Hits (H), L857–864",
+        "quote": "The analysis detected a main effect for Group F(2,30) = ... 3.84, p\\.05. Duncan’s new multiple range test indicated",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1759,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Hit rate, omnibus Group main effect followed by Duncan comparisons. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Hits (H), L857–864",
+        "quote": "The analysis detected a main effect for Group F(2,30) = ... 3.84, p\\.05. Duncan’s new multiple range test indicated",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 30) = 3.84",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1759,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 5, Hits (H), L857–864",
+        "quote": "3.84, p\\.05. Duncan’s new multiple range test indicated",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1759,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Hit rate, omnibus Group main effect followed by Duncan comparisons. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Hits (H), L857–864",
+        "quote": "3.84, p\\.05. Duncan’s new multiple range test indicated",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1760,
+      "field": "es_value_o",
+      "blind": {
+        "value": "3.32",
+        "metric": "F",
+        "test_statistic": "F(1,30) =3.32",
+        "location": "p. 5, Hits (H), L866–868",
+        "quote": "analysis failed to indicate a main effect Test, F(1,30) = ... 3.32, p[.05, or a Group 9 Test interaction, F(2,30) \\1,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1760,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Hits, omnibus Test main effect. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Hits (H), L866–868",
+        "quote": "analysis failed to indicate a main effect Test, F(1,30) = ... 3.32, p[.05, or a Group 9 Test interaction, F(2,30) \\1,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(1, 30) = 3.32",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1760,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "g",
+        "location": "p. 5, Hits (H), L866–868",
+        "quote": "3.32, p[.05, or a Group 9 Test interaction, F(2,30) \\1,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1760,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Hits, omnibus Test main effect. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Hits (H), L866–868",
+        "quote": "3.32, p[.05, or a Group 9 Test interaction, F(2,30) \\1,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1761,
+      "field": "es_value_o",
+      "blind": {
+        "value": "<1",
+        "metric": "F",
+        "test_statistic": "F(2,30) <1",
+        "location": "p. 5, Hits (H), L868–870",
+        "quote": "or a Group 9 Test interaction, F(2,30) \\1,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1761,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Hits, Group by Test interaction. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Hits (H), L868–870",
+        "quote": "or a Group 9 Test interaction, F(2,30) \\1,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 30) < 1",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1761,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 5, Hits (H), L868–870",
+        "quote": "or a Group 9 Test interaction, F(2,30) \\1, ... p\\.05.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1761,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Hits, Group by Test interaction. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 5, Hits (H), L868–870",
+        "quote": "or a Group 9 Test interaction, F(2,30) \\1, ... p\\.05.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1765,
+      "field": "es_value_o",
+      "blind": {
+        "value": "4.28",
+        "metric": "F",
+        "test_statistic": "F(2,30) =4.28",
+        "location": "p. 6, Percent time to peak velocity (%TPV), L910–919",
+        "quote": "The analysis indicated a main effect of Group, F(2,30) = ... 4.28, p\\.01. Duncan’s new multiple range test indicated",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1765,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Percent time to peak velocity, omnibus Group main effect followed by Duncan comparisons. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 6, Percent time to peak velocity (%TPV), L910–919",
+        "quote": "The analysis indicated a main effect of Group, F(2,30) = ... 4.28, p\\.01. Duncan’s new multiple range test indicated",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 30) = 4.28",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1765,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".01",
+        "bound": "l",
+        "location": "p. 6, Percent time to peak velocity (%TPV), L910–919",
+        "quote": "4.28, p\\.01. Duncan’s new multiple range test indicated",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1765,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Percent time to peak velocity, omnibus Group main effect followed by Duncan comparisons. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 6, Percent time to peak velocity (%TPV), L910–919",
+        "quote": "4.28, p\\.01. Duncan’s new multiple range test indicated",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1767,
+      "field": "es_value_o",
+      "blind": {
+        "value": "3.98",
+        "metric": "F",
+        "test_statistic": "F(2,30) =3.98",
+        "location": "p. 7, Dwell time (DT), L943–950",
+        "quote": "The analysis indicated a main effect of Group F(2,30) = ... 3.98, p\\.05. Duncan’s multiple range test found DTs",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1767,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Dwell time, omnibus Group main effect followed by Duncan comparisons. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 7, Dwell time (DT), L943–950",
+        "quote": "The analysis indicated a main effect of Group F(2,30) = ... 3.98, p\\.05. Duncan’s multiple range test found DTs",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 30) = 3.98",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1767,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 7, Dwell time (DT), L943–950",
+        "quote": "3.98, p\\.05. Duncan’s multiple range test found DTs",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1767,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Dwell time, omnibus Group main effect followed by Duncan comparisons. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 7, Dwell time (DT), L943–950",
+        "quote": "3.98, p\\.05. Duncan’s multiple range test found DTs",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1770,
+      "field": "es_value_o",
+      "blind": {
+        "value": "8.09",
+        "metric": "F",
+        "test_statistic": "F(2,30) =8.09",
+        "location": "p. 7, Peak velocity (PV), L963–965",
+        "quote": "and the Group 9 Test interaction, F(2,30) = ... 8.09, p\\.05, were signiﬁcant.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1770,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Peak velocity, Group by Test interaction. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 7, Peak velocity (PV), L963–965",
+        "quote": "and the Group 9 Test interaction, F(2,30) = ... 8.09, p\\.05, were signiﬁcant.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 30) = 8.09",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1770,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 7, Peak velocity (PV), L963–965",
+        "quote": "8.09, p\\.05, were signiﬁcant.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1770,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed statistic for the identified Peak velocity, Group by Test interaction. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+        "location": "p. 7, Peak velocity (PV), L963–965",
+        "quote": "8.09, p\\.05, were signiﬁcant.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/a30c4e39a66a4ad1. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_a30c4e39a66a4ad1_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+Large-batch reply override: write the COMPLETE strict JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_a30c4e39a66a4ad1_v1.json, but reply ONLY with its path and item count. Do not echo the array. This overrides earlier reply-format instructions only; all source/evidence/target requirements still apply.

@@ -1,0 +1,144 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1834": {
+      "source_key": "9b3945d1f9a9bd81",
+      "side": "original",
+      "input": {
+        "ref_o": "Burlingame, G. M., Whitcomb, K. E., Woodland, S. C., Olsen, J. A., Beecher, M., & Gleave, R. (2018). The effects of relationship and progress feedback in group psychotherapy using the Group Questionnaire and Outcome Questionnaire–45: A randomized clinical trial. Psychotherapy, 55(2), 116–131. https://doi.org/10.1037/pst0000133",
+        "doi_o": "10.1037/pst0000133",
+        "study_o": "1",
+        "ref_r": "Alldredge, C., Burlingame, G., Olsen, J., & Van Epps, J. (2020). Outcome Questionnaire-45 (OQ-45) progress alert rates in group versus individual treatment: An archival replication. Group Dynamics: Theory, Research, and Practice, 24(4), 247–260. https://doi.org/10.1037/gdn0000121",
+        "doi_r": "10.1037/gdn0000121",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "OR",
+        "es_type_r": "OR",
+        "description": "Timing of \"not on track\" alerts among group therapy versus individual therapy participants.",
+        "locators_o": "p. 10",
+        "locators_r": "Table 1",
+        "audit_id": 1834,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Timing/session of NOT OQ-45 progress alerts: current group therapy (both randomized arms) versus archival individual therapy; preliminary equivalence comparison, F(1, 443) ⫽ 61.84, p ⬍ .001.",
+      "worker_notes": "Identity assessment: supplied frozen Scribd HTML parse matches original title, all six authors, Psychotherapy 2018, 55(2), 116–131. It contains the primary full trial report (Methods, Results, tables, figures and references), not merely an abstract or secondary report. DOI is not visible, so DOI identity cannot independently be corroborated within this file; title/authors/journal/year/pagination support identity. No PDF supplied. Column interleaving is handled with literal ordered evidence fragments. 318 + 59 + 67 = 444 participants (archival individual NOT cases + GQ/OQ-45 group NOT cases + OQ-45-only group NOT cases). Group subtotal: 59 + 67 = 126. No N derived from df. Printed F df (1, 443) are preserved, though they do not exactly agree with a simple two-group ANOVA using the documented count of 444; N is not inferred or repaired from df. Requested OR is not printed for timing; retain the actual printed F and its same-test strict p bound without conversion. Early/late alert predictors of posttreatment scores elsewhere are different tests and outcomes. The 15-case efficacy exclusion applies later to experimental-arm outcome analyses, not this timing contrast.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Group therapy participants had later \"not on track\" alerts than individual therapy participants",
+        "es_repr_o": "p. 10, =(0.335/(1-0.335))/(0.18/(1-0.18))",
+        "es_repr_r": "Table 1, =(46/100)/(1214/4279)",
+        "es_type_o": "OR",
+        "es_type_r": "OR",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "he current study\nreplicated the significant difference found in the rate of NOT alerts between treatment\nformats (p ! .007). Additionally, the timing of NOT alerts created a more complex\npicture. Burlingame et al.’s (2018) results may be more common as preliminary results\nsuggest that clients in group therapy are more likely to alert as NOT during the course\nof therapy when compared to clients in individual therapy."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1834,
+      "field": "n_o",
+      "blind": {
+        "value": "444",
+        "location": "p. 125 (PDF p. 10), Exploratory Analysis of NOT OQ-45 Cases With Archival No-Feedback Condition; canonical L691–L707, particularly L698–L703",
+        "quote": "We retrieved data from 318 patients who signaled as ... NOT from four of the six studies summarized by Shimokawa ... We then identified NOT OQ-45 cases in ... our study, locating 59 patients in the GQ ⫹ OQ-45 condition and ... 67 patients in the OQ-45 control condition.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "confident": true,
+        "sample_role": "Analytic participants selected for at least one NOT OQ-45 alert: 318 archival individual patients, 59 GQ/OQ-45 group patients, 67 OQ-45-only group patients.",
+        "exclusions": "Archival patients selected from individual no-feedback therapy with NOT alerts, from four of six studies; current trial patients selected for NOT OQ-45 alerts in two mutually exclusive randomized arms. Additional timing-specific missingness not stated. Later exclusion of 15 efficacy cases belongs to a different outcome analysis."
+      },
+      "disposition": {
+        "audit_id": 1834,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The section explicitly selects three mutually exclusive NOT patient groups and uses them in preliminary group-versus-individual equivalence analyses, including timing. Counts are participants, not person-session observations. No timing-specific exclusions are stated. Later 15-case efficacy exclusion is a different analysis. Preserve printed df without using it to derive N.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "location": "p. 125 (PDF p. 10), Exploratory Analysis of NOT OQ-45 Cases With Archival No-Feedback Condition; canonical L691–L707, particularly L698–L703",
+        "quote": "We retrieved data from 318 patients who signaled as ... NOT from four of the six studies summarized by Shimokawa ... We then identified NOT OQ-45 cases in ... our study, locating 59 patients in the GQ ⫹ OQ-45 condition and ... 67 patients in the OQ-45 control condition.",
+        "calculation": "318 + 59 + 67 = 444 participants (archival individual NOT cases + GQ/OQ-45 group NOT cases + OQ-45-only group NOT cases). Group subtotal: 59 + 67 = 126. No N derived from df."
+      },
+      "supported": true,
+      "shipped": "374",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1834,
+      "field": "es_value_o",
+      "blind": {
+        "value": "61.84",
+        "location": "p. 125 (PDF p. 10), preliminary timing comparison, canonical L648–L658; Figure 3 on p. 127 identifies group versus archival individual trajectories",
+        "quote": "However, the most striking statistically significant ... difference was when the NOT progress alert occurred, F(1, 443) ⫽ ... 61.84, p ⬍ .001.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "confident": true,
+        "metric": "F",
+        "test_statistic": "F(1, 443) ⫽ 61.84"
+      },
+      "disposition": {
+        "audit_id": 1834,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Prose explicitly identifies when the NOT progress alert occurred. Printed metric is F, not requested OR; retain F=61.84 without conversion. Figure 3 and adjacent prose establish group versus archival individual contrast.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "location": "p. 125 (PDF p. 10), preliminary timing comparison, canonical L648–L658; Figure 3 on p. 127 identifies group versus archival individual trajectories",
+        "quote": "However, the most striking statistically significant ... difference was when the NOT progress alert occurred, F(1, 443) ⫽ ... 61.84, p ⬍ .001.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "2.295",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1834,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "location": "p. 125 (PDF p. 10), preliminary timing comparison, canonical L648–L658; Figure 3 on p. 127 identifies group versus archival individual trajectories",
+        "quote": "However, the most striking statistically significant ... difference was when the NOT progress alert occurred, F(1, 443) ⫽ ... 61.84, p ⬍ .001.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "confident": true,
+        "bound": "l"
+      },
+      "disposition": {
+        "audit_id": 1834,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Strict p ⬍ .001 is printed with the same timing F(1, 443) ⫽ 61.84; retain the bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5e55376dcae427d10ebbd356.txt",
+        "location": "p. 125 (PDF p. 10), preliminary timing comparison, canonical L648–L658; Figure 3 on p. 127 identifies group versus archival individual trajectories",
+        "quote": "However, the most striking statistically significant ... difference was when the NOT progress alert occurred, F(1, 443) ⫽ ... 61.84, p ⬍ .001.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": null,
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/9b3945d1f9a9bd81. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_9b3945d1f9a9bd81_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

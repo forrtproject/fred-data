@@ -1,0 +1,152 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "0f486d842c61ee89",
+    "audit_id": 706,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Jostmann, N. B., Lakens, D., & Schubert, T. W. (2009). Weight as an Embodiment of Importance. Psychological Science, 20(9), 1169–1174. https://doi.org/10.1111/j.1467-9280.2009.02426.x",
+      "doi_o": "10.1111/j.1467-9280.2009.02426.x",
+      "study_o": "2",
+      "ref_r": "Ebersole, C. R., Atherton, O. E., Belanger, A. L., Skulborstad, H. M., Allen, J. M., Banks, J. B., Baranski, E., Bernstein, M. J., Bonfiglio, D. B. V., Boucher, L., Brown, E. R., Budiman, N. I., Cairo, A. H., Capaldi, C. A., Chartier, C. R., Chung, J. M., Cicero, D. C., Coleman, J. A., Conway, J. G., … Nosek, B. A. (2016). Many Labs 3: Evaluating participant pool quality across the academic semester via replication. Journal of Experimental Social Psychology, 67, 68–82. https://doi.org/10.1016/j.jesp.2015.10.012",
+      "doi_r": "10.1016/j.jesp.2015.10.012",
+      "url_r": "https://osf.io/ct89g/",
+      "study_r": "4.6 (as labeled in Many Labs 3 supplement).",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "description": "Clipboard weight and perceived importance.",
+      "locators_o": "page 1171",
+      "locators_r": "",
+      "audit_id": 706,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_e687965715c1861165232a36.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/continuation-1201/private_batch_01/artifacts/e687965715c1861165232a36_ebsco.pdf",
+      "source_version_note": "Published article supplied by licensed EBSCO all-database service"
+    },
+    "blind": {
+      "value": ".08",
+      "metric": "partial eta squared (ηp²)",
+      "test_statistic": "F(1, 49) = 4.33",
+      "location": "Printed p. 1171 (PDF page 3), Study 2, Results and Discussion, right column, first paragraph",
+      "quote": "SD 5 2.10), F(1, 49) 5 4.33, p < .05, prep 5 .92, Zp 2 5 .08.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_e687965715c1861165232a36.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 706,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "The explicitly identified Study 2 voice/importance outcome has printed partial eta squared .08 for the unadjusted heavy-versus-light one-way ANOVA. PDF inspection confirms metric identity despite canonical text OCR. Requested d is not printed; retain the actual printed metric without conversion.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_e687965715c1861165232a36.txt",
+      "location": "Printed p. 1171 (PDF page 3), Study 2, Results and Discussion, right column, first paragraph",
+      "quote": "SD 5 2.10), F(1, 49) 5 4.33, p < .05, prep 5 .92, Zp 2 5 .08.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 2: heavy versus light clipboard; importance of having the university committee listen to students concerning a grant to study abroad; unadjusted one-way ANOVA on importance ratings among Dutch-university volunteers.",
+    "worker_notes": "Only es_value_o is assigned. Other-side and N fields are unassigned placeholders. Same-test p bound retained as supporting context. PDF page 3 was rendered and inspected: canonical text Zp 2 denotes printed partial eta squared ηp²; canonical 5 denotes an equals sign. No metric conversion performed. Study and outcome establish target identity independently of row order or numeric correspondence. The mood-adjusted analysis (p = .095) is a different test and was not combined with the unadjusted effect. Requested d is not printed for this test; the printed partial eta squared .08 is retained under the brief’s printed-metric rule.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_e687965715c1861165232a36.txt",
+    "shipped": "0.59",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Replicated the effect of clipboard weight on perceived importance. No significant differences were observed (p = .54).",
+      "es_repr_o": "Reported directly in the text, page 1171.",
+      "es_repr_r": "6",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": "2 (two)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Across all in-lab replications (N = 2,285), participants in the heavy (M = 6.16, SD = 1.02) and light (M = 6.14, SD = 1.03) clipboard conditions believed that it was similarly important for the university committee to listen to the students' opinions, t(2283) = 0.61, p = .543, d = .03, 95% CI = [−.06, .11]."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "0f486d842c61ee89",
+    "audit_id": 1039,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Jostmann, N. B., Lakens, D., & Schubert, T. W. (2009). Weight as an Embodiment of Importance. Psychological Science, 20(9), 1169–1174. https://doi.org/10.1111/j.1467-9280.2009.02426.x",
+      "doi_o": "10.1111/j.1467-9280.2009.02426.x",
+      "study_o": "2",
+      "ref_r": "Djordjevic, S., & IJzerman, H. (2015). Weight as an Embodiment of Importance: Replication and Extensions. SSRN Electronic Journal. https://doi.org/10.2139/ssrn.2586261",
+      "doi_r": "10.2139/ssrn.2586261",
+      "url_r": null,
+      "study_r": "3",
+      "es_type_o": "etasq",
+      "es_type_r": "d",
+      "description": "Importance or weight assigned to having a voice in a decision-making procedure.",
+      "locators_o": "p. 4",
+      "locators_r": "p. 9",
+      "audit_id": 1039,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_e687965715c1861165232a36.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/continuation-1201/private_batch_01/artifacts/e687965715c1861165232a36_ebsco.pdf",
+      "source_version_note": "Published article supplied by licensed EBSCO all-database service"
+    },
+    "blind": {
+      "value": ".08",
+      "metric": "partial eta squared (ηp²)",
+      "test_statistic": "F(1, 49) = 4.33",
+      "location": "Printed p. 1171 (PDF page 3), Study 2, Results and Discussion, right column, first paragraph",
+      "quote": "SD 5 2.10), F(1, 49) 5 4.33, p < .05, prep 5 .92, Zp 2 5 .08.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_e687965715c1861165232a36.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1039,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "The explicitly identified Study 2 voice/importance outcome has printed partial eta squared .08 for the unadjusted heavy-versus-light one-way ANOVA. PDF inspection confirms metric identity despite canonical text OCR. The printed metric is partial eta squared; locator pagination is discrepant but study and outcome match.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_e687965715c1861165232a36.txt",
+      "location": "Printed p. 1171 (PDF page 3), Study 2, Results and Discussion, right column, first paragraph",
+      "quote": "SD 5 2.10), F(1, 49) 5 4.33, p < .05, prep 5 .92, Zp 2 5 .08.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 2: heavy versus light clipboard; importance of having the university committee listen to students concerning a grant to study abroad; unadjusted one-way ANOVA on importance ratings among Dutch-university volunteers.",
+    "worker_notes": "Only es_value_o is assigned. Other-side and N fields are unassigned placeholders. Same-test p bound retained as supporting context. PDF page 3 was rendered and inspected: canonical text Zp 2 denotes printed partial eta squared ηp²; canonical 5 denotes an equals sign. No metric conversion performed. Study and outcome establish target identity independently of row order or numeric correspondence. The mood-adjusted analysis (p = .095) is a different test and was not combined with the unadjusted effect. Requested etasq is resolved specifically to printed partial eta squared, not ordinary eta squared. Input locator p. 4 differs from the actual printed p. 1171/PDF page 3; the explicit Study 2 and decision-making voice outcome identify the target.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_e687965715c1861165232a36.txt",
+    "shipped": "0.08",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "importance of weight on having a voice in a decision-making procedure",
+      "es_repr_o": "p. 4",
+      "es_repr_r": "p. 9",
+      "es_type_o": "etasq",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": "1 (one)",
+      "pval_tails_r": "1 (one)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "There were no main effect of weight on the\nimportance of having a voice in a decision-making procedure, importance of a book, and\nimportance of healthy eating. However, the present design was slightly different, as the authors\nincluded three (counterbalanced) assessments of the effects. When the authors conducted the\nanalysis on the first measurement only in the counterbalanced design, they found the effects on\nthe perceived importance of a book, but with a smaller effect size than the original."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/0f486d842c61ee89. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_0f486d842c61ee89_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

@@ -1,0 +1,117 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1075": {
+      "source_key": "0ef0bc33b3ab9b99",
+      "side": "original",
+      "input": {
+        "ref_o": "Blackwell, L. S., Trzesniewski, K. H., & Dweck, C. S. (2007). Implicit Theories of Intelligence Predict Achievement Across an Adolescent Transition: A Longitudinal Study and an Intervention. Child Development, 78(1), 246–263. Portico. https://doi.org/10.1111/j.1467-8624.2007.00995.x",
+        "doi_o": "10.1111/j.1467-8624.2007.00995.x",
+        "study_o": "1",
+        "ref_r": "Li, Y., & Bates, T. C. (2020). Testing the association of growth mindset and grades across a challenging transition: Is growth mindset associated with grades? Intelligence, 81, 101471. https://doi.org/10.1016/j.intell.2020.101471",
+        "doi_r": "10.1016/j.intell.2020.101471",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Relationship between growth mindset and change in grades during a challenging educational transition.",
+        "locators_o": "p. 6",
+        "locators_r": "p. 6",
+        "audit_id": 1075,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4e196c649ece2e20121bb918.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1 HLM: theory of intelligence predicting change in mathematics grades over four assessments across seventh and eighth grades, controlling cohort indicators at Level 2.",
+      "worker_notes": "Identity independently checked: title Implicit Theories of Intelligence Predict Achievement Across an Adolescent Transition: A Longitudinal Study and an Intervention; authors Lisa S. Blackwell, Kali H. Trzesniewski, Carol Sorich Dweck; Child Development, January/February 2007, Volume 78, Number 1, Pages 246–263. Wiley header identifies DOI 10.1111/j.1467-8624.2007.00995.x. This is a primary article with Study 1 methods/results, Study 2, references and appendices, not an abstract or secondary report. No PDF supplied. Page-6 locator and change-in-grades description identify the HLM theory-by-time slope effect .53, t = 2.93, p < .05. Canonical text renders the symbol as b; standardised-beta identity is not established, so no conversion or standardisation claim is made. Distinct candidates outside this target: p. 251 endpoint regressions .17 and .10 with different covariates; p. 252 single-factor mediation theory effects .20 before and .11 after the mediator. Study 1 overall participant count is 373; Figure 2 explicitly reports N = 373 for a separate SEM process model. Neither establishes an explicit analytic N for the target HLM or endpoint regressions. Target-test exclusions are not specified. No N sum or df-based derivation performed. Unassigned replication and success fields are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4e196c649ece2e20121bb918.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Growth mindset is associated with the change of grades in a challenging educational transition.",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "p. 6",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Contrary to prediction, mindset was not associated with grades across the challenging transition from high-\nschool to the first year of university (β = −0.05 CI95 [−0.14, 0.05], t = −0.95, p = .345)."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1075,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".53",
+        "metric": "b (canonical printed symbol; standardisation not established)",
+        "test_statistic": "t = 2.93",
+        "location": "p. 251 (sixth article page), Relation of Theory of Intelligence to Mathematics Grade Growth Trajectories",
+        "quote": "However, there was a significant effect of ... theory of intelligence on change in grades (b 5 .53, ... t 5 2.93, po.05).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4e196c649ece2e20121bb918.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1075,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Retain printed HLM coefficient .53 and t = 2.93. Requested beta (std) identity is not established by this text; metric retained as canonical b without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4e196c649ece2e20121bb918.txt",
+        "location": "p. 251 (sixth article page), Relation of Theory of Intelligence to Mathematics Grade Growth Trajectories",
+        "quote": "However, there was a significant effect of ... theory of intelligence on change in grades (b 5 .53, ... t 5 2.93, po.05).",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.53",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1075,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 251 (sixth article page), Relation of Theory of Intelligence to Mathematics Grade Growth Trajectories",
+        "quote": "However, there was a significant effect of ... theory of intelligence on change in grades (b 5 .53, ... t 5 2.93, po.05).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4e196c649ece2e20121bb918.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1075,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Canonical po.05 gives strict p < .05 for the same HLM change effect as coefficient .53 and t = 2.93.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4e196c649ece2e20121bb918.txt",
+        "location": "p. 251 (sixth article page), Relation of Theory of Intelligence to Mathematics Grade Growth Trajectories",
+        "quote": "However, there was a significant effect of ... theory of intelligence on change in grades (b 5 .53, ... t 5 2.93, po.05).",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/0ef0bc33b3ab9b99. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_0ef0bc33b3ab9b99_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
