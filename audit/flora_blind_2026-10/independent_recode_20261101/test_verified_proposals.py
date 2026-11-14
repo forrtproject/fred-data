@@ -1,0 +1,1145 @@
+"""Reject incompatible fixes even when individual model outputs are valid."""
+import hashlib
+import json
+import subprocess
+from pathlib import Path
+import tempfile
+import unittest
+
+from build_verified_proposals import BASELINE_SHA, checked_replacements, completed_field_work, current_alignment, digest, ids, metadata_title, original_alias_replacements, original_alignment, original_doi_alignment, original_identifier_alignment, original_replacements, record_removal, replacement_quote, retained_target_scope_review, review_field_dispositions, review_row_binding
+
+
+class ProposalDependencies(unittest.TestCase):
+    def setUp(self):
+        self.row = {'type': 'replication', 'outcome': 'failed'}
+        self.result = {'record_type': 'reproduction'}
+        self.target = {'outcome': '', 'outcome_computation': 'computational issues',
+                       'outcome_robustness': 'robustness challenges'}
+
+    def external_snapshot_fixture(self, directory):
+        row={'doi_o':'original','doi_r':'current','outcome':'mixed'}
+        snapshot=dict(input_row_index_zero_based=0,row=row,row_sha256_sorted_json=
+                      hashlib.sha256(json.dumps(row,ensure_ascii=False,sort_keys=True).encode()).hexdigest())
+        path=Path(directory)/'baseline_snapshot.json'
+        path.write_text(json.dumps(dict(frozen_csv_sha256=BASELINE_SHA,rows_total=1,rows={'0':snapshot})))
+        receipt=dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),review_file_sha256='review-hash')
+        review=dict(frozen_csv=dict(baseline_snapshot=path.name))
+        return row,review,receipt
+
+    def test_external_full_snapshot_binds_review_and_entire_record(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,review,receipt=self.external_snapshot_fixture(directory)
+            review_row_binding(review,0,[row],review_sha256='review-hash',snapshot_receipt=receipt)
+            with self.assertRaisesRegex(AssertionError,'another frozen row'):
+                review_row_binding(review,0,[dict(row,outcome='failed')],review_sha256='review-hash',snapshot_receipt=receipt)
+
+    def test_legacy_csv_path_keeps_embedded_full_snapshot_checks(self):
+        row={'doi_o':'original','doi_r':'current'}
+        review=dict(frozen_csv='/path/to/input.csv',baseline_snapshot={'0':dict(
+                    input_row_index_zero_based=0,row=row,row_sha256_sorted_json=
+                    hashlib.sha256(json.dumps(row,ensure_ascii=False,sort_keys=True).encode()).hexdigest())})
+        review_row_binding(review,0,[row])
+        with self.assertRaisesRegex(AssertionError,'another frozen row'):
+            review_row_binding(review,0,[dict(row,doi_r='other')])
+
+    def test_external_snapshot_requires_exact_file_and_review_receipt(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,review,receipt=self.external_snapshot_fixture(directory)
+            with self.assertRaisesRegex(AssertionError,'bound receipt'):
+                review_row_binding(review,0,[row],review_sha256='review-hash')
+            for changes in [dict(sha256='wrong'),dict(review_file_sha256='another-review')]:
+                with self.subTest(changes=changes),self.assertRaises(AssertionError):
+                    review_row_binding(review,0,[row],review_sha256='review-hash',snapshot_receipt=dict(receipt,**changes))
+
+    def test_external_snapshot_cannot_omit_row_or_conflict_with_embedded_snapshot(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,review,receipt=self.external_snapshot_fixture(directory)
+            with self.assertRaisesRegex(AssertionError,'Conflicting'):
+                review_row_binding(dict(review,baseline_snapshot={'0':{}}),0,[row],review_sha256='review-hash',snapshot_receipt=receipt)
+            path=Path(receipt['path']);value=json.loads(path.read_text());value['rows']={};path.write_text(json.dumps(value));receipt['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError,'omits'):
+                review_row_binding(review,0,[row],review_sha256='review-hash',snapshot_receipt=receipt)
+
+
+    def printed_alias_fixture(self, directory):
+        canonical = '10.1037/0022-3514.68.5.793'
+        literal = '10.1037//0022-3514.68.5.793'
+        path = Path(directory) / 'handle.json'
+        path.write_text(json.dumps(dict(responseCode=1, handle=literal, values=[
+            dict(type='HS_ALIAS', data=dict(value=canonical))])))
+        receipt = dict(kind='registered_doi_alias', canonical_doi=canonical,
+                       literal_extracted_doi=literal, handle_receipt=dict(
+                           path=str(path), sha256=hashlib.sha256(path.read_bytes()).hexdigest()))
+        return dict(doi_o=canonical), dict(doi=literal), receipt
+
+    def test_printed_registered_alias_aligns_without_mutating_either_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.printed_alias_fixture(directory)
+            before = json.dumps([row, target], sort_keys=True)
+            original_doi_alignment(row, target, receipt)
+            self.assertEqual(json.dumps([row, target], sort_keys=True), before)
+
+    def test_printed_alias_needs_exact_handle_and_single_canonical_alias(self):
+        for mutation in ('different-handle', 'no-alias', 'different-canonical', 'two-aliases', 'bad-hash'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+                row, target, receipt = self.printed_alias_fixture(directory)
+                path = Path(receipt['handle_receipt']['path']); handle = json.loads(path.read_text())
+                if mutation == 'different-handle': handle['handle'] += 'x'
+                elif mutation == 'no-alias': handle['values'] = []
+                elif mutation == 'different-canonical': handle['values'][0]['data']['value'] += 'x'
+                elif mutation == 'two-aliases': handle['values'] *= 2
+                path.write_text(json.dumps(handle))
+                receipt['handle_receipt']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+                if mutation == 'bad-hash': receipt['handle_receipt']['sha256'] = 'wrong'
+                with self.assertRaises(AssertionError): original_doi_alignment(row, target, receipt)
+
+    def published_order_fixture(self, directory):
+        # A real PDF keeps the source-equivalence gate under test, without a mock extractor.
+        packet = Path(directory); pdf = packet / 'report.pdf'
+        content = b'BT /F1 12 Tf 50 700 Td (The replication was partly successful.) Tj ET'
+        objects = [b'<< /Type /Catalog /Pages 2 0 R >>',
+                   b'<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+                   b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+                   b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+                   b'<< /Length ' + str(len(content)).encode() + b' >>\nstream\n' + content + b'\nendstream']
+        raw = b'%PDF-1.4\n'; offsets = []
+        for index, obj in enumerate(objects, 1):
+            offsets.append(len(raw)); raw += str(index).encode() + b' 0 obj\n' + obj + b'\nendobj\n'
+        xref = len(raw); raw += b'xref\n0 6\n0000000000 65535 f \n'
+        raw += b''.join(f'{offset:010} 00000 n \n'.encode() for offset in offsets)
+        raw += b'trailer << /Size 6 /Root 1 0 R >>\nstartxref\n' + str(xref).encode() + b'\n%%EOF\n'
+        pdf.write_bytes(raw)
+        article = packet / 'article.txt'
+        article.write_bytes(subprocess.run(['pdftotext', '-layout', str(pdf), '-'], check=True, capture_output=True).stdout)
+        published = packet / 'published.txt'
+        published.write_bytes(subprocess.run(['pdftotext', str(pdf), '-'], check=True, capture_output=True).stdout)
+        image = packet / 'view.png'; image.write_bytes(b'parent-inspected-page-receipt')
+        quote = 'The replication was partly successful.'; text = published.read_text()
+        targets = [dict(outcome_quote='raw first layout quote'), dict(outcome_quote='raw second layout quote')]
+        h = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+        receipt = dict(kind='same_pdf_published_reading_order', raw_outcome_quotes_sha256=[
+            hashlib.sha256(t['outcome_quote'].encode()).hexdigest() for t in targets],
+            pdf_path=str(pdf), pdf_sha256=h(pdf), registered_source_sha256=h(article),
+            published_reading_order_path=str(published), published_reading_order_sha256=h(published),
+            page=1, page_image_path=str(image), page_image_sha256=h(image), root_visually_inspected=True,
+            clean_quote=quote, quote_character_start=text.index(quote), quote_character_end=text.index(quote)+len(quote))
+        path = packet / 'receipt.json'; path.write_text(json.dumps(receipt))
+        decision = dict(replacement_quote_field='outcome_quote', published_quote_receipt=dict(path=str(path), sha256=h(path)))
+        return packet, decision, targets, receipt
+
+    def test_published_quote_replays_same_pdf_and_preserves_raw_codings(self):
+        with tempfile.TemporaryDirectory() as directory:
+            packet, decision, targets, receipt = self.published_order_fixture(directory)
+            before = json.dumps(targets)
+            quote, evidence = replacement_quote(packet, decision, *targets)
+            self.assertEqual(quote, receipt['clean_quote'])
+            self.assertEqual(json.dumps(targets), before)
+            self.assertTrue(evidence['raw_blind_quotes_preserved'])
+            self.assertEqual(Path(evidence['source_path']).read_text()[evidence['character_start']:evidence['character_end']], quote)
+
+    def test_published_quote_rejects_stale_source_pdf_or_coding(self):
+        for mutation in ('pdf', 'registered-source', 'saved-extraction', 'raw-coder', 'receipt-hash'):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+                packet, decision, targets, receipt = self.published_order_fixture(directory)
+                if mutation == 'raw-coder': targets[1]['outcome_quote'] += ' changed'
+                elif mutation == 'receipt-hash': decision['published_quote_receipt']['sha256'] = 'wrong'
+                else:
+                    path = packet / {'pdf': 'report.pdf', 'registered-source': 'article.txt',
+                                     'saved-extraction': 'published.txt'}[mutation]
+                    path.write_bytes(path.read_bytes() + b'changed')
+                with self.assertRaises(AssertionError): replacement_quote(packet, decision, *targets)
+
+    def test_published_quote_rejects_forged_extraction_even_with_updated_hash(self):
+        with tempfile.TemporaryDirectory() as directory:
+            packet, decision, targets, receipt = self.published_order_fixture(directory)
+            source = packet / 'published.txt'; source.write_text('Injected successful verdict.')
+            receipt['published_reading_order_sha256'] = hashlib.sha256(source.read_bytes()).hexdigest()
+            path = Path(decision['published_quote_receipt']['path']); path.write_text(json.dumps(receipt))
+            decision['published_quote_receipt']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'exact extraction'): replacement_quote(packet, decision, *targets)
+
+    def test_published_quote_needs_exact_offsets_inspected_page_and_both_coders(self):
+        for changes in [dict(quote_character_start=999), dict(page=2), dict(root_visually_inspected=False),
+                        dict(raw_outcome_quotes_sha256=[]), dict(clean_quote='partly ... successful')]:
+            with self.subTest(changes=changes), tempfile.TemporaryDirectory() as directory:
+                packet, decision, targets, receipt = self.published_order_fixture(directory)
+                receipt.update(changes); path = Path(decision['published_quote_receipt']['path'])
+                path.write_text(json.dumps(receipt)); decision['published_quote_receipt']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+                with self.assertRaises(AssertionError): replacement_quote(packet, decision, *targets)
+
+    def sici_fixture(self, directory):
+        canonical = '10.1002/(sici)1520-6653(199924)13:1<5::aid-dir2>3.0.co;2-9'
+        literal = canonical.replace('1520-6653', '15206653')
+        row = {'doi_o': canonical, 'doi_r': '10.1/current'}
+        path = Path(directory) / 'publisher.json'
+        path.write_text(json.dumps({'message': {'DOI': row['doi_r'], 'reference': [
+            {'key': 'bibr37', 'doi-asserted-by': 'publisher', 'DOI': canonical}]}}))
+        receipt = {'canonical_doi': canonical, 'literal_extracted_doi': literal,
+                   'publisher_reference_key': 'bibr37', 'publisher_reference_metadata': {
+                       'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}}
+        return row, {'doi': literal}, receipt
+
+    def test_publisher_verified_sici_transcription_preserves_canonical_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.sici_fixture(directory)
+            before = dict(row)
+            original_doi_alignment(row, target, receipt)
+            self.assertEqual(row, before)
+            with self.assertRaisesRegex(AssertionError, 'verified transcription evidence'):
+                original_doi_alignment(row, target)
+
+    def test_sici_transcription_cannot_remove_an_article_identifier_hyphen(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.sici_fixture(directory)
+            target['doi'] = target['doi'].replace('aid-dir2', 'aiddir2')
+            receipt['literal_extracted_doi'] = target['doi']
+            with self.assertRaisesRegex(AssertionError, 'Only the SICI ISSN'):
+                original_doi_alignment(row, target, receipt)
+
+    def test_sici_transcription_requires_the_actual_current_publisher_reference(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.sici_fixture(directory)
+            receipt['publisher_reference_key'] = 'missing'
+            with self.assertRaisesRegex(AssertionError, 'canonical reference not established'):
+                original_doi_alignment(row, target, receipt)
+            receipt['publisher_reference_key'] = 'bibr37'
+            row['doi_r'] = '10.1/different-current-work'
+            with self.assertRaisesRegex(AssertionError, 'different current work'):
+                original_doi_alignment(row, target, receipt)
+
+    def test_source_review_native_field_dictionary_preserves_explicit_identity(self):
+        review = {'field_reviews': {'104.original': {
+            'input_row_index': 104, 'field_review_id': '104.original',
+            'requested_fields': ['original'], 'status': 'supported_correction'}}}
+        self.assertEqual(review_field_dispositions(review), [(104, 'original', 'supported_correction')])
+
+    def test_assigned_field_table_cannot_override_another_review_table(self):
+        review = {'assigned_fields': [{'input_row_index': 353, 'field': 'outcome',
+                                     'status': 'supported_correction'}]}
+        self.assertEqual(review_field_dispositions(review), [(353, 'outcome', 'supported_correction')])
+        review['reviews'] = []
+        with self.assertRaisesRegex(AssertionError, 'Conflicting source review field tables'):
+            review_field_dispositions(review)
+
+    def single_field_review_fixture(self):
+        row = dict(doi_o='original', doi_r='current', type='replication', outcome='mixed',
+                   outcome_quote='old quote', outcome_quote_source='abstract')
+        review = dict(kind='independent_nonblind_primary_source_adjudication', index_basis='zero-based',
+                      input_row_index=0, assigned_field='outcome', status='supported_correction',
+                      confidence='high', outcome_confident=True, current_value='mixed', recommended_value='failed',
+                      full_frozen_baseline=dict(csv_sha256=BASELINE_SHA, row_count=1,
+                                                rows=[dict(input_row_index_zero_based=0, row=dict(row))]),
+                      baseline_verification=dict(
+                          frozen_row_count=1, expected_row_count=1, columns=list(row), all_rows_parsed=True),
+                      atomic_remedy=dict(apply_together=True, before={key: row[key] for key in (
+                          'outcome', 'outcome_quote', 'outcome_quote_source')}, after=dict(outcome='failed')))
+        return row, review
+
+    def test_single_field_review_binds_explicit_outcome_and_all_dependencies(self):
+        row, review = self.single_field_review_fixture()
+        self.assertEqual(review_field_dispositions(review), [(0, 'outcome', 'supported_correction')])
+        review_row_binding(review, 0, [row])
+
+    def test_single_field_review_rejects_competing_tables(self):
+        for key in ('reviews', 'field_reviews', 'cases', 'assigned_fields', 'field_dispositions'):
+            row, review = self.single_field_review_fixture()
+            review[key] = []
+            with self.subTest(key=key), self.assertRaises(AssertionError):
+                review_field_dispositions(review)
+
+    def test_single_field_review_rejects_ambiguous_identity_and_unknown_status(self):
+        for changes in (dict(input_row_index=True), dict(input_row_index='0'), dict(input_row_index=-1),
+                        dict(index_basis='one-based'), dict(kind='other'), dict(assigned_field='type'),
+                        dict(status='unknown')):
+            row, review = self.single_field_review_fixture()
+            review.update(changes)
+            with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                review_field_dispositions(review)
+
+    def test_single_field_review_cannot_hide_redundant_identity_or_disposition(self):
+        for key in ('row_index', 'row_id', 'row', 'input_row_index_zero_based', 'field',
+                    'field_reviewed', 'requested_fields', 'field_review_id', 'case_id', 'disposition'):
+            row, review = self.single_field_review_fixture()
+            review[key] = 'conflicting'
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, 'competing'):
+                review_field_dispositions(review)
+
+    def test_single_field_review_preserves_policy_boundary_and_rejects_uncertain_correction(self):
+        row, review = self.single_field_review_fixture()
+        review.update(status='policy_boundary', confidence='moderate', outcome_confident=False)
+        self.assertEqual(review_field_dispositions(review), [(0, 'outcome', 'policy_boundary')])
+        for changes in (dict(confidence='moderate'), dict(outcome_confident=False),
+                        dict(recommended_value='mixed'), dict(recommended_value='')):
+            row, review = self.single_field_review_fixture()
+            review.update(changes)
+            with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                review_field_dispositions(review)
+
+    def test_single_field_baseline_cannot_change_unproposed_identifier_or_omit_full_scan(self):
+        for mutation in ('doi', 'columns', 'count', 'scan', 'competing-snapshot', 'wrong-row', 'current-value',
+                         'hash', 'multiple-rows', 'snapshot-row'):
+            row, review = self.single_field_review_fixture()
+            if mutation == 'doi':
+                review['full_frozen_baseline']['rows'][0]['row']['doi_o'] = 'another-original'
+            elif mutation == 'columns':
+                review['baseline_verification']['columns'].pop()
+            elif mutation == 'count':
+                review['baseline_verification']['frozen_row_count'] = 2
+            elif mutation == 'scan':
+                review['baseline_verification']['all_rows_parsed'] = False
+            elif mutation == 'competing-snapshot':
+                review['baseline_snapshot'] = {}
+            elif mutation == 'wrong-row':
+                review['input_row_index'] = 1
+            elif mutation == 'hash':
+                review['full_frozen_baseline']['csv_sha256'] = 'other-input'
+            elif mutation == 'multiple-rows':
+                review['full_frozen_baseline']['rows'] *= 2
+            elif mutation == 'snapshot-row':
+                review['full_frozen_baseline']['rows'][0]['input_row_index_zero_based'] = True
+            else:
+                review['current_value'] = 'successful'
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                review_row_binding(review, 0, [row])
+
+    def test_single_field_remedy_cannot_split_or_change_quote_dependencies(self):
+        for mutation in ('not-atomic', 'old-quote', 'old-source', 'after-value'):
+            row, review = self.single_field_review_fixture()
+            if mutation == 'not-atomic':
+                review['atomic_remedy']['apply_together'] = False
+            elif mutation == 'old-quote':
+                review['atomic_remedy']['before']['outcome_quote'] = 'another quote'
+            elif mutation == 'old-source':
+                review['atomic_remedy']['before']['outcome_quote_source'] = 'discussion'
+            else:
+                review['atomic_remedy']['after']['outcome'] = 'successful'
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                review_row_binding(review, 0, [row])
+
+    def native_review_fixture(self):
+        row = dict(type='replication', outcome='successful', doi_o='original', doi_r='current')
+        review = dict(kind='nonblind_primary_source_adjudication', status='completed',
+                      input_row_index_zero_based=0,
+                      baseline=dict(csv_sha256=BASELINE_SHA, row_count=1,
+                                    rows=[dict(input_row_index_zero_based=0, row=dict(row))]),
+                      field_dispositions=[dict(field=field, disposition='supported_correction',
+                                               baseline_value=row[field]) for field in ('type', 'outcome')])
+        return row, review
+
+    def test_native_dispositions_bind_both_fields_to_one_complete_frozen_record(self):
+        row, review = self.native_review_fixture()
+        self.assertEqual(review_field_dispositions(review),
+                         [(0, 'type', 'supported_correction'), (0, 'outcome', 'supported_correction')])
+        review_row_binding(review, 0, [row])
+
+    def test_native_dispositions_reject_competing_review_tables(self):
+        for key in ('reviews', 'field_reviews', 'cases', 'assigned_fields'):
+            row, review = self.native_review_fixture()
+            review[key] = []
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, 'Conflicting'):
+                review_field_dispositions(review)
+
+    def test_native_dispositions_reject_nested_identity_overrides(self):
+        for key in ('row', 'row_id', 'row_index', 'input_row_index', 'input_row_index_zero_based',
+                    'field_review_id', 'case_id', 'requested_fields'):
+            row, review = self.native_review_fixture()
+            review['field_dispositions'][0][key] = 1
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, 'overrides'):
+                review_field_dispositions(review)
+
+    def test_native_dispositions_reject_invalid_top_level_identity_or_state(self):
+        for changes in (dict(input_row_index_zero_based='0'), dict(input_row_index_zero_based=True),
+                        dict(input_row_index_zero_based=-1), dict(status='running'), dict(kind='other')):
+            row, review = self.native_review_fixture()
+            review.update(changes)
+            with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                review_field_dispositions(review)
+
+    def test_native_dispositions_preserve_uncertainty_and_reject_conflicting_statuses(self):
+        row, review = self.native_review_fixture()
+        review['field_dispositions'][1]['disposition'] = 'policy_boundary'
+        self.assertEqual(review_field_dispositions(review)[1], (0, 'outcome', 'policy_boundary'))
+        review['field_dispositions'][1]['status'] = 'supported_correction'
+        with self.assertRaisesRegex(AssertionError, 'Conflicting'):
+            review_field_dispositions(review)
+        row, review = self.native_review_fixture()
+        review['field_dispositions'].append(dict(review['field_dispositions'][0]))
+        with self.assertRaisesRegex(AssertionError, 'Duplicate'):
+            review_field_dispositions(review)
+
+    def test_native_baseline_cannot_change_an_unproposed_identifier_or_input(self):
+        row, review = self.native_review_fixture()
+        with self.assertRaisesRegex(AssertionError, 'frozen record'):
+            review_row_binding(review, 0, [dict(row, doi_o='another-original')])
+        for key, value in (('csv_sha256', 'wrong'), ('row_count', 2)):
+            row, review = self.native_review_fixture()
+            review['baseline'][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(AssertionError, 'another input'):
+                review_row_binding(review, 0, [row])
+
+    def test_native_baseline_rejects_missing_or_multiple_rows_and_wrong_field_values(self):
+        for mutation in ('missing-row', 'multiple-rows', 'wrong-row', 'missing-column', 'wrong-field-value'):
+            row, review = self.native_review_fixture()
+            if mutation == 'missing-row':
+                review['baseline']['rows'] = []
+            elif mutation == 'multiple-rows':
+                review['baseline']['rows'] *= 2
+            elif mutation == 'wrong-row':
+                review['baseline']['rows'][0]['input_row_index_zero_based'] = 1
+            elif mutation == 'missing-column':
+                del review['baseline']['rows'][0]['row']['doi_o']
+            else:
+                review['field_dispositions'][0]['baseline_value'] = 'reproduction'
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                review_row_binding(review, 0, [row])
+
+    def test_native_baseline_cannot_hide_behind_an_existing_snapshot_format(self):
+        row, review = self.native_review_fixture()
+        review['baseline_snapshot'] = {}
+        with self.assertRaisesRegex(AssertionError, 'Conflicting'):
+            review_row_binding(review, 0, [row])
+        del review['baseline_snapshot']
+        review['input_row_index_zero_based'] = 1
+        with self.assertRaisesRegex(AssertionError, 'another frozen row'):
+            review_row_binding(review, 0, [row, row])
+
+    def test_named_baseline_snapshot_must_match_the_entire_frozen_record(self):
+        row = {'doi_o': 'original', 'doi_r': 'current'}
+        review = {'baseline_snapshot': {'0': {'input_row_index_zero_based': 0, 'row': row,
+            'row_sha256_sorted_json': hashlib.sha256(json.dumps(row, ensure_ascii=False, sort_keys=True).encode()).hexdigest()}}}
+        review_row_binding(review, 0, [row])
+        with self.assertRaisesRegex(AssertionError, 'another frozen row'):
+            review_row_binding(review, 0, [dict(row, doi_r='another-current')])
+
+    def test_flat_hashed_baseline_cannot_hide_a_conflicting_field_snapshot(self):
+        row=dict(doi_r='current')
+        field=dict(row=0,input_row_index_zero_based=0,field='doi_r',value='current',
+                   value_sha256=hashlib.sha256(b'current').hexdigest())
+        review={'baseline_snapshot':dict(input_row_index_zero_based=0,row_sha256=digest(row),fields=[field])}
+        review_row_binding(review,0,[row])
+        field['value']='another-current'
+        with self.assertRaisesRegex(AssertionError,'baseline field differs'):
+            review_row_binding(review,0,[row])
+
+    def test_complete_csv_snapshot_preserves_declared_embedded_crlf(self):
+        literal=dict(bibtex_ref_r='line1\r\nline2');parsed=dict(bibtex_ref_r='line1\nline2')
+        field=dict(row=0,input_row_index_zero_based=0,field='bibtex_ref_r',value=literal['bibtex_ref_r'],
+                   value_sha256=hashlib.sha256(literal['bibtex_ref_r'].encode()).hexdigest())
+        snapshot=dict(input_row_index_zero_based=0,row_sha256=digest(literal),fields=[field],reader="csv.DictReader newline=''")
+        review_row_binding({'baseline_snapshot':snapshot},0,[parsed])
+        del snapshot['reader']
+        with self.assertRaisesRegex(AssertionError,'Undeclared CSV newline'):
+            review_row_binding({'baseline_snapshot':snapshot},0,[parsed])
+
+    def doi_alias_fixture(self, directory):
+        old, canonical = '10.1//work', '10.1/work'
+        authors = [{'given': 'Ann', 'family': 'One'}]
+        row = dict(doi_o=old, doi_o_hash=hashlib.md5(old.encode()).hexdigest()[:3], title_o='Same work',
+                   author_o=json.dumps(authors), year_o='1995', journal_o='Journal', volume_o='69',
+                   issue_o='4', pages_o='603-610', apa_ref_o='Same work. '+canonical,
+                   bibtex_ref_o='DOI={'+canonical+'}', oa_url_o='https://repository.example/same-work.pdf')
+        metadata = dict(DOI=canonical, title=['Same work'], author=authors,
+                        issued={'date-parts': [[1995]]}, **{'container-title':['Journal']},
+                        volume='69', issue='4', page='603-610')
+        path = Path(directory)/'handle.json'
+        path.write_text(json.dumps(dict(responseCode=1,handle=old,values=[
+            dict(type='HS_ALIAS',data={'value':canonical})])))
+        receipt = dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+        return row, metadata, receipt
+
+    def test_registered_doi_alias_preserves_existing_same_work_bibliography(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, metadata, receipt = self.doi_alias_fixture(directory)
+            after = original_alias_replacements(row,metadata,receipt)
+            self.assertEqual(set(after), {'doi_o','doi_o_hash'})
+            self.assertEqual(after['doi_o'],metadata['DOI'])
+            self.assertEqual(after['doi_o_hash'],hashlib.md5(metadata['DOI'].encode()).hexdigest()[:3])
+            self.assertIn('repository.example',row['oa_url_o'])
+
+    def test_similar_doi_strings_without_registered_alias_cannot_be_collapsed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, metadata, receipt = self.doi_alias_fixture(directory)
+            path=Path(receipt['path']);handle=json.loads(path.read_text());handle['values']=[]
+            path.write_text(json.dumps(handle));receipt['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'does not name the canonical'):
+                original_alias_replacements(row,metadata,receipt)
+
+    def test_doi_alias_cannot_authorize_another_works_bibliography(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, metadata, receipt = self.doi_alias_fixture(directory)
+            metadata['title']=['Another work']
+            with self.assertRaisesRegex(AssertionError, 'title differs'):
+                original_alias_replacements(row,metadata,receipt)
+
+    def test_doi_alias_receipt_must_name_the_exact_frozen_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, metadata, receipt = self.doi_alias_fixture(directory)
+            row['doi_o']='10.1///work'
+            with self.assertRaisesRegex(AssertionError, 'names another identifier'):
+                original_alias_replacements(row,metadata,receipt)
+
+    def replacement_review(self):
+        return dict(input_row_index=699, field='outcome', current_value='successful',
+                    proposed_value='mixed', adjudicated_value='mixed', recommended_value='mixed',
+                    value='mixed', status='propose_change_to_mixed',
+                    disposition='replace_current_with_proposed', outcome_confident=True,
+                    policy_boundary_needed=False)
+
+    def test_deposited_subtitle_is_preserved_without_duplication(self):
+        self.assertEqual(metadata_title({'title': ['Main title'], 'subtitle': ['A question?']}),
+                         'Main title: A question?')
+        self.assertEqual(metadata_title({'title': ['Main title: A question?'], 'subtitle': ['A question?']}),
+                         'Main title: A question?')
+
+    def test_ambiguous_deposited_subtitles_are_rejected(self):
+        with self.assertRaises(AssertionError):
+            metadata_title({'title': ['Main'], 'subtitle': ['One', 'Two']})
+
+    def test_deposited_italic_markup_and_entities_are_display_formatting(self):
+        self.assertEqual(metadata_title({'title': ['<i>That</i> &amp; the claim']}), 'That & the claim')
+
+    def test_nested_field_table_cannot_override_its_case_identity(self):
+        detail = {'status': 'supported_correction', 'recommended_value': 'mixed'}
+        entry = {'case_id': '561.outcome', 'record_id': '561', 'focus': 'outcome',
+                 'field_reviews': {'outcome': detail}}
+        self.assertEqual(review_field_dispositions({'cases': [entry]}), [(561, 'outcome', 'supported_correction')])
+        detail['input_row_index'] = 562
+        with self.assertRaisesRegex(AssertionError, 'overrides case identity'):
+            review_field_dispositions({'cases': [entry]})
+
+    def test_nested_case_id_must_match_the_record_id(self):
+        entry = {'case_id': '561.outcome', 'record_id': '562', 'focus': 'outcome',
+                 'field_reviews': {'outcome': {'status': 'supported_correction'}}}
+        with self.assertRaisesRegex(AssertionError, 'Conflicting nested case identity'):
+            review_field_dispositions({'cases': [entry]})
+
+    def test_case_table_preserves_explicit_field_identity(self):
+        review = {'cases': {'2.original': {'case_id': '2.original', 'input_row_index': 2,
+                  'field': 'original', 'status': 'supported_correction'}}}
+        self.assertEqual(review_field_dispositions(review), [(2, 'original', 'supported_correction')])
+        review['cases']['2.original']['case_id'] = '3.original'
+        with self.assertRaisesRegex(AssertionError, 'Conflicting review row'):
+            review_field_dispositions(review)
+
+    def test_partial_review_baseline_cannot_name_a_different_current_work(self):
+        rows = [{'doi_r': '10.1/current', 'outcome': 'failed'}]
+        review = {'cases': [{'input_row_index': 0, 'field': 'outcome',
+                            'frozen_csv_baseline': {'doi_r': '10.1/unrelated', 'value': 'failed'}}]}
+        with self.assertRaisesRegex(AssertionError, 'baseline identifier'):
+            review_row_binding(review, 0, rows)
+
+    def row_binding_fixture(self, directory):
+        rows = [{'doi_o': 'old', 'doi_r': 'unrelated'}, {'doi_o': 'target', 'doi_r': 'current'}]
+        snapshot = {'\ufeff"doi_o"': 'old', 'doi_r': 'unrelated'}
+        review = {'cases': {'1.original': {'case_id': '1.original', 'input_row_index': 1,
+                  'field': 'original', 'status': 'supported_correction', 'frozen_row_state': snapshot}}}
+        correction = {'review_file_sha256': 'review-hash', 'baseline_sha256': BASELINE_SHA,
+            'case_bindings': {'1.original': {'input_row_index': 1,
+                'correct_frozen_full_record_sha256': digest(rows[1]),
+                'review_snapshot_sha256': digest(snapshot), 'incorrect_snapshot_row_index': 0,
+                'correction_kind': 'one_based_index_used_for_zero_based_row'}}}
+        path = Path(directory) / 'correction.json'
+        path.write_text(json.dumps(correction))
+        receipt = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+        return rows, review, receipt
+
+    def test_wrong_row_snapshot_requires_exact_parent_correction(self):
+        with tempfile.TemporaryDirectory() as directory:
+            rows, review, receipt = self.row_binding_fixture(directory)
+            with self.assertRaisesRegex(AssertionError, 'another frozen row'):
+                review_row_binding(review, 1, rows)
+            review_row_binding(review, 1, rows, receipt, 'review-hash')
+
+    def test_row_correction_cannot_authorize_another_review_or_record(self):
+        with tempfile.TemporaryDirectory() as directory:
+            rows, review, receipt = self.row_binding_fixture(directory)
+            with self.assertRaisesRegex(AssertionError, 'another review'):
+                review_row_binding(review, 1, rows, receipt, 'different-review')
+            rows[1]['doi_r'] = 'different-current'
+            with self.assertRaises(AssertionError):
+                review_row_binding(review, 1, rows, receipt, 'review-hash')
+
+    def record_removal_fixture(self):
+        result = dict(study_status='completed', record_type='not_a_replication', targets=[])
+        decision = dict(positive_record_scope_parent_verified=True, action='exclude_nonreplication_record',
+                        isolated_field_application_allowed=False, rationale='Within-paper repetition only', limits=[])
+        return result, decision
+
+    def test_record_exclusion_archives_the_complete_pair_without_field_patches(self):
+        result, decision = self.record_removal_fixture()
+        action = record_removal(self.row, 1, result, result, decision, ['proof1', 'proof2'])
+        self.assertEqual(action['operations'][0]['operation'], 'remove_row')
+        self.assertEqual(action['operations'][0]['archive_before'], self.row)
+        self.assertEqual(action['expected_before_full_record_sha256'], digest(self.row))
+        self.assertFalse(action['outcome_applicable'])
+        self.assertFalse(action['user_approval_recorded'])
+
+    def test_zero_targets_alone_cannot_authorize_record_exclusion(self):
+        result, decision = self.record_removal_fixture()
+        decision['positive_record_scope_parent_verified'] = False
+        with self.assertRaisesRegex(AssertionError, 'Omitted targets alone'):
+            record_removal(self.row, 1, result, result, decision, ['proof1', 'proof2'])
+
+    def test_record_exclusion_rejects_isolated_type_application(self):
+        result, decision = self.record_removal_fixture()
+        decision['isolated_field_application_allowed'] = True
+        with self.assertRaisesRegex(AssertionError, 'Whole-record remedy'):
+            record_removal(self.row, 1, result, result, decision, ['proof1', 'proof2'])
+
+    def test_explicit_replacement_disposition_preserves_field_identity(self):
+        self.assertEqual(review_field_dispositions(self.replacement_review()),
+                         [(699, 'outcome', 'supported_correction')])
+
+    def test_replacement_disposition_rejects_conflicting_values(self):
+        review = self.replacement_review()
+        review['adjudicated_value'] = 'successful'
+        with self.assertRaisesRegex(AssertionError, 'Conflicting replacement values'):
+            review_field_dispositions(review)
+
+    def test_replacement_disposition_rejects_uncertain_policy(self):
+        review = self.replacement_review()
+        review['policy_boundary_needed'] = True
+        with self.assertRaisesRegex(AssertionError, 'uncertain'):
+            review_field_dispositions(review)
+
+    def test_replacement_disposition_rejects_wrong_status(self):
+        review = self.replacement_review()
+        review['status'] = 'retain_current'
+        with self.assertRaisesRegex(AssertionError, 'Conflicting replacement status'):
+            review_field_dispositions(review)
+
+    def test_source_review_rejects_conflicting_row_aliases(self):
+        review = {'reviews': [{'row_index': 104, 'row_id': 'row:105', 'field': 'original',
+                               'status': 'supported_correction'}]}
+        with self.assertRaisesRegex(AssertionError, 'Conflicting review row'):
+            review_field_dispositions(review)
+
+    def test_source_review_rejects_conflicting_field_aliases(self):
+        review = {'field_reviews': {'104.original': {'input_row_index': 104,
+            'field_review_id': '104.original', 'field': 'outcome', 'status': 'supported_correction'}}}
+        with self.assertRaisesRegex(AssertionError, 'Conflicting review field'):
+            review_field_dispositions(review)
+
+    def one_author_abbreviation_fixture(self, directory, printed='Smith SM, et al.'):
+        authors = [{'family': 'Smith', 'given': 'Stephen M.'}, {'family': 'Jones', 'given': 'Ann'}]
+        row = {'title_o': 'Actual target', 'year_o': '2009', 'doi_o': '10.1/original',
+               'author_o': json.dumps(authors)}
+        target = {'title': 'Actual target', 'year': '2009', 'doi': '10.1/original', 'authors': printed}
+        path = Path(directory) / 'authors.json'
+        path.write_text(json.dumps({'message': {'DOI': '10.1/original', 'title': ['Actual target'], 'author': authors}}))
+        receipt = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                   'source_printed_authors': printed, 'source_printed_person_count': 1}
+        return row, target, receipt
+
+    def test_single_named_author_et_al_requires_matching_source_doi_and_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.one_author_abbreviation_fixture(directory)
+            original_alignment(row, target, author_receipt=receipt)
+
+    def test_single_author_abbreviation_cannot_bypass_missing_source_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.one_author_abbreviation_fixture(directory)
+            target['doi'] = ''
+            with self.assertRaisesRegex(AssertionError, 'printed matching DOI'):
+                original_alignment(row, target, author_receipt=receipt)
+
+    def test_single_author_abbreviation_requires_matching_first_author_initials(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.one_author_abbreviation_fixture(directory, 'Smith SJ, et al.')
+            with self.assertRaisesRegex(AssertionError, 'first-author initials differ'):
+                original_alignment(row, target, author_receipt=receipt)
+
+    def scope_fixture(self, directory, original_status='retain_current'):
+        row = {'doi_o': '10.1/original', 'title_o': 'Actual retested study', 'type': 'replication'}
+        review = {'field_reviews': [
+            {'field_id': '403.original', 'status': original_status,
+             'recommended_value': {'doi_o': row['doi_o'], 'title_o': row['title_o']}},
+            {'field_id': '403.type', 'status': 'retain_current', 'recommended_value': 'replication'},
+            {'field_id': '403.outcome', 'status': 'supported_correction', 'recommended_value': 'mixed'}]}
+        directory = Path(directory)
+        (directory / 'review.json').write_text(json.dumps(review))
+        validation = {'proof_count_verified': 1,
+                      'review_file_sha256': hashlib.sha256((directory / 'review.json').read_bytes()).hexdigest(),
+                      'parent_corrections': ['Raw reviewer provenance error preserved and corrected.']}
+        for name, value in [('parent_validation.json', validation), ('sources_and_proofs.json', {}),
+                            ('reading_manifest.json', {})]:
+            (directory / name).write_text(json.dumps(value))
+        receipt = {'directory': str(directory), 'file_hashes': {
+            p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in directory.iterdir()}}
+        return receipt, row
+
+    def test_resolved_target_objection_keeps_raw_review_and_parent_corrections_bound(self):
+        with tempfile.TemporaryDirectory() as directory:
+            receipt, row = self.scope_fixture(directory)
+            retained_target_scope_review(receipt, 403, row, 'mixed')
+            with self.assertRaisesRegex(AssertionError, 'disposition differs'):
+                retained_target_scope_review(receipt, 403, row, 'successful')
+
+    def test_matching_conditional_outcome_does_not_resolve_target_policy_boundary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            receipt, row = self.scope_fixture(directory, 'policy_boundary')
+            with self.assertRaisesRegex(AssertionError, 'objection remains unresolved: original'):
+                retained_target_scope_review(receipt, 403, row, 'mixed')
+
+    def test_target_scope_parent_corrections_cannot_change_after_acceptance(self):
+        with tempfile.TemporaryDirectory() as directory:
+            receipt, row = self.scope_fixture(directory)
+            (Path(directory) / 'parent_validation.json').write_text('{}')
+            with self.assertRaisesRegex(AssertionError, 'evidence changed: parent_validation'):
+                retained_target_scope_review(receipt, 403, row, 'mixed')
+
+    def test_field_set_requires_both_coders_to_establish_a_completed_study(self):
+        completed_field_work({'study_status': 'completed'}, {'study_status': 'completed'})
+
+    def test_job_completion_cannot_substitute_for_empirical_study_completion(self):
+        for status in ['planned', 'in_progress', 'unclear', None]:
+            with self.subTest(status=status), self.assertRaisesRegex(AssertionError, 'record-level remedy'):
+                completed_field_work({'status': 'done', 'study_status': status},
+                                     {'status': 'done', 'study_status': 'completed'})
+
+    def test_printed_or_retained_doi_still_requires_authoritative_title_verification(self):
+        row = {'doi_o': '10.1/original', 'title_o': 'Actual paper'}
+        with self.assertRaisesRegex(AssertionError, 'authoritative metadata'):
+            original_identifier_alignment(row, None)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'metadata.json'
+            path.write_text(json.dumps({'message': {'DOI': '10.1/original', 'title': ['Actual paper']}}))
+            receipt = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+            original_identifier_alignment(row, receipt)
+            path.write_text(json.dumps({'message': {'DOI': '10.1/original', 'title': ['Different paper']}}))
+            receipt['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'different title'):
+                original_identifier_alignment(row, receipt)
+
+    def test_type_conversion_cannot_ship_as_an_outcome_only_fix(self):
+        decision = {'proposal_fields': ['outcome'], 'replacement_fields': {
+                    'outcome': 'computational issues, robustness challenges'}}
+        with self.assertRaisesRegex(AssertionError, 'joint remedy'):
+            checked_replacements(self.row, self.result, self.target, decision)
+
+    def test_joint_conversion_preserves_both_result_axes(self):
+        fields = {'type': 'reproduction', 'outcome': 'computational issues, robustness challenges'}
+        decision = {'proposal_fields': ['type', 'outcome'], 'replacement_fields': fields}
+        self.assertEqual(checked_replacements(self.row, self.result, self.target, decision), fields)
+
+    def test_individually_valid_but_different_outcome_cannot_enter_fix(self):
+        decision = {'proposal_fields': ['outcome'], 'replacement_fields': {'outcome': 'successful'}}
+        with self.assertRaisesRegex(AssertionError, 'independently coded'):
+            checked_replacements(self.row, {'record_type': 'replication'}, {'outcome': 'mixed'}, decision)
+
+    def test_uncertified_identity_change_cannot_hide_in_field_bundle(self):
+        decision = {'proposal_fields': ['outcome'], 'replacement_fields': {
+                    'outcome': 'mixed', 'doi_o': '10.1/another-original'}}
+        with self.assertRaisesRegex(AssertionError, 'Unvalidated field'):
+            checked_replacements(self.row, {'record_type': 'replication'}, {'outcome': 'mixed'}, decision)
+
+    def test_axis_fix_preserves_the_other_axis_and_replaces_complete_csv_value(self):
+        row = {'type': 'reproduction', 'outcome': 'computational issues, robust'}
+        target = {'outcome_computation': 'computationally reproducible', 'outcome_robustness': 'robust'}
+        decision = {'proposal_fields': ['outcome_computation'], 'replacement_fields': {
+                    'outcome': 'computationally reproducible, robust'}}
+        self.assertEqual(checked_replacements(row, self.result, target, decision), decision['replacement_fields'])
+        target['outcome_robustness'] = 'robustness challenges'
+        with self.assertRaisesRegex(AssertionError, 'dependent reproduction axis'):
+            checked_replacements(row, self.result, target, decision)
+
+    def test_axis_fix_requires_both_axes_and_correct_csv_encoding(self):
+        row = {'type': 'reproduction', 'outcome': 'computational issues, robustness not checked'}
+        decision = {'proposal_fields': ['outcome_computation'], 'replacement_fields': {
+                    'outcome': 'computationally reproducible, robustness not checked'}}
+        target = {'outcome_computation': 'computationally reproducible', 'outcome_robustness': 'not checked'}
+        self.assertEqual(checked_replacements(row, self.result, target, decision), decision['replacement_fields'])
+        target['outcome_robustness'] = ''
+        with self.assertRaisesRegex(AssertionError, 'Both reproduction axes'):
+            checked_replacements(row, self.result, target, decision)
+
+    def test_pair_check_recognizes_doi_and_osf_alias_forms(self):
+        a = {'doi_r': 'https://doi.org/10.17605/OSF.IO/ABC12', 'alt_identifier_r': 'https://doi.org/10.1111/Example'}
+        b = {'doi_r': 'https://osf.io/abc12/', 'alt_identifier_r': '10.1111/example'}
+        self.assertEqual(ids(a, 'r'), ids(b, 'r'))
+
+    def test_non_doi_report_requires_its_exact_registered_source_url(self):
+        url = 'https://example.org/Report.pdf'
+        row = {'doi_r': 'NA', 'alt_identifier_r': 'NA', 'url_r': url}
+        source = {'parent_work_key': url.lower(), 'metadata': {'source_url': url}}
+        current_alignment(row, source)
+        source['metadata']['source_url'] = 'https://example.org/AnotherReport.pdf'
+        with self.assertRaisesRegex(AssertionError, 'source URL differs'):
+            current_alignment(row, source)
+
+    def test_url_cannot_bypass_a_disagreeing_current_doi(self):
+        row = {'doi_r': '10.1/actual', 'url_r': 'https://example.org/Report.pdf'}
+        source = {'parent_work_key': row['url_r'].lower(), 'metadata': {'source_url': row['url_r']}}
+        with self.assertRaisesRegex(AssertionError, 'identifier differs'):
+            current_alignment(row, source)
+
+    def osf_file_fixture(self, directory):
+        guid='abc12'
+        row=dict(doi_r='NA',alt_identifier_r='NA',url_r='https://osf.io/'+guid)
+        source=dict(parent_work_key=row['url_r'],metadata={'source_url':'https://osf.io/download/'+guid+'/'})
+        file=dict(id=guid,type='files',attributes=dict(guid=guid,kind='file'),links=dict(
+            self='https://api.osf.io/v2/files/'+guid+'/',iri=row['url_r'],download=source['metadata']['source_url']))
+        path=Path(directory)/'file.json';path.write_text(json.dumps({'data':file}))
+        receipt=dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+        return row,source,receipt
+
+    def test_osf_file_page_and_download_require_authoritative_same_file_binding(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,source,receipt=self.osf_file_fixture(directory)
+            with self.assertRaisesRegex(AssertionError,'Current source URL differs'):
+                current_alignment(row,source)
+            current_alignment(row,source,receipt)
+            source['metadata']['source_url']='https://osf.io/download/other/'
+            with self.assertRaisesRegex(AssertionError,'not the registered file'):
+                current_alignment(row,source,receipt)
+
+    def test_osf_file_receipt_cannot_bypass_a_different_current_identifier(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,source,receipt=self.osf_file_fixture(directory);row['doi_r']='10.1/unrelated'
+            with self.assertRaisesRegex(AssertionError,'Current DOI or alternate identifier differs'):
+                current_alignment(row,source,receipt)
+
+    def econstor_fixture(self, directory):
+        root = Path(directory)
+        handle = 'https://hdl.handle.net/10419/12345'
+        download = 'https://www.econstor.eu/bitstream/10419/12345/1/DP180.pdf'
+        row = dict(doi_r='NA', alt_identifier_r='https://osf.io/abc12/',
+                   url_r=handle, title_r='A report (Discussion Paper Series No')
+        article = root / 'article.txt'
+        article.write_text('A report\nThis version is available at:\n' + handle)
+        repository = root / 'repository.html'
+        repository.write_text('<meta name="DC.identifier" content="' + handle + '">'
+                              '<meta name="citation_title" content="A report">'
+                              '<meta name="citation_pdf_url" content="' + download + '">')
+        node = root / 'project.json'
+        node.write_text(json.dumps({'data': dict(id='abc12', type='nodes',
+            links={'self': 'https://api.osf.io/v2/nodes/abc12/'},
+            attributes={'description': 'Two reports: ' + download.replace('www.', '')
+                        + ' and https://econstor.eu/bitstream/10419/67890/1/DP162.pdf'})}))
+        file = lambda p, **extra: dict(path=str(p), sha256=hashlib.sha256(p.read_bytes()).hexdigest(), **extra)
+        binding = dict(kind='econstor_handle_with_shared_osf_project',
+                       repository_metadata=file(repository, url='https://www.econstor.eu/handle/10419/12345'),
+                       osf_project_metadata=file(node, url='https://api.osf.io/v2/nodes/abc12/'),
+                       primary_text=file(article))
+        source = dict(parent_work_key=handle, metadata={'source_url': download},
+                      source_checks={'raw_sha256': binding['primary_text']['sha256']})
+        path = root / 'binding.json'
+        path.write_text(json.dumps(binding))
+        receipt = dict(kind=binding['kind'], **file(path))
+        return row, source, receipt, binding
+
+    def test_exact_repository_report_can_belong_to_a_shared_project(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            current_alignment(row, source, receipt)
+
+    def test_shared_project_cannot_substitute_another_pdf(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            source['metadata']['source_url'] = source['metadata']['source_url'].replace('DP180', 'DP162')
+            with self.assertRaisesRegex(AssertionError, 'another PDF'):
+                current_alignment(row, source, receipt)
+
+    def test_shared_project_receipt_cannot_override_a_different_handle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            row['url_r'] = 'https://hdl.handle.net/10419/67890'
+            with self.assertRaisesRegex(AssertionError, 'Different report handle'):
+                current_alignment(row, source, receipt)
+
+    def test_report_membership_requires_the_project_to_name_that_report(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            path = Path(binding['osf_project_metadata']['path'])
+            node = json.loads(path.read_text())
+            node['data']['attributes']['description'] = 'Only https://econstor.eu/bitstream/10419/67890/1/DP162.pdf'
+            path.write_text(json.dumps(node))
+            binding['osf_project_metadata']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            bp = Path(receipt['path']); bp.write_text(json.dumps(binding))
+            receipt['sha256'] = hashlib.sha256(bp.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'does not identify this report'):
+                current_alignment(row, source, receipt)
+
+    def test_repository_binding_cannot_override_a_different_project(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            row['alt_identifier_r'] = 'https://osf.io/other/'
+            with self.assertRaisesRegex(AssertionError, 'Different OSF project'):
+                current_alignment(row, source, receipt)
+
+    def test_project_report_link_must_be_exact_not_a_filename_prefix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            path = Path(binding['osf_project_metadata']['path'])
+            node = json.loads(path.read_text())
+            node['data']['attributes']['description'] = source['metadata']['source_url'] + '-another-report'
+            path.write_text(json.dumps(node))
+            binding['osf_project_metadata']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            bp = Path(receipt['path']); bp.write_text(json.dumps(binding))
+            receipt['sha256'] = hashlib.sha256(bp.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'does not identify this report'):
+                current_alignment(row, source, receipt)
+
+    def test_repository_binding_cannot_bypass_an_unverified_doi(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            row['doi_r'] = '10.1/another'
+            with self.assertRaisesRegex(AssertionError, 'DOI needs its own'):
+                current_alignment(row, source, receipt)
+
+    def test_repository_binding_rejects_changed_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, source, receipt, binding = self.econstor_fixture(directory)
+            Path(binding['repository_metadata']['path']).write_text('Another report')
+            with self.assertRaisesRegex(AssertionError, 'evidence changed'):
+                current_alignment(row, source, receipt)
+
+    def author_typo_fixture(self,directory):
+        authors=[dict(given='Luca',family='Rinaldi'),dict(given='Samuel',family='Di Luca'),
+                 dict(given='Avishai',family='Henik'),dict(given='Luisa',family='Girelli')]
+        row=dict(doi_o='10.1/original',title_o='Same work',year_o='2016',author_o=json.dumps(authors))
+        printed='Rinaldi, L., Di Luca, S., Henik, A., & Girell, L.'
+        target=dict(doi='',title='Same work',year='2016',authors=printed)
+        path=Path(directory)/'authors.json';path.write_text(json.dumps({'message':dict(
+            DOI=row['doi_o'],title=[row['title_o']],author=authors)}))
+        receipt=dict(path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+            source_printed_authors=printed,source_printed_person_count=4,
+            source_author_transcription=dict(author_index=3,canonical_family='Girelli',
+                printed_family='Girell',kind='missing_final_character'))
+        return row,target,receipt
+
+    def test_bound_final_character_author_typo_preserves_literal_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,target,receipt=self.author_typo_fixture(directory)
+            original_alignment(row,target,author_receipt=receipt)
+            self.assertTrue(target['authors'].endswith('Girell, L.'))
+
+    def test_author_typo_cannot_replace_a_different_internal_character(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,target,receipt=self.author_typo_fixture(directory)
+            receipt['source_author_transcription']['printed_family']='Garell'
+            with self.assertRaisesRegex(AssertionError,'Unverified author transcription'):
+                original_alignment(row,target,author_receipt=receipt)
+
+    def test_author_typo_requires_all_printed_authors_instead_of_a_prefix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row,target,receipt=self.author_typo_fixture(directory);receipt['source_printed_person_count']=3
+            with self.assertRaisesRegex(AssertionError,'complete printed author list'):
+                original_alignment(row,target,author_receipt=receipt)
+
+    def test_abbreviated_author_list_requires_registered_metadata(self):
+        row = {'title_o': 'Actual paper', 'year_o': '2015', 'doi_o': '10.1/original',
+               'author_o': json.dumps([{'given': 'A', 'family': 'One'}, {'given': 'B', 'family': 'Two'},
+                                       {'given': 'C', 'family': 'Three'}])}
+        target = {'title': 'Actual paper', 'year': '2015', 'doi': '10.1/original', 'authors': 'One A, Two B'}
+        with self.assertRaisesRegex(AssertionError, 'abbreviated'):
+            original_alignment(row, target)
+
+    def test_metadata_verifies_abbreviation_and_known_consortium_name_loss(self):
+        authors = [{'name': 'Consortium', 'sequence': 'first'}, {'given': 'A', 'family': 'One'},
+                   {'given': 'B', 'family': 'Two'}, {'given': 'C', 'family': 'Three'}]
+        frozen = [{'sequence': 'first'}] + authors[1:]
+        row = {'title_o': 'Actual paper', 'year_o': '2015', 'doi_o': '10.1/original',
+               'author_o': json.dumps(frozen)}
+        target = {'title': 'Actual paper', 'year': '2015', 'doi': '10.1/original', 'authors': 'One A, Two B'}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'metadata.json'
+            path.write_text(json.dumps({'message': {'DOI': '10.1/original', 'title': ['Actual paper'], 'author': authors}}))
+            receipt = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest(),
+                       'source_printed_authors': 'One A Two B', 'source_printed_person_count': 2}
+            original_alignment(row, target, author_receipt=receipt)
+            self.assertEqual(json.loads(row['author_o']), frozen)
+            authors[0] = {'given': 'Missing', 'family': 'Person'}
+            path.write_text(json.dumps({'message': {'DOI': '10.1/original', 'title': ['Actual paper'], 'author': authors}}))
+            receipt['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'verified group'):
+                original_alignment(row, target, author_receipt=receipt)
+
+    def test_author_metadata_cannot_authorize_a_different_paper(self):
+        row = {'title_o': 'Actual paper', 'year_o': '2015', 'doi_o': '10.1/original',
+               'author_o': json.dumps([{'given': 'A', 'family': 'One'}, {'given': 'B', 'family': 'Two'}])}
+        target = {'title': 'Actual paper', 'year': '2015', 'doi': '10.1/original', 'authors': 'One A'}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'metadata.json'
+            path.write_text(json.dumps({'message': {'DOI': '10.1/different', 'title': ['Actual paper'], 'author': []}}))
+            receipt = {'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+            with self.assertRaisesRegex(AssertionError, 'metadata DOI differs'):
+                original_alignment(row, target, author_receipt=receipt)
+
+    def jats_etal_fixture(self, directory):
+        authors = [dict(given='Peter J.', family='Schmidt'), dict(given='Lynnette K.', family='Nieman'),
+                   dict(given='Merry A.', family='Danaceau'), dict(given='Linda F.', family='Adams')]
+        row = dict(doi_o='10.1/original', doi_r='10.1/current', title_o='Actual paper', year_o='1998',
+                   author_o=json.dumps(authors))
+        target = dict(doi='10.1/original', title='Actual paper', year='1998',
+                      authors='Schmidt, PJ, Nieman, LK, Danaceau, MA, et al.')
+        metadata = Path(directory)/'metadata.json'
+        metadata.write_text(json.dumps(dict(message=dict(DOI=row['doi_o'], title=[row['title_o']], author=authors))))
+        xml = Path(directory)/'article.xml'
+        xml.write_text('<article><front><article-meta><article-id pub-id-type="doi">10.1/current</article-id>'
+                       '</article-meta></front><back><ref-list><ref id="R3"><mixed-citation>'
+                       '<name><surname>Schmidt</surname><given-names>PJ</given-names></name>'
+                       '<name><surname>Nieman</surname><given-names>LK</given-names></name>'
+                       '<name><surname>Danaceau</surname><given-names>MA</given-names></name>'
+                       '<etal/><article-title>Actual paper</article-title><pub-id pub-id-type="doi">'
+                       '10.1/original</pub-id></mixed-citation></ref></ref-list></back></article>')
+        receipt = dict(path=str(metadata), sha256=hashlib.sha256(metadata.read_bytes()).hexdigest(),
+                       source_printed_authors='SchmidtPJ, NiemanLK, DanaceauMA', source_printed_person_count=3,
+                       source_author_abbreviation=dict(kind='jats_etal_element', path=str(xml),
+                       sha256=hashlib.sha256(xml.read_bytes()).hexdigest(), reference_id='R3'))
+        return row, target, receipt
+
+    def test_bound_jats_etal_preserves_flattened_and_rendered_author_prefixes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.jats_etal_fixture(directory)
+            before = dict(target)
+            original_alignment(row, target, author_receipt=receipt)
+            original_alignment(row, dict(target, authors='Schmidt PJ, Nieman LK, Danaceau MA'), author_receipt=receipt)
+            self.assertEqual(target, before)
+            del receipt['source_author_abbreviation']
+            with self.assertRaises(AssertionError):
+                original_alignment(row, target, author_receipt=receipt)
+
+    def test_jats_etal_requires_bound_hash_and_exact_reference(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.jats_etal_fixture(directory)
+            for changes in [dict(sha256='wrong'), dict(reference_id='R4'), dict(kind='inferred')]:
+                altered = dict(receipt, source_author_abbreviation=dict(receipt['source_author_abbreviation'], **changes))
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(row, target, author_receipt=altered)
+
+    def test_jats_etal_cannot_bind_another_current_or_original_work(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.jats_etal_fixture(directory)
+            for changes in [dict(doi_r='10.1/other'), dict(doi_o='10.1/other')]:
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(dict(row, **changes), target, author_receipt=receipt)
+
+    def test_jats_etal_rejects_missing_element_changed_author_and_false_rendering(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.jats_etal_fixture(directory)
+            path = Path(receipt['source_author_abbreviation']['path']); raw = path.read_text()
+            for value in [raw.replace('<etal/>', ''), raw.replace('<surname>Danaceau</surname>', '<surname>Other</surname>'),
+                          raw.replace('<given-names>MA</given-names>', '<given-names>PA</given-names>')]:
+                path.write_text(value); receipt['source_author_abbreviation']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+                with self.subTest(value=value), self.assertRaises(AssertionError):
+                    original_alignment(row, target, author_receipt=receipt)
+            path.write_text(raw); receipt['source_author_abbreviation']['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+            with self.assertRaises(AssertionError):
+                original_alignment(row, dict(target, authors=target['authors']+' Adams LF'), author_receipt=receipt)
+
+    def conflicting_dates_fixture(self, directory):
+        row = dict(doi_o='10.1/original', title_o='Actual paper', year_o='2020',
+                   volume_o='36', issue_o='9', pages_o='1823-1834',
+                   author_o=json.dumps([dict(family='Luna')]))
+        target = dict(doi=row['doi_o'], title=row['title_o'], year='2021', authors='Luna M')
+        metadata = dict(DOI=row['doi_o'], title=[row['title_o']], volume='36', issue='9', page='1823-1834',
+                        **{'published-online': {'date-parts': [[2021, 5, 17]]},
+                           'published-print': {'date-parts': [[2020, 12, 1]]}})
+        path = Path(directory)/'metadata.json'; path.write_text(json.dumps(dict(message=metadata)))
+        quote = 'Luna M. Actual paper. Journal. 2021;36(9):1823–1834. 10.1/original'
+        source = Path(directory)/'article.txt'; source.write_text(quote)
+        receipt = dict(path=str(path), sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                       kind='conflicting_deposited_date_fields_same_work', scope='identity_only_preserve_frozen_year',
+                       literal_reference=dict(source_path=str(source), source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                                              quote=quote, quote_sha256=hashlib.sha256(quote.encode()).hexdigest()))
+        return row, target, receipt
+
+    def test_conflicting_deposited_dates_preserve_same_work_without_changing_year(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.conflicting_dates_fixture(directory)
+            before = dict(row)
+            original_alignment(row, target, receipt)
+            self.assertEqual(row, before)
+            del receipt['kind']
+            with self.assertRaises(AssertionError):
+                original_alignment(row, target, receipt)
+
+    def test_date_conflict_cannot_authorize_an_unregistered_year_or_missing_printed_doi(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.conflicting_dates_fixture(directory)
+            for changes in [dict(year='2022'), dict(doi='')]:
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(row, dict(target, **changes), receipt)
+            with self.assertRaises(AssertionError):
+                original_alignment(dict(row, year_o='2019'), target, receipt)
+
+    def test_date_conflict_requires_a_hashed_literal_reference(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.conflicting_dates_fixture(directory)
+            for changes in [dict(source_sha256='wrong'), dict(quote_sha256='wrong'), dict(quote='not in source')]:
+                altered = dict(receipt, literal_reference=dict(receipt['literal_reference'], **changes))
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(row, target, altered)
+
+    def test_date_conflict_cannot_hide_a_different_work_issue_or_reference_year(self):
+        with tempfile.TemporaryDirectory() as directory:
+            row, target, receipt = self.conflicting_dates_fixture(directory)
+            for changes in [dict(doi_o='10.1/other'), dict(title_o='Another paper'), dict(pages_o='1-2')]:
+                with self.subTest(changes=changes), self.assertRaises(AssertionError):
+                    original_alignment(dict(row, **changes), target, receipt)
+            source = Path(receipt['literal_reference']['source_path'])
+            quote = source.read_text().replace('2021;', '2020;'); source.write_text(quote)
+            receipt['literal_reference'].update(source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
+                                                quote=quote, quote_sha256=hashlib.sha256(quote.encode()).hexdigest())
+            with self.assertRaisesRegex(AssertionError, 'printed year or issue differs'):
+                original_alignment(row, target, receipt)
+
+    def test_advance_year_requires_primary_publisher_evidence_for_later_issue(self):
+        row = {'title_o': 'Actual paper', 'year_o': '2015', 'doi_o': '10.1/original',
+               'volume_o': 'NA', 'issue_o': 'NA', 'pages_o': 'muu053',
+               'author_o': json.dumps([{'family': 'Marvel'}])}
+        target = {'title': 'Actual paper', 'year': '2016', 'doi': '10.1/original', 'authors': 'Marvel JD'}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            metadata = root / 'crossref.json'
+            metadata.write_text(json.dumps({'message': {'DOI': '10.1/original', 'title': ['Actual paper'],
+                'published-online': {'date-parts': [[2015, 1, 30]]}, 'page': 'muu053',
+                'resource': {'primary': {'URL': 'https://publisher.example/article/10.1/original'}}}}))
+            year = {'path': str(metadata), 'sha256': hashlib.sha256(metadata.read_bytes()).hexdigest()}
+            with self.assertRaisesRegex(AssertionError, 'publisher issue evidence required'):
+                original_alignment(row, target, year)
+            source = root / 'publisher.txt'
+            quote = 'Actual paper. Marvel JD. Volume 26, Issue 1, January 2016, Pages 143–158. 10.1/original'
+            source.write_text(quote)
+            printed = root / 'print.json'
+            record = {'doi': '10.1/original', 'title': 'Actual paper', 'year': '2016',
+                      'volume': '26', 'issue': '1', 'page': '143-158',
+                      'source_url': 'https://publisher.example/issue/26/1', 'source_path': str(source),
+                      'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(), 'quote': quote}
+            printed.write_text(json.dumps(record))
+            year['publisher_print_metadata_receipt'] = {'path': str(printed), 'sha256': hashlib.sha256(printed.read_bytes()).hexdigest()}
+            original_alignment(row, target, year)
+            row['volume_o'] = '26'
+            with self.assertRaisesRegex(AssertionError, 'advance-publication metadata differs'):
+                original_alignment(row, target, year)
+            row['volume_o'] = 'NA'
+            record['source_url'] = 'https://unrelated.example/issue/26/1'
+            printed.write_text(json.dumps(record))
+            year['publisher_print_metadata_receipt']['sha256'] = hashlib.sha256(printed.read_bytes()).hexdigest()
+            with self.assertRaisesRegex(AssertionError, 'registered publisher'):
+                original_alignment(row, target, year)
+
+    def test_original_remedy_replaces_all_bibliographic_fields_and_clears_old_oa(self):
+        metadata = {'DOI': '10.1111/example', 'title': ['Actual retested study.'],
+                    'container-title': ['Correct Journal'], 'volume': '53', 'issue': '4', 'page': '579-590',
+                    'author': [{'given': 'Nathalie', 'family': 'klein Selle', 'sequence': 'first'}],
+                    'published-print': {'date-parts': [[2016, 4]]},
+                    'published-online': {'date-parts': [[2015, 11, 30]]}}
+        fields = original_replacements(metadata)
+        self.assertEqual(fields['year_o'], '2016')
+        self.assertEqual(fields['title_o'], 'Actual retested study')
+        self.assertEqual(fields['journal_o'], 'Correct Journal')
+        self.assertEqual(fields['doi_o_hash'], hashlib.md5(b'10.1111/example').hexdigest()[:3])
+        self.assertEqual(fields['oa_url_o'], 'NA')
+        self.assertEqual(fields['alt_identifier_o'], 'NA')
+        self.assertEqual(json.loads(fields['author_o'])[0]['family'], 'klein Selle')
+        for key in ['apa_ref_o', 'bibtex_ref_o', 'url_o']:
+            self.assertIn('10.1111/example', fields[key])
+        self.assertEqual(set(fields), {'doi_o', 'alt_identifier_o', 'doi_o_hash', 'title_o',
+                        'author_o', 'journal_o', 'year_o', 'volume_o', 'issue_o', 'pages_o',
+                        'apa_ref_o', 'bibtex_ref_o', 'url_o', 'language_o', 'oa_url_o'})
+
+
+if __name__ == '__main__':
+    unittest.main()
