@@ -68,7 +68,7 @@ For example:
 
 For meta-papers, use individual reports where available and otherwise the main criterion used by the meta-paper's authors.
 
-Use descriptive / not applicable only when the authors state an intended re-test of a central claim but explicitly present the results descriptively without assessing agreement with the original. Missing comparison evidence alone leaves the outcome undetermined. Pure method reuse without an intended re-test does not qualify for inclusion.
+Use *descriptive only* only when the authors state an intended re-test of a central claim but explicitly present the results descriptively without assessing agreement with the original. Missing comparison evidence alone does not justify an outcome code; flag the pair for source review or re-coding. Pure method reuse without an intended re-test does not qualify for inclusion.
 
 ### How are you dealing with Preprints?
 
