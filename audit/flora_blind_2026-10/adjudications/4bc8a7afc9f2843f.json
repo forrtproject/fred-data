@@ -1,0 +1,144 @@
+{
+  "decisions": [
+    {
+      "input_row_index": 2633,
+      "field": "type",
+      "method": "argon",
+      "verdict": "shipped_right",
+      "corrected_value": "reproduction",
+      "quote": "To demonstrate our approach on empirical data, we analyze the riboflavin production dataset previously examined by Javanmard and Montanari (2014). Originally introduced by Bühlmann et al. (2014), the dataset comprises n = 71 samples and p = 4, 088 covariates representing individual gene expression levels.",
+      "location": "Data Analysis, line 185",
+      "reason": "Although the hybrid report also runs fresh Monte Carlo simulations, it performs a substantial re-analysis of the original riboflavin empirical dataset previously examined by Javanmard and Montanari (2014) using the original authors' implementation and comparator routines."
+    },
+    {
+      "input_row_index": 2633,
+      "field": "outcome",
+      "method": "argon",
+      "verdict": "both_wrong",
+      "corrected_value": {
+        "outcome_computation": "not checked",
+        "outcome_robustness": "robust"
+      },
+      "quote": "The Javanmard and Montanari method exhibited the highest precision , consistently yielding the narrowest confidence intervals and isolating signal where the Ridge and Lasso projection estimators were less sensitive. These results highlight the substantial precision gains achievable through the optimized de-biasing procedure proposed by Javanmard and Montanari (2014).",
+      "location": "Data Analysis, line 186",
+      "reason": "Evaluating the reproduction axes strictly on the re-analysis of the original riboflavin dataset rather than the newly generated simulation draws, exact recovery of the original tuned numbers was not checked (the authors switched to default configurations and added a comparator), while the original method's superior precision and signal detection remained robust across all alternative estimators tested on the empirical data."
+    },
+    {
+      "input_row_index": 2633,
+      "field": "outcome_computation",
+      "method": "argon",
+      "verdict": "shipped_right",
+      "corrected_value": "not checked",
+      "quote": "In contrast to Javanmard and Montanari (2014), who explicitly tune a regularization parameter and model optimization constraint µ, we rely on the default configurations for all methods to better reflect how these implementations are typically used in practice.",
+      "location": "Simulation Study, line 172",
+      "reason": "Reusing the authors' implementation functions does not by itself establish recovery of the original reported numbers; the authors explicitly changed the analysis plan to default parameter configurations and an expanded set of estimators without checking exact numerical recovery of Javanmard and Montanari's original riboflavin results."
+    },
+    {
+      "input_row_index": 2633,
+      "field": "outcome_robustness",
+      "method": "argon",
+      "verdict": "blind_right",
+      "corrected_value": "robust",
+      "quote": "The Javanmard and Montanari method exhibited the highest precision , consistently yielding the narrowest confidence intervals and isolating signal where the Ridge and Lasso projection estimators were less sensitive. These results highlight the substantial precision gains achievable through the optimized de-biasing procedure proposed by Javanmard and Montanari (2014).",
+      "location": "Data Analysis, line 186",
+      "reason": "The robustness axis applies only to re-analysis of the original data, not newly simulated Monte Carlo realizations; on the original riboflavin dataset, re-analysis under default configurations and against alternative estimators including the newly added LASSO projection estimator confirms the superior precision and signal isolation of Javanmard and Montanari's method."
+    }
+  ],
+  "scope_review": {
+    "prior_decisions": [
+      {
+        "input_row_index": 2633,
+        "field": "outcome_robustness",
+        "method": "argon",
+        "verdict": "shipped_right",
+        "corrected_value": "robustness challenges",
+        "quote": "Empirical evaluations across replications of the simulation study and the riboflavin dataset reveal a nuanced narrative regarding the practical performance of these estimators, highlighting a critical divergence between idealized settings and severely sample-starved, real-world applications. In the simulation study, multisample-splitting (Meinshausen et al., 2009) maintained strong statistical power, and the LASSO projection estimator (Zhang and Zhang, 2014) outperformed the Javanmard and Montanari (2014) method by demonstrating superior sensitivity in low-signal regimes. However, this dynamic reversed in a real high-dimensional genomic data setting.",
+        "location": "Discussion & Conclusion, line 191",
+        "reason": "Evaluated across all re-analyses together, the alternative specifications and inclusion of the LASSO projection estimator substantively qualify the original study's conclusions by showing that multisample-splitting retains power and the LASSO projection estimator outperforms Javanmard and Montanari's method in low-signal simulation regimes, even though the original method remains superior on the empirical riboflavin dataset."
+      }
+    ],
+    "all_prior_decisions": [
+      {
+        "input_row_index": 2633,
+        "field": "outcome_computation",
+        "method": "argon",
+        "verdict": "shipped_right",
+        "corrected_value": "not checked",
+        "quote": "In contrast to Javanmard and Montanari (2014), who explicitly tune a regularization parameter and model optimization constraint µ, we rely on the default configurations for all methods to better reflect how these implementations are typically used in practice.",
+        "location": "Simulation Study, line 172",
+        "reason": "Rather than attempting to recover the exact numerical results reported by Javanmard and Montanari (2014) under their tuned hyperparameter settings, the authors went straight to alternative specifications using default parameter configurations and an additional comparator estimator, and the blind coder's cannot_be_determined establishes no error."
+      }
+    ],
+    "prior_state": {
+      "file_key": "4bc8a7afc9f2843f",
+      "status": "validated",
+      "attempts": 1,
+      "input_sha256": "cfbcbf24f0f056bf44f8ae0dc4117b10ce70457e4bdb5bc20bf45ef5bd19775c",
+      "elapsed_seconds": 186.62524198321626,
+      "transport_timed_out_after_answer": false,
+      "closed_transport_after_valid_answer": false,
+      "transport_returncode": 0,
+      "at": "2026-10-29T15:25:06.385067+00:00"
+    },
+    "parent_objection": "The first robustness judgment uses fresh Monte Carlo draws with changed default tuning. Codebook robustness axes concern re-analysis of original data, not newly simulated samples. Supplied source explicitly generates20independent realizations;the reused riboflavin dataset instead favors Javanmard/Montanari. Does any reasonable alternative analysis of the ORIGINAL dataset materially qualify the original finding? Distinguish this from new-sample simulation comparisons. Originalauthorimplementationfunctions used for newrandom draws do not by themselves establish originaldata re-analysis. Consider recordtype if needed for hybrid report,but do not change it merely because simulation appears;the substantial actualoriginal-data workflow matters. Firstquote confirms planchange,notnecessarilyrobustnesschallengeonoriginaldata.",
+    "requested_fields": [
+      {
+        "input_row_index": 2633,
+        "field": "type"
+      },
+      {
+        "input_row_index": 2633,
+        "field": "outcome"
+      },
+      {
+        "input_row_index": 2633,
+        "field": "outcome_computation"
+      },
+      {
+        "input_row_index": 2633,
+        "field": "outcome_robustness"
+      }
+    ],
+    "first_complete_reply": {
+      "decisions": [
+        {
+          "input_row_index": 2633,
+          "field": "outcome_computation",
+          "method": "argon",
+          "verdict": "shipped_right",
+          "corrected_value": "not checked",
+          "quote": "In contrast to Javanmard and Montanari (2014), who explicitly tune a regularization parameter and model optimization constraint µ, we rely on the default configurations for all methods to better reflect how these implementations are typically used in practice.",
+          "location": "Simulation Study, line 172",
+          "reason": "Rather than attempting to recover the exact numerical results reported by Javanmard and Montanari (2014) under their tuned hyperparameter settings, the authors went straight to alternative specifications using default parameter configurations and an additional comparator estimator, and the blind coder's cannot_be_determined establishes no error."
+        },
+        {
+          "input_row_index": 2633,
+          "field": "outcome_robustness",
+          "method": "argon",
+          "verdict": "shipped_right",
+          "corrected_value": "robustness challenges",
+          "quote": "Empirical evaluations across replications of the simulation study and the riboflavin dataset reveal a nuanced narrative regarding the practical performance of these estimators, highlighting a critical divergence between idealized settings and severely sample-starved, real-world applications. In the simulation study, multisample-splitting (Meinshausen et al., 2009) maintained strong statistical power, and the LASSO projection estimator (Zhang and Zhang, 2014) outperformed the Javanmard and Montanari (2014) method by demonstrating superior sensitivity in low-signal regimes. However, this dynamic reversed in a real high-dimensional genomic data setting.",
+          "location": "Discussion & Conclusion, line 191",
+          "reason": "Evaluated across all re-analyses together, the alternative specifications and inclusion of the LASSO projection estimator substantively qualify the original study's conclusions by showing that multisample-splitting retains power and the LASSO projection estimator outperforms Javanmard and Montanari's method in low-signal simulation regimes, even though the original method remains superior on the empirical riboflavin dataset."
+        }
+      ]
+    },
+    "final_transport": {
+      "file_key": "4bc8a7afc9f2843f",
+      "substantive_attempt": 2,
+      "prompt_sha256": "af997f15f952dfd77063947b21a255f6fe75fe57480e5c3eee1851bd9a7a59c2",
+      "source_sha256": "0015307091667b9ba2f0b0f10d2e66cb9b27a1b7358d8e2f85113998f2e08e1a",
+      "transport": {
+        "returncode": 0,
+        "timed_out": false,
+        "closed_after_valid_answer": false
+      },
+      "validated": true,
+      "decisions_returned": 4,
+      "elapsed_seconds": 229.87572408560663,
+      "at": "2026-10-29T15:36:33.475022+00:00"
+    },
+    "response_sha256": "42e26add68710d4e5a213041375a547fca3632efd3c4279b2c5ddaed249f4662",
+    "parent_integration": "Accepted after inspecting Data Analysis:originalriboflavin71samples4088covariatesreanalyzed;J&Mhighestprecisionandsignal retained underdefaultconfigurations/comparatorestimators.Fresh20drawMonteCarloresults excludedfromrobustnessaxis.Type reproduction retained,computationnotchecked,robustnessrobust.No thirdcall."
+  }
+}

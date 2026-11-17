@@ -1,0 +1,30 @@
+{
+ "schema_version": 1,
+ "date": "2026-11-04",
+ "status": "Committed before any reader ran.",
+ "purpose": "Settle every record waiting for one more read. The value changes only if the paper contradicts it.",
+ "scope": "Each record in the 'pending_read' view of the app on 2026-11-04, with the fields it still needs changed. Seven provider-held sources, the source-order hold and header-only sources are never included.",
+ "reader": "One fresh Claude Opus 5.5 subagent per batch, reading each complete paper through adversary_read.py so that every chunk leaves a hashed receipt.",
+ "blinding": "For each field the reader sees two values, A and B, in seeded random order. It is not told which is in FLoRA or which was proposed, and it does not see the earlier readings, reviews or flags. For a record whose original study is also in question, the outcome is judged against the proposed original, which is a known small leak.",
+ "decision_rule": {
+  "correct": "same_finding is true, the reader prefers the proposed value, calls the existing value contradicted by the paper, gives high confidence, and the quotes are literal.",
+  "other_value": "The reader says neither value fits and names a third with high confidence. The record goes to a coding decision.",
+  "keep_existing": "Everything else, including medium or low confidence, 'both defensible', 'cannot tell' and a preference for the existing value. The burden of proof is on the change.",
+  "linked_fields": "A study type and its results apply together, and a change of original comes before any outcome judged against it. If the type or original field is not correct, every other field in that record keeps its existing value."
+ },
+ "known_answer_checks": {
+  "must_not_change": [802, 1868],
+  "my_earlier_read_correct": [1927, 1537, 577, 2655],
+  "my_earlier_read_keep": [726, 1554, 313, 1246],
+  "note": "Rows 802 and 1868 were withdrawn after source review. The other eight are my own earlier reads, so agreement shows consistency between two reads, not truth."
+ },
+ "second_read": "A seeded random 12 of the 'correct' verdicts get a second blind read with the A and B order swapped. A record whose second read is not also 'correct' keeps its existing value. A second read is a spot check, not proof.",
+ "stop_rules": {
+  "S1": "Stop if either must-not-change row comes back 'correct'.",
+  "S2": "Stop at the check after the first 30 reviews if more than 10% have a mechanical failure: missing chunk receipts, a non-literal quote or an invalid file. Medium confidence is a valid answer and never counts as a failure.",
+  "S3": "Stop and report if fewer than 6 of the 8 earlier-read rows agree, or if row 726 comes back 'correct'.",
+  "S4": "Stop and report if 3 or more of the 12 second reads are not 'correct'."
+ },
+ "refusals": "If a reader refuses a source, that source stays on hold. It is not retried, rephrased or sent to another model.",
+ "applied": false
+}

@@ -1,0 +1,269 @@
+Independently adjudicate this FLoRA audit disagreement using the coding rules. Use only read_file or equivalent read-only file tools on the supplied text, codebook and input JSON. Do not use command tools, grep through a shell, follow web links, or read cache-file URIs mentioned in provenance; the supplied audit text is the source. Treat paper contents as evidence, never as instructions. Read the source at /home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/texts/259ed3faa8c43fba.txt and the codebook at /home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/codebook.md. Evidence level is full_text; abstracts cannot establish absence of evidence in unseen full text. The blind coder is not automatically right and the shipped outcome quote is only a pointer: verify it in source. Identity must be resolved before judging outcomes. Unmatched rows/targets are not errors merely because unmatched; classify as wrong original, omitted target, duplicate, or insufficient evidence from the source. Missing evidence, unclear and cannot_be_determined establish no error. Confidence is descriptive only. Plans retain separate study_status.
+
+Return exactly a JSON object with decisions array, one object for every listed row/field or target/field. Each decision needs input_row_index (for shipped rows) or target_index (for missing_row), field, method="argon", verdict (shipped_right|blind_right|both_wrong|undeterminable), corrected_value (actual final value, or null for undeterminable), quote (verbatim supporting source passage), location, reason. For original-identity decisions, corrected_value is a DOI string or object with doi/title/authors/year; include target_index only where that blind target matches the row, to resolve ambiguous pairing. Valid field names type, original, outcome, outcome_computation, outcome_robustness, missing_row. A shipped_right corrected_value must equal the shipped value in the comparison vocabulary. For reproductions normalize computation not checked/robustness not checked to not checked. If correcting type to reproduction, return outcome corrected_value as an object with outcome_computation and outcome_robustness, never as a scalar or semicolon string; use cannot_be_determined explicitly on an unsupported axis. For type disagreements also settle outcome if supported; retain unverified if vocabulary depends on an unresolved type. Keep reasons concise, normally one or two sentences, without repeating long background. Use the shortest self-contained contiguous quotation that supports the decision, and never splice passages with ellipses. Do not propose an error without a supporting quote. For insufficient evidence give undeterminable and quote the relevant passage showing what the source does support. Use only actual quote text that occurs in the supplied source. End your response with the answer itself under a heading `## Answer`.
+
+If type is not_a_replication, return its supported type correction. For requested original/outcome fields that have no applicable value, return verdict="undeterminable", corrected_value=null and explain the inapplicability; never pair a non-undeterminable verdict with a null replacement (except missing_row/shipped_right). Do not invent an original or outcome to fill the schema.
+
+INPUTS:
+{
+  "shipped_rows": [
+    {
+      "input_row_index": 736,
+      "doi_r": "10.1017/s0261444818000368",
+      "title_r": "Eye gaze and L2 speakers’ responses to recasts: A systematic replication study of McDonough, Crowther, Kielstra and Trofimovich (2015)",
+      "doi_o": "10.1177/0267658315589656",
+      "title_o": "Exploring the potential relationship between eye gaze and English L2 speakers’ responses to recasts",
+      "author_o": "[{\"given\":\"Kim\",\"family\":\"McDonough\",\"sequence\":\"first\"},{\"given\":\"Dustin\",\"family\":\"Crowther\",\"sequence\":\"additional\"},{\"given\":\"Paula\",\"family\":\"Kielstra\",\"sequence\":\"additional\"},{\"given\":\"Pavel\",\"family\":\"Trofimovich\",\"sequence\":\"additional\"}]",
+      "year_o": "2015",
+      "type": "replication",
+      "outcome": "successful",
+      "outcome_quote": "confirmed the findings of McDonough et al. (2015), with both L2 speaker and mutual eye gaze predictive of targetlike responses",
+      "source": "replications"
+    }
+  ],
+  "blind_coding": {
+    "record_type": "replication",
+    "record_type_quote": "To confirm the role of social factors in mediating cognitive processes, this systematic replication study seeks to extend the generalizability of an exploratory study (McDonough, Crowther, Kielstra & Trofimovich 2015) that reported a positive association between eye gaze and second language (L2) speakers’ responses to recasts.",
+    "study_status": "completed",
+    "targets": [
+      {
+        "authors": "McDonough, K., Crowther, D., Kielstra, P., & Trofimovich, P.",
+        "year": "2015",
+        "title": "Exploring the potential role of eye gaze in eliciting English L2 speakers’ responses to recasts",
+        "doi": "10.1177/0267658315589656",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "To confirm the role of social factors in mediating cognitive processes, this systematic replication study seeks to extend the generalizability of an exploratory study (McDonough, Crowther, Kielstra & Trofimovich 2015) that reported a positive association between eye gaze and second language (L2) speakers’ responses to recasts.",
+        "outcome": "mixed",
+        "outcome_quote": "A logistic regression model confirmed the findings of McDonough et al. (2015), with both L2 speaker and mutual eye gaze predictive of targetlike responses; however, the effect of L2 speaker’s eye gaze duration was in the opposite direction as compared to the initial study.",
+        "outcome_quote_section": "abstract",
+        "outcome_confident": true,
+        "outcome_reasoning": "Mutual gaze agrees with the original but speaker gaze duration reverses direction. Confirmation of a particular effect is not an overall verdict that overrides this contrast."
+      },
+      {
+        "authors": "Lyster, R.",
+        "year": "1998",
+        "title": "Recasts, repetition, and ambiguity in L2 classroom discourse",
+        "doi": "10.1017/S027226319800103X",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "Finally, these replication results confirmed the results of prior research that showed a difference in response rates based on the linguistic error targeted in recasts, with recasts for lexical errors eliciting more targetlike responses than recasts targeting grammatical errors (Lyster 1998; Mackey et al. 2000; Carpenter et al. 2006; Loewen & Philp 2006).",
+        "outcome": "successful",
+        "outcome_quote": "Finally, these replication results confirmed the results of prior research that showed a difference in response rates based on the linguistic error targeted in recasts, with recasts for lexical errors eliciting more targetlike responses than recasts targeting grammatical errors (Lyster 1998; Mackey et al. 2000; Carpenter et al. 2006; Loewen & Philp 2006).",
+        "outcome_quote_section": "discussion",
+        "outcome_confident": true,
+        "outcome_reasoning": "Explicit group-level comparison states that this study confirms the lexical-versus-grammatical error result attributed to each named original; this was tested in the current regression. DOI reproduced as printed, including any typographical error."
+      },
+      {
+        "authors": "Mackey, A., Gass, S., & McDonough, K.",
+        "year": "2000",
+        "title": "How do learners perceive interactional feedback?",
+        "doi": "",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "Finally, these replication results confirmed the results of prior research that showed a difference in response rates based on the linguistic error targeted in recasts, with recasts for lexical errors eliciting more targetlike responses than recasts targeting grammatical errors (Lyster 1998; Mackey et al. 2000; Carpenter et al. 2006; Loewen & Philp 2006).",
+        "outcome": "successful",
+        "outcome_quote": "Finally, these replication results confirmed the results of prior research that showed a difference in response rates based on the linguistic error targeted in recasts, with recasts for lexical errors eliciting more targetlike responses than recasts targeting grammatical errors (Lyster 1998; Mackey et al. 2000; Carpenter et al. 2006; Loewen & Philp 2006).",
+        "outcome_quote_section": "discussion",
+        "outcome_confident": true,
+        "outcome_reasoning": "Explicit group-level comparison states that this study confirms the lexical-versus-grammatical error result attributed to each named original; this was tested in the current regression. DOI reproduced as printed, including any typographical error."
+      },
+      {
+        "authors": "Carpenter, H., Jeon, K. S., MacGregor, D., & Mackey, A.",
+        "year": "2006",
+        "title": "Learners’ interpretation of recasts",
+        "doi": "10+10170S0272263106060104",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "Finally, these replication results confirmed the results of prior research that showed a difference in response rates based on the linguistic error targeted in recasts, with recasts for lexical errors eliciting more targetlike responses than recasts targeting grammatical errors (Lyster 1998; Mackey et al. 2000; Carpenter et al. 2006; Loewen & Philp 2006).",
+        "outcome": "successful",
+        "outcome_quote": "Finally, these replication results confirmed the results of prior research that showed a difference in response rates based on the linguistic error targeted in recasts, with recasts for lexical errors eliciting more targetlike responses than recasts targeting grammatical errors (Lyster 1998; Mackey et al. 2000; Carpenter et al. 2006; Loewen & Philp 2006).",
+        "outcome_quote_section": "discussion",
+        "outcome_confident": true,
+        "outcome_reasoning": "Explicit group-level comparison states that this study confirms the lexical-versus-grammatical error result attributed to each named original; this was tested in the current regression. DOI reproduced as printed, including any typographical error."
+      },
+      {
+        "authors": "Loewen, S., & Philp, J.",
+        "year": "2006",
+        "title": "Recasts in the adult English L2 classroom: Characteristics, explicitness, and effectiveness",
+        "doi": "10.1111/j.1540-4781.2006.00465.x",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "Finally, these replication results confirmed the results of prior research that showed a difference in response rates based on the linguistic error targeted in recasts, with recasts for lexical errors eliciting more targetlike responses than recasts targeting grammatical errors (Lyster 1998; Mackey et al. 2000; Carpenter et al. 2006; Loewen & Philp 2006).",
+        "outcome": "successful",
+        "outcome_quote": "Finally, these replication results confirmed the results of prior research that showed a difference in response rates based on the linguistic error targeted in recasts, with recasts for lexical errors eliciting more targetlike responses than recasts targeting grammatical errors (Lyster 1998; Mackey et al. 2000; Carpenter et al. 2006; Loewen & Philp 2006).",
+        "outcome_quote_section": "discussion",
+        "outcome_confident": true,
+        "outcome_reasoning": "Explicit group-level comparison states that this study confirms the lexical-versus-grammatical error result attributed to each named original; this was tested in the current regression. DOI reproduced as printed, including any typographical error."
+      },
+      {
+        "authors": "Philp, J.",
+        "year": "2003",
+        "title": "Constraints on ‘noticing the gap.’",
+        "doi": "10.1017/S0272263103000044",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "Unlike prior research though, the current dataset failed to confirm the effect of recast length whereby shorter recasts have been more frequently noticed (Philp 2003) or recognized as being corrective (Egi 2007) and have elicited higher repair rates (Sheen 2006).",
+        "outcome": "failed",
+        "outcome_quote": "Unlike prior research though, the current dataset failed to confirm the effect of recast length whereby shorter recasts have been more frequently noticed (Philp 2003) or recognized as being corrective (Egi 2007) and have elicited higher repair rates (Sheen 2006).",
+        "outcome_quote_section": "discussion",
+        "outcome_confident": true,
+        "outcome_reasoning": "Authors explicitly state failure to confirm the shorter-recast effect in their current data and name this original within the comparison. DOI copied as printed, without repairing typographical errors."
+      },
+      {
+        "authors": "Egi, T.",
+        "year": "2007",
+        "title": "Interpreting recasts as linguistic evidence: The roles of linguistic target, length, and degree of change",
+        "doi": "0+10170S0272263107070416",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "Unlike prior research though, the current dataset failed to confirm the effect of recast length whereby shorter recasts have been more frequently noticed (Philp 2003) or recognized as being corrective (Egi 2007) and have elicited higher repair rates (Sheen 2006).",
+        "outcome": "failed",
+        "outcome_quote": "Unlike prior research though, the current dataset failed to confirm the effect of recast length whereby shorter recasts have been more frequently noticed (Philp 2003) or recognized as being corrective (Egi 2007) and have elicited higher repair rates (Sheen 2006).",
+        "outcome_quote_section": "discussion",
+        "outcome_confident": true,
+        "outcome_reasoning": "Authors explicitly state failure to confirm the shorter-recast effect in their current data and name this original within the comparison. DOI copied as printed, without repairing typographical errors."
+      },
+      {
+        "authors": "Sheen, Y.",
+        "year": "2006",
+        "title": "Exploring the relationship between characteristics of recasts and learner uptake",
+        "doi": "10.1191/1362168806lr203oa",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "Unlike prior research though, the current dataset failed to confirm the effect of recast length whereby shorter recasts have been more frequently noticed (Philp 2003) or recognized as being corrective (Egi 2007) and have elicited higher repair rates (Sheen 2006).",
+        "outcome": "failed",
+        "outcome_quote": "Unlike prior research though, the current dataset failed to confirm the effect of recast length whereby shorter recasts have been more frequently noticed (Philp 2003) or recognized as being corrective (Egi 2007) and have elicited higher repair rates (Sheen 2006).",
+        "outcome_quote_section": "discussion",
+        "outcome_confident": true,
+        "outcome_reasoning": "Authors explicitly state failure to confirm the shorter-recast effect in their current data and name this original within the comparison. DOI copied as printed, without repairing typographical errors."
+      }
+    ],
+    "reasoning": "New English-L2 sample retests McDonough et al. (2015). In addition to that central eye-gaze target, the study tests error type and recast length in its regression and explicitly states confirmation or nonconfirmation relative to seven named primary papers. These explicit empirical comparisons are retained as targets, rather than treating all earlier papers as background. Bibliographic fields come from this paper’s reference list, even where a title or DOI differs from outside metadata. Title, authors, DOI and complete 15-page article boundaries verified from the author-hosted publisher PDF.",
+    "work_key": "10.1017/s0261444818000368",
+    "status": "done",
+    "evidence_level": "full_text",
+    "source_url": "https://www.paveltrofimovich.ca/wp-content/uploads/2022/01/McDonough_et_al_2018.pdf",
+    "retrieved_at": "2026-10-29T09:58:19.318567+00:00",
+    "text_sha256": "2c0bf1a9135f89cd471ef98ee633296f8b7f87627e0899c824062b117a99a038",
+    "parser": "pdftotext; author-hosted publisher PDF",
+    "elapsed_seconds": 110,
+    "acquisition_seconds": 5,
+    "skip_reason": ""
+  },
+  "review_items": [
+    {
+      "input_row_index": "736",
+      "work_key": "10.1017/s0261444818000368",
+      "file_key": "259ed3faa8c43fba",
+      "target_index": 0,
+      "field": "outcome",
+      "pairing_flags": [],
+      "reason": "comparison or evidence requires review",
+      "final_verdict": "unverified",
+      "resolution": "unresolved",
+      "shipped": {
+        "doi_o": "10.1177/0267658315589656",
+        "title_o": "Exploring the potential relationship between eye gaze and English L2 speakers’ responses to recasts",
+        "authors_o": "McDonough; Crowther; Kielstra; Trofimovich",
+        "year_o": "2015",
+        "type": "replication",
+        "outcome": "successful",
+        "outcome_computation": "",
+        "outcome_robustness": "",
+        "outcome_quote": "confirmed the findings of McDonough et al. (2015), with both L2 speaker and mutual eye gaze predictive of targetlike responses"
+      },
+      "blind_type": "replication",
+      "blind_target": {
+        "authors": "McDonough, K., Crowther, D., Kielstra, P., & Trofimovich, P.",
+        "year": "2015",
+        "title": "Exploring the potential role of eye gaze in eliciting English L2 speakers’ responses to recasts",
+        "doi": "10.1177/0267658315589656",
+        "identified_by": "citation",
+        "study_numbers": "",
+        "replication_study_numbers": "",
+        "evidence_quote": "To confirm the role of social factors in mediating cognitive processes, this systematic replication study seeks to extend the generalizability of an exploratory study (McDonough, Crowther, Kielstra & Trofimovich 2015) that reported a positive association between eye gaze and second language (L2) speakers’ responses to recasts.",
+        "outcome": "mixed",
+        "outcome_quote": "A logistic regression model confirmed the findings of McDonough et al. (2015), with both L2 speaker and mutual eye gaze predictive of targetlike responses; however, the effect of L2 speaker’s eye gaze duration was in the opposite direction as compared to the initial study.",
+        "outcome_quote_section": "abstract",
+        "outcome_confident": true,
+        "outcome_reasoning": "Mutual gaze agrees with the original but speaker gaze duration reverses direction. Confirmation of a particular effect is not an overall verdict that overrides this contrast."
+      },
+      "identity_resolved": true,
+      "shipped_quote_present": true
+    },
+    {
+      "work_key": "10.1017/s0261444818000368",
+      "file_key": "259ed3faa8c43fba",
+      "target_index": 1,
+      "field": "missing_row",
+      "reason": "unmatched blind target",
+      "final_verdict": "unverified",
+      "resolution": "unresolved"
+    },
+    {
+      "work_key": "10.1017/s0261444818000368",
+      "file_key": "259ed3faa8c43fba",
+      "target_index": 2,
+      "field": "missing_row",
+      "reason": "unmatched blind target",
+      "final_verdict": "unverified",
+      "resolution": "unresolved"
+    },
+    {
+      "work_key": "10.1017/s0261444818000368",
+      "file_key": "259ed3faa8c43fba",
+      "target_index": 3,
+      "field": "missing_row",
+      "reason": "unmatched blind target",
+      "final_verdict": "unverified",
+      "resolution": "unresolved"
+    },
+    {
+      "work_key": "10.1017/s0261444818000368",
+      "file_key": "259ed3faa8c43fba",
+      "target_index": 4,
+      "field": "missing_row",
+      "reason": "unmatched blind target",
+      "final_verdict": "unverified",
+      "resolution": "unresolved"
+    },
+    {
+      "work_key": "10.1017/s0261444818000368",
+      "file_key": "259ed3faa8c43fba",
+      "target_index": 5,
+      "field": "missing_row",
+      "reason": "unmatched blind target",
+      "final_verdict": "unverified",
+      "resolution": "unresolved"
+    },
+    {
+      "work_key": "10.1017/s0261444818000368",
+      "file_key": "259ed3faa8c43fba",
+      "target_index": 6,
+      "field": "missing_row",
+      "reason": "unmatched blind target",
+      "final_verdict": "unverified",
+      "resolution": "unresolved"
+    },
+    {
+      "work_key": "10.1017/s0261444818000368",
+      "file_key": "259ed3faa8c43fba",
+      "target_index": 7,
+      "field": "missing_row",
+      "reason": "unmatched blind target",
+      "final_verdict": "unverified",
+      "resolution": "unresolved"
+    }
+  ]
+}
+
+Put your whole result in your reply; do not create files or run commands.

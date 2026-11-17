@@ -1,0 +1,10 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync(__dirname+'/review_batch_workflow.js','utf8');
+const context={CONTEXT:{review_reliability:{bulk_outcome_approval_enabled:false,holds:{'row:462':{}}}},store:{records:{'row:936':{decision:'approve',batch_id:'replication_outcomes',approved_fields:['outcome']}},pairs:{}},caseById:new Map([['row:936',{}]]),statusOf:()=> 'approve'};
+vm.createContext(context);vm.runInContext(source.slice(source.indexOf('function bulkOutcomeSuspended'),source.indexOf('function approvedOperations')),context);
+const item={case_id:'row:936',fields:['outcome']},group={id:'replication_outcomes'};
+assert.equal(context.approvedItem(item,group),false,'Historical bulk approval must not authorize an outcome operation');
+delete context.store.records['row:936'].batch_id;assert.equal(context.approvedItem(item,group),true,'Explicit individual review remains possible');
+context.caseById.set('row:462',{});context.store.records['row:462']={decision:'approve',approved_fields:['outcome']};assert.equal(context.approvedItem({case_id:'row:462',fields:['outcome']},group),false,'Contested correction must remain withheld even with an older individual approval');
+assert.equal(context.bulkOutcomeSuspended({id:'reproduction_results'}),true);assert.equal(context.bulkOutcomeSuspended({id:'confirmed_missing_pairs'}),false);
+console.log('Reliability holds exclude previous bulk outcome approvals and contested corrections.');
