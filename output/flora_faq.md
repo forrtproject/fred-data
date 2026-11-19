@@ -18,6 +18,8 @@ Robustness checks, exploratory analyses, and extensions outside the intended rep
 
 If studies are part of a meta-paper, use the individual reports where available, and otherwise the main criterion used by the meta-paper's authors. Each original–replication reference pair has its own outcome; do not transfer another original's verdict to it.
 
+Use *statistically successful but flawed* when the authors obtain the original effect but argue that their own or the original's method does not validly test the claim, for example because the effect can be explained by regression to the mean. Use it only when that critique is the paper's main message; a replication that merely notes limitations is successful.
+
 ### What is the outcome if the manipulation check failed so the hypothesis could not be tested?
 
 Apply the authors' explicit assessment of the intended replication scope first, including an explicit assessment that the attempt was uninformative. Where no such assessment is available, a failed manipulation or preliminary test that prevents the hypothesis from being tested is coded as failed. The same fallback applies if the manipulation check succeeded but the main test failed. Equivalent cases include a failed preliminary gender-knowledge-gap test before a stereotype-threat test.
@@ -67,8 +69,6 @@ For example:
 | The authors explicitly conclude that the attempt cannot adjudicate the target claim because its sample was too small. | Uninformative; this is the authors' assessment, not missing evidence on the coder's side. |
 
 For meta-papers, use individual reports where available and otherwise the main criterion used by the meta-paper's authors.
-
-Use *statistically successful but flawed* when the authors obtain the original effect but argue that their own or the original's method does not validly test the claim, for example because the effect can be explained by regression to the mean. Use it only when that critique is the paper's main message; a replication that merely notes limitations is successful.
 
 Use *descriptive only* only when the authors state an intended re-test of a central claim but explicitly present the results descriptively without assessing agreement with the original. Missing comparison evidence alone does not justify an outcome code; flag the pair for source review or re-coding. Pure method reuse without an intended re-test does not qualify for inclusion.
 
