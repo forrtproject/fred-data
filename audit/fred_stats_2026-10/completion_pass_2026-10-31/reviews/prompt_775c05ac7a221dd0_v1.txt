@@ -1,0 +1,187 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "249": {
+      "source_key": "775c05ac7a221dd0",
+      "side": "replication",
+      "input": {
+        "ref_o": "He, J., Chen, G., Wu, S., Niu, R., & Fan, X. (2020). Patterns of negative emotional eating among Chinese young adults: A latent class analysis. Appetite, 155, 104808. https://doi.org/10.1016/j.appet.2020.104808",
+        "doi_o": "10.1016/j.appet.2020.104808",
+        "study_o": null,
+        "ref_r": "Xu, Y., Song, J., Ren, Y., Barnhart, W. R., Dixit, U., Ji, F., Chen, C., & He, J. (2024). Negative emotional eating patterns in general Chinese adults: A replication and expansion study examining group differences in eating disorder symptomatology, psychosocial impairment, and emotion regulation difficulties. Eating Behaviors, 54, 101899. https://doi.org/10.1016/j.eatbeh.2024.101899",
+        "doi_r": "10.1016/j.eatbeh.2024.101899",
+        "url_r": null,
+        "study_r": "10.1016/j.eatbeh.2024.101899",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Negative emotional eating patterns and their relationship to disordered eating behaviors in Chinese young adults aged 17–24 years, examined using a person-oriented latent class analysis (LCA), including emotional over-eating and under-eating.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 249,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt"
+        },
+        "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f0eb6d5ebd63474b5475d4dd_drive.pdf",
+        "source_version_note": "Published article copy from private Google Drive archive"
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Xu et al. (2024), general Chinese adults; four-class emotional eating LCA and class comparisons. Exact outcome/contrast for this row remains ambiguous.",
+      "worker_notes": "Both assigned rows have identical neutral descriptions, p.4 locators, and study identifiers. No outcome or contrast distinguishes them. No row-order or numeric matching used. The replication is general Chinese adults aged 18–75 (Table 1), rather than the original young adults aged 17–24 in the description. Candidate critical tests on p.4 section 3.5: typical eating disorder symptomatology omnibus chi-square 47.78, p < .001; muscularity-oriented eating disorder symptomatology omnibus chi-square 50.40, p < .001; psychosocial impairment omnibus chi-square 115.88, p < .001; emotion regulation difficulties omnibus chi-square 128.12, p < .001. Typical symptomatology pairwise candidates: EOE versus EOE-EUE chi-square 8.29, p = .004, d = .39; EOE versus EUE chi-square 27.02, p < .001, d = .69; EOE versus non-EE chi-square 40.98, p < .001, d = .92. Muscularity symptomatology pairwise candidates: EOE versus non-EE chi-square 30.87, p < .001, d = .84; EOE versus EUE chi-square 31.79, p < .001, d = .81; EOE-EUE versus non-EE chi-square 18.41, p < .001, d = .56; EOE-EUE versus EUE chi-square 18.81, p < .001, d = .51; EOE versus EOE-EUE chi-square 3.58, p = .058, d = .27. There are additional pairwise psychosocial impairment and emotion regulation tests on pp.4–5, sex-membership odds ratios in section 3.4, and LCA fit comparisons in Table 2. None is uniquely assigned by these locators. Candidate common sample only: Table 1 n = 600 and section 2.1 final 600 adults after 33 validity-test exclusions. Participant role; no separately stated row-specific analytic N assigned. No N inferred from df, percentages, or summed recruitment groups. Authors report successful replication of the four latent patterns; this is a paper-level narrative verdict, not confirmation that each unidentified contrast replicated. Discussion p.5 calls typical-symptomatology findings partially consistent with hypotheses. PDF pp.4–5 rendered and visually inspected for column and table layout. Original is an unassigned placeholder, not a claim that the original paper is unavailable.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "negative emotional eating is closely related to disordered eating behaviors...In this study, we used a person-oriented approach, latent class analysis (LCA), to examine the negative emotional eating patterns and to characterize these patterns in a sample of 1,068 Chinese young adults (52.6% females, aged 17–24 years)...Overall, this study identified four distinct negative emotional eating patterns, among which, the emotional over- and under-eating was the most problematic.",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Results replicated the four patterns of negative emotional eating\nin previous research"
+      }
+    },
+    "250": {
+      "source_key": "775c05ac7a221dd0",
+      "side": "replication",
+      "input": {
+        "ref_o": "He, J., Chen, G., Wu, S., Niu, R., & Fan, X. (2020). Patterns of negative emotional eating among Chinese young adults: A latent class analysis. Appetite, 155, 104808. https://doi.org/10.1016/j.appet.2020.104808",
+        "doi_o": "10.1016/j.appet.2020.104808",
+        "study_o": null,
+        "ref_r": "Xu, Y., Song, J., Ren, Y., Barnhart, W. R., Dixit, U., Ji, F., Chen, C., & He, J. (2024). Negative emotional eating patterns in general Chinese adults: A replication and expansion study examining group differences in eating disorder symptomatology, psychosocial impairment, and emotion regulation difficulties. Eating Behaviors, 54, 101899. https://doi.org/10.1016/j.eatbeh.2024.101899",
+        "doi_r": "10.1016/j.eatbeh.2024.101899",
+        "url_r": null,
+        "study_r": "10.1016/j.eatbeh.2024.101899",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Negative emotional eating patterns and their relationship to disordered eating behaviors in Chinese young adults aged 17–24 years, examined using a person-oriented latent class analysis (LCA), including emotional over-eating and under-eating.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 250,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt"
+        },
+        "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/f0eb6d5ebd63474b5475d4dd_drive.pdf",
+        "source_version_note": "Published article copy from private Google Drive archive"
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Xu et al. (2024), general Chinese adults; four-class emotional eating LCA and class comparisons. Exact outcome/contrast for this row remains ambiguous.",
+      "worker_notes": "Both assigned rows have identical neutral descriptions, p.4 locators, and study identifiers. No outcome or contrast distinguishes them. No row-order or numeric matching used. The replication is general Chinese adults aged 18–75 (Table 1), rather than the original young adults aged 17–24 in the description. Candidate critical tests on p.4 section 3.5: typical eating disorder symptomatology omnibus chi-square 47.78, p < .001; muscularity-oriented eating disorder symptomatology omnibus chi-square 50.40, p < .001; psychosocial impairment omnibus chi-square 115.88, p < .001; emotion regulation difficulties omnibus chi-square 128.12, p < .001. Typical symptomatology pairwise candidates: EOE versus EOE-EUE chi-square 8.29, p = .004, d = .39; EOE versus EUE chi-square 27.02, p < .001, d = .69; EOE versus non-EE chi-square 40.98, p < .001, d = .92. Muscularity symptomatology pairwise candidates: EOE versus non-EE chi-square 30.87, p < .001, d = .84; EOE versus EUE chi-square 31.79, p < .001, d = .81; EOE-EUE versus non-EE chi-square 18.41, p < .001, d = .56; EOE-EUE versus EUE chi-square 18.81, p < .001, d = .51; EOE versus EOE-EUE chi-square 3.58, p = .058, d = .27. There are additional pairwise psychosocial impairment and emotion regulation tests on pp.4–5, sex-membership odds ratios in section 3.4, and LCA fit comparisons in Table 2. None is uniquely assigned by these locators. Candidate common sample only: Table 1 n = 600 and section 2.1 final 600 adults after 33 validity-test exclusions. Participant role; no separately stated row-specific analytic N assigned. No N inferred from df, percentages, or summed recruitment groups. Authors report successful replication of the four latent patterns; this is a paper-level narrative verdict, not confirmation that each unidentified contrast replicated. Discussion p.5 calls typical-symptomatology findings partially consistent with hypotheses. PDF pp.4–5 rendered and visually inspected for column and table layout. Original is an unassigned placeholder, not a claim that the original paper is unavailable.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "negative emotional eating is closely related to disordered eating behaviors...In this study, we used a person-oriented approach, latent class analysis (LCA), to examine the negative emotional eating patterns and to characterize these patterns in a sample of 1,068 Chinese young adults (52.6% females, aged 17–24 years)...Overall, this study identified four distinct negative emotional eating patterns, among which, the emotional over- and under-eating was the most problematic.",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Results replicated the four patterns of negative emotional eating\nin previous research"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 249,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p.1 Abstract; four-pattern replication verdict",
+        "quote": "Results replicated the four patterns of negative emotional eating ... in previous research, including non-emotional eating (non-EE), emotional over- and under-eating (EOE-EUE),",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 249,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state replication of the four negative emotional eating patterns. Verdict is at the paper/pattern level; unidentified individual contrasts remain unresolved.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+        "location": "p.1 Abstract",
+        "quote": "Results replicated the four patterns of negative emotional eating ... in previous research, including non-emotional eating (non-EE), emotional over- and under-eating (EOE-EUE),",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 249,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "p. 1, Abstract; p. 4, Section 3.5; p. 5, Section 4",
+        "quote": "were found in typical eating disorder symptomatology (χ 2 = 47.78,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+        "reason": "The neutral locator (broad LCA description and p. 4) is identical across rows 249 and 250 and does not uniquely identify a single target outcome among the multiple p. 4 analyses (class-solution fit comparisons in Table 2, sex-difference multinomial regressions, and omnibus/pairwise BCH group comparisons across \"eating disorder symptomatology, psychosocial impairment, and emotion regulation difficulties.\"). Furthermore, the global abstract statement \"Results replicated the four patterns of negative emotional eating\" applies to the four-class LCA structure rather than specific outcome tests (where class rankings were only \"partially consistent with the hypotheses\" and psychosocial impairment was an expansion measure not in He et al., 2020), and numerical coincidence with the coded chi-square cannot establish target identity.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 250,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p.1 Abstract; four-pattern replication verdict",
+        "quote": "Results replicated the four patterns of negative emotional eating ... in previous research, including non-emotional eating (non-EE), emotional over- and under-eating (EOE-EUE),",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 250,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state replication of the four negative emotional eating patterns. Verdict is at the paper/pattern level; unidentified individual contrasts remain unresolved.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+        "location": "p.1 Abstract",
+        "quote": "Results replicated the four patterns of negative emotional eating ... in previous research, including non-emotional eating (non-EE), emotional over- and under-eating (EOE-EUE),",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 250,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "p. 2, Section 1.3; p. 4, Section 3.5; p. 5, Section 4",
+        "quote": "50.40, p < .001), psychosocial impairment (χ 2 = 115.88, p < .001), and",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_f0eb6d5ebd63474b5475d4dd.txt",
+        "reason": "As in row 249, the neutral p. 4 locator and original-study description do not uniquely map this row to a specific test among the multiple p. 4 group comparisons without relying on numerical coincidence with the coded statistic. In addition, the paper states that \"prior studies did not examine group differences in muscularity-oriented eating disorder symptomatology (Dixit et al., 2023; He et al., 2020) or psychosocial impairment (He et al., 2020)\" and that EOE versus EOE-EUE showed \"no significant difference between the EOE and EOE-EUE classes (χ 2 = 1.59, p = .207, d = .17)\", so the overall four-class replication narrative cannot be transferred to this unresolved individual effect.",
+        "resolution": "argon"
+      }
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/775c05ac7a221dd0. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_775c05ac7a221dd0_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

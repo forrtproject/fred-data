@@ -1,0 +1,94 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item carrying scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1728,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "0.000",
+    "shipped_metric": "etasq",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".002",
+      "metric": "η2",
+      "test_statistic": "F(1, 536) = 1.27",
+      "location": "p. 806 (PDF p. 9), Preregistered extension analyses, first paragraph",
+      "quote": "F(1, 536) = 1.27, p = .26, η2 = .002.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6e6a2faf6d285c5606ab179a.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Valdesolo, P., & DeSteno, D. (2007). Moral Hypocrisy. Psychological Science, 18(8), 689–690. https://doi.org/10.1111/j.1467-9280.2007.01961.x",
+      "doi_o": "10.1111/j.1467-9280.2007.01961.x",
+      "study_o": "1",
+      "ref_r": "Robertson, C. E., Akles, M., & Van Bavel, J. J. (2024). Preregistered Replication and Extension of “Moral Hypocrisy: Social Groups and the Flexibility of Virtue.” Psychological Science, 35(7), 798–813. https://doi.org/10.1177/09567976241246552",
+      "doi_r": "10.1177/09567976241246552",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "d",
+      "es_type_r": "etasq",
+      "audit_id": 1728,
+      "description": "Perceived objectionability of one’s own transgression versus the same transgression enacted by another person, excluding altruists.",
+      "locators_o": "p. 2",
+      "locators_r": "p. 9",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d0308035e5c441c9b40d1cfc.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6e6a2faf6d285c5606ab179a.txt"
+      }
+    },
+    "work_key": "10.1177/09567976241246552",
+    "coding_context": {
+      "es_repr": "p. 9",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1728,
+    "field": "pval_value_r",
+    "comparison": "differ",
+    "shipped": "0.7",
+    "shipped_metric": "etasq",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".26",
+      "bound": "e",
+      "location": "p. 806 (PDF p. 9), Preregistered extension analyses, first paragraph",
+      "quote": "F(1, 536) = 1.27, p = .26, η2 = .002.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6e6a2faf6d285c5606ab179a.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Valdesolo, P., & DeSteno, D. (2007). Moral Hypocrisy. Psychological Science, 18(8), 689–690. https://doi.org/10.1111/j.1467-9280.2007.01961.x",
+      "doi_o": "10.1111/j.1467-9280.2007.01961.x",
+      "study_o": "1",
+      "ref_r": "Robertson, C. E., Akles, M., & Van Bavel, J. J. (2024). Preregistered Replication and Extension of “Moral Hypocrisy: Social Groups and the Flexibility of Virtue.” Psychological Science, 35(7), 798–813. https://doi.org/10.1177/09567976241246552",
+      "doi_r": "10.1177/09567976241246552",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "d",
+      "es_type_r": "etasq",
+      "audit_id": 1728,
+      "description": "Perceived objectionability of one’s own transgression versus the same transgression enacted by another person, excluding altruists.",
+      "locators_o": "p. 2",
+      "locators_r": "p. 9",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d0308035e5c441c9b40d1cfc.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6e6a2faf6d285c5606ab179a.txt"
+      }
+    },
+    "work_key": "10.1177/09567976241246552",
+    "coding_context": {
+      "es_repr": "p. 9",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

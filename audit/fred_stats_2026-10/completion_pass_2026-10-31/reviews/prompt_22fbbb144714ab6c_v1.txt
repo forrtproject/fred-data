@@ -1,0 +1,228 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "22fbbb144714ab6c",
+    "audit_id": 146,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Fath, S., & Kay, A. C. (2018). “If hierarchical, then corrupt”: Exploring people’s tendency to associate hierarchy with corruption in organizations. Organizational Behavior and Human Decision Processes, 149, 145–164. https://doi.org/10.1016/j.obhdp.2018.10.004",
+      "doi_o": "10.1016/j.obhdp.2018.10.004",
+      "study_o": "1c",
+      "ref_r": "Evans, T. R., Kviatkovskyte, R., O’Regan, S., Adolph, S. A., nishat, Chukwudi, F. O. N., Wildova, T., & Krzan, M. (2024). Corruption and Hierarchy: A Replication of Studies 1c and 6 of Fath &amp;amp; Kay 2018. https://doi.org/10.31234/osf.io/68jft",
+      "doi_r": "10.31234/osf.io/68jft",
+      "url_r": null,
+      "study_r": "1c",
+      "description": "Relationship between organizational hierarchy and expected corruption among employees.",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "locators_o": "p. 6",
+      "locators_r": "p. 9",
+      "audit_id": 146,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/b1bd746869b8adb268c0cec0_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "0.042",
+      "location": "Printed p. 149 (PDF p. 5), §8.2; continuation p. 150 (PDF p. 6)",
+      "quote": "401) = 17.49, p < .001, ηp2 = 0.042",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+      "confident": true,
+      "metric": "partial eta-squared (printed ηp2)",
+      "test_statistic": "F(1, 401) = 17.49"
+    },
+    "disposition": {
+      "audit_id": 146,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Study 1c hierarchy main effect is explicitly identified in §8.2. Requested d is not printed; printed partial eta-squared retained without conversion.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+      "location": "p.149, §8.2; p.150 continuation",
+      "quote": "401) = 17.49, p < .001, ηp2 = 0.042",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 1c: main effect of hierarchy in the 2 (workplace social vs remote) × 2 (hierarchy high vs low) ANOVA on corruption beliefs, across workplace levels.",
+    "worker_notes": "Only assigned unfinished fields examined. Unassigned fields are placeholders. Target PDF pages visually inspected; canonical evidence is the supplied text. Requested d is not printed for the Study 1c main effect; retain printed partial eta-squared without conversion. Same-test p < .001 is printed in the evidence; p is unassigned. The d = 0.55 on p.149 belongs to Study 1b and the d = 0.35 on p.150 belongs to Study 2a, so neither identifies this outcome.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+    "shipped": "0.423",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "\"We find that people expect more corruption to manifest among the employees of relatively more hierarchical organizations\"",
+      "es_repr_o": "p. 6",
+      "es_repr_r": "p. 9",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": null,
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": null,
+      "nested_r": "no",
+      "reported_success_quote": "Two high-powered close replications of studies 1c and 6 by Fath and Kay provide further evidence for the claim that taller organizational structures are associated with greater perceived potential for cor-\nruption, and that these perceptions may compromise subsequent trust-related outcomes."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "22fbbb144714ab6c",
+    "audit_id": 144,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Fath, S., & Kay, A. C. (2018). “If hierarchical, then corrupt”: Exploring people’s tendency to associate hierarchy with corruption in organizations. Organizational Behavior and Human Decision Processes, 149, 145–164. https://doi.org/10.1016/j.obhdp.2018.10.004",
+      "doi_o": "10.1016/j.obhdp.2018.10.004",
+      "study_o": "6",
+      "ref_r": "Evans, T. R., Kviatkovskyte, R., O’Regan, S., Adolph, S. A., nishat, Chukwudi, F. O. N., Wildova, T., & Krzan, M. (2024). Corruption and Hierarchy: A Replication of Studies 1c and 6 of Fath &amp;amp; Kay 2018. https://doi.org/10.31234/osf.io/68jft",
+      "doi_r": "10.31234/osf.io/68jft",
+      "url_r": null,
+      "study_r": "6",
+      "description": "indirect effect of hierarchy condition through corruption perceptions, on beliefs about whether the anti-corruption petition was justified",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 16",
+      "locators_r": "p. 11",
+      "audit_id": 144,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/b1bd746869b8adb268c0cec0_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "0.21",
+      "location": "Printed p.160 (PDF p.16), §14.2.2 mediation paragraph; Fig.9 caption",
+      "quote": "are unstandardized. ... was justified, b = 0.21, SE = 0.16, 95% CI [0.01, 0.65]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+      "confident": true,
+      "metric": "b (unstandardized indirect effect)",
+      "test_statistic": null
+    },
+    "disposition": {
+      "audit_id": 144,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome identified explicitly in mediation paragraph; preserve printed indirect-effect b. Fig.9 caption supplies unstandardized regression-coefficient identity.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+      "location": "p.160 §14.2.2 and Fig.9 caption",
+      "quote": "was justified, b = 0.21, SE = 0.16, 95% CI [0.01, 0.65] ... are unstandardized.",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 6: PROCESS Model 4, 5000-bootstrap indirect effect of hierarchy condition through corruption perceptions on belief that the anti-corruption petition/audit was justified.",
+    "worker_notes": "Only assigned unfinished fields examined. Unassigned fields are placeholders. Target PDF pages visually inspected; canonical evidence is the supplied text. The indirect effect is reported with SE and bootstrap 95% CI, without a same-test p value. Fig.9 asterisks concern constituent regression paths and cannot supply the indirect-effect p. Fig.9 explicitly labels regression coefficients unstandardized. Candidate study N: final sample 97, with table headers 47 + 50 = 97. This is not adopted as model analytic N: mediation paragraph does not specify model N; low-hierarchy petition percentages (61.2/38.8 and 18.4/81.6) do not resolve exact response counts under the printed n=50 header. No N is inferred from percentages or df.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+    "shipped": "0.21",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "indirect effect of hierarchy condition through corruption perceptions, on beliefs about whether the anti-corruption petition was justified",
+      "es_repr_o": "p. 16",
+      "es_repr_r": "p. 11",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": null,
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Two high-powered close replications of studies 1c and 6 by Fath and Kay provide further evidence for the claim that taller organizational structures are associated with greater perceived potential for cor-\nruption, and that these perceptions may compromise subsequent trust-related outcomes."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "22fbbb144714ab6c",
+    "audit_id": 145,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Fath, S., & Kay, A. C. (2018). “If hierarchical, then corrupt”: Exploring people’s tendency to associate hierarchy with corruption in organizations. Organizational Behavior and Human Decision Processes, 149, 145–164. https://doi.org/10.1016/j.obhdp.2018.10.004",
+      "doi_o": "10.1016/j.obhdp.2018.10.004",
+      "study_o": "6",
+      "ref_r": "Evans, T. R., Kviatkovskyte, R., O’Regan, S., Adolph, S. A., nishat, Chukwudi, F. O. N., Wildova, T., & Krzan, M. (2024). Corruption and Hierarchy: A Replication of Studies 1c and 6 of Fath &amp;amp; Kay 2018. https://doi.org/10.31234/osf.io/68jft",
+      "doi_r": "10.31234/osf.io/68jft",
+      "url_r": null,
+      "study_r": "6",
+      "description": "indirect effect of hierarchy condition through corruption perceptions, on (...) desire to sign the anti-corruption petition",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "locators_o": "p. 16",
+      "locators_r": "p. 11",
+      "audit_id": 145,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "es_value_o",
+        "pval_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/b1bd746869b8adb268c0cec0_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "0.35",
+      "location": "Printed p.160 (PDF p.16), §14.2.2 mediation paragraph; Fig.9 caption",
+      "quote": "are unstandardized. ... sign the petition, b = 0.35, SE = 0.22, 95% CI [0.04, 0.90]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+      "confident": true,
+      "metric": "b (unstandardized indirect effect)",
+      "test_statistic": null
+    },
+    "disposition": {
+      "audit_id": 145,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Outcome identified explicitly in mediation paragraph; preserve printed indirect-effect b. Fig.9 caption supplies unstandardized regression-coefficient identity.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+      "location": "p.160 §14.2.2 and Fig.9 caption",
+      "quote": "sign the petition, b = 0.35, SE = 0.22, 95% CI [0.04, 0.90] ... are unstandardized.",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 6: PROCESS Model 4, 5000-bootstrap indirect effect of hierarchy condition through corruption perceptions on desire to sign the anti-corruption petition.",
+    "worker_notes": "Only assigned unfinished fields examined. Unassigned fields are placeholders. Target PDF pages visually inspected; canonical evidence is the supplied text. The indirect effect is reported with SE and bootstrap 95% CI, without a same-test p value. Fig.9 asterisks concern constituent regression paths and cannot supply the indirect-effect p. Fig.9 explicitly labels regression coefficients unstandardized. Candidate study N: final sample 97, with table headers 47 + 50 = 97. This is not adopted as model analytic N: mediation paragraph does not specify model N; low-hierarchy petition percentages (61.2/38.8 and 18.4/81.6) do not resolve exact response counts under the printed n=50 header. No N is inferred from percentages or df.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+    "shipped": "0.35",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "indirect effect of hierarchy condition through corruption perceptions, on (...) desire to sign the anti-corruption petition",
+      "es_repr_o": "p. 16",
+      "es_repr_r": "p. 11",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": null,
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Two high-powered close replications of studies 1c and 6 by Fath and Kay provide further evidence for the claim that taller organizational structures are associated with greater perceived potential for cor-\nruption, and that these perceptions may compromise subsequent trust-related outcomes."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/22fbbb144714ab6c. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_22fbbb144714ab6c_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

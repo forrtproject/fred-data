@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1780,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "Manuscript p. 1, Abstract (paper-level narrative verdict)",
+      "quote": "The results generally replicate those of prior research",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/147e56f4022cdff332c7c8e2.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": "The primary replication full text is available, but manuscript p. 7 contains non-shared-identity comparisons for both perceived nationality and perceived similarity. The supplied neutral description does not identify the outcome, so the target test cannot be uniquely matched without inferring from input order. Original and replication assessed independently. Replication is an explicitly stated conceptual replication of Study 2, adapting Canadian-American/Belgian-American high jumping to French-English/Belgian-English judo. The author narrative verdict is paper-level and qualified by generally; it is not inferred from the target p value. Replication text is a frozen parse of publicly accessible author-uploaded full HTML, with title and DOI verified; PDF links were inaccessible. Greek eta is rendered as g in this parse. For audit_id 1780 the outcome is unspecified. The two p. 7 candidate non-shared contrasts concern nationality and similarity; neither was selected. This is locator insufficiency, not paper unavailability.",
+    "locator": {
+      "ref_o": "Stelzl, M., Janes, L., & Seligman, C. (2007). Champ or chump: strategic utilization of dual social identities of others. European Journal of Social Psychology, 38(1), 128–138. Portico. https://doi.org/10.1002/ejsp.446",
+      "doi_o": "10.1002/ejsp.446",
+      "study_o": "2",
+      "ref_r": "Bernache-Assollant, I., Chantal, Y., & Laurin, R. (2020). Is Andy Murray More British Than Scottish? It Depends on His Success! Game Outcome and the MOATing Effect. Psychological Reports, 124(5), 2237–2250. https://doi.org/10.1177/0033294120957242",
+      "doi_r": "10.1177/0033294120957242",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 1780,
+      "description": "Comparison between non-shared identity conditions.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/147e56f4022cdff332c7c8e2.txt"
+      }
+    },
+    "work_key": "10.1177/0033294120957242",
+    "coding_context": {
+      "es_repr": "p. 7",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

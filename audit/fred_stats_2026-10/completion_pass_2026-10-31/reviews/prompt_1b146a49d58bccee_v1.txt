@@ -1,0 +1,275 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1775": {
+      "source_key": "1b146a49d58bccee",
+      "side": "original",
+      "input": {
+        "ref_o": "Tullis, J. G., & Benjamin, A. S. (2011). On the effectiveness of self-paced learning. Journal of Memory and Language, 64(2), 109–118. https://doi.org/10.1016/j.jml.2010.11.002",
+        "doi_o": "10.1016/j.jml.2010.11.002",
+        "study_o": "1",
+        "ref_r": "Patel, T. N., Steyvers, M., & Benjamin, A. S. (2019). Monitoring the ebb and flow of attention: Does controlling the onset of stimuli during encoding enhance memory? Memory &amp; Cognition, 47(4), 706–718. https://doi.org/10.3758/s13421-019-00899-4",
+        "doi_r": "10.3758/s13421-019-00899-4",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Performance under self-paced conditions.",
+        "locators_o": "p. 3",
+        "locators_r": "p. 10",
+        "audit_id": 1775,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1 overall recognition discriminability (da), self-paced versus total-study-time-yoked fixed-rate controls; subject analysis, paired t test, Results p. 111 (article p. 3).",
+      "worker_notes": "Identity checked from supplied canonical text: title On the effectiveness of self-paced learning; Jonathan G. Tullis and Aaron S. Benjamin; Journal of Memory and Language 64 (2011), 109–118; doi:10.1016/j.jml.2010.11.002. This is the original journal article (author personal copy), including methods, results and references, not an abstract or secondary report. No PDF path supplied; no rendering performed. 35 discrepancy reducers + 39 discrepancy increasers = 74 self-paced participants; each has one yoked control, giving 74 self-paced + 74 fixed-rate controls = 148 participants, organized as 74 paired analytic units. These exhaustive positive/negative allocation groups are described as the subsets of self-paced subjects. This also matches the explicitly printed participant count. No N inferred from degrees of freedom. The superscript-like 1 after [73] in canonical text points to footnote 1 explaining pairwise yoking; it is not part of the degrees of freedom. The article supplies a significance threshold and calls this test significant; .05 is an upper bound, not an exact p. Unassigned replication and success fields are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Self-paced subjects revealed significantly higher performance",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 10",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Across four experiments, we found no evidence that control over the onset of stimuli enhances learning. This result\nstands in notable contrast to the fact that control over stimulus offset does enhance memory (Experiment 1; Tullis & Benjamin,\nJournal of memory and language, 64 (2), 109-118, 2011)."
+      }
+    },
+    "1776": {
+      "source_key": "1b146a49d58bccee",
+      "side": "original",
+      "input": {
+        "ref_o": "Tullis, J. G., & Benjamin, A. S. (2011). On the effectiveness of self-paced learning. Journal of Memory and Language, 64(2), 109–118. https://doi.org/10.1016/j.jml.2010.11.002",
+        "doi_o": "10.1016/j.jml.2010.11.002",
+        "study_o": "1",
+        "ref_r": "Patel, T. N., Steyvers, M., & Benjamin, A. S. (2019). Monitoring the ebb and flow of attention: Does controlling the onset of stimuli during encoding enhance memory? Memory &amp; Cognition, 47(4), 706–718. https://doi.org/10.3758/s13421-019-00899-4",
+        "doi_r": "10.3758/s13421-019-00899-4",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Item-level performance under self-paced conditions.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 10",
+        "audit_id": 1776,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1 overall item-level recognition discriminability (da), calculated for each word from all self-paced versus all fixed-rate respondents; paired item analysis in p. 112 Results (article p. 4).",
+      "worker_notes": "Identity checked from supplied canonical text: title On the effectiveness of self-paced learning; Jonathan G. Tullis and Aaron S. Benjamin; Journal of Memory and Language 64 (2011), 109–118; doi:10.1016/j.jml.2010.11.002. This is the original journal article (author personal copy), including methods, results and references, not an abstract or secondary report. No PDF path supplied; no rendering performed. The neutral item-level description and p. 4 locator identify the overall item analysis before the allocation-strategy subsection, rather than either strategy-specific item test. N=160 is established by the explicit test-list count and the statement that the analysis calculates discriminability for each word in each condition; not inferred from df. The significance convention establishes only p < .05. Unassigned replication and success fields are placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Performance on the item level was greater for self-paced subjects",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 10",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": null,
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Across four experiments, we found no evidence that control over the onset of stimuli enhances learning. This result\nstands in notable contrast to the fact that control over stimulus offset does enhance memory (Experiment 1; Tullis & Benjamin,\nJournal of memory and language, 64 (2), 109-118, 2011)."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1775,
+      "field": "n_o",
+      "blind": {
+        "value": "148",
+        "sample_role": "Participants in 74 yoked pairs; pair is the unit of the paired test.",
+        "exclusions": "No participant exclusions reported for Experiment 1. Four primacy and four recency buffer words excluded from analysis; these are items, not participant exclusions.",
+        "location": "p. 111 Participants and Results footnote 1; p. 112 allocation-strategy subsets and their yoked controls",
+        "quote": "One-hundred and forty-eight introductory-level psy- ... chology students from the University of Illinois partici- ... pated in exchange for course credit. ... Thirty-ﬁve subjects exhibited negative ... correlations, classifying them as discrepancy reducers, ... and 39 subjects revealed positive correlations, classifying ... them as discrepancy increasers. ... The performance of each of these subsets of subjects is ... compared to their yoked controls",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1775,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "Final mutually exclusive allocation subsets and their yoked controls establish analytic participants and pair role; corroborated by printed participant total.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "location": "p. 111 Participants and Results footnote 1; p. 112 allocation-strategy subsets and their yoked controls",
+        "quote": "One-hundred and forty-eight introductory-level psy- ... chology students from the University of Illinois partici- ... pated in exchange for course credit. ... Thirty-ﬁve subjects exhibited negative ... correlations, classifying them as discrepancy reducers, ... and 39 subjects revealed positive correlations, classifying ... them as discrepancy increasers. ... The performance of each of these subsets of subjects is ... compared to their yoked controls",
+        "calculation": "35 discrepancy reducers + 39 discrepancy increasers = 74 self-paced participants; each has one yoked control, giving 74 self-paced + 74 fixed-rate controls = 148 participants, organized as 74 paired analytic units. These exhaustive positive/negative allocation groups are described as the subsets of self-paced subjects. This also matches the explicitly printed participant count. No N inferred from degrees of freedom."
+      },
+      "supported": true,
+      "shipped": "148",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1775,
+      "field": "es_value_o",
+      "blind": {
+        "value": "2.20",
+        "metric": "t",
+        "test_statistic": "t [73]1 = 2.20",
+        "location": "p. 111 Results, subject analysis",
+        "quote": "[SEM = 0.07]; t [73]1 = 2.20)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1775,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "The locator identifies the overall subject analysis, with printed paired t statistic; no effect-size conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "location": "p. 111 Results, subject analysis",
+        "quote": "[SEM = 0.07]; t [73]1 = 2.20)",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "t(73) = 2.20",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1775,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 111 Results, opening significance convention and subject-analysis result",
+        "quote": "All statistics reported here are signiﬁcant at an a < .05 le- ... vel. ... Self-paced subjects ... revealed signiﬁcantly higher performance than their paired ... controls",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1775,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Opening Results convention states significance at alpha < .05 and the target comparison is explicitly significant. Preserve p < .05 only; no exact p is printed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "location": "p. 111 Results, opening significance convention and subject-analysis result",
+        "quote": "All statistics reported here are signiﬁcant at an a < .05 le- ... vel. ... Self-paced subjects ... revealed signiﬁcantly higher performance than their paired ... controls",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": null,
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1776,
+      "field": "n_o",
+      "blind": {
+        "value": "160",
+        "sample_role": "Words/items as paired analytic observations, with one discriminability estimate per condition for each word; 148 participants contribute responses, not 148 item-level observations.",
+        "exclusions": "Four primacy and four recency buffer words excluded from analysis. The explicitly specified 160-word test list comprises the selected nonbuffer words; each participant studied a randomized subset of 80 and was tested on all 160.",
+        "location": "p. 111 Materials and Design and procedure; p. 112 Results, overall item analysis",
+        "quote": "All 160 words ... comprised the test list. ... an item analysis, in which discrimination was calculated for ... each word once from the combined responses of the entire ... group of self-paced subjects and once from the combined re- ... sponses of the entire group of control subjects.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1776,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "The explicit 160-word test list and per-word paired analysis establish the analytic observation count; participant contributors are a separate role.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "location": "p. 111 Materials and Design and procedure; p. 112 Results, overall item analysis",
+        "quote": "All 160 words ... comprised the test list. ... an item analysis, in which discrimination was calculated for ... each word once from the combined responses of the entire ... group of self-paced subjects and once from the combined re- ... sponses of the entire group of control subjects.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "148",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1776,
+      "field": "es_value_o",
+      "blind": {
+        "value": "4.25",
+        "metric": "t",
+        "test_statistic": "t [159] = 4.25",
+        "location": "p. 112 Results, overall item analysis",
+        "quote": "subjects (da = 1.58 [SEM = 0.06], da = 1.43 [SEM = 0.05]; t ... [159] = 4.25).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1776,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "The item-level locator identifies the overall paired item analysis and its printed t statistic, not the subsequent strategy-subgroup tests.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "location": "p. 112 Results, overall item analysis",
+        "quote": "subjects (da = 1.58 [SEM = 0.06], da = 1.43 [SEM = 0.05]; t ... [159] = 4.25).",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "t(159) = 4.25",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1776,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 111 Results significance convention; p. 112 overall item-analysis result",
+        "quote": "All statistics reported here are signiﬁcant at an a < .05 le- ... vel. ... Item discrim- ... inability calculated from the self-paced subjects was ... signiﬁcantly greater than that computed from the control ... subjects",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1776,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Opening Results convention states significance at alpha < .05; the target item comparison is explicitly significant. Preserve p < .05, without computing exact p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4534c7213e374a373b18d95e.txt",
+        "location": "p. 111 Results significance convention; p. 112 overall item-analysis result",
+        "quote": "All statistics reported here are signiﬁcant at an a < .05 le- ... vel. ... Item discrim- ... inability calculated from the self-paced subjects was ... signiﬁcantly greater than that computed from the control ... subjects",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": null,
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/1b146a49d58bccee. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_1b146a49d58bccee_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

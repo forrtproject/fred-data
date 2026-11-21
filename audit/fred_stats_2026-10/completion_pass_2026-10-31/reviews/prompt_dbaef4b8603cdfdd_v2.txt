@@ -1,0 +1,114 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1275": {
+      "source_key": "dbaef4b8603cdfdd",
+      "side": "replication",
+      "input": {
+        "ref_o": "Wansink, B., Painter, J. E., & North, J. (2005). Bottomless Bowls: Why Visual Cues of Portion Size May Influence Intake**. Obesity Research, 13(1), 93–100. Portico. https://doi.org/10.1038/oby.2005.12",
+        "doi_o": "10.1038/oby.2005.12",
+        "study_o": "1",
+        "ref_r": "Lopez, A., Choi, A. K., Dellawar, N. C., Cullen, B. C., Avila Contreras, S., Rosenfeld, D. L., & Tomiyama, A. J. (2024). Visual cues and food intake: A preregistered replication of Wansink et al. (2005). Journal of Experimental Psychology: General, 153(2), 275–281. https://doi.org/10.1037/xge0001503",
+        "doi_r": "10.1037/xge0001503",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Participants’ beliefs about monitoring their consumption.",
+        "locators_o": "p.5",
+        "locators_r": "p. 4",
+        "audit_id": 1275,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1ccbd78a2cc3a025f81c00f1.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Between-condition comparison of consumption monitoring: agreement with “I carefully paid attention to how much I ate,” current-study Table 1 row.",
+      "worker_notes": "Identity checked independently against canonical L75–92, L94–133 and L245: matching title Visual Cues and Food Intake: A Preregistered Replication of Wansink et al. (2005), authors Lopez, Choi, Dellawar, Cullen, Avila Contreras, Rosenfeld, and Tomiyama, DOI 10.1037/xge0001503. Supplied frozen ResearchGate author-uploaded parse contains seven-page primary empirical report including methods, results, tables, discussion and references. This is the November 2, 2023 advance online version of the reference published in 2024, not a preregistration or secondary article. No PDF supplied; no rendering attempted. Supplements not supplied. Original side and reported_success are unassigned placeholders. Monitoring description maps to the named consumption-monitoring row, supported by questionnaire measure on p.3 L577–584. Current-study F=1.14 is printed; requested d is not supplied for this test. Original-study F=.69 is a different column. Table gives means, SDs, CIs and F but no df or item-specific N. Unstarred F is not converted into p>.05; legend gives thresholds only for starred results. No same-test exact p or bound is printed. Methods report 654 recruited; 190 excluded (168 for discovery of purpose, 22 experimenter error). Group members were excluded if anyone inferred the purpose. Final whole-study N=464, not assumed to be item-specific analytic N. Table 2 correlation Ns are not transferred to this test. No conversion or N calculation performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1ccbd78a2cc3a025f81c00f1.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "The extent to which participants believed they monitored their consumption.",
+        "es_repr_o": "p.5",
+        "es_repr_r": "p. 4",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the present study did replicate the key finding from Wansink et al.—participants that ate from the imperceptibly self-refilling bowl ate more than those eating from the regular bowl. [...] (32% more soup consumption, or d = 0.45) [...] In our preregistration, we had indicated that a successful replication would be defined as “If our results show that the experimental (biased visual cue) group consumed significantly more soup than the control (accurate visual cue) group, but their estimated consumption and satiation ratings were not significantly different between groups. In terms of the size of the effect, we will consider the effect replicated if the difference in the two groups in terms of consumption is at least half of the original effect (i.e., Cohen’s d = 0.4223).” While participants in the control group estimated that they ate significantly more soup than did those in the experimental group, these results are still consistent with Wansink and colleagues’ hypotheses. We therefore deem this replication successful."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1275,
+      "field": "es_value_r",
+      "blind": {
+        "value": "1.14",
+        "metric": "F",
+        "test_statistic": "F = 1.14",
+        "location": "Advance online p.4 Table 1 Consumption monitoring, canonical L747–775",
+        "quote": "Consumption monitoring ... I carefully paid attention to how ... much I ate ... 4.9 +2.3 4.21 +1.81 [3.98, 4.44] 5.3 +2.4 4.40 +2.06 [4.12, 4.68] 0.69 1.14",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1ccbd78a2cc3a025f81c00f1.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1275,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Monitoring item matches target. Current-study F=1.14 is printed; requested d is not printed for this comparison, so the printed F is retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1ccbd78a2cc3a025f81c00f1.txt",
+        "location": "Advance online p.4 Table 1 Consumption monitoring, canonical L747–775",
+        "quote": "Consumption monitoring ... I carefully paid attention to how ... much I ate ... 4.9 +2.3 4.21 +1.81 [3.98, 4.44] 5.3 +2.4 4.40 +2.06 [4.12, 4.68] 0.69 1.14",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "0.098",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/dbaef4b8603cdfdd. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_dbaef4b8603cdfdd_v2.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+
+FOCUSED CALCULATION RE-CHECK: row1275 requests d, but the primary Table1 prints an F and group descriptives, with no d inline. V1 reconstructed d using unweighted or weighted SDs and Table2 condition Ns. coding_context es_repr_r is only p.4 and documents no derivation or direction. Do not certify the stored d simply because a reconstruction approximately matches it. Independently establish from source whether these Table1 descriptives are unadjusted independent-group means/SDs for this exact item and whether Table2 condition counts are its final analytic counts, rather than counts for another outcome/full sample. Determine whether the requested standard Cohen d (including signed direction, estimator/denominator and design assumptions) is positively identified and reproducibly supported without choosing a formula to fit shipped0.098. Our established completion gate only permits documented field-specific derivations; a naked F is not d and there is no generic conversion. If a documented source/coding formula or unequivocal requested-metric identity is unavailable, return undeterminable with null correct_value and explain the limit. Preserve the raw Table1 F and all source discrepancies; no calculation from df or rounding repairs. Only es_value_r is under review. No source acquisition, repo search or Git.
+
+V1 FINDING:
+[
+  {
+    "audit_id": 1275,
+    "field": "es_value_r",
+    "verdict": "shipped_right",
+    "correct_value": "0.098",
+    "correct_metric": "d",
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": false,
+    "location": "p. 4, Table 1 (Consumption monitoring row, L747\u2013L768)",
+    "quote": "Consumption monitoring ... I carefully paid attention to how ... much I ate ... 4.9 +2.3 4.21 +1.81 [3.98, 4.44] 5.3 +2.4 4.40 +2.06 [4.12, 4.68] 0.69 1.14",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1ccbd78a2cc3a025f81c00f1.txt",
+    "reason": "Table 1 prints current-study group descriptive statistics (M = 4.21, SD = 1.81 vs. M = 4.40, SD = 2.06) and F = 1.14 for the consumption monitoring item without printing Cohen's d inline. The blind extraction recorded the test statistic F = 1.14, whereas the shipped d = 0.098 is reproducibly calculated from the printed group means and SDs ((4.40 - 4.21) / sqrt((1.81^2 + 2.06^2) / 2) = 0.09799, or 0.09837 using sample-weighted pooled SD with Table 2 condition sizes n = 246 and n = 218)."
+  }
+]
+
+Return only the one-item complete JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_dbaef4b8603cdfdd_v2.json and ## Answer, addressing the objection explicitly.

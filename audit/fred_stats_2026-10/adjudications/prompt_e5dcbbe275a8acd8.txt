@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 667,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "t(28) = 2.86",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "2.86",
+      "location": "p. 237 (PDF p. 8), Results, Experiment 2a",
+      "quote": "tion (M= 7.30 s), t(2S) = 2.86,p< .01, as predicted.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1c6230a566069e92212d6cb8.txt",
+      "confident": true,
+      "metric": "t",
+      "test_statistic": "t(2S) = 2.86"
+    },
+    "locator": {
+      "ref_o": "Bargh, J. A., Chen, M., & Burrows, L. (1996). Automaticity of social behavior: Direct effects of trait construct and stereotype activation on action. Journal of Personality and Social Psychology, 71(2), 230–244. https://doi.org/10.1037/0022-3514.71.2.230",
+      "doi_o": "10.1037/0022-3514.71.2.230",
+      "study_o": "2a",
+      "ref_r": "Pashler, H., Harris, C., & Coburn, N.. Elderly-Related Words Prime Slow Walking . (2011, September 15). Retrieved from https://web.archive.org/web/20191117063540/http://www.PsychFileDrawer.org/replication.php?attempt=MTU%3D",
+      "doi_r": null,
+      "url_r": "https://drive.google.com/file/d/1i2aa1erQ9i9knP8Z5bgGiSt6DXX7U7Fa/view?usp=drivesdk",
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 667,
+      "description": "Elderly-stereotype activation or priming and participants’ walking speed.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 2",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1c6230a566069e92212d6cb8.txt"
+      }
+    },
+    "work_key": "https://drive.google.com/file/d/1i2aa1erQ9i9knP8Z5bgGiSt6DXX7U7Fa/view?usp=drivesdk",
+    "coding_context": {
+      "es_repr": "p. 8",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

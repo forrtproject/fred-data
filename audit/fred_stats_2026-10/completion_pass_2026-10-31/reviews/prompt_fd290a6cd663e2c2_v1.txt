@@ -1,0 +1,89 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "912": {
+      "source_key": "fd290a6cd663e2c2",
+      "side": "original",
+      "input": {
+        "ref_o": "Shrum, L. J., Lowrey, T. M., Luna, D., Lerman, D. B., & Liu, M. (2012). Sound symbolism effects across languages: Implications for global brand names. International Journal of Research in Marketing, 29(3), 275–279. https://doi.org/10.1016/j.ijresmar.2012.03.002",
+        "doi_o": "10.1016/j.ijresmar.2012.03.002",
+        "study_o": "1a-c",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Relationship between vowel sounds, product category and brand-name preference, examining consistency between phonetic connotations and product attributes (vowel sound-by-product category interaction).",
+        "locators_o": "p. 3",
+        "locators_r": "p. 9",
+        "audit_id": 912,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86b78d0b17c71596b218c254.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiments 1a–1c pooled across languages: vowel sound × product category interaction in the 2 × 2 × 4 mixed ANOVA, section 3.2.1, printed F(1, 367)=63.87. This is the pooled interaction, not a language-specific interaction.",
+      "worker_notes": "Identity verified within supplied canonical text: title Sound symbolism effects across languages: Implications for global brand names; authors L. J. Shrum, T. M. Lowrey, David Luna, D. B. Lerman, Min Liu; DOI 10.1016/j.ijresmar.2012.03.002; International Journal of Research in Marketing 29 (2012), 275–279. Five-page primary research report with methods, results, tables and references; not an abstract-only excerpt or secondary article. No PDF was supplied. Only assigned n_o reviewed; other statistic fields and replication are unassigned placeholders. 106 (Experiment 1a, French sample) + 88 (Experiment 1b, Spanish sample) + 181 (Experiment 1c, Chinese sample) = 375 participants. Separate experiments/country samples are mutually exclusive; the critical analysis explicitly combines all three. Alphabetic/logographic conditions are subdivisions of 1c, not additional samples. N is not inferred from degrees of freedom.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86b78d0b17c71596b218c254.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Particular words will be preferred as brand names when the phonetic connotations of the words are consistent with the product attributes (Vowel sound-product category interaction)",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 9 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 912,
+      "field": "n_o",
+      "blind": {
+        "value": "375",
+        "sample_role": "Participants across the three separate experimental samples, pooled for the critical mixed ANOVA; vowel sound within participants, product category and experiment between participants.",
+        "exclusions": "No participant exclusions reported in the supplied methods/results. Gender missingness (one in 1a and one in 1b) is included in the printed sample counts, not a participant exclusion. Translation errors reduce word pairs in Chinese logographic conditions, not the stated participant sample.",
+        "location": "p. 276, §3.1.1 Participants, procedure, and measures; p. 277, §3.2.1 Effects of sound as a function of product",
+        "quote": "(n=106, 58 women, 47 men, 1 missing; Mage =23.7 yrs., SD=2.57) ... (n=88, 39 women, 48 men, 1 missing; Mage =23.6 yrs., ... (n=181, 104 women, 77 men; Mage =31.8 yrs., ... data from all three experiments into one dataset",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86b78d0b17c71596b218c254.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 912,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The source gives participant counts for each of the three separate experiments and explicitly combines their data for the critical pooled ANOVA. These are the reported experimental participant groups, not a generic external recruitment total. No exclusion reducing those groups is stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/86b78d0b17c71596b218c254.txt",
+        "location": "p. 276, §3.1.1 Participants, procedure, and measures; p. 277, §3.2.1 Effects of sound as a function of product",
+        "quote": "(n=106, 58 women, 47 men, 1 missing; Mage =23.7 yrs., SD=2.57) ... (n=88, 39 women, 48 men, 1 missing; Mage =23.6 yrs., ... (n=181, 104 women, 77 men; Mage =31.8 yrs., ... data from all three experiments into one dataset",
+        "calculation": "106 (Experiment 1a, French sample) + 88 (Experiment 1b, Spanish sample) + 181 (Experiment 1c, Chinese sample) = 375 participants. Separate experiments/country samples are mutually exclusive; the critical analysis explicitly combines all three. Alphabetic/logographic conditions are subdivisions of 1c, not additional samples. N is not inferred from degrees of freedom."
+      },
+      "supported": true,
+      "shipped": "368",
+      "comparison": "near",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/fd290a6cd663e2c2. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_fd290a6cd663e2c2_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

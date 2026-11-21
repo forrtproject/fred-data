@@ -1,0 +1,122 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 84,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 3, section 3.2 Meta-analyses",
+      "quote": "For both worry about climate change and ... belief that climate change is caused by humans a significant association ... emerged in each of the 31 countries.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_d474c9df976cbc3128830634.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": "The numeric target is unresolved or explicitly mismatched; the author label was retained as an observation. Require unique individual-effect mapping; do not transfer an agreeing overall paper/study label.",
+    "locator": {
+      "ref_o": "Syropoulos, S., & Markowitz, E. M. (2022). Perceived responsibility to address climate change consistently relates to increased pro-environmental attitudes, behaviors and policy support: Evidence across 23 countries. Journal of Environmental Psychology, 83, 101868. https://doi.org/10.1016/j.jenvp.2022.101868",
+      "doi_o": "10.1016/j.jenvp.2022.101868",
+      "study_o": "1",
+      "ref_r": "Tedaldi, E., Syropoulos, S., & Markowitz, E. M. (2024). Re-examining feelings of responsibility as a predictor of climate belief and worry: A replication across 31 countries. Journal of Environmental Psychology, 96, 102289. https://doi.org/10.1016/j.jenvp.2024.102289",
+      "doi_r": "10.1016/j.jenvp.2024.102289",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 84,
+      "description": "effect of perceived responsibility to address climate change (...) on worry about chlimate change",
+      "locators_o": "p.4",
+      "locators_r": "p.3",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_d474c9df976cbc3128830634.txt"
+      },
+      "target_side": "replication",
+      "source_version_note": "Published article copy from private Google Drive archive; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Tedaldi,Syropoulos,Markowitz. PDF has6pages; published range=102289; source endmatter checked in model review. Methods-related material pages[2, 3, 5]; results-related material pages[1, 2, 3, 4, 5]; references atPDFpages[5]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/d474c9df976cbc3128830634_drive.pdf"
+    },
+    "work_key": "10.1016/j.jenvp.2024.102289",
+    "coding_context": {
+      "description": "effect of perceived responsibility to address climate change (...) on worry about chlimate change",
+      "es_repr": "p.3",
+      "reported_success_quote": "All correlational findings for measures overlapping across ESS waves were replicated (within and across all countries)",
+      "coded_statistics_for_target_selection": {
+        "n_r": "40177",
+        "es_value_r": "0.17",
+        "es_type_r": "b (unstd)",
+        "pval_value_r": "0.001",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "prior_findings": [],
+    "blind_target_description": "ESS Wave 10, 31-country meta-analysis of within-country responsibility–worry about climate change regressions; model unspecified in locator.",
+    "blind_extraction_notes": "Target: perceived responsibility to address climate change predicting worry about climate change; original Study 1 p.4 and replication Study 1 p.3. Original and replication acquired independently; neither full paper obtained. Titles verified against DOI/Unpaywall/OpenAlex records. No target statistics, analytic n or narrative verdict extracted from abstract/section snippets. Acquisition details recorded in the DOI-keyed terminal .miss files.\nSource follow-up: Published article; Table 2 visually verified. Neutral locator does not select among multilevel Models 2/3 and meta-analysis. Extracted meta-analysis with explicit same-test p bound; multilevel Models 2 and 3 print the same b for both assigned outcomes. Model-specific analytic participant N is absent. Replication unassigned.\nSource follow-up: Published article. PDF p. 3 visually checked including figures. Extracted explicit meta-analysis coefficient and same-test p; neutral locator also includes multilevel models without choosing one, so exact test match remains uncertain. Table 1 unadjusted B: worry 0.19; belief 0.09; adjusted B: worry 0.18; belief 0.08 (each *** p < .001). Analytic participant N for selected test absent. Original unassigned.",
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/d474c9df976cbc3128830634_drive.pdf",
+    "parent_objection": "An agreement with a printed number or broad author label cannot resolve a different contrast, sample, model or outcome. Independently establish a documented mapping using target metadata and primary evidence, otherwise undeterminable. For1596/1597 distinguish initial intervention within all participants from a no-intervention control comparison; do not select the slope by numeric coincidence. For1552/1553 distinguish all instructed participants from Tseltal-only follow-up models and the original study4 replication portion from extension manipulations."
+  },
+  {
+    "audit_id": 85,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 3, section 3.2 Meta-analyses",
+      "quote": "For both worry about climate change and ... belief that climate change is caused by humans a significant association ... emerged in each of the 31 countries.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_d474c9df976cbc3128830634.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": "The numeric target is unresolved or explicitly mismatched; the author label was retained as an observation. Require unique individual-effect mapping; do not transfer an agreeing overall paper/study label.",
+    "locator": {
+      "ref_o": "Syropoulos, S., & Markowitz, E. M. (2022). Perceived responsibility to address climate change consistently relates to increased pro-environmental attitudes, behaviors and policy support: Evidence across 23 countries. Journal of Environmental Psychology, 83, 101868. https://doi.org/10.1016/j.jenvp.2022.101868",
+      "doi_o": "10.1016/j.jenvp.2022.101868",
+      "study_o": "1",
+      "ref_r": "Tedaldi, E., Syropoulos, S., & Markowitz, E. M. (2024). Re-examining feelings of responsibility as a predictor of climate belief and worry: A replication across 31 countries. Journal of Environmental Psychology, 96, 102289. https://doi.org/10.1016/j.jenvp.2024.102289",
+      "doi_r": "10.1016/j.jenvp.2024.102289",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 85,
+      "description": "effect of perceived responsibility to address climate change (...) on belief climate change is caused by humans",
+      "locators_o": "p.4",
+      "locators_r": "p.3",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_d474c9df976cbc3128830634.txt"
+      },
+      "target_side": "replication",
+      "source_version_note": "Published article copy from private Google Drive archive; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Tedaldi,Syropoulos,Markowitz. PDF has6pages; published range=102289; source endmatter checked in model review. Methods-related material pages[2, 3, 5]; results-related material pages[1, 2, 3, 4, 5]; references atPDFpages[5]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/d474c9df976cbc3128830634_drive.pdf"
+    },
+    "work_key": "10.1016/j.jenvp.2024.102289",
+    "coding_context": {
+      "description": "effect of perceived responsibility to address climate change (...) on belief climate change is caused by humans",
+      "es_repr": "p.3",
+      "reported_success_quote": "All correlational findings for measures overlapping across ESS waves were replicated (within and across all countries)",
+      "coded_statistics_for_target_selection": {
+        "n_r": "40177",
+        "es_value_r": "0.08",
+        "es_type_r": "b (unstd)",
+        "pval_value_r": "0.001",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "prior_findings": [],
+    "blind_target_description": "ESS Wave 10, 31-country meta-analysis of within-country responsibility–belief climate change is caused by humans regressions; model unspecified in locator.",
+    "blind_extraction_notes": "Target: perceived responsibility to address climate change predicting belief that climate change is caused by humans; original Study 1 p.4 and replication Study 1 p.3. Original and replication acquired independently; neither full paper obtained. Titles verified against DOI/Unpaywall/OpenAlex records. No target statistics, analytic n or narrative verdict extracted from abstract/section snippets. Acquisition details recorded in the DOI-keyed terminal .miss files.\nSource follow-up: Published article; Table 2 visually verified. Neutral locator does not select among multilevel Models 2/3 and meta-analysis. Extracted meta-analysis with explicit same-test p bound; multilevel Models 2 and 3 print the same b for both assigned outcomes. Model-specific analytic participant N is absent. Replication unassigned.\nSource follow-up: Published article. PDF p. 3 visually checked including figures. Extracted explicit meta-analysis coefficient and same-test p; neutral locator also includes multilevel models without choosing one, so exact test match remains uncertain. Table 1 unadjusted B: worry 0.19; belief 0.09; adjusted B: worry 0.18; belief 0.08 (each *** p < .001). Analytic participant N for selected test absent. Original unassigned.",
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/d474c9df976cbc3128830634_drive.pdf",
+    "parent_objection": "An agreement with a printed number or broad author label cannot resolve a different contrast, sample, model or outcome. Independently establish a documented mapping using target metadata and primary evidence, otherwise undeterminable. For1596/1597 distinguish initial intervention within all participants from a no-intervention control comparison; do not select the slope by numeric coincidence. For1552/1553 distinguish all instructed participants from Tseltal-only follow-up models and the original study4 replication portion from extension manipulations."
+  }
+]
+
+FOCUSED SCOPE ROUND: Carry forward original brief, prior findings and unresolved objections. For reported_success return effect_specific_verdict_confirmed true ONLY with a unique defensible row/outcome mapping and the authors own applicable narrative. Include exact primary quotations. Numeric agreement alone never establishes sample/contrast identity. No commands or writes; whole reply under ## Answer.

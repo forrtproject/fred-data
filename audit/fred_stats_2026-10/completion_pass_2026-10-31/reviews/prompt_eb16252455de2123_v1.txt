@@ -1,0 +1,621 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "180": {
+      "source_key": "eb16252455de2123",
+      "side": "original",
+      "input": {
+        "ref_o": "Lozano, C., & Díaz-Negrillo, A. (2019). Using learner corpus methods in L2 acquisition                    research. Revista Española de Lingüística Aplicada/Spanish Journal of Applied Linguistics, 32(1), 82–124. Portico. https://doi.org/10.1075/resla.17019.loz",
+        "doi_o": "10.1075/resla.17019.loz",
+        "study_o": "1",
+        "ref_r": "Kontkanen, J. (2024). Investigating the effect of proficiency level on the acquisition order of morphemes for L2 English learners: A replication of a corpus-based SLA study using Interlanguage Annotation [Master’s thesis, University of Helsinki]. Retrieved from http://hdl.handle.net/10138/576172",
+        "doi_r": "kontkanen_jaakko_thesis_2024",
+        "url_r": "https://helda.helsinki.fi/bitstreams/b16ebd43-f83b-42c9-9996-adf6735845c1/download",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Progressive -ing. The annotation covers OCs of the progressive verb form in main lexical verbs occurring in finite verb phrases. Present",
+        "locators_o": "p. 101",
+        "locators_r": "p.31",
+        "audit_id": 180,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Progressive -ing; original COREFL L1-Spanish/L2-English study; pooled A1/A2 beginners versus pooled B1/B2 intermediates; raw-frequency TLU/non-TLU chi-square contrast.",
+      "worker_notes": "Identity verified from manuscript p. 1: title Using learner corpus methods in L2 acquisition research: The morpheme order studies revisited with Interlanguage Annotation; Lozano, C., & Díaz-Negrillo, A. (2019); DOI 10.1075/resla.17019.loz. Explicitly labelled accepted manuscript (postprint) of the RESLA article. Reference title is abbreviated and the supplied reference begins at p.82 whereas manuscript citation gives 83–124; authors, year, journal, volume and DOI match. This is a primary report with methods and results, not an abstract or secondary article. The supplied text contains manuscript pp.1–36; tables/figures are insertion markers and referenced appendices are not included. No PDF supplied. Target matched by named morpheme and the explicitly stated beginners-versus-intermediates contrast in section 4.1, not by row order or numeric matching. 38 beginner observations + 47 intermediate observations = 85 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive. The 40 sampled participants/texts, 5,869 words and 1,751 annotations described in methods are distinct counting roles and are not substituted for this morpheme-specific analytic N. No N inferred from degrees of freedom. Methods section 3.3 (p.18) explicitly says chi-square tests use raw frequencies. Annotation rules: Finite lexical-verb progressive contexts; non-finite present participles outside the annotation scope. Unassigned original es/p, replication and reported_success are null placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Progressive -ing. The annotation covers OCs of the progressive verb form in main lexical verbs occurring in finite verb phrases. Present",
+        "es_repr_o": "p. 101, df inferred based on description",
+        "es_repr_r": "p.31",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the study preliminarily\nsuggest that, unlike the reference study, L2 proficiency level does not have a considerable effect on the\nacquisition order of morphemes."
+      }
+    },
+    "181": {
+      "source_key": "eb16252455de2123",
+      "side": "original",
+      "input": {
+        "ref_o": "Lozano, C., & Díaz-Negrillo, A. (2019). Using learner corpus methods in L2 acquisition                    research. Revista Española de Lingüística Aplicada/Spanish Journal of Applied Linguistics, 32(1), 82–124. Portico. https://doi.org/10.1075/resla.17019.loz",
+        "doi_o": "10.1075/resla.17019.loz",
+        "study_o": "1",
+        "ref_r": "Kontkanen, J. (2024). Investigating the effect of proficiency level on the acquisition order of morphemes for L2 English learners: A replication of a corpus-based SLA study using Interlanguage Annotation [Master’s thesis, University of Helsinki]. Retrieved from http://hdl.handle.net/10138/576172",
+        "doi_r": "kontkanen_jaakko_thesis_2024",
+        "url_r": "https://helda.helsinki.fi/bitstreams/b16ebd43-f83b-42c9-9996-adf6735845c1/download",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Plural -s. The annotation covers OCs of the regular plural number form in nouns, while irregular nominal plurals or plural number forms with other lexical categories (adjectives) were not annotated, as done in previous MOS.",
+        "locators_o": "p.100",
+        "locators_r": "p.31",
+        "audit_id": 181,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Plural -s; original COREFL L1-Spanish/L2-English study; pooled A1/A2 beginners versus pooled B1/B2 intermediates; raw-frequency TLU/non-TLU chi-square contrast.",
+      "worker_notes": "Identity verified from manuscript p. 1: title Using learner corpus methods in L2 acquisition research: The morpheme order studies revisited with Interlanguage Annotation; Lozano, C., & Díaz-Negrillo, A. (2019); DOI 10.1075/resla.17019.loz. Explicitly labelled accepted manuscript (postprint) of the RESLA article. Reference title is abbreviated and the supplied reference begins at p.82 whereas manuscript citation gives 83–124; authors, year, journal, volume and DOI match. This is a primary report with methods and results, not an abstract or secondary article. The supplied text contains manuscript pp.1–36; tables/figures are insertion markers and referenced appendices are not included. No PDF supplied. Target matched by named morpheme and the explicitly stated beginners-versus-intermediates contrast in section 4.1, not by row order or numeric matching. 15 beginner observations + 54 intermediate observations = 69 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive. The 40 sampled participants/texts, 5,869 words and 1,751 annotations described in methods are distinct counting roles and are not substituted for this morpheme-specific analytic N. No N inferred from degrees of freedom. Methods section 3.3 (p.18) explicitly says chi-square tests use raw frequencies. Annotation rules: Regular nominal plural only; irregular nominal plurals and other lexical categories excluded from annotation. Unassigned original es/p, replication and reported_success are null placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Plural -s. The annotation covers OCs of the regular plural number form in nouns, while irregular nominal plurals or plural number forms with other lexical categories (adjectives) were not annotated, as done in previous MOS.",
+        "es_repr_o": "p.100",
+        "es_repr_r": "p.31",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the study preliminarily\nsuggest that, unlike the reference study, L2 proficiency level does not have a considerable effect on the\nacquisition order of morphemes."
+      }
+    },
+    "182": {
+      "source_key": "eb16252455de2123",
+      "side": "original",
+      "input": {
+        "ref_o": "Lozano, C., & Díaz-Negrillo, A. (2019). Using learner corpus methods in L2 acquisition                    research. Revista Española de Lingüística Aplicada/Spanish Journal of Applied Linguistics, 32(1), 82–124. Portico. https://doi.org/10.1075/resla.17019.loz",
+        "doi_o": "10.1075/resla.17019.loz",
+        "study_o": "1",
+        "ref_r": "Kontkanen, J. (2024). Investigating the effect of proficiency level on the acquisition order of morphemes for L2 English learners: A replication of a corpus-based SLA study using Interlanguage Annotation [Master’s thesis, University of Helsinki]. Retrieved from http://hdl.handle.net/10138/576172",
+        "doi_r": "kontkanen_jaakko_thesis_2024",
+        "url_r": "https://helda.helsinki.fi/bitstreams/b16ebd43-f83b-42c9-9996-adf6735845c1/download",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Copula be. The annotation covers OCs of copula be in finite verb phrases, so imperatives and other non-finite forms were not annotated. Copulas in the negative form were tagged because, unlike lexical verbs, the negator does not force the verb be to appear in the base form. This also holds for auxiliary be.",
+        "locators_o": "p.100",
+        "locators_r": "p.31",
+        "audit_id": 182,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Copula be; original COREFL L1-Spanish/L2-English study; pooled A1/A2 beginners versus pooled B1/B2 intermediates; raw-frequency TLU/non-TLU chi-square contrast.",
+      "worker_notes": "Identity verified from manuscript p. 1: title Using learner corpus methods in L2 acquisition research: The morpheme order studies revisited with Interlanguage Annotation; Lozano, C., & Díaz-Negrillo, A. (2019); DOI 10.1075/resla.17019.loz. Explicitly labelled accepted manuscript (postprint) of the RESLA article. Reference title is abbreviated and the supplied reference begins at p.82 whereas manuscript citation gives 83–124; authors, year, journal, volume and DOI match. This is a primary report with methods and results, not an abstract or secondary article. The supplied text contains manuscript pp.1–36; tables/figures are insertion markers and referenced appendices are not included. No PDF supplied. Target matched by named morpheme and the explicitly stated beginners-versus-intermediates contrast in section 4.1, not by row order or numeric matching. 61 beginner observations + 93 intermediate observations = 154 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive. The 40 sampled participants/texts, 5,869 words and 1,751 annotations described in methods are distinct counting roles and are not substituted for this morpheme-specific analytic N. No N inferred from degrees of freedom. Methods section 3.3 (p.18) explicitly says chi-square tests use raw frequencies. Annotation rules: Finite copula contexts, including negative forms; imperatives and other non-finite forms not annotated. Unassigned original es/p, replication and reported_success are null placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Copula be. The annotation covers OCs of copula be in finite verb phrases, so imperatives and other non-finite forms were not annotated. Copulas in the negative form were tagged because, unlike lexical verbs, the negator does not force the verb be to appear in the base form. This also holds for auxiliary be.",
+        "es_repr_o": "p.100",
+        "es_repr_r": "p.31",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the study preliminarily\nsuggest that, unlike the reference study, L2 proficiency level does not have a considerable effect on the\nacquisition order of morphemes."
+      }
+    },
+    "183": {
+      "source_key": "eb16252455de2123",
+      "side": "original",
+      "input": {
+        "ref_o": "Lozano, C., & Díaz-Negrillo, A. (2019). Using learner corpus methods in L2 acquisition                    research. Revista Española de Lingüística Aplicada/Spanish Journal of Applied Linguistics, 32(1), 82–124. Portico. https://doi.org/10.1075/resla.17019.loz",
+        "doi_o": "10.1075/resla.17019.loz",
+        "study_o": "1",
+        "ref_r": "Kontkanen, J. (2024). Investigating the effect of proficiency level on the acquisition order of morphemes for L2 English learners: A replication of a corpus-based SLA study using Interlanguage Annotation [Master’s thesis, University of Helsinki]. Retrieved from http://hdl.handle.net/10138/576172",
+        "doi_r": "kontkanen_jaakko_thesis_2024",
+        "url_r": "https://helda.helsinki.fi/bitstreams/b16ebd43-f83b-42c9-9996-adf6735845c1/download",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Auxiliary be. The annotation covers OCs of auxiliary be, specifically in progressive and passive contexts.",
+        "locators_o": "p.100",
+        "locators_r": "p.31",
+        "audit_id": 183,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Auxiliary be; original COREFL L1-Spanish/L2-English study; pooled A1/A2 beginners versus pooled B1/B2 intermediates; raw-frequency TLU/non-TLU chi-square contrast.",
+      "worker_notes": "Identity verified from manuscript p. 1: title Using learner corpus methods in L2 acquisition research: The morpheme order studies revisited with Interlanguage Annotation; Lozano, C., & Díaz-Negrillo, A. (2019); DOI 10.1075/resla.17019.loz. Explicitly labelled accepted manuscript (postprint) of the RESLA article. Reference title is abbreviated and the supplied reference begins at p.82 whereas manuscript citation gives 83–124; authors, year, journal, volume and DOI match. This is a primary report with methods and results, not an abstract or secondary article. The supplied text contains manuscript pp.1–36; tables/figures are insertion markers and referenced appendices are not included. No PDF supplied. Target matched by named morpheme and the explicitly stated beginners-versus-intermediates contrast in section 4.1, not by row order or numeric matching. 40 beginner observations + 48 intermediate observations = 88 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive. The 40 sampled participants/texts, 5,869 words and 1,751 annotations described in methods are distinct counting roles and are not substituted for this morpheme-specific analytic N. No N inferred from degrees of freedom. Methods section 3.3 (p.18) explicitly says chi-square tests use raw frequencies. Annotation rules: Auxiliary be in progressive and passive contexts. Unassigned original es/p, replication and reported_success are null placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Auxiliary be. The annotation covers OCs of auxiliary be, specifically in progressive and passive contexts.",
+        "es_repr_o": "p.100",
+        "es_repr_r": "p.31",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the study preliminarily\nsuggest that, unlike the reference study, L2 proficiency level does not have a considerable effect on the\nacquisition order of morphemes."
+      }
+    },
+    "184": {
+      "source_key": "eb16252455de2123",
+      "side": "original",
+      "input": {
+        "ref_o": "Lozano, C., & Díaz-Negrillo, A. (2019). Using learner corpus methods in L2 acquisition                    research. Revista Española de Lingüística Aplicada/Spanish Journal of Applied Linguistics, 32(1), 82–124. Portico. https://doi.org/10.1075/resla.17019.loz",
+        "doi_o": "10.1075/resla.17019.loz",
+        "study_o": "1",
+        "ref_r": "Kontkanen, J. (2024). Investigating the effect of proficiency level on the acquisition order of morphemes for L2 English learners: A replication of a corpus-based SLA study using Interlanguage Annotation [Master’s thesis, University of Helsinki]. Retrieved from http://hdl.handle.net/10138/576172",
+        "doi_r": "kontkanen_jaakko_thesis_2024",
+        "url_r": "https://helda.helsinki.fi/bitstreams/b16ebd43-f83b-42c9-9996-adf6735845c1/download",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Article. The annotation covers OCs of (in)definite articles (a(n)/the). Given that the ‘zero article’ was disregarded in previous MOS, it was also disregarded here for comparative purposes. The non-suppliance of an article in an (in)definite OC was tagged as omission. Also, given that both definite and indefinite articles were analysed as a single morpheme in previous MOS, we analysed them similarly, even if we are aware that they are better analysed separately as they do not emerge simultaneously (cf. the discussion in Section 4.4). Selection of one article for the other was tagged as ‘mis-selection’. The forms a/an were understood as spelling variants, so selection of one when the other was expected was not tagged as NTLU. Importantly, determining the OC of the/a(n) is based on information-status distinctions deriving from discourse, i.e., on whether the entity has been previously mentioned in the discourse (i.e., discourse-old, topic) or not (i.e., discourse-new, focus), and therefore whether or not the referent is known to the reader. Articles were annotated independently of the appearance of characters in the picture story, which could give the sense of old information, but technically introduce discoursenew information when retelling the story to a reader. Therefore, ILA considers hearer/reader knowledge (and not speaker knowledge) to determine discourse-old/discourse-new distinctions (cf. Hawkins, 2001).",
+        "locators_o": "p.100",
+        "locators_r": "p.31",
+        "audit_id": 184,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Article; original COREFL L1-Spanish/L2-English study; pooled A1/A2 beginners versus pooled B1/B2 intermediates; raw-frequency TLU/non-TLU chi-square contrast.",
+      "worker_notes": "Identity verified from manuscript p. 1: title Using learner corpus methods in L2 acquisition research: The morpheme order studies revisited with Interlanguage Annotation; Lozano, C., & Díaz-Negrillo, A. (2019); DOI 10.1075/resla.17019.loz. Explicitly labelled accepted manuscript (postprint) of the RESLA article. Reference title is abbreviated and the supplied reference begins at p.82 whereas manuscript citation gives 83–124; authors, year, journal, volume and DOI match. This is a primary report with methods and results, not an abstract or secondary article. The supplied text contains manuscript pp.1–36; tables/figures are insertion markers and referenced appendices are not included. No PDF supplied. Target matched by named morpheme and the explicitly stated beginners-versus-intermediates contrast in section 4.1, not by row order or numeric matching. 386 beginner observations + 440 intermediate observations = 826 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive. The 40 sampled participants/texts, 5,869 words and 1,751 annotations described in methods are distinct counting roles and are not substituted for this morpheme-specific analytic N. No N inferred from degrees of freedom. Methods section 3.3 (p.18) explicitly says chi-square tests use raw frequencies. Annotation rules: Definite/indefinite articles pooled; zero article disregarded as a target morpheme; a/an treated as spelling variants. Unassigned original es/p, replication and reported_success are null placeholders only. Section 4.4 prints beginners 211/386=80.6%, whereas footnote 8 prints 311/386; this numerator inconsistency is retained as a source limitation and does not change the explicitly repeated denominator 386. No numerator correction or effect-size conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Article. The annotation covers OCs of (in)definite articles (a(n)/the). Given that the ‘zero article’ was disregarded in previous MOS, it was also disregarded here for comparative purposes. The non-suppliance of an article in an (in)definite OC was tagged as omission. Also, given that both definite and indefinite articles were analysed as a single morpheme in previous MOS, we analysed them similarly, even if we are aware that they are better analysed separately as they do not emerge simultaneously (cf. the discussion in Section 4.4). Selection of one article for the other was tagged as ‘mis-selection’. The forms a/an were understood as spelling variants, so selection of one when the other was expected was not tagged as NTLU. Importantly, determining the OC of the/a(n) is based on information-status distinctions deriving from discourse, i.e., on whether the entity has been previously mentioned in the discourse (i.e., discourse-old, topic) or not (i.e., discourse-new, focus), and therefore whether or not the referent is known to the reader. Articles were annotated independently of the appearance of characters in the picture story, which could give the sense of old information, but technically introduce discoursenew information when retelling the story to a reader. Therefore, ILA considers hearer/reader knowledge (and not speaker knowledge) to determine discourse-old/discourse-new distinctions (cf. Hawkins, 2001).",
+        "es_repr_o": "p.100",
+        "es_repr_r": "p.31",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the study preliminarily\nsuggest that, unlike the reference study, L2 proficiency level does not have a considerable effect on the\nacquisition order of morphemes."
+      }
+    },
+    "185": {
+      "source_key": "eb16252455de2123",
+      "side": "original",
+      "input": {
+        "ref_o": "Lozano, C., & Díaz-Negrillo, A. (2019). Using learner corpus methods in L2 acquisition                    research. Revista Española de Lingüística Aplicada/Spanish Journal of Applied Linguistics, 32(1), 82–124. Portico. https://doi.org/10.1075/resla.17019.loz",
+        "doi_o": "10.1075/resla.17019.loz",
+        "study_o": "1",
+        "ref_r": "Kontkanen, J. (2024). Investigating the effect of proficiency level on the acquisition order of morphemes for L2 English learners: A replication of a corpus-based SLA study using Interlanguage Annotation [Master’s thesis, University of Helsinki]. Retrieved from http://hdl.handle.net/10138/576172",
+        "doi_r": "kontkanen_jaakko_thesis_2024",
+        "url_r": "https://helda.helsinki.fi/bitstreams/b16ebd43-f83b-42c9-9996-adf6735845c1/download",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Irregular past. The annotation covers OCs of the irregular past tense form of lexical verbs only. Similarly to the rationale with irregular plural, cases of misformation (and also oversuppliance) are those where the learner applies the regular past -ed rule to a morphologically past-irregular verb.",
+        "locators_o": "p.108",
+        "locators_r": "p.31",
+        "audit_id": 185,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Irregular past; original COREFL L1-Spanish/L2-English study; pooled A1/A2 beginners versus pooled B1/B2 intermediates; raw-frequency TLU/non-TLU chi-square contrast.",
+      "worker_notes": "Identity verified from manuscript p. 1: title Using learner corpus methods in L2 acquisition research: The morpheme order studies revisited with Interlanguage Annotation; Lozano, C., & Díaz-Negrillo, A. (2019); DOI 10.1075/resla.17019.loz. Explicitly labelled accepted manuscript (postprint) of the RESLA article. Reference title is abbreviated and the supplied reference begins at p.82 whereas manuscript citation gives 83–124; authors, year, journal, volume and DOI match. This is a primary report with methods and results, not an abstract or secondary article. The supplied text contains manuscript pp.1–36; tables/figures are insertion markers and referenced appendices are not included. No PDF supplied. Target matched by named morpheme and the explicitly stated beginners-versus-intermediates contrast in section 4.1, not by row order or numeric matching. 65 beginner observations + 156 intermediate observations = 221 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive. The 40 sampled participants/texts, 5,869 words and 1,751 annotations described in methods are distinct counting roles and are not substituted for this morpheme-specific analytic N. No N inferred from degrees of freedom. Methods section 3.3 (p.18) explicitly says chi-square tests use raw frequencies. Annotation rules: Irregular past contexts of main lexical verbs only. Unassigned original es/p, replication and reported_success are null placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Irregular past. The annotation covers OCs of the irregular past tense form of lexical verbs only. Similarly to the rationale with irregular plural, cases of misformation (and also oversuppliance) are those where the learner applies the regular past -ed rule to a morphologically past-irregular verb.",
+        "es_repr_o": "p.108",
+        "es_repr_r": "p.31",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the study preliminarily\nsuggest that, unlike the reference study, L2 proficiency level does not have a considerable effect on the\nacquisition order of morphemes."
+      }
+    },
+    "186": {
+      "source_key": "eb16252455de2123",
+      "side": "original",
+      "input": {
+        "ref_o": "Lozano, C., & Díaz-Negrillo, A. (2019). Using learner corpus methods in L2 acquisition                    research. Revista Española de Lingüística Aplicada/Spanish Journal of Applied Linguistics, 32(1), 82–124. Portico. https://doi.org/10.1075/resla.17019.loz",
+        "doi_o": "10.1075/resla.17019.loz",
+        "study_o": "1",
+        "ref_r": "Kontkanen, J. (2024). Investigating the effect of proficiency level on the acquisition order of morphemes for L2 English learners: A replication of a corpus-based SLA study using Interlanguage Annotation [Master’s thesis, University of Helsinki]. Retrieved from http://hdl.handle.net/10138/576172",
+        "doi_r": "kontkanen_jaakko_thesis_2024",
+        "url_r": "https://helda.helsinki.fi/bitstreams/b16ebd43-f83b-42c9-9996-adf6735845c1/download",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Regular past. The annotation covers OCs of the simple past tense -(e)d form of regular lexical verbs.",
+        "locators_o": "p.108",
+        "locators_r": "p.31",
+        "audit_id": 186,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Regular past; original COREFL L1-Spanish/L2-English study; pooled A1/A2 beginners versus pooled B1/B2 intermediates; raw-frequency TLU/non-TLU chi-square contrast.",
+      "worker_notes": "Identity verified from manuscript p. 1: title Using learner corpus methods in L2 acquisition research: The morpheme order studies revisited with Interlanguage Annotation; Lozano, C., & Díaz-Negrillo, A. (2019); DOI 10.1075/resla.17019.loz. Explicitly labelled accepted manuscript (postprint) of the RESLA article. Reference title is abbreviated and the supplied reference begins at p.82 whereas manuscript citation gives 83–124; authors, year, journal, volume and DOI match. This is a primary report with methods and results, not an abstract or secondary article. The supplied text contains manuscript pp.1–36; tables/figures are insertion markers and referenced appendices are not included. No PDF supplied. Target matched by named morpheme and the explicitly stated beginners-versus-intermediates contrast in section 4.1, not by row order or numeric matching. 63 beginner observations + 158 intermediate observations = 221 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive. The 40 sampled participants/texts, 5,869 words and 1,751 annotations described in methods are distinct counting roles and are not substituted for this morpheme-specific analytic N. No N inferred from degrees of freedom. Methods section 3.3 (p.18) explicitly says chi-square tests use raw frequencies. Annotation rules: Simple past -(e)d contexts of main regular verbs. Unassigned original es/p, replication and reported_success are null placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Regular past. The annotation covers OCs of the simple past tense -(e)d form of regular lexical verbs.",
+        "es_repr_o": "p.108",
+        "es_repr_r": "p.31",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the study preliminarily\nsuggest that, unlike the reference study, L2 proficiency level does not have a considerable effect on the\nacquisition order of morphemes."
+      }
+    },
+    "187": {
+      "source_key": "eb16252455de2123",
+      "side": "original",
+      "input": {
+        "ref_o": "Lozano, C., & Díaz-Negrillo, A. (2019). Using learner corpus methods in L2 acquisition                    research. Revista Española de Lingüística Aplicada/Spanish Journal of Applied Linguistics, 32(1), 82–124. Portico. https://doi.org/10.1075/resla.17019.loz",
+        "doi_o": "10.1075/resla.17019.loz",
+        "study_o": "1",
+        "ref_r": "Kontkanen, J. (2024). Investigating the effect of proficiency level on the acquisition order of morphemes for L2 English learners: A replication of a corpus-based SLA study using Interlanguage Annotation [Master’s thesis, University of Helsinki]. Retrieved from http://hdl.handle.net/10138/576172",
+        "doi_r": "kontkanen_jaakko_thesis_2024",
+        "url_r": "https://helda.helsinki.fi/bitstreams/b16ebd43-f83b-42c9-9996-adf6735845c1/download",
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Possessive. The annotation covers OCs of the genitive structure [noun’s + NP]. Cases showing absence of the apostrophe have been marked as TLU, as we understand that the morpheme has been produced and the apostrophe represents a spelling issue.",
+        "locators_o": "p.101",
+        "locators_r": "p.31",
+        "audit_id": 187,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Possessive; original COREFL L1-Spanish/L2-English study; pooled A1/A2 beginners versus pooled B1/B2 intermediates; raw-frequency TLU/non-TLU chi-square contrast.",
+      "worker_notes": "Identity verified from manuscript p. 1: title Using learner corpus methods in L2 acquisition research: The morpheme order studies revisited with Interlanguage Annotation; Lozano, C., & Díaz-Negrillo, A. (2019); DOI 10.1075/resla.17019.loz. Explicitly labelled accepted manuscript (postprint) of the RESLA article. Reference title is abbreviated and the supplied reference begins at p.82 whereas manuscript citation gives 83–124; authors, year, journal, volume and DOI match. This is a primary report with methods and results, not an abstract or secondary article. The supplied text contains manuscript pp.1–36; tables/figures are insertion markers and referenced appendices are not included. No PDF supplied. Target matched by named morpheme and the explicitly stated beginners-versus-intermediates contrast in section 4.1, not by row order or numeric matching. 7 beginner observations + 7 intermediate observations = 14 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive. The 40 sampled participants/texts, 5,869 words and 1,751 annotations described in methods are distinct counting roles and are not substituted for this morpheme-specific analytic N. No N inferred from degrees of freedom. Methods section 3.3 (p.18) explicitly says chi-square tests use raw frequencies. Annotation rules: Genitive [noun’s + NP] contexts; missing apostrophe treated as spelling and marked target-like. Most files lacked possessive instances; no count of contributing learners to this contrast is printed. Unassigned original es/p, replication and reported_success are null placeholders only. The printed possessive contrast gives 7/7 versus 7/7 alongside χ2=1.400; this source inconsistency is not corrected or used to derive N.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Possessive. The annotation covers OCs of the genitive structure [noun’s + NP]. Cases showing absence of the apostrophe have been marked as TLU, as we understand that the morpheme has been produced and the apostrophe represents a spelling issue.",
+        "es_repr_o": "p.101",
+        "es_repr_r": "p.31",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The results of the study preliminarily\nsuggest that, unlike the reference study, L2 proficiency level does not have a considerable effect on the\nacquisition order of morphemes."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 180,
+      "field": "n_o",
+      "blind": {
+        "value": "85",
+        "sample_role": "Morpheme-specific raw-frequency annotation/context observations in the 2×2 target-like-use versus non-target-like-use contrast: beginners (A1+A2) versus intermediates (B1+B2). Not learner participants or text count.",
+        "exclusions": "Finite lexical-verb progressive contexts; non-finite present participles outside the annotation scope. No additional model-specific exclusions stated for these printed contrast totals. Participant contribution counts per morpheme are not established.",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... progressive -ing (TLU=18/38 vs. 44/47, χ2=22.771)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 180,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named morpheme is explicitly identified in the beginner/intermediate raw-frequency critical contrast. Sum uses the printed denominators for mutually exclusive final proficiency groups; analytic units are morpheme annotations/contexts, not the 40 learner texts. Finite lexical-verb progressive contexts; non-finite present participles outside the annotation scope.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... progressive -ing (TLU=18/38 vs. 44/47, χ2=22.771)",
+        "calculation": "38 beginner observations + 47 intermediate observations = 85 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive."
+      },
+      "supported": true,
+      "shipped": "40",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 181,
+      "field": "n_o",
+      "blind": {
+        "value": "69",
+        "sample_role": "Morpheme-specific raw-frequency annotation/context observations in the 2×2 target-like-use versus non-target-like-use contrast: beginners (A1+A2) versus intermediates (B1+B2). Not learner participants or text count.",
+        "exclusions": "Regular nominal plural only; irregular nominal plurals and other lexical categories excluded from annotation. No additional model-specific exclusions stated for these printed contrast totals. Participant contribution counts per morpheme are not established.",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 main text",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... plural -s (TLU= 14/15 vs. 51/54, χ2=0.027, p>0.05)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 181,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named morpheme is explicitly identified in the beginner/intermediate raw-frequency critical contrast. Sum uses the printed denominators for mutually exclusive final proficiency groups; analytic units are morpheme annotations/contexts, not the 40 learner texts. Regular nominal plural only; irregular nominal plurals and other lexical categories excluded from annotation.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 main text",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... plural -s (TLU= 14/15 vs. 51/54, χ2=0.027, p>0.05)",
+        "calculation": "15 beginner observations + 54 intermediate observations = 69 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive."
+      },
+      "supported": true,
+      "shipped": "40",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 182,
+      "field": "n_o",
+      "blind": {
+        "value": "154",
+        "sample_role": "Morpheme-specific raw-frequency annotation/context observations in the 2×2 target-like-use versus non-target-like-use contrast: beginners (A1+A2) versus intermediates (B1+B2). Not learner participants or text count.",
+        "exclusions": "Finite copula contexts, including negative forms; imperatives and other non-finite forms not annotated. No additional model-specific exclusions stated for these printed contrast totals. Participant contribution counts per morpheme are not established.",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... copula be (TLU=44/61 vs. 86/93, χ2=11.587)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 182,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named morpheme is explicitly identified in the beginner/intermediate raw-frequency critical contrast. Sum uses the printed denominators for mutually exclusive final proficiency groups; analytic units are morpheme annotations/contexts, not the 40 learner texts. Finite copula contexts, including negative forms; imperatives and other non-finite forms not annotated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... copula be (TLU=44/61 vs. 86/93, χ2=11.587)",
+        "calculation": "61 beginner observations + 93 intermediate observations = 154 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive."
+      },
+      "supported": true,
+      "shipped": "40",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 183,
+      "field": "n_o",
+      "blind": {
+        "value": "88",
+        "sample_role": "Morpheme-specific raw-frequency annotation/context observations in the 2×2 target-like-use versus non-target-like-use contrast: beginners (A1+A2) versus intermediates (B1+B2). Not learner participants or text count.",
+        "exclusions": "Auxiliary be in progressive and passive contexts. No additional model-specific exclusions stated for these printed contrast totals. Participant contribution counts per morpheme are not established.",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... auxiliary be (TLU=20/40 vs. 46/48, χ2=24.444)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 183,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named morpheme is explicitly identified in the beginner/intermediate raw-frequency critical contrast. Sum uses the printed denominators for mutually exclusive final proficiency groups; analytic units are morpheme annotations/contexts, not the 40 learner texts. Auxiliary be in progressive and passive contexts.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... auxiliary be (TLU=20/40 vs. 46/48, χ2=24.444)",
+        "calculation": "40 beginner observations + 48 intermediate observations = 88 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive."
+      },
+      "supported": true,
+      "shipped": "40",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 184,
+      "field": "n_o",
+      "blind": {
+        "value": "826",
+        "sample_role": "Morpheme-specific raw-frequency annotation/context observations in the 2×2 target-like-use versus non-target-like-use contrast: beginners (A1+A2) versus intermediates (B1+B2). Not learner participants or text count.",
+        "exclusions": "Definite/indefinite articles pooled; zero article disregarded as a target morpheme; a/an treated as spelling variants. No additional model-specific exclusions stated for these printed contrast totals. Participant contribution counts per morpheme are not established.",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... article\n(TLU=311/386 vs. 405/440, χ2=23.456)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 184,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named morpheme is explicitly identified in the beginner/intermediate raw-frequency critical contrast. Sum uses the printed denominators for mutually exclusive final proficiency groups; analytic units are morpheme annotations/contexts, not the 40 learner texts. Definite/indefinite articles pooled; zero article disregarded as a target morpheme; a/an treated as spelling variants.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... article\n(TLU=311/386 vs. 405/440, χ2=23.456)",
+        "calculation": "386 beginner observations + 440 intermediate observations = 826 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive."
+      },
+      "supported": true,
+      "shipped": "40",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 185,
+      "field": "n_o",
+      "blind": {
+        "value": "221",
+        "sample_role": "Morpheme-specific raw-frequency annotation/context observations in the 2×2 target-like-use versus non-target-like-use contrast: beginners (A1+A2) versus intermediates (B1+B2). Not learner participants or text count.",
+        "exclusions": "Irregular past contexts of main lexical verbs only. No additional model-specific exclusions stated for these printed contrast totals. Participant contribution counts per morpheme are not established.",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.25, section 4.6",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... beginners’ rates are significantly\nlower than intermediates’ (Figure 6B) for both past irregular (27/65=41.5% beginners\nvs. 129/156=82.7% intermediates, χ2=37.429, p<0.02)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 185,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named morpheme is explicitly identified in the beginner/intermediate raw-frequency critical contrast. Sum uses the printed denominators for mutually exclusive final proficiency groups; analytic units are morpheme annotations/contexts, not the 40 learner texts. Irregular past contexts of main lexical verbs only.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.25, section 4.6",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... beginners’ rates are significantly\nlower than intermediates’ (Figure 6B) for both past irregular (27/65=41.5% beginners\nvs. 129/156=82.7% intermediates, χ2=37.429, p<0.02)",
+        "calculation": "65 beginner observations + 156 intermediate observations = 221 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive."
+      },
+      "supported": true,
+      "shipped": "40",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 186,
+      "field": "n_o",
+      "blind": {
+        "value": "221",
+        "sample_role": "Morpheme-specific raw-frequency annotation/context observations in the 2×2 target-like-use versus non-target-like-use contrast: beginners (A1+A2) versus intermediates (B1+B2). Not learner participants or text count.",
+        "exclusions": "Simple past -(e)d contexts of main regular verbs. No additional model-specific exclusions stated for these printed contrast totals. Participant contribution counts per morpheme are not established.",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... past regular -ed (TLU=25/63 vs. 132/158, χ2=42.119)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 186,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named morpheme is explicitly identified in the beginner/intermediate raw-frequency critical contrast. Sum uses the printed denominators for mutually exclusive final proficiency groups; analytic units are morpheme annotations/contexts, not the 40 learner texts. Simple past -(e)d contexts of main regular verbs.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 footnote 8",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... past regular -ed (TLU=25/63 vs. 132/158, χ2=42.119)",
+        "calculation": "63 beginner observations + 158 intermediate observations = 221 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive."
+      },
+      "supported": true,
+      "shipped": "40",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 187,
+      "field": "n_o",
+      "blind": {
+        "value": "14",
+        "sample_role": "Morpheme-specific raw-frequency annotation/context observations in the 2×2 target-like-use versus non-target-like-use contrast: beginners (A1+A2) versus intermediates (B1+B2). Not learner participants or text count.",
+        "exclusions": "Genitive [noun’s + NP] contexts; missing apostrophe treated as spelling and marked target-like. Most files lacked possessive instances; no count of contributing learners to this contrast is printed. No additional model-specific exclusions stated for these printed contrast totals. Participant contribution counts per morpheme are not established.",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 main text",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... possessive -’s (TLU=7/7 vs.\n7/7, χ2=1.400, p>0.05)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 187,
+        "field": "n_o",
+        "code": "extracted_documented_n_sum",
+        "reason": "The named morpheme is explicitly identified in the beginner/intermediate raw-frequency critical contrast. Sum uses the printed denominators for mutually exclusive final proficiency groups; analytic units are morpheme annotations/contexts, not the 40 learner texts. Genitive [noun’s + NP] contexts; missing apostrophe treated as spelling and marked target-like. Most files lacked possessive instances; no count of contributing learners to this contrast is printed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/69095a3d0d41ba746420e002.txt",
+        "location": "Accepted manuscript p.19, section 4.1 (group definition); p.19, section 4.1 main text",
+        "quote": "By conflating A1 and A2 together into\n‘beginners’ and B1 and B2 into ‘intermediates’ (Figure 6B),7 beginners significantly\ndiffer from intermediates for each morpheme (p<0.02 for all χ2 contrasts),8 except for ... possessive -’s (TLU=7/7 vs.\n7/7, χ2=1.400, p>0.05)",
+        "calculation": "7 beginner observations + 7 intermediate observations = 14 analytic observations. The denominators are totals, not sums of correct-use numerators; beginner and intermediate proficiency groups are mutually exclusive."
+      },
+      "supported": true,
+      "shipped": "40",
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/eb16252455de2123. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_eb16252455de2123_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

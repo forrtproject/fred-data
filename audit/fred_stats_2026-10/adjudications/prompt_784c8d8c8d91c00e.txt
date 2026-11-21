@@ -1,0 +1,41 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 1881,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "t(81) = 3.13",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "3.13",
+      "location": "p. 109 (PDF p. 3), Study 1, Results and discussion",
+      "quote": "t  3:13; p < 0:01",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0504d7965a0e5a5e5399576f.txt",
+      "confident": true,
+      "metric": "t",
+      "test_statistic": "t = 3.13"
+    },
+    "locator": {
+      "ref_o": "Hsee, C. K. (1998). Less is better: when low-value options are valued more highly than high-value options. Journal of Behavioral Decision Making, 11(2), 107–121. https://doi.org/10.1002/(sici)1099-0771(199806)11:2<107::aid-bdm292>3.0.co;2-y",
+      "doi_o": "10.1002/(sici)1099-0771(199806)11:2<107::aid-bdm292>3.0.co;2-y",
+      "study_o": "1",
+      "ref_r": "Vonasch, A. J., Hung, W. Y., Leung, W. Y., Nguyen, A. T. B., Chan, S., Cheng, B. L., & Feldman, G. (2023). ‎“Less Is Better” in Separate Evaluations Versus “More Is Better” in Joint Evaluations: Mostly ‎Successful Close Replication and Extension of Hsee (1998)‎. Collabra: Psychology, 9(1). https://doi.org/10.1525/collabra.77859",
+      "doi_r": "10.1525/collabra.77859",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1881,
+      "description": "Perceived generosity of a friend after receiving a $45 scarf versus a $55 coat.",
+      "locators_o": "p.3",
+      "locators_r": "p.3",
+      "text_paths": {}
+    },
+    "work_key": "10.1525/collabra.77859"
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

@@ -1,0 +1,324 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "432": {
+      "source_key": "7bfce78721c48d6b",
+      "side": "original",
+      "input": {
+        "ref_o": "Shah, A. K., Shafir, E., & Mullainathan, S. (2015). Scarcity Frames Value. Psychological Science, 26(4), 402–412. https://doi.org/10.1177/0956797614563958",
+        "doi_o": "10.1177/0956797614563958",
+        "study_o": "1b-1c",
+        "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+        "doi_r": "10.1098/rsos.231240",
+        "url_r": "https://rpubs.com/wuphins/159194",
+        "study_r": "1",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "description": "Relationship between income and the context effect on willingness to pay.",
+        "locators_o": "p. 3",
+        "locators_r": "p. 11; https://rpubs.com/wuphins/159194,",
+        "audit_id": 432,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1b, continuous-income × resort/grocery context interaction predicting willingness to pay, on assigned p. 3 (printed p. 404).",
+      "worker_notes": "Identity verified from supplied canonical text: full Research Article, Scarcity Frames Value, Anuj K. Shah, Eldar Shafir, and Sendhil Mullainathan, Psychological Science 2015, 26(4), 402–412, DOI 10.1177/0956797614563958. Text contains main article through references, not supplemental material. No PDF was supplied. The supplied study label spans 1b–1c; the assigned p. 3 specifically reports Study 1b. Study 1c is on pp. 405–406 and has a different continuous-income interaction (β = 1.65), so it was not substituted. The median-split Study 1b interaction has ηp2 = .07, whereas the requested coefficient selects the continuous-income test. The source prints β without establishing whether it is unstandardized; no conversion or relabeling as b was made. Same-test printed p < .05 retained here as context only; p was not assigned for completion. Unassigned fields and replication/success are placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Higher income predicting a stronger effect of context on WTP",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "https://rpubs.com/wuphins/159194, p. 11",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "subjective replication success rating 1"
+      }
+    },
+    "434": {
+      "source_key": "7bfce78721c48d6b",
+      "side": "original",
+      "input": {
+        "ref_o": "Shah, A. K., Shafir, E., & Mullainathan, S. (2015). Scarcity Frames Value. Psychological Science, 26(4), 402–412. https://doi.org/10.1177/0956797614563958",
+        "doi_o": "10.1177/0956797614563958",
+        "study_o": "1b-1c",
+        "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+        "doi_r": "10.1098/rsos.231240",
+        "url_r": "https://rpubs.com/wuphins/159194",
+        "study_r": "1",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "description": "Relationship between income and the context effect (resort versus grocery store) on willingness to pay.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 12; https://rpubs.com/wuphins/159194,",
+        "audit_id": 434,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 1c continuous-income × resort/grocery context interaction predicting willingness to pay; assigned PDF p. 5, printed p. 406.",
+      "worker_notes": "Identity verified from supplied canonical text: full Research Article, Scarcity Frames Value, Anuj K. Shah, Eldar Shafir, and Sendhil Mullainathan, Psychological Science 2015, 26(4), 402–412, DOI 10.1177/0956797614563958. Text contains main article through references, not supplemental material. No PDF was supplied. The study label 1b–1c and p. 5 jointly identify Study 1c. The same page also reports Study 1d (β = 0.50), outside the supplied study label. Study 1c median-split interaction instead prints ηp2 = .01; the coefficient test prints β = 1.65. The source does not establish unstandardized metric identity; retain β as printed. Same-test p < .01 is context only; n and p were not assigned for completion. Unassigned fields and replication/success are placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Higher income amplifying the influence of context (resort vs. grocery store) on WTP",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "https://rpubs.com/wuphins/159194, p. 12",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "subjective replication success rating 1"
+      }
+    },
+    "1974": {
+      "source_key": "7bfce78721c48d6b",
+      "side": "original",
+      "input": {
+        "ref_o": "Shah, A. K., Shafir, E., & Mullainathan, S. (2015). Scarcity Frames Value. Psychological Science, 26(4), 402–412. https://doi.org/10.1177/0956797614563958",
+        "doi_o": "10.1177/0956797614563958",
+        "study_o": "6",
+        "ref_r": "O’Donnell, M., Dev, A. S., Antonoplis, S., Baum, S. M., Benedetti, A. H., Brown, N. D., Carrillo, B., Choi, A. L., Connor, P., Donnelly, K., Ellwood-Lowe, M. E., Foushee, R., Jansen, R., Jarvis, S. N., Lundell-Creagh, R., Ocampo, J. M., Okafor, G. N., Azad, Z. R., Rosenblum, M., … Nelson, L. D. (2021). Empirical audit and review and an assessment of evidentiary value in research on the psychological consequences of scarcity. Proceedings of the National Academy of Sciences, 118(44). https://doi.org/10.1073/pnas.2103313118",
+        "doi_r": "10.1073/pnas.2103313118",
+        "url_r": "https://osf.io/a2e96/",
+        "study_r": "shah_2015",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "description": "Relationship between scarcity and alignment of behavior with traditional economic predictions.",
+        "locators_o": "p.8",
+        "locators_r": "p.65 , p",
+        "audit_id": 1974,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 6: time scarcity (75 versus 250 seconds) by small versus large account, interaction on rated cost of losing 10 seconds; 2 × 2 ANOVA.",
+      "worker_notes": "Identity verified from supplied canonical text: full Research Article, Scarcity Frames Value, Anuj K. Shah, Eldar Shafir, and Sendhil Mullainathan, Psychological Science 2015, 26(4), 402–412, DOI 10.1177/0956797614563958. Text contains main article through references, not supplemental material. No PDF was supplied. Table 1 explicitly reports analytic n = 73; no N derivation from degrees of freedom or arithmetic was used. Effect size and p refer to the same interaction. Unassigned fields and replication/success are placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "scarcity can align certain behaviors more closely with traditional economic predictions",
+        "es_repr_o": "p.8",
+        "es_repr_r": "p.65 , p = .19.",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "A 2 (scarcity\ncondition) × 2 (account condition) analysis of variance revealed no significant\ninteraction, F(1, 203) = 1.69, p = .19."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 432,
+      "field": "n_o",
+      "blind": {
+        "value": "149",
+        "sample_role": "Participants included in Study 1b analyses, including the continuous-income interaction model.",
+        "exclusions": "Two participants whose WTP exceeded 3 standard deviations from the mean were excluded; final analytic n = 149 is explicitly printed.",
+        "location": "p. 410 (PDF p. 9), Table 1, Study 1b and note",
+        "quote": "Study 1b (N = 151, n = 149) ... Note: For each study, the table indicates the total number of participants (N) and the number of participants included in the analyses (n).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 432,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "Assigned p. 3 identifies the Study 1b income × context model; Table 1 explicitly supplies its analytic n.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "location": "p. 404, Study 1b Results; p. 410, Table 1",
+        "quote": "Study 1b (N = 151, n = 149) ... Note: For each study, the table indicates the total number of participants (N) and the number of participants included in the analyses (n).",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "577",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 432,
+      "field": "es_value_o",
+      "blind": {
+        "value": "2.27",
+        "metric": "β (printed regression coefficient; standardization unspecified)",
+        "test_statistic": "t(145) = 2.17",
+        "location": "p. 404 (PDF p. 3), Studies 1b–1d Results, Study 1b",
+        "quote": "The interaction was also significant when ... income was treated as a continuous variable, β = 2.27, ... t(145) = 2.17, p < .05.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 432,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Continuous-income × context interaction on assigned p. 3 prints β = 2.27. Standardization is unspecified; retain printed β rather than assert unstandardized b.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "location": "p. 404 (PDF p. 3), Study 1b Results",
+        "quote": "The interaction was also significant when ... income was treated as a continuous variable, β = 2.27, ... t(145) = 2.17, p < .05.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "2.27",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 434,
+      "field": "es_value_o",
+      "blind": {
+        "value": "1.65",
+        "metric": "β (printed regression coefficient; standardization unspecified)",
+        "test_statistic": "t(574) = 3.27",
+        "location": "p. 406 (PDF p. 5), continuation of Study 1c Results",
+        "quote": "The interaction was ... also significant when income was treated continuously, ... β = 1.65, t(574) = 3.27, p < .01.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 434,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Study 1c continuous-income interaction matches the supplied study range, resort/grocery outcome and p. 5 locator. Retain β; no unsupported claim of unstandardized b.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "location": "p. 406 (PDF p. 5), Study 1c Results",
+        "quote": "The interaction was ... also significant when income was treated continuously, ... β = 1.65, t(574) = 3.27, p < .01.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "1.65",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1974,
+      "field": "n_o",
+      "blind": {
+        "value": "73",
+        "sample_role": "Participants included in the Study 6 critical 2 × 2 ANOVA.",
+        "exclusions": "One participant excluded because of a computer malfunction during the game; 74 recruited, 73 analyzed, explicitly printed in Table 1.",
+        "location": "p. 410 (PDF p. 9), Table 1, Study 6 and note",
+        "quote": "Study 6 (N = 74, n = 73) ... Note: For each study, the table indicates the total number of participants (N) and the number of participants included in the analyses (n).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1974,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "Explicit analytic n in Table 1; Study 6 Results identifies the one computer-malfunction exclusion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "location": "p. 410, Table 1; p. 409, Study 6 Results",
+        "quote": "Study 6 (N = 74, n = 73) ... Note: For each study, the table indicates the total number of participants (N) and the number of participants included in the analyses (n).",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "74",
+      "comparison": "near",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1974,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".07",
+        "metric": "ηp2 (partial eta squared)",
+        "test_statistic": "F(1, 69) = 5.16",
+        "location": "p. 409 (PDF p. 8), Study 6 Results",
+        "quote": "variance revealed a significant interaction, F(1, 69) = 5.16, ... p < .05, ηp2 = .07.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1974,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta squared for the time scarcity × account interaction.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "location": "p. 409, Study 6 Results",
+        "quote": "variance revealed a significant interaction, F(1, 69) = 5.16, ... p < .05, ηp2 = .07.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "0.07",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1974,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "p. 409 (PDF p. 8), Study 6 Results",
+        "quote": "variance revealed a significant interaction, F(1, 69) = 5.16, ... p < .05, ηp2 = .07.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1974,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Same interaction as the extracted partial eta squared; preserve the printed strict upper bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/389c9e1b4f2c10958cd468da.txt",
+        "location": "p. 409, Study 6 Results",
+        "quote": "variance revealed a significant interaction, F(1, 69) = 5.16, ... p < .05, ηp2 = .07.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/7bfce78721c48d6b. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_7bfce78721c48d6b_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

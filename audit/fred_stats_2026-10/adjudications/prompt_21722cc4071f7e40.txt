@@ -1,0 +1,63 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 644,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "X2(1, N = 366) = 16.3",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "16.3",
+      "location": "p. 389, results, Fig. 1c test (source PDF p. 9)",
+      "quote": "bias), this individual becomes the new demonstrator, driving cultural                                     with group size (x2 5 16.3, d.f. 5 1, P , 0.0001; Fig. 1c).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/603e3ff32a362a598e52ce1c.txt",
+      "confident": true,
+      "metric": "Wald chi-squared statistic",
+      "test_statistic": "χ² = 16.3, d.f. = 1"
+    },
+    "locator": {
+      "ref_o": "Derex, M., Beugin, M.-P., Godelle, B., & Raymond, M. (2013). Experimental evidence for the influence of group size on cultural complexity. Nature, 503(7476), 389–391. https://doi.org/10.1038/nature12774",
+      "doi_o": "10.1038/nature12774",
+      "study_o": "1",
+      "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+      "doi_r": "10.1038/s41562-018-0399-z",
+      "url_r": "https://osf.io/kchf9",
+      "study_r": "4",
+      "es_type_o": "test statistic",
+      "es_type_r": "r",
+      "audit_id": 644,
+      "description": "Group size and cultural complexity.",
+      "locators_o": "p. 389",
+      "locators_r": "p. 54",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/603e3ff32a362a598e52ce1c.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+      }
+    },
+    "work_key": "10.1038/s41562-018-0399-z",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 644,
+      "field": "es_value_o",
+      "verdict": "blind_right",
+      "correct_value": "16.3",
+      "location": "p. 389, Results (Fig. 1c test)",
+      "quote": "with group size (x2 5 16.3, d.f. 5 1, P , 0.0001; Fig. 1c).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/603e3ff32a362a598e52ce1c.txt",
+      "reason": "The original paper reports a chi-squared test statistic value of 16.3 (d.f. = 1) for the effect of group size on maintaining cultural diversity. The shipped value stores a full formatted string rather than the numeric statistic value and attaches the individual participant count (N = 366) to a group-level binomial GLM across 51 groups.",
+      "resolution": "argon"
+    },
+    "parent_response": "The prior verdict appears to treat an unprinted df/N annotation or formatted test-statistic expression as intrinsically wrong. The requested metric is test statistic; its formatted expression is allowed. Unprinted df/N may be inferred where consistent with the analysis. Determine from primary context whether the coded df/N is demonstrably wrong, rather than merely absent. For within-subject designs inspect the actual model/test, do not assume denominator df from total N alone. If a specific df or N annotation is wrong, provide the FULL corrected test-statistic expression with justified df/N and quote; otherwise shipped_right for compatible numeric rounding or undeterminable if inference cannot be settled. Preserve the requested metric. Reconcile prior response explicitly.",
+    "coding_context": {
+      "es_repr": "p. 389",
+      "pval_tails": "1 (one)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

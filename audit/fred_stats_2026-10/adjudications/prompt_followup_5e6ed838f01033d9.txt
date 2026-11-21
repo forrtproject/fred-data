@@ -1,0 +1,50 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 693,
+    "field": "pval_value_o",
+    "comparison": "differ",
+    "shipped": "0.025",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.047",
+      "location": "p. 1452, Study 4 moral-emotions results, middle column; note 12",
+      "quote": "SEM = 0.26), F(1,41) = 2.94, P= 0.047.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_683877f6912e782beacf0340.txt",
+      "confident": true,
+      "bound": "e"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Zhong, C.-B., & Liljenquist, K. (2006). Washing Away Your Sins: Threatened Morality and Physical Cleansing. Science, 313(5792), 1451–1452. https://doi.org/10.1126/science.1130726",
+      "doi_o": "10.1126/science.1130726",
+      "study_o": "4",
+      "ref_r": "Fayard, J. V., Bassi, A. K., Bernstein, D. M., & Roberts, B. W. (2009). Is cleanliness next to godliness? Dispelling old wives' tales: Failure to replicate Zhong and Liljenquist (2006). Journal of Articles in Support of the Null Hypothesis, 6(2).",
+      "doi_r": null,
+      "url_r": "https://www.jasnh.com/pdf/Vol6-No2.pdf",
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "audit_id": 693,
+      "description": "Physical cleansing following recall of unethical behavior in relation to moral emotion (Macbeth effect).",
+      "locators_o": "p.2",
+      "locators_r": "p.7",
+      "text_paths": {}
+    },
+    "work_key": "https://www.jasnh.com/pdf/Vol6-No2.pdf",
+    "coding_context": {
+      "es_repr": "p.2",
+      "description": "Macbeth effect: Recalling unethical behavior followed by actual physical cleansing leads to a reduction in moral emotion.",
+      "reported_success_quote": "Despite larger samples and thus greater power to\ndetect effects, both studies failed to replicate the original work of Zhong and\nLiljenquist (2006).",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    }
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

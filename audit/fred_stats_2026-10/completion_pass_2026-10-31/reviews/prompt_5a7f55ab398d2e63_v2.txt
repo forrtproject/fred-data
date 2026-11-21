@@ -1,0 +1,361 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+
+FOCUSED REGION-TARGET RE-CHECK, only1794/1795/1796 es_value_r. Experiment1 and Yang2012 original reference positively select the LOW-FREQUENCY word-n+1 materials. They do not by themselves select which fixation region was coded: source p18 Discussion explicitly says Yang analysed words n, n+1 and n+2. Table3 contains all three regions plus a composite. Neutral descriptions identify FFD/SFD/GD and preview type but omit the region; supplied p9 cannot yet be mapped to accepted-manuscript pagination. V1 calls shipped .04/-.03 wrong pre-target rows, but that presumes the assigned rows were intended as wordn+2. Do not identify a target by shipped numbers, row order, or a general preference for the paper's focal finding. Establish whether source-defined terminology, the neutral original-work/study and description, or independently mapped p9 locator uniquely selects wordn+2 rather than wordn or n+1. If source defines the exact named effect/measure only for that target region, quote that definition and explain why other region models cannot fit. If multiple word regions remain plausible, return undeterminable with null correct_value and target_match_confirmed=false for each affected coefficient. Preserve printed low-frequency table cells, signs, log-transformed unstandardised metric and raw V1 findings. Do not mix high-frequency or composite-region estimates or repair source numbers. Ns are NOT under this focused review: their separate pooled final participant sample evidence is not a reason to assign a coefficient region. No acquisition, repo search, paid APIs, Git or delegation. This is a final changed-input re-check, so retain uncertainty if no positive locator resolves it.
+
+FULL ASSIGNED PAYLOAD:
+[
+  {
+    "source_key": "5a7f55ab398d2e63",
+    "audit_id": 1794,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n\u00a0+\u00a02 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079\u20131091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn\u2009+\u20092 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130\u20131149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "description": "First fixation duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "audit_id": 1794,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "-0.02",
+      "metric": "b (LME fixed-effect estimate for log-transformed fixation time)",
+      "test_statistic": "t = -0.77",
+      "location": "Manuscript p.51 Table 3, low-frequency block, Word n + 2 / Preview row, first fixation duration (FFD) columns; p.17 transformation",
+      "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1794,
+      "field": "es_value_r",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "code": "extracted_printed",
+      "reason": "Table 3 explicitly reports b = -0.02 and t = -0.77 for first fixation duration (FFD) in the low-frequency Word n+2 preview model. Outcome/reference-based mapping documented in checkpoint notes; no effect-size conversion.",
+      "location": "Manuscript p.51 Table 3, low-frequency block, Word n + 2 / Preview row, first fixation duration (FFD) columns; p.17 transformation",
+      "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 1, low-frequency word n+1 stimuli from Yang et al. (2012), word n+2 first fixation duration (FFD); incorrect/dissimilar versus correct/identical preview contrast in a linear mixed-effects model; fixation-time outcomes log-transformed.",
+    "worker_notes": "Identity verified from Edinburgh Research Explorer cover and manuscript title page: title, all seven authors, DOI 10.1080/23273798.2016.1197954, journal/volume/pages match the assigned replication reference. Document is the full peer-reviewed accepted manuscript (56 numbered pages plus cover), rather than an abstract or secondary report. No PDF path was supplied; layout evidence is canonical text only. Target matched by study/outcome and cited original identity: Experiment 1 Methods p.14 explicitly identifies the low-frequency stimuli as Yang et al. (2012); References p.45 identifies that work with the assigned original title and DOI 10.1007/s11145-010-9282-7 (input year 2010 versus reference year 2012). Therefore use the word n+2 Preview row in the low-frequency block, not high-frequency, word n, word n+1, or composite-region coefficients. The Table 3 block heading prints \"Word n+2 Low Frequency\", whereas Methods identifies the frequency manipulation as word n+1. Assigned p.9 locator does not correspond to accepted-manuscript pagination; results are pp.13\u201318 and Table 3 p.51. 40 final England participants + 40 final China participants = 80 final participants. Distinct location groups are mutually exclusive; all participants exposed to all conditions (footnote 2, p.46). The 18 additional excluded participants are not added. 80 is participant N, not the number of retained trial observations or items. To increase the normality of the data, the fixation time measures were\n\nlog-transformed. Printed coefficients retained without conversion; the precise contrast sign/order is not explicitly spelled out in the contr.sdif discussion and is not reversed here. Table 3 supplies b, SE, t (z for skipping), no numerical p column. The narrative non-significance is not converted into a p bound. Unassigned original and reported_success fields are placeholders. The printed metric label is b; no claim of standardisation beyond the documented log transformation is made.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "shipped": "-0.02",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "First fixation duration was longer in the dissimilar condition than the identical condition",
+      "es_repr_o": "p. 10",
+      "es_repr_r": "p. 9",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n\u2009+\u20091 and n\u2009+\u20092 as a single region revealed significant preview effects regardless of word n\u2009+\u20091 frequency."
+    },
+    "prior_adjudication": {
+      "audit_id": 1794,
+      "field": "es_value_r",
+      "verdict": "shipped_right",
+      "correct_value": "-0.02",
+      "location": "Accepted manuscript p. 51, Table 3, lower block (Word n+2 Low Frequency), Word n + 2, Preview row, FFD column",
+      "quote": "Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "reason": "For the low-frequency word n+1 replication of Yang et al. (2010/2012), the fixed-effect estimate for word n+2 preview on target word n+2 first fixation duration is b = -0.02 (SE = 0.02, t = -0.77), matching both shipped and blind.",
+      "resolution": "argon"
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "5a7f55ab398d2e63",
+    "audit_id": 1795,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n\u00a0+\u00a02 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079\u20131091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn\u2009+\u20092 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130\u20131149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "description": "Single fixation duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "audit_id": 1795,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "-0.02",
+      "metric": "b (LME fixed-effect estimate for log-transformed fixation time)",
+      "test_statistic": "t = -0.59",
+      "location": "Manuscript p.51 Table 3, low-frequency block, Word n + 2 / Preview row, single fixation duration (SFD) columns; p.17 transformation",
+      "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1795,
+      "field": "es_value_r",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "code": "extracted_printed",
+      "reason": "Table 3 explicitly reports b = -0.02 and t = -0.59 for single fixation duration (SFD) in the low-frequency Word n+2 preview model. Outcome/reference-based mapping documented in checkpoint notes; no effect-size conversion.",
+      "location": "Manuscript p.51 Table 3, low-frequency block, Word n + 2 / Preview row, single fixation duration (SFD) columns; p.17 transformation",
+      "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 1, low-frequency word n+1 stimuli from Yang et al. (2012), word n+2 single fixation duration (SFD); incorrect/dissimilar versus correct/identical preview contrast in a linear mixed-effects model; fixation-time outcomes log-transformed.",
+    "worker_notes": "Identity verified from Edinburgh Research Explorer cover and manuscript title page: title, all seven authors, DOI 10.1080/23273798.2016.1197954, journal/volume/pages match the assigned replication reference. Document is the full peer-reviewed accepted manuscript (56 numbered pages plus cover), rather than an abstract or secondary report. No PDF path was supplied; layout evidence is canonical text only. Target matched by study/outcome and cited original identity: Experiment 1 Methods p.14 explicitly identifies the low-frequency stimuli as Yang et al. (2012); References p.45 identifies that work with the assigned original title and DOI 10.1007/s11145-010-9282-7 (input year 2010 versus reference year 2012). Therefore use the word n+2 Preview row in the low-frequency block, not high-frequency, word n, word n+1, or composite-region coefficients. The Table 3 block heading prints \"Word n+2 Low Frequency\", whereas Methods identifies the frequency manipulation as word n+1. Assigned p.9 locator does not correspond to accepted-manuscript pagination; results are pp.13\u201318 and Table 3 p.51. 40 final England participants + 40 final China participants = 80 final participants. Distinct location groups are mutually exclusive; all participants exposed to all conditions (footnote 2, p.46). The 18 additional excluded participants are not added. 80 is participant N, not the number of retained trial observations or items. To increase the normality of the data, the fixation time measures were\n\nlog-transformed. Printed coefficients retained without conversion; the precise contrast sign/order is not explicitly spelled out in the contr.sdif discussion and is not reversed here. Table 3 supplies b, SE, t (z for skipping), no numerical p column. The narrative non-significance is not converted into a p bound. Unassigned original and reported_success fields are placeholders. The printed metric label is b; no claim of standardisation beyond the documented log transformation is made.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "shipped": "0.04",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Single fixation duration was longer in the dissimilar condition than the identical condition",
+      "es_repr_o": "p. 10",
+      "es_repr_r": "p. 9",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n\u2009+\u20091 and n\u2009+\u20092 as a single region revealed significant preview effects regardless of word n\u2009+\u20091 frequency."
+    },
+    "prior_adjudication": {
+      "audit_id": 1795,
+      "field": "es_value_r",
+      "verdict": "blind_right",
+      "correct_value": "-0.02",
+      "correct_metric": "b (unstd)",
+      "location": "Accepted manuscript p. 51, Table 3, lower block (Word n+2 Low Frequency), Word n + 2, Preview row, SFD column",
+      "quote": "Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "reason": "On target word n+2 in the low-frequency word n+1 subset, the preview effect on single fixation duration is b = -0.02 (SE = 0.04, t = -0.59); shipped (0.04) erroneously extracted the pre-target Word n row.",
+      "resolution": "argon"
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "5a7f55ab398d2e63",
+    "audit_id": 1796,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n\u00a0+\u00a02 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079\u20131091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn\u2009+\u20092 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130\u20131149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "description": "Gaze duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "audit_id": 1796,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "0.02",
+      "metric": "b (LME fixed-effect estimate for log-transformed fixation time)",
+      "test_statistic": "t = 0.57",
+      "location": "Manuscript p.51 Table 3, low-frequency block, Word n + 2 / Preview row, gaze duration (GD) columns; p.17 transformation",
+      "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1796,
+      "field": "es_value_r",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "code": "extracted_printed",
+      "reason": "Table 3 explicitly reports b = 0.02 and t = 0.57 for gaze duration (GD) in the low-frequency Word n+2 preview model. Outcome/reference-based mapping documented in checkpoint notes; no effect-size conversion.",
+      "location": "Manuscript p.51 Table 3, low-frequency block, Word n + 2 / Preview row, gaze duration (GD) columns; p.17 transformation",
+      "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+      "calculation": ""
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 1, low-frequency word n+1 stimuli from Yang et al. (2012), word n+2 gaze duration (GD); incorrect/dissimilar versus correct/identical preview contrast in a linear mixed-effects model; fixation-time outcomes log-transformed.",
+    "worker_notes": "Identity verified from Edinburgh Research Explorer cover and manuscript title page: title, all seven authors, DOI 10.1080/23273798.2016.1197954, journal/volume/pages match the assigned replication reference. Document is the full peer-reviewed accepted manuscript (56 numbered pages plus cover), rather than an abstract or secondary report. No PDF path was supplied; layout evidence is canonical text only. Target matched by study/outcome and cited original identity: Experiment 1 Methods p.14 explicitly identifies the low-frequency stimuli as Yang et al. (2012); References p.45 identifies that work with the assigned original title and DOI 10.1007/s11145-010-9282-7 (input year 2010 versus reference year 2012). Therefore use the word n+2 Preview row in the low-frequency block, not high-frequency, word n, word n+1, or composite-region coefficients. The Table 3 block heading prints \"Word n+2 Low Frequency\", whereas Methods identifies the frequency manipulation as word n+1. Assigned p.9 locator does not correspond to accepted-manuscript pagination; results are pp.13\u201318 and Table 3 p.51. 40 final England participants + 40 final China participants = 80 final participants. Distinct location groups are mutually exclusive; all participants exposed to all conditions (footnote 2, p.46). The 18 additional excluded participants are not added. 80 is participant N, not the number of retained trial observations or items. To increase the normality of the data, the fixation time measures were\n\nlog-transformed. Printed coefficients retained without conversion; the precise contrast sign/order is not explicitly spelled out in the contr.sdif discussion and is not reversed here. Table 3 supplies b, SE, t (z for skipping), no numerical p column. The narrative non-significance is not converted into a p bound. Unassigned original and reported_success fields are placeholders. The printed metric label is b; no claim of standardisation beyond the documented log transformation is made.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "shipped": "-0.03",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Gaze duration was longer in the dissimilar condition than the identical condition",
+      "es_repr_o": "p. 10",
+      "es_repr_r": "p. 9",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n\u2009+\u20091 and n\u2009+\u20092 as a single region revealed significant preview effects regardless of word n\u2009+\u20091 frequency."
+    },
+    "prior_adjudication": {
+      "audit_id": 1796,
+      "field": "es_value_r",
+      "verdict": "blind_right",
+      "correct_value": "0.02",
+      "correct_metric": "b (unstd)",
+      "location": "Accepted manuscript p. 51, Table 3, lower block (Word n+2 Low Frequency), Word n + 2, Preview row, GD column",
+      "quote": "Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+      "reason": "On target word n+2 in the low-frequency word n+1 subset, the preview effect on gaze duration is b = 0.02 (SE = 0.03, t = 0.57); shipped (-0.03) erroneously extracted the pre-target Word n row.",
+      "resolution": "argon"
+    },
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+V1 FINDINGS TO RECONSIDER:
+[
+  {
+    "audit_id": 1794,
+    "field": "n_r",
+    "verdict": "blind_right",
+    "correct_value": "80",
+    "correct_metric": null,
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": false,
+    "location": "Accepted manuscript p. 13, Experiment 1, Method, Participants; p. 18, Results, Word n+2",
+    "quote": "Participants. 40 (20 males and 20 females) native Chinese speakers who were\n\ngraduate students studying in England with an average age of 25 and 40 (10 males and 30\n\nfemales) native Chinese speakers who were undergraduate students studying in China with an\n\naverage age of 21 years with normal or corrected to normal vision participated. ... Given the lack of interaction, we did not\n\nfurther analyse these two data sets separately.",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "reason": "Experiment 1 analysed two mutually exclusive groups of 40 retained participants each (40 tested in England and 40 in China; N = 80 total, excluding 18 additional participants) together in the linear mixed-effects models; shipped recorded only a single group's size (40)."
+  },
+  {
+    "audit_id": 1794,
+    "field": "es_value_r",
+    "verdict": "shipped_right",
+    "correct_value": "-0.02",
+    "correct_metric": "b (unstd)",
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": false,
+    "location": "Accepted manuscript p. 17, Experiment 1, Results; p. 51, Table 3, Word n+2 Low Frequency block, Word n + 2, Preview row, FFD columns",
+    "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "reason": "In the Experiment 1 low-frequency word n+1 replication of Yang et al. (2010/2012), the unstandardised LME fixed-effect estimate for word n+2 preview on target word n+2 log-transformed first fixation duration (FFD) is b = -0.02 (SE = 0.02, t = -0.77), matching both shipped and blind."
+  },
+  {
+    "audit_id": 1795,
+    "field": "n_r",
+    "verdict": "blind_right",
+    "correct_value": "80",
+    "correct_metric": null,
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": false,
+    "location": "Accepted manuscript p. 13, Experiment 1, Method, Participants; p. 18, Results, Word n+2",
+    "quote": "Participants. 40 (20 males and 20 females) native Chinese speakers who were\n\ngraduate students studying in England with an average age of 25 and 40 (10 males and 30\n\nfemales) native Chinese speakers who were undergraduate students studying in China with an\n\naverage age of 21 years with normal or corrected to normal vision participated. ... Given the lack of interaction, we did not\n\nfurther analyse these two data sets separately.",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "reason": "Both retained participant groups (40 tested in England and 40 in China; N = 80 total) were analysed together in the Experiment 1 linear mixed-effects model, whereas shipped recorded only one group's size (40)."
+  },
+  {
+    "audit_id": 1795,
+    "field": "es_value_r",
+    "verdict": "blind_right",
+    "correct_value": "-0.02",
+    "correct_metric": "b (unstd)",
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": false,
+    "location": "Accepted manuscript p. 17, Experiment 1, Results; p. 51, Table 3, Word n+2 Low Frequency block, Word n + 2, Preview row, SFD columns",
+    "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "reason": "For the Experiment 1 low-frequency word n+1 replication of Yang et al. (2010/2012), the unstandardised LME fixed-effect estimate for word n+2 preview on target word n+2 log-transformed single fixation duration (SFD) is b = -0.02 (SE = 0.04, t = -0.59); shipped (0.04) erroneously extracted the pre-target Word n row."
+  },
+  {
+    "audit_id": 1796,
+    "field": "n_r",
+    "verdict": "blind_right",
+    "correct_value": "80",
+    "correct_metric": null,
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": false,
+    "location": "Accepted manuscript p. 13, Experiment 1, Method, Participants; p. 18, Results, Word n+2",
+    "quote": "Participants. 40 (20 males and 20 females) native Chinese speakers who were\n\ngraduate students studying in England with an average age of 25 and 40 (10 males and 30\n\nfemales) native Chinese speakers who were undergraduate students studying in China with an\n\naverage age of 21 years with normal or corrected to normal vision participated. ... Given the lack of interaction, we did not\n\nfurther analyse these two data sets separately.",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "reason": "Both retained participant groups (40 tested in England and 40 in China; N = 80 total) were analysed together in the Experiment 1 linear mixed-effects model, whereas shipped recorded only one group's size (40)."
+  },
+  {
+    "audit_id": 1796,
+    "field": "es_value_r",
+    "verdict": "blind_right",
+    "correct_value": "0.02",
+    "correct_metric": "b (unstd)",
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": false,
+    "location": "Accepted manuscript p. 17, Experiment 1, Results; p. 51, Table 3, Word n+2 Low Frequency block, Word n + 2, Preview row, GD columns",
+    "quote": "To increase the normality of the data, the fixation time measures were\n\nlog-transformed. ... Preview -0.02 0.02 -0.77 -0.02 0.04 -0.59 0.02 0.03 0.57 -0.01 0.05 -0.17 0.30 0.20 0.13",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3eb87368cec5640c0c51f8d7.txt",
+    "reason": "For the Experiment 1 low-frequency word n+1 replication of Yang et al. (2010/2012), the unstandardised LME fixed-effect estimate for word n+2 preview on target word n+2 log-transformed gaze duration (GD) is b = 0.02 (SE = 0.03, t = 0.57); shipped (-0.03) erroneously extracted the pre-target Word n row."
+  }
+]
+
+Return a COMPLETE three-item strict JSON array only to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_5a7f55ab398d2e63_v2.json and ## Answer. Required fields: audit_id,field,verdict,correct_value,correct_metric,correct_bound,target_match_confirmed,effect_specific_verdict_confirmed,location,quote,source_path,reason. Literal canonical quotations or ordered ... fragments only. Aim8min hard12min.

@@ -1,0 +1,259 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "251": {
+      "source_key": "49e666ac5d9d1839",
+      "side": "replication",
+      "input": {
+        "ref_o": "Reiff, J. S., Hershfield, H. E., & Quoidbach, J. (2019). Identity Over Time: Perceived Similarity Between Selves Predicts Well-Being 10 Years Later. Social Psychological and Personality Science, 11(2), 160–167. https://doi.org/10.1177/1948550619843931",
+        "doi_o": "10.1177/1948550619843931",
+        "study_o": "1",
+        "ref_r": "Weidmann, R., Alabdullah, A., Warkentien, J., Vesikar, S., Denehy, M. E., Yang, H., Rakhshani, A., Brent Donnellan, M., & Lucas, R. E. (2024). Does Perceived Similarity Between Present and Future Self Predict Well-Being? A Reanalysis and Replication of. Social Psychological and Personality Science, 15(7), 791–801. https://doi.org/10.1177/19485506241257971",
+        "doi_r": "10.1177/19485506241257971",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Perceived Similarity (Model 1): Relationship between perceived similarity of one’s present and future self and well-being 10 years later.",
+        "locators_o": "p.2",
+        "locators_r": "p.9",
+        "audit_id": 251,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": false,
+      "worker_target_description": "Study 2, newly collected cross-sectional undergraduate sample, difference-score perceived present/future personality similarity predicting concurrent life satisfaction, Model 1 (no covariates). Study and model are explicitly identified; the supplied ten-year-later outcome description does not match this concurrent outcome.",
+      "worker_notes": "Identity verified from supplied canonical full article text: title Does Perceived Similarity Between Present and Future Self Predict Well-Being? A Reanalysis and Replication of Reiff et al. (2020); Rebekka Weidmann and all listed coauthors; DOI 10.1177/19485506241257971; Social Psychological and Personality Science 2024, 15(7), 791–801. This is a primary research report with methods, results, tables, discussion and references, not an abstract or preregistration. No PDF was supplied. Target correspondence: Study 2 Analytic Strategy explicitly identifies Model 1; Table 9 directly labels the predictor and models. The supplied p.9 locator does not contain this table: Table 9 is on canonical page 8 / journal p.798. The supplied longitudinal outcome wording conflicts with Study 2, which explicitly uses new cross-sectional data and concurrent life satisfaction; target_match=false flags this known outcome-timing mismatch, not uncertainty about which Study 2 model is printed. Table 2 is the Study 1 reproduction with original longitudinal data, and is not substituted for assigned Study 2. Table 9 prints standardized b=.30 with p<.001 for both models. Narrative Results prints b=.302, 95% CI=[.243, .361] for both models; retained as a more precise printed counterpart, not a conversion or replacement of the table value. Standardization is explicit in Table 9 note and narrative SD interpretation. Canonical extraction renders the less-than glyph as a backslash; p bound is transcribed as less than .001. Unassigned original, n, and success fields are null placeholders and must not overwrite prior verified fields. No N derivation or effect-size conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Perceived Similarity (Model 1): Perceived similarity between one’s present and future self is associated with greater well-being 10 years later.",
+        "es_repr_o": "p.2",
+        "es_repr_r": "p.9",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We were able to reproduce and replicate the findings based on a difference-score approach. However, we did not find a similarity effect in either sample using more sophisticated approaches. The current results show that previously reported support for the association between perceived similarity and well-being is driven by the statistical main effects of personality reports."
+      }
+    },
+    "252": {
+      "source_key": "49e666ac5d9d1839",
+      "side": "replication",
+      "input": {
+        "ref_o": "Reiff, J. S., Hershfield, H. E., & Quoidbach, J. (2019). Identity Over Time: Perceived Similarity Between Selves Predicts Well-Being 10 Years Later. Social Psychological and Personality Science, 11(2), 160–167. https://doi.org/10.1177/1948550619843931",
+        "doi_o": "10.1177/1948550619843931",
+        "study_o": "1",
+        "ref_r": "Weidmann, R., Alabdullah, A., Warkentien, J., Vesikar, S., Denehy, M. E., Yang, H., Rakhshani, A., Brent Donnellan, M., & Lucas, R. E. (2024). Does Perceived Similarity Between Present and Future Self Predict Well-Being? A Reanalysis and Replication of. Social Psychological and Personality Science, 15(7), 791–801. https://doi.org/10.1177/19485506241257971",
+        "doi_r": "10.1177/19485506241257971",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Perceived Similarity (Model 2, controlling for demographics): Relationship between perceived similarity of one’s present and future self and well-being 10 years later.",
+        "locators_o": "p.2",
+        "locators_r": "p.9",
+        "audit_id": 252,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": false,
+      "worker_target_description": "Study 2, newly collected cross-sectional undergraduate sample, difference-score perceived present/future personality similarity predicting concurrent life satisfaction, Model 2 (controlling age and gender). Study and model are explicitly identified; the supplied ten-year-later outcome description does not match this concurrent outcome.",
+      "worker_notes": "Identity verified from supplied canonical full article text: title Does Perceived Similarity Between Present and Future Self Predict Well-Being? A Reanalysis and Replication of Reiff et al. (2020); Rebekka Weidmann and all listed coauthors; DOI 10.1177/19485506241257971; Social Psychological and Personality Science 2024, 15(7), 791–801. This is a primary research report with methods, results, tables, discussion and references, not an abstract or preregistration. No PDF was supplied. Target correspondence: Study 2 Analytic Strategy explicitly identifies Model 2; Table 9 directly labels the predictor and models. The supplied p.9 locator does not contain this table: Table 9 is on canonical page 8 / journal p.798. The supplied longitudinal outcome wording conflicts with Study 2, which explicitly uses new cross-sectional data and concurrent life satisfaction; target_match=false flags this known outcome-timing mismatch, not uncertainty about which Study 2 model is printed. Table 2 is the Study 1 reproduction with original longitudinal data, and is not substituted for assigned Study 2. Table 9 prints standardized b=.30 with p<.001 for both models. Narrative Results prints b=.302, 95% CI=[.243, .361] for both models; retained as a more precise printed counterpart, not a conversion or replacement of the table value. Standardization is explicit in Table 9 note and narrative SD interpretation. Canonical extraction renders the less-than glyph as a backslash; p bound is transcribed as less than .001. Unassigned original, n, and success fields are null placeholders and must not overwrite prior verified fields. No N derivation or effect-size conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Perceived Similarity (Model 2, controlling for demographics): Perceived similarity between one’s present and future self is associated with greater well-being 10 years later.",
+        "es_repr_o": "p.2",
+        "es_repr_r": "p.9",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We were able to reproduce and replicate the findings based on a difference-score approach. However, we did not find a similarity effect in either sample using more sophisticated approaches. The current results show that previously reported support for the association between perceived similarity and well-being is driven by the statistical main effects of personality reports."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 251,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".30",
+        "metric": "b (standardized; Table 9 states all other variables are standardized)",
+        "test_statistic": null,
+        "location": "Journal p. 798 (canonical page 8), Table 9, Perceived similarity row, Model 1; Study 2 Analytic Strategy and Results",
+        "quote": "Perceived similarity ... .30               [.24, .36]               \\ .001 ... All other variables are standardized.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 251,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit Study 2 Model 1 and perceived-similarity row identify Table 9 independently of row order or numeric matching. Table prints b=.30; note explicitly establishes standardization. Narrative b=.302 is recorded separately in checkpoint notes. Study 2 outcome is concurrent, conflicting with supplied ten-year-later wording; core target_match=false preserves that discrepancy.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "location": "Journal p. 798 (canonical page 8), Table 9, Perceived similarity row, Model 1; Study 2 Analytic Strategy and Results",
+        "quote": "Perceived similarity ... .30               [.24, .36]               \\ .001 ... All other variables are standardized.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.302",
+      "comparison": "not_comparable",
+      "prior_adjudication": {
+        "audit_id": 251,
+        "field": "es_value_r",
+        "verdict": "shipped_right",
+        "correct_value": "0.302",
+        "location": "p. 798 (PDF p. 8), Study 2 Results—Replication",
+        "quote": "concurrent life satisfaction (b = .302, 95% CI = [.243,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "reason": "The standardized regression coefficient for Study 2 Model 1 is reported as .302 in the text (.30 in Table 9), matching both shipped and blind values.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 251,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "Journal p. 798 (canonical page 8), Table 9, Perceived similarity row, Model 1; Study 2 Analytic Strategy and Results",
+        "quote": "Perceived similarity ... .30               [.24, .36]               \\ .001 ... All other variables are standardized.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 251,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit Study 2 Model 1 and perceived-similarity row identify Table 9 independently of row order or numeric matching. Same Table 9 predictor/model cell prints p<.001 (canonical less-than glyph extracted as backslash); no p inferred from CI. Study 2 outcome is concurrent, conflicting with supplied ten-year-later wording; core target_match=false preserves that discrepancy.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "location": "Journal p. 798 (canonical page 8), Table 9, Perceived similarity row, Model 1; Study 2 Analytic Strategy and Results",
+        "quote": "Perceived similarity ... .30               [.24, .36]               \\ .001 ... All other variables are standardized.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "compatible",
+      "prior_adjudication": {
+        "audit_id": 251,
+        "field": "pval_value_r",
+        "verdict": "blind_right",
+        "correct_value": "< 0.001",
+        "location": "p. 798 (PDF p. 8), Table 9, Model 1, Perceived similarity row",
+        "quote": "Perceived similarity                        .30               [.24, .36]               \\ .001               .30                 [.24, .36]              \\ .001",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "reason": "Table 9 reports p < .001 (OCR-rendered as '\\ .001') for perceived similarity in Model 1 rather than the shipped threshold of < 0.01.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 252,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".30",
+        "metric": "b (standardized; Table 9 states all other variables are standardized)",
+        "test_statistic": null,
+        "location": "Journal p. 798 (canonical page 8), Table 9, Perceived similarity row, Model 2; Study 2 Analytic Strategy and Results",
+        "quote": "Perceived similarity ... .30                 [.24, .36]              \\ .001 ... All other variables are standardized.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 252,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit Study 2 Model 2 and perceived-similarity row identify Table 9 independently of row order or numeric matching. Table prints b=.30; note explicitly establishes standardization. Narrative b=.302 is recorded separately in checkpoint notes. Study 2 outcome is concurrent, conflicting with supplied ten-year-later wording; core target_match=false preserves that discrepancy.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "location": "Journal p. 798 (canonical page 8), Table 9, Perceived similarity row, Model 2; Study 2 Analytic Strategy and Results",
+        "quote": "Perceived similarity ... .30                 [.24, .36]              \\ .001 ... All other variables are standardized.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.302",
+      "comparison": "not_comparable",
+      "prior_adjudication": {
+        "audit_id": 252,
+        "field": "es_value_r",
+        "verdict": "shipped_right",
+        "correct_value": "0.302",
+        "location": "p. 798 (PDF p. 8), Study 2 Results—Replication",
+        "quote": "with a 0.302-SD higher concurrent life satisfaction.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "reason": "Controlling for age and gender in Study 2 Model 2 yields b = .302 (.30 in Table 9), matching both shipped and blind values.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 252,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "Journal p. 798 (canonical page 8), Table 9, Perceived similarity row, Model 2; Study 2 Analytic Strategy and Results",
+        "quote": "Perceived similarity ... .30                 [.24, .36]              \\ .001 ... All other variables are standardized.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 252,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit Study 2 Model 2 and perceived-similarity row identify Table 9 independently of row order or numeric matching. Same Table 9 predictor/model cell prints p<.001 (canonical less-than glyph extracted as backslash); no p inferred from CI. Study 2 outcome is concurrent, conflicting with supplied ten-year-later wording; core target_match=false preserves that discrepancy.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "location": "Journal p. 798 (canonical page 8), Table 9, Perceived similarity row, Model 2; Study 2 Analytic Strategy and Results",
+        "quote": "Perceived similarity ... .30                 [.24, .36]              \\ .001 ... All other variables are standardized.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "compatible",
+      "prior_adjudication": {
+        "audit_id": 252,
+        "field": "pval_value_r",
+        "verdict": "blind_right",
+        "correct_value": "< 0.001",
+        "location": "p. 798 (PDF p. 8), Table 9, Model 2, Perceived similarity row",
+        "quote": "Perceived similarity                        .30               [.24, .36]               \\ .001               .30                 [.24, .36]              \\ .001",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ae37c73b0897deceecad4d32.txt",
+        "reason": "Table 9 reports p < .001 (OCR-rendered as '\\ .001') for perceived similarity in Model 2 rather than the shipped value of < 0.01.",
+        "resolution": "argon"
+      }
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/49e666ac5d9d1839. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_49e666ac5d9d1839_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

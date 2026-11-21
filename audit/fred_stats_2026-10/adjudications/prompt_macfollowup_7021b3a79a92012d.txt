@@ -1,0 +1,353 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1965,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "F(1, 99) = 4.00",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "4.00",
+      "location": "p. 413 (PDF p. 8), Study 3 Results, planned contrast",
+      "quote": "The planned … contrast was statistically significant (F(1, 99) p 4.00, p ! … .05).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_8755933b9f258b6ee4cdb766.txt",
+      "confident": true,
+      "metric": "F",
+      "test_statistic": "F(1, 99) = 4.00"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+      "doi_o": "10.1086/598971",
+      "study_o": "1",
+      "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+      "doi_r": "10.15626/mp.2020.2639",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1965,
+      "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 3",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2020.2639",
+    "coding_context": {
+      "es_repr": "p. 8",
+      "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+      "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1965,
+        "batch": "mac01_8755933b9f258b6ee4cdb766_original_000",
+        "fields": [
+          "es",
+          "p"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_8755933b9f258b6ee4cdb766_original_000/1965.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:46:20.432247+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 1965,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".05",
+      "location": "p. 413 (PDF p. 8), Study 3 Results, same planned contrast",
+      "quote": "The planned … contrast was statistically significant (F(1, 99) p 4.00, p ! … .05).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_8755933b9f258b6ee4cdb766.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+      "doi_o": "10.1086/598971",
+      "study_o": "1",
+      "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+      "doi_r": "10.15626/mp.2020.2639",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1965,
+      "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 3",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2020.2639",
+    "coding_context": {
+      "es_repr": "p. 8",
+      "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+      "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1965,
+        "batch": "mac01_8755933b9f258b6ee4cdb766_original_000",
+        "fields": [
+          "es",
+          "p"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_8755933b9f258b6ee4cdb766_original_000/1965.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:46:20.432247+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 1966,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "F(1, 99) = 4.00",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "4.00",
+      "location": "p. 413 (PDF p. 8), Study 3 Results, planned contrast",
+      "quote": "The planned … contrast was statistically significant (F(1, 99) p 4.00, p ! … .05).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_8755933b9f258b6ee4cdb766.txt",
+      "confident": true,
+      "metric": "F",
+      "test_statistic": "F(1, 99) = 4.00"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+      "doi_o": "10.1086/598971",
+      "study_o": "1",
+      "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+      "doi_r": "10.15626/mp.2020.2639",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1966,
+      "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 13",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2020.2639",
+    "coding_context": {
+      "es_repr": "p. 8",
+      "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+      "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1966,
+        "batch": "mac01_8755933b9f258b6ee4cdb766_original_000",
+        "fields": [
+          "es",
+          "p"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_8755933b9f258b6ee4cdb766_original_000/1966.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:46:20.445267+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 1966,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".05",
+      "location": "p. 413 (PDF p. 8), Study 3 Results, same planned contrast",
+      "quote": "The planned … contrast was statistically significant (F(1, 99) p 4.00, p ! … .05).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_8755933b9f258b6ee4cdb766.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+      "doi_o": "10.1086/598971",
+      "study_o": "1",
+      "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+      "doi_r": "10.15626/mp.2020.2639",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1966,
+      "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 13",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2020.2639",
+    "coding_context": {
+      "es_repr": "p. 8",
+      "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+      "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1966,
+        "batch": "mac01_8755933b9f258b6ee4cdb766_original_000",
+        "fields": [
+          "es",
+          "p"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_8755933b9f258b6ee4cdb766_original_000/1966.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:46:20.445267+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 1967,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "F(1, 99) = 4.00",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "4.00",
+      "location": "p. 413 (PDF p. 8), Study 3 Results, planned contrast",
+      "quote": "The planned … contrast was statistically significant (F(1, 99) p 4.00, p ! … .05).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_8755933b9f258b6ee4cdb766.txt",
+      "confident": true,
+      "metric": "F",
+      "test_statistic": "F(1, 99) = 4.00"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+      "doi_o": "10.1086/598971",
+      "study_o": "1",
+      "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+      "doi_r": "10.15626/mp.2020.2639",
+      "url_r": null,
+      "study_r": "6",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1967,
+      "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 13",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2020.2639",
+    "coding_context": {
+      "es_repr": "p. 8",
+      "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+      "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1967,
+        "batch": "mac01_8755933b9f258b6ee4cdb766_original_000",
+        "fields": [
+          "es",
+          "p"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_8755933b9f258b6ee4cdb766_original_000/1967.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:46:20.474307+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 1967,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".05",
+      "location": "p. 413 (PDF p. 8), Study 3 Results, same planned contrast",
+      "quote": "The planned … contrast was statistically significant (F(1, 99) p 4.00, p ! … .05).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_8755933b9f258b6ee4cdb766.txt",
+      "confident": true,
+      "bound": "l"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Redden, J. P., & Hoch, S. J. (2009). The Presence of Variety Reduces Perceived Quantity. Journal of Consumer Research, 36(3), 406–417. https://doi.org/10.1086/598971",
+      "doi_o": "10.1086/598971",
+      "study_o": "1",
+      "ref_r": "Röseler, L., Felser, G., Asberger, J., & Schütz, A. (2024). The Effect of Variety on Perceived Quantity. Meta-Psychology, 8. https://doi.org/10.15626/mp.2020.2639",
+      "doi_r": "10.15626/mp.2020.2639",
+      "url_r": null,
+      "study_r": "6",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1967,
+      "description": "Relationship between candy variety, quantity of candy poured and perceived quantity.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 13",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0731f4ebafe3b50345e9afd7.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2020.2639",
+    "coding_context": {
+      "es_repr": "p. 8",
+      "description": "Having variety leads people to pour more candy, presumably because variety lowers the perceived quantity.",
+      "reported_success_quote": "We conducted six studies with methods that\nwere similar to those used by Redden and Hoch and did not find this effect in any of them. A meta-analysis of the four original studies and 6 replication studies (N = 1,383) revealed no\nevidence for the phenomenon that variety reduces perceived quantity.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 1967,
+        "batch": "mac01_8755933b9f258b6ee4cdb766_original_000",
+        "fields": [
+          "es",
+          "p"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_8755933b9f258b6ee4cdb766_original_000/1967.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:46:20.474307+00:00"
+      }
+    ]
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

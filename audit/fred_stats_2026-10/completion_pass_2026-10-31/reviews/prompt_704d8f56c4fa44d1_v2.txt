@@ -1,0 +1,138 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+Final focused review. The following is a FLAT payload list; review every assigned field. Include correct_value,correct_metric,correct_bound,target_match_confirmed,effect_specific_verdict_confirmed,quote,source_path,location and reason for every item, including undeterminable. Undeterminable correct_value must be null.
+[
+  {
+    "source_key": "704d8f56c4fa44d1",
+    "audit_id": 1874,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Gray, K., Knobe, J., Sheskin, M., Bloom, P., & Barrett, L. F. (2011). More than a body: Mind perception and the nature of objectification. Journal of Personality and Social Psychology, 101(6), 1207–1220. https://doi.org/10.1037/a0025883",
+      "doi_o": "10.1037/a0025883",
+      "study_o": "4",
+      "ref_r": "Feldman, G., &amp; Tsz Ching TSANG Ivard. (2021). <i>Gray et al (2011): Replication and extension</i>. OSF Registries. https://doi.org/10.17605/OSF.IO/W34FB",
+      "doi_r": "10.17605/osf.io/w34fb",
+      "url_r": "https://osf.io/8hdu3/files/7w5b6",
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "description": "Perceived agency in the sexual versus clothed conditions.",
+      "locators_o": "p.8",
+      "locators_r": "p.36; p. 45; Table 9",
+      "audit_id": 1874,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "673",
+      "sample_role": "Participants contributing agency index scores to the independent Sexual versus Clothed contrast (335 Sexual; 338 Clothed).",
+      "exclusions": "Main analysis uses the full sample before supplementary exclusions. Naked condition (336 participants) is outside this contrast. Supplementary post-exclusion analysis is separate: 56 exclusions across all conditions; Sexual 321 and Clothed 315.",
+      "location": "Main manuscript p. 42, Table 10 contrast header and note; corroborated by p. 30 Table 9 and p. 31 Hypothesis 1. Supplementary pp. 34, 37–39 distinguish exclusion analysis.",
+      "quote": "Independent samples t-test: Contrast between Sexual Condition (335) and Clothed Condition (338) ... Note. Welch’s t (two-tailed) for independent samples, N = 673.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1874,
+      "field": "n_r",
+      "code": "extracted_printed",
+      "reason": "Exact target located by agency outcome and Sexual versus Clothed conditions, with supplied Table 9 identifying the main full-sample analysis. Table 10 explicitly prints independent-test N = 673. Participants are the analytic units. Exclusion sensitivity analysis is separate; the primary full-sample model intentionally precedes exclusions. Primary manuscript identity verified through authors, title, exact original DOI and OSF registration/project links.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt",
+      "location": "Main manuscript p. 42, Table 10 contrast header and note; corroborated by p. 30 Table 9 and p. 31 Hypothesis 1. Supplementary pp. 34, 37–39 distinguish exclusion analysis.",
+      "quote": "Independent samples t-test: Contrast between Sexual Condition (335) and Clothed Condition (338) ... Note. Welch’s t (two-tailed) for independent samples, N = 673.",
+      "calculation": "No derivation required: N = 673 explicitly printed. Cross-check: mutually exclusive main groups Sexual 335 + Clothed 338 = 673; Naked 336 excluded from this contrast. Separate supplementary sensitivity variant: Sexual 321 + Clothed 315 = 636 after study-wide 56 exclusions; not the selected Table 9 analysis."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Experiment 4 Part 1, Hypothesis 1: perceived agency index in Sexual versus Clothed conditions; independent-samples Welch’s t, two-tailed, main full-sample analysis. Matched by outcome, conditions, and supplied Table 9 locator.",
+    "worker_notes": "Identity assessment: canonical text opens with “Revisiting the link between Mind Perception and Objectification: Replication and Extension of Gray et al (2011)”, authored by Tsz Ching (Ivard) Tsang and Gilad Feldman. It identifies itself as a preliminary MSc-thesis preprint, reports completed data collection and results, cites the exact Gray et al. original DOI 10.1037/a0025883, and links https://osf.io/w34fb and https://osf.io/8hdu3/ on main p. 17; supplementary p. 3 also links the supplied registration. Thus this is the primary replication report associated with that registration, rather than the registration itself. No PDF was supplied. Only n_r is assigned. The supplied Table 9 locator identifies the main full-sample analysis; its main-text Hypothesis 1 and Table 10 confirm the exact agency contrast. Analytic N = 673 is explicitly printed, independently consistent with 335 + 338 = 673 mutually exclusive between-subjects condition participants; this is not the whole-study N = 1009 and does not include Naked-condition participants. Supplementary post-exclusion variant is documented separately (321 + 315 = 636); not substituted for the main Table 9 analysis. The main model intentionally uses pre-exclusion data, as specified in supplementary p. 34. Unassigned original, effect size, p, and success fields are placeholders only and must not overwrite previously verified fields.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt",
+    "shipped": "673",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "Perceived agency in Sexual Condition being lower than Clothed Condition",
+      "es_repr_o": "p.8",
+      "es_repr_r": "p.36/ p. 45/ Table 9",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": "2 (two)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "We successfully replicated all the findings"
+    },
+    "prior_adjudication": {
+      "audit_id": 1874,
+      "field": "n_r",
+      "verdict": "shipped_right",
+      "correct_value": "673",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": true,
+      "location": "Main manuscript p. 42, Table 10 contrast header and note; corroborated by p. 30 Table 9 and p. 31 Hypothesis 1",
+      "quote": "Independent samples t-test: Contrast between Sexual Condition (335) and Clothed Condition (338) ... Note. Welch’s t (two-tailed) for independent samples, N = 673.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt",
+      "reason": "Primary replication manuscript identity is confirmed by title, authors (Tsang & Feldman), target citation (10.1037/a0025883), and OSF links (osf.io/w34fb, osf.io/8hdu3). For Experiment 4 Part 1 Hypothesis 1 (perceived agency index in Sexual vs. Clothed conditions, main full-sample analysis per Table 9 and supplementary p. 34), Table 10 explicitly reports N = 673 (335 Sexual + 338 Clothed participants; excluding 336 Naked-condition extension participants)."
+    },
+    "parent_response": "FOCUSED FINAL SAMPLE/MODEL REVIEW,1874 n_r ONLY. V1 confirms673 for main full-sample Sexual335 versusClothed338 Welch agency comparison based on Table9/10 and source policy that full sample is primary, exclusions supplementary. A preserved validated sibling-field conflict must be reconciled: at protected published commit f3eb01ce19e9a1fc79ed85fc1b0964f7ba53cf01, replication target_description explicitly selects POST-EXCLUSION analysis; verified es_value_r and pval_value_r quote Supplement p39 Table4 Agency index and its t=-5.00, while that same preserved extraction records Sexual321 andClothed315 after exclusions. Current source-only main/focal role cannot silently override an established same-row model scope, and numeric agreement of d=-.40/p<.001 in both analyses cannot select the model. Conversely the actual row nonnumeric locators p36/p45/Table9 explicitly name the main descriptive table; determine whether this provenance positively establishes the intended full-sample target, identifies the existing protected sibling mapping as an unresolved conflict, or leaves N scope ambiguous between673 pre-exclusion and636 post-exclusion. Do not default to either full sample or exclusion sample. Quote nonnumeric source/row bridge for any positive target choice, not just the printed counts or common significance. Independent count roles, source full-sample policy, and supplementary exclusion analysis must remain separate. If no unique intended model, undeterminable/null with model ambiguity; no correction from the mere existence of636/673. Do not alter the other six fields or the protected es/p evidence. Do not infer N from Welch df. Manuscript title/authors, original DOI and OSF registration/project links establish primary identity; it is a preliminary completed MSc-thesis report associated with the registry, not the registry itself. Only named complete cached report/supplement, no acquisition/URLs/data/code execution/repo search/Git/delegation. Final changed-input scope review.",
+    "preserved_validated_sibling_scope": {
+      "commit": "f3eb01ce19e9a1fc79ed85fc1b0964f7ba53cf01",
+      "replication": {
+        "status": "done",
+        "target_match": true,
+        "target_description": "Replication of Experiment 4 Part 1, Hypothesis 1: agency index in Sexual versus Clothed conditions, independent samples Welch t test, post-exclusion analysis. The supplied locators differ from the pagination/table numbering in the OSF preprint.",
+        "n": {
+          "value": "321; 315",
+          "sample_role": "Analytic participants by condition: Sexual = 321; Clothed = 315, after exclusions.",
+          "exclusions": "56 participants excluded across the full study under eight exclusion criteria; nine were excluded for correctly guessing the hypotheses. Target-condition sample sizes are explicitly printed in the post-exclusion table.",
+          "location": "Supplement p. 39 (PDF p. 102), Table 4, contrast heading; Supplement p. 37 (PDF p. 100)",
+          "quote": "Contrast between Sexual Condition (321) and Clothed Condition (315) - Independent samples t-test",
+          "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt",
+          "confident": true
+        },
+        "es": {
+          "value": "-0.40",
+          "metric": "Cohen’s d",
+          "test_statistic": "t(631) = -5.00",
+          "location": "Supplement p. 39 (PDF p. 102), Table 4, Agency index - 1 row",
+          "quote": "Agency index - 1   -5.00   631   <.001   -0.21   d = -0.40 [-0.56, -0.24]",
+          "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt",
+          "confident": true
+        },
+        "p": {
+          "value": ".001",
+          "bound": "l",
+          "location": "Supplement p. 39 (PDF p. 102), Table 4, Agency index - 1 row",
+          "quote": "Agency index - 1   -5.00   631   <.001   -0.21   d = -0.40 [-0.56, -0.24]",
+          "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt",
+          "confident": true
+        }
+      },
+      "reported_success": {
+        "value": "successful",
+        "status": "done",
+        "location": "p. 31, Experiment 4 Part 1: Agency and Experience in Clothed vs. Sexual Conditions",
+        "quote": "We conducted independent samples t-tests (Welch’s t, two-tailed) and found support for Hypothesis 1 that the agency index in Sexual Condition is lower than that of Clothed Condition",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/43639e83bd9e29d0e60c4760.txt",
+        "confident": true
+      },
+      "notes": "Original title and authors verified in author-hosted full paper; source URL https://kurtgray-lab.squarespace.com/s/more-than-a-body.pdf . No printed d or contrast test statistic was found for the original LSD contrast; omnibus F and eta-squared are different tests and were not substituted. Replication title is Revisiting the link between Mind Perception and Objectification: Replication and Extension of Gray et al (2011), by Tsang and Feldman, obtained from assigned OSF file https://osf.io/download/7w5b6/ . Main-text pre-exclusion result (p. 31; Table 10 p. 42): Sexual N = 335, Clothed N = 338, t(666) = -5.20, p < .001, d = -0.40 [-0.56, -0.25]. Post-exclusion values retained consistently for replication n, es and p. Original g = -0.58 in replication comparison table is replication-author-derived and is not a printed effect size in the original target test."
+    }
+  }
+]

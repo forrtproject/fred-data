@@ -1,0 +1,41 @@
+Summary of the adjudicated items from [39e32c5299588a573610242a.txt](file:///home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/39e32c5299588a573610242a.txt):
+
+- **Audit ID 69 (`pval_value_o`)**: Table 3 (Subgroup Analyses, OnlineFirst p. 7) reports the subgroup test for sample size as $\chi^2(1) = 0.53, p = .47$. The blind value (`.47` / `0.47`) is right (`blind_right`).
+- **Audit ID 72 (`n_o` and `es_value_o`)**: Both shipped and blind extracted the exact same values from the target analysis in Pigott et al. (2013) ($N = 79$ matched dissertation–published paper pairs; overall Mantel–Haenszel $\text{OR} = 2.41$, 95% CI $[1.79, 3.25]$). The `mismatched_target` flag arose only because the blind extraction labeled the metric `"Mantel–Haenszel odds ratio"` rather than `"OR"`. Both shipped values are right (`shipped_right`).
+
+## Answer
+
+```json
+[
+  {
+    "audit_id": 69,
+    "field": "pval_value_o",
+    "verdict": "blind_right",
+    "correct_value": "0.47",
+    "location": "OnlineFirst p. 7, Table 3, Subgroup Analyses, Sample size row, χ²(1), p column",
+    "quote": "Sample size 0.53, .47",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/39e32c5299588a573610242a.txt",
+    "reason": "Table 3 reports the subgroup homogeneity test for sample size as χ²(1) = 0.53, p = .47. The shipped p-value of 0.41 is incorrect and the blind extraction of .47 (0.47) is correct."
+  },
+  {
+    "audit_id": 72,
+    "field": "n_o",
+    "verdict": "shipped_right",
+    "correct_value": "79",
+    "location": "OnlineFirst p. 5, Results and Table 2 note",
+    "quote": "Within the 79 studies, we found 1,599 different treatment outcomes.",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/39e32c5299588a573610242a.txt",
+    "reason": "Both shipped and blind identify N = 79 dissertation–published paper matched pairs (with 1,599 nested treatment outcomes) for the overall odds ratio analysis. The mismatched_target flag resulted only from metric naming differences (OR vs. Mantel–Haenszel odds ratio)."
+  },
+  {
+    "audit_id": 72,
+    "field": "es_value_o",
+    "verdict": "shipped_right",
+    "correct_value": "2.41",
+    "location": "OnlineFirst p. 5, Results (published p. 428)",
+    "quote": "The mean odds ratio was 2.41 (with a 95% confidence interval ranging from a low of 1.79 to a high of 3.25).",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/39e32c5299588a573610242a.txt",
+    "reason": "Both shipped and blind extract the exact same overall odds ratio of 2.41. The mismatched_target comparison flag occurred only because blind specified 'Mantel–Haenszel odds ratio' while shipped used 'OR'."
+  }
+]
+```

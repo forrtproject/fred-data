@@ -1,0 +1,122 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 61,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 10, Discussion; overall study verdict",
+      "quote": "thereby replicating the outcomes from the prior experimental study.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_cf3cdf98cc2a333b4b2bfafd.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": "The numeric target is unresolved or explicitly mismatched; the author label was retained as an observation. Require unique individual-effect mapping; do not transfer an agreeing overall paper/study label.",
+    "locator": {
+      "ref_o": "Gettinger, M., Kratochwill, T. R., Eubanks, A., Foy, A., & Levin, J. R. (2021). Academic and Behavior Combined Support: Evaluation of an integrated supplemental intervention for early elementary students. Journal of School Psychology, 89, 1–19. https://doi.org/10.1016/j.jsp.2021.09.004",
+      "doi_o": "10.1016/j.jsp.2021.09.004",
+      "study_o": null,
+      "ref_r": "Gettinger, M., Kratochwill, T. R., Levin, J. R., Eubanks, A., & Foy, A. (2024). Academic and behavior combined support: A single-case practice-based replication study. Journal of School Psychology, 104, 101307. https://doi.org/10.1016/j.jsp.2024.101307",
+      "doi_r": "10.1016/j.jsp.2024.101307",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "hedges' g",
+      "es_type_r": "hedges' g",
+      "audit_id": 61,
+      "description": "Reading and behavior outcomes at baseline versus intervention during an integrated supplemental intervention for early elementary students.",
+      "locators_o": "p.24-25",
+      "locators_r": "p.8",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_cf3cdf98cc2a333b4b2bfafd.txt"
+      },
+      "target_side": "replication",
+      "source_version_note": "Published article copy from private Google Drive archive; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Gettinger,Kratochwill,Levin,Eubanks,Foy. PDF has13pages; published range=101307; source endmatter checked in model review. Methods-related material pages[2, 3, 4, 5, 8, 10, 11, 12]; results-related material pages[1, 2, 8, 10, 11]; references atPDFpages[12]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/cf3cdf98cc2a333b4b2bfafd_drive.pdf"
+    },
+    "work_key": "10.1016/j.jsp.2024.101307",
+    "coding_context": {
+      "description": "\"..integrated supplemental intervention for early elementary students [...] (produces) significant improvement from baseline to intervention for both reading and behavior outcomes.\"",
+      "es_repr": "p.8",
+      "reported_success_quote": "In concert with prior empirical findings on ABC Support, analyses revealed improvement from baseline to intervention for both reading and behavior outcomes, as well as from baseline to follow-up assessments.",
+      "coded_statistics_for_target_selection": {
+        "n_r": "4",
+        "es_value_r": "2.06",
+        "es_type_r": "hedges' g",
+        "pval_value_r": "0.25",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "prior_findings": [],
+    "blind_target_description": "ABC Support, p. 8: both training and standard non-training reading-passage outcomes are reported; supplied neutral locator does not distinguish them.",
+    "blind_extraction_notes": "Original full text is available at /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9db4edd7c949d8588b9b359c.txt. Located primary reading and behavior analyses, but cannot map this assigned effect uniquely without assuming an outcome from input order or an unavailable manuscript pagination. Original is not classified paper_unavailable. Replication full text unavailable independently.\nSource follow-up: Numerics verified on rendered primary PDF pp. 8–10. No values inferred from figure coordinates. Page 8 contains baseline-to-intervention average g=3.59, p=.042 for training passages and average g=2.06, p=.25 for standard non-training passages. Both also have baseline-to-follow-up tests. Neither supplied description selects the reading-passage type; input order was not used to select it. Primary paper is available.",
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/cf3cdf98cc2a333b4b2bfafd_drive.pdf",
+    "parent_objection": "An agreement with a printed number or broad author label cannot resolve a different contrast, sample, model or outcome. Independently establish a documented mapping using target metadata and primary evidence, otherwise undeterminable. For1596/1597 distinguish initial intervention within all participants from a no-intervention control comparison; do not select the slope by numeric coincidence. For1552/1553 distinguish all instructed participants from Tseltal-only follow-up models and the original study4 replication portion from extension manipulations."
+  },
+  {
+    "audit_id": 62,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 10, Discussion; overall study verdict",
+      "quote": "thereby replicating the outcomes from the prior experimental study.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_cf3cdf98cc2a333b4b2bfafd.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": "The numeric target is unresolved or explicitly mismatched; the author label was retained as an observation. Require unique individual-effect mapping; do not transfer an agreeing overall paper/study label.",
+    "locator": {
+      "ref_o": "Gettinger, M., Kratochwill, T. R., Eubanks, A., Foy, A., & Levin, J. R. (2021). Academic and Behavior Combined Support: Evaluation of an integrated supplemental intervention for early elementary students. Journal of School Psychology, 89, 1–19. https://doi.org/10.1016/j.jsp.2021.09.004",
+      "doi_o": "10.1016/j.jsp.2021.09.004",
+      "study_o": null,
+      "ref_r": "Gettinger, M., Kratochwill, T. R., Levin, J. R., Eubanks, A., & Foy, A. (2024). Academic and behavior combined support: A single-case practice-based replication study. Journal of School Psychology, 104, 101307. https://doi.org/10.1016/j.jsp.2024.101307",
+      "doi_r": "10.1016/j.jsp.2024.101307",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "hedges' g",
+      "es_type_r": "hedges' g",
+      "audit_id": 62,
+      "description": "Academic and Behavior Combined Support (ABC Support)",
+      "locators_o": "p. 13",
+      "locators_r": "p. 8",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_cf3cdf98cc2a333b4b2bfafd.txt"
+      },
+      "target_side": "replication",
+      "source_version_note": "Published article copy from private Google Drive archive; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Gettinger,Kratochwill,Levin,Eubanks,Foy. PDF has13pages; published range=101307; source endmatter checked in model review. Methods-related material pages[2, 3, 4, 5, 8, 10, 11, 12]; results-related material pages[1, 2, 8, 10, 11]; references atPDFpages[12]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/cf3cdf98cc2a333b4b2bfafd_drive.pdf"
+    },
+    "work_key": "10.1016/j.jsp.2024.101307",
+    "coding_context": {
+      "description": "Academic and Behavior Combined Support (ABC Support)",
+      "es_repr": "p. 8",
+      "reported_success_quote": "In concert with prior empirical findings on ABC Support, analyses revealed improvement from baseline to intervention for both reading and behavior outcomes, as well as from baseline to follow-up assessments.",
+      "coded_statistics_for_target_selection": {
+        "n_r": "4",
+        "es_value_r": "3.59",
+        "es_type_r": "hedges' g",
+        "pval_value_r": "0.042",
+        "pval_type_r": "e (=)"
+      }
+    },
+    "prior_findings": [],
+    "blind_target_description": "ABC Support, p. 8: both training and standard non-training reading-passage outcomes are reported; supplied neutral locator does not distinguish them.",
+    "blind_extraction_notes": "Original p.13 identifies the training-passage comparison. The effect size is the printed average g for that outcome, and p is the randomization-test result for the same baseline/intervention outcome. The authors caution on p.12 that summary effect sizes compare A/B observations and are not directly connected to the structured omnibus randomization statistic; they are not identical estimands. Replication not inferred from its abstract or section previews.\nSource follow-up: Numerics verified on rendered primary PDF pp. 8–10. No values inferred from figure coordinates. Page 8 contains baseline-to-intervention average g=3.59, p=.042 for training passages and average g=2.06, p=.25 for standard non-training passages. Both also have baseline-to-follow-up tests. Neither supplied description selects the reading-passage type; input order was not used to select it. Primary paper is available.",
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/cf3cdf98cc2a333b4b2bfafd_drive.pdf",
+    "parent_objection": "An agreement with a printed number or broad author label cannot resolve a different contrast, sample, model or outcome. Independently establish a documented mapping using target metadata and primary evidence, otherwise undeterminable. For1596/1597 distinguish initial intervention within all participants from a no-intervention control comparison; do not select the slope by numeric coincidence. For1552/1553 distinguish all instructed participants from Tseltal-only follow-up models and the original study4 replication portion from extension manipulations."
+  }
+]
+
+FOCUSED SCOPE ROUND: Carry forward original brief, prior findings and unresolved objections. For reported_success return effect_specific_verdict_confirmed true ONLY with a unique defensible row/outcome mapping and the authors own applicable narrative. Include exact primary quotations. Numeric agreement alone never establishes sample/contrast identity. No commands or writes; whole reply under ## Answer.

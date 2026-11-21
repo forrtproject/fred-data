@@ -1,0 +1,144 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1099": {
+      "source_key": "724fea2029a9cb3a",
+      "side": "original",
+      "input": {
+        "ref_o": "De Brigard, F. (2010). If you like it, does it matter if it’s real? Philosophical Psychology, 23(1), 43–57. https://doi.org/10.1080/09515080903532290",
+        "doi_o": "10.1080/09515080903532290",
+        "study_o": "1",
+        "ref_r": "Cova, F., Strickland, B., Abatista, A., Allard, A., Andow, J., Attie, M., Beebe, J., Berniūnas, R., Boudesseul, J., Colombo, M., Cushman, F., Diaz, R., N’Djaye Nikolai van Dongen, N., Dranseika, V., Earp, B. D., Torres, A. G., Hannikainen, I., Hernández-Conde, J. V., Hu, W., … Zhou, X. (2018). Estimating the Reproducibility of Experimental Philosophy. Review of Philosophy and Psychology, 12(1), 9–44. https://doi.org/10.1007/s13164-018-0400-9",
+        "doi_r": "10.1007/s13164-018-0400-9",
+        "url_r": "https://osf.io/cvuwy/files/3q5ac",
+        "study_r": "23",
+        "es_type_o": "OR",
+        "es_type_r": "d",
+        "description": "Trade-off between having a good experience and having contact with reality.",
+        "locators_o": "p. 48",
+        "locators_r": "p. 2",
+        "audit_id": 1099,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2e38d3f03902b9e57595632d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "First study: choice to remain connected versus go back to reality across Negative, Positive, and Neutral experience-machine vignettes; omnibus difference among the three conditions, linked from the p. 48 results by note 3.",
+      "worker_notes": "Identity checked independently: title “If you like it, does it matter if it’s real?”, Felipe De Brigard, Philosophical Psychology 23(1), February 2010, pp. 43–57, DOI 10.1080/09515080903532290 match the neutral original reference. Supplied text contains the primary article, methods/results, notes, and references, rather than an abstract or secondary report. The p. 48 first-study result points to note 3, which supplies the only inferential test for the three-condition comparison. This is the omnibus test, not an invented pairwise odds ratio. The source reports percentages by condition but no OR in the inspected first-study results or inferential note; retain the printed test statistic instead of converting it. The canonical text encodes the statistic symbol as U+001F followed by 2, and equals signs as ¼; metric and test_statistic preserve that exact encoding. The numeric statistic, N, and p are explicit. No source PDF was supplied, so the damaged glyph could not be visually checked. The methods on pp. 46–47 state three conditions with 24 participants in each and each participant receiving only one vignette; no N sum is needed because note 3 explicitly prints N=72. The later Second Neutral follow-up (80 participants, p. 49) is a separate study and is excluded. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2e38d3f03902b9e57595632d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Trade-off between value of having a good experience vs having contact with reality",
+        "es_repr_o": "p. 48, OR: = (12/12) / (3/21) = 7.00",
+        "es_repr_r": "p. 2",
+        "es_type_o": "OR",
+        "es_type_r": "d",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Thus, we replicated the main finding of De Brigard (2010) \"If you like it, does it matter if it's real?\""
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1099,
+      "field": "n_o",
+      "blind": {
+        "value": "72",
+        "location": "p. 48, Figure 1 and results paragraph ending in note 3; p. 56, note [3]",
+        "quote": "The difference among conditions was statistically significant: \u001f2(2, N¼72)¼10.6, p¼.005.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2e38d3f03902b9e57595632d.txt",
+        "confident": true,
+        "sample_role": "Participants in the first-study omnibus three-condition test; UNC undergraduates without previous exposure to philosophy.",
+        "exclusions": "No exclusions reported in the first-study methods/results or note 3; N=72 is explicitly reported for this test."
+      },
+      "disposition": {
+        "audit_id": 1099,
+        "field": "n_o",
+        "code": "extracted_printed",
+        "reason": "Explicit N=72 in the first-study omnibus test; participants are the analytic units. No exclusions are reported here. The separate 80-participant Second Neutral follow-up is excluded. No arithmetic derivation is needed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2e38d3f03902b9e57595632d.txt",
+        "location": "p. 48, Figure 1 and results paragraph ending in note 3; p. 56, note [3]",
+        "quote": "The difference among conditions was statistically significant: \u001f2(2, N¼72)¼10.6, p¼.005.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "48",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1099,
+      "field": "es_value_o",
+      "blind": {
+        "value": "10.6",
+        "location": "p. 48, Figure 1 and results paragraph ending in note 3; p. 56, note [3]",
+        "quote": "The difference among conditions was statistically significant: \u001f2(2, N¼72)¼10.6, p¼.005.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2e38d3f03902b9e57595632d.txt",
+        "confident": true,
+        "metric": "\u001f2",
+        "test_statistic": "\u001f2(2, N¼72)¼10.6"
+      },
+      "disposition": {
+        "audit_id": 1099,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "The first-study omnibus statistic is explicitly 10.6. Preserve its canonical metric symbol U+001F followed by 2; the symbol is encoding-damaged and no supplied PDF permits visual confirmation. OR is not printed in the inspected first-study results/note; no metric conversion performed.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2e38d3f03902b9e57595632d.txt",
+        "location": "p. 48, Figure 1 and results paragraph ending in note 3; p. 56, note [3]",
+        "quote": "The difference among conditions was statistically significant: \u001f2(2, N¼72)¼10.6, p¼.005.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "1.07",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1099,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".005",
+        "location": "p. 48, Figure 1 and results paragraph ending in note 3; p. 56, note [3]",
+        "quote": "The difference among conditions was statistically significant: \u001f2(2, N¼72)¼10.6, p¼.005.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2e38d3f03902b9e57595632d.txt",
+        "confident": true,
+        "bound": "e"
+      },
+      "disposition": {
+        "audit_id": 1099,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "The same omnibus test explicitly reports p¼.005, interpreted as exact p=.005; preserve the printed precision and equality bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2e38d3f03902b9e57595632d.txt",
+        "location": "p. 48, Figure 1 and results paragraph ending in note 3; p. 56, note [3]",
+        "quote": "The difference among conditions was statistically significant: \u001f2(2, N¼72)¼10.6, p¼.005.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": null,
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/724fea2029a9cb3a. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_724fea2029a9cb3a_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

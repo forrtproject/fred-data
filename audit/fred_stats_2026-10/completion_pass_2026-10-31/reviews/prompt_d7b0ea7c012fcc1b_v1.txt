@@ -1,0 +1,246 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "697": {
+      "source_key": "d7b0ea7c012fcc1b",
+      "side": "replication",
+      "input": {
+        "ref_o": "Correll, J. (2008). 1/f noise and effort on implicit measures of bias. Journal of Personality and Social Psychology, 94(1), 48–59. https://doi.org/10.1037/0022-3514.94.1.48",
+        "doi_o": "10.1037/0022-3514.94.1.48",
+        "study_o": "2",
+        "ref_r": "Madurski, C., & LeBel, E. P. (2014). Making sense of the noise: Replication difficulties of Correll’s (2008) modulation of 1/f noise in a racial bias task. Psychonomic Bulletin &amp; Review, 22(4), 1135–1141. https://doi.org/10.3758/s13423-014-0757-4",
+        "doi_r": "10.3758/s13423-014-0757-4",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Effort and emission of 1/f noise.",
+        "locators_o": "p. 9",
+        "locators_r": "p.4",
+        "audit_id": 697,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Replication attempt / Sample #1: participant PSD slopes in the weapon identification task, planned orthogonal contrast of control against the average of use-race and avoid-race conditions; replication of Correll (2008) Study 2 effort manipulation.",
+      "worker_notes": "Identity verified from canonical text: title Making sense of the noise: Replication difficulties of Correll’s (2008) modulation of 1/f noise in a racial bias task; Christine Madurski and Etienne P. LeBel; DOI 10.3758/s13423-014-0757-4. Primary BRIEF REPORT, Psychon Bull Rev (2015) 22:1135–1141, published online 11 November 2014; matches supplied 2014 reference. Supplied text contains all seven journal pages, methods, results, tables, discussion, and references. No PDF supplied. Only assigned unfinished fields were examined for checkpoint values; other fields are unassigned placeholders. Study correspondence follows explicitly named replication attempts and Sample # labels, not input ordering or numeric matching. Authors’ failed verdict concerns the effort manipulation; successful emergence of general 1/f noise is a different finding.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Effort causally affects the emission of 1/f noise.",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p.4",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Despite considerable effort to closely\nduplicate all procedural and methodological details of the original study (i.e., same cover story, experimental manipula-\ntion, implicit measure task, original stimuli, task instructions, sampling frame, population, and statistical analyses), both replication attempts were unsuccessful in replicating the original finding challenging the theoretical account that 1/f noise\nin racial bias tasks reflects a deliberative process."
+      }
+    },
+    "698": {
+      "source_key": "d7b0ea7c012fcc1b",
+      "side": "replication",
+      "input": {
+        "ref_o": "Correll, J. (2008). 1/f noise and effort on implicit measures of bias. Journal of Personality and Social Psychology, 94(1), 48–59. https://doi.org/10.1037/0022-3514.94.1.48",
+        "doi_o": "10.1037/0022-3514.94.1.48",
+        "study_o": "2",
+        "ref_r": "Madurski, C., & LeBel, E. P. (2014). Making sense of the noise: Replication difficulties of Correll’s (2008) modulation of 1/f noise in a racial bias task. Psychonomic Bulletin &amp; Review, 22(4), 1135–1141. https://doi.org/10.3758/s13423-014-0757-4",
+        "doi_r": "10.3758/s13423-014-0757-4",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Effort and emission of 1/f noise.",
+        "locators_o": "p. 9",
+        "locators_r": "p.4",
+        "audit_id": 698,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Replication attempt / Sample #2: participant PSD slopes in the weapon identification task, planned orthogonal contrast of control against the average of use-race and avoid-race conditions; replication of Correll (2008) Study 2 effort manipulation.",
+      "worker_notes": "Identity verified from canonical text: title Making sense of the noise: Replication difficulties of Correll’s (2008) modulation of 1/f noise in a racial bias task; Christine Madurski and Etienne P. LeBel; DOI 10.3758/s13423-014-0757-4. Primary BRIEF REPORT, Psychon Bull Rev (2015) 22:1135–1141, published online 11 November 2014; matches supplied 2014 reference. Supplied text contains all seven journal pages, methods, results, tables, discussion, and references. No PDF supplied. Only assigned unfinished fields were examined for checkpoint values; other fields are unassigned placeholders. Study correspondence follows explicitly named replication attempts and Sample # labels, not input ordering or numeric matching. Authors’ failed verdict concerns the effort manipulation; successful emergence of general 1/f noise is a different finding. Table 1 explicitly prints N=148, t=-.494, p=.62, and d=-.09 +/- .34 for Sample #2. No metric conversion or N derivation. White-only and non-compliance-exclusion sensitivity analyses and the combined sample are distinct tests. Exclusion evidence: One participant in sample 2 had an extremely high error rate of 83 % ... and was excluded from all analyses.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Effort causally affects the emission of 1/f noise.",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p.4",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Despite considerable effort to closely\nduplicate all procedural and methodological details of the original study (i.e., same cover story, experimental manipula-\ntion, implicit measure task, original stimuli, task instructions, sampling frame, population, and statistical analyses), both replication attempts were unsuccessful in replicating the original finding challenging the theoretical account that 1/f noise\nin racial bias tasks reflects a deliberative process."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 697,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Journal p. 1136, Results, paragraph introducing Fig. 1",
+        "quote": "we were not able to replicate ... Correll’s (2008) Study 2 main finding in both of our samples.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 697,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state failure to replicate the target effort manipulation in both samples, including assigned replication attempt 1. General 1/f noise emergence is a separate result.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "location": "Journal p. 1136, Results, paragraph introducing Fig. 1",
+        "quote": "we were not able to replicate ... Correll’s (2008) Study 2 main finding in both of our samples.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 698,
+      "field": "n_r",
+      "blind": {
+        "value": "148",
+        "sample_role": "Participants in the critical between-subjects PSD-slope contrast, Sample #2. Explicit Table 1 analytic N.",
+        "exclusions": "One participant with an 83 % error rate was excluded from all analyses (p. 1136, footnote 4). Separate non-compliance sensitivity exclusions are not the Table 1 primary analysis.",
+        "location": "Journal p. 1138 (article p. 4), Table 1, Current studies / Sample #2 row",
+        "quote": "  Sample #2                             148                 -.494                .62                d=-.09 +/-.34                              86%",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 698,
+        "field": "n_r",
+        "code": "extracted_printed",
+        "reason": "Table 1 explicitly gives the participant N for the critical Sample #2 contrast; p. 1136 footnote 4 documents one participant excluded from all analyses. No recruitment total or df inference used.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "location": "Journal p. 1138 (article p. 4), Table 1, Current studies / Sample #2 row",
+        "quote": "One participant in sample 2 had an extremely high error rate of 83 % ... and was excluded from all analyses. ...   Sample #2                             148                 -.494                .62                d=-.09 +/-.34                              86%",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "148",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 698,
+      "field": "es_value_r",
+      "blind": {
+        "value": "-.09",
+        "metric": "d",
+        "test_statistic": "t = -.494",
+        "location": "Journal p. 1138 (article p. 4), Table 1, Current studies / Sample #2 row",
+        "quote": "  Sample #2                             148                 -.494                .62                d=-.09 +/-.34                              86%",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 698,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed d for the identified Sample #2 critical contrast, retaining its printed sign and precision; associated printed t retained.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "location": "Journal p. 1138 (article p. 4), Table 1, Current studies / Sample #2 row",
+        "quote": "  Sample #2                             148                 -.494                .62                d=-.09 +/-.34                              86%",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.09",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 698,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".62",
+        "bound": "e",
+        "location": "Journal p. 1138 (article p. 4), Table 1, Current studies / Sample #2 row",
+        "quote": "  Sample #2                             148                 -.494                .62                d=-.09 +/-.34                              86%",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 698,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed exact p from the same Sample #2 critical contrast as d=-.09 and t=-.494.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "location": "Journal p. 1138 (article p. 4), Table 1, Current studies / Sample #2 row",
+        "quote": "  Sample #2                             148                 -.494                .62                d=-.09 +/-.34                              86%",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.62",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 698,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Journal p. 1136, Results, paragraph introducing Fig. 1",
+        "quote": "we were not able to replicate ... Correll’s (2008) Study 2 main finding in both of our samples.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 698,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state failure to replicate the target effort manipulation in both samples, including assigned replication attempt 2. General 1/f noise emergence is a separate result.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dbf1ea1a4faf823a7d9ae4d5.txt",
+        "location": "Journal p. 1136, Results, paragraph introducing Fig. 1",
+        "quote": "we were not able to replicate ... Correll’s (2008) Study 2 main finding in both of our samples.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/d7b0ea7c012fcc1b. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_d7b0ea7c012fcc1b_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

@@ -1,0 +1,52 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1826,
+    "field": "pval_value_r",
+    "comparison": "differ",
+    "shipped": "0.99",
+    "shipped_metric": "d",
+    "shipped_bound": "g (>)",
+    "blind": {
+      "value": ".003",
+      "location": "p. 426, Results, first one-way ANOVA",
+      "quote": "F(2, 891) = 5.79, p = .003, ηp2 = .013.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4b693b150113691903003a2b.txt",
+      "confident": true,
+      "bound": "e"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Black, J. E., & Barnes, J. L. (2015). The effects of reading material on social and non-social cognition. Poetics, 52, 32–43. https://doi.org/10.1016/j.poetic.2015.07.001",
+      "doi_o": "10.1016/j.poetic.2015.07.001",
+      "study_o": null,
+      "ref_r": "Isakoglou, F., Multhaup, K. S., Munger, M. P., & Eiler, B. A. (2021). The Effects of Genre and Reading Difficulty on Narrative Transportation: The Mediating Role of Affect. Psi Chi Journal of Psychological Research, 26(4), 422–429. https://doi.org/10.24839/2325-7342.jn26.4.422",
+      "doi_r": "10.24839/2325-7342.jn26.4.422",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 1826,
+      "description": "Relationship between reading material and transportation.",
+      "locators_o": "p. 5",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/0dac17af2d1fd198f33fed77.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4b693b150113691903003a2b.txt"
+      }
+    },
+    "work_key": "10.24839/2325-7342.jn26.4.422",
+    "coding_context": {
+      "es_repr": "5, =(4.29-4.27)/SQRT((0.97^2+1.01^2)/2)",
+      "description": "The effects of reading material on transportation",
+      "reported_success_quote": "these results did not replicate Black\nand Barnes’ (2015a) finding that literary fiction\nengenders higher narrative transportation than\nnonfiction",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

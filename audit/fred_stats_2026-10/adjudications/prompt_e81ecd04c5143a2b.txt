@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 2127,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "0.00014699792960662",
+    "shipped_metric": "Cohen's f^2",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.000147482",
+      "metric": "Cohen’s f2",
+      "test_statistic": "F(1,483) = 0.071",
+      "location": "p. 2, Replication results (stage 2)",
+      "quote": "F(1,483) = 0.071, p = 0.79, Cohen’s f2 = 0.000147482.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3e4a31680dcd1480d01cc1fe.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Mason, M. F., & Bar, M. (2012). The effect of mental progression on mood. Journal of Experimental Psychology: General, 141(2), 217–221. https://doi.org/10.1037/a0025035",
+      "doi_o": "10.1037/a0025035",
+      "study_o": null,
+      "ref_r": "Aczel, B., Szaszi, B., Bognar, M., Kline Struhl, M., Miske, O., Loomas, Z., & Luis, B. (2025, November 18). Mason_JournExPsychGen_2012_eOQm - Bognar - New Data Replication - yk91. Retrieved from osf.io/2cjuw",
+      "doi_r": null,
+      "url_r": "https://osf.io/q4e35",
+      "study_r": null,
+      "es_type_o": "Cohen's f^2",
+      "es_type_r": "Cohen's f^2",
+      "audit_id": 2127,
+      "description": null,
+      "locators_o": "p. 2",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/452a26fa4d812f2a021cf44b.txt"
+      }
+    },
+    "work_key": "https://osf.io/q4e35",
+    "coding_context": {
+      "es_repr": null,
+      "pval_tails": "2",
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

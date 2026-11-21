@@ -1,0 +1,182 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+Reassess ONLY1657 n_o and es_value_o. Full original inputs, blind allele/participant counts, v1 decisions and unresolved unit objection follow.
+[
+  {
+    "source_key": "dc7d494739726f9e",
+    "audit_id": 1657,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Sanders, A. R., Rincon-Limas, D. E., Chakraborty, R., Grandchamp, B., Hamilton, J. D., Fann, W. E., & Patel, P. I. (1993). Association between genetic variation at the porphobilinogen deaminase gene and schizophrenia. Schizophrenia Research, 8(3), 211\u2013221. https://doi.org/10.1016/0920-9964(93)90019-f",
+      "doi_o": "10.1016/0920-9964(93)90019-f",
+      "study_o": null,
+      "ref_r": "N\u00f6then, M. M., Wildenauer, D., Cichon, S., Schwab, S., Kramer, R., Hallmayer, J., Maier, W., Lichtermann, D., Minges, J., Lanczik, M., Rietschel, M., K\u00f6rner, J., Ertl, M. A., Fimmers, R., Ackenheil, M., & Propping, P. (1993). No association or linkage between polymorphisms at the porphobilinogen deaminase gene locus and schizophrenia. Psychiatric Genetics, 3(2), 101\u2013106. https://doi.org/10.1097/00041444-199322000-00006",
+      "doi_r": "10.1097/00041444-199322000-00006",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "description": "Association between ApaLI allele presence at the porphobilinogen deaminase gene and schizophrenia",
+      "locators_o": "p. 213; Table 1",
+      "locators_r": "p. 103; Table I",
+      "audit_id": 1657,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/75a11feaefcc97bcf0ecef5d_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "208",
+      "sample_role": "Analytic allele/chromosome counts in the 2 \u00d7 2 association contingency table: 106 affected alleles and 102 control alleles. The corresponding contributor count is 104 participants (53 affected, 51 controls), not 208 participants.",
+      "exclusions": "Rare alleles, persistent partial digests, and otherwise unscorable alleles excluded (p. 214). Table 1 final counts used, not the recruitment total of 55 affected and 51 controls. ApaLI Table 2 final genotypes total 53 affected and 51 controls; two affected participants lack usable ApaLI genotype information; specific reasons for those two are not individually stated.",
+      "location": "p. 213 Table 1, PBGD ApaLI D1 and D2 rows; p. 214 Statistical analysis; p. 215 Table 2 ApaLI genotype counts",
+      "quote": "PBGD          I lq23.2.qter   ApaLI\u2019   Dl         41         56          5.50   0.02 ... D2         65         46",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1657,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "Table 1 explicitly labels affected and control allele counts for the target ApaLI test. Sum final mutually exclusive allele cells; keep allele observations separate from participant contributors.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt",
+      "location": "p. 213 Table 1, PBGD ApaLI D1 and D2 rows; p. 214 Statistical analysis; p. 215 Table 2 ApaLI genotype counts",
+      "quote": "PBGD          I lq23.2.qter   ApaLI\u2019   Dl         41         56          5.50   0.02 ... D2         65         46",
+      "calculation": "(41 + 65) + (56 + 46) = 106 + 102 = 208 analytic alleles/chromosomes. Separate contributor count from Table 2: (6 + 29 + 18) + (16 + 24 + 11) = 53 + 51 = 104 participants. Excluded unusable alleles per p. 214; 2 of 55 affected contributors absent from final ApaLI genotype counts; controls 51 retained."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "PBGD ApaLI D1/D2 allele-frequency association between affected schizophrenia/schizoaffective subjects and normal controls, p. 213 Table 1; chi-square with one degree of freedom.",
+    "worker_notes": "Only assigned unfinished fields assessed; unassigned fields are placeholders. Analytic N arithmetic: affected alleles 41 + 65 = 106; control alleles 56 + 46 = 102; mutually exclusive disease groups and allele categories sum to 208 alleles. Separately, Table 2 mutually exclusive genotypes give affected participants 6 + 29 + 18 = 53 and controls 16 + 24 + 11 = 51, total 104 participants; this is contributor N, not the allele-count unit of Table 1. No division by df or effect-size conversion. Same-test P = 0.02 retained in test_statistic; p field unassigned. PDF p. 213 and p. 215 visually inspected. Source title matches supplied reference; printed article header gives 1992 whereas supplied reference gives 1993.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt",
+    "shipped": "106",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "Association between ApaLI allele presence at the porphobilinogen deaminase gene and schizophrenia",
+      "es_repr_o": "p. 213/ Table 1",
+      "es_repr_r": "p. 103/ Table I",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Our data from both the association and the linkage study do not support a widespread or consistent involvement of the PBGD gene in the etiology of schizophrenia."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.\nFOCUSED SECOND ROUND. Reconcile count roles before adopting N208. The allele-frequency contingency table has208 alleles (106 affected+102 control), but Table2 has104 contributing genotyped participants (53+51) after2 affected participants were unscorable; initial recruited participants were106 (55+51). V1 establishes all these counts, but does not establish which count role n_o represents. The audit brief explicitly says different valid participant/cluster/observation counts alone do not prove a replacement N when the intended unit is unidentified. Do not assume that binomial table counts automatically replace contributor sample size, and do not choose by reproducing chi-square/effect-size arithmetic. Establish from neutral source/context whether allele-level observations or genotyped participants are the requested n_o, or retain both roles and return undeterminable. Separately assess the inline N106 in the test statistic: can its error be established independently of the unresolved104/208 role? Do not add an unprinted N208 annotation merely because it is the sum of allele counts. Give only a source-supported statistic expression, and explain whether omission of an unsupported N is appropriate if its replacement unit is not uniquely settled. Preserve the printed one-df chi-square5.50 and do not infer a new effect metric. No acquisition, repository/codebook search or paid APIs.",
+    "prior_round_findings": {
+      "audit_id": 1657,
+      "field": "n_o",
+      "verdict": "blind_right",
+      "correct_value": "208",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": true,
+      "location": "p. 213 Table 1, PBGD ApaLI D1 and D2 rows; p. 214 Statistical analysis; p. 215 Table 2 ApaLI genotype counts",
+      "quote": "PBGD          I lq23.2.qter   ApaLI\u2019   Dl         41         56          5.50   0.02 ... D2         65         46",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt",
+      "reason": "Table 1 tests PBGD ApaLI allele frequencies in a 2 x 2 contingency table of 41 + 65 = 106 affected alleles and 56 + 46 = 102 control alleles, summing to N = 208 analytic alleles (from 53 affected and 51 control genotyped participants in Table 2 after excluding 2 affected subjects with unscorable alleles per p. 214). The shipped value 106 reflects either the pre-exclusion recruited subject total (55 + 51) or only the affected allele count (41 + 65)."
+    }
+  },
+  {
+    "source_key": "dc7d494739726f9e",
+    "audit_id": 1657,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Sanders, A. R., Rincon-Limas, D. E., Chakraborty, R., Grandchamp, B., Hamilton, J. D., Fann, W. E., & Patel, P. I. (1993). Association between genetic variation at the porphobilinogen deaminase gene and schizophrenia. Schizophrenia Research, 8(3), 211\u2013221. https://doi.org/10.1016/0920-9964(93)90019-f",
+      "doi_o": "10.1016/0920-9964(93)90019-f",
+      "study_o": null,
+      "ref_r": "N\u00f6then, M. M., Wildenauer, D., Cichon, S., Schwab, S., Kramer, R., Hallmayer, J., Maier, W., Lichtermann, D., Minges, J., Lanczik, M., Rietschel, M., K\u00f6rner, J., Ertl, M. A., Fimmers, R., Ackenheil, M., & Propping, P. (1993). No association or linkage between polymorphisms at the porphobilinogen deaminase gene locus and schizophrenia. Psychiatric Genetics, 3(2), 101\u2013106. https://doi.org/10.1097/00041444-199322000-00006",
+      "doi_r": "10.1097/00041444-199322000-00006",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "description": "Association between ApaLI allele presence at the porphobilinogen deaminase gene and schizophrenia",
+      "locators_o": "p. 213; Table 1",
+      "locators_r": "p. 103; Table I",
+      "audit_id": 1657,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/75a11feaefcc97bcf0ecef5d_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "5.50",
+      "metric": "chi-square (1 df)",
+      "test_statistic": "chi-square = 5.50; P = 0.02 (Table 1)",
+      "location": "p. 213 Table 1, PBGD ApaLI row and footnote b",
+      "quote": "PBGD          I lq23.2.qter   ApaLI\u2019   Dl         41         56          5.50   0.02 ... \u201cChi square with one degree of freedom.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1657,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Description specifies ApaLI allele presence and locator specifies Table 1; PBGD ApaLI allele-frequency test is uniquely identified. Printed chi-square retained with same-test P = 0.02.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt",
+      "location": "p. 213 Table 1, PBGD ApaLI row and footnote b",
+      "quote": "PBGD          I lq23.2.qter   ApaLI\u2019   Dl         41         56          5.50   0.02 ... \u201cChi square with one degree of freedom.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "PBGD ApaLI D1/D2 allele-frequency association between affected schizophrenia/schizoaffective subjects and normal controls, p. 213 Table 1; chi-square with one degree of freedom.",
+    "worker_notes": "Only assigned unfinished fields assessed; unassigned fields are placeholders. Analytic N arithmetic: affected alleles 41 + 65 = 106; control alleles 56 + 46 = 102; mutually exclusive disease groups and allele categories sum to 208 alleles. Separately, Table 2 mutually exclusive genotypes give affected participants 6 + 29 + 18 = 53 and controls 16 + 24 + 11 = 51, total 104 participants; this is contributor N, not the allele-count unit of Table 1. No division by df or effect-size conversion. Same-test P = 0.02 retained in test_statistic; p field unassigned. PDF p. 213 and p. 215 visually inspected. Source title matches supplied reference; printed article header gives 1992 whereas supplied reference gives 1993.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt",
+    "shipped": "X2(1, N = 106) = 5.5",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Association between ApaLI allele presence at the porphobilinogen deaminase gene and schizophrenia",
+      "es_repr_o": "p. 213/ Table 1",
+      "es_repr_r": "p. 103/ Table I",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "pval_type_o": "e (=)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Our data from both the association and the linkage study do not support a widespread or consistent involvement of the PBGD gene in the etiology of schizophrenia."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.\nFOCUSED SECOND ROUND. Reconcile count roles before adopting N208. The allele-frequency contingency table has208 alleles (106 affected+102 control), but Table2 has104 contributing genotyped participants (53+51) after2 affected participants were unscorable; initial recruited participants were106 (55+51). V1 establishes all these counts, but does not establish which count role n_o represents. The audit brief explicitly says different valid participant/cluster/observation counts alone do not prove a replacement N when the intended unit is unidentified. Do not assume that binomial table counts automatically replace contributor sample size, and do not choose by reproducing chi-square/effect-size arithmetic. Establish from neutral source/context whether allele-level observations or genotyped participants are the requested n_o, or retain both roles and return undeterminable. Separately assess the inline N106 in the test statistic: can its error be established independently of the unresolved104/208 role? Do not add an unprinted N208 annotation merely because it is the sum of allele counts. Give only a source-supported statistic expression, and explain whether omission of an unsupported N is appropriate if its replacement unit is not uniquely settled. Preserve the printed one-df chi-square5.50 and do not infer a new effect metric. No acquisition, repository/codebook search or paid APIs.",
+    "prior_round_findings": {
+      "audit_id": 1657,
+      "field": "es_value_o",
+      "verdict": "blind_right",
+      "correct_value": "X2(1, N = 208) = 5.50",
+      "correct_metric": "chi-square (1 df)",
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": true,
+      "location": "p. 213 Table 1, PBGD ApaLI row and footnote b",
+      "quote": "PBGD          I lq23.2.qter   ApaLI\u2019   Dl         41         56          5.50   0.02 ... \u201cChi square with one degree of freedom.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_75a11feaefcc97bcf0ecef5d.txt",
+      "reason": "Table 1 reports chi-square(1) = 5.50 (p = 0.02) for the PBGD ApaLI 2 x 2 allele-frequency contingency table based on N = 208 total alleles (106 affected + 102 control alleles from 104 scored participants). The shipped inline annotation N = 106 is established as incorrect by the Table 1 allele counts and 2 x 2 chi-square calculation."
+    }
+  }
+]

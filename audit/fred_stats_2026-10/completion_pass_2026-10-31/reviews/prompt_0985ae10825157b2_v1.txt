@@ -1,0 +1,559 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "173": {
+      "source_key": "0985ae10825157b2",
+      "side": "original",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "description": "This effect examines how block type (switch vs. non-switch) affects reaction times (global switch cost condition)",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 173,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Median RT global switch cost: main effect of block type (non-switch trials in single-task versus switch blocks), 2 × 2 block type by language status ANOVA.",
+      "worker_notes": "Identity verified internally: title Flexibility in task switching by monolinguals and bilinguals; authors Melody Wiseheart, Mythili Viswanathan and Ellen Bialystok; DOI 10.1017/S1366728914000273; Cambridge FirstView primary research article, published online 29 December 2014, printed pages 1–6. Supplied text includes methods, results, discussion and references, rather than an abstract-only excerpt. No PDF was supplied. Input locators p. 5/p. 6 correspond to printed article pp. 4/5 when counting the cover page. The source gives 68 recruited participants (37 monolinguals, 31 bilinguals in Table 1) and removes two monolingual participants for cell error rates >25%, but does not explicitly print the final critical-model analytic N or mutually exclusive final group counts. Recruitment totals are not final group counts; analytic N is left null under the assigned completion rule. Candidate accounting only, not an extracted analytic N: 68 recruited − 2 excluded = 66; 37 recruited monolinguals − 2 excluded = 35, with 31 recruited bilinguals. These final group counts are derived rather than printed. No N was inferred from degrees of freedom. Median RT is the explicitly reported critical analysis; mean RT analyses are described as an identical pattern with nearly identical F-values, without separate printed statistics.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This effect examines how block type (switch vs. non-switch) affects reaction times (global switch cost condition)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "10",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    },
+    "174": {
+      "source_key": "0985ae10825157b2",
+      "side": "original",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": null,
+        "es_type_r": "etasq",
+        "description": "This effect explores whether language status (bilingual vs. monolingual) has an impact on global switch costs (global switch cost condition)",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 174,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Median RT global switch cost ANOVA: main effect of language status (monolingual versus bilingual), averaged over block types.",
+      "worker_notes": "Identity verified internally: title Flexibility in task switching by monolinguals and bilinguals; authors Melody Wiseheart, Mythili Viswanathan and Ellen Bialystok; DOI 10.1017/S1366728914000273; Cambridge FirstView primary research article, published online 29 December 2014, printed pages 1–6. Supplied text includes methods, results, discussion and references, rather than an abstract-only excerpt. No PDF was supplied. Input locators p. 5/p. 6 correspond to printed article pp. 4/5 when counting the cover page. The source gives 68 recruited participants (37 monolinguals, 31 bilinguals in Table 1) and removes two monolingual participants for cell error rates >25%, but does not explicitly print the final critical-model analytic N or mutually exclusive final group counts. Recruitment totals are not final group counts; analytic N is left null under the assigned completion rule. Candidate accounting only, not an extracted analytic N: 68 recruited − 2 excluded = 66; 37 recruited monolinguals − 2 excluded = 35, with 31 recruited bilinguals. These final group counts are derived rather than printed. No N was inferred from degrees of freedom. Median RT is the explicitly reported critical analysis; mean RT analyses are described as an identical pattern with nearly identical F-values, without separate printed statistics. The corresponding test prints only F < 1 (jointly Fs < 1 for the two local-cost effects); no numerical p or partial eta-squared is reported for this effect. The printed F bound is retained without converting to an effect size or p value.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This effect explores whether language status (bilingual vs. monolingual) has an impact on global switch costs (global switch cost condition)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "10",
+        "es_type_o": null,
+        "es_type_r": "etasq",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    },
+    "175": {
+      "source_key": "0985ae10825157b2",
+      "side": "original",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "description": "This interaction effect investigates how block type (switch vs. non-switch) and language status interact to affect global switch costs (global switch cost condition)",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 175,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Median RT global switch cost ANOVA: block type × language status interaction.",
+      "worker_notes": "Identity verified internally: title Flexibility in task switching by monolinguals and bilinguals; authors Melody Wiseheart, Mythili Viswanathan and Ellen Bialystok; DOI 10.1017/S1366728914000273; Cambridge FirstView primary research article, published online 29 December 2014, printed pages 1–6. Supplied text includes methods, results, discussion and references, rather than an abstract-only excerpt. No PDF was supplied. Input locators p. 5/p. 6 correspond to printed article pp. 4/5 when counting the cover page. The source gives 68 recruited participants (37 monolinguals, 31 bilinguals in Table 1) and removes two monolingual participants for cell error rates >25%, but does not explicitly print the final critical-model analytic N or mutually exclusive final group counts. Recruitment totals are not final group counts; analytic N is left null under the assigned completion rule. Candidate accounting only, not an extracted analytic N: 68 recruited − 2 excluded = 66; 37 recruited monolinguals − 2 excluded = 35, with 31 recruited bilinguals. These final group counts are derived rather than printed. No N was inferred from degrees of freedom. Median RT is the explicitly reported critical analysis; mean RT analyses are described as an identical pattern with nearly identical F-values, without separate printed statistics.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This interaction effect investigates how block type (switch vs. non-switch) and language status interact to affect global switch costs (global switch cost condition)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "10",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    },
+    "176": {
+      "source_key": "0985ae10825157b2",
+      "side": "original",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "description": "This effect examines the difference in reaction times between switch and non-switch trials within the switch block (local switch cost)",
+        "locators_o": "p. 6",
+        "locators_r": "",
+        "audit_id": 176,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Median RT local switch cost: main effect of switch status (switch versus non-switch trials within switch blocks), 2 × 2 switch status by language status ANOVA.",
+      "worker_notes": "Identity verified internally: title Flexibility in task switching by monolinguals and bilinguals; authors Melody Wiseheart, Mythili Viswanathan and Ellen Bialystok; DOI 10.1017/S1366728914000273; Cambridge FirstView primary research article, published online 29 December 2014, printed pages 1–6. Supplied text includes methods, results, discussion and references, rather than an abstract-only excerpt. No PDF was supplied. Input locators p. 5/p. 6 correspond to printed article pp. 4/5 when counting the cover page. The source gives 68 recruited participants (37 monolinguals, 31 bilinguals in Table 1) and removes two monolingual participants for cell error rates >25%, but does not explicitly print the final critical-model analytic N or mutually exclusive final group counts. Recruitment totals are not final group counts; analytic N is left null under the assigned completion rule. Candidate accounting only, not an extracted analytic N: 68 recruited − 2 excluded = 66; 37 recruited monolinguals − 2 excluded = 35, with 31 recruited bilinguals. These final group counts are derived rather than printed. No N was inferred from degrees of freedom. Median RT is the explicitly reported critical analysis; mean RT analyses are described as an identical pattern with nearly identical F-values, without separate printed statistics.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This effect examines the difference in reaction times between switch and non-switch trials within the switch block (local switch cost)",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "11",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    },
+    "177": {
+      "source_key": "0985ae10825157b2",
+      "side": "original",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": null,
+        "es_type_r": "etasq",
+        "description": "This effect tests whether language status (bilingual vs. monolingual) influences the local switch cost (local switch cost condition)",
+        "locators_o": "p. 6",
+        "locators_r": "",
+        "audit_id": 177,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Median RT local switch cost ANOVA: main effect of language status (monolingual versus bilingual), averaged over switch status.",
+      "worker_notes": "Identity verified internally: title Flexibility in task switching by monolinguals and bilinguals; authors Melody Wiseheart, Mythili Viswanathan and Ellen Bialystok; DOI 10.1017/S1366728914000273; Cambridge FirstView primary research article, published online 29 December 2014, printed pages 1–6. Supplied text includes methods, results, discussion and references, rather than an abstract-only excerpt. No PDF was supplied. Input locators p. 5/p. 6 correspond to printed article pp. 4/5 when counting the cover page. The source gives 68 recruited participants (37 monolinguals, 31 bilinguals in Table 1) and removes two monolingual participants for cell error rates >25%, but does not explicitly print the final critical-model analytic N or mutually exclusive final group counts. Recruitment totals are not final group counts; analytic N is left null under the assigned completion rule. Candidate accounting only, not an extracted analytic N: 68 recruited − 2 excluded = 66; 37 recruited monolinguals − 2 excluded = 35, with 31 recruited bilinguals. These final group counts are derived rather than printed. No N was inferred from degrees of freedom. Median RT is the explicitly reported critical analysis; mean RT analyses are described as an identical pattern with nearly identical F-values, without separate printed statistics. The corresponding test prints only F < 1 (jointly Fs < 1 for the two local-cost effects); no numerical p or partial eta-squared is reported for this effect. The printed F bound is retained without converting to an effect size or p value.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This effect tests whether language status (bilingual vs. monolingual) influences the local switch cost (local switch cost condition)",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "11",
+        "es_type_o": null,
+        "es_type_r": "etasq",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    },
+    "178": {
+      "source_key": "0985ae10825157b2",
+      "side": "original",
+      "input": {
+        "ref_o": "WISEHEART, M., VISWANATHAN, M., & BIALYSTOK, E. (2014). Flexibility in task switching by monolinguals and bilinguals. Bilingualism: Language and Cognition, 19(1), 141–146. https://doi.org/10.1017/s1366728914000273",
+        "doi_o": "10.1017/s1366728914000273",
+        "study_o": "1",
+        "ref_r": "Ward, R., & Awani, J. (2024). Bilingualism and flexibility in task switching. Studies in Second Language Acquisition, 46(4), 996–1012. https://doi.org/10.1017/s0272263124000378",
+        "doi_r": "10.1017/s0272263124000378",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": null,
+        "es_type_r": "etasq",
+        "description": "This interaction effect examines whether the relationship between switch status (switch vs. non-switch trials) and local switch costs is moderated by language status (local switch cost condition)",
+        "locators_o": "p. 6",
+        "locators_r": "",
+        "audit_id": 178,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Median RT local switch cost ANOVA: switch status × language status interaction.",
+      "worker_notes": "Identity verified internally: title Flexibility in task switching by monolinguals and bilinguals; authors Melody Wiseheart, Mythili Viswanathan and Ellen Bialystok; DOI 10.1017/S1366728914000273; Cambridge FirstView primary research article, published online 29 December 2014, printed pages 1–6. Supplied text includes methods, results, discussion and references, rather than an abstract-only excerpt. No PDF was supplied. Input locators p. 5/p. 6 correspond to printed article pp. 4/5 when counting the cover page. The source gives 68 recruited participants (37 monolinguals, 31 bilinguals in Table 1) and removes two monolingual participants for cell error rates >25%, but does not explicitly print the final critical-model analytic N or mutually exclusive final group counts. Recruitment totals are not final group counts; analytic N is left null under the assigned completion rule. Candidate accounting only, not an extracted analytic N: 68 recruited − 2 excluded = 66; 37 recruited monolinguals − 2 excluded = 35, with 31 recruited bilinguals. These final group counts are derived rather than printed. No N was inferred from degrees of freedom. Median RT is the explicitly reported critical analysis; mean RT analyses are described as an identical pattern with nearly identical F-values, without separate printed statistics. The corresponding test prints only F < 1 (jointly Fs < 1 for the two local-cost effects); no numerical p or partial eta-squared is reported for this effect. The printed F bound is retained without converting to an effect size or p value.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "This interaction effect examines whether the relationship between switch status (switch vs. non-switch trials) and local switch costs is moderated by language status (local switch cost condition)",
+        "es_repr_o": "p. 6",
+        "es_repr_r": "11",
+        "es_type_o": null,
+        "es_type_r": "etasq",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "This replication study supported previous findings indicating that some bilingual individuals possess advantages in terms of cognitive flexibility in task switching."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 173,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".78",
+        "metric": "partial eta-squared (η2 p)",
+        "test_statistic": "F(1,64) = 228.4",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "switch trials in the switch block, F(1,64) = 228.4, p < ... .001, η2 p = .78",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 173,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Target identified by its named ANOVA factor and outcome. Retained the printed partial eta-squared (η2 p) without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "switch trials in the switch block, F(1,64) = 228.4, p < ... .001, η2 p = .78",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.78",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 173,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "switch trials in the switch block, F(1,64) = 228.4, p < ... .001, η2 p = .78",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 173,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed same-test p, preserving its bound and precision.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "switch trials in the switch block, F(1,64) = 228.4, p < ... .001, η2 p = .78",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 174,
+      "field": "es_value_o",
+      "blind": {
+        "value": "<1",
+        "metric": "F",
+        "test_statistic": "F < 1",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "no main effect of language status, F < ... 1, and an interaction between block type and language",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 174,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Target identified by its named ANOVA factor and outcome. Retained the printed F without conversion. The source supplies only the F bound for this effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "no main effect of language status, F < ... 1, and an interaction between block type and language",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": null,
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 175,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".07",
+        "metric": "partial eta-squared (η2 p)",
+        "test_statistic": "F(1,64) = 4.9",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "1, and an interaction between block type and language ... status, F(1,64) = 4.9, p = .03, η2 p = .07",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 175,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Target identified by its named ANOVA factor and outcome. Retained the printed partial eta-squared (η2 p) without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "1, and an interaction between block type and language ... status, F(1,64) = 4.9, p = .03, η2 p = .07",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.07",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 175,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".03",
+        "bound": "e",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "1, and an interaction between block type and language ... status, F(1,64) = 4.9, p = .03, η2 p = .07",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 175,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed same-test p, preserving its bound and precision.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 4 (cover-counted p. 5)",
+        "quote": "1, and an interaction between block type and language ... status, F(1,64) = 4.9, p = .03, η2 p = .07",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.03",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 176,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".45",
+        "metric": "partial eta-squared (η2 p)",
+        "test_statistic": "F(1,64) = 53.2",
+        "location": "Results, printed p. 5 (cover-counted p. 6)",
+        "quote": "was a main effect of switch status, with longer RTs ... for switch trials, F(1,64) = 53.2, p < .001, η2 p = .45.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 176,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Target identified by its named ANOVA factor and outcome. Retained the printed partial eta-squared (η2 p) without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 5 (cover-counted p. 6)",
+        "quote": "was a main effect of switch status, with longer RTs ... for switch trials, F(1,64) = 53.2, p < .001, η2 p = .45.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.45",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 176,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "Results, printed p. 5 (cover-counted p. 6)",
+        "quote": "was a main effect of switch status, with longer RTs ... for switch trials, F(1,64) = 53.2, p < .001, η2 p = .45.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 176,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed same-test p, preserving its bound and precision.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 5 (cover-counted p. 6)",
+        "quote": "was a main effect of switch status, with longer RTs ... for switch trials, F(1,64) = 53.2, p < .001, η2 p = .45.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 177,
+      "field": "es_value_o",
+      "blind": {
+        "value": "<1",
+        "metric": "F",
+        "test_statistic": "Fs < 1",
+        "location": "Results, printed p. 5 (cover-counted p. 6)",
+        "quote": "Neither the language status main effect nor the interaction ... reached significance, Fs < 1. Analysis using mean RTs",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 177,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Target identified by its named ANOVA factor and outcome. Retained the printed F without conversion. The source supplies only the F bound for this effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 5 (cover-counted p. 6)",
+        "quote": "Neither the language status main effect nor the interaction ... reached significance, Fs < 1. Analysis using mean RTs",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": null,
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 178,
+      "field": "es_value_o",
+      "blind": {
+        "value": "<1",
+        "metric": "F",
+        "test_statistic": "Fs < 1",
+        "location": "Results, printed p. 5 (cover-counted p. 6)",
+        "quote": "Neither the language status main effect nor the interaction ... reached significance, Fs < 1. Analysis using mean RTs",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 178,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Target identified by its named ANOVA factor and outcome. Retained the printed F without conversion. The source supplies only the F bound for this effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cedf0a5876ca11b16e636db6.txt",
+        "location": "Results, printed p. 5 (cover-counted p. 6)",
+        "quote": "Neither the language status main effect nor the interaction ... reached significance, Fs < 1. Analysis using mean RTs",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": null,
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/0985ae10825157b2. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_0985ae10825157b2_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

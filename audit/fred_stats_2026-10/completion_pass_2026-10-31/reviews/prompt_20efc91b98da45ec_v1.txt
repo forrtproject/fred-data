@@ -1,0 +1,90 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1333": {
+      "source_key": "20efc91b98da45ec",
+      "side": "original",
+      "input": {
+        "ref_o": "Stahlberg, D., Sczesny, S., & Braun, F. (2001). Name Your Favorite Musician. Journal of Language and Social Psychology, 20(4), 464–469. https://doi.org/10.1177/0261927x01020004004",
+        "doi_o": "10.1177/0261927x01020004004",
+        "study_o": "2",
+        "ref_r": "Brohmer, H., Hofer, G., Bauch, S. A., Beitner, J., Berkessel, J., Corcoran, K., Garcia, D., Gruber, F. M., Giuliani, F., Jauk, E., Krammer, G., Malkoc, S., Metzler, H., Mües, H. M., Otto, K., Rahal, R.-M., Salwender, M., Stahlberg, D., Sczesny, S., … Athenstaedt, U. (2024). Effects of the Generic Masculine and its Alternatives in Germanophone countries - A Multi-lab Replication and Extension of Stahlberg, Sczesny, and Braun, 2001. https://doi.org/10.31219/osf.io/q56rk",
+        "doi_r": "10.31219/osf.io/q56rk",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": null,
+        "es_type_r": "d",
+        "description": "Comparison of generic masculine prompts with the other language-form groups on the number of women named in the extension pilot.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 13",
+        "audit_id": 1333,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9951c2f4a65a6ce5b5ae9923.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Original Experiment 2, number of women named summed over four questions; masculine generics versus both alternative generic conditions pooled.",
+      "worker_notes": "Identity checked independently from article title NAME YOUR FAVORITE MUSICIAN / Effects of Masculine Generics and of Their Alternatives in German, authors Dagmar Stahlberg, Sabine Sczesny, Friederike Braun, journal Vol. 20 No. 4 December 2001 pp. 464-469. These match the original reference. The DOI is not printed in the supplied text and was not independently resolved. Supplied candidate is an author-provided ResearchGate full-text HTML extraction, containing the article through notes and references, not merely an abstract; no PDF is supplied. Trailing book-review text is unrelated and excluded. All extraction concerns original Experiment 2; replication/pilot/extension qualifiers in some neutral descriptions do not change the assigned original-side primary study. Unassigned fields and replication/reported_success are placeholders. Identified test: masculine generics versus both alternative generic conditions pooled. Same-test printed p retained as candidate evidence only because p is unassigned here: p < .01. Three condition means are printed (2.37, 2.67, 4.60, respectively); no raw mean difference or standardized effect or test statistic is printed for this contrast. The omnibus F(2,84)=9.97 is a distinct test and is not substituted. Analytic N derivation for the all-condition primary contrast: 45 female + 45 male = 90 participants. Sex groups are mutually exclusive; all three randomized language conditions enter this contrast. Four respondents were removed only for the separate sensitivity rerun; no sensitivity result is extracted. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9951c2f4a65a6ce5b5ae9923.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants prompted with the generic masculine mentioned fewer women than any other group (extension pilot)",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 13 (supplementary)",
+        "es_type_o": null,
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our data from twelve labs and N = 2,697 participants\nreplicated the original effect: when prompted with gender-inclusive forms participants\nmentioned more women than when the generic masculine and the control form were\nused."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1333,
+      "field": "n_o",
+      "blind": {
+        "value": "90",
+        "sample_role": "Participants in the primary Experiment 2 contrast spanning all three randomized language conditions; 45 female and 45 male participants.",
+        "exclusions": "Primary analysis includes all 90 described participants. Note 3 reports a separate sensitivity rerun excluding four capital-I respondents; its revised statistics are not supplied.",
+        "location": "Experiment 2 methods/results, p.467; note 3 p.469",
+        "quote": "Participants (45 female and 45 male native speakers of German\nbetween 18 and 45 years of age) ... Participants were randomly assigned to one of these language condi\n\n-\n\ntions. The number of women reported in response to the four critical\nquestions (summarized over all four questions) was the dependent\n\nvariable.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9951c2f4a65a6ce5b5ae9923.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1333,
+        "field": "n_o",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/9951c2f4a65a6ce5b5ae9923.txt",
+        "location": "Experiment 2, journal pp. 467-468 (article pp. 4-5)",
+        "code": "extracted_documented_n_sum",
+        "reason": "The target pooled contrast spans all three randomized language conditions in the primary Experiment 2 analysis. Explicit mutually exclusive participant-sex groups provide analytic N; separate note-3 sensitivity exclusions are not applied to the primary analysis.",
+        "quote": "Participants (45 female and 45 male native speakers of German\nbetween 18 and 45 years of age) ... Participants were randomly assigned to one of these language condi\n\n-\n\ntions. The number of women reported in response to the four critical\nquestions (summarized over all four questions) was the dependent\n\nvariable. ... The contrast\n\nbetween masculine generics on one hand and the two alternative\n\ngenerics on the other was statistically significant (p < .01). ... 3. Four participants responded to capital I forms with female names exclusively. Be\n\n-\n\ncause these participants might have mistaken capital I forms for feminine generics (i.e.,\n\nsex-specific forms), statistical analyses were repeated without the respective partici\n\n-\n\npants. The exclusion of these doubtful cases did not, however, lead to significant changes\n\nin the results.",
+        "calculation": "45 female participants + 45 male participants = 90 participants in the primary all-condition contrast. Four sensitivity-only exclusions are not subtracted."
+      },
+      "supported": true,
+      "shipped": "90",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/20efc91b98da45ec. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_20efc91b98da45ec_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

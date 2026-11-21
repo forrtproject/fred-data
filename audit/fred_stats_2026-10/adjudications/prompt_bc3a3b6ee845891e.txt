@@ -1,0 +1,63 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 322,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "F(3, 78) = 10.76",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "10.76",
+      "metric": "F",
+      "test_statistic": "F = 10.76",
+      "location": "Proof p. 5, Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1 row, Motivation column",
+      "quote": "10.76 (p ¼ .003)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+      "doi_o": "10.1016/j.cortex.2014.02.013",
+      "study_o": "1",
+      "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+      "doi_r": "10.12688/openreseurope.17749.1",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 322,
+      "description": "Motivation on Proximity effect 1/4, 1/3, 1/2, 1/1",
+      "locators_o": "p. 5",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4642916294804a9a845d0838.txt"
+      }
+    },
+    "work_key": "10.12688/openreseurope.17749.1",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 322,
+      "field": "es_value_o",
+      "verdict": "blind_right",
+      "correct_value": "F = 10.76",
+      "location": "Proof p. 5, Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1 row, Motivation column",
+      "quote": "10.76 (p ¼ .003)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "reason": "Table 1 in Yu et al. (2014) reports F = 10.76 (p = .003) for the Motivation proximity effect across the first trials of the four schedules (1/4, 1/3, 1/2, 1/1) without reporting degrees of freedom. Moreover, the Table 1 caption specifies that the ANOVAs examine linear effects (which for N = 27 has df = 1, 26, matching p = .003), so the shipped degrees of freedom (3, 78) are not in the source text and do not match the reported p-value.",
+      "resolution": "argon"
+    },
+    "parent_response": "The requested metric permits a full test-statistic string. Prior correction F=10.76 removes df rather than determining whether df are demonstrably wrong; unprinted but consistent inferred df are valid. Inspect the ORIGINAL Yu study (not replication), its N, repeated-measures design and exact comparison/contrast. Original design may use linear contrasts with df1=1 rather than omnibus4-level df1=3. Distinguish established wrong df from absent inline df. Give a FULL corrected F expression if established, shipped_right if coding is valid, or undeterminable if inference is not secure. Preserve requested metric. Reconcile prior response explicitly.",
+    "coding_context": {
+      "es_repr": "5",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

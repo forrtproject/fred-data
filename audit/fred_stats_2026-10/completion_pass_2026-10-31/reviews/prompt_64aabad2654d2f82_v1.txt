@@ -1,0 +1,89 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1728": {
+      "source_key": "64aabad2654d2f82",
+      "side": "replication",
+      "input": {
+        "ref_o": "Valdesolo, P., & DeSteno, D. (2007). Moral Hypocrisy. Psychological Science, 18(8), 689–690. https://doi.org/10.1111/j.1467-9280.2007.01961.x",
+        "doi_o": "10.1111/j.1467-9280.2007.01961.x",
+        "study_o": "1",
+        "ref_r": "Robertson, C. E., Akles, M., & Van Bavel, J. J. (2024). Preregistered Replication and Extension of “Moral Hypocrisy: Social Groups and the Flexibility of Virtue.” Psychological Science, 35(7), 798–813. https://doi.org/10.1177/09567976241246552",
+        "doi_r": "10.1177/09567976241246552",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "etasq",
+        "description": "Perceived objectionability of one’s own transgression versus the same transgression enacted by another person, excluding altruists.",
+        "locators_o": "p. 2",
+        "locators_r": "p. 9",
+        "audit_id": 1728,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6e6a2faf6d285c5606ab179a.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1 (minimal groups), Hypothesis 2 planned contrast of self versus the other three conditions, excluding altruists; p. 806 (article PDF page 9). Fairness judgment of the same transgression. The supplied page locator and exclusion condition identify this test.",
+      "worker_notes": "Identity verified independently from first-page title, Claire E. Robertson, Madison Akles, Jay J. Van Bavel, Psychological Science 35(7), 798–813 (2024), DOI 10.1177/09567976241246552. Supplied text is a full primary research article with methods, results, discussion and references; no PDF was supplied. Only n_r and reported_success assigned; other fields are placeholders. Target matching uses the described comparison and page locator, not row order or numeric matching. PDF page 9 corresponds to printed p. 806 and the Experiment 1 Hypothesis 2 extension contrast. Experiment 2 has a separate analogous contrast on p. 809. Candidate analytic N: p. 806 explicitly says final sample size 536 in the power/equivalence discussion for the Hypothesis 1 contrast, whereas p. 805 says final sample 590 and identifies fair/altruistic self participants n = 47 and n = 4. Diagnostic arithmetic 590 - 47 - 4 = 539 is not an accepted analytic N and is not a sum of explicit mutually exclusive final groups. The Hypothesis 2 test is printed F(1, 536) = 1.27, p = .26, η2 = .002; no N is inferred from these df. Neither 536 nor 539 is assigned as target analytic N without clarification of the discrepancy. The reported_success failed is scoped to transgressors-only individual moral hypocrisy, using the authors narrative verdict; their overall individual-hypocrisy summary is mixed when inclusive and excluded analyses are combined.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6e6a2faf6d285c5606ab179a.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Individuals perceived their own transgressions to be less objectionable than the same transgression enacted by another person (without altruists in the sample of replication study)",
+        "es_repr_o": "p. 2",
+        "es_repr_r": "p. 9",
+        "es_type_o": "d",
+        "es_type_r": "etasq",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "the results did not replicate the original findings"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1728,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 811, Discussion, individual moral hypocrisy (transgressors-only sample); see also p. 806 Hypothesis 2",
+        "quote": "When only transgressors were included in our               Jay J. Van Bavel    https://orcid.org/0000-0002-2520-0442\nsample, we did not find that participants rated them-\nselves as more moral than others.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6e6a2faf6d285c5606ab179a.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1728,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the transgressors-only sample did not show self ratings as more moral than ratings of others; vocabulary failed is scoped to the assigned exclusion analysis, rather than the overall mixed result across inclusive and excluded analyses.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/6e6a2faf6d285c5606ab179a.txt",
+        "location": "p. 811, Discussion, individual moral hypocrisy (transgressors-only sample); see also p. 806 Hypothesis 2",
+        "quote": "When only transgressors were included in our               Jay J. Van Bavel    https://orcid.org/0000-0002-2520-0442\nsample, we did not find that participants rated them-\nselves as more moral than others.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/64aabad2654d2f82. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_64aabad2654d2f82_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

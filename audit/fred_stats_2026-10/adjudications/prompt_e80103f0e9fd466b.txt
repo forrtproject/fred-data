@@ -1,0 +1,262 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1794,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "36",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "36",
+      "sample_role": "Retained participants in crossed participant/item linear mixed models; per-test fixation observation counts not reported.",
+      "exclusions": "Four additional participants discarded for >30% display changes during fixations. Trials with track loss, fixations outside 60–600 ms, or changes during fixations excluded; average 16% data lost.",
+      "location": "p. 1084, Method—Participants and footnote 4; p. 1086, Results",
+      "quote": "Thirty-six4 undergraduate students from South China Normal University",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cd25347ea9c94167eb2f739e.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n + 2 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079–1091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn + 2 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130–1149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1794,
+      "description": "First fixation duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "text_paths": {}
+    },
+    "work_key": "10.1080/23273798.2016.1197954",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "First fixation duration was longer in the dissimilar condition than the identical condition",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n + 1 and n + 2 as a single region revealed significant preview effects regardless of word n + 1 frequency.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1794,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".4",
+      "bound": "g",
+      "location": "p. 1087, Table 1, Target word (2 characters), boundary n−2, First fixation duration row",
+      "quote": "FFD               256 (41)     270 (39)         \\.05           254 (41)       258 (41)         [.4",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cd25347ea9c94167eb2f739e.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n + 2 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079–1091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn + 2 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130–1149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1794,
+      "description": "First fixation duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "text_paths": {}
+    },
+    "work_key": "10.1080/23273798.2016.1197954",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "First fixation duration was longer in the dissimilar condition than the identical condition",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n + 1 and n + 2 as a single region revealed significant preview effects regardless of word n + 1 frequency.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1795,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "36",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "36",
+      "sample_role": "Retained participants in crossed participant/item linear mixed models; per-test fixation observation counts not reported.",
+      "exclusions": "Four additional participants discarded for >30% display changes during fixations. Trials with track loss, fixations outside 60–600 ms, or changes during fixations excluded; average 16% data lost.",
+      "location": "p. 1084, Method—Participants and footnote 4; p. 1086, Results",
+      "quote": "Thirty-six4 undergraduate students from South China Normal University",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cd25347ea9c94167eb2f739e.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n + 2 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079–1091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn + 2 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130–1149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1795,
+      "description": "Single fixation duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "text_paths": {}
+    },
+    "work_key": "10.1080/23273798.2016.1197954",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Single fixation duration was longer in the dissimilar condition than the identical condition",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n + 1 and n + 2 as a single region revealed significant preview effects regardless of word n + 1 frequency.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1795,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.05",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".6",
+      "bound": "g",
+      "location": "p. 1087, Table 1, Target word (2 characters), boundary n−2, Single fixation duration row",
+      "quote": "Single            261 (58)     280 (56)         \\.05           255 (48)       266 (49)         [.6",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cd25347ea9c94167eb2f739e.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n + 2 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079–1091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn + 2 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130–1149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1795,
+      "description": "Single fixation duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "text_paths": {}
+    },
+    "work_key": "10.1080/23273798.2016.1197954",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Single fixation duration was longer in the dissimilar condition than the identical condition",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n + 1 and n + 2 as a single region revealed significant preview effects regardless of word n + 1 frequency.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1796,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "36",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "36",
+      "sample_role": "Retained participants in crossed participant/item linear mixed models; per-test fixation observation counts not reported.",
+      "exclusions": "Four additional participants discarded for >30% display changes during fixations. Trials with track loss, fixations outside 60–600 ms, or changes during fixations excluded; average 16% data lost.",
+      "location": "p. 1084, Method—Participants and footnote 4; p. 1086, Results",
+      "quote": "Thirty-six4 undergraduate students from South China Normal University",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cd25347ea9c94167eb2f739e.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n + 2 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079–1091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn + 2 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130–1149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1796,
+      "description": "Gaze duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "text_paths": {}
+    },
+    "work_key": "10.1080/23273798.2016.1197954",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Gaze duration was longer in the dissimilar condition than the identical condition",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n + 1 and n + 2 as a single region revealed significant preview effects regardless of word n + 1 frequency.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1796,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.001",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".9",
+      "bound": "g",
+      "location": "p. 1087, Table 1, Target word (2 characters), boundary n−2, Gaze duration row",
+      "quote": "Gaze              307 (78)     382 (113)        \\.001          323 (69)       323 (87)         [.9",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/cd25347ea9c94167eb2f739e.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Yang, J., Rayner, K., Li, N., & Wang, S. (2010). Is preview benefit from word n + 2 a common effect in reading Chinese? Evidence from eye movements. Reading and Writing, 25(5), 1079–1091. https://doi.org/10.1007/s11145-010-9282-7",
+      "doi_o": "10.1007/s11145-010-9282-7",
+      "study_o": null,
+      "ref_r": "Yu, L., Cutter, M. G., Yan, G., Bai, X., Fu, Y., Drieghe, D., & Liversedge, S. P. (2016). Wordn + 2 preview effects in three-character Chinese idioms and phrases. Language, Cognition and Neuroscience, 31(9), 1130–1149. https://doi.org/10.1080/23273798.2016.1197954",
+      "doi_r": "10.1080/23273798.2016.1197954",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 1796,
+      "description": "Gaze duration in dissimilar versus identical conditions.",
+      "locators_o": "p. 10",
+      "locators_r": "p. 9",
+      "text_paths": {}
+    },
+    "work_key": "10.1080/23273798.2016.1197954",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Gaze duration was longer in the dissimilar condition than the identical condition",
+      "reported_success_quote": "Experiment 1 replicated prior findings, although additional analyses of word n + 1 and n + 2 as a single region revealed significant preview effects regardless of word n + 1 frequency.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

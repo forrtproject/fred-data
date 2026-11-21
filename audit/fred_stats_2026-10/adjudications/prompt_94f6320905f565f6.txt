@@ -1,0 +1,242 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1078,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 408 (PDF p. 7), adult attachment results",
+      "quote": "was successfully replicated in the current study",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f26155990969ba554c0fa37.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "1",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1078,
+      "description": "Social value orientation (SLM) and secure attachment (AAS), comparing prosocials and competitors in sample 2.",
+      "locators_o": "p.6",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.9",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1079,
+    "field": "es_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.9",
+    "shipped_metric": "OR",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".95",
+      "metric": "odds ratio",
+      "test_statistic": "z = −1.51",
+      "location": "p. 410 (PDF p. 9), Table 4, TDM/Original/Anxiety row",
+      "quote": "Anxiety .95 .03 0.89 to 1.02 −1.51 .131 .476 <.001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f26155990969ba554c0fa37.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "1",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1079,
+      "description": "Anxious-ambivalent attachment among prosocials, individualists, and competitors.",
+      "locators_o": "p.4",
+      "locators_r": "p. 5 & 6",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p. 5 & 6",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1079,
+    "field": "pval_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.003",
+    "shipped_metric": "OR",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".131",
+      "bound": "e",
+      "location": "p. 410 (PDF p. 9), Table 4, TDM/Original/Anxiety row",
+      "quote": "Anxiety .95 .03 0.89 to 1.02 −1.51 .131 .476 <.001",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f26155990969ba554c0fa37.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "1",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1079,
+      "description": "Anxious-ambivalent attachment among prosocials, individualists, and competitors.",
+      "locators_o": "p.4",
+      "locators_r": "p. 5 & 6",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p. 5 & 6",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1080,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 410 (PDF p. 9), Discussion",
+      "quote": "We successfully replicated the previous result",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f26155990969ba554c0fa37.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1080,
+      "description": "Social value orientation (TDM) and total number of siblings, comparing prosocials and competitors in sample 2.",
+      "locators_o": "p.7",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.9",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1081,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "p. 410 (PDF p. 9), Discussion",
+      "quote": "We successfully replicated the previous result",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f26155990969ba554c0fa37.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1081,
+      "description": "Social value orientation (TDM) and number of sisters, comparing prosocials and individualists in sample 2.",
+      "locators_o": "p.8",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.9",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1082,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "mixed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "failed",
+      "location": "p. 409 (PDF p. 8), sibling results",
+      "quote": "we did not find the association between SVO and older siblings",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f26155990969ba554c0fa37.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Van Lange, P. A. M., De Bruin, E. M. N., Otten, W., & Joireman, J. A. (1997). Development of prosocial, individualistic, and competitive orientations: Theory and preliminary evidence. Journal of Personality and Social Psychology, 73(4), 733–746. https://doi.org/10.1037/0022-3514.73.4.733",
+      "doi_o": "10.1037/0022-3514.73.4.733",
+      "study_o": "3",
+      "ref_r": "Liu, Y., Wang, B., & Van Lange, P. A. M. (2022). The development of social value orientation: Attachment styles, number of siblings, age, and a comparison of measures. European Journal of Personality, 37(4), 402–417. https://doi.org/10.1177/08902070221094216",
+      "doi_r": "10.1177/08902070221094216",
+      "url_r": null,
+      "study_r": "combined",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1082,
+      "description": "Social value orientation (TDM) and number of older siblings, comparing prosocials and individualists in sample 2.",
+      "locators_o": "p.8",
+      "locators_r": "p.9",
+      "text_paths": {}
+    },
+    "work_key": "10.1177/08902070221094216",
+    "coding_context": {
+      "es_repr": "p.9",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

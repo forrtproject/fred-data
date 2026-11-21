@@ -1,0 +1,247 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1860": {
+      "source_key": "160f5c224c703322",
+      "side": "replication",
+      "input": {
+        "ref_o": "Damisch, L., Stoberock, B., & Mussweiler, T. (2010). Keep Your Fingers Crossed! Psychological Science, 21(7), 1014–1020. https://doi.org/10.1177/0956797610372631",
+        "doi_o": "10.1177/0956797610372631",
+        "study_o": "1",
+        "ref_r": "Calin-Jageman, R. J., & Caldwell, T. L. (2014). Replication of the Superstition and Performance Study by. Social Psychology, 45(3), 239–245. https://doi.org/10.1027/1864-9335/a000190",
+        "doi_r": "10.1027/1864-9335/a000190",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "d",
+        "es_type_r": "test statistic",
+        "description": "Relationship between playing with a ball described as \"lucky\" and performance.",
+        "locators_o": "p.3",
+        "locators_r": "p.4",
+        "audit_id": 1860,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1: Direct Replication; initial independent-samples lucky-ball versus control comparison of golf putts made (p. 242), before quality-control filtering. Matched by study heading, standard lucky-ball manipulation, golf outcome, and assigned Results locator.",
+      "worker_notes": "Identity independently checked in canonical text: title Replication of the Superstition and Performance Study by Damisch, Stoberock, and Mussweiler (2010); authors Robert J. Calin-Jageman and Tracy L. Caldwell; DOI 10.1027/1864-9335/a000190; Social Psychology 2014, 45(3):239–245. Primary report with both experiments, methods, results, tables, and references; not abstract-only or preregistration. No PDF supplied; none acquired or rendered. Only assigned unfinished fields populated; other fields are placeholders. Analytic N: 58 controls + 66 superstition-activated participants = 124 participants, no initial exclusions. Separate quality-control subset retains 58 controls and 42 lucky-condition participants and is not the primary initial comparison. Target assignment does not use row order or numeric matching.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "People perform better when playing with a \"lucky\" ball",
+        "es_repr_o": "p.3 (M = 6.42, SD = 1.88) rather than a neutral ball (M = 4.75, SD = 2.15), t(26) = 2.14, p < .05, Cohen’s d = 0.83.",
+        "es_repr_r": "p.4",
+        "es_type_o": "d",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted two high-powered and precise replications [...] We found that the effect of superstition on performance is elusive: Participants told they had a lucky ball performed almost identically to controls. Our failure to replicate the target study was not due to lack of impact, lack of statistical power, differences in task difficulty, nor differences in participant belief in luck."
+      }
+    },
+    "1861": {
+      "source_key": "160f5c224c703322",
+      "side": "replication",
+      "input": {
+        "ref_o": "Damisch, L., Stoberock, B., & Mussweiler, T. (2010). Keep Your Fingers Crossed! Psychological Science, 21(7), 1014–1020. https://doi.org/10.1177/0956797610372631",
+        "doi_o": "10.1177/0956797610372631",
+        "study_o": "1",
+        "ref_r": "Calin-Jageman, R. J., & Caldwell, T. L. (2014). Replication of the Superstition and Performance Study by. Social Psychology, 45(3), 239–245. https://doi.org/10.1027/1864-9335/a000190",
+        "doi_r": "10.1027/1864-9335/a000190",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "d",
+        "es_type_r": "test statistic",
+        "description": "Relationship between playing with a ball described as \"lucky\" and performance.",
+        "locators_o": "p.3",
+        "locators_r": "p.6",
+        "audit_id": 1861,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 2: Higher Impact Replication; enhanced clover/lucky-ball versus control comparison of golf putts made, Table 3 and p. 244 Results. Matched by Experiment 2 heading, enhanced manipulation, outcome, and assigned locator, not row order or numeric matching. Excludes manipulation checks, moderator subsets, and pooled meta-analysis.",
+      "worker_notes": "Identity independently checked in canonical text: title Replication of the Superstition and Performance Study by Damisch, Stoberock, and Mussweiler (2010); authors Robert J. Calin-Jageman and Tracy L. Caldwell; DOI 10.1027/1864-9335/a000190; Social Psychology 2014, 45(3):239–245. Primary report with both experiments, methods, results, tables, and references; not abstract-only or preregistration. No PDF supplied; none acquired or rendered. Only assigned unfinished fields populated; other fields are placeholders. Experiment 2 explicitly reports final N = 111 after two exclusions from 113 collected. Internal source discrepancy: Participants and Table 3 note print control n = 54 and superstition-activated n = 66, summing to 120 rather than 111. Retain explicit final N = 111; do not substitute conflicting group sum or infer N from df. Documented flow: 113 - 1 withdrawal - 1 quality-control exclusion = 111; N itself is printed. Requested printed test is t(109) = 0.26 with same-test p = .80; do not substitute before-task luck rating t(96) = 3.65, p = .004, other checks, exploratory subsets, or pooled effect. Conflicting condition counts remain unresolved and require parent review; no numerical correction is made.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "People perform better when playing with a \"lucky\" ball",
+        "es_repr_o": "p.3 (M = 6.42, SD = 1.88) rather than a neutral ball (M = 4.75, SD = 2.15), t(26) = 2.14, p < .05, Cohen’s d = 0.83.",
+        "es_repr_r": "p.6",
+        "es_type_o": "d",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We conducted two high-powered and precise replications [...] We found that the effect of superstition on performance is elusive: Participants told they had a lucky ball performed almost identically to controls. Our failure to replicate the target study was not due to lack of impact, lack of statistical power, differences in task difficulty, nor differences in participant belief in luck."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1860,
+      "field": "n_r",
+      "blind": {
+        "value": "124",
+        "sample_role": "Participants in two mutually exclusive randomized conditions in the initial primary golf-performance comparison: 58 controls and 66 superstition-activated participants.",
+        "exclusions": "No participants excluded from initial analysis; quality-control-filtered and other exploratory comparisons are separate.",
+        "location": "p. 241 (PDF p. 3), Experiment 1 Participants; p. 242 Results; p. 243 Table 2 note",
+        "quote": "58 controls and 66 superstition-activated participants ... No participants were excluded from initial ... analysis.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1860,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Explicit mutually exclusive final conditions, no initial exclusions, in the primary golf-performance test. The quality-control subset is separate.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "location": "p. 241 (PDF p. 3), Experiment 1 Participants; p. 242 Results; p. 243 Table 2 note",
+        "quote": "58 controls and 66 superstition-activated participants ... No participants were excluded from initial ... analysis.",
+        "calculation": "58 + 66 = 124 participants; no exclusions from initial analysis. Do not substitute 58 + 42 from the quality-control-only analysis."
+      },
+      "supported": true,
+      "shipped": "124",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1861,
+      "field": "n_r",
+      "blind": {
+        "value": "111",
+        "sample_role": "Participants in the explicitly stated final Experiment 2 sample after exclusions, used for the primary golf-performance comparison.",
+        "exclusions": "113 collected; one lucky-condition participant requested withdrawal, another failed quality control and was removed. Printed condition counts conflict with explicit final sample; see notes.",
+        "location": "p. 243 (PDF p. 5), Experiment 2 Participants; p. 244 Results",
+        "quote": "One participant in the lucky condition requested at ... the end of the experiment that his or her data be withdrawn ... from analysis. Another failed the quality-control task and ... was removed. Thus, our final sample consisted of 111 par- ... ticipants (28 males and 83 females)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1861,
+        "field": "n_r",
+        "code": "extracted_printed",
+        "reason": "Explicit final sample after two specified exclusions is 111 and links to the primary Experiment 2 comparison. Preserve printed final sample and flag contradictory group counts; no N inferred from df.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "location": "p. 243 (PDF p. 5), Experiment 2 Participants; p. 244 Results",
+        "quote": "One participant in the lucky condition requested at ... the end of the experiment that his or her data be withdrawn ... from analysis. Another failed the quality-control task and ... was removed. Thus, our final sample consisted of 111 par- ... ticipants (28 males and 83 females)",
+        "calculation": "Printed final N = 111. Documented sample flow 113 - 1 withdrawal - 1 quality-control exclusion = 111. Conflicting printed group counts 54 + 66 = 120 are NOT accepted as analytic N."
+      },
+      "supported": true,
+      "shipped": "113",
+      "comparison": "near",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1861,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.26",
+        "metric": "t",
+        "test_statistic": "t(109) = 0.26",
+        "location": "p. 244 (PDF p. 6), Experiment 2 Results and Discussion, first paragraph",
+        "quote": "control group, a nonsignificant difference, t(109) = 0.26, ... p = .80.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1861,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Requested test statistic is printed for the primary Experiment 2 golf-performance comparison. Preserve t; no effect-size conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "location": "p. 244 (PDF p. 6), Experiment 2 Results and Discussion, first paragraph",
+        "quote": "control group, a nonsignificant difference, t(109) = 0.26, ... p = .80.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "t(109) = 0.26",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1861,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".80",
+        "bound": "e",
+        "location": "p. 244 (PDF p. 6), Experiment 2 Results and Discussion, first paragraph",
+        "quote": "control group, a nonsignificant difference, t(109) = 0.26, ... p = .80.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1861,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Exact p = .80 accompanies this same primary golf-performance t test, distinct from manipulation checks and exploratory subsets.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "location": "p. 244 (PDF p. 6), Experiment 2 Results and Discussion, first paragraph",
+        "quote": "control group, a nonsignificant difference, t(109) = 0.26, ... p = .80.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "0.8",
+      "comparison": "compatible",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1861,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 244 (PDF p. 6), Experiment 2 Results and Discussion, second paragraph",
+        "quote": "Our failure to replicate was not due to insufficient",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1861,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly characterize Experiment 2 as a failure to replicate; this is narrative evidence rather than inference from significance.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e2f4a752235a57a658564dfd.txt",
+        "location": "p. 244 (PDF p. 6), Experiment 2 Results and Discussion, second paragraph",
+        "quote": "Our failure to replicate was not due to insufficient",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/160f5c224c703322. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_160f5c224c703322_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

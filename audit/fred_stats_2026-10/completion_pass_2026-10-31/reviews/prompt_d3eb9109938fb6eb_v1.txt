@@ -1,0 +1,167 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "144": {
+      "source_key": "d3eb9109938fb6eb",
+      "side": "replication",
+      "input": {
+        "ref_o": "Fath, S., & Kay, A. C. (2018). “If hierarchical, then corrupt”: Exploring people’s tendency to associate hierarchy with corruption in organizations. Organizational Behavior and Human Decision Processes, 149, 145–164. https://doi.org/10.1016/j.obhdp.2018.10.004",
+        "doi_o": "10.1016/j.obhdp.2018.10.004",
+        "study_o": "6",
+        "ref_r": "Evans, T. R., Kviatkovskyte, R., O’Regan, S., Adolph, S. A., nishat, Chukwudi, F. O. N., Wildova, T., & Krzan, M. (2024). Corruption and Hierarchy: A Replication of Studies 1c and 6 of Fath &amp;amp; Kay 2018. https://doi.org/10.31234/osf.io/68jft",
+        "doi_r": "10.31234/osf.io/68jft",
+        "url_r": null,
+        "study_r": "6",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "description": "indirect effect of hierarchy condition through corruption perceptions, on beliefs about whether the anti-corruption petition was justified",
+        "locators_o": "p. 16",
+        "locators_r": "p. 11",
+        "audit_id": 144,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Replication of Study 6: indirect effect of randomized high/low organisational hierarchy through perceived corruption on belief that an audit is justified. Matched by named mediator and outcome in Hypothesis 2, not row order or numeric correspondence.",
+      "worker_notes": "Identity checked independently from document content: title matches Corruption and Hierarchy: A Replication of Studies 1c and 6 of Fath & Kay 2018; named authors Thomas Rhys Evans, Renata Kviatkovskyte, Susannah O’Regan, Shernay A Adolph, Nishat Tasnim, Floriana O Nkagbu Chukwudi, Tereza Wildova and Maja M Krzan correspond to the supplied reference (which abbreviates/mangles some names). Document states Accepted for Publication at the Journal of General Psychology and includes methods, results, discussion, references and contributorship; it is a primary replication manuscript, not merely an abstract or preregistration. Project identity https://osf.io/zb5j2 is printed. The assigned DOI 10.31234/osf.io/68jft and reference year 2024 are not independently printed in this text, so precise DOI/version linkage remains unconfirmed. No PDF was supplied; section/table locators are used because this canonical text has no page markers. Only assigned unfinished fields n_r and pval_value_r were assessed. Final analytic N is documented by mutually exclusive randomized Study 6 groups, both outcomes tabulated in Table 2, and the explicit complete-case analysis policy: 168 + 153 = 321 participants. This is not derived from degrees of freedom or the recruitment total. No extra mediation-only exclusions are reported. Exclusion counts are unknown. The indirect effect for belief that an audit is justified is reported with B, SE and 95% CI but without a p-value; the p-values printed for hierarchy-to-corruption and corruption-to-outcome paths belong to different tests and are not substituted. Unassigned original, effect-size and reported-success fields are placeholders only. Printed indirect-effect evidence: with a significant indirect effect (B = -.04, SE = 0.02, 95% CI [-0.07, -0.01]).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "indirect effect of hierarchy condition through corruption perceptions, on beliefs about whether the anti-corruption petition was justified",
+        "es_repr_o": "p. 16",
+        "es_repr_r": "p. 11",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Two high-powered close replications of studies 1c and 6 by Fath and Kay provide further evidence for the claim that taller organizational structures are associated with greater perceived potential for cor-\nruption, and that these perceptions may compromise subsequent trust-related outcomes."
+      }
+    },
+    "145": {
+      "source_key": "d3eb9109938fb6eb",
+      "side": "replication",
+      "input": {
+        "ref_o": "Fath, S., & Kay, A. C. (2018). “If hierarchical, then corrupt”: Exploring people’s tendency to associate hierarchy with corruption in organizations. Organizational Behavior and Human Decision Processes, 149, 145–164. https://doi.org/10.1016/j.obhdp.2018.10.004",
+        "doi_o": "10.1016/j.obhdp.2018.10.004",
+        "study_o": "6",
+        "ref_r": "Evans, T. R., Kviatkovskyte, R., O’Regan, S., Adolph, S. A., nishat, Chukwudi, F. O. N., Wildova, T., & Krzan, M. (2024). Corruption and Hierarchy: A Replication of Studies 1c and 6 of Fath &amp;amp; Kay 2018. https://doi.org/10.31234/osf.io/68jft",
+        "doi_r": "10.31234/osf.io/68jft",
+        "url_r": null,
+        "study_r": "6",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "description": "indirect effect of hierarchy condition through corruption perceptions, on (...) desire to sign the anti-corruption petition",
+        "locators_o": "p. 16",
+        "locators_r": "p. 11",
+        "audit_id": 145,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Replication of Study 6: indirect effect of randomized high/low organisational hierarchy through perceived corruption on willingness to sign the petition. Matched by named mediator and outcome in Hypothesis 2, not row order or numeric correspondence.",
+      "worker_notes": "Identity checked independently from document content: title matches Corruption and Hierarchy: A Replication of Studies 1c and 6 of Fath & Kay 2018; named authors Thomas Rhys Evans, Renata Kviatkovskyte, Susannah O’Regan, Shernay A Adolph, Nishat Tasnim, Floriana O Nkagbu Chukwudi, Tereza Wildova and Maja M Krzan correspond to the supplied reference (which abbreviates/mangles some names). Document states Accepted for Publication at the Journal of General Psychology and includes methods, results, discussion, references and contributorship; it is a primary replication manuscript, not merely an abstract or preregistration. Project identity https://osf.io/zb5j2 is printed. The assigned DOI 10.31234/osf.io/68jft and reference year 2024 are not independently printed in this text, so precise DOI/version linkage remains unconfirmed. No PDF was supplied; section/table locators are used because this canonical text has no page markers. Only assigned unfinished fields n_r and pval_value_r were assessed. Final analytic N is documented by mutually exclusive randomized Study 6 groups, both outcomes tabulated in Table 2, and the explicit complete-case analysis policy: 168 + 153 = 321 participants. This is not derived from degrees of freedom or the recruitment total. No extra mediation-only exclusions are reported. Exclusion counts are unknown. The indirect effect for willingness to sign the petition is reported with B, SE and 95% CI but without a p-value; the p-values printed for hierarchy-to-corruption and corruption-to-outcome paths belong to different tests and are not substituted. Unassigned original, effect-size and reported-success fields are placeholders only. Printed indirect-effect evidence: with a significant indirect effect (B = -.03, SE = 0.05, 95% CI [-0.06, -0.01]).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "indirect effect of hierarchy condition through corruption perceptions, on (...) desire to sign the anti-corruption petition",
+        "es_repr_o": "p. 16",
+        "es_repr_r": "p. 11",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Two high-powered close replications of studies 1c and 6 by Fath and Kay provide further evidence for the claim that taller organizational structures are associated with greater perceived potential for cor-\nruption, and that these perceptions may compromise subsequent trust-related outcomes."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 144,
+      "field": "n_r",
+      "blind": {
+        "value": "321",
+        "sample_role": "Participants in the final mutually exclusive high- and low-hierarchy groups contributing to the Study 6 mediation analysis.",
+        "exclusions": "Incomplete study responses and participants requesting that their data not be used were excluded. The report states that data from all other full completers were analysed; exclusion counts are not specified.",
+        "location": "Methodology, Design and Sample; Results, Study 6, Tables 1 and 2 (hierarchy-group Ns and both trust outcomes)",
+        "quote": "Participants who did not complete all aspects of the study were automatically excluded from the analysis. ... participants were excluded if they responded “No – do not use my data” ... Data was analysed from all other participants who completed the study in full. ... High Hierarchy (N = 168) ... Low Hierarchy (N = 153)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 144,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Study 6 randomized between-participant hierarchy conditions are mutually exclusive. Tables 1 and 2 identify final group Ns and Table 2 includes both target outcomes. The Sample section states all other full completers were analysed after excluding incomplete responses and requests not to use data. Thus the same final groups support the identified mediation; no mediation-specific exclusions are stated. Units are participants, not observations or df.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt",
+        "location": "Methodology, Design and Sample; Results, Study 6, Tables 1 and 2 (hierarchy-group Ns and both trust outcomes)",
+        "quote": "Participants who did not complete all aspects of the study were automatically excluded from the analysis. ... participants were excluded if they responded “No – do not use my data” ... Data was analysed from all other participants who completed the study in full. ... High Hierarchy (N = 168) ... Low Hierarchy (N = 153)",
+        "calculation": "168 (high hierarchy) + 153 (low hierarchy) = 321 analysed participants; incomplete and do-not-use responses excluded, counts unspecified."
+      },
+      "supported": true,
+      "shipped": "321",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 145,
+      "field": "n_r",
+      "blind": {
+        "value": "321",
+        "sample_role": "Participants in the final mutually exclusive high- and low-hierarchy groups contributing to the Study 6 mediation analysis.",
+        "exclusions": "Incomplete study responses and participants requesting that their data not be used were excluded. The report states that data from all other full completers were analysed; exclusion counts are not specified.",
+        "location": "Methodology, Design and Sample; Results, Study 6, Tables 1 and 2 (hierarchy-group Ns and both trust outcomes)",
+        "quote": "Participants who did not complete all aspects of the study were automatically excluded from the analysis. ... participants were excluded if they responded “No – do not use my data” ... Data was analysed from all other participants who completed the study in full. ... High Hierarchy (N = 168) ... Low Hierarchy (N = 153)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 145,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Study 6 randomized between-participant hierarchy conditions are mutually exclusive. Tables 1 and 2 identify final group Ns and Table 2 includes both target outcomes. The Sample section states all other full completers were analysed after excluding incomplete responses and requests not to use data. Thus the same final groups support the identified mediation; no mediation-specific exclusions are stated. Units are participants, not observations or df.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt",
+        "location": "Methodology, Design and Sample; Results, Study 6, Tables 1 and 2 (hierarchy-group Ns and both trust outcomes)",
+        "quote": "Participants who did not complete all aspects of the study were automatically excluded from the analysis. ... participants were excluded if they responded “No – do not use my data” ... Data was analysed from all other participants who completed the study in full. ... High Hierarchy (N = 168) ... Low Hierarchy (N = 153)",
+        "calculation": "168 (high hierarchy) + 153 (low hierarchy) = 321 analysed participants; incomplete and do-not-use responses excluded, counts unspecified."
+      },
+      "supported": true,
+      "shipped": "321",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/d3eb9109938fb6eb. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_d3eb9109938fb6eb_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

@@ -1,0 +1,167 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "483": {
+      "source_key": "6d66e56ba7f2a066",
+      "side": "original",
+      "input": {
+        "ref_o": "Vohs, K. D., Sengupta, J., & Dahl, D. W. (2013). The Price Had Better Be Right. Psychological Science, 25(1), 278–283. https://doi.org/10.1177/0956797613502732",
+        "doi_o": "10.1177/0956797613502732",
+        "study_o": "1",
+        "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+        "doi_r": "10.1098/rsos.231240",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq",
+        "es_type_r": "test statistic",
+        "description": "Women's attitudes toward sexual imagery for expensive goods.",
+        "locators_o": "p. 2",
+        "locators_r": "p. 11",
+        "audit_id": 483,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f251d5be0acc3bac06f40b2f.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1, women’s ad attitudes toward sexual imagery promoting an expensive versus cheap watch; female simple effect within sexual conditions.",
+      "worker_notes": "Identity verified from supplied full primary Research Report: title The Price Had Better Be Right: Women’s Reactions to Sexual Stimuli Vary With Market Factors; authors Kathleen D. Vohs, Jaideep Sengupta, Darren W. Dahl; DOI 10.1177/0956797613502732; Psychological Science 2014, 25(1), 278–283, online November 2013. Complete article through references. No PDF supplied; no rendering performed. Only assigned n_o and es_value_o evaluated; all unassigned fields are placeholders. Effect metric preserved exactly as canonical notation without conversion. The design identifies 47 women among 87 sexual-condition participants, but does not explicitly give a final analytic female count for the target contrast. Candidate N: 47 women; 87 is the broader sexual-condition design count. Same-test printed p < .01. The distinct omnibus ad-attitude interaction is F(1, 83) = 4.97, p < .05, hp2 = .056; the narrative explicitly identifies the women-only price contrast as the target.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f251d5be0acc3bac06f40b2f.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Women reported more positive attitudes toward sexual imagery for expensive goods",
+        "es_repr_o": "p. 2",
+        "es_repr_r": "p. 11",
+        "es_type_o": "etasq",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "0 [In figure 2, authors quantified subjective success on a more nuanced scale from 0, 0.25, 0.5, 0.75 and 1. I am coding 0 as 'failed', 1 as 'success' and anything inbetween as 'mixed']. subjective replication success rating 0"
+      }
+    },
+    "484": {
+      "source_key": "6d66e56ba7f2a066",
+      "side": "original",
+      "input": {
+        "ref_o": "Vohs, K. D., Sengupta, J., & Dahl, D. W. (2013). The Price Had Better Be Right. Psychological Science, 25(1), 278–283. https://doi.org/10.1177/0956797613502732",
+        "doi_o": "10.1177/0956797613502732",
+        "study_o": "1",
+        "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+        "doi_r": "10.1098/rsos.231240",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq",
+        "es_type_r": "test statistic",
+        "description": "Interaction between gender and price in emotional response.",
+        "locators_o": "p. 3",
+        "locators_r": "p. 11",
+        "audit_id": 484,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f251d5be0acc3bac06f40b2f.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1, Gender × Price interaction on self-reported negative affect in sexual-ad conditions.",
+      "worker_notes": "Identity verified from supplied full primary Research Report: title The Price Had Better Be Right: Women’s Reactions to Sexual Stimuli Vary With Market Factors; authors Kathleen D. Vohs, Jaideep Sengupta, Darren W. Dahl; DOI 10.1177/0956797613502732; Psychological Science 2014, 25(1), 278–283, online November 2013. Complete article through references. No PDF supplied; no rendering performed. Only assigned n_o and es_value_o evaluated; all unassigned fields are placeholders. Effect metric preserved exactly as canonical notation without conversion. The design identifies 87 sexual-condition participants, but does not explicitly give the final analytic count for negative affect; its denominator df differs from the ad-attitude analysis. No N derived from df. Candidate N: 87 sexual-condition participants. Same-test printed p = .059. The target is the negative-affect interaction; the positive-affect analysis is a different outcome. Negative affect has denominator df 82, while ad attitudes has 83, without an explanation of missingness.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f251d5be0acc3bac06f40b2f.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Interaction between gender and price in emotional response was marginally significant",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 11",
+        "es_type_o": "etasq",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "0 [In figure 2, authors quantified subjective success on a more nuanced scale from 0, 0.25, 0.5, 0.75 and 1. I am coding 0 as 'failed', 1 as 'success' and anything inbetween as 'mixed']. subjective replication success rating 0"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 483,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".144",
+        "metric": "hp2 (printed canonical text notation)",
+        "test_statistic": "F(1, 83) = 7.55",
+        "location": "p. 279 (article p. 2), Experiment 1, Results—Ad attitudes",
+        "quote": "Women reported\nus to rule out an alternate explanation for the results of                    more positive attitudes toward sexual imagery that pro-\nExperiment 1 and provided a replication of the effects.                       moted an expensive watch than toward sexual imagery\n                                                                              that promoted a cheap watch, F(1, 83) = 7.55, p < .01,\n                                                                               hp2 = .144. Men’s reactions did not differ by price condi-\nExperiment 1                                                                  tion, F < 1.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f251d5be0acc3bac06f40b2f.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 483,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "The primary Experiment 1 narrative identifies the target contrast and outcome. Printed effect-size precision and notation retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f251d5be0acc3bac06f40b2f.txt",
+        "location": "p. 279 (article p. 2), Experiment 1, Results—Ad attitudes",
+        "quote": "Women reported\nus to rule out an alternate explanation for the results of                    more positive attitudes toward sexual imagery that pro-\nExperiment 1 and provided a replication of the effects.                       moted an expensive watch than toward sexual imagery\n                                                                              that promoted a cheap watch, F(1, 83) = 7.55, p < .01,\n                                                                               hp2 = .144. Men’s reactions did not differ by price condi-\nExperiment 1                                                                  tion, F < 1.",
+        "calculation": "None; printed .144. Same-test p < .01."
+      },
+      "supported": true,
+      "shipped": "0.144",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 484,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".043",
+        "metric": "hp2 (printed canonical text notation)",
+        "test_statistic": "F(1, 82) = 3.68",
+        "location": "pp. 279–280 (article pp. 2–3), Experiment 1, Results—Emotional reactions",
+        "quote": "negative affect. This hypothesis was supported, F(1, 82) =                                 Discussion. Women and men viewed three advertise-\n3.68, p = .059, hp2 = .043.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f251d5be0acc3bac06f40b2f.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 484,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "The primary Experiment 1 narrative identifies the target contrast and outcome. Printed effect-size precision and notation retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f251d5be0acc3bac06f40b2f.txt",
+        "location": "pp. 279–280 (article pp. 2–3), Experiment 1, Results—Emotional reactions",
+        "quote": "negative affect. This hypothesis was supported, F(1, 82) =                                 Discussion. Women and men viewed three advertise-\n3.68, p = .059, hp2 = .043.",
+        "calculation": "None; printed .043. Same-test p = .059."
+      },
+      "supported": true,
+      "shipped": "0.043",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/6d66e56ba7f2a066. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_6d66e56ba7f2a066_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

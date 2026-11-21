@@ -1,0 +1,423 @@
+import json,csv,re,collections,datetime,hashlib,unicodedata
+from functools import lru_cache
+from fractions import Fraction
+from pathlib import Path
+from consistency import number,analytic_n,rounding,pinterval,p_parts
+from schema import validate
+B=Path(__file__).resolve().parents[1]
+SOURCE_PROVENANCE=json.loads((B/'source_provenance.json').read_text()) if (B/'source_provenance.json').exists() else {}
+FIELDS=['n_o','es_value_o','pval_value_o','n_r','es_value_r','pval_value_r','reported_success']
+def norm(s):return re.sub(r'\s+',' ',unicodedata.normalize('NFKC',str(s)).replace('−','-').replace('“','"').replace('”','"').replace('’',"'")).strip()
+@lru_cache(maxsize=2048)
+def source_text(path,mtime_ns):return norm(Path(path).read_text())
+def quote_ok(e):
+ if e.get('value') is None or not e.get('confident') or not e.get('quote') or not e.get('location'):return False
+ p=Path(e.get('source_path',''))
+ try:
+  if not p.resolve().is_relative_to((B/'texts').resolve()):return False
+  text=source_text(str(p),p.stat().st_mtime_ns);quote=norm(e['quote'])
+  if quote in text:return True
+  parts=[z.strip() for z in re.split(r'\[?\.{3}\]?|…',quote) if z.strip()]
+  pos=0
+  for z in parts:
+   idx=text.find(z,pos)
+   if idx<0:return False
+   pos=idx+len(z)
+  return bool(parts)
+ except (OSError,ValueError):return False
+def metric(s):
+ s=str(s or '').strip().lower().replace('’',"'")
+ aliases={"cohen's d":'d','pearson r':'r','pearson correlation':'r',"hedges g":"hedges' g",'partial eta squared':'etasq (partial)','partial eta-squared':'etasq (partial)','ηp2':'etasq (partial)','eta squared':'etasq','eta-squared':'etasq','η2':'etasq','standardized beta':'beta (std)','standardised beta':'beta (std)','unstandardized b':'b (unstd)','unstandardised b':'b (unstd)','odds ratio':'or'}
+ aliases.update({
+  'b (unstandardized)':'b (unstd)',
+  'b (unstandardized regression coefficient)':'b (unstd)',
+  'unstandardized regression coefficient':'b (unstd)',
+  'unstandardized regression coefficient (estimate)':'b (unstd)',
+  'unstandardized regression coefficient (b)':'b (unstd)',
+  'unstandardized regression coefficient (thousands of dollars)':'b (unstd)',
+  'b (unstandardized, replication_raw_stat)':'b (unstd)',
+  'b (unstandardized regression coefficient; outcome log(price))':'b (unstd)',
+  'β (standardized sem coefficient)':'beta (std)',
+  'β (standardized regression coefficient)':'beta (std)',
+  'standardized regression coefficient':'beta (std)',
+  'standardized regression coefficient β':'beta (std)',
+  'standardized regression coefficient (beta)':'beta (std)',
+  'standardized regression coefficient (author table code b)':'beta (std)',
+  'standardized beta (β)':'beta (std)',
+  'standardized path coefficient (β)':'beta (std)',
+  'partial η²':'etasq (partial)','partial η2':'etasq (partial)',
+  'np2 (partial eta squared)':'etasq (partial)',
+  'ŋ_p² (partial eta squared, as printed)':'etasq (partial)',
+  'partial eta square':'etasq (partial)',
+  'r²':'r-squared','φ':'phi',
+  "cohen's f2":"cohen's f^2", "cohen's f²":"cohen's f^2",
+  "cohen's f squared":"cohen's f^2",'f-squared':"cohen's f^2",
+  'incidence rate ratio (irr)':'irr','odds ratio (or)':'or',
+  "hedges's g":"hedges' g",
+  'η² (printed as eta squared)':'etasq','eta-squared (η²)':'etasq',
+  "cohen's d (author-derived standardized effect size)":'d',
+  "cohen's d (authors' weighted table value)":'d',
+  "cohen's d (author-derived table column rep_d_calc)":'d',
+  "cohen's d (author-supplied table)":'d',
+  "cohen's d (random-effects meta-analysis)":'d',
+ })
+ if s.startswith('partial eta squared') or s.startswith('partial eta-squared'):return 'etasq (partial)'
+ if s in ['η²','η2','η² (eta squared)']:return 'etasq'
+ if s in ['η²p','ηp²','ηp2','η2p']:return 'etasq (partial)'
+ if s in ["pearson's r", "pearson's r (meta-analytic estimate)"]:return 'r'
+ if re.fullmatch(r'[dr] \(author-derived[^)]*\)',s):return s[0]
+ return aliases.get(s,s)
+def parsed_stat(s):
+ s=norm(s).replace('–','-').replace('²','2').replace('χ','X')
+ m=re.search(r'(?i)(F|t|z|X2|chi2|G2?)\s*(?:\(\s*([^)]*)\))?\s*=\s*([+-]?(?:\d*\.\d+|\d+\.?\d*))',s)
+ if not m:return None
+ kind=m[1].lower();kind='g' if kind in ['g','g2'] else 'chi2' if kind in ['x2','chi2'] else kind
+ dfs=tuple(number(x) for x in (m[2] or '').split(',') if number(x) is not None)
+ annotation=re.search(r'(?i)\bN\s*=\s*(\d+)',s)
+ return kind,dfs,m[3],int(annotation[1]) if annotation else None
+def bounded_stat(value):
+ text=norm(value).replace('≤','<=').replace('≥','>=')
+ match=re.fullmatch(r'(?i)(F|t|z|X2|chi2)\s*(?:values)?\s*(\([^)]*\))?\s*(<=|>=|<|>)\s*([+-]?(?:\d*\.\d+|\d+\.?\d*))',text)
+ return (match[1].lower(),re.sub(r'\s+','',match[2] or ''),match[3],number(match[4])) if match else None
+
+def comparison_evidence(aid,field,e,rules):
+ """Use a reviewed field-specific metric identity without relabelling printed evidence."""
+ rule=rules.get((aid,field))
+ if not e or not rule:return e
+ if any(e.get(k)!=rule.get('printed_'+k if k in ['value','metric'] else k) for k in ['value','metric','source_path']):return e
+ if not quote_ok({**rule,'value':'metric identity','confident':True}):return e
+ value=rule.get('comparison_value',e['value'])
+ if value!=e['value'] and not rule.get('derivation'):return e
+ return {**e,'metric':rule['comparison_metric'],'value':value}
+
+def overlap(a,b):return a is not None and b is not None and max(a[0],b[0])<=min(a[1],b[1])
+def comp(field,raw,blind,r):
+ val=blind['value']
+ if field=='reported_success':return 'agree' if val==raw else 'soft' if {val,raw}=={'failed','mixed'} else 'differ'
+ if field.startswith('n_'):
+  a,b=analytic_n(raw),analytic_n(val)
+  if a is None or b is None:return 'differ' if raw in [None,''] and b is not None else 'not_comparable'
+  return 'agree' if a==b else 'near' if abs(a-b)/max(a,1)<=.05 else 'differ'
+ if field.startswith('pval'):
+  typ=str(r['pval_type_'+field[-1]] or '').split(' ')[0]
+  ap,bp=p_parts(raw,typ),p_parts(val,blind['bound'])
+  if raw in [None,''] and bp:return 'differ'
+  if not ap or not bp:return 'not_comparable'
+  aa,bb=pinterval(raw,typ),pinterval(val,blind['bound'])
+  # Strict bounds at zero/one can represent an empty set, never an agreement.
+  if any(t=='l' and x==0 or t=='g' and x==1 for x,t in [ap,bp]):return 'differ'
+  if ap==bp and aa==bb:return 'identical'
+  if not overlap(aa,bb):return 'differ'
+  lo,hi=max(aa[0],bb[0]),min(aa[1],bb[1])
+  if lo==hi:
+   for value,bound in [ap,bp]:
+    if bound=='l' and not lo<value:return 'differ'
+    if bound=='g' and not lo>value:return 'differ'
+  return 'compatible'
+ if not metric(r['es_type_'+field[-1]]):return 'not_comparable'
+ if metric(r['es_type_'+field[-1]])=='test statistic':
+  a=parsed_stat(raw);b=parsed_stat(blind.get('test_statistic') or val)
+  if raw in [None,''] and b:return 'differ'
+  if not a or not b:
+   aa=bounded_stat(raw);bb=bounded_stat(blind.get('test_statistic') or val)
+   return 'agree' if aa is not None and aa==bb else 'not_comparable'
+  if a[0]!=b[0]:return 'not_comparable'
+  if a[1]!=b[1]:return 'differ'
+  if a[3] is not None and b[3] is not None and a[3]!=b[3]:return 'differ'
+  return 'agree' if number(a[2])==number(b[2]) else 'compatible' if overlap(rounding(a[2]),rounding(b[2])) else 'differ'
+ if metric(r['es_type_'+field[-1]])!=metric(blind['metric']):return 'not_comparable'
+ if metric(r['es_type_'+field[-1]]) in ['etasq','etasq (partial)'] and any(re.match(r'^\s*[<>≤≥]',str(q or '')) for q in [raw,val]):
+  aa,bb=pinterval(raw,'e'),pinterval(val,'e')
+  if aa is None or bb is None:return 'not_comparable'
+  return 'compatible' if overlap(aa,bb) else 'differ'
+ a,b=number(raw),number(val)
+ if a is None or b is None:return 'differ' if raw in [None,''] and b is not None else 'agree' if norm(raw)==norm(val) else 'not_comparable'
+ if a*b<0:return 'differ'
+ return 'agree' if a==b else 'compatible' if overlap(rounding(raw),rounding(val)) else 'differ'
+def narrative_scope_unknown(x,field_override=None):
+ if field_override and field_override.get('target_match') is False:return True
+ if not x or x['replication']['status']!='locator_insufficient':return False
+ text=str(x.get('notes',''))+' '+str(x['reported_success'].get('location',''))
+ return bool(re.search(r'(?i)\b(?:paper[ -]level|overall narrative|overall paper)\b',text))
+def field_target_match(x,field,overrides):
+ """A parent-confirmed field target never changes another field's target."""
+ key=(x['audit_id'],field)
+ if key in overrides:return overrides[key]['target_match']
+ side='original' if field.endswith('_o') else 'replication'
+ return x[side]['target_match']
+def adjudication_confirms_shipped(field,raw,a,row):
+ if a.get('verdict')!='shipped_right' or a.get('correct_value') is None:return False
+ # Newly supported bounds cannot establish the identity of an old unknown target.
+ if bounded_stat(raw) and a.get('target_match_confirmed') is not True:return False
+ if field.startswith('es_value'):
+  requested=metric(row.get('es_type_'+field[-1]))
+  if requested!='test statistic' and metric(a.get('correct_metric'))!=requested:return False
+ e={'value':a['correct_value'],'bound':a.get('correct_bound') or row.get('pval_type_'+field[-1]),'metric':a.get('correct_metric'),'test_statistic':a['correct_value']}
+ return comp(field,raw,e,row) in ['agree','identical','compatible']
+def fresh_test_review(a,field,row):
+ """A fresh source-matched review can resolve printed notation or a wrongly coded test kind."""
+ if not field.startswith('es_value') or metric(row.get('es_type_'+field[-1]))!='test statistic':return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
+ if a.get('verdict') not in ['shipped_right','blind_right','both_wrong']:return False
+ parsed=parsed_stat(a.get('correct_value'));kind=metric(a.get('correct_metric'))
+ if not parsed and kind=='t' and a.get('verdict') in ['blind_right','both_wrong']:
+  # A scalar correction may copy an explicitly labelled source t statistic.
+  # Keep the raw review and OCR equality glyph; infer no df or conversion.
+  value=number(a.get('correct_value'))
+  printed=re.search(r'(?i)\bt\s*(?:\([^)]*\))?\s*(?:=|¼)\s*([+-]?(?:\d*\.\d+|\d+\.?\d*))',str(a.get('quote') or ''))
+  return bool(value is not None and printed and value==number(printed[1]))
+ if kind=='binomial z' and a.get('verdict')=='shipped_right':
+  # Confirm the same co-reported z copied in the data, not a conversion of
+  # the blind worker's chi-square statistic or a general metric alias.
+  # Isolate its printed expression so a following chi-square's N cannot
+  # become an annotation on this z. Legacy parsing remains unchanged.
+  printed=re.search(r'(?i)\bz\s*(?:\(\s*[^)]*\))?\s*=\s*[+-]?(?:\d*\.\d+|\d+\.?\d*)',str(a.get('quote') or ''))
+  return bool(parsed and parsed[0]=='z' and parsed==parsed_stat(row.get(field)) and printed and parsed==parsed_stat(printed[0]))
+ if not parsed and a.get('verdict')=='shipped_right':
+  # Current target-confirmed review may certify an identical printed bound.
+  # Do not infer an exact statistic or reconcile different cutoffs/annotations.
+  bounded=bounded_stat(a.get('correct_value'))
+  if bounded and bounded==bounded_stat(row.get(field)) and kind in ['test statistic',bounded[0]]:return True
+ if kind=='x2':kind='chi2'
+ if kind=='chi-square' and parsed and parsed[0]=='chi2':kind='chi2'
+ if kind=='z (wilcoxon-test)' and parsed and parsed[0]=='z':kind='z'
+ if kind=='chi-square (1 df)' and parsed and parsed[0]=='chi2' and parsed[1]==(1.0,):kind='chi2'
+ if kind=='f-ratio':
+  # A target-confirmed current review may preserve a table's explicit F-Ratio
+  # label. Keep legacy parsing and printed evidence unchanged.
+  parsed=parsed_stat(re.sub(r'(?i)^\s*F-Ratio\s*=', 'F =',str(a.get('correct_value') or '')));kind='f'
+ if not parsed and a.get('verdict')=='shipped_right' and kind in ['test statistic','q']:
+  # Confirm an exactly copied q expression only after the current source review.
+  # Do not extend legacy parsing or infer q parameters.
+  value=re.sub(r'\s+','',str(a.get('correct_value') or '')).lower()
+  raw=re.sub(r'\s+','',str(row.get(field) or '')).lower()
+  if re.fullmatch(r'q\(\d+(?:,\d+)*\)=[+-]?(?:\d*\.\d+|\d+\.?\d*)',value) and value==raw:return True
+ if not parsed and a.get('verdict')=='shipped_right' and kind in ['f','t','z','chi2','g']:
+  # A freshly identified source statistic can have a correctly coded bare value.
+  # Do not require a formatter prefix that the data contract never specified.
+  value=number(a.get('correct_value'));raw=number(row.get(field))
+  return value is not None and raw==value
+ return bool(parsed and kind in ['test statistic',parsed[0]])
+
+def reviewed_correction_value(a,field):
+ """Render a reviewed success label in the dataset's canonical vocabulary."""
+ value=a.get('correct_value')
+ if field=='reported_success' and value=='success' and a.get('completion_pass')=='2026-10-31' and a.get('replaces_unverified') is True and a.get('target_match_confirmed') is True and a.get('effect_specific_verdict_confirmed') is True and a.get('verdict') in ['shipped_right','blind_right','both_wrong']:
+  return 'successful'
+ return value
+
+def fresh_sample_annotation_review(a,field,row):
+ """A current review may correct N even when the blind z omitted that annotation."""
+ if not field.startswith('es_value_') or metric(row.get('es_type_'+field[-1]))!='test statistic':return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict') not in ['blind_right','both_wrong']:return False
+ before=parsed_stat(row.get(field));after=parsed_stat(a.get('correct_value'))
+ if not before or not after or before[0]!='z' or after[0]!='z' or metric(a.get('correct_metric'))!='z':return False
+ if before[1]!=after[1] or number(before[2])!=number(after[2]):return False
+ return bool(all(n is not None and n>0 and float(n).is_integer() for n in [before[3],after[3]]) and before[3]!=after[3])
+
+def fresh_printed_effect_review(a,field,row,blind):
+ """Copy a directly printed requested coefficient over a wrongly stored statistic."""
+ if not field.startswith('es_value_') or not blind:return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True:return False
+ requested=metric(row.get('es_type_'+field[-1]))
+ if requested=='bayes factor' and a.get('verdict')=='shipped_right':
+  # Preserve an explicitly reviewed BF01 direction under the generic coding
+  # label. This exact-copy check neither inverts a BF nor aliases BF10 to BF01.
+  if metric(a.get('correct_metric'))!='bayes factor bf01' or metric(blind.get('metric'))!='bayes factor bf01 (null / alternative)':return False
+  value=number(a.get('correct_value'))
+  printed=re.search(r'\bBF01\s*=\s*(\d+(?:\.\d+)?)\b',str(a.get('quote') or ''))
+  return bool(value is not None and value>0 and value==number(row.get(field))==number(blind.get('value')) and printed and value==number(printed[1]))
+ if a.get('verdict') not in ['blind_right','both_wrong']:return False
+ if not requested or requested in ['test statistic','f','t','z','chi2','x2','g']:return False
+ if metric(a.get('correct_metric'))!=requested or metric(blind.get('metric'))!=requested:return False
+ value=number(a.get('correct_value'))
+ return bool(parsed_stat(row.get(field)) and value is not None and value==number(blind.get('value')))
+
+def fresh_proportion_fraction_review(a,field,row,blind):
+ """Confirm an exact fraction/percentage identity under a current source review."""
+ if not field.startswith('es_value_') or not blind:return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict')!='shipped_right':return False
+ if metric(row.get('es_type_'+field[-1]))!='proportion' or metric(a.get('correct_metric'))!='proportion':return False
+ if metric(blind.get('metric'))!='percentage of choices':return False
+ raw=str(row.get(field) or '').strip()
+ fraction=re.sub(r'^proportion:\s*','',raw,flags=re.I);parts=re.fullmatch(r'(\d+)/(\d+)',fraction)
+ if not parts or str(a.get('correct_value') or '').strip()!=fraction:return False
+ numerator,denominator=map(int,parts.groups())
+ if denominator<=0 or not 0<=numerator<=denominator:return False
+ percent=str(blind.get('value') or '').strip()
+ if not re.fullmatch(r'\d+(?:\.\d+)?',percent):return False
+ if not re.search(r'(?<![\d.])'+re.escape(percent)+r'\s*%',str(a.get('quote') or '')):return False
+ if a.get('source_path')!=blind.get('source_path') or not quote_ok({**a,'value':'reviewed percentage','confident':True}):return False
+ return Fraction(numerator,denominator)==Fraction(percent)/100
+
+def fresh_scientific_p_review(a,field,row,blind):
+ """Confirm reviewed scientific p notation with a flattened exponent."""
+ if field not in ['pval_value_o','pval_value_r'] or not blind:return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict')!='shipped_right':return False
+ if a.get('correct_bound')!='e' or blind.get('bound')!='e':return False
+ value=str(blind.get('value') or '').strip()
+ match=re.fullmatch(r'(\d+(?:\.\d+)?)\s*[×x]\s*10[−-](\d+)',value)
+ if not match:return False
+ quote=str(a.get('quote') or '')
+ if not re.search(r'\bp\s*=\s*'+re.escape(value)+r'(?!\d|\.\d)',quote):return False
+ if a.get('source_path')!=blind.get('source_path') or not quote_ok({**a,'value':'reviewed scientific p','confident':True}):return False
+ printed=p_parts(match[1]+'e-'+match[2],'e')
+ shipped=p_parts(row.get(field),row.get('pval_type_'+field[-1]))
+ reviewed=p_parts(a.get('correct_value'),'e')
+ return printed is not None and printed==shipped==reviewed
+
+def fresh_quoted_p_review(a,field,row):
+ """Confirm literal quoted bound metadata only under a current source review."""
+ if field not in ['pval_value_o','pval_value_r']:return False
+ if a.get('completion_pass')!='2026-10-31' or a.get('replaces_unverified') is not True or a.get('target_match_confirmed') is not True or a.get('verdict')!='shipped_right':return False
+ match=re.fullmatch(r'"(<=|>=|<|>|=|≤|≥)"',str(row.get('pval_type_'+field[-1]) or '').strip())
+ if not match:return False
+ bound={'=':'e','<':'l','>':'g','<=':'le','≤':'le','>=':'ge','≥':'ge'}[match[1]]
+ if a.get('correct_bound')!=bound:return False
+ value=number(row.get(field))
+ if value is None or value!=number(a.get('correct_value')):return False
+ return comp(field,row[field],{'value':a['correct_value'],'bound':bound},{**row,'pval_type_'+field[-1]:bound}) in ['agree','identical','compatible']
+
+def source_prefix(value):
+ s=str(value or '').strip()
+ if not s:return '(missing)'
+ if '_' in s:return s.split('_',1)[0] or '(unprefixed)'
+ if re.fullmatch(r'(?i)manylabs[1-6]',s):return s
+ match=re.match(r'[^\W\d_]+',s,re.UNICODE)
+ return match[0] if match else '(unprefixed)'
+def original_secondary_source(e,row):
+ info=SOURCE_PROVENANCE.get(e.get('source_path'))
+ if info:return not (info.get('work_doi') and str(info['work_doi']).lower()==str(row.get('doi_o') or '').lower())
+ doi=str(row.get('doi_r') or '').strip().lower()
+ if not doi or str(row.get('doi_o') or '').strip().lower()==doi:return False
+ key=hashlib.sha256(doi.encode()).hexdigest()[:24]
+ return Path(e.get('source_path') or '').name.startswith(key)
+def original_primary_evidence(e,row):
+ path=e.get('source_path') or '';doi=str(row.get('doi_o') or '').strip().lower()
+ if not doi:return False
+ info=SOURCE_PROVENANCE.get(path)
+ if info:return bool(info.get('work_doi') and str(info['work_doi']).lower()==doi)
+ return Path(path).name.startswith(hashlib.sha256(doi.encode()).hexdigest()[:24])
+def load_adjudications(root, exclude_prefixes=()):
+ """Review precedence follows recorded rounds, never mutable file mtimes."""
+ tasks={}
+ history=root/'adjudication_tasks.jsonl'
+ if history.exists():
+  for line in history.read_text().splitlines():
+   if line:
+    a=json.loads(line);tasks[a['key']]=a
+ def priority(path):
+  key=path.stem.removeprefix('validated_');a=tasks.get(key,{})
+  return bool(a.get('focused_review')),a.get('started_at',''),a.get('attempt',0),key
+ decisions={}
+ for path in sorted((root/'adjudications').glob('validated_*.json'),key=priority):
+  if path.name.startswith(exclude_prefixes):continue
+  for a in json.loads(path.read_text()):decisions[(a['audit_id'],a['field'])]=a
+ return decisions
+def load_checkpoint(root,aid):
+ """Load canonical evidence; enrichment protection runs when checkpoints are written."""
+ path=root/'extractions'/f'{aid}.json'
+ if not path.exists():return None
+ x=validate(json.loads(path.read_text()));assert x['audit_id']==aid
+ return x
+def combine_obvious(decisions,obvious):
+ decisions=dict(decisions)
+ for a in obvious:
+  key=(a['audit_id'],a['field'])
+  if decisions.get(key,{}).get('replaces_unverified') is True:continue
+  decisions[key]=a
+ return decisions
+
+def main():
+ rows=json.loads((B/'parent_rows.json').read_text());results=[];candidates=[];invalid=[];coverage=collections.Counter();counts={f:collections.Counter() for f in FIELDS};projects=collections.defaultdict(lambda:{f:collections.Counter() for f in FIELDS});errors=[]
+ adjud=load_adjudications(B)
+ exhausted={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_exhausted.json').read_text())} if (B/'adjudication_exhausted.json').exists() else {}
+ holds={(a['audit_id'],a['field']) for a in json.loads((B/'adjudication_holds.json').read_text())} if (B/'adjudication_holds.json').exists() else set()
+ completion_pending={(a['audit_id'],a['field']):a for a in json.loads((B/'adjudication_holds.json').read_text()) if a.get('completion_pass') in ['2026-10-31-pending','2026-10-31-unresolved']} if (B/'adjudication_holds.json').exists() else set()
+ metric_path=B/'metric_equivalences.json'
+ metric_rules={(a['audit_id'],a['field']):a for a in json.loads(metric_path.read_text())} if metric_path.exists() else {}
+ target_overrides={};field_overrides={}
+ if (B/'target_overrides.json').exists():
+  overrides=json.loads((B/'target_overrides.json').read_text())
+  target_overrides={(a['audit_id'],a['side']):a for a in overrides if not a.get('field')}
+  field_overrides={(a['audit_id'],a['field']):a for a in overrides if a.get('field')}
+ obvious_path=B/'obvious_resolutions.json'
+ if obvious_path.exists():
+  adjud=combine_obvious(adjud,json.loads(obvious_path.read_text()))
+ for r in rows:
+  aid=r['input_row_index'];x=None
+  try:x=load_checkpoint(B,aid)
+  except Exception as e:invalid.append({'audit_id':aid,'error':str(e)[:400]});x=None
+  if x:
+   coverage['checkpointed']+=1
+   for side in ['original','replication']:
+    if (aid,side) in target_overrides:x[side]['target_match']=target_overrides[(aid,side)]['target_match']
+  z={'input_row_index':aid,'effect_id':r['effect_id'],'fred_id':r['fred_id']};full=True;side_ok={'o':True,'r':True};side_any={'o':False,'r':False};any_field=False
+  for f in FIELDS:
+   raw=r[f];side=None if f=='reported_success' else ('original' if f[-1]=='o' else 'replication');sub='n' if f.startswith('n_') else 'es' if f.startswith('es_value') else 'p'
+   e=None if not x else x[f] if side is None else x[side][sub]
+   v=None if not e else e.get('value');
+   if f.startswith('pval'):
+    z[f+'_shipped_bound']=r['pval_type_'+f[-1]];z[f+'_blind_bound']=e.get('bound') if e else None
+   if f.startswith('es_value'):
+    z[f+'_shipped_metric']=r['es_type_'+f[-1]];z[f+'_blind_metric']=e.get('metric') if e else None
+    z[f+'_blind_printed_value']=v;z[f+'_blind_printed_metric']=e.get('metric') if e else None;z[f+'_blind_test_statistic']=e.get('test_statistic') if e else None;z[f+'_comparison_basis']='printed es value'
+    if e and metric(r['es_type_'+f[-1]])=='test statistic' and (parsed_stat(e.get('test_statistic')) or bounded_stat(e.get('test_statistic'))):
+     v=e['test_statistic'];z[f+'_blind_metric']='test statistic';z[f+'_comparison_basis']='separately blind-extracted printed test_statistic (no conversion)'
+   effective_e=comparison_evidence(aid,f,e,metric_rules) if f.startswith('es_value') else e
+   if f.startswith('es_value'):z[f+'_comparison_value']=effective_e['value'] if effective_e is not e else v
+   if effective_e is not e:
+    z[f+'_blind_metric']=effective_e['metric'];z[f+'_comparison_basis']='Independent field-specific metric equivalence or documented calculation: '+metric_rules[(aid,f)]['reason']
+   broad_success=bool(f=='reported_success' and narrative_scope_unknown(x,field_overrides.get((aid,f))))
+   matched_target=field_target_match(x,f,field_overrides) if x else None
+   z[f+'_target_basis']=field_overrides.get((aid,f),{}).get('reason','')
+   if f=='reported_success':z[f+'_scope_note']='Worker reports a broad paper narrative while the individual effect remains unidentified.' if broad_success else ''
+   secondary=bool(e and side=='original' and original_secondary_source(e,r))
+   if side:
+    z[f+'_blind_source_path']=e.get('source_path') if e else None;z[f+'_evidence_basis']='replication source only (original unverified)' if secondary else 'paper evidence supplied' if e and e.get('source_path') else 'none'
+   comparison='unverified';resolution='unresolved';verdict='unverified';suggestion='';location='';reason=''
+   if (aid,f) in completion_pending:reason=completion_pending[(aid,f)].get('parent_response') or 'Source-grouped completion is awaiting independent review; field remains unverified.'
+   elif secondary:reason='Original statistic is supported only by a replication paper/table; original primary-source verification remains unavailable.'
+   elif broad_success and v is not None:comparison='mismatched_target';reason='Only broad paper-level narrative is identified; no individual-effect verdict established.'
+   elif x and v is not None and (matched_target is False or side is not None and matched_target is None and quote_ok({**e,'value':v,'confident':True})):comparison='mismatched_target'
+   elif e and quote_ok({**e,'value':v}) and (side is None or x[side]['status']=='done' and matched_target is True):
+    comparison=comp(f,raw,effective_e,r)
+    if comparison in ['agree','identical','compatible']:
+     resolution='agree' if comparison in ['agree','identical'] else 'obvious';verdict='correct';reason='Compatible printed rounding intervals' if comparison=='compatible' else ''
+    elif comparison=='not_comparable':verdict='not_comparable'
+   elif e and v is not None:reason='Evidence, confidence or target match not validated'
+   primary_adjud=bool(secondary and adjud.get((aid,f)) and original_primary_evidence(adjud[(aid,f)],r))
+   if primary_adjud:
+    comparison=comp(f,raw,effective_e,r);z[f+'_evidence_basis']='secondary blind observation; original primary evidence validated during resolution'
+   fresh_review=bool(comparison=='not_comparable' and (fresh_test_review(adjud.get((aid,f),{}),f,r) or fresh_printed_effect_review(adjud.get((aid,f),{}),f,r,e) or fresh_proportion_fraction_review(adjud.get((aid,f),{}),f,r,e) or fresh_scientific_p_review(adjud.get((aid,f),{}),f,r,e) or fresh_quoted_p_review(adjud.get((aid,f),{}),f,r)))
+   sample_annotation_review=bool(comparison in ['agree','identical','compatible'] and fresh_sample_annotation_review(adjud.get((aid,f),{}),f,r))
+   if comparison in ['differ','near','soft','mismatched_target'] or primary_adjud or fresh_review or sample_annotation_review:
+    a=adjud.get((aid,f))
+    if (aid,f) in holds:a=None
+    if a:
+     resolution=a.get('resolution','argon');verdict={'shipped_right':'correct','blind_right':'error','both_wrong':'error','undeterminable':'unverified'}[a['verdict']];suggestion=reviewed_correction_value(a,f);location=a.get('location','');reason=a.get('reason','')
+     if comparison=='mismatched_target':
+      if broad_success and a.get('effect_specific_verdict_confirmed') is not True:verdict='unverified';reason='Paper-level narrative scope remains unresolved; '+reason
+      elif broad_success:reason='Independent review establishes an effect-specific author verdict; '+reason
+      elif adjudication_confirms_shipped(f,raw,a,r):reason='Argon independently located evidence confirming the shipped target value; '+reason
+      else:verdict='unverified';reason='Target mismatch remains unresolved; '+reason
+     if verdict=='error':errors.append({'audit_id':aid,'field':f,'shipped':raw,'error_kind':'coding omission' if raw in [None,''] else 'coded value/annotation','correction':suggestion,'location':location,'doi':r['doi_r' if side!='original' else 'doi_o'],'primary_source_url':next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('url_r') or '')+' '+str(r.get('es_repr_r') or ''))), '').rstrip('.,;)') if side!='original' else next(iter(re.findall(r'https?://[^\s<>\"\]]+',str(r.get('es_repr_o') or ''))), '').rstrip('.,;)'),'reason':reason})
+    else:candidates.append({'audit_id':aid,'field':f,'comparison':comparison,'shipped':raw,'shipped_metric':r.get('es_type_'+f[-1]) if side else None,'shipped_bound':r.get('pval_type_'+f[-1]) if side else None,'blind':e,'scope_note':(str(x['replication']['target_description'])+' '+str(x.get('notes',''))) if broad_success else None,'locator':{'study_o':r['study_o'],'study_r':r['study_r'],'description':next((a['description'] for a in json.loads((B/'inputs'/p.name).read_text()) if a['audit_id']==aid), '') if False else 'See assigned blind input'},'work_key':r['work_key']})
+   if resolution=='unresolved' and (aid,f) in exhausted:reason=exhausted[(aid,f)]['reason']
+   if comparison=='mismatched_target' and resolution=='unresolved':verdict='unverified'
+   if verdict in ['correct','error']:
+    any_field=True
+    if side:side_any[f[-1]]=True
+   if verdict not in ['correct','error']:full=False
+   if side and verdict not in ['correct','error']:side_ok[f[-1]]=False
+   counts[f][verdict]+=1;projects[source_prefix(r['fred_id'])][f][verdict]+=1
+   for suffix,value in [('shipped',raw),('blind',v),('comparison',comparison),('resolution',resolution),('final_verdict',verdict),('suggested_correction',suggestion),('location',location),('reason',reason)]:z[f+'_'+suffix]=value
+  for s,ok in side_ok.items():
+   coverage[s+'_fully_checked']+=int(ok);coverage[s+'_any_stat_checked']+=int(side_any[s])
+  coverage['any_field_checked']+=int(any_field)
+  coverage['fully_checked_effects']+=int(full);results.append(z)
+ with (B/'results.csv').open('w',encoding='utf-8-sig',newline='') as f:
+  w=csv.DictWriter(f,fieldnames=results[0]);w.writeheader();w.writerows(results)
+ for name,value in [('disagreements.json',candidates),('validation_errors.json',invalid),('progress.json',{'updated_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'coverage':coverage,'field_counts':counts,'project_counts':projects,'confirmed_errors':errors})]:(B/name).write_text(json.dumps(value,indent=2,ensure_ascii=False))
+ print({'coverage':coverage,'disagreements':len(candidates),'invalid':len(invalid),'confirmed_errors':len(errors)})
+if __name__=='__main__':main()

@@ -1,0 +1,636 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "102": {
+      "source_key": "1a4114664f75608a",
+      "side": "replication",
+      "input": {
+        "ref_o": "Grainger, J., Snell, J., & Beyersmann, E. (2020). Morphological processing in the flankers task. Language, Cognition and Neuroscience, 36(3), 288–295. https://doi.org/10.1080/23273798.2020.1810292",
+        "doi_o": "10.1080/23273798.2020.1810292",
+        "study_o": null,
+        "ref_r": "Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker effects in French. Language, Cognition and Neuroscience, 39(5), 686–691. https://doi.org/10.1080/23273798.2024.2337948",
+        "doi_r": "10.1080/23273798.2024.2337948",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "b (unstd)",
+        "es_type_r": "test statistic",
+        "description": "Comparison of flanker relatedness effects for true morphological, pseudo-morphological, and non-morphological relations between flankers and targets.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 102,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "French morphological flankers replication: transparent, opaque and form conditions; RT and error mixed-model tests located, but row-specific test unresolved.",
+      "worker_notes": "Identity verified internally: title, Elisabeth Beyersmann and Jonathan Grainger, 2024 journal reference and DOI 10.1080/23273798.2024.2337948 match the assigned replication. The supplied canonical text identifies an accepted manuscript and contains Methods, Results, Discussion, References and Appendix A. No supplied PDF path; no rendering performed. One discussion paragraph is visibly corrupted; the quoted results and verdict are intact. Identity evidence: This is the author version of an article published as: ... Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker\neffects in French. Language, Cognition and Neuroscience, 39(5), pp. 686-691. ... https://doi.org/10.1080/23273798.2024.2337948 Unassigned printed candidates, never mapped by audit_id/order: RT interaction χ2(2)=11.07, p=.004; error interaction χ2(2)=14.20, p<.001. Table 3 RT Form*Opaque z.ratio=0.329, p=.742; Form*Transparent z.ratio=-2.694, p=.007; Opaque*Transparent z.ratio=3.033, p=.002. Table 3 errors Form*Opaque z.ratio=1.923, p=.054; Form*Transparent z.ratio=-2.23, p=.023; Opaque*Transparent z.ratio=3.731, p<.001. Simple flanker effects: RT transparent z=5.27, p<.001; opaque z=9.59, p<.001; form z=5.70, p<.001; errors transparent z=5.01, p<.001; form z=2.59, p=.010; opaque z=0.26, p=.795. All metrics and p values retained as printed; no conversions. Table 3 also gives estimates and SEs. The shared description and p.4 locator do not distinguish outcome, omnibus versus contrast versus simple effect, or particular contrast. The generic test-statistic request for 102 and z requests for 103-108 cannot resolve this correspondence. Participant recruitment candidate is one hundred (100); not an explicit final critical-model participant N. The source gives 102 word and 102 nonword trials, nonword exclusion and RT observation trimming, but no retained observation count or explicit model N. No N derived from df, percentages or trial multiplication; no documented mutually exclusive group sum. Participant and trial/observation roles remain separate. Common sample candidate is recorded only for parent field-scope review. Reported success is the explicit source-wide verdict for the shared morphological pattern; it does not select an individual row test. Unassigned original-side placeholders must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "\"we expected to see a significant effect of flanker relatedness when flankers had a true morphological relation with targets, and these effects should be significantly greater than the effects of flanker relatedness seen in the pseudo-morphological and non-morphological conditions.\"",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "test statistic",
+        "pval_type_o": null,
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results of the present\nstudy successfully replicate the findings of Grainger et al. [(2021)."
+      }
+    },
+    "103": {
+      "source_key": "1a4114664f75608a",
+      "side": "replication",
+      "input": {
+        "ref_o": "Grainger, J., Snell, J., & Beyersmann, E. (2020). Morphological processing in the flankers task. Language, Cognition and Neuroscience, 36(3), 288–295. https://doi.org/10.1080/23273798.2020.1810292",
+        "doi_o": "10.1080/23273798.2020.1810292",
+        "study_o": null,
+        "ref_r": "Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker effects in French. Language, Cognition and Neuroscience, 39(5), 686–691. https://doi.org/10.1080/23273798.2024.2337948",
+        "doi_r": "10.1080/23273798.2024.2337948",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "description": "Comparison of flanker relatedness effects for true morphological, pseudo-morphological, and non-morphological relations between flankers and targets.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 103,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "French morphological flankers replication: transparent, opaque and form conditions; RT and error mixed-model tests located, but row-specific test unresolved.",
+      "worker_notes": "Identity verified internally: title, Elisabeth Beyersmann and Jonathan Grainger, 2024 journal reference and DOI 10.1080/23273798.2024.2337948 match the assigned replication. The supplied canonical text identifies an accepted manuscript and contains Methods, Results, Discussion, References and Appendix A. No supplied PDF path; no rendering performed. One discussion paragraph is visibly corrupted; the quoted results and verdict are intact. Identity evidence: This is the author version of an article published as: ... Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker\neffects in French. Language, Cognition and Neuroscience, 39(5), pp. 686-691. ... https://doi.org/10.1080/23273798.2024.2337948 Unassigned printed candidates, never mapped by audit_id/order: RT interaction χ2(2)=11.07, p=.004; error interaction χ2(2)=14.20, p<.001. Table 3 RT Form*Opaque z.ratio=0.329, p=.742; Form*Transparent z.ratio=-2.694, p=.007; Opaque*Transparent z.ratio=3.033, p=.002. Table 3 errors Form*Opaque z.ratio=1.923, p=.054; Form*Transparent z.ratio=-2.23, p=.023; Opaque*Transparent z.ratio=3.731, p<.001. Simple flanker effects: RT transparent z=5.27, p<.001; opaque z=9.59, p<.001; form z=5.70, p<.001; errors transparent z=5.01, p<.001; form z=2.59, p=.010; opaque z=0.26, p=.795. All metrics and p values retained as printed; no conversions. Table 3 also gives estimates and SEs. The shared description and p.4 locator do not distinguish outcome, omnibus versus contrast versus simple effect, or particular contrast. The generic test-statistic request for 102 and z requests for 103-108 cannot resolve this correspondence. Participant recruitment candidate is one hundred (100); not an explicit final critical-model participant N. The source gives 102 word and 102 nonword trials, nonword exclusion and RT observation trimming, but no retained observation count or explicit model N. No N derived from df, percentages or trial multiplication; no documented mutually exclusive group sum. Participant and trial/observation roles remain separate. Common sample candidate is recorded only for parent field-scope review. Reported success is the explicit source-wide verdict for the shared morphological pattern; it does not select an individual row test. Unassigned original-side placeholders must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "\"we expected to see a significant effect of flanker relatedness when flankers had a true morphological relation with targets, and these effects should be significantly greater than the effects of flanker relatedness seen in the pseudo-morphological and non-morphological conditions.\"",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results of the present\nstudy successfully replicate the findings of Grainger et al. [(2021)."
+      }
+    },
+    "104": {
+      "source_key": "1a4114664f75608a",
+      "side": "replication",
+      "input": {
+        "ref_o": "Grainger, J., Snell, J., & Beyersmann, E. (2020). Morphological processing in the flankers task. Language, Cognition and Neuroscience, 36(3), 288–295. https://doi.org/10.1080/23273798.2020.1810292",
+        "doi_o": "10.1080/23273798.2020.1810292",
+        "study_o": null,
+        "ref_r": "Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker effects in French. Language, Cognition and Neuroscience, 39(5), 686–691. https://doi.org/10.1080/23273798.2024.2337948",
+        "doi_r": "10.1080/23273798.2024.2337948",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "description": "Comparison of flanker relatedness effects for true morphological, pseudo-morphological, and non-morphological relations between flankers and targets.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 104,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "French morphological flankers replication: transparent, opaque and form conditions; RT and error mixed-model tests located, but row-specific test unresolved.",
+      "worker_notes": "Identity verified internally: title, Elisabeth Beyersmann and Jonathan Grainger, 2024 journal reference and DOI 10.1080/23273798.2024.2337948 match the assigned replication. The supplied canonical text identifies an accepted manuscript and contains Methods, Results, Discussion, References and Appendix A. No supplied PDF path; no rendering performed. One discussion paragraph is visibly corrupted; the quoted results and verdict are intact. Identity evidence: This is the author version of an article published as: ... Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker\neffects in French. Language, Cognition and Neuroscience, 39(5), pp. 686-691. ... https://doi.org/10.1080/23273798.2024.2337948 Unassigned printed candidates, never mapped by audit_id/order: RT interaction χ2(2)=11.07, p=.004; error interaction χ2(2)=14.20, p<.001. Table 3 RT Form*Opaque z.ratio=0.329, p=.742; Form*Transparent z.ratio=-2.694, p=.007; Opaque*Transparent z.ratio=3.033, p=.002. Table 3 errors Form*Opaque z.ratio=1.923, p=.054; Form*Transparent z.ratio=-2.23, p=.023; Opaque*Transparent z.ratio=3.731, p<.001. Simple flanker effects: RT transparent z=5.27, p<.001; opaque z=9.59, p<.001; form z=5.70, p<.001; errors transparent z=5.01, p<.001; form z=2.59, p=.010; opaque z=0.26, p=.795. All metrics and p values retained as printed; no conversions. Table 3 also gives estimates and SEs. The shared description and p.4 locator do not distinguish outcome, omnibus versus contrast versus simple effect, or particular contrast. The generic test-statistic request for 102 and z requests for 103-108 cannot resolve this correspondence. Participant recruitment candidate is one hundred (100); not an explicit final critical-model participant N. The source gives 102 word and 102 nonword trials, nonword exclusion and RT observation trimming, but no retained observation count or explicit model N. No N derived from df, percentages or trial multiplication; no documented mutually exclusive group sum. Participant and trial/observation roles remain separate. Common sample candidate is recorded only for parent field-scope review. Reported success is the explicit source-wide verdict for the shared morphological pattern; it does not select an individual row test. Unassigned original-side placeholders must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "\"we expected to see a significant effect of flanker relatedness when flankers had a true morphological relation with targets, and these effects should be significantly greater than the effects of flanker relatedness seen in the pseudo-morphological and non-morphological conditions.\"",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results of the present\nstudy successfully replicate the findings of Grainger et al. [(2021)."
+      }
+    },
+    "105": {
+      "source_key": "1a4114664f75608a",
+      "side": "replication",
+      "input": {
+        "ref_o": "Grainger, J., Snell, J., & Beyersmann, E. (2020). Morphological processing in the flankers task. Language, Cognition and Neuroscience, 36(3), 288–295. https://doi.org/10.1080/23273798.2020.1810292",
+        "doi_o": "10.1080/23273798.2020.1810292",
+        "study_o": null,
+        "ref_r": "Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker effects in French. Language, Cognition and Neuroscience, 39(5), 686–691. https://doi.org/10.1080/23273798.2024.2337948",
+        "doi_r": "10.1080/23273798.2024.2337948",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "description": "Comparison of flanker relatedness effects for true morphological, pseudo-morphological, and non-morphological relations between flankers and targets.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 105,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "French morphological flankers replication: transparent, opaque and form conditions; RT and error mixed-model tests located, but row-specific test unresolved.",
+      "worker_notes": "Identity verified internally: title, Elisabeth Beyersmann and Jonathan Grainger, 2024 journal reference and DOI 10.1080/23273798.2024.2337948 match the assigned replication. The supplied canonical text identifies an accepted manuscript and contains Methods, Results, Discussion, References and Appendix A. No supplied PDF path; no rendering performed. One discussion paragraph is visibly corrupted; the quoted results and verdict are intact. Identity evidence: This is the author version of an article published as: ... Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker\neffects in French. Language, Cognition and Neuroscience, 39(5), pp. 686-691. ... https://doi.org/10.1080/23273798.2024.2337948 Unassigned printed candidates, never mapped by audit_id/order: RT interaction χ2(2)=11.07, p=.004; error interaction χ2(2)=14.20, p<.001. Table 3 RT Form*Opaque z.ratio=0.329, p=.742; Form*Transparent z.ratio=-2.694, p=.007; Opaque*Transparent z.ratio=3.033, p=.002. Table 3 errors Form*Opaque z.ratio=1.923, p=.054; Form*Transparent z.ratio=-2.23, p=.023; Opaque*Transparent z.ratio=3.731, p<.001. Simple flanker effects: RT transparent z=5.27, p<.001; opaque z=9.59, p<.001; form z=5.70, p<.001; errors transparent z=5.01, p<.001; form z=2.59, p=.010; opaque z=0.26, p=.795. All metrics and p values retained as printed; no conversions. Table 3 also gives estimates and SEs. The shared description and p.4 locator do not distinguish outcome, omnibus versus contrast versus simple effect, or particular contrast. The generic test-statistic request for 102 and z requests for 103-108 cannot resolve this correspondence. Participant recruitment candidate is one hundred (100); not an explicit final critical-model participant N. The source gives 102 word and 102 nonword trials, nonword exclusion and RT observation trimming, but no retained observation count or explicit model N. No N derived from df, percentages or trial multiplication; no documented mutually exclusive group sum. Participant and trial/observation roles remain separate. Common sample candidate is recorded only for parent field-scope review. Reported success is the explicit source-wide verdict for the shared morphological pattern; it does not select an individual row test. Unassigned original-side placeholders must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "\"we expected to see a significant effect of flanker relatedness when flankers had a true morphological relation with targets, and these effects should be significantly greater than the effects of flanker relatedness seen in the pseudo-morphological and non-morphological conditions.\"",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results of the present\nstudy successfully replicate the findings of Grainger et al. [(2021)."
+      }
+    },
+    "106": {
+      "source_key": "1a4114664f75608a",
+      "side": "replication",
+      "input": {
+        "ref_o": "Grainger, J., Snell, J., & Beyersmann, E. (2020). Morphological processing in the flankers task. Language, Cognition and Neuroscience, 36(3), 288–295. https://doi.org/10.1080/23273798.2020.1810292",
+        "doi_o": "10.1080/23273798.2020.1810292",
+        "study_o": null,
+        "ref_r": "Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker effects in French. Language, Cognition and Neuroscience, 39(5), 686–691. https://doi.org/10.1080/23273798.2024.2337948",
+        "doi_r": "10.1080/23273798.2024.2337948",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "description": "Comparison of flanker relatedness effects for true morphological, pseudo-morphological, and non-morphological relations between flankers and targets.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 106,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "French morphological flankers replication: transparent, opaque and form conditions; RT and error mixed-model tests located, but row-specific test unresolved.",
+      "worker_notes": "Identity verified internally: title, Elisabeth Beyersmann and Jonathan Grainger, 2024 journal reference and DOI 10.1080/23273798.2024.2337948 match the assigned replication. The supplied canonical text identifies an accepted manuscript and contains Methods, Results, Discussion, References and Appendix A. No supplied PDF path; no rendering performed. One discussion paragraph is visibly corrupted; the quoted results and verdict are intact. Identity evidence: This is the author version of an article published as: ... Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker\neffects in French. Language, Cognition and Neuroscience, 39(5), pp. 686-691. ... https://doi.org/10.1080/23273798.2024.2337948 Unassigned printed candidates, never mapped by audit_id/order: RT interaction χ2(2)=11.07, p=.004; error interaction χ2(2)=14.20, p<.001. Table 3 RT Form*Opaque z.ratio=0.329, p=.742; Form*Transparent z.ratio=-2.694, p=.007; Opaque*Transparent z.ratio=3.033, p=.002. Table 3 errors Form*Opaque z.ratio=1.923, p=.054; Form*Transparent z.ratio=-2.23, p=.023; Opaque*Transparent z.ratio=3.731, p<.001. Simple flanker effects: RT transparent z=5.27, p<.001; opaque z=9.59, p<.001; form z=5.70, p<.001; errors transparent z=5.01, p<.001; form z=2.59, p=.010; opaque z=0.26, p=.795. All metrics and p values retained as printed; no conversions. Table 3 also gives estimates and SEs. The shared description and p.4 locator do not distinguish outcome, omnibus versus contrast versus simple effect, or particular contrast. The generic test-statistic request for 102 and z requests for 103-108 cannot resolve this correspondence. Participant recruitment candidate is one hundred (100); not an explicit final critical-model participant N. The source gives 102 word and 102 nonword trials, nonword exclusion and RT observation trimming, but no retained observation count or explicit model N. No N derived from df, percentages or trial multiplication; no documented mutually exclusive group sum. Participant and trial/observation roles remain separate. Common sample candidate is recorded only for parent field-scope review. Reported success is the explicit source-wide verdict for the shared morphological pattern; it does not select an individual row test. Unassigned original-side placeholders must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "\"we expected to see a significant effect of flanker relatedness when flankers had a true morphological relation with targets, and these effects should be significantly greater than the effects of flanker relatedness seen in the pseudo-morphological and non-morphological conditions.\"",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results of the present\nstudy successfully replicate the findings of Grainger et al. [(2021)."
+      }
+    },
+    "107": {
+      "source_key": "1a4114664f75608a",
+      "side": "replication",
+      "input": {
+        "ref_o": "Grainger, J., Snell, J., & Beyersmann, E. (2020). Morphological processing in the flankers task. Language, Cognition and Neuroscience, 36(3), 288–295. https://doi.org/10.1080/23273798.2020.1810292",
+        "doi_o": "10.1080/23273798.2020.1810292",
+        "study_o": null,
+        "ref_r": "Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker effects in French. Language, Cognition and Neuroscience, 39(5), 686–691. https://doi.org/10.1080/23273798.2024.2337948",
+        "doi_r": "10.1080/23273798.2024.2337948",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "description": "Comparison of flanker relatedness effects for true morphological, pseudo-morphological, and non-morphological relations between flankers and targets.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 107,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "French morphological flankers replication: transparent, opaque and form conditions; RT and error mixed-model tests located, but row-specific test unresolved.",
+      "worker_notes": "Identity verified internally: title, Elisabeth Beyersmann and Jonathan Grainger, 2024 journal reference and DOI 10.1080/23273798.2024.2337948 match the assigned replication. The supplied canonical text identifies an accepted manuscript and contains Methods, Results, Discussion, References and Appendix A. No supplied PDF path; no rendering performed. One discussion paragraph is visibly corrupted; the quoted results and verdict are intact. Identity evidence: This is the author version of an article published as: ... Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker\neffects in French. Language, Cognition and Neuroscience, 39(5), pp. 686-691. ... https://doi.org/10.1080/23273798.2024.2337948 Unassigned printed candidates, never mapped by audit_id/order: RT interaction χ2(2)=11.07, p=.004; error interaction χ2(2)=14.20, p<.001. Table 3 RT Form*Opaque z.ratio=0.329, p=.742; Form*Transparent z.ratio=-2.694, p=.007; Opaque*Transparent z.ratio=3.033, p=.002. Table 3 errors Form*Opaque z.ratio=1.923, p=.054; Form*Transparent z.ratio=-2.23, p=.023; Opaque*Transparent z.ratio=3.731, p<.001. Simple flanker effects: RT transparent z=5.27, p<.001; opaque z=9.59, p<.001; form z=5.70, p<.001; errors transparent z=5.01, p<.001; form z=2.59, p=.010; opaque z=0.26, p=.795. All metrics and p values retained as printed; no conversions. Table 3 also gives estimates and SEs. The shared description and p.4 locator do not distinguish outcome, omnibus versus contrast versus simple effect, or particular contrast. The generic test-statistic request for 102 and z requests for 103-108 cannot resolve this correspondence. Participant recruitment candidate is one hundred (100); not an explicit final critical-model participant N. The source gives 102 word and 102 nonword trials, nonword exclusion and RT observation trimming, but no retained observation count or explicit model N. No N derived from df, percentages or trial multiplication; no documented mutually exclusive group sum. Participant and trial/observation roles remain separate. Common sample candidate is recorded only for parent field-scope review. Reported success is the explicit source-wide verdict for the shared morphological pattern; it does not select an individual row test. Unassigned original-side placeholders must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "\"we expected to see a significant effect of flanker relatedness when flankers had a true morphological relation with targets, and these effects should be significantly greater than the effects of flanker relatedness seen in the pseudo-morphological and non-morphological conditions.\"",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "pval_type_o": null,
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results of the present\nstudy successfully replicate the findings of Grainger et al. [(2021)."
+      }
+    },
+    "108": {
+      "source_key": "1a4114664f75608a",
+      "side": "replication",
+      "input": {
+        "ref_o": "Grainger, J., Snell, J., & Beyersmann, E. (2020). Morphological processing in the flankers task. Language, Cognition and Neuroscience, 36(3), 288–295. https://doi.org/10.1080/23273798.2020.1810292",
+        "doi_o": "10.1080/23273798.2020.1810292",
+        "study_o": null,
+        "ref_r": "Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker effects in French. Language, Cognition and Neuroscience, 39(5), 686–691. https://doi.org/10.1080/23273798.2024.2337948",
+        "doi_r": "10.1080/23273798.2024.2337948",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "description": "Comparison of flanker relatedness effects for true morphological, pseudo-morphological, and non-morphological relations between flankers and targets.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 108,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "French morphological flankers replication: transparent, opaque and form conditions; RT and error mixed-model tests located, but row-specific test unresolved.",
+      "worker_notes": "Identity verified internally: title, Elisabeth Beyersmann and Jonathan Grainger, 2024 journal reference and DOI 10.1080/23273798.2024.2337948 match the assigned replication. The supplied canonical text identifies an accepted manuscript and contains Methods, Results, Discussion, References and Appendix A. No supplied PDF path; no rendering performed. One discussion paragraph is visibly corrupted; the quoted results and verdict are intact. Identity evidence: This is the author version of an article published as: ... Beyersmann, E., & Grainger, J. (2024). A replication of morphological flanker\neffects in French. Language, Cognition and Neuroscience, 39(5), pp. 686-691. ... https://doi.org/10.1080/23273798.2024.2337948 Unassigned printed candidates, never mapped by audit_id/order: RT interaction χ2(2)=11.07, p=.004; error interaction χ2(2)=14.20, p<.001. Table 3 RT Form*Opaque z.ratio=0.329, p=.742; Form*Transparent z.ratio=-2.694, p=.007; Opaque*Transparent z.ratio=3.033, p=.002. Table 3 errors Form*Opaque z.ratio=1.923, p=.054; Form*Transparent z.ratio=-2.23, p=.023; Opaque*Transparent z.ratio=3.731, p<.001. Simple flanker effects: RT transparent z=5.27, p<.001; opaque z=9.59, p<.001; form z=5.70, p<.001; errors transparent z=5.01, p<.001; form z=2.59, p=.010; opaque z=0.26, p=.795. All metrics and p values retained as printed; no conversions. Table 3 also gives estimates and SEs. The shared description and p.4 locator do not distinguish outcome, omnibus versus contrast versus simple effect, or particular contrast. The generic test-statistic request for 102 and z requests for 103-108 cannot resolve this correspondence. Participant recruitment candidate is one hundred (100); not an explicit final critical-model participant N. The source gives 102 word and 102 nonword trials, nonword exclusion and RT observation trimming, but no retained observation count or explicit model N. No N derived from df, percentages or trial multiplication; no documented mutually exclusive group sum. Participant and trial/observation roles remain separate. Common sample candidate is recorded only for parent field-scope review. Reported success is the explicit source-wide verdict for the shared morphological pattern; it does not select an individual row test. Unassigned original-side placeholders must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "\"we expected to see a significant effect of flanker relatedness when flankers had a true morphological relation with targets, and these effects should be significantly greater than the effects of flanker relatedness seen in the pseudo-morphological and non-morphological conditions.\"",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "b (unstd)",
+        "es_type_r": "z",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "The results of the present\nstudy successfully replicate the findings of Grainger et al. [(2021)."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 102,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 102,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the current study replicates the earlier morphological flanker pattern; source-wide narrative verdict applies to the shared target description.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 102,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Results, PDF pp. 8-9 (lines 411-421, 472-478)",
+        "quote": "between item type and flanker type (χ2(2) = 14.20, p < .001), and a significant effect of flanker",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "reason": "Neutral locator metadata (p. 4, 'test statistic', and the broad three-condition description) does not identify whether this row targets the RT or error-rate analysis or which omnibus chi-square or z test is intended. Reconciling the prior adjudication, the paper-level replication conclusion cannot be assigned to an unidentified individual test.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 103,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 103,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the current study replicates the earlier morphological flanker pattern; source-wide narrative verdict applies to the shared target description.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 103,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Results, PDF pp. 8-10, Table 3 (lines 421-457, 478-488)",
+        "quote": "decomposed into three individual contrasts (see Table 3), showing a significant interaction",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "reason": "Neutral locator metadata (p. 4, metric 'z', and identical broad description across rows 103-108) cannot distinguish among the 12 z-tests reported across RT and error analyses (six pairwise interaction contrasts in Table 3 and six simple within-condition flanker effects, only some of which are significant). Reconciling the prior adjudication, the global paper-level success narrative cannot be transferred to an unidentifiable individual contrast.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 104,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 104,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the current study replicates the earlier morphological flanker pattern; source-wide narrative verdict applies to the shared target description.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 104,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Results, PDF pp. 8-10, Table 3 (lines 421-457, 478-488)",
+        "quote": "transparent condition (z = 5.27, p < .001), in the opaque condition (z = 9.59, p < .001), and in",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "reason": "Identical neutral locator information (p. 4 and metric 'z') leaves the target effect indistinguishable among the 12 RT and error-rate z-tests. Reconciling the prior response, the overall paper-level narrative does not confirm an effect-specific verdict for an unidentified test.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 105,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 105,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the current study replicates the earlier morphological flanker pattern; source-wide narrative verdict applies to the shared target description.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 105,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Results, PDF pp. 8-10, Table 3 (lines 421-457, 478-488)",
+        "quote": "effect in the transparent condition (z = 5.01, p < .001), and in the form condition (z = 2.59, p =",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "reason": "Neutral locator information does not uniquely map this row to one of the 12 candidate z-tests across RT and error analyses. Reconciling the prior adjudication, a paper-wide success claim cannot be applied to an unidentified individual z-test.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 106,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 106,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the current study replicates the earlier morphological flanker pattern; source-wide narrative verdict applies to the shared target description.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 106,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Results, PDF pp. 8-10, Table 3 (lines 421-457, 478-488)",
+        "quote": ".010), but not in the opaque condition (z = 0.26, p = .795).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "reason": "Because the neutral locator metadata is identical across rows 103-108 and matches 12 candidate z-tests with differing results, the target test cannot be identified. Reconciling the prior adjudication, the authors' general replication claim does not establish an effect-specific verdict here.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 107,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 107,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the current study replicates the earlier morphological flanker pattern; source-wide narrative verdict applies to the shared target description.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 107,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Results, PDF pp. 8-10, Table 3 (lines 421-457, 478-488)",
+        "quote": "decomposed into three individual contrasts (see Table 3), showing a significant interaction",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "reason": "Neutral locator metadata does not isolate which of the 12 RT or error-rate z-tests this row represents. Reconciling the prior adjudication, the paper-level replication verdict cannot be transferred to an unidentified effect.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 108,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 108,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the current study replicates the earlier morphological flanker pattern; source-wide narrative verdict applies to the shared target description.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "location": "Discussion, concluding paragraph (canonical form-feed page 15)",
+        "quote": "In sum, the current study replicates Grainger et al.’s (2021) earlier findings, showing\n\nthat flanker effects in French are significantly greater for semantically transparent suffixed\n\nwords than for semantically opaque suffixed words or non-affixed words.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 108,
+        "field": "reported_success",
+        "verdict": "undeterminable",
+        "correct_value": null,
+        "effect_specific_verdict_confirmed": false,
+        "location": "Results, PDF pp. 8-10, Table 3 (lines 421-457, 478-488)",
+        "quote": ".010), but not in the opaque condition (z = 0.26, p = .795).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/afbfc0e7f87ce847d3998836.txt",
+        "reason": "With identical neutral locator metadata across six 'z' rows and 12 candidate z-tests across two outcomes, the specific target hypothesis cannot be determined. Reconciling the prior adjudication, the global replication narrative cannot be assigned to an unidentified individual test.",
+        "resolution": "argon"
+      }
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/1a4114664f75608a. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_1a4114664f75608a_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

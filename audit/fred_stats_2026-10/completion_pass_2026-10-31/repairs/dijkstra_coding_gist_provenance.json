@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-11-05T17:36:20.924087+00:00",
+  "url": "https://gist.github.com/LukasWallrich/2dbe7931dba1260b74512330c300d0e1",
+  "revision": "51d068d10c8b2e75b7dc9413bdeaba038c8ca5d4",
+  "description": "Effect size calculation for Dijkstra et al",
+  "files": {
+    "gistfile1.txt": "``` r\n# Study parameters\nn1 <- 150 # Popular fiction\nn2 <- 150 # Literary fiction\n\n# Means and 95% CIs\nm1 <- 27.233\nci1_lower <- 26.581\nci1_upper <- 27.885\n\nm2 <- 27.808\nci2_lower <- 27.156\nci2_upper <- 28.460\n\n# Calculate standard deviations from confidence intervals\n# Formula: SD = (CI_margin * sqrt(n)) / t_critical\n\n# Degrees of freedom\ndf <- n1 - 1\n\n# Critical t-value for 95% CI\nt_crit <- qt(0.975, df)\n\n# Margin of error (from mean to CI boundary)\nmargin1 <- ci1_upper - m1\nmargin2 <- ci2_upper - m2\n\n# Calculate standard deviations\nsd1 <- (margin1 * sqrt(n1)) / t_crit\nsd2 <- (margin2 * sqrt(n2)) / t_crit\n\n# Calculate pooled standard deviation\nsd_pooled <- sqrt((sd1^2 + sd2^2) / 2)\n\n# Calculate Cohen's d\ncohens_d <- (m2 - m1) / sd_pooled\n\n# Display results\ncat(\"=== Results ===\\n\\n\")\n#> === Results ===\ncat(\"Popular Fiction:\\n\")\n#> Popular Fiction:\ncat(\"  Mean:\", m1, \"\\n\")\n#>   Mean: 27.233\ncat(\"  SD:\", round(sd1, 3), \"\\n\\n\")\n#>   SD: 4.041\n\ncat(\"Literary Fiction:\\n\")\n#> Literary Fiction:\ncat(\"  Mean:\", m2, \"\\n\")\n#>   Mean: 27.808\ncat(\"  SD:\", round(sd2, 3), \"\\n\\n\")\n#>   SD: 4.041\n\ncat(\"Pooled SD:\", round(sd_pooled, 3), \"\\n\")\n#> Pooled SD: 4.041\ncat(\"Cohen's d:\", round(cohens_d, 3), \"\\n\\n\")\n#> Cohen's d: 0.142\n```"
+  },
+  "content_sha256": "2a454bb7ca0439c89cca1ebebf554400969b0cf2b88082217f7cbc81581d170f",
+  "role": "Existing row-linked coding provenance only; no new scientific paper acquired, no code executed. Labels name reading conditions but no RMET/Yoni outcome; numbers were not used to select a target."
+}

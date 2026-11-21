@@ -1,0 +1,799 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "703": {
+      "source_key": "e815f964cd918655",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kidd, D. C., & Castano, E. (2013). Reading Literary Fiction Improves Theory of Mind. Science, 342(6156), 377–380. https://doi.org/10.1126/science.1239918",
+        "doi_o": "10.1126/science.1239918",
+        "study_o": "1",
+        "ref_r": "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. https://doi.org/10.1037/pspa0000064",
+        "doi_r": "10.1037/pspa0000064",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "omega squared",
+        "es_type_r": "d",
+        "description": "Immediate performance on affective and cognitive theory-of-mind tests following literary fiction versus nonfiction, popular fiction, or no reading.",
+        "locators_o": "p.2; table 1",
+        "locators_r": "p.5",
+        "audit_id": 703,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Immediate RMET literary fiction versus nonfiction condition effect in mixed model controlling ART and ART × condition, text nested in experiment and condition; pooled replication comparison on page 5.",
+      "worker_notes": "Identity verified from the supplied full primary replication article: matching title, all seven authors and DOI 10.1037/pspa0000064 on page 1; nine text pages include Methods, Results, Discussion and References. Header has provisional volume/issue/pagination (Vol. 111, No. 9, 000), unlike the final bibliographic issue, but title/authors/DOI identify the work. No PDF was supplied. Original source and unassigned fields were not examined; their schema entries are placeholders. Target matched by the immediate RMET outcome, named comparator, page locator and source methods (not numerical matching or row order). Page 4 explicitly reports this comparison N, so no N derivation was used. Page 4 defines the reported d as adjusted mean difference divided by model root mean square error. Page 7 Table 3 also gives a different pooled descriptive d; retained the page-located adjusted mixed-model d and its same-test p.  Reported_success refers to the authors’ paper-level verdict on immediate reading effects, not to the significant lifetime ART association.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Literary fiction leads to (temporarily) better performance on tests of affective ToM (Theory of Mind) and cognitive ToM compared with reading nonfiction, popular fiction nothing at all.",
+        "es_repr_o": "p.2 (table 1)",
+        "es_repr_r": "p.5",
+        "es_type_o": "omega squared",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "In contrast to Kidd and Castano (2013), we found no significant advantage in RMET scores for literary fiction compared to any\nof the other conditions."
+      }
+    },
+    "705": {
+      "source_key": "e815f964cd918655",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kidd, D. C., & Castano, E. (2013). Reading Literary Fiction Improves Theory of Mind. Science, 342(6156), 377–380. https://doi.org/10.1126/science.1239918",
+        "doi_o": "10.1126/science.1239918",
+        "study_o": "1",
+        "ref_r": "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. https://doi.org/10.1037/pspa0000064",
+        "doi_r": "10.1037/pspa0000064",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "omega squared",
+        "es_type_r": "b (unstd)",
+        "description": "Reading literature and performance on affective and cognitive theory-of-mind tests.",
+        "locators_o": "p.2; Table 2, b",
+        "locators_r": "p. 5, F",
+        "audit_id": 705,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Unresolved row correspondence among printed candidate RMET condition effects, ART predictors and/or interactions.",
+      "worker_notes": "Identity verified from the supplied full primary replication article: matching title, all seven authors and DOI 10.1037/pspa0000064 on page 1; nine text pages include Methods, Results, Discussion and References. Header has provisional volume/issue/pagination (Vol. 111, No. 9, 000), unlike the final bibliographic issue, but title/authors/DOI identify the work. No PDF was supplied. Original source and unassigned fields were not examined; their schema entries are placeholders. Page 5 contains both a reading-condition test and an ART predictor/interaction test; the broad supplied description does not identify the desired model term. Candidate evidence (not assigned values): p. 5 literary versus nonfiction condition: nonfiction (Madj. ⫽ 27.02), F(1, 167) ⫽ 0.08, p ⫽ .775, d ⫽ 0.07.; ART predictor in that model: RMET, F(1, 266) ⫽ 44.22, p ⬍ .001, b ⫽ 0.19; interaction F(1, 266) = 0.24, p = .625. Comparison analytic participant N = 300 is printed on p. 4, but cannot be assigned until the row/model is resolved. Reported_success refers to the authors’ paper-level verdict on immediate reading effects, not to the significant lifetime ART association.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Reading literature can led to better performance on tests of affective theory of mind and and cognitive theory of mind",
+        "es_repr_o": "p.2, Table 2, b = 0.36, p = 0.0003",
+        "es_repr_r": "p. 5, F(1, 266) 44.22, p < .001, b = 0.19",
+        "es_type_o": "omega squared",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "In contrast to Kidd and Castano (2013), we found no significant advantage in RMET scores for literary fiction compared to any\nof the other conditions."
+      }
+    },
+    "708": {
+      "source_key": "e815f964cd918655",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kidd, D. C., & Castano, E. (2013). Reading Literary Fiction Improves Theory of Mind. Science, 342(6156), 377–380. https://doi.org/10.1126/science.1239918",
+        "doi_o": "10.1126/science.1239918",
+        "study_o": "3",
+        "ref_r": "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. https://doi.org/10.1037/pspa0000064",
+        "doi_r": "10.1037/pspa0000064",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "omega squared",
+        "es_type_r": "d",
+        "description": "Immediate performance on the Reading the Mind in the Eyes theory-of-mind test following segments of literary fiction versus popular fiction or nonfiction.",
+        "locators_o": "p.2; Table 2, F1,65",
+        "locators_r": "p.6, F",
+        "audit_id": 708,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Immediate RMET literary fiction versus popular fiction condition effect in mixed model controlling ART and ART × condition, text nested in experiment and condition; pooled replication comparison on page 6.",
+      "worker_notes": "Identity verified from the supplied full primary replication article: matching title, all seven authors and DOI 10.1037/pspa0000064 on page 1; nine text pages include Methods, Results, Discussion and References. Header has provisional volume/issue/pagination (Vol. 111, No. 9, 000), unlike the final bibliographic issue, but title/authors/DOI identify the work. No PDF was supplied. Original source and unassigned fields were not examined; their schema entries are placeholders. Target matched by the immediate RMET outcome, named comparator, page locator and source methods (not numerical matching or row order). Page 4 explicitly reports this comparison N, so no N derivation was used. Page 4 defines the reported d as adjusted mean difference divided by model root mean square error. Page 7 Table 3 also gives a different pooled descriptive d; retained the page-located adjusted mixed-model d and its same-test p.  Reported_success refers to the authors’ paper-level verdict on immediate reading effects, not to the significant lifetime ART association.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Reading segments of literary fiction (but not popular fiction or nonfiction) immediately and significantly improves performance on reading the mind in the eyes test, which is an theory-of-mind test.",
+        "es_repr_o": "p.2, Table 2, F1,65 = 4.07 p = 0.04",
+        "es_repr_r": "p.6, F(1, 191) = 0.83, p = .363, d = 0.05.",
+        "es_type_o": "omega squared",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "In contrast to Kidd and Castano (2013), we found no significant advantage in RMET scores for literary fiction compared to any of the other conditions."
+      }
+    },
+    "709": {
+      "source_key": "e815f964cd918655",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kidd, D. C., & Castano, E. (2013). Reading Literary Fiction Improves Theory of Mind. Science, 342(6156), 377–380. https://doi.org/10.1126/science.1239918",
+        "doi_o": "10.1126/science.1239918",
+        "study_o": "3",
+        "ref_r": "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. https://doi.org/10.1037/pspa0000064",
+        "doi_r": "10.1037/pspa0000064",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "omega squared",
+        "es_type_r": "b (unstd)",
+        "description": "Reading literature and performance on affective and cognitive theory-of-mind tests.",
+        "locators_o": "p.2; Table 2, b",
+        "locators_r": "p.6, F",
+        "audit_id": 709,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Unresolved row correspondence among printed candidate RMET condition effects, ART predictors and/or interactions.",
+      "worker_notes": "Identity verified from the supplied full primary replication article: matching title, all seven authors and DOI 10.1037/pspa0000064 on page 1; nine text pages include Methods, Results, Discussion and References. Header has provisional volume/issue/pagination (Vol. 111, No. 9, 000), unlike the final bibliographic issue, but title/authors/DOI identify the work. No PDF was supplied. Original source and unassigned fields were not examined; their schema entries are placeholders. The broad description and page-6 F locator leave two reading comparisons, ART main effects and interactions possible. Original study identifiers do not uniquely identify a pooled replication term. Candidate evidence (not assigned values): p. 6 literary versus popular condition: 25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.; ART predictor: F(1, 288) = 95.16, p < .001, b = 0.37; ART × condition F(1, 288) = 0.67, p = .412. Literary versus no-reading condition: for those who had read nothing (Madj. ⫽ 26.25), F(1, 53.6) ⫽ 0.08, ... p ⫽ .775, d ⫽ 0.01.; ART predictor F(1, 361) = 139.37, p < .001; interaction F(1, 361) = 4.06, p = .045, with conditional b = 0.37 (no reading) and b = 0.26 (literary). Comparison N candidates printed p. 4: popular 303; no reading 369. These are candidate model Ns only, not assigned analytic Ns. Page 6 footnote 3 explicitly identifies the conditional b values as unstandardized coefficients in a model with transformed ART/RMET. No conversion performed. Reported_success refers to the authors’ paper-level verdict on immediate reading effects, not to the significant lifetime ART association.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Reading literature can led to better performance on tests of affective theory of mind and and cognitive theory of mind",
+        "es_repr_o": "p.2, Table 2, b = –0.01 , p = 0.90",
+        "es_repr_r": "p.6, F(1, 288) = 95.16, p < .001, b = 0.37",
+        "es_type_o": "omega squared",
+        "es_type_r": "b (unstd)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "In contrast to Kidd and Castano (2013), we found no significant advantage in RMET scores for literary fiction compared to any of the other conditions."
+      }
+    },
+    "710": {
+      "source_key": "e815f964cd918655",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kidd, D. C., & Castano, E. (2013). Reading Literary Fiction Improves Theory of Mind. Science, 342(6156), 377–380. https://doi.org/10.1126/science.1239918",
+        "doi_o": "10.1126/science.1239918",
+        "study_o": "3",
+        "ref_r": "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. https://doi.org/10.1037/pspa0000064",
+        "doi_r": "10.1037/pspa0000064",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "omega squared",
+        "es_type_r": "test statistic",
+        "description": "Reading literature and performance on affective and cognitive theory-of-mind tests.",
+        "locators_o": "p.2; Table 2, F1,65",
+        "locators_r": "p.6, F",
+        "audit_id": 710,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Unresolved row correspondence among printed candidate RMET condition effects, ART predictors and/or interactions.",
+      "worker_notes": "Identity verified from the supplied full primary replication article: matching title, all seven authors and DOI 10.1037/pspa0000064 on page 1; nine text pages include Methods, Results, Discussion and References. Header has provisional volume/issue/pagination (Vol. 111, No. 9, 000), unlike the final bibliographic issue, but title/authors/DOI identify the work. No PDF was supplied. Original source and unassigned fields were not examined; their schema entries are placeholders. The broad description and page-6 F locator leave two reading comparisons, ART main effects and interactions possible. Original study identifiers do not uniquely identify a pooled replication term. Candidate evidence (not assigned values): p. 6 literary versus popular condition: 25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.; ART predictor: F(1, 288) = 95.16, p < .001, b = 0.37; ART × condition F(1, 288) = 0.67, p = .412. Literary versus no-reading condition: for those who had read nothing (Madj. ⫽ 26.25), F(1, 53.6) ⫽ 0.08, ... p ⫽ .775, d ⫽ 0.01.; ART predictor F(1, 361) = 139.37, p < .001; interaction F(1, 361) = 4.06, p = .045, with conditional b = 0.37 (no reading) and b = 0.26 (literary). Comparison N candidates printed p. 4: popular 303; no reading 369. These are candidate model Ns only, not assigned analytic Ns. Page 6 footnote 3 explicitly identifies the conditional b values as unstandardized coefficients in a model with transformed ART/RMET. No conversion performed. Reported_success refers to the authors’ paper-level verdict on immediate reading effects, not to the significant lifetime ART association.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Reading literature can led to better performance on tests of affective theory of mind and and cognitive theory of mind",
+        "es_repr_o": "p.2, Table 2, F1,65 = 0.01, p =0.90",
+        "es_repr_r": "p.6, F(1, 288) = 0.67, p = .412.",
+        "es_type_o": "omega squared",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "In contrast to Kidd and Castano (2013), we found no significant advantage in RMET scores for literary fiction compared to any of the other conditions."
+      }
+    },
+    "712": {
+      "source_key": "e815f964cd918655",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kidd, D. C., & Castano, E. (2013). Reading Literary Fiction Improves Theory of Mind. Science, 342(6156), 377–380. https://doi.org/10.1126/science.1239918",
+        "doi_o": "10.1126/science.1239918",
+        "study_o": "5",
+        "ref_r": "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. https://doi.org/10.1037/pspa0000064",
+        "doi_r": "10.1037/pspa0000064",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "omega squared",
+        "es_type_r": "d",
+        "description": "Reading literature and performance on affective and cognitive theory-of-mind tests.",
+        "locators_o": "p.2; Table 2, F2,352",
+        "locators_r": "",
+        "audit_id": 712,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Unresolved row correspondence among printed candidate RMET condition effects, ART predictors and/or interactions.",
+      "worker_notes": "Identity verified from the supplied full primary replication article: matching title, all seven authors and DOI 10.1037/pspa0000064 on page 1; nine text pages include Methods, Results, Discussion and References. Header has provisional volume/issue/pagination (Vol. 111, No. 9, 000), unlike the final bibliographic issue, but title/authors/DOI identify the work. No PDF was supplied. Original source and unassigned fields were not examined; their schema entries are placeholders. No replication locator is supplied; the broad description permits all three condition comparisons, ART associations and interactions, including different printed d summaries. Candidate evidence (not assigned values): p. 6 literary versus popular condition: 25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.; ART predictor: F(1, 288) = 95.16, p < .001, b = 0.37; ART × condition F(1, 288) = 0.67, p = .412. Literary versus no-reading condition: for those who had read nothing (Madj. ⫽ 26.25), F(1, 53.6) ⫽ 0.08, ... p ⫽ .775, d ⫽ 0.01.; ART predictor F(1, 361) = 139.37, p < .001; interaction F(1, 361) = 4.06, p = .045, with conditional b = 0.37 (no reading) and b = 0.26 (literary). Comparison N candidates printed p. 4: popular 303; no reading 369. These are candidate model Ns only, not assigned analytic Ns. Page 6 footnote 3 explicitly identifies the conditional b values as unstandardized coefficients in a model with transformed ART/RMET. No conversion performed. Additional p. 5 nonfiction candidates: nonfiction (Madj. ⫽ 27.02), F(1, 167) ⫽ 0.08, p ⫽ .775, d ⫽ 0.07.; RMET, F(1, 266) ⫽ 44.22, p ⬍ .001, b ⫽ 0.19; comparison N = 300. Page 7 Table 3 gives pooled descriptive condition d values −.08, .04 and .10, distinct from adjusted model d values. Reported_success refers to the authors’ paper-level verdict on immediate reading effects, not to the significant lifetime ART association.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Reading literature can led to better performance on tests of affective theory of mind and and cognitive theory of mind",
+        "es_repr_o": "p.2, Table 2, F2,352 =3.10, p = 0.04",
+        "es_repr_r": "F(1, 53.6) = 0.08, p = .775, d = 0.01.",
+        "es_type_o": "omega squared",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "In contrast to Kidd and Castano (2013), we found no significant advantage in RMET scores for literary fiction compared to any of the other conditions."
+      }
+    },
+    "713": {
+      "source_key": "e815f964cd918655",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kidd, D. C., & Castano, E. (2013). Reading Literary Fiction Improves Theory of Mind. Science, 342(6156), 377–380. https://doi.org/10.1126/science.1239918",
+        "doi_o": "10.1126/science.1239918",
+        "study_o": "5",
+        "ref_r": "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. https://doi.org/10.1037/pspa0000064",
+        "doi_r": "10.1037/pspa0000064",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "omega squared",
+        "es_type_r": "test statistic",
+        "description": "Reading literature and performance on affective and cognitive theory-of-mind tests.",
+        "locators_o": "p.2; Table 2, b",
+        "locators_r": "p.6, F",
+        "audit_id": 713,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Unresolved row correspondence among printed candidate RMET condition effects, ART predictors and/or interactions.",
+      "worker_notes": "Identity verified from the supplied full primary replication article: matching title, all seven authors and DOI 10.1037/pspa0000064 on page 1; nine text pages include Methods, Results, Discussion and References. Header has provisional volume/issue/pagination (Vol. 111, No. 9, 000), unlike the final bibliographic issue, but title/authors/DOI identify the work. No PDF was supplied. Original source and unassigned fields were not examined; their schema entries are placeholders. The broad description and page-6 F locator leave two reading comparisons, ART main effects and interactions possible. Original study identifiers do not uniquely identify a pooled replication term. Candidate evidence (not assigned values): p. 6 literary versus popular condition: 25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.; ART predictor: F(1, 288) = 95.16, p < .001, b = 0.37; ART × condition F(1, 288) = 0.67, p = .412. Literary versus no-reading condition: for those who had read nothing (Madj. ⫽ 26.25), F(1, 53.6) ⫽ 0.08, ... p ⫽ .775, d ⫽ 0.01.; ART predictor F(1, 361) = 139.37, p < .001; interaction F(1, 361) = 4.06, p = .045, with conditional b = 0.37 (no reading) and b = 0.26 (literary). Comparison N candidates printed p. 4: popular 303; no reading 369. These are candidate model Ns only, not assigned analytic Ns. Page 6 footnote 3 explicitly identifies the conditional b values as unstandardized coefficients in a model with transformed ART/RMET. No conversion performed. Reported_success refers to the authors’ paper-level verdict on immediate reading effects, not to the significant lifetime ART association.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Reading literature can led to better performance on tests of affective theory of mind and and cognitive theory of mind",
+        "es_repr_o": "p.2, Table 2, b = 0.28, p <0.001",
+        "es_repr_r": "p.6, F(1, 361) = 139.37, p < .001",
+        "es_type_o": "omega squared",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "yes",
+        "reported_success_quote": "In contrast to Kidd and Castano (2013), we found no significant advantage in RMET scores for literary fiction compared to any of the other conditions."
+      }
+    },
+    "714": {
+      "source_key": "e815f964cd918655",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kidd, D. C., & Castano, E. (2013). Reading Literary Fiction Improves Theory of Mind. Science, 342(6156), 377–380. https://doi.org/10.1126/science.1239918",
+        "doi_o": "10.1126/science.1239918",
+        "study_o": "5",
+        "ref_r": "Panero, M. E., Weisberg, D. S., Black, J., Goldstein, T. R., Barnes, J. L., Brownell, H., & Winner, E. (2016). Does reading a single passage of literary fiction really improve theory of mind? An attempt at replication. Journal of Personality and Social Psychology, 111(5), e46–e54. https://doi.org/10.1037/pspa0000064",
+        "doi_r": "10.1037/pspa0000064",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "omega squared",
+        "es_type_r": "test statistic",
+        "description": "Reading literature and performance on affective and cognitive theory-of-mind tests.",
+        "locators_o": "p.2; Table 2, F2,352",
+        "locators_r": "p.6, F",
+        "audit_id": 714,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Unresolved row correspondence among printed candidate RMET condition effects, ART predictors and/or interactions.",
+      "worker_notes": "Identity verified from the supplied full primary replication article: matching title, all seven authors and DOI 10.1037/pspa0000064 on page 1; nine text pages include Methods, Results, Discussion and References. Header has provisional volume/issue/pagination (Vol. 111, No. 9, 000), unlike the final bibliographic issue, but title/authors/DOI identify the work. No PDF was supplied. Original source and unassigned fields were not examined; their schema entries are placeholders. The broad description and page-6 F locator leave two reading comparisons, ART main effects and interactions possible. Original study identifiers do not uniquely identify a pooled replication term. Candidate evidence (not assigned values): p. 6 literary versus popular condition: 25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.; ART predictor: F(1, 288) = 95.16, p < .001, b = 0.37; ART × condition F(1, 288) = 0.67, p = .412. Literary versus no-reading condition: for those who had read nothing (Madj. ⫽ 26.25), F(1, 53.6) ⫽ 0.08, ... p ⫽ .775, d ⫽ 0.01.; ART predictor F(1, 361) = 139.37, p < .001; interaction F(1, 361) = 4.06, p = .045, with conditional b = 0.37 (no reading) and b = 0.26 (literary). Comparison N candidates printed p. 4: popular 303; no reading 369. These are candidate model Ns only, not assigned analytic Ns. Page 6 footnote 3 explicitly identifies the conditional b values as unstandardized coefficients in a model with transformed ART/RMET. No conversion performed. Reported_success refers to the authors’ paper-level verdict on immediate reading effects, not to the significant lifetime ART association.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Reading literature can led to better performance on tests of affective theory of mind and and cognitive theory of mind",
+        "es_repr_o": "p.2, Table 2, F2,352 = 1.37, p = 0.25",
+        "es_repr_r": "p.6, F(1, 361) = 4.06, p = .045:",
+        "es_type_o": "omega squared",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "In contrast to Kidd and Castano (2013), we found no significant advantage in RMET scores for literary fiction compared to any of the other conditions."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 703,
+      "field": "n_r",
+      "blind": {
+        "value": "300",
+        "sample_role": "Participants in the two final mutually exclusive comparison conditions; analytic sample for the identified mixed-model comparison. Text and experiment are modeled random effects, not participant counts.",
+        "exclusions": "Final post-exclusion participants. Page 3 lists 510 additional recruits excluded for dropping out before text assignment (46), nonoriginal texts (165), noncompletion (284; superscript footnote 1 attached in canonical text), extreme reading times (3), low RMET outlier (1), and high ART guessing (10). These are whole-source exclusion counts, not separately allocated to this comparison; subgroup exclusion details are in unsupplied Tables S5/S6.",
+        "location": "p. 4, Power Analyses and Table 1",
+        "quote": "Our comparison has N ⫽ 300.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 703,
+        "field": "n_r",
+        "code": "extracted_printed",
+        "reason": "Explicit comparison-specific analytic N, supported by Table 1 final condition samples.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 4, Power Analyses and Table 1",
+        "quote": "Our comparison has N ⫽ 300.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "300",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 703,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.07",
+        "metric": "d",
+        "test_statistic": "F(1, 167) ⫽ 0.08",
+        "location": "p. 5, Literary Fiction Versus Nonfiction",
+        "quote": "nonfiction (Madj. ⫽ 27.02), F(1, 167) ⫽ 0.08, p ⫽ .775, d ⫽ 0.07.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 703,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed adjusted mixed-model condition effect and same-test p; comparator and immediate RMET outcome identify the page-located test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 5, Literary Fiction Versus Nonfiction",
+        "quote": "nonfiction (Madj. ⫽ 27.02), F(1, 167) ⫽ 0.08, p ⫽ .775, d ⫽ 0.07.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "0.07",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 703,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".775",
+        "bound": "e",
+        "location": "p. 5, Literary Fiction Versus Nonfiction",
+        "quote": "nonfiction (Madj. ⫽ 27.02), F(1, 167) ⫽ 0.08, p ⫽ .775, d ⫽ 0.07.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 703,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed adjusted mixed-model condition effect and same-test p; comparator and immediate RMET outcome identify the page-located test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 5, Literary Fiction Versus Nonfiction",
+        "quote": "nonfiction (Madj. ⫽ 27.02), F(1, 167) ⫽ 0.08, p ⫽ .775, d ⫽ 0.07.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "0.775",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 703,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 703,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly report failure to support the immediate causal reading effect. This is the paper-level replication verdict, not an inference from p; the authors separately report positive lifetime ART associations. Row-specific test correspondence remains unresolved where stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 705,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 705,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly report failure to support the immediate causal reading effect. This is the paper-level replication verdict, not an inference from p; the authors separately report positive lifetime ART associations. Row-specific test correspondence remains unresolved where stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 708,
+      "field": "n_r",
+      "blind": {
+        "value": "303",
+        "sample_role": "Participants in the two final mutually exclusive comparison conditions; analytic sample for the identified mixed-model comparison. Text and experiment are modeled random effects, not participant counts.",
+        "exclusions": "Final post-exclusion participants. Page 3 lists 510 additional recruits excluded for dropping out before text assignment (46), nonoriginal texts (165), noncompletion (284; superscript footnote 1 attached in canonical text), extreme reading times (3), low RMET outlier (1), and high ART guessing (10). These are whole-source exclusion counts, not separately allocated to this comparison; subgroup exclusion details are in unsupplied Tables S5/S6.",
+        "location": "p. 4, Power Analyses and Table 1",
+        "quote": "Our comparison has N ⫽ 303.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 708,
+        "field": "n_r",
+        "code": "extracted_printed",
+        "reason": "Explicit comparison-specific analytic N, supported by Table 1 final condition samples.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 4, Power Analyses and Table 1",
+        "quote": "Our comparison has N ⫽ 303.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "193",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 708,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.05",
+        "metric": "d",
+        "test_statistic": "F(1, 191) ⫽ 0.83",
+        "location": "p. 6, Literary Fiction Versus Popular Fiction",
+        "quote": "25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 708,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed adjusted mixed-model condition effect and same-test p; comparator and immediate RMET outcome identify the page-located test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 6, Literary Fiction Versus Popular Fiction",
+        "quote": "25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 708,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".363",
+        "bound": "e",
+        "location": "p. 6, Literary Fiction Versus Popular Fiction",
+        "quote": "25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 708,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed adjusted mixed-model condition effect and same-test p; comparator and immediate RMET outcome identify the page-located test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 6, Literary Fiction Versus Popular Fiction",
+        "quote": "25.99), F(1, 191) ⫽ 0.83, p ⫽ .363, d ⫽ 0.05.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "0.363",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 708,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 708,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly report failure to support the immediate causal reading effect. This is the paper-level replication verdict, not an inference from p; the authors separately report positive lifetime ART associations. Row-specific test correspondence remains unresolved where stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 709,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 709,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly report failure to support the immediate causal reading effect. This is the paper-level replication verdict, not an inference from p; the authors separately report positive lifetime ART associations. Row-specific test correspondence remains unresolved where stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 710,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 710,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly report failure to support the immediate causal reading effect. This is the paper-level replication verdict, not an inference from p; the authors separately report positive lifetime ART associations. Row-specific test correspondence remains unresolved where stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 712,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 712,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly report failure to support the immediate causal reading effect. This is the paper-level replication verdict, not an inference from p; the authors separately report positive lifetime ART associations. Row-specific test correspondence remains unresolved where stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 713,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 713,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly report failure to support the immediate causal reading effect. This is the paper-level replication verdict, not an inference from p; the authors separately report positive lifetime ART associations. Row-specific test correspondence remains unresolved where stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 714,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 714,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly report failure to support the immediate causal reading effect. This is the paper-level replication verdict, not an inference from p; the authors separately report positive lifetime ART associations. Row-specific test correspondence remains unresolved where stated.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3db41dfc0e457fa92a6c8b58.txt",
+        "location": "p. 7, Discussion",
+        "quote": "we found no support for any short-term ... causal effects of reading literary fiction on theory of mind.",
+        "calculation": ""
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/e815f964cd918655. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_e815f964cd918655_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+Large-batch reply override: write the COMPLETE strict JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_e815f964cd918655_v1.json, but reply ONLY with its path and item count. Do not echo the array. This overrides earlier reply-format instructions only; all source/evidence/target requirements still apply.

@@ -1,0 +1,52 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 2043,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "25",
+    "shipped_metric": "ser_method",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "25",
+      "sample_role": "Countries contributing estimates to the target meta-analysis; underlying analytic sample includes 24,652 women.",
+      "exclusions": "Original reports 4 per cent of respondents dropped for missing values on one or more variables; no country exclusions stated for Figure 1A.",
+      "location": "p. 816, Figure 1A caption; p. 814, Analytical Strategy; p. 812, Data",
+      "quote": "Total effect of parental SES on the timing of first union for WOMEN in 25 European countries. Meta-analysis of estimates from discrete-time logistic models",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a0a0fbf1f9421bd65d7a76c3.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Brons, M. D. (Anne), Liefbroer, A. C., & Ganzeboom, H. B. G. (2017). Parental Socio-Economic Status and First Union Formation: Can European Variation Be Explained by the Second Demographic Transition Theory? European Sociological Review, 33(6), 809–822. https://doi.org/10.1093/esr/jcx078",
+      "doi_o": "10.1093/esr/jcx078",
+      "study_o": null,
+      "ref_r": "Parsons, E. S., Miske, O., Luis, B., Loomas, Z., Fox, N. W., Tyner, A. H., … Reed, W. R. (2025, November 18). Brons_EurSocioRev_2017_e227 - Reed - Secondary Data Replication - 24yw6. Retrieved from osf.io/9mx5w",
+      "doi_r": null,
+      "url_r": "https://osf.io/4usmq",
+      "study_r": null,
+      "es_type_o": "ser_method",
+      "es_type_r": "ser_method",
+      "audit_id": 2043,
+      "description": null,
+      "locators_o": "p. 7",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a0a0fbf1f9421bd65d7a76c3.txt"
+      }
+    },
+    "work_key": "https://osf.io/4usmq",
+    "coding_context": {
+      "es_repr": null,
+      "description": null,
+      "reported_success_quote": "NB: SCORE relied on statistical significance and direction as the leading success criterion - so reported_success coded based on that",
+      "pval_tails": "1",
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

@@ -1,0 +1,942 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1911": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of criminal versatility for ASPD-only diagnosis versus controls.",
+        "locators_o": "p. 801",
+        "locators_r": "p.336",
+        "audit_id": 1911,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of criminal versatility for ASPD-only diagnosis versus controls. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 201 + 328 = 529 participants; explicit mutually exclusive final diagnostic groups for ASPD-only diagnosis versus controls. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD-only diagnosis predicts greater criminal versatility than controls.",
+        "es_repr_o": "801",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "<",
+        "pval_type_r": "\"<\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    },
+    "1912": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of criminal versatility for ASPD+PSY diagnosis versus controls.",
+        "locators_o": "p. 801",
+        "locators_r": "p.336",
+        "audit_id": 1912,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of criminal versatility for ASPD+PSY diagnosis versus controls. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 145 + 328 = 473 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus controls. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD+PSY diagnosis predicts greater criminal versatility than controls.",
+        "es_repr_o": "801",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "<",
+        "pval_type_r": "\"<\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    },
+    "1913": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of criminal versatility for ASPD+PSY diagnosis versus ASPD-only diagnosis.",
+        "locators_o": "p. 801",
+        "locators_r": "p.336",
+        "audit_id": 1913,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of criminal versatility for ASPD+PSY diagnosis versus ASPD-only diagnosis. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 145 + 201 = 346 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus ASPD-only diagnosis. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD+PSY diagnosis predicts greater criminal versatility than ASPD-only.",
+        "es_repr_o": "801",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "<",
+        "pval_type_r": "\"<\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    },
+    "1914": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of number of violent charges for ASPD-only diagnosis versus controls.",
+        "locators_o": "p. 801",
+        "locators_r": "p.336",
+        "audit_id": 1914,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of number of violent charges for ASPD-only diagnosis versus controls. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 201 + 328 = 529 participants; explicit mutually exclusive final diagnostic groups for ASPD-only diagnosis versus controls. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD-only diagnosis predicts more violent charges than controls.",
+        "es_repr_o": "801",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "<",
+        "pval_type_r": "\"=\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    },
+    "1915": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of number of violent charges for ASPD+PSY diagnosis versus controls.",
+        "locators_o": "p. 801",
+        "locators_r": "p.336",
+        "audit_id": 1915,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of number of violent charges for ASPD+PSY diagnosis versus controls. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 145 + 328 = 473 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus controls. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD+PSY diagnosis predicts more violent charges than controls.",
+        "es_repr_o": "801",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "<",
+        "pval_type_r": "\"<\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    },
+    "1916": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of number of violent charges for ASPD+PSY diagnosis versus ASPD-only diagnosis.",
+        "locators_o": "p. 801",
+        "locators_r": "p.336",
+        "audit_id": 1916,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of number of violent charges for ASPD+PSY diagnosis versus ASPD-only diagnosis. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 145 + 201 = 346 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus ASPD-only diagnosis. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD+PSY diagnosis predicts more violent charges than ASPD-only.",
+        "es_repr_o": "801",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "<",
+        "pval_type_r": "\"<\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    },
+    "1917": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of number of nonviolent charges for ASPD-only diagnosis versus controls.",
+        "locators_o": "p. 801,802",
+        "locators_r": "p.336",
+        "audit_id": 1917,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of number of nonviolent charges for ASPD-only diagnosis versus controls. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 201 + 328 = 529 participants; explicit mutually exclusive final diagnostic groups for ASPD-only diagnosis versus controls. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD-only diagnosis predicts more nonviolent charges than controls.",
+        "es_repr_o": "801,802",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "<",
+        "pval_type_r": "\"<\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    },
+    "1918": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of number of nonviolent charges for ASPD+PSY diagnosis versus controls.",
+        "locators_o": "p. 801,802",
+        "locators_r": "p.336",
+        "audit_id": 1918,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of number of nonviolent charges for ASPD+PSY diagnosis versus controls. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 145 + 328 = 473 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus controls. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD+PSY diagnosis predicts more nonviolent charges than controls.",
+        "es_repr_o": "801,802",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "<",
+        "pval_type_r": "\"<\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    },
+    "1919": {
+      "source_key": "e0d7afe3bbd042b2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Kosson, D. S., Lorenz, A. R., & Newman, J. P. (2006). Effects of comorbid psychopathy on criminal offending and emotion processing in male offenders with antisocial personality disorder. Journal of Abnormal Psychology, 115(4), 798–806. https://doi.org/10.1037/0021-843x.115.4.798",
+        "doi_o": "10.1037/0021-843x.115.4.798",
+        "study_o": null,
+        "ref_r": "Riser, R. E., & Kosson, D. S. (2013). Criminal behavior and cognitive processing in male offenders with antisocial personality disorder with and without comorbid psychopathy. Personality Disorders: Theory, Research, and Treatment, 4(4), 332–340. https://doi.org/10.1037/a0033303",
+        "doi_r": "10.1037/a0033303",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Comparison of number of nonviolent charges for ASPD+PSY diagnosis versus ASPD-only diagnosis.",
+        "locators_o": "p. 801,802",
+        "locators_r": "p.336",
+        "audit_id": 1919,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of number of nonviolent charges for ASPD+PSY diagnosis versus ASPD-only diagnosis. Primary criminal-behavior follow-up; standard ASPD definition, not severe-ASPD sensitivity analysis or cognitive task.",
+      "worker_notes": "Identity independently checked against supplied article header: Criminal Behavior and Cognitive Processing in Male Offenders With Antisocial Personality Disorder With and Without Comorbid Psychopathy; Rebecca E. Riser and David S. Kosson; 2013, Vol. 4, No. 4, 332–340; DOI 10.1037/a0033303; BRIEF REPORT. Hosted primary article transcription, not hosting-site summary. Canonical cache combines excerpted web parses with interleaved columns; relevant Participants, criminal-analysis Results and Table 2 are present. No PDF supplied; no layout rendering available. Completeness of other sections not assumed. 145 + 201 = 346 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus ASPD-only diagnosis. No inference from df. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Evidence for criminal analytic sample and outlier treatment: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3. Printed same-test t/t-prime and d retained in p evidence; no metric conversion. Unassigned original, effect size and success are placeholders only. Targets matched by named outcome and diagnostic contrast, not row order or numeric correspondence.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "ASPD+PSY diagnosis predicts more nonviolent charges than ASPD-only.",
+        "es_repr_o": "801,802",
+        "es_repr_r": "p.336",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "\"=\"",
+        "pval_type_r": "\"=\"",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "Results replicate the findings of\nKosson, Lorenz, and Newman (2006)"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1911,
+      "field": "n_r",
+      "blind": {
+        "value": "529",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1911,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "201 + 328 = 529 participants; explicit mutually exclusive final diagnostic groups for ASPD-only diagnosis versus controls. No inference from df."
+      },
+      "supported": true,
+      "shipped": "529",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1911,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "of offenses than controls: t(527) ⫽ ⫺4.83, p ⬍ .001, d ⫽ .42, for ... ASPD-only inmates versus controls",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1911,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "of offenses than controls: t(527) ⫽ ⫺4.83, p ⬍ .001, d ⫽ .42, for ... ASPD-only inmates versus controls",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1912,
+      "field": "n_r",
+      "blind": {
+        "value": "473",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1912,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "145 + 328 = 473 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus controls. No inference from df."
+      },
+      "supported": true,
+      "shipped": "473",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1912,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "and t’(242) ⫽ ⫺9.60, p ⬍ ... .001, d ⫽ 1.23, for controls versus ASPD ⫹ PSY.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1912,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "and t’(242) ⫽ ⫺9.60, p ⬍ ... .001, d ⫽ 1.23, for controls versus ASPD ⫹ PSY.",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1913,
+      "field": "n_r",
+      "blind": {
+        "value": "346",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1913,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "145 + 201 = 346 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus ASPD-only diagnosis. No inference from df."
+      },
+      "supported": true,
+      "shipped": "346",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1913,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "ASPD ⫹ PSY inmates were charged with more types of crimes ... than ASPD-only inmates, t(344) ⫽ ⫺5.35, p ⬍ .001, d ⫽ .58",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1913,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "ASPD ⫹ PSY inmates were charged with more types of crimes ... than ASPD-only inmates, t(344) ⫽ ⫺5.35, p ⬍ .001, d ⫽ .58",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1914,
+      "field": "n_r",
+      "blind": {
+        "value": "529",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1914,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "201 + 328 = 529 participants; explicit mutually exclusive final diagnostic groups for ASPD-only diagnosis versus controls. No inference from df."
+      },
+      "supported": true,
+      "shipped": "529",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1914,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".003",
+        "bound": "e",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "violent offenses than controls: t’(357) ⫽ ⫺2.97, p ⫽ .003, d ⫽ .31,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1914,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "violent offenses than controls: t’(357) ⫽ ⫺2.97, p ⫽ .003, d ⫽ .31,",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.003",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1915,
+      "field": "n_r",
+      "blind": {
+        "value": "473",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1915,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "145 + 328 = 473 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus controls. No inference from df."
+      },
+      "supported": true,
+      "shipped": "473",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1915,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "inmates and ASPD ⫹ PSY inmates were charged with more ... violent offenses than controls: ... t’(192) ⫽ ⫺7.42, p ⬍ .001, d ⫽ 1.07, respectively.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1915,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "inmates and ASPD ⫹ PSY inmates were charged with more ... violent offenses than controls: ... t’(192) ⫽ ⫺7.42, p ⬍ .001, d ⫽ 1.07, respectively.",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1916,
+      "field": "n_r",
+      "blind": {
+        "value": "346",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1916,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "145 + 201 = 346 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus ASPD-only diagnosis. No inference from df."
+      },
+      "supported": true,
+      "shipped": "346",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1916,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "ASPD ⫹ PSY inmates were charged with more violent crimes than ... ASPD-only inmates, t’(253) ⫽ ⫺4.89, p ⬍ .001, d ⫽ .61.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1916,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "ASPD ⫹ PSY inmates were charged with more violent crimes than ... ASPD-only inmates, t’(253) ⫽ ⫺4.89, p ⬍ .001, d ⫽ .61.",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1917,
+      "field": "n_r",
+      "blind": {
+        "value": "529",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1917,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "201 + 328 = 529 participants; explicit mutually exclusive final diagnostic groups for ASPD-only diagnosis versus controls. No inference from df."
+      },
+      "supported": true,
+      "shipped": "529",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1917,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "Again, ASPD-only inmates and ASPD ⫹ ... PSY inmates were charged with more nonviolent offenses than ... controls: t’(317) ⫽ ⫺4.65, p ⬍ .001, d ⫽ .52,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1917,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "Again, ASPD-only inmates and ASPD ⫹ ... PSY inmates were charged with more nonviolent offenses than ... controls: t’(317) ⫽ ⫺4.65, p ⬍ .001, d ⫽ .52,",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1918,
+      "field": "n_r",
+      "blind": {
+        "value": "473",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1918,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "145 + 328 = 473 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus controls. No inference from df."
+      },
+      "supported": true,
+      "shipped": "473",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1918,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "Again, ASPD-only inmates and ASPD ⫹ ... PSY inmates were charged with more nonviolent offenses than ... t’(189) ⫽ ⫺5.91, ... p ⬍ .001, d ⫽ .86, respectively.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1918,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "Again, ASPD-only inmates and ASPD ⫹ ... PSY inmates were charged with more nonviolent offenses than ... t’(189) ⫽ ⫺5.91, ... p ⬍ .001, d ⫽ .86, respectively.",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1919,
+      "field": "n_r",
+      "blind": {
+        "value": "346",
+        "sample_role": "Analytic participants in the two named final diagnostic groups for criminal activity.",
+        "exclusions": "Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply.",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1919,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Table 2 supplies final mutually exclusive group counts for these criminal variables. Included male county-jail inmates aged 18–45. Method exclusions: medication with neurocognitive side effects, psychotic symptoms, inability to read English, estimated IQ below 70, missing prior-charge information. Left-handedness exclusion is cognitive-only. For criminal analyses, 12 control, 9 ASPD-only and 4 ASPD+PSY outliers had extreme values transformed, not participants deleted. Cognitive-task exclusions do not apply. Sample-role evidence: Of the 674 inmates in the criminal activity analyses, outliers ... were identified for 12 control, 9 ASPD-only, and 4 ASPD ⫹ PSY ... inmates. To reduce their influence, extreme values were trans- ... formed to one unit greater than the most extreme value within 3",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 334 Participants; pp. 335–336 Overview and Preliminary Analyses; p. 337 Table 2",
+        "quote": "Control (n ⫽ 328) ASPD only (n ⫽ 201) ASPD ⫹ PSY (n ⫽ 145)",
+        "calculation": "145 + 201 = 346 participants; explicit mutually exclusive final diagnostic groups for ASPD+PSY diagnosis versus ASPD-only diagnosis. No inference from df."
+      },
+      "supported": true,
+      "shipped": "346",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1919,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".04",
+        "bound": "e",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "Finally, ASPD ⫹ PSY inmates ... were charged with more nonviolent crimes than ASPD-only in- ... mates, t’(279) ⫽ ⫺2.05, p ⫽ .04, d ⫽ .25 (see Table 2).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1919,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit primary outcome and diagnostic contrast identify the same follow-up test; printed precision and bound retained. Printed t/t-prime and d preserved in evidence; no conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5499650b366c1f48dd882b4c.txt",
+        "location": "p. 336 Primary Analyses, Analyses of criminal behavior",
+        "quote": "Finally, ASPD ⫹ PSY inmates ... were charged with more nonviolent crimes than ASPD-only in- ... mates, t’(279) ⫽ ⫺2.05, p ⫽ .04, d ⫽ .25 (see Table 2).",
+        "calculation": "None."
+      },
+      "supported": true,
+      "shipped": "0.04",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/e0d7afe3bbd042b2. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_e0d7afe3bbd042b2_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+Large-batch reply override: write the COMPLETE strict JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_e0d7afe3bbd042b2_v1.json, but reply ONLY with its path and item count. Do not echo the array. This overrides earlier reply-format instructions only; all source/evidence/target requirements still apply.

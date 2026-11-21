@@ -1,0 +1,76 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 147,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "0.76",
+    "shipped_metric": "r",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": ".62",
+      "metric": "r",
+      "test_statistic": null,
+      "location": "Printed p. 62 (PDF p. 64), subscale convergent-validity results; Table 6 p. 67.",
+      "quote": "The BASC-3 TRS-C Attention problems scale was significantly correlated with the ASCA Attention Deficit Hyperactive syndrome (r = .62, p < .001), indicating 38% shared variance and supporting good convergent validity.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_d174d412261234f92287a43f.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Burback, S. (2020). Construct validity of the Behavior Assessment System for Children--Third Edition Teacher Rating Scales (BASC-3 TRS): Comparisons with the Adjustment Scales for Children and Adolescents (ASCA) [Master's thesis, Eastern Illinois University]. The Keep. https://thekeep.eiu.edu/theses/4783",
+      "doi_o": "thekeep.eiu.edu/theses/4783",
+      "study_o": "1",
+      "ref_r": "Katla, J. (2024). Replication of Construct Validity of the Behavior Assessment System for Children-Teacher Rating Scales (BASC-3 TRS) and the Adjustment Scales for Children and Adolescents (ASCA). https://thekeep.eiu.edu/theses/5025",
+      "doi_r": null,
+      "url_r": "https://thekeep.eiu.edu/theses/5025",
+      "study_r": "1",
+      "es_type_o": "r",
+      "es_type_r": "r",
+      "audit_id": 147,
+      "description": "BASC Attention Problems assess tendencies to be easily distracted, have difficulty focusing, and struggle to complete tasks that require sustained attention. ASCA Attention Deficit Hyperactive assesses behaviors commonly associated with Attention-Deficit/Hyperactivity Disorder (ADHD), including inattention, impulsivity, and hyperactivity.",
+      "locators_o": "p. 53",
+      "locators_r": "",
+      "text_paths": {}
+    },
+    "work_key": "https://thekeep.eiu.edu/theses/5025",
+    "coding_context": {
+      "es_repr": "63",
+      "description": "BASC Attention Problems assess tendencies to be easily distracted, have difficulty focusing, and struggle to complete tasks that require sustained attention. ASCA Attention Deficit Hyperactive assesses behaviors commonly associated with Attention-Deficit/Hyperactivity Disorder (ADHD), including inattention, impulsivity, and hyperactivity.",
+      "reported_success_quote": "Results indicated that construct validity was evident.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "103",
+        "es_value_r": "0.76",
+        "es_type_r": "r",
+        "pval_value_r": "0.001",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "source_version_note": "Complete master’s thesis, Eastern Illinois University, repository deposit5025",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/d174d412261234f92287a43f_drive.pdf",
+    "source_identity_and_completeness": "Visually inspectedrepositorycovermatchesexactrequestedtitle,JoelKatla,Spring2024andthekeep.eiu.edu/theses/5025. Complete91PDFpages; methods59,results63,discussion70,references81onward,completeAppendixAquestionnaire90–91. Contentsandterminalappendixagree. NoDOIclaimed.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 147,
+        "batch": "drive01_d174d412261234f92287a43f_replication_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path",
+          "reported_success:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_d174d412261234f92287a43f_replication_000/147.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:35:58.076432+00:00"
+      }
+    ]
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

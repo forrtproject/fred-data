@@ -1,0 +1,64 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1145,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "40",
+    "shipped_metric": "kendall's w",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "40",
+      "sample_role": "undergraduates answering first experiment/C1 vignette",
+      "exclusions": "No exclusions stated for this vignette sample.",
+      "location": "p. 347; PDF p. 8",
+      "quote": "40 undergraduates, each of whom received the following vignette:",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_4d8f4b1186548593e667666f.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Nadelhoffer, T. (2005). Skill, luck, control, and intentional action. Philosophical Psychology, 18(3), 341–352. https://doi.org/10.1080/09515080500177309",
+      "doi_o": "10.1080/09515080500177309",
+      "study_o": "1",
+      "ref_r": "Cova, F., Strickland, B., Abatista, A., Allard, A., Andow, J., Attie, M., Beebe, J., Berniūnas, R., Boudesseul, J., Colombo, M., Cushman, F., Diaz, R., N’Djaye Nikolai van Dongen, N., Dranseika, V., Earp, B. D., Torres, A. G., Hannikainen, I., Hernández-Conde, J. V., Hu, W., … Zhou, X. (2018). Estimating the Reproducibility of Experimental Philosophy. Review of Philosophy and Psychology, 12(1), 9–44. https://doi.org/10.1007/s13164-018-0400-9",
+      "doi_r": "10.1007/s13164-018-0400-9",
+      "url_r": "https://osf.io/4ewkh",
+      "study_r": "9",
+      "es_type_o": "kendall's w",
+      "es_type_r": "kendall's w",
+      "audit_id": 1145,
+      "description": "Intentional action judgments in relation to skill, control, and luck.",
+      "locators_o": "https://osf.io/ygv4e; p. 8, 10",
+      "locators_r": "p. 1; https://osf.io/7s5vy",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/f0d7e94a060e237c7f07cce9.txt"
+      }
+    },
+    "work_key": "10.1007/s13164-018-0400-9",
+    "coding_context": {
+      "es_repr": "pg 1 - https://osf.io/ygv4e “a surprising majority of [participants] (viz., 73%) were willing to say that Fredintentionally prevented the explosion”Inferring from reported sample size and reported percentages, there were 29 (out of 40) participants willing to say that Fred intentionally prevented the explosion and 11 (out of 40) participants not willing to say that Fred intentionally prevented theexplosion.This allows to calculate the following statistic: X2(1, N = 40) = 8.10, p = .004, w = .45",
+      "description": "in order for an action to be performed intentionally it must be performed with a relevant amount of skill or control—i.e., an intentional actioncannot simply be the result of luck.",
+      "reported_success_quote": "YES in ReplicationSUCCESS column",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "40",
+        "es_value_o": "0.45",
+        "es_type_o": "kendall's w",
+        "pval_value_o": "0.004",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Authors’ project table lists ReplicationN_Effect 128, but individual report explicitly establishes analytic N=123 after five exclusions. Printed w retained without assuming Kendall’s w. Original acquisition: DOI landing page 403; Unpaywall has no OA location; OpenAlex has no OA location; targeted primary-source search found no accessible full paper. Acquisition allowance exhausted.\nSource follow-up: Published article copy from private Google Drive archive; Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Nadelhoffer. PDF has13pages; published range=341-352; source endmatter checked in model review. Methods-related material pages[6, 7, 8, 9, 10, 11, 12]; results-related material pages[2, 4, 7, 8, 9, 10, 11, 13]; references atPDFpages[13]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled. Rendered PDF p. 8 confirms first-experiment sample. No Kendall W printed. First experiment C1 reports percentages and mean praise ratings; later C1/C2 comparison has chi-square in endnote 3 and later die-vignette comparisons have other chi-squares. Supplied p. 8/10 locator and general description do not select a specific contrast, so ES and p left null; matching exact test unresolved.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/4d8f4b1186548593e667666f_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Nadelhoffer. PDF has13pages; published range=341-352; source endmatter checked in model review. Methods-related material pages[6, 7, 8, 9, 10, 11, 12]; results-related material pages[2, 4, 7, 8, 9, 10, 11, 13]; references atPDFpages[13]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. Inspect the primary PDF for flagged glyph/sign discrepancies: PDF text extraction can drop minus signs. Do not reverse signs from the parsed text alone when the worker flagged visual disagreement. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

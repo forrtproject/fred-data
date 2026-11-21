@@ -1,0 +1,47 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 2154,
+    "field": "n_r",
+    "comparison": "differ",
+    "shipped": "159",
+    "shipped_metric": "ser_method",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "220,787",
+      "sample_role": "Individual birth/child observations used in the focal new-data-only regression; 159 region clusters",
+      "exclusions": "Only observations not used in the original study; new DHS waves after 2005. Further observation-level exclusions not documented in the report. Kenya 1988–1989 unavailable for the combined dataset.",
+      "location": "p. 4, Replication Results (1) New Data Only, With clustering, regression header",
+      "quote": "Number of obs = 220,787\n(Std. Err. adjusted for 159 clusters in uniqueregion)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/409ce1b564c7b3fa5fb1ac81.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Case, A., & Paxson, C. (2011). The Impact of the AIDS Pandemic on Health Services in Africa: Evidence from Demographic and Health Surveys. Demography, 48(2), 675–697. https://doi.org/10.1007/s13524-011-0026-3",
+      "doi_o": "10.1007/s13524-011-0026-3",
+      "study_o": null,
+      "ref_r": "Reed, W. R., Duan, J., Hong, S., Coupe, T., Tyner, A. H., Loomas, Z., … Kline Struhl, M. (2025, November 18). Case_Demography_2011_5Kgq - Hong & Duan/Reed & Coupe - Secondary Data Replication - k6y7. Retrieved from osf.io/62xh4",
+      "doi_r": null,
+      "url_r": "https://osf.io/nuzh2",
+      "study_r": null,
+      "es_type_o": null,
+      "es_type_r": "ser_method",
+      "audit_id": 2154,
+      "description": null,
+      "locators_o": "",
+      "locators_r": "",
+      "text_paths": {}
+    },
+    "work_key": "https://osf.io/nuzh2",
+    "coding_context": {
+      "es_repr": null,
+      "pval_tails": "2",
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

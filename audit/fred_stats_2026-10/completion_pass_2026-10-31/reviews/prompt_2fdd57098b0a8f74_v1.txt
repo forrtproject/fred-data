@@ -1,0 +1,92 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "2fdd57098b0a8f74",
+    "audit_id": 232,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Edwards, S. H., Kandru, N., & Rajagopal, M. B. M. (2017). Investigating Static Analysis Errors in Student Java Programs. Proceedings of the 2017 ACM Conference on International Computing Education Research, 65–73. https://doi.org/10.1145/3105726.3106182",
+      "doi_o": "10.1145/3105726.3106182",
+      "study_o": "1",
+      "ref_r": "Liu, D., Calver, J., & Craig, M. (2024). Are a Static Analysis Tool Study’s Findings Static? A Replication. Proceedings of the 2024 on Innovation and Technology in Computer Science Education V. 1, 80–86. https://doi.org/10.1145/3649217.3653545",
+      "doi_r": "10.1145/3649217.3653545",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "r",
+      "es_type_r": "r",
+      "description": "relationship between overall grades and all static analysis errors",
+      "locators_o": "p. 6",
+      "locators_r": "p. 4",
+      "audit_id": 232,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c458fb85f9f2380c9b7e1b3d.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c458fb85f9f2380c9b7e1b3d_drive.pdf",
+      "source_version_note": "Published article copy from private Google Drive archive"
+    },
+    "blind": {
+      "value": "−0.53",
+      "metric": "Pearson R",
+      "test_statistic": null,
+      "location": "p. 83 (PDF p. 4), section 4.4, first correlation",
+      "quote": "tive correlation between these two quantities (𝑅 = −0.53, 𝑝 < .001).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c458fb85f9f2380c9b7e1b3d.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 232,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "First Pearson correlation in section 4.4 concerns all PythonTA errors; the separate R = −0.54 concerns only Coding Flaws. Printed metric and sign preserved. Same-test p < .001 retained in checkpoint.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c458fb85f9f2380c9b7e1b3d.txt",
+      "location": "p. 83 (PDF p. 4), section 4.4",
+      "quote": "tive correlation between these two quantities (𝑅 = −0.53, 𝑝 < .001).",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Study 1, section 4.4: Pearson correlation of all PythonTA errors remaining in a final graded Python submission with percentage of correctness tests failed. This is the conceptual replication of the overall-grades/all-static-analysis-errors relationship, explicitly contrasted with the original in the same paragraph.",
+    "worker_notes": "Only assigned unfinished fields were evaluated; original is an unassigned placeholder. Same-test p < .001 retained with the printed R = −0.53. Preserve the printed negative sign despite the text describing percentage of correctness tests failed. The separate Coding Flaws correlation R = −0.54 is not this target. Table 1 prints 1270 participants, 34629 interim submissions, and 15060 final submissions; these are corpus counts, with no explicit N attached to the critical Pearson test. Section 4.4 continues on p. 84 with G1/G2/G3 counts 2086, 726, 641 for a distinct grouped coding-flaw correctness analysis; these were not summed or transferred to the all-errors correlation. No N derived from df. Authors provide a general paper-level verdict (Our findings are generally consistent with the Edwards et al. study, ... though with some notable differences.), but no explicit success/failure verdict for the assigned all-errors correlation; significance alone was not converted into replication success.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c458fb85f9f2380c9b7e1b3d.txt",
+    "shipped": "-0.53",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "relationship between overall grades and all static analysis errors",
+      "es_repr_o": "p. 6",
+      "es_repr_r": "p. 4",
+      "es_type_o": "r",
+      "es_type_r": "r",
+      "pval_type_o": null,
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "We confirm that almost a decade\nlater and even after being instructed to use the auto-formatting\noptions within their IDE, students still encounter mostly formatting errors when using a static analysis tool. We find that the second-\nmost common category of errors detected are “Coding Flaws”, and,\nlike Edwards et al., that the frequency of coding flaws identified by the static analysis tool correlates to program correctness."
+    },
+    "prior_adjudication": {
+      "audit_id": 232,
+      "field": "es_value_r",
+      "verdict": "shipped_right",
+      "correct_value": "-0.53",
+      "location": "p. 83 (PDF page 4), §4.4",
+      "quote": "(𝑅 = −0.53, 𝑝 < .001).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c458fb85f9f2380c9b7e1b3d.txt",
+      "reason": "Both shipped (-0.53) and blind (−0.53) match the Pearson correlation reported in §4.4 (confirmed on rendered PDF page 4 of the published article copy) between total PythonTA errors in final graded submissions and percentage of correctness tests failed, which the authors directly compare against the original study's all-errors correlation (R = -0.27).",
+      "resolution": "argon"
+    },
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/2fdd57098b0a8f74. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_2fdd57098b0a8f74_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

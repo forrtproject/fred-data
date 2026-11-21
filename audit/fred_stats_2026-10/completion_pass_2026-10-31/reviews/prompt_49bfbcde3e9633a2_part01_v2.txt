@@ -1,0 +1,198 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+ORIGINAL REVIEW PAYLOAD:
+[
+  {
+    "source_key": "49bfbcde3e9633a2",
+    "audit_id": 941,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Dessalegn, B., & Landau, B. (2008). More Than Meets the Eye. Psychological Science, 19(2), 189\u2013195. https://doi.org/10.1111/j.1467-9280.2008.02066.x",
+      "doi_o": "10.1111/j.1467-9280.2008.02066.x",
+      "study_o": "4",
+      "ref_r": "(2015). Estimating the reproducibility of psychological science. Science, 349(6251). https://doi.org/10.1126/science.aac4716",
+      "doi_r": "10.1126/science.aac4716",
+      "url_r": "https://osf.io/83n4z",
+      "study_r": "1",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "description": "Comparison of children\u2019s binding and maintenance of color\u2013shape feature conjunctions under directional language (e.g., \u201cto the left\u201d) versus relational language alone (e.g., \u201cnext to\u201d); table reference.",
+      "locators_o": "p. 5",
+      "locators_r": "p. 5",
+      "audit_id": 941,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use."
+    },
+    "blind": {
+      "value": "failed",
+      "location": "Authors project table Row.106 (More than meets the eye: the role of language in binding and maintaining feature conjunctions.); Replicate.R",
+      "quote": "no",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 941,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Explicit authors project-table Replicate.R yes/no assessment, mapped to the required vocabulary; not inferred from statistical significance.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt",
+      "location": "Authors project table Row.106 (More than meets the eye: the role of language in binding and maintaining feature conjunctions.); Replicate.R",
+      "quote": "no",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "More than meets the eye: the role of language in binding and maintaining feature conjunctions.; replicated original study 4; directional language (e.g., to the left) helps children bind color and shape information to a greater extent than relational language alone ( e.g., next to)",
+    "worker_notes": "Only assigned unfinished fields checked. Other fields and original side are unassigned placeholders. Source identity: Open Science Collaboration (2015) authors project data, RPPdataConverted.csv, as declared in supplied canonical text. Row correspondence checked using title, authors, replicated study and effect description; OSF report URLs may differ from parent project URLs. N.R is extracted only as named author-table replication N; analytic role and exclusions are not documented. No N inferred from degrees of freedom, and no effect-size conversion performed.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt",
+    "shipped": "mixed",
+    "comparison": "soft",
+    "coding_context": {
+      "description": "More than meets the eye: the role of language in binding and maintaining feature conjunctions.; table: directional language (e.g., to the left) helps children bind color and shape information to a greater extent than relational language alone ( e.g., next to)",
+      "es_repr_o": "p. 5; F(1, 34) = 5.8",
+      "es_repr_r": "p. 5",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": "2 (two)",
+      "pval_tails_r": "2 (two)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "The present study provides a partial replication of their findings. Specifically, while replicating the direction of the effect, we failed to replicate its size and significance even though the present study had greater power."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "49bfbcde3e9633a2",
+    "audit_id": 943,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Mirman, D., & Magnuson, J. S. (2008). Attractor dynamics and semantic neighborhood density: Processing is slowed by near neighbors and speeded by distant neighbors. Journal of Experimental Psychology: Learning, Memory, and Cognition, 34(1), 65\u201379. https://doi.org/10.1037/0278-7393.34.1.65",
+      "doi_o": "10.1037/0278-7393.34.1.65",
+      "study_o": "2",
+      "ref_r": "(2015). Estimating the reproducibility of psychological science. Science, 349(6251). https://doi.org/10.1126/science.aac4716",
+      "doi_r": "10.1126/science.aac4716",
+      "url_r": "https://osf.io/r57hu",
+      "study_r": "1",
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "description": "Comparison of processing and categorization time for words with many near neighbors (e.g., chicken) versus few near neighbors.",
+      "locators_o": "p. 12",
+      "locators_r": "p. 4",
+      "audit_id": 943,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use."
+    },
+    "blind": {
+      "value": "successful",
+      "location": "Authors project table Row.11 (Attractor dynamics and semantic neighborhood density: Processing is slowed by near neighbors and speeded by distant neighbors.); Replicate.R",
+      "quote": "yes",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 943,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Explicit authors project-table Replicate.R yes/no assessment, mapped to the required vocabulary; not inferred from statistical significance.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt",
+      "location": "Authors project table Row.11 (Attractor dynamics and semantic neighborhood density: Processing is slowed by near neighbors and speeded by distant neighbors.); Replicate.R",
+      "quote": "yes",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Attractor dynamics and semantic neighborhood density: Processing is slowed by near neighbors and speeded by distant neighbors.; replicated original study 2; Words with many near neighbors (e.g., chicken) were associated with an increased level of processing (i.e., categorized more slowly) compared to words with few near neighbors (e.g., hyena",
+    "worker_notes": "Only assigned unfinished fields checked. Other fields and original side are unassigned placeholders. Source identity: Open Science Collaboration (2015) authors project data, RPPdataConverted.csv, as declared in supplied canonical text. Row correspondence checked using title, authors, replicated study and effect description; OSF report URLs may differ from parent project URLs. N.R is extracted only as named author-table replication N; analytic role and exclusions are not documented. No N inferred from degrees of freedom, and no effect-size conversion performed.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt",
+    "shipped": "mixed",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "Words with many near neighbors (e.g., chicken) were associated with an increased level of processing (i.e., categorized more slowly) compared to words with few near neighbors",
+      "es_repr_o": "p. 12; F(1, 21) = 17.3",
+      "es_repr_r": "p. 4; F (1, 29) = 8.064",
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq (partial)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "e (=)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "The present findings indicate a successful replication attempt in terms of statistical significance. Specifically, a statistically \u201csignificant\u201d (i.e., p < .01) effect of nearnessin the predicted direction was found in our replication study, replicating what was observed in the original study. However, the observed effect size in our replication (partial\u03b72= .22) was smaller than the effect size observed inthe original study(partial \u03b72= .45)."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+FIRST REVIEW FINDINGS:
+[
+  {
+    "audit_id": 941,
+    "field": "reported_success",
+    "verdict": "blind_right",
+    "correct_value": "failed",
+    "correct_metric": null,
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": true,
+    "location": "RPPdataConverted.csv Row.106 (line 109); Replicated.study.number.R, Description.of.effect.O, Replicate.R",
+    "quote": "\"t(45) = 1.534\",47,0.132,\"same\",2,\"ANOVA\",\"main effect\",\"no\",0.8,\"d = .48\"",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt",
+    "reason": "Row.106 uniquely identifies the replication of Dessalegn and Landau (2008) Study 4 on directional versus relational language and explicitly records Replicate.R = 'no' ('failed') in the supplied primary project table; the shipped 'mixed' label came from external report text not present in this canonical source.",
+    "resolution": "argon",
+    "completion_pass": "2026-10-31",
+    "replaces_unverified": true
+  },
+  {
+    "audit_id": 943,
+    "field": "reported_success",
+    "verdict": "blind_right",
+    "correct_value": "successful",
+    "correct_metric": null,
+    "correct_bound": null,
+    "target_match_confirmed": true,
+    "effect_specific_verdict_confirmed": true,
+    "location": "RPPdataConverted.csv Row.11 (line 14); Replicated.study.number.R, Description.of.effect.O, Replicate.R",
+    "quote": "\"F (1, 29) = 8.064\",30,0.008,\"same\",NA,\"RM ANOVA\",\"main effect\",\"yes\",0.99,\"__p^2 = .218\"",
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/33227181ad90cb9bac7c35c7.txt",
+    "reason": "Row.11 uniquely identifies the replication of Mirman and Magnuson (2008) Study 2 on near-neighbor semantic processing and explicitly records Replicate.R = 'yes' ('successful') in the supplied project table; the shipped 'mixed' value relied on external report text outside this canonical source.",
+    "resolution": "argon",
+    "completion_pass": "2026-10-31",
+    "replaces_unverified": true
+  }
+]
+
+PARENT UNRESOLVED OBJECTION:
+FOCUSED SECOND ROUND: Only reported_success for audit941 and943. The first review replaced mixed with failed/successful using Replicate.R=no/yes in the authors RPP project table. However, reported_success is the authors narrative outcome, not automatically the project statistical-significance criterion. The supplied shipped coding_context quotes (not independently verified primary evidence by themselves) describe partial replication for941 and successful significance with smaller size for943. Do not dismiss these conflicts merely because their individual primary reports are absent from the supplied cache. Independently determine whether the primary table actually establishes a matching effect-specific NARRATIVE criterion. A yes/no project-table field need not settle mixed narrative coding. Do not infer success from significance. You may cross-check the second primary RPP table at /home/lukas/cloud-data/fred-stats-2026-10-b48a7d6-20261029T092009Z/texts/689aec8a424360e5f712a7a7.txt. No individual primary replication reports are supplied and no acquisition is authorised. Do not assume the shipped quotations are true or automatically declare them wrong. If narrative criteria/source conflict cannot be resolved from the supplied primary evidence, return undeterminable with null correct_value and no effect-specific confirmation. If resolving it, explain the criterion mapping with primary evidence. Source_path and quote must remain the assigned canonical33227181 text; use literal ordered fragments with explicit ellipses. Do not overwrite v1.
+
+Return complete strict JSON for these2items only, using the same schema and evidence requirements. Write /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_49bfbcde3e9633a2_part01_v2.json and include the same JSON under ## Answer. Aim8min hard12min. No paid APIs, acquisition, delegation, Git or other files.

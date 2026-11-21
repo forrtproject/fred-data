@@ -1,0 +1,1367 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "740": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in judgments of applicability of the insanity defense.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 3",
+        "audit_id": 740,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on insanity defense; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "main effect of condition on the applicability of the insanity defense",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 3",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "741": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in judgments of the diminished-capacity defense.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 3",
+        "audit_id": 741,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on diminished capacity defense; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "main effect of condition for the diminished capacity defense",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 3",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "742": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in judgments of the intoxication defense.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 3",
+        "audit_id": 742,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on intoxication defense; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "main effect of condition on the intoxication defense",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 3",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "743": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in sentencing.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 4",
+        "audit_id": 743,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on sentencing; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "main effect of condition on the sentencing",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 4",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "744": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in perceived conscious control.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 4",
+        "audit_id": 744,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on perceived conscious control; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "significant effect of condition on perceived conscious control",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 4",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "745": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in perceived recidivism.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 4",
+        "audit_id": 745,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on perceived recidivism; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders. Recidivism and intention to kill share an explicit sentence reporting Fs < 2.00, ps > .200, and partial eta-squared values of 0.01; no exact individual F or p is printed there. Preserve the shared bounds.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "effect of condition on perceived recidivism",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 4",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "746": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in perceived intention to kill.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 4",
+        "audit_id": 746,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on intention to kill; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders. Recidivism and intention to kill share an explicit sentence reporting Fs < 2.00, ps > .200, and partial eta-squared values of 0.01; no exact individual F or p is printed there. Preserve the shared bounds.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "effect of condition on perceived intention to kill",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 4",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "747": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in criminal responsibility.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 5",
+        "audit_id": 747,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on criminal responsibility; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "effect of condition on criminal responsibility",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 5",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "748": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in causal locus.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 5",
+        "audit_id": 748,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on causal locus; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "effect of condition on causal locus",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 5",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "749": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in causal stability.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 5",
+        "audit_id": 749,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on causal stability; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "effect of condition on causal stability",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 5",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "750": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in causal specificity.",
+        "locators_o": "p. 9",
+        "locators_r": "p. 5",
+        "audit_id": 750,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on causal specificity; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "effect of condition on causal specificity",
+        "es_repr_o": "p. 9",
+        "es_repr_r": "p. 5",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "751": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in causal control.",
+        "locators_o": "p. 10",
+        "locators_r": "p. 5",
+        "audit_id": 751,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on causal control; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "effect of condition on causal control",
+        "es_repr_o": "p. 10",
+        "es_repr_r": "p. 5",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    },
+    "752": {
+      "source_key": "f9152a3d81dfd8f9",
+      "side": "original",
+      "input": {
+        "ref_o": "Cheung, B. Y., & Heine, S. J. (2015). The Double-Edged Sword of Genetic Accounts of Criminality. Personality and Social Psychology Bulletin, 41(12), 1723–1738. https://doi.org/10.1177/0146167215610520",
+        "doi_o": "10.1177/0146167215610520",
+        "study_o": "3",
+        "ref_r": "Crawford, J. (2016). <i>Syntax and output files for Cheung &amp; Heine 2015 study 3 replication</i>. https://doi.org/10.17605/OSF.IO/E9D3K",
+        "doi_r": "10.17605/osf.io/e9d3k",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "description": "Condition comparison in causal malleability.",
+        "locators_o": "p. 10",
+        "locators_r": "p. 6",
+        "audit_id": 752,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Study 3 four-condition main effect on causal malleability; one-way ANCOVA with political orientation as covariate. Named outcome and page locator identify the omnibus condition test; pairwise contrasts are separately reported.",
+      "worker_notes": "Identity checked independently against the document header: The Double-Edged Sword of Genetic Accounts of Criminality: Causal Attributions From Genetic Ascriptions Affect Legal Decision Making; Benjamin Y. Cheung and Steven J. Heine; Personality and Social Psychology Bulletin 2015, 41(12), 1723–1738; DOI 10.1177/0146167215610520. Supplied canonical text is a primary journal-article PDF parse, with Study 3 methods and results present. No PDF path supplied; no rendering performed. Study 3 reports 303 recruited and an effective sample of 298 passing comprehension checks, but does not explicitly give the outcome-specific ANCOVA analytic N or final mutually exclusive group counts. Outcome-specific residual degrees of freedom vary; no N is derived from df. No effect-size conversion performed. Replication and reported_success are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "effect of condition on causal malleability",
+        "es_repr_o": "p. 10",
+        "es_repr_r": "p. 6",
+        "es_type_o": "etasq (partial)",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "[Coded by authors as succcess in post-completion registration: https://osf.io/e9d3k.] The pattern of findings in the replication study was either identical or quite similar to the pattern of findings from the original study on eleven of the thirteen ANCOVA analyses."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 740,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.04",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 290) = 4.53",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "applicability of the insanity defense, F(3, 290) = 4.53, ... p = .004, ηp = 0.04, 95% CI = [0.00, 0.09].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 740,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "applicability of the insanity defense, F(3, 290) = 4.53, ... p = .004, ηp = 0.04, 95% CI = [0.00, 0.09].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.04",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 740,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".004",
+        "bound": "e",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "applicability of the insanity defense, F(3, 290) = 4.53, ... p = .004, ηp = 0.04, 95% CI = [0.00, 0.09].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 740,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "applicability of the insanity defense, F(3, 290) = 4.53, ... p = .004, ηp = 0.04, 95% CI = [0.00, 0.09].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.004",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 741,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.12",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 289) = 12.82",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "There was a main effect of Condition for the diminished ... capacity defense, F(3, 289) = 12.82, p < .001, ηp = 0.12, 95%",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 741,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "There was a main effect of Condition for the diminished ... capacity defense, F(3, 289) = 12.82, p < .001, ηp = 0.12, 95%",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.12",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 741,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "There was a main effect of Condition for the diminished ... capacity defense, F(3, 289) = 12.82, p < .001, ηp = 0.12, 95%",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 741,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "There was a main effect of Condition for the diminished ... capacity defense, F(3, 289) = 12.82, p < .001, ηp = 0.12, 95%",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 742,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.01",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 289) = 1.10",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "There was no main effect of Condition on the intoxica- ... tion defense, F(3, 289) = 1.10, p = .349, ηp = 0.01, 95%",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 742,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "There was no main effect of Condition on the intoxica- ... tion defense, F(3, 289) = 1.10, p = .349, ηp = 0.01, 95%",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 742,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".349",
+        "bound": "e",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "There was no main effect of Condition on the intoxica- ... tion defense, F(3, 289) = 1.10, p = .349, ηp = 0.01, 95%",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 742,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Defense claims",
+        "quote": "There was no main effect of Condition on the intoxica- ... tion defense, F(3, 289) = 1.10, p = .349, ηp = 0.01, 95%",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.349",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 743,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.07",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 291) = 7.48",
+        "location": "1731 (article p. 9), Study 3 Results, Sentencing",
+        "quote": "Sentencing. Unlike Studies 1 and 2, but replicating other ... 2011), there was a main effect of Condition, F(3, 291) = ... 7.48, p < .001, ηp = 0.07, 95% CI = [0.02, 0.13].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 743,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Sentencing",
+        "quote": "Sentencing. Unlike Studies 1 and 2, but replicating other ... 2011), there was a main effect of Condition, F(3, 291) = ... 7.48, p < .001, ηp = 0.07, 95% CI = [0.02, 0.13].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.07",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 743,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "1731 (article p. 9), Study 3 Results, Sentencing",
+        "quote": "Sentencing. Unlike Studies 1 and 2, but replicating other ... 2011), there was a main effect of Condition, F(3, 291) = ... 7.48, p < .001, ηp = 0.07, 95% CI = [0.02, 0.13].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 743,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Sentencing",
+        "quote": "Sentencing. Unlike Studies 1 and 2, but replicating other ... 2011), there was a main effect of Condition, F(3, 291) = ... 7.48, p < .001, ηp = 0.07, 95% CI = [0.02, 0.13].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 744,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.10",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 290) = 10.82",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "there was a significant effect of Condition on perceived con- ... trol, F(3, 290) = 10.82, p < .001, ηp = 0.10, 95% CI = [0.04,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 744,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "there was a significant effect of Condition on perceived con- ... trol, F(3, 290) = 10.82, p < .001, ηp = 0.10, 95% CI = [0.04,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.1",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 744,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "there was a significant effect of Condition on perceived con- ... trol, F(3, 290) = 10.82, p < .001, ηp = 0.10, 95% CI = [0.04,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 744,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "there was a significant effect of Condition on perceived con- ... trol, F(3, 290) = 10.82, p < .001, ηp = 0.10, 95% CI = [0.04,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 745,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.01",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "Fs < 2.00 (joint report for recidivism and intention to kill)",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition did not affect perceived recidivism or intention ... to kill, Fs < 2.00, ps > .200, ηp s = 0.01.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 745,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect. The sentence explicitly reports both recidivism and intention to kill together.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition did not affect perceived recidivism or intention ... to kill, Fs < 2.00, ps > .200, ηp s = 0.01.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 745,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".200",
+        "bound": "g",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition did not affect perceived recidivism or intention ... to kill, Fs < 2.00, ps > .200, ηp s = 0.01.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 745,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound. The sentence explicitly reports both recidivism and intention to kill together.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition did not affect perceived recidivism or intention ... to kill, Fs < 2.00, ps > .200, ηp s = 0.01.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.2",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 746,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.01",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "Fs < 2.00 (joint report for recidivism and intention to kill)",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition did not affect perceived recidivism or intention ... to kill, Fs < 2.00, ps > .200, ηp s = 0.01.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 746,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect. The sentence explicitly reports both recidivism and intention to kill together.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition did not affect perceived recidivism or intention ... to kill, Fs < 2.00, ps > .200, ηp s = 0.01.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 746,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".200",
+        "bound": "g",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition did not affect perceived recidivism or intention ... to kill, Fs < 2.00, ps > .200, ηp s = 0.01.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 746,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound. The sentence explicitly reports both recidivism and intention to kill together.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition did not affect perceived recidivism or intention ... to kill, Fs < 2.00, ps > .200, ηp s = 0.01.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.2",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 747,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.04",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 291) = 4.31",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition significantly affected criminal responsibility, ... F(3, 291) = 4.31, p = .005, ηp = 0.04, 95% CI = [0.00, 0.09].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 747,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition significantly affected criminal responsibility, ... F(3, 291) = 4.31, p = .005, ηp = 0.04, 95% CI = [0.00, 0.09].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.04",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 747,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".005",
+        "bound": "e",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition significantly affected criminal responsibility, ... F(3, 291) = 4.31, p = .005, ηp = 0.04, 95% CI = [0.00, 0.09].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 747,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Perpetrator-relevant perceptions",
+        "quote": "Condition significantly affected criminal responsibility, ... F(3, 291) = 4.31, p = .005, ηp = 0.04, 95% CI = [0.00, 0.09].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.005",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 748,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.08",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 290) = 8.65",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Causal attributions. Condition significantly affected causal ... locus, F(3, 290) = 8.65, p < .001, ηp = 0.08, 95% CI =",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 748,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Causal attributions. Condition significantly affected causal ... locus, F(3, 290) = 8.65, p < .001, ηp = 0.08, 95% CI =",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.08",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 748,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Causal attributions. Condition significantly affected causal ... locus, F(3, 290) = 8.65, p < .001, ηp = 0.08, 95% CI =",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 748,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Causal attributions. Condition significantly affected causal ... locus, F(3, 290) = 8.65, p < .001, ηp = 0.08, 95% CI =",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 749,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".01",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 291) = 0.67",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Condition did not affect causal stability, F(3, 291) = 0.67, ... p = .568, ηp = .01, 95% CI = [0.00, 0.03].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 749,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Condition did not affect causal stability, F(3, 291) = 0.67, ... p = .568, ηp = .01, 95% CI = [0.00, 0.03].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 749,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".568",
+        "bound": "e",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Condition did not affect causal stability, F(3, 291) = 0.67, ... p = .568, ηp = .01, 95% CI = [0.00, 0.03].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 749,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Condition did not affect causal stability, F(3, 291) = 0.67, ... p = .568, ηp = .01, 95% CI = [0.00, 0.03].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.568",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 750,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.11",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 289) = 11.50",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Condition significantly affected causal specificity, F(3, ... 289) = 11.50, p < .001, ηp = 0.11, 95% CI = [0.04, 0.17].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 750,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Condition significantly affected causal specificity, F(3, ... 289) = 11.50, p < .001, ηp = 0.11, 95% CI = [0.04, 0.17].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.11",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 750,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".001",
+        "bound": "l",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Condition significantly affected causal specificity, F(3, ... 289) = 11.50, p < .001, ηp = 0.11, 95% CI = [0.04, 0.17].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 750,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1731 (article p. 9), Study 3 Results, Causal attributions",
+        "quote": "Condition significantly affected causal specificity, F(3, ... 289) = 11.50, p < .001, ηp = 0.11, 95% CI = [0.04, 0.17].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.001",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 751,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.01",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 289) = 0.60",
+        "location": "1732 (article p. 10), Study 3 Results, Causal attributions",
+        "quote": "Condition did not affect causal control, F(3, 289) = 0.60, ... p = .613, ηp = 0.01, 95% CI = [0.00, 0.02].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 751,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1732 (article p. 10), Study 3 Results, Causal attributions",
+        "quote": "Condition did not affect causal control, F(3, 289) = 0.60, ... p = .613, ηp = 0.01, 95% CI = [0.00, 0.02].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 751,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".613",
+        "bound": "e",
+        "location": "1732 (article p. 10), Study 3 Results, Causal attributions",
+        "quote": "Condition did not affect causal control, F(3, 289) = 0.60, ... p = .613, ηp = 0.01, 95% CI = [0.00, 0.02].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 751,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1732 (article p. 10), Study 3 Results, Causal attributions",
+        "quote": "Condition did not affect causal control, F(3, 289) = 0.60, ... p = .613, ηp = 0.01, 95% CI = [0.00, 0.02].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.613",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 752,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.02",
+        "metric": "partial eta-squared (printed ηp with superscript 2)",
+        "test_statistic": "F(3, 290) = 2.15",
+        "location": "1732 (article p. 10), Study 3 Results, Causal attributions",
+        "quote": "Condition marginally affected causal malleability, F(3, 290) ... = 2.15, p = .095, ηp = 0.02, 95% CI = [0.00, 0.06].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 752,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the named Study 3 condition main effect.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1732 (article p. 10), Study 3 Results, Causal attributions",
+        "quote": "Condition marginally affected causal malleability, F(3, 290) ... = 2.15, p = .095, ηp = 0.02, 95% CI = [0.00, 0.06].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.02",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 752,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".095",
+        "bound": "e",
+        "location": "1732 (article p. 10), Study 3 Results, Causal attributions",
+        "quote": "Condition marginally affected causal malleability, F(3, 290) ... = 2.15, p = .095, ηp = 0.02, 95% CI = [0.00, 0.06].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 752,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed p for the same Study 3 condition main effect, preserving the stated bound.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4f4a2c3fd308e16141d966e8.txt",
+        "location": "1732 (article p. 10), Study 3 Results, Causal attributions",
+        "quote": "Condition marginally affected causal malleability, F(3, 290) ... = 2.15, p = .095, ηp = 0.02, 95% CI = [0.00, 0.06].",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.095",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/f9152a3d81dfd8f9. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_f9152a3d81dfd8f9_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+Large-batch reply override: write the COMPLETE strict JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_f9152a3d81dfd8f9_v1.json, but reply ONLY with its path and item count. Do not echo the array. This overrides earlier reply-format instructions only; all source/evidence/target requirements still apply.

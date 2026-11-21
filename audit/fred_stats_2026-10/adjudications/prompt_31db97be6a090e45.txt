@@ -1,0 +1,44 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 550,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "F(1, 431) = 5.24",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "4.63",
+      "location": "p. 7, Study 3 Results",
+      "quote": "a significant effect of healthy side in the reference food on calorie estimates (F(1,431) = 4.63, p = 0.03)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d69dbc74cd2e6aa3e761497e.txt",
+      "confident": true,
+      "metric": "F",
+      "test_statistic": "F(1,431) = 4.63"
+    },
+    "locator": {
+      "ref_o": "Forwood, S. E., Ahern, A., Hollands, G. J., Fletcher, P. C., & Marteau, T. M. (2013). Underestimating Calorie Content When Healthy Foods Are Present: An Averaging Effect or a Reference-Dependent Anchoring Effect? PLoS ONE, 8(8), e71475. https://doi.org/10.1371/journal.pone.0071475",
+      "doi_o": "10.1371/journal.pone.0071475",
+      "study_o": "3",
+      "ref_r": "Boyce, V., Mathur, M., & Frank, M. C. (2023). Eleven years of student replication projects provide evidence on the correlates of replicability in psychology. Royal Society Open Science, 10(11). https://doi.org/10.1098/rsos.231240",
+      "doi_r": "10.1098/rsos.231240",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 550,
+      "description": "Calorie estimates in the presence of healthy foods, including the role of reference food and averaging versus reference-dependent anchoring.",
+      "locators_o": "p. 7",
+      "locators_r": "https://github.com/vboyce/251-254-MA/blob/main/data/processed_data.csv",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d69dbc74cd2e6aa3e761497e.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2736b815e9f115a425e9220a.txt"
+      }
+    },
+    "work_key": "10.1098/rsos.231240"
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

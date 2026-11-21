@@ -1,0 +1,91 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1006": {
+      "source_key": "332af5928d37da9b",
+      "side": "original",
+      "input": {
+        "ref_o": "Mitchell, C., Nash, S., & Hall, G. (2008). The intermixed-blocked effect in human perceptual learning is not the consequence of trial spacing. Journal of Experimental Psychology: Learning, Memory, and Cognition, 34(1), 237–242. https://doi.org/10.1037/0278-7393.34.1.237",
+        "doi_o": "10.1037/0278-7393.34.1.237",
+        "study_o": "2",
+        "ref_r": "(2015). Estimating the reproducibility of psychological science. Science, 349(6251). https://doi.org/10.1126/science.aac4716",
+        "doi_r": "10.1126/science.aac4716",
+        "url_r": "https://osf.io/4xdkk",
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Discrimination of AX and BX at test after preexposure in which AX and BX were intermixed versus AX and BY were intermixed.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 9",
+        "audit_id": 1006,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a89bc48fd309a25a7d5d332c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 2, within-participant AX/BX versus CX/DY preexposure comparison: overall accuracy for AX (or BX) versus CX on critical same/different trials, collapsed across test-trial type. The physical discrimination on different trials is each target compound versus X, not a direct AX-versus-BX test.",
+      "worker_notes": "Identity independently checked: supplied text is the full six-page primary journal report, The Intermixed–Blocked Effect in Human Perceptual Learning Is Not the Consequence of Trial Spacing, Chris Mitchell, Scott Nash, Geoffrey Hall; Journal of Experimental Psychology: Learning, Memory, and Cognition 34(1), 237–242 (2008), DOI 10.1037/0278-7393.34.1.237. Header, authors, DOI, article body and references match the neutral reference. No PDF path supplied, so no PDF rendering performed. Target selected by Experiment 2 design and explicitly described training-condition contrast, not numeric or row-order matching. The p. 240 main effect of same versus different test trials (F = 70.21) and interaction (F < 1) are different tests and are not substituted. The requested printed test statistic is F = 8.38. No same-test numeric p or bound is printed; p < .05 on p. 239 specifies the general significance criterion and is not extracted as a same-test p bound. Candidate participant N = 32 is explicitly reported for the experiment; retained only as a candidate because no explicit final analytic sample for the critical model is identified. No N inferred from denominator degrees of freedom. No arithmetic or effect-size conversion performed. Unassigned replication and reported_success entries are placeholders only.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a89bc48fd309a25a7d5d332c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Perceptual learning (better discrimination of AX and BX on test) was observed when AX and BX were intermixed in preexposure but not when AX was intermixed with BY.",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 9",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "no marked in Replicate column"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1006,
+      "field": "es_value_o",
+      "blind": {
+        "value": "8.38",
+        "metric": "F",
+        "test_statistic": "F(1, 31) = 8.38; MSE = 0.106",
+        "location": "p. 240 (PDF-text page 4), Experiment 2 Results and Discussion, contrast of overall performance across the two types of test",
+        "quote": "F(1, 31) ⫽ 8.38, MSE ⫽ 0.106.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a89bc48fd309a25a7d5d332c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1006,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Experiment 2 explicitly compares overall performance for AX/BX versus CX/DY preexposure across same and different critical test trials. The printed F statistic is the requested test-statistic metric.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a89bc48fd309a25a7d5d332c.txt",
+        "location": "p. 240, Experiment 2 Results and Discussion",
+        "quote": "F(1, 31) ⫽ 8.38, MSE ⫽ 0.106.",
+        "calculation": "None; printed F = 8.38 retained without conversion."
+      },
+      "supported": true,
+      "shipped": "F(1, 31) = 8.38",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/332af5928d37da9b. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_332af5928d37da9b_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

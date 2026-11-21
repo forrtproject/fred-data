@@ -1,0 +1,477 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "223": {
+      "source_key": "1718897326b729f2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Barrett, F. S., Grimm, K. J., Robins, R. W., Wildschut, T., Sedikides, C., & Janata, P. (2010). Music-evoked nostalgia: Affect, memory, and personality. Emotion, 10(3), 390–403. https://doi.org/10.1037/a0019006",
+        "doi_o": "10.1037/a0019006",
+        "study_o": "1",
+        "ref_r": "Hennessy, S., Greer, T., Narayanan, S., & Habibi, A. (2024). Unique affective profile of music-evoked nostalgia: An extension and conceptual replication of Barrett et al.’s (2010) study. Emotion, 24(8), 1803–1825. https://doi.org/10.1037/emo0001389",
+        "doi_r": "10.1037/emo0001389",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Effects of context-level measures on music-evoked nostalgia (arousal)",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5-6",
+        "audit_id": 223,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Context models distinguish high arousal (β=3.89, t(1681)=39.27, adjusted p<.001, f²=0.49) and low arousal (β=0.08, adjusted p>1, f² approximately 0.00), Table 5 p.7. Locator does not specify high versus low. The authors model arousal as outcome and nostalgia/control as categorical predictor, rather than nostalgia ratings as outcome.",
+      "worker_notes": "Identity verified independently: supplied text has matching title Unique Affective Profile of Music-Evoked Nostalgia: An Extension and Conceptual Replication of Barrett et al.’s (2010) Study, authors Sarah Hennessy, Timothy Greer, Shrikanth Narayanan, Assal Habibi, and DOI 10.1037/emo0001389. It is the primary research article (2024 advance online publication), with Methods, Results, Discussion, tables and references through printed p.23; not merely an abstract. No PDF was supplied. Original side and unassigned fields are placeholders only. The requested standardized beta is not established: context variables were raw and not standardized; person scores were mean-centered, not described as standardized. Printed β coefficients and Cohen’s f² candidates are retained without conversion. Context models distinguish high arousal (β=3.89, t(1681)=39.27, adjusted p<.001, f²=0.49) and low arousal (β=0.08, adjusted p>1, f² approximately 0.00), Table 5 p.7. Locator does not specify high versus low. The authors model arousal as outcome and nostalgia/control as categorical predictor, rather than nostalgia ratings as outcome. Common candidate-model sample is explicitly N=582 participant clusters and 2,234 song observations. It is retained only as a candidate because row-to-test mapping is unresolved. Participants with improper responses (14) or no matched control songs (172) were excluded; unmatched song pairs were excluded. No N was inferred from df and no arithmetic sum was used.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Effects of context-level measures on music-evoked nostalgia (arousal)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5-6",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We demonstrate affective and person-level\ncontributors to music-evoked nostalgia observed in Barrett et al.’s (2010) hold even when controlling for\nfamiliarity and musical features."
+      }
+    },
+    "224": {
+      "source_key": "1718897326b729f2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Barrett, F. S., Grimm, K. J., Robins, R. W., Wildschut, T., Sedikides, C., & Janata, P. (2010). Music-evoked nostalgia: Affect, memory, and personality. Emotion, 10(3), 390–403. https://doi.org/10.1037/a0019006",
+        "doi_o": "10.1037/a0019006",
+        "study_o": "1",
+        "ref_r": "Hennessy, S., Greer, T., Narayanan, S., & Habibi, A. (2024). Unique affective profile of music-evoked nostalgia: An extension and conceptual replication of Barrett et al.’s (2010) study. Emotion, 24(8), 1803–1825. https://doi.org/10.1037/emo0001389",
+        "doi_r": "10.1037/emo0001389",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Effects of context-level measures on music-evoked nostalgia (positive emotions)",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5-6",
+        "audit_id": 224,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": false,
+      "worker_target_description": "Positive valence is uniquely identified in the context-only comparison: β=3.94, t(1700)=41.76, adjusted p<.001, Table 4 p.7 and Results p.5. The model predicts positive valence from nostalgia/control song condition; this is a conceptual replication with changed model direction, not the original continuous-nostalgia regression. Narrative f²=0.61 (p.5) and Table 4 f²=0.62 differ; retained β instead.",
+      "worker_notes": "Identity verified independently: supplied text has matching title Unique Affective Profile of Music-Evoked Nostalgia: An Extension and Conceptual Replication of Barrett et al.’s (2010) Study, authors Sarah Hennessy, Timothy Greer, Shrikanth Narayanan, Assal Habibi, and DOI 10.1037/emo0001389. It is the primary research article (2024 advance online publication), with Methods, Results, Discussion, tables and references through printed p.23; not merely an abstract. No PDF was supplied. Original side and unassigned fields are placeholders only. The requested standardized beta is not established: context variables were raw and not standardized; person scores were mean-centered, not described as standardized. Printed β coefficients and Cohen’s f² candidates are retained without conversion. Positive valence is uniquely identified in the context-only comparison: β=3.94, t(1700)=41.76, adjusted p<.001, Table 4 p.7 and Results p.5. The model predicts positive valence from nostalgia/control song condition; this is a conceptual replication with changed model direction, not the original continuous-nostalgia regression. Narrative f²=0.61 (p.5) and Table 4 f²=0.62 differ; retained β instead. Target_match is false for the literal supplied outcome/test: the source explicitly changes from predictors of continuous nostalgia to categorical nostalgia/control predicting positive valence. The printed coefficient is retained with this mismatch visible, not asserted to be the original-form target regression.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Effects of context-level measures on music-evoked nostalgia (positive emotions)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5-6",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We demonstrate affective and person-level\ncontributors to music-evoked nostalgia observed in Barrett et al.’s (2010) hold even when controlling for\nfamiliarity and musical features."
+      }
+    },
+    "225": {
+      "source_key": "1718897326b729f2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Barrett, F. S., Grimm, K. J., Robins, R. W., Wildschut, T., Sedikides, C., & Janata, P. (2010). Music-evoked nostalgia: Affect, memory, and personality. Emotion, 10(3), 390–403. https://doi.org/10.1037/a0019006",
+        "doi_o": "10.1037/a0019006",
+        "study_o": "1",
+        "ref_r": "Hennessy, S., Greer, T., Narayanan, S., & Habibi, A. (2024). Unique affective profile of music-evoked nostalgia: An extension and conceptual replication of Barrett et al.’s (2010) study. Emotion, 24(8), 1803–1825. https://doi.org/10.1037/emo0001389",
+        "doi_r": "10.1037/emo0001389",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Effects of context-level measures on music-evoked nostalgia (mixed emotions)",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5-6",
+        "audit_id": 225,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Two context-only mixedness tests are explicitly reported: Griffin β=−1.47, t(524)=−13.34, adjusted p<.001, f²=0.086; MIN β=0.26, t(522)=4.03, adjusted p<.001, f²=0.009 (p.5; Table 6 p.8). Description does not choose the mixedness formula. Outcomes are mixedness ratings with nostalgia/control condition predictor.",
+      "worker_notes": "Identity verified independently: supplied text has matching title Unique Affective Profile of Music-Evoked Nostalgia: An Extension and Conceptual Replication of Barrett et al.’s (2010) Study, authors Sarah Hennessy, Timothy Greer, Shrikanth Narayanan, Assal Habibi, and DOI 10.1037/emo0001389. It is the primary research article (2024 advance online publication), with Methods, Results, Discussion, tables and references through printed p.23; not merely an abstract. No PDF was supplied. Original side and unassigned fields are placeholders only. The requested standardized beta is not established: context variables were raw and not standardized; person scores were mean-centered, not described as standardized. Printed β coefficients and Cohen’s f² candidates are retained without conversion. Two context-only mixedness tests are explicitly reported: Griffin β=−1.47, t(524)=−13.34, adjusted p<.001, f²=0.086; MIN β=0.26, t(522)=4.03, adjusted p<.001, f²=0.009 (p.5; Table 6 p.8). Description does not choose the mixedness formula. Outcomes are mixedness ratings with nostalgia/control condition predictor. Common candidate-model sample is explicitly N=582 participant clusters and 2,234 song observations. It is retained only as a candidate because row-to-test mapping is unresolved. Participants with improper responses (14) or no matched control songs (172) were excluded; unmatched song pairs were excluded. No N was inferred from df and no arithmetic sum was used.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Effects of context-level measures on music-evoked nostalgia (mixed emotions)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5-6",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We demonstrate affective and person-level\ncontributors to music-evoked nostalgia observed in Barrett et al.’s (2010) hold even when controlling for\nfamiliarity and musical features."
+      }
+    },
+    "226": {
+      "source_key": "1718897326b729f2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Barrett, F. S., Grimm, K. J., Robins, R. W., Wildschut, T., Sedikides, C., & Janata, P. (2010). Music-evoked nostalgia: Affect, memory, and personality. Emotion, 10(3), 390–403. https://doi.org/10.1037/a0019006",
+        "doi_o": "10.1037/a0019006",
+        "study_o": "1",
+        "ref_r": "Hennessy, S., Greer, T., Narayanan, S., & Habibi, A. (2024). Unique affective profile of music-evoked nostalgia: An extension and conceptual replication of Barrett et al.’s (2010) study. Emotion, 24(8), 1803–1825. https://doi.org/10.1037/emo0001389",
+        "doi_r": "10.1037/emo0001389",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Effects of person level predictors on music-evoked nostalgia (Nostalgia proneness)",
+        "locators_o": "p. 5",
+        "locators_r": "p. 5",
+        "audit_id": 226,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "SNS nostalgia-proneness appears in three nostalgia-rating models: individual SNS β=0.20, t(2232)=3.16, p<.01, f²=0.004; combined TIPI/PANAS/SNS β=0.19, t(2225)=2.77, p<.01, f²=0.003; combined BANPS/PANAS/SNS β=0.20, t(2224)=2.70, p<.01, f²=0.003 (p.5). Table 7 p.9 gives .006 and .007 for the two combined-model p values. Locator does not choose a model; do not use identical rounded β values to resolve it.",
+      "worker_notes": "Identity verified independently: supplied text has matching title Unique Affective Profile of Music-Evoked Nostalgia: An Extension and Conceptual Replication of Barrett et al.’s (2010) Study, authors Sarah Hennessy, Timothy Greer, Shrikanth Narayanan, Assal Habibi, and DOI 10.1037/emo0001389. It is the primary research article (2024 advance online publication), with Methods, Results, Discussion, tables and references through printed p.23; not merely an abstract. No PDF was supplied. Original side and unassigned fields are placeholders only. The requested standardized beta is not established: context variables were raw and not standardized; person scores were mean-centered, not described as standardized. Printed β coefficients and Cohen’s f² candidates are retained without conversion. SNS nostalgia-proneness appears in three nostalgia-rating models: individual SNS β=0.20, t(2232)=3.16, p<.01, f²=0.004; combined TIPI/PANAS/SNS β=0.19, t(2225)=2.77, p<.01, f²=0.003; combined BANPS/PANAS/SNS β=0.20, t(2224)=2.70, p<.01, f²=0.003 (p.5). Table 7 p.9 gives .006 and .007 for the two combined-model p values. Locator does not choose a model; do not use identical rounded β values to resolve it.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Effects of person level predictors on music-evoked nostalgia (Nostalgia proneness)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 5",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We demonstrate affective and person-level\ncontributors to music-evoked nostalgia observed in Barrett et al.’s (2010) hold even when controlling for\nfamiliarity and musical features."
+      }
+    },
+    "227": {
+      "source_key": "1718897326b729f2",
+      "side": "replication",
+      "input": {
+        "ref_o": "Barrett, F. S., Grimm, K. J., Robins, R. W., Wildschut, T., Sedikides, C., & Janata, P. (2010). Music-evoked nostalgia: Affect, memory, and personality. Emotion, 10(3), 390–403. https://doi.org/10.1037/a0019006",
+        "doi_o": "10.1037/a0019006",
+        "study_o": "1",
+        "ref_r": "Hennessy, S., Greer, T., Narayanan, S., & Habibi, A. (2024). Unique affective profile of music-evoked nostalgia: An extension and conceptual replication of Barrett et al.’s (2010) study. Emotion, 24(8), 1803–1825. https://doi.org/10.1037/emo0001389",
+        "doi_r": "10.1037/emo0001389",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "description": "Interaction of context-level and person-level predictors on music-evoked nostalgia (nostalgia proneness x arousal)",
+        "locators_o": "p. 7",
+        "locators_r": "p. 8",
+        "audit_id": 227,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Interaction is SNS × nostalgia/control condition predicting felt arousal, not an arousal × SNS term predicting nostalgia ratings. High-arousal BANPS model: β=0.37, t(1675)=3.44, adjusted p<.01, f²=0.004; high-arousal TIPI model: β=0.35, t(1678)=3.37, adjusted p<.05, f²=0.004 (p.8). Table 11 p.17 gives exact adjusted p=.003 and .01, respectively. Low-arousal Table 12 p.19 gives SNS × condition β=0.13 and 0.10, both adjusted p>1. The locator does not choose covariate model or high/low arousal.",
+      "worker_notes": "Identity verified independently: supplied text has matching title Unique Affective Profile of Music-Evoked Nostalgia: An Extension and Conceptual Replication of Barrett et al.’s (2010) Study, authors Sarah Hennessy, Timothy Greer, Shrikanth Narayanan, Assal Habibi, and DOI 10.1037/emo0001389. It is the primary research article (2024 advance online publication), with Methods, Results, Discussion, tables and references through printed p.23; not merely an abstract. No PDF was supplied. Original side and unassigned fields are placeholders only. The requested standardized beta is not established: context variables were raw and not standardized; person scores were mean-centered, not described as standardized. Printed β coefficients and Cohen’s f² candidates are retained without conversion. Interaction is SNS × nostalgia/control condition predicting felt arousal, not an arousal × SNS term predicting nostalgia ratings. High-arousal BANPS model: β=0.37, t(1675)=3.44, adjusted p<.01, f²=0.004; high-arousal TIPI model: β=0.35, t(1678)=3.37, adjusted p<.05, f²=0.004 (p.8). Table 11 p.17 gives exact adjusted p=.003 and .01, respectively. Low-arousal Table 12 p.19 gives SNS × condition β=0.13 and 0.10, both adjusted p>1. The locator does not choose covariate model or high/low arousal. Common candidate-model sample is explicitly N=582 participant clusters and 2,234 song observations. It is retained only as a candidate because row-to-test mapping is unresolved. Participants with improper responses (14) or no matched control songs (172) were excluded; unmatched song pairs were excluded. No N was inferred from df and no arithmetic sum was used.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Interaction of context-level and person-level predictors on music-evoked nostalgia (nostalgia proneness x arousal)",
+        "es_repr_o": "p. 7",
+        "es_repr_r": "p. 8",
+        "es_type_o": "beta (std)",
+        "es_type_r": "beta (std)",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We demonstrate affective and person-level\ncontributors to music-evoked nostalgia observed in Barrett et al.’s (2010) hold even when controlling for\nfamiliarity and musical features."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 223,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p.10, Nostalgia and Context-Level Constructs",
+        "quote": "ﬁndings replicate that of Barrett et al. (2010), in which arousal ... positively predicted nostalgia rating, indicating that more nostalgic ... songs were experienced as higher arousal.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 223,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ effect-domain narrative verdict; independent of unresolved choice among numeric models. Conceptual replication claim, not a verdict inferred from statistical significance.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "location": "p.10, Nostalgia and Context-Level Constructs",
+        "quote": "ﬁndings replicate that of Barrett et al. (2010), in which arousal ... positively predicted nostalgia rating, indicating that more nostalgic ... songs were experienced as higher arousal.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 223,
+        "field": "reported_success",
+        "verdict": "shipped_right",
+        "correct_value": "successful",
+        "location": "p. 10, Discussion, Nostalgia and Context-Level Constructs",
+        "quote": "ﬁndings replicate that of Barrett et al. (2010), in which arousal",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "reason": "Both shipped and blind agree that the authors report a successful replication for context-level arousal.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 224,
+      "field": "es_value_r",
+      "blind": {
+        "value": "3.94",
+        "metric": "β (raw context-level coefficient; not standardized)",
+        "test_statistic": "t(1700) = 41.76",
+        "location": "p.5 Results; p.7 Table 4",
+        "quote": "positive valenced: β = 3.94, t(1700) = 41.76, padjusted < .001, f 2 =",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 224,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed β for positive-valence context-only comparison, retained in raw metric. Context variables explicitly use raw values (p.4); requested standardized beta is not established. Analysis direction differs from original; see notes. Known outcome/model-direction mismatch: target_match=false; coefficient is the located conceptual-replication test, not a verified coefficient from positive emotions predicting continuous nostalgia.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "location": "p.5 Results; p.7 Table 4",
+        "quote": "positive valenced: β = 3.94, t(1700) = 41.76, padjusted < .001, f 2 =",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "3.94",
+      "comparison": "not_comparable",
+      "prior_adjudication": {
+        "audit_id": 224,
+        "field": "es_value_r",
+        "verdict": "shipped_right",
+        "correct_value": "3.94",
+        "location": "p. 5, Context-Level Differences Between Nostalgia and Control Songs; p. 7, Table 4",
+        "quote": "positive valenced: β = 3.94, t(1700) = 41.76, padjusted < .001",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "reason": "Both shipped and blind report the same regression coefficient (β = 3.94) for the condition effect on positive valence.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 224,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p.10, Nostalgia and Context-Level Constructs",
+        "quote": "using discrete emotions vs. a bivalent scale), these results largely ... replicate Barrett et al.’s (2010) work. In our study, participants felt ... more positive and higher energy while listening to nostalgic songs",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 224,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ effect-domain narrative verdict; independent of unresolved choice among numeric models. Conceptual replication claim, not a verdict inferred from statistical significance.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "location": "p.10, Nostalgia and Context-Level Constructs",
+        "quote": "using discrete emotions vs. a bivalent scale), these results largely ... replicate Barrett et al.’s (2010) work. In our study, participants felt ... more positive and higher energy while listening to nostalgic songs",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 224,
+        "field": "reported_success",
+        "verdict": "shipped_right",
+        "correct_value": "successful",
+        "location": "p. 10, Discussion, Nostalgia and Context-Level Constructs",
+        "quote": "replicate Barrett et al.’s (2010) work. In our study, participants felt",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "reason": "Both shipped and blind agree that the positive-valence context effect is reported as replicating Barrett et al. (2010).",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 225,
+      "field": "reported_success",
+      "blind": {
+        "value": "mixed",
+        "location": "p.10, Nostalgia and Context-Level Constructs",
+        "quote": "more mixed valence in comparison with control songs according ... to MIN (Schimmack, 2001) but less mixed valence according to ... the Grifﬁn formula (Thompson et al., 1995).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 225,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ effect-domain narrative verdict; independent of unresolved choice among numeric models. Mixedness explicitly differs by formula.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "location": "p.10, Nostalgia and Context-Level Constructs",
+        "quote": "more mixed valence in comparison with control songs according ... to MIN (Schimmack, 2001) but less mixed valence according to ... the Grifﬁn formula (Thompson et al., 1995).",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "differ",
+      "prior_adjudication": {
+        "audit_id": 225,
+        "field": "reported_success",
+        "verdict": "blind_right",
+        "correct_value": "mixed",
+        "location": "p. 1, Abstract; p. 10, Discussion, Nostalgia and Context-Level Constructs",
+        "quote": "to MIN (Schimmack, 2001) but less mixed valence according to",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "reason": "The authors explicitly report conflicting results across their two mixed-valence metrics (more mixed under MIN, β = 0.26, but less mixed under the Griffin formula, β = -1.47, and no difference in negative valence), noting that mixedness effects are limited and inconsistent across metrics.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 226,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p.12, Nostalgia and Person-Level Constructs",
+        "quote": "factor contributing to the nostalgic experience. Our results corroborate ... Barrett et al.’s (2010) study, suggesting that Trait Nostalgia is the most ... signiﬁcant person-level variable contributing to the music-evoked ... nostalgic experience.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 226,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ effect-domain narrative verdict; independent of unresolved choice among numeric models. Conceptual replication claim, not a verdict inferred from statistical significance.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "location": "p.12, Nostalgia and Person-Level Constructs",
+        "quote": "factor contributing to the nostalgic experience. Our results corroborate ... Barrett et al.’s (2010) study, suggesting that Trait Nostalgia is the most ... signiﬁcant person-level variable contributing to the music-evoked ... nostalgic experience.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 227,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p.12, Interactions Between Context- and Person-Level Constructs",
+        "quote": "Nostalgia ﬁnding aligns with Barrett et al.’s (2010) ﬁnding, in which ... they observed tentative support for Trait Nostalgia to increase the ... potency of context-level effects.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 227,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors’ effect-domain narrative verdict; independent of unresolved choice among numeric models. Conceptual replication claim, not a verdict inferred from statistical significance.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "location": "p.12, Interactions Between Context- and Person-Level Constructs",
+        "quote": "Nostalgia ﬁnding aligns with Barrett et al.’s (2010) ﬁnding, in which ... they observed tentative support for Trait Nostalgia to increase the ... potency of context-level effects.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": {
+        "audit_id": 227,
+        "field": "reported_success",
+        "verdict": "shipped_right",
+        "correct_value": "successful",
+        "location": "p. 13, Discussion, Interactions Between Context- and Person-Level Constructs",
+        "quote": "Nostalgia ﬁnding aligns with Barrett et al.’s (2010) ﬁnding, in which",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/31a6626f51abad1f3bd2b06d.txt",
+        "reason": "Both shipped and blind agree that the interaction between Trait Nostalgia and condition on arousal is reported as aligning with and replicating Barrett et al. (2010).",
+        "resolution": "argon"
+      }
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/1718897326b729f2. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_1718897326b729f2_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
