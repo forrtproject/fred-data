@@ -1,0 +1,140 @@
+{
+  "diagnosis_id": "round82_diagnosis_0087",
+  "created_at_utc": "2026-10-31T01:39:33.144477+00:00",
+  "status": "diagnosis_complete; upstream stall origin unresolved; no retry authorised by this artifact",
+  "scope": {
+    "live_model_api_requests": 0,
+    "retries": 0,
+    "delegations": 0,
+    "runtime_edits": false,
+    "control_state_ledger_mutations": false,
+    "git_or_schedule_operations": 0,
+    "credentials_read_or_changed": false,
+    "actual_processes_signalled": 0,
+    "write_roots": [
+      "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/evidence_followup/private/round82_diagnosis_0087",
+      "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/evidence_followup/integration/round82_diagnosis_0087.result.json"
+    ]
+  },
+  "conclusion": "A shared approximately seven-minute progress stall consumed most of the ten-minute CLI budget. Calls resumed permitted file reads, including repeated bibliography range navigation, but produced no visible final answer before the CLI deadline. The CLI deliberately returned warning-only output and exit 0; relay correctly rejected it. Retained evidence cannot distinguish provider/stream delay, network impairment, or host/runtime scheduling stall.",
+  "proven": [
+    "0102/0103/0104 returned exit 0 after 603.774/603.121/604.895 seconds; print warnings, not outer 660-second expiry. All raw outputs are the same 80-byte timeout banner, without answer text.",
+    "Requested Gemini 4 Argon (High) propagated to backend; persisted generation records contain gemini-4-argon. Consumer/CCPA route recorded. Default-to-CCPA is backend selection, not a demonstrated model fallback.",
+    "Generation response IDs precede and follow the stall. Config FetchConfig requests separately hit context deadlines. No explicit generation 429/RESOURCE_EXHAUSTED/quota exhaustion is recorded; quota refresh messages do not expose remaining quota.",
+    "Failed calls first complete tool batches together at about 01:31:16 UTC. Call 0098 attempt2 also has a multi-minute gap and config deadline yet later validates. That comparison supports a shared transient impairment, not a permanent account block.",
+    "Persisted steps for failed calls contain no visible response text in planner-response fields 20/1 or 20/8; successful 0099-0101 provide validator-accepted visible final responses at that seam. No final answer is recoverable from the inspected exact conversation databases; all have no nonempty WAL.",
+    "No permission blobs or headless auto-denial are present in failed stored steps. All retained tools have finished numeric statuses matching completed or missing-file steps; no retained pending approval. Missing frozen history reads occur in successful 0101 too and snapshot provenance marks absent originals.",
+    "No exact PID/PGID/SID members remain for 1732747/1732771/1732783 in the read-only orphan check. CLI logs show conversation stream stop and language-server shutdown. Remote work cancellation/completion cannot be proved from local shutdown.",
+    "Failed bibliography reads total 16/19/24; successful 0101 used 27 and completed in 337.391 seconds. Failed source sizes are smaller in aggregate than 0101. Input complexity is a contributor to post-stall work, not an independently proven root cause."
+  ],
+  "hypothesis_outcomes": [
+    {
+      "rank": 1,
+      "hypothesis": "Long/incomplete generation or shared progress stall",
+      "outcome": "Observed, but shared timing and delayed already-ready tool publication prevent attributing entire delay to model thinking."
+    },
+    {
+      "rank": 2,
+      "hypothesis": "Waiting approval/tool loop",
+      "outcome": "Approval wait not evidenced; completed bibliography navigation is observed overhead. Missing history reads are shared with successes."
+    },
+    {
+      "rank": 3,
+      "hypothesis": "Explicit backend/network/auth/quota failure",
+      "outcome": "Config-service deadlines observed; generation responses continue. Shared startup auth/scope warnings are insufficient. Exact impaired layer unknown."
+    },
+    {
+      "rank": 4,
+      "hypothesis": "Valid answer lost on output/shutdown or signal wrapper failure",
+      "outcome": "Not supported: no visible final response in exact retained conversations; clean CLI deadline exits before outer timeout; prior SIGTERM boundary differs."
+    }
+  ],
+  "orphan_check": {
+    "at_utc": "2026-10-31T01:35:52.861153+00:00",
+    "owned_identifiers": [
+      1732747,
+      1732771,
+      1732783
+    ],
+    "members": [],
+    "read_only": true,
+    "method": "single /proc stat metadata scan; retain only exact PID/PGID/SID matches; no command lines or environments read"
+  },
+  "recoveries": [
+    {
+      "option": "Offline exact bibliography navigation index",
+      "status": "Prepared and verified privately; not activated",
+      "artifact": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/evidence_followup/private/round82_diagnosis_0087/bibliography_line_index.json",
+      "proof": "All 1189 records indexed; each exact original line span decoded and compared equal to original JSON entry. Source hash pinned. No metadata/scientific content rewritten.",
+      "activation_condition": "Parent may separately approve a supplemental navigation aid referencing the unchanged full bibliography and explicit snapshot-proven absence of optional history. Preserve all original envelopes/snapshots, actual sources, scientific instructions and validation. Any changed effective prompt must be recorded as a new attempt, never overwrite old captures.",
+      "limitation": "Reduces blind range search; does not repair or prove disappearance of the shared upstream/runtime stall. Not sufficient alone to clear the circuit."
+    },
+    {
+      "option": "Resolve the shared transport/runtime stall before a bounded retry",
+      "status": "Externally blocked",
+      "required_evidence": "Exact-session generation/stream and tool-publication timing spanning 01:23:45\u201301:31:16 UTC, with host scheduling/connectivity evidence or provider trace diagnosis and a specific repair/resolution. Use existing response/trace IDs privately. No new model request is needed to inspect retained server/operator traces.",
+      "limitation": "Local read-only artifacts do not identify a fixable server/network/host cause. Do not relabel identical rerun as recovery."
+    },
+    {
+      "option": "Longer CLI or outer budget",
+      "status": "Not proposed for implementation",
+      "reason": "The CLI 600-second deadline binds, leaving about 55\u201357 seconds under the existing outer budget. Raising only outer timeout cannot repair that cutoff. A longer print window with a correspondingly adequate outer budget changes authorised 10m/660s limits; no retained completion time supports a particular replacement value. No such changes made."
+    },
+    {
+      "option": "Recover existing complete answers",
+      "status": "Unavailable for 0102\u20130104",
+      "reason": "No validated visible answer exists in raw captures or the exact persisted conversations. Existing 0098 retry and 0099\u20130101 remain valid and need no rerun."
+    }
+  ],
+  "smallest_unresolved_external_blocker": "Identify and resolve the shared approximately seven-minute generation/tool-publication stall (provider stream versus network versus host scheduling). Retained CLI records do not expose that boundary. No supported local runtime patch is established for this stall.",
+  "verification": {
+    "capture_validator_accepts": [
+      "0099",
+      "0100",
+      "0101"
+    ],
+    "capture_validator_rejects": [
+      "0102",
+      "0103",
+      "0104"
+    ],
+    "offline_real_transport_fake_cases": 2,
+    "metadata_exact_spans_verified": 1189,
+    "original_inspected_input_hashes_unchanged": true,
+    "all_fixture_children_reaped": true,
+    "all_fixture_pid_pgid_sid_members_absent": true,
+    "runtime_patch_proposed": false,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 /home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/evidence_followup/private/round82_diagnosis_0087/investigate_offline.py",
+    "replay_note": "Already executed successfully. Fixture paths are immutable; script intentionally refuses to overwrite prior fixture captures.",
+    "history_absence_provenance_checked": {
+      "101": {
+        "missing_tool_reads": 12,
+        "all_frozen_absence_in_snapshot": true
+      },
+      "102": {
+        "missing_tool_reads": 6,
+        "all_frozen_absence_in_snapshot": true
+      },
+      "103": {
+        "missing_tool_reads": 10,
+        "all_frozen_absence_in_snapshot": true
+      },
+      "104": {
+        "missing_tool_reads": 4,
+        "all_frozen_absence_in_snapshot": true
+      }
+    }
+  },
+  "limits": [
+    "No current quota/network/provider health probe or server event polling performed.",
+    "Protobuf timestamp field numbers retained without assuming undocumented semantic names; comparisons use ordering and corroborating CLI events.",
+    "Local process absence cannot establish whether a provider continued already-submitted work or billed it; no remote cancellation receipt is retained.",
+    "Not a proof that indexed navigation alone makes a future call fit ten minutes. No circuit clear, attempt refund, snapshot rewrite, validation relaxation, model substitution, slot change, or retry was performed."
+  ],
+  "private_artifacts": {
+    "evidence": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/evidence_followup/private/round82_diagnosis_0087/captured_evidence.json",
+    "hash_inventory": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/evidence_followup/private/round82_diagnosis_0087/input_inventory.json",
+    "offline_tests": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/evidence_followup/private/round82_diagnosis_0087/offline_reproduction.json",
+    "report": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/evidence_followup/private/round82_diagnosis_0087/report.md"
+  }
+}

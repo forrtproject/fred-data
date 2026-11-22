@@ -1,0 +1,130 @@
+{
+  "diagnosis_id": "cli_host_SIGTERM_0052",
+  "status": "diagnosed_signal_boundary; proposal_only; external_sender_unproven",
+  "at_utc": "2026-10-30T23:57:03.832161+00:00",
+  "scope": {
+    "live_model_calls": 0,
+    "delegations": 0,
+    "real_queue_preparations": 0,
+    "real_state_mutations": 0,
+    "runtime_files_modified": false,
+    "git_used": false,
+    "schedules_changed": false,
+    "write_roots": [
+      "audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052",
+      "audit/flora_blind_2026-10/evidence_followup/integration/cli_host_SIGTERM_0052.result.json"
+    ]
+  },
+  "finding": "The captured subprocess.run wrapper has no SIGTERM forwarding. A signal to that process or an explicit waiting shell reproduces shell-equivalent 143/no output while the helper and new-session CLI survive. A group signal initially produces the same terminal symptom but the real helper handler subsequently reaps the CLI. Observed 143 alone cannot distinguish these cases.",
+  "external_sender": "Unobservable in allowed retained trace and exact owned-thread activity. No proof of default 5-minute timeout, provider/account block, host shell/session TTL or cancellation. Native runs ended completed after the failed command; no run interruption/cancellation is recorded.",
+  "ranked_hypotheses": [
+    {
+      "rank": 1,
+      "hypothesis": "Host signals outer wrapper or its parent without forwarding",
+      "prediction": "Outer/parent SIGTERM gives 143 and leaves helper alive; exec removes orphan boundary",
+      "outcome": "Reproduced twice for outer; shell-parent and threaded variants reproduced; exec variants clean. Historical trigger not proven."
+    },
+    {
+      "rank": 2,
+      "hypothesis": "Host signals wrapper process group",
+      "prediction": "Same initial 143, but helper handler reaps isolated CLI before fixture cleanup",
+      "outcome": "Reproduced; handler reaped CLI. Indistinguishable from #1 in captured terminal summary."
+    },
+    {
+      "rank": 3,
+      "hypothesis": "Helper cleanup kills wrapper via wrong PGID",
+      "prediction": "Helper-only signal or ordinary CLI cleanup kills outer with 143",
+      "outcome": "Not reproduced: helper-only gives outer exit1 and CalledProcessError; normal cleanup leaves outer exit0. Retained CLI is its own session/group."
+    },
+    {
+      "rank": 4,
+      "hypothesis": "Provider CLI failure propagates SIGTERM to coordinator",
+      "prediction": "CLI SIGTERM/nonzero alone produces outer143",
+      "outcome": "Not reproduced at lifetime seam: fake CLI SIGTERM/-15 and exit7 return values to helper; wrapper survives. This fixture exercises transport, not Relay.call failure accounting; focused tests cover bounded failure accounting."
+    },
+    {
+      "rank": 5,
+      "hypothesis": "T3 task cancellation or exec-host lifetime deadline",
+      "prediction": "Cancellation/interruption marker or explicit tool lifetime setting explains timing",
+      "outcome": "Owned runs show completed, command failed; exposed exec schema has yield_time_ms but no lifetime timeout field. Short retention succeeds; cannot falsify hidden host deadline or command-level cancellation."
+    }
+  ],
+  "feedback_loop": {
+    "red_command": "PYTHONDONTWRITEBYTECODE=1 python3 audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052/replay.py outer",
+    "red_exit": 1,
+    "red_actual": {
+      "mode": "outer",
+      "outer_rc": -15,
+      "shell_equivalent": 143,
+      "stdout_bytes": 0,
+      "helper_alive_at_outer_exit": true,
+      "cli_alive_at_outer_exit": true,
+      "elapsed": 0.113,
+      "verdict": "RED: 143/no helper output; helper and CLI survive wrapper",
+      "stderr_contains_keyboard_interrupt": false,
+      "stderr_contains_called_process_error": false,
+      "cleanup_all_owned_pids_absent": true
+    },
+    "green_command": "PYTHONDONTWRITEBYTECODE=1 python3 audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052/replay.py threaded_exec_outer",
+    "green_exit": 0,
+    "green_actual": {
+      "mode": "threaded_exec_outer",
+      "outer_rc": -2,
+      "shell_equivalent": 130,
+      "stdout_bytes": 0,
+      "helper_alive_at_outer_exit": false,
+      "cli_alive_at_outer_exit": false,
+      "elapsed": 0.227,
+      "verdict": "GREEN: signal reaches helper and owned CLI is reaped",
+      "stderr_contains_keyboard_interrupt": true,
+      "stderr_contains_called_process_error": false,
+      "cleanup_all_owned_pids_absent": true
+    },
+    "matrix_command": "PYTHONDONTWRITEBYTECODE=1 python3 audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052/run_matrix.py",
+    "matrix_cases": 14,
+    "max_test_seconds": 1.11,
+    "matrix_artifact": "audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052/matrix_results.json"
+  },
+  "minimisation": "Removing control-publication loop, reservation lookup and worker pool leaves same red. Removing SIGTERM permits normal completion. Replacing extra waiting process by exec reaches the installed real helper handler. Kept actual cli_transport, owned_transport and new-session CLI lifetime; fixture helper substitutes only finite fake work and never calls Relay.run against the real queue.",
+  "proposed_fix": {
+    "artifact": "audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052/proposed_candidate_exec.patch",
+    "minimal_runtime_files": [
+      "audit/flora_blind_2026-10/scripts/tick_evidence_followup.js"
+    ],
+    "change": "Candidate wrapper import os and replace subprocess.run(argv,check=True) with os.execvp(\"python3\",argv); keep exact argv, control wait, assertions and owner/max-calls. Ensure terminal command is exec python3 -c SCRIPT if a waiting shell remains. Shell exec plus Python exec tested with fake fixture.",
+    "proof": "threaded_exec_outer, threaded_exec_group, exec_normal and shell_exec_parent pass cleanup/normal-completion assertions.",
+    "limits": "Cleanup mitigation only. It cannot complete work after a deliberate host SIGTERM or prevent host-enforced group termination. Startup/pre-handler race, SIGKILL and recursive host tree termination are not covered. No production fix applied; no claim that retry would succeed."
+  },
+  "continuation_gate": "Parent review required before tracked runtime changes. Keep dispatch paused until host lifetime/cancellation contract is evidenced for the unchanged 60-second publication wait plus up-to-660-second transport and bounded validation/cleanup (no numeric total claimed for unmeasured validation). Available tool schema cannot set this lifetime. Do not shorten CLI deadlines or weaken validation to fit an assumed five-minute window. Any later execution must be a NEW delegate_task round/clientRequestId, exact Codex coordinator and included Gemini 4 Argon (High), unchanged instructions, max4 concurrency, max2 attempts/request and durable owner max-calls. Preserve all spent attempts/circuit state; inspect/reconcile already-written replies before any new attempts using authorised parent workflow. No detached jobs, polling watchers or lower-worker retry proposal.",
+  "real_owned_process_observation": {
+    "read_only": true,
+    "0072": "validated; attempt1 interrupted/spent, attempt2 finished rc0 validated; group1685546 absent; group1690603 absent",
+    "0073": "At observation ledger already marked attempt1 interrupted/spent and pending; stale process metadata running pid1690628, exact group absent. No real process signalled.",
+    "concurrent_parent_state": "Snapshot observation only; parent may update later."
+  },
+  "verification": {
+    "focused_command": "PYTHONDONTWRITEBYTECODE=1 python3 audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052/focused_tests.py",
+    "focused_tests_passed": 11,
+    "max_focused_test_seconds": 1.747,
+    "focused_artifact": "audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052/focused_results.json",
+    "retention_probe": "exec_command yield_time_ms250 retained session; one write_stdin collection returned FAKE_ONLY_RETAINED_PROCESS_COMPLETED and exit0 after fake .8s sleep. Yield is not demonstrated to be a lifetime deadline; multi-minute deadline not tested due 8-second/test restriction.",
+    "fixture_cleanup": {
+      "all_case_pid_and_group_checks_absent": true,
+      "groups_checked": 73,
+      "live_groups": []
+    },
+    "bytecode_disabled": true,
+    "runtime_source_sha256_at_completion": {
+      "audit/flora_blind_2026-10/scripts/tick_evidence_followup.js": "e0c5fd90cf26f23083c97b84b43234e54eb58040359e05bd998531a6aa96fa2a",
+      "audit/flora_blind_2026-10/evidence_followup/candidate_cli_relay.py": "b8fb4992f30f42894faa2022a7a6f33aabd6e1ae4cff606ea6d435933c09435d",
+      "audit/flora_blind_2026-10/scripts/adjudicate.py": "519d7668490007a0580edc60d8315a340c4b75240df7c78dc04d65bdae28ae13"
+    }
+  },
+  "host_metadata_artifact": "audit/flora_blind_2026-10/evidence_followup/private/diagnosis_0052/host_contract.json",
+  "assumptions_and_limits": [
+    "Actual helper transport and installed interrupted handler imported unchanged; fake helper has no real reservations and never invokes a model. Threaded variants exercise retained transport in a worker but not full Relay.run scheduling.",
+    "Provider-failure fixture proves signal ownership only; no provider health/account conclusion.",
+    "Exact terminal tool input arguments and SIGTERM sender are absent from available native timeline summaries. No external caches/logs or global runstore inspected.",
+    "All generated files are metadata, fake code/fixtures or proposed diff under permitted outputs. Existing focused-test temp directories redirected to authorised scratch; they are cleaned."
+  ]
+}

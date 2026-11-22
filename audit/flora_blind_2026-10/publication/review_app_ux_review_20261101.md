@@ -1,0 +1,46 @@
+# FLoRA review app: UX review and redesign
+
+The published review app could not support a decision. It showed what the audit proposed in machine form, but not what FLoRA currently records, what is wrong, or what the reviewer is being asked to decide. The redesigned app turns each case into one concrete question with the current and proposed values side by side, the evidence beneath, the dependencies that must be settled first, and choices that match the case type. The interface reads the handoff decisions; it never applies dataset changes. Record eligibility and completed-report integration are documented in the accompanying source-review files.
+
+## Root faults in the previous app
+
+1. **No question.** Cases opened with internal labels (`full_text`, “Plan with no reported results”, “correction supported”, `cannot_be_determined`). Nothing stated what was wrong with the record or what to decide.
+2. **No before-values.** The review queue carries only proposed values, so a correction appeared as `{"outcome": "cannot_be_determined"}`. FLoRA’s current value (here “uninformative”), the linked original and the record’s supporting quote were never shown, so a change could not be judged.
+3. **Generic actions.** Every case had the same four buttons (“Retain evidence limit”, “Needs source”, “Propose correction”, “Resolve applicability”). None meant “approve this proposal”, and every click required a typed reason, even for fully explained proposals.
+4. **Caveats hidden or raw.** Application holds and policy alternatives appeared as unlabelled strings or not at all; record-level remedies, conditional corrections and withdrawn proposals were not surfaced. The 271 abstract-only and no-text rows had no explanation. 111 structured source locations rendered as “[object Object]”.
+5. **Provenance in place of content.** File keys, decision-file names and “complete proofs are retained in …” notes filled the main view, while the reasoning was cut at 260 characters.
+6. **No workflow.** One flat list of 980 cases, no default queue, no progress, no next case, silent saving and export without import.
+
+## What the redesign does
+
+- **Queues.** “Needs decision” is the default (47 cases: the 33 review-required cases, the record-level actions and every proposal with a decision hold). “Proposed changes” (524 rows: 515 rows with field corrections plus 9 rows whose only proposal is an evidence-quote update), “Missing pairs” (124 unresolved, 3 settled), “Evidence limits” (290 rows without a proposal whose values the source could not verify) and “Everything” (all 980) keep every case reachable. Each list is grouped (for example policy choices, record-level actions, row removals, original replacements) and shows a one-line summary such as “Outcome: uninformative → cannot be determined”.
+- **What is wrong.** Each case opens with a plain sentence built from the record and proposal, for example “FLoRA links this replication to van Prooijen et al. (2018); the audit identifies van Prooijen (2017) as the original it re-tests.” Record-level cases lead with the parent’s stated problem.
+- **Current versus proposed.** A record card shows FLoRA’s current type, original, outcome (or reproduction axes) and supporting quote from the frozen snapshot, with changed values struck through beside the highlighted proposal and the codebook definition of each coded value. Unchanged fields stay visible, so the row-level result of approving is explicit.
+- **Record-level actions.** `case.record_action` (or the matching entry in `record_actions.json`) is rendered first and without assuming its shape: action, status, the remaining reason, each proposed change as before and after (including field lists, `from_*`/`to_*` moves and audit-field bundles), dependencies, what is preserved, quoted evidence and source links. Unknown keys appear under “More about this action”. For row 0 (BU3GM) the app shows “Move this registration to planned studies” above the outcome-only field proposal, which the correction file marks as not to be applied in isolation.
+- **Dependencies and caveats.** Holds, conditional corrections, removal prerequisites and withdrawn proposals appear in a “Before applying” panel; row references in any audit text (“row814”, “row 1697”) link to that case.
+- **Evidence.** Per field: the opening of the reasoning with the full text one click away, the literal quote and its location, contrary evidence the review considered, limits and dependencies from the source review, and links to the replication, originals and verified primary reports. Abstract-only rows explain what a blind coder could see.
+- **Specific choices.** Field corrections: approve (partial approval by field when a row has several changes), keep FLoRA as it is, or needs follow-up. Record-level actions: approve the action, keep the record, or follow-up; isolated field approval is not offered because the parent marks those fields `isolated_field_application_allowed: false`. Policy cases: the source-review options with specific reader-facing questions and labels, retaining their original keys and values (marked when an option equals FLoRA’s current value), keep, or follow-up; where the review names no options, “Record policy decision” asks for the rule in a note. Missing pairs: add, do not add, or follow-up; settled pairs: accept or follow-up. Evidence limits: keep or follow-up.
+- **Notes, feedback and progress.** Notes are optional except for a free-form policy rule and save as you type. Each decision shows a toast with Undo (also `U`), a saved line in the decision bar, a mark in the list and per-queue progress. The app moves to the next undecided case unless switched off. Keyboard: `A`, `C`, `F`, `1`–`9`, `J`/`K`, `N`, `/`.
+- **Export and import.** JSON export (schema 2) records the decision, chosen option, approved fields, the current and proposed values decided on, the frozen full-record SHA-256 and a proposal fingerprint; CSV export suits spreadsheets. Import merges by case and keeps the newer entry. If a proposal changes after a decision, the case is flagged for re-checking instead of counting as decided. Notes saved by the previous app version are kept as “earlier review” entries.
+- **Technical details.** Case IDs, routes, review status, hashes, the raw case record and the display context stay in a collapsed panel on each case.
+
+## Build and publication contract
+
+`scripts/build_review_handoff.py` now reads the interface from `scripts/review_app_template.html` and embeds a display-only context (frozen current values, proposal status and holds, source-review limits, missing-pair candidates and existing pairs, evidence-quote updates, record-action fallback). Proposal status and holds come from `correction_proposals.json` where its proposed value matches the queue; otherwise the builder mirrors `build_audit_report.py` and prints which entries were derived. Both the case and context blocks are sanitized for the public app; the public builder applies the public-asset rules (no private paths or tokens, quotes as 25-word excerpts) and asserts them. No new runtime fetch was added; the complete queue is still fetched and SHA-256 checked as before.
+
+The public builder contract is unchanged: one `/*flora-cases-start*/ … /*flora-cases-end*/` block, the queue hash string, `function loadCompleteEvidence`, the three replaced strings and a downloads paragraph beginning `<p><a href="correction_proposals.json">`. Links to downloads missing from a deployment are struck through after a HEAD check.
+
+## Verification
+
+- Historical scientific decisions, initial proposals, approvals and the original 109-case inventory remain byte-identical. The current queue merges the three newly verified completed reports and attaches 21 whole-record remedies; it exposes 47 decision cases and 562 field proposals across 515 rows.
+- The current `build_public_review.py` ran successfully on the mirror output, including its private-path, token and report-link checks.
+- In the T3 browser, all 980 cases rendered without errors in the public build, the private build and the embedded-excerpt fallback. Desktop (1280–1440 px) and phone (390 px) layouts were inspected. Decisions, keyboard shortcuts, auto-advance, undo, notes, JSON and CSV export, import (schema 1 and 2), stale-proposal flags and legacy entries were exercised.
+
+## Use and limits
+
+- Current-source decisions are merged into the queue. The superseded Gray outcome correction is absent; its completed-report outcome is successful, conditional on joint record rebinding.
+- Record-action rows approve the whole remedy, with no isolated field-approval path. The eight coding-policy cases have specific questions; no new coding option or scientific rule is silently added.
+- Mobile keeps the decision question visible and reduces header controls so the reason is readable.
+- Decisions are stored per browser and site. JSON export/import transfers them between Cloudflare and private previews.
+- Queue counts are memberships, not report categories: the report’s 292 evidence-limit rows include rows with proposals shown in another queue.
+- Some original audit prose contains lost spaces. The source text is preserved; current record-action summaries use reader-facing wording.

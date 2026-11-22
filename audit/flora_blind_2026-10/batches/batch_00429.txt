@@ -1,0 +1,576 @@
+You are a BLIND paper coding child. Your only task is to code the works below sequentially. Do not open flora.csv, FReD, the FLoRA/FORRT websites or any FORRT dataset. Do not search the repository. Exclude FORRT domains from all web searches (use -site:forrt.org -site:github.com/forrtproject -site:forrtproject.github.io -site:citestamp.com -"forrt-fred"). If a snippet nevertheless exposes FORRT dataset coding, record blind_source_warning and STOP THE ENTIRE BATCH immediately; never use those snippets and do not code any later work in the same child. Preserve valid checkpoints completed before exposure. For remaining unstarted assigned works, write status error with skip_reason batch_blinding_stop so a fresh child can process them; do not write no_text. Never continue coding after a blinding warning. Do not read any parent brief, manifest, queue, tasks, results, report, comparison or other coder outputs. Do not delegate further. Do not stage, commit or push. Return only counts and output paths, never paper text. Only write the assigned output paths and their source text paths, plus uniquely named temporary files alongside them. No questions: decide and record uncertainty.
+
+Acquisition route: parent-supplied cached text first; otherwise DOI landing page, Unpaywall, OpenAlex best_oa_location, PMC/Europe PMC, OSF API file listing (including DOCX), PsyArXiv/preprints; then download-paper skill open-access chain WITHOUT signed-in Chrome. Use title_r to verify paper identity and boundaries and authors before full-text coding. If DOI and title identify clearly different papers, write error with identity_warning instead of silently choosing one or coding an Open Data companion as the assigned article. Abstracts, previews, supplements are not full text. Budget acquisition 90 seconds plus at most 30 seconds for one promising alternative, no repeated 403/challenge/unchanged miss. If unavailable, use OpenAlex/Crossref abstract and label abstract. No abstract => no_text. Entire ordinary work cap 180 seconds, complex cap 480 seconds including acquisition. On cap write timeout with whatever is known. Save extracted text (including references when full text) through a temp file and atomic rename to audit/flora_blind_2026-10/texts/<file_key>.txt. Record actual source URL, UTC retrieved_at, SHA256 of saved bytes, parser, evidence_level. Parent cached text is the first source: inspect its header for provenance, record cached_text.sh as parser if otherwise unavailable. Do not invent an upstream retrieval URL or date; parent will complete missing cache provenance from verified cache files.
+
+For OSF identifiers, a GUID can identify a FILE rather than a node or registration. Before concluding no_text from node/registration 404s, check https://api.osf.io/v2/guids/<guid>/ and, if it resolves to the assigned file, https://osf.io/download/<guid>/. Verify title/authors and document boundaries. Keep these requests inside the existing acquisition budget. Collect and inspect pending acquisition responses before writing a terminal no_text checkpoint; do not write no_text while a promising source response is still unexamined.
+
+Checkpoints: valid done is final, never overwrite it. no_text is final. timeout/error/malformed files get at most one retry (this task may be that retry). JSON output top level contains coding fields plus envelope fields; validate against the supplied schema for done, and require work_key/status for failure records (provenance may be null). Reproductions require BOTH axes and quote fields. Write one JSON per work via temp+atomic rename immediately upon finishing that work, not at batch end. Include elapsed_seconds, acquisition_seconds and skip_reason as extra fields. Code all originals independently, one per original paper, including large projects from primary project files where necessary; no shipped original list exists in this task.
+
+CODEBOOK (verbatim):
+You are checking a record for a database of replication and reproduction studies.
+Read the paper below and code it from scratch.
+
+STEP 1 — RECORD TYPE
+
+"record_type": "replication" if the paper collected new data or used a different sample
+to re-test a previously published finding; "reproduction" if it re-analysed the
+original study's own data (or code); "not_a_replication" if it re-tests no specific
+earlier published finding at all (an original study, a review, a meta-analysis, a
+method paper, a commentary); "unclear" if the text does not let you tell. A paper that
+reports "replicating" its own new study within the same paper is not a replication of
+a PUBLISHED finding.
+
+"study_status": "completed", or "prospective" when the record IS a plan (a
+preregistration, protocol, analysis plan or Stage 1 registered report) that reports no
+result. A finished study whose result you cannot see is still "completed".
+
+STEP 2 — THE ORIGINAL STUDY OR STUDIES (skip when not_a_replication)
+
+What counts as a target:
+- The paper must re-test that study's reported finding: collecting new data to check
+  whether it holds, or re-analysing that study's own data. Judge the RELATIONSHIP,
+  not the wording — a paper that tests whether a specific published result holds in a
+  new sample is a replication whether or not it uses the word "replication". A study
+  cited for background, motivation or context is NOT a target.
+- Do NOT include a study because it is topically similar, prominent, frequently
+  cited, or the only option offered.
+- A listed reference is a target only when THIS paper itself re-tests its finding. A
+  work cited as background, as commentary, or as an earlier replication attempt that
+  this paper does not itself re-test is NOT a target, even when its title names the
+  same effect, gene or phenomenon. An earlier replication attempt CAN be the target —
+  when this paper re-tests IT. What decides is what this paper does with the work, not
+  what kind of work the citation is. The evidence_quote for a target must show the
+  paper stating that it re-tests that work.
+- Replication chains: when the finding has already been re-tested by others, the
+  target is the study closest to this paper in the chain — the one it actually
+  re-tests — not the chain's original source.
+
+How to count:
+- One entry per original PAPER, not per test. Several studies from the same original
+  paper are ONE entry: put their numbers as the replication refers to them
+  ("Study 2", "Experiment 3") in study_numbers, comma-separated. Independent original
+  papers are separate entries.
+- If the replicating paper itself reports several studies, say which of ITS studies
+  re-tests this original in replication_study_numbers ("Study 1", "Experiment 2" →
+  "1, 2"), comma-separated. Leave it empty when the paper reports a single study or
+  does not say.
+- Count the ORIGINALS, not the replicating teams or sites. Many laboratories
+  re-running one original protocol is ONE target. Many analysts re-analysing one
+  dataset is ONE target. A project re-testing N different published findings from
+  different papers is N targets.
+
+For each original, find its entry in the paper's reference list and copy the citation
+from there: "authors" as listed (surname first), "year", and the full "title". Where the
+paper cites by number, follow the number to the reference. Give the "doi" ONLY if it is
+printed in the supplied text — never from memory. Leave a field "" only when the text
+truly does not give it; a year printed beside an in-text citation is still the year.
+
+Which entry is the original: where the paper cites it, follow the citation. Where it
+only DESCRIBES the original ("earlier research found that X", "our previous study"),
+name the one entry in the reference list whose title or content states that finding,
+when exactly one entry fits; leave the citation fields "" only when two entries fit
+equally well or none does. Before naming any entry, rule out: another work by the same authors; a registered-report protocol or preregistration versus the paper reporting the original finding; the paper that supplied the materials, task or measure versus the finding re-tested; a meta-analysis or review versus the primary study; a meeting abstract or working paper versus the published article.
+
+"identified_by": "citation" when the paper cites the entry you named, "description" when
+you named it because it is the one entry that fits the paper's description of the
+finding, "" when you named none.
+
+STEP 3 — OUTCOME, per original
+
+For a replication, code "outcome" in this vocabulary:
+"successful", "failed", "mixed", "descriptive only", "statistically successful but flawed", "uninformative", "cannot_be_determined"
+
+HOW TO DECIDE, IN ORDER
+
+1. Where the authors state an OVERALL verdict on the replication, that verdict decides the
+   outcome, even where individual results point elsewhere. Trust it over your own reading
+   of the evidence. An overall verdict is a statement about how the replication came out AS
+   A WHOLE — "our results replicate the original finding", "the original result did not
+   hold". A sentence confirming one particular effect is NOT an overall verdict: it is one
+   of the paper's comparisons, and rule 2 applies.
+2. Where no overall verdict is stated, code from the authors' comparisons of their results
+   to the original, explicit or implicit. A comparison is implicit when the result the paper
+   reports IS the original's own finding — the same claim, in the same direction: a study
+   built to re-test the original's effect that reports "the predicted effect was found" has
+   compared, even without naming the original in that sentence. Two tests before you code
+   from an implicit comparison, and both must pass:
+     (a) the evidence states what THE ORIGINAL THIS OUTCOME IS ABOUT found. You cannot
+         compare against
+         a finding the evidence never states, however positive this paper's own results
+         sound;
+     (b) you can name this paper's result that corresponds to it.
+   Agreement with a general model, a theory, a method's usefulness or the wider literature
+   is not a comparison to that original's finding. The absence of a contradiction is not
+   agreement: "the findings support X rather than contradicting the original" fails both
+   tests and is cannot_be_determined, not successful. All comparisons agree → successful; all
+   disagree → failed; some agree and some do not → mixed.
+3. Where the paper's reported results state or imply nothing about the original's finding,
+   no replication outcome exists to code: answer cannot_be_determined. Answer descriptive only
+   only where the AUTHORS themselves say they applied the original's methods in a new context
+   or population — never as your own reading of what the study did.
+
+A changed method, measure, paradigm, population or setting does not by itself mean the paper
+has not compared: a conceptual replication re-tests the original's claim by design, and rule 2
+applies to it unchanged. Where the authors state one of the special verdicts below — statistically successful but flawed
+or uninformative — that verdict is the outcome.
+
+WHEN YOU CANNOT TELL
+
+Answer "cannot_be_determined" when the evidence in front of you does not state the outcome.
+Do not guess an outcome the evidence does not support, and do not withhold one it does state
+(or implies through a comparison as defined in rule 2 above).
+
+OUTCOME CATEGORIES
+
+- "successful" — the authors conclude the original finding was confirmed, replicated or
+  supported. A finding the authors treat as supported is successful even when the effect is
+  smaller or weaker than the original: effect size alone does not make it mixed. Code
+  successful from the authors' verdict or from their comparison to the original, never from
+  results with no stated or implied bearing on the original's finding.
+- "failed" — the authors conclude the original finding was not supported, was contradicted,
+  or failed to replicate.
+
+These two verdicts are about AGREEMENT with what the original reported, not about this
+paper's own statistical significance: finding no effect where the original also found none is
+"successful", and finding an effect where the original found none is "failed".
+- "mixed" — the authors themselves present their evidence as partly supporting and partly not,
+  for example when some of several tested findings replicated and others did not. Use mixed
+  only when the paper frames its own result that way; do not infer it from a reduced effect
+  size, or because you would have judged the evidence differently. If this paper re-tests
+  several studies from the original this verdict is about and they came out differently,
+  that is mixed. Where the paper marks one result as differing from the original in its own
+  words — "in contrast to the original", "unlike Smith et al.", "we did not replicate the
+  second effect" — and reports another as agreeing, the outcome is mixed. That holds even
+  where the paper opens by confirming the effect it set out to test: confirming the tested
+  effect is one comparison, not a verdict on the whole replication, and only an overall
+  verdict that speaks to the replication as a whole (rule 1) outweighs a stated contrast. A
+  count of how many measures replicated is not by itself such a mark.
+- "descriptive only" — the AUTHORS say they applied the original's methods, materials or procedure
+  in a new context or population, and the paper compares no result against the original finding.
+  Code this only from the authors' own account of what they did: where they do not say it, you
+  are inferring descriptive only from the shape of the study, and the answer is
+  cannot_be_determined instead. If the paper does compare its results to the original's — even
+  in a new population — code another outcome.
+- "statistically successful but flawed" — the authors obtained the original effect but argue
+  that their own or the original's method does not validly test the hypothesis, for example
+  "we replicated the effect using the original materials, but show that they are not a valid
+  test of the claim". Use this only when that critique is the paper's main message; a
+  replication that merely notes minor limitations is successful.
+- "uninformative" — the authors themselves state that a defect or limitation of this attempt
+  prevents it from providing a meaningful test of the original claim: it was underpowered, or
+  the design failed. Their substantive verdict is that this particular attempt can support
+  neither confirmation nor contradiction. Do not use uninformative merely because an estimate
+  is imprecise, nonsignificant, mixed, or described cautiously.
+- "cannot_be_determined" — we cannot tell from the evidence supplied. The paper may well state
+  an outcome somewhere we were not shown. Use this for missing evidence on our side, never for
+  a paper that reports its own attempt as incapable of adjudicating: that is uninformative.
+
+Remember: "uninformative" is the authors' verdict about their study; "cannot_be_determined" is
+our verdict about our evidence.
+
+CODING RULES
+
+- Where the authors state no verdict of their own: a manipulation check or preliminary test
+  that failed, so that the hypothesis could not be tested, is "failed" — not
+  "uninformative" and not "cannot_be_determined". A manipulation check that succeeded
+  followed by a failed main test is also "failed".
+- Where the authors state no verdict of their own: if the paper's title focuses on one
+  specific effect and that effect did not replicate, code "failed", whatever other checks
+  succeeded.
+- A close replication that works alongside a conceptual replication that does not is "mixed".
+- Code the central finding the replication was designed to test. Robustness checks and
+  exploratory analyses around it may be left out of the verdict; a tested finding the paper
+  itself contrasts with the original may not.
+- Where this paper reports several of its own studies against the original this verdict is
+  about, aggregate them into one verdict, following the authors' own judgment where they
+  state one; results that conflict with each other are "mixed".
+
+Examples:
+
+1. "Study x used method A to study reasons for 911 calls in city 1. Here, we replicate this
+   method to understand 911 calls in city 2." — descriptive only: the methods are reused, the
+   original claim is never tested.
+2. "We replicated the main effect but not the interaction." — mixed.
+3. "Our findings confirm Smith et al. (2015)." — successful.
+4. "Our sample was too small to provide a meaningful test of the original effect." —
+   uninformative: this is the authors' own verdict.
+5. "We obtained the original effect, but demonstrate that it can be explained by mere
+   regression to the mean." — statistically successful but flawed.
+
+Judge the outcome of this paper's own replication, not outcomes it reports for other studies
+in its background or literature review.
+
+For a reproduction, code the two axes instead ("outcome" is then ""):
+
+WHEN YOU CANNOT TELL
+
+Use "cannot_be_determined" on an axis the evidence in front of you does not settle. Do not
+guess a verdict the evidence does not support, and do not withhold one it does state (or
+strongly imply, with a citable sentence that shows this). The axes are settled separately —
+one may be clear while the other is not.
+
+AXIS 1 — outcome_computation: did re-running the analysis produce the original numbers?
+
+Only the numbers matter here, not the effort: if the reported numbers were obtained in the
+end, that is a reproducible computation regardless of what it took to get there. Work through
+these in order and stop at the first that fits:
+
+1. "not checked" — the supplied text states or implies that reproducing the original reported
+   numbers was outside this paper's analysis plan: it went straight to alternative
+   specifications, or examined the original by other means.
+2. "technical failure" — the reproduction could not be attempted or completed at all, because
+   the code, the data or the documentation was missing or unusable, or the workflow could not
+   be run. No comparable numbers came out.
+3. "computational issues" — the analysis ran and produced numbers, but the reported numbers
+   were not obtained: coefficients differed, results could not be recovered, or the paper
+   reports discrepancies it treats as substantive.
+4. "computationally reproducible" — the reported numbers were obtained again. Rounding and
+   negligible numerical differences are compatible with this value, and so is a reproduction
+   that needed correspondence with the authors, a corrected script or a reconstructed step to
+   get there.
+5. "cannot_be_determined" — the supplied evidence does not establish whether a reproduction
+   was attempted, or which of the four results above occurred.
+
+The boundary that matters most is whether comparable numerical output exists at all:
+"computational issues" means numbers came out and disagreed, "technical failure" means no
+numbers came out.
+
+AXIS 2 — outcome_robustness: does the finding survive alternative specifications?
+
+- "robust" — in re-analyses of the original data, the substantive finding remains supported
+  across the reasonable alternative specifications, variable constructions, inclusion rules,
+  estimators or sensitivity analyses actually tested.
+- "robustness challenges" — at least one reasonable alternative analysis materially weakens,
+  reverses, removes or substantively qualifies the original finding. Do not use this for
+  trivial numerical variation that leaves the substantive conclusion unchanged; where the
+  authors state explicitly how they read the variation, trust their judgement.
+- "not checked" — the supplied text suggests that the paper only considered computational
+  reproducibility and did not conduct robustness checks.
+- "cannot_be_determined" — the evidence does not say whether robustness was examined, or does
+  not reveal how it came out.
+
+Rules that apply to both axes:
+
+- The axes are independent and each is coded on its own evidence. A reproduction can fail
+  computationally and still find the conclusion robust, and it can reproduce every number and
+  still overturn the finding under a better specification.
+- A "technical failure" on axis 1 does not settle axis 2. The authors may still have examined
+  the finding by other means, so code axis 2 independently.
+- Both axes concern re-analysis of the original data. New data collected in a fresh sample is
+  a replication, not a robustness check, and does not belong on axis 2.
+- Both axes concern the central finding this paper set out to check, not incidental or
+  exploratory analyses around it.
+- Where the paper reports several of its own re-analyses against the original this verdict is
+  about, settle each axis over them together rather than picking one, following the authors'
+  own judgment where they state one.
+- Never answer "not checked" on BOTH axes. A paper that examined neither the original numbers
+  nor their robustness has checked the original in no way at all, so that pair of answers
+  describes no reproduction. Where the evidence does not settle an axis, that axis is
+  "cannot_be_determined".
+
+Judge this paper's own reproduction attempt, not results it reports for other studies in its
+background or literature review.
+
+SEVERAL ORIGINALS: WHICH TARGETS A VERDICT COVERS
+
+Where this paper re-tests several different originals, each target carries its own
+outcome, and the paper's own words decide which targets a verdict speaks about:
+
+- A verdict phrased over a SET covers every member of that set. "None of them
+  replicated", "these effects did not hold", "all eleven original findings were
+  supported" state an outcome about each target in the set they name.
+- A verdict that names particular originals covers those originals only, and says
+  nothing about the rest.
+- A target the paper's words never place inside such a verdict, and never discuss on
+  its own, is "cannot_be_determined" — on every outcome field asked for above. Do
+  not carry one target's outcome across to another.
+- An unattributed count is not a verdict about any single target: "six of the ten
+  effects replicated", without saying WHICH six, leaves each of the ten
+  "cannot_be_determined" unless the paper says elsewhere how that one came out.
+
+"outcome_confident": true or false — whether you would stake the verdict on the
+evidence as written. It is about the OUTCOME only: how the original was identified is
+recorded in "identified_by", and must not lower this.
+
+QUOTES
+
+For each verdict, copy the verbatim passage that proves it: 1-4 complete consecutive
+sentences, word for word from the text below, the shortest passage that makes the
+verdict self-contained. Name the section it came from: "title", "abstract",
+"introduction", "methods", "results", "discussion" or "fulltext" (in the document but
+section unclear). Use "" when no passage supports the verdict.
+
+Respond with the JSON object the schema asks for.
+
+SUCCESS SCHEMA:
+{
+  "type": "object",
+  "properties": {
+    "record_type": {
+      "enum": [
+        "replication",
+        "reproduction",
+        "not_a_replication",
+        "unclear"
+      ]
+    },
+    "record_type_quote": {
+      "type": "string",
+      "maxLength": 6000
+    },
+    "study_status": {
+      "enum": [
+        "completed",
+        "prospective"
+      ]
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "authors": {
+            "type": "string"
+          },
+          "year": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "doi": {
+            "type": "string"
+          },
+          "identified_by": {
+            "enum": [
+              "citation",
+              "description",
+              ""
+            ]
+          },
+          "study_numbers": {
+            "type": "string"
+          },
+          "replication_study_numbers": {
+            "type": "string"
+          },
+          "evidence_quote": {
+            "type": "string",
+            "maxLength": 6000
+          },
+          "outcome": {
+            "enum": [
+              "successful",
+              "failed",
+              "mixed",
+              "descriptive only",
+              "statistically successful but flawed",
+              "uninformative",
+              "cannot_be_determined",
+              ""
+            ]
+          },
+          "outcome_quote": {
+            "type": "string",
+            "maxLength": 6000
+          },
+          "outcome_quote_section": {
+            "type": "string"
+          },
+          "outcome_computation": {
+            "enum": [
+              "computationally reproducible",
+              "computational issues",
+              "technical failure",
+              "not checked",
+              "cannot_be_determined",
+              ""
+            ]
+          },
+          "outcome_computational_quote": {
+            "type": "string",
+            "maxLength": 6000
+          },
+          "outcome_robustness": {
+            "enum": [
+              "robust",
+              "robustness challenges",
+              "not checked",
+              "cannot_be_determined",
+              ""
+            ]
+          },
+          "outcome_robustness_quote": {
+            "type": "string",
+            "maxLength": 6000
+          },
+          "outcome_confident": {
+            "type": "boolean"
+          },
+          "outcome_reasoning": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "authors",
+          "year",
+          "title",
+          "doi",
+          "identified_by",
+          "evidence_quote",
+          "outcome",
+          "outcome_quote",
+          "outcome_quote_section",
+          "outcome_confident"
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "outcome": {
+                  "const": ""
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "outcome_computation",
+                "outcome_computational_quote",
+                "outcome_robustness",
+                "outcome_robustness_quote"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "reasoning": {
+      "type": "string"
+    },
+    "work_key": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "done",
+        "timeout",
+        "no_text",
+        "error"
+      ]
+    },
+    "evidence_level": {
+      "enum": [
+        "full_text",
+        "abstract",
+        null
+      ]
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "retrieved_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "text_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parser": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "record_type",
+    "study_status",
+    "targets",
+    "reasoning",
+    "work_key",
+    "status",
+    "evidence_level",
+    "source_url",
+    "retrieved_at",
+    "text_sha256",
+    "parser"
+  ]
+}
+
+
+ASSIGNED WORKS:
+[
+  {
+    "file_key": "42c36157d3ee5430",
+    "work_key": "https://osf.io/ad9jm",
+    "doi_r": "NA",
+    "url_r": "https://osf.io/ad9jm",
+    "title_r": "SCORE new data replication of Linkenauger et al. (2009)",
+    "author_r": "[{\"given\":\"Timothy F\",\"family\":\"Brady\",\"sequence\":\"first\"},{\"given\":\"Jamal R\",\"family\":\"Williams\",\"sequence\":\"additional\"},{\"given\":\"Melissa\",\"family\":\"Kline Struhl\",\"sequence\":\"additional\"},{\"given\":\"Zachary\",\"family\":\"Loomas\",\"sequence\":\"additional\"},{\"given\":\"Olivia\",\"family\":\"Miske\",\"sequence\":\"additional\"},{\"given\":\"Nicholas W\",\"family\":\"Fox\",\"sequence\":\"additional\"}]",
+    "year_r": "2026",
+    "journal_r": "NA",
+    "text_path": null,
+    "output_path": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/codings/42c36157d3ee5430.json",
+    "time_cap_seconds": 180
+  },
+  {
+    "file_key": "908fbb1cb58c9c38",
+    "work_key": "10.1017/s1930297500002941",
+    "doi_r": "10.1017/s1930297500002941",
+    "url_r": "NA",
+    "title_r": "The collective intelligence of random small crowds: A partial replication of Kosinski et al. (2012)",
+    "author_r": "[{\"given\":\"Ans\",\"family\":\"Vercammen\",\"sequence\":\"first\"},{\"given\":\"Yan\",\"family\":\"Ji\",\"sequence\":\"additional\"},{\"given\":\"Mark\",\"family\":\"Burgman\",\"sequence\":\"additional\"}]",
+    "year_r": "2019",
+    "journal_r": "Judgment and Decision Making",
+    "text_path": null,
+    "output_path": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/codings/908fbb1cb58c9c38.json",
+    "time_cap_seconds": 180
+  },
+  {
+    "file_key": "2b39952e06c4c3e2",
+    "work_key": "10.1017/s1930297500008184",
+    "doi_r": "10.1017/s1930297500008184",
+    "url_r": "NA",
+    "title_r": "Unit Asking — a method for increasing donations: A replication and extension",
+    "author_r": "[{\"given\":\"Hulda\",\"family\":\"Karlsson\",\"sequence\":\"first\",\"ORCID\":\"https://orcid.org/0000-0001-6890-3298\"},{\"given\":\"Simon\",\"family\":\"Hellström\",\"sequence\":\"additional\",\"ORCID\":\"https://orcid.org/0000-0001-9561-6972\"},{\"given\":\"Hajdi\",\"family\":\"Moche\",\"sequence\":\"additional\",\"ORCID\":\"https://orcid.org/0000-0001-8494-8701\"},{\"given\":\"Daniel\",\"family\":\"Västfjäll\",\"sequence\":\"additional\",\"ORCID\":\"https://orcid.org/0000-0003-2873-4500\"}]",
+    "year_r": "2020",
+    "journal_r": "Judgment and Decision Making",
+    "text_path": null,
+    "output_path": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/codings/2b39952e06c4c3e2.json",
+    "time_cap_seconds": 180
+  },
+  {
+    "file_key": "7af83e83ae2d5727",
+    "work_key": "10.1176/appi.ajp.2015.14070896",
+    "doi_r": "10.1176/appi.ajp.2015.14070896",
+    "url_r": "NA",
+    "title_r": "Gene-Environment Interaction in Youth Depression: Replication of the 5-HTTLPR Moderation in a Diverse Setting",
+    "author_r": "[{\"given\":\"Thiago Botter-Maio\",\"family\":\"Rocha\",\"sequence\":\"first\"},{\"given\":\"Mara H.\",\"family\":\"Hutz\",\"sequence\":\"additional\"},{\"given\":\"Angélica\",\"family\":\"Salatino-Oliveira\",\"sequence\":\"additional\"},{\"given\":\"Júlia P.\",\"family\":\"Genro\",\"sequence\":\"additional\"},{\"given\":\"Guilherme V.\",\"family\":\"Polanczyk\",\"sequence\":\"additional\"},{\"given\":\"João Ricardo\",\"family\":\"Sato\",\"sequence\":\"additional\"},{\"given\":\"Fernando C.\",\"family\":\"Wehrmeister\",\"sequence\":\"additional\"},{\"given\":\"Fernando C.\",\"family\":\"Barros\",\"sequence\":\"additional\"},{\"given\":\"Ana M.B.\",\"family\":\"Menezes\",\"sequence\":\"additional\"},{\"given\":\"Luis Augusto\",\"family\":\"Rohde\",\"sequence\":\"additional\"},{\"given\":\"Luciana\",\"family\":\"Anselmi\",\"sequence\":\"additional\"},{\"given\":\"Christian\",\"family\":\"Kieling\",\"sequence\":\"additional\"}]",
+    "year_r": "2015",
+    "journal_r": "American Journal of Psychiatry",
+    "text_path": null,
+    "output_path": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/codings/7af83e83ae2d5727.json",
+    "time_cap_seconds": 180
+  },
+  {
+    "file_key": "4a86e7a107c2be42",
+    "work_key": "10.1177/0956797619837942",
+    "doi_r": "10.1177/0956797619837942",
+    "url_r": "NA",
+    "title_r": "Is There a Positive Association Between Working Memory Capacity and Mind Wandering in a Low-Demand Breathing Task? A Preregistered Replication of a Study by Levinson, Smallwood, and Davidson (2012)",
+    "author_r": "[{\"given\":\"Matt E.\",\"family\":\"Meier\",\"sequence\":\"first\"}]",
+    "year_r": "2019",
+    "journal_r": "Psychological Science",
+    "text_path": null,
+    "output_path": "/home/lukas/.t3/worktrees/fred-data/audit-flora-blind-2026-10/audit/flora_blind_2026-10/codings/4a86e7a107c2be42.json",
+    "time_cap_seconds": 180
+  }
+]

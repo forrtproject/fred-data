@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict');const S=require('./review_shared_state.js');const b='baseline';let n=0;const event=(before,after,heads={},name='Alice')=>S.makeEvent(before,after,heads,name,b,'event-'+(++n),'2026-11-01');
+const a=event({}, {records:{'row:1':{decision:'approve'}}});
+const c=event({}, {records:{'row:2':{decision:'keep_current'}}},{},'Bob');
+let state=S.reduce([a,c],b);assert.equal(state.records['row:1'].decision,'approve');assert.equal(state.records['row:2'].decision,'keep_current');assert.equal(state.conflicts.length,0);
+const stale=event({}, {records:{'row:1':{decision:'keep_current'}}},{},'Bob');state=S.reduce([a,c,stale],b);assert.equal(state.records['row:1'].decision,'approve');assert.equal(state.conflicts.length,1);
+const same=event({}, {records:{'row:1':{decision:'approve',recorded_at:'different',reviewer:'Bob'}}},{},'Bob');assert.equal(S.reduce([a,same],b).conflicts.length,0);
+const next=event(state,{...state,records:{...state.records,'row:1':{decision:'follow_up'}}},state.heads);assert.equal(S.reduce([a,c,next],b).records['row:1'].decision,'follow_up');
+const undo=event(S.reduce([a],b),{records:{}},S.reduce([a],b).heads);assert.equal(S.reduce([a,undo],b).records['row:1'],undefined);
+const badUndo=event(S.reduce([a],b),{records:{}},S.reduce([a],b).heads);assert.equal(S.reduce([a,next,badUndo],b).conflicts.length,1);
+const big=event({}, {records:{'row:1':{notes:'😀'.repeat(50000)}}});const chunks=S.parts(big,'test-project','test-session');assert.ok(chunks.length>1);assert.ok(chunks.every(c=>c.note.length<50000));const rows=chunks.map(c=>({...c,ts:'2026-11-01'}));assert.equal(S.assemble(rows.slice(1)).length,0);assert.equal(S.assemble([...rows,...rows]).length,1);assert.equal(S.assemble(rows)[0].changes[0].value.notes.length,100000);
+assert.equal(S.reduce([a,a],b).events.length,1);assert.equal(S.reduce([a],'other-baseline').events.length,0);
+const resolved=event(state,{...state,resolutions:{[stale.id]:{resolution:'keep_shared'}}},state.heads);assert.equal(S.reduce([a,c,stale,resolved],b).conflicts.length,0);
+const formula=event({}, {records:{'row:5':{decision:'approve'}}},{},'=unsafe');assert.equal(S.parts(formula,'project','session')[0].voter.charAt(0),"'");
+const invalid={...a,changes:[{collection:'records',key:'row:1',value:'bad'}]};assert.equal(S.reduce([invalid],b).events.length,0);
+console.log('Shared protocol: independent reviewers, stale conflicts, identical approvals, undo, multipart atomicity, duplicate retries, baseline and conflict resolution passed.');

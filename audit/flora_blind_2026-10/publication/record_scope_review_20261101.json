@@ -1,0 +1,2004 @@
+{
+  "schema_version": "1.0",
+  "review_date": "2026-11-01",
+  "purpose": "Concrete report eligibility remedies; proposals only, no dataset/coding/adjudication changes.",
+  "recommendation": "Represent report/study status separately from replication intent and outcome. Move BU3GM planned attempt out of completed-results pool while preserving planned-study record. For five other originally prospective codings adopt/bind the exact verified completed report, refreshing dependent _r citation and quote provenance together. Bind the already recovered Crosby report similarly. Preserve every current scientific decision and its source-bound history; outcome-only corrections are insufficient as standalone record remedies.",
+  "inputs": {
+    "decisions_path": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+    "decisions_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+    "baseline_path": "/home/lukas/audit_inputs_2026-10/flora_b48a7d6.csv",
+    "baseline_sha256": "6d391186dfb57263bbc6bb504e8561e0d1e25997b36417072c023812efaad9f7",
+    "codebook_path": "audit/flora_blind_2026-10/codebook.md",
+    "codebook_sha256": "feab4379f0f2c93c6519647efd4872602e17e7124987ae8cf3764b236deecc38"
+  },
+  "codebook_evidence": [
+    {
+      "source_path": "audit/flora_blind_2026-10/codebook.md",
+      "sha256": "feab4379f0f2c93c6519647efd4872602e17e7124987ae8cf3764b236deecc38",
+      "literal_contiguous_quote": "\"study_status\": \"completed\", or \"prospective\" when the record IS a plan (a\npreregistration, protocol, analysis plan or Stage 1 registered report) that reports no\nresult. A finished study whose result you cannot see is still \"completed\".",
+      "character_start": 681,
+      "character_end": 917,
+      "utf8_byte_start": 683,
+      "utf8_byte_end": 919,
+      "section": "STEP 1",
+      "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+    }
+  ],
+  "structural_proposal": {
+    "record_action": "Required row-level review decision separate from existing field outcome dispositions.",
+    "new_columns_or_related_table": [
+      "study_status",
+      "report_kind",
+      "completed_results_eligible",
+      "registration_identifier",
+      "results_report_identifier",
+      "results_report_url",
+      "results_report_sha256",
+      "report_relation"
+    ],
+    "completed_results_rule": "A prospective intended replication can remain type replication while completed_results_eligible=false. Filter by report eligibility, not cannot_be_determined or not_a_replication. A completed report with inaccessible/unclear outcome remains completed.",
+    "version_rule": "Registration and results report are related records with separate bibliographies and evidence. Use exact report file/hash plus verified project/registration link; never transfer outcomes by title/year similarity or replace old cached evidence silently.",
+    "atomic_application": "When switching _r source, refresh citation identity, DOI hash, URLs, APA/BibTeX, quote/section and scientific dependencies as one reviewable change. Current decisions remain historical for their exact source until a new binding is explicitly integrated.",
+    "no_plan_nonreplication_recoding": true
+  },
+  "coverage": {
+    "current_final_decision_rows_screened": 109,
+    "originally_prospective_codings_requested": 6,
+    "originally_prospective_codings_accounted": 6,
+    "originally_prospective_associated_baseline_rows": 6,
+    "current_plan_bound_among_six": 4,
+    "already_current_completed_among_six": 2,
+    "new_completed_report_candidates_positively_bound": 3,
+    "six_with_verified_results_report_available_after_this_check": 5,
+    "plan_only_with_no_verified_results_replacement_in_bounds": 1,
+    "additional_current_plan_only_scopes_found": 0,
+    "additional_completed_upgrade_false_positive_crosby_rows": 1,
+    "original_side_stage1_false_positive_existing_remove_row": 1,
+    "detailed_findings": 8,
+    "all_known_associated_rows_checked": "Full frozen baseline _r fields searched for each registration, source project, file GUID and publication DOI; each of the seven report families has exactly the one associated row listed. Manifest confirms each of six requested filekeys maps to one row.",
+    "not_certification": "Other 101 current scopes were triaged for clear plan-only status, not newly recoded or exhaustively reread. Collection-level registration mentions do not turn completed constituent reports prospective."
+  },
+  "findings": [
+    {
+      "input_row_index": 0,
+      "file_key": "5746d10c18005a08",
+      "all_associated_input_rows": [
+        0
+      ],
+      "baseline_r": {
+        "doi_r": "10.17605/osf.io/bu3gm",
+        "url_r": "NA",
+        "title_r": "Spontaneous construction of causally relevant spatial models: Bulgarian replication of the model-type effect",
+        "author_r": "[{\"given\":\"Nikolay R.\",\"family\":\"Rachev\",\"sequence\":\"first\"}]",
+        "year_r": "2025",
+        "journal_r": "OSF Registries"
+      },
+      "current_scientific_decision": {
+        "source": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+        "source_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+        "case_id": "row:0",
+        "fields": {
+          "outcome": {
+            "disposition": "correction_supported",
+            "confirmed_value": null,
+            "proposed_value": "cannot_be_determined"
+          }
+        }
+      },
+      "scientific_decision_changes_applied": false,
+      "current_bound_report_status": "prospective_registration_with_earlier_2022_results_in_background",
+      "record_action": "move_plan_out_of_completed_results_pool",
+      "reason": "BU3GM registers a future improved-script/new-participant attempt. Its 2022 comparisons describe an earlier attempt. Keeping this row in a completed-results pool after changing only outcome still conflates those two attempts. Preserve the intended replication and named target as a separate planned-study record; do not label it not_a_replication. No verified later results report is available in this bounded check.",
+      "proposed_changes": [
+        {
+          "operation": "move_record",
+          "from_pool": "completed_results",
+          "to_pool": "planned_studies",
+          "study_status": "prospective",
+          "preserve": "Entire registered record, intended target and current/historical scientific decisions, including outcome-only correction, as provenance. Do not publish that historical outcome correction as a completed-attempt result."
+        }
+      ],
+      "alternative_action": {
+        "operation": "replace_r_source_and_refresh_dependencies",
+        "condition": "Only if a completed report is positively bound to the registered improved-script/new-participant attempt. The background 2022 result cannot satisfy this condition.",
+        "verified_candidate": null
+      },
+      "evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/texts/5746d10c18005a08.txt",
+          "sha256": "44014803106fc61d6916b3da2f4cbbd5347fc3cd7038033271a9a17e994ddc9c",
+          "literal_contiguous_quote": "Due to a bug in the experiment script, some sentence groups occurred more often than others. Now I aim to replicate Bransford et al.'s, Rinck et al.'s, and Jahn's results, with a new improved script and with a new set of",
+          "character_start": 4503,
+          "character_end": 4723,
+          "utf8_byte_start": 4503,
+          "utf8_byte_end": 4723,
+          "section": "introduction",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/texts/5746d10c18005a08.txt",
+          "sha256": "44014803106fc61d6916b3da2f4cbbd5347fc3cd7038033271a9a17e994ddc9c",
+          "literal_contiguous_quote": "Registration prior to creation of data",
+          "character_start": 11870,
+          "character_end": 11908,
+          "utf8_byte_start": 11870,
+          "utf8_byte_end": 11908,
+          "section": "q8",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/texts/5746d10c18005a08.txt",
+          "sha256": "44014803106fc61d6916b3da2f4cbbd5347fc3cd7038033271a9a17e994ddc9c",
+          "literal_contiguous_quote": "To address these limitations, in 2022 I designed an online experiment closely following Jahn's (2004, Experiment 1) design and using Jahn's stimulus sentences translated into Bulgarian).",
+          "character_start": 3823,
+          "character_end": 4009,
+          "utf8_byte_start": 3823,
+          "utf8_byte_end": 4009,
+          "section": "introduction",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ],
+      "bounded_latest_metadata": {
+        "registration_receipt": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/bu3gm.registration.json",
+        "registration_sha256": "dd440cf0183c603702cb3d2e4a1f8dd307cb3665c5ce164036b8cb9862f62c3a",
+        "registered_from": "https://osf.io/9vdn6/",
+        "project_metadata_http_status": 401,
+        "project_files_http_status": 401,
+        "article_doi": null,
+        "limit": "No inference that results do not exist elsewhere; inaccessible project was not bypassed."
+      },
+      "report_links": [
+        "https://doi.org/10.17605/OSF.IO/BU3GM"
+      ],
+      "bibliographic_note": "date_registered is 2023-11-24 whereas shipped year_r is 2025. Neither is silently substituted for the other; no bibliographic year change is proposed for the preserved registration."
+    },
+    {
+      "input_row_index": 533,
+      "file_key": "964819c2019d5385",
+      "all_associated_input_rows": [
+        533
+      ],
+      "baseline_r": {
+        "doi_r": "10.7554/elife.25801",
+        "url_r": "NA",
+        "title_r": "Replication Study: Fusobacterium nucleatum infection is prevalent in human colorectal carcinoma",
+        "author_r": "[{\"given\":\"John\",\"family\":\"Repass\",\"sequence\":\"first\"},{\"sequence\":\"additional\"},{\"given\":\"Elizabeth\",\"family\":\"Iorns\",\"sequence\":\"additional\"},{\"given\":\"Alexandria\",\"family\":\"Denis\",\"sequence\":\"additional\",\"ORCID\":\"https://orcid.org/0000-0002-1210-2309\"},{\"given\":\"Stephen R\",\"family\":\"Williams\",\"sequence\":\"additional\"},{\"given\":\"Nicole\",\"family\":\"Perfito\",\"sequence\":\"additional\"},{\"given\":\"Timothy M\",\"family\":\"Errington\",\"sequence\":\"additional\",\"ORCID\":\"https://orcid.org/0000-0002-4959-5143\"}]",
+        "year_r": "2018",
+        "journal_r": "eLife"
+      },
+      "current_scientific_decision": {
+        "source": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+        "source_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+        "case_id": "row:533",
+        "fields": {
+          "outcome": {
+            "disposition": "not_applicable",
+            "confirmed_value": null,
+            "proposed_value": null
+          }
+        }
+      },
+      "scientific_decision_changes_applied": false,
+      "current_bound_report_status": "completed_results_report_with_protocol_wrongly_paired_as_original",
+      "record_action": "preserve_existing_remove_row_decision_keep_empirical_target_row464",
+      "reason": "The Stage 1 document is on the original side of this pairing. The results-bearing _r is completed; excluding its entire report as prospective would be a false positive. Integrate existing row 533 removal with retained empirical-target row 464, without any new field judgment.",
+      "evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/texts/964819c2019d5385.txt",
+          "sha256": "c5c040e7f3fbf6d837d6713b1fb20c294e784258ee40639cd38ee37498391d2a",
+          "literal_contiguous_quote": "As part of the\nReproducibility Project: Cancer Biology\n, we published a Registered Report (Repass et al., 2016), that described how we intended to replicate an experiment",
+          "character_start": 1536,
+          "character_end": 1706,
+          "utf8_byte_start": 1536,
+          "utf8_byte_end": 1706,
+          "section": "abstract",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ]
+    },
+    {
+      "input_row_index": 1616,
+      "file_key": "da421d9c29242ecc",
+      "all_associated_input_rows": [
+        1616
+      ],
+      "baseline_r": {
+        "doi_r": "10.17605/osf.io/j9mfn",
+        "url_r": "https://osf.io/8mqx5",
+        "title_r": "Kozak et al 2006 replication and extension",
+        "author_r": "[{\"given\":\"Wong Ting\",\"family\":\"Hin\",\"sequence\":\"first\"},{\"given\":\"Gilad\",\"family\":\"Feldman\",\"sequence\":\"additional\"}]",
+        "year_r": "2021",
+        "journal_r": "OSF Registries"
+      },
+      "current_scientific_decision": {
+        "source": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+        "source_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+        "case_id": "row:1616",
+        "fields": {
+          "outcome": {
+            "disposition": "reviewed_unknown",
+            "confirmed_value": "cannot_be_determined",
+            "proposed_value": null
+          }
+        }
+      },
+      "scientific_decision_changes_applied": false,
+      "current_bound_report_status": "prospective_simulated_stage1_draft",
+      "verified_candidate_report_status": "completed_results_bearing_preprint",
+      "record_action": "replace_r_with_verified_results_report_and_refresh_dependencies",
+      "reason": "Current source-specific cannot_be_determined remains valid for the frozen simulated draft. A separate public completed report is now verified through registration registered_from -> project root Preprint folder -> named PDF, matching authors/target, and explicit body registration link. Adopt this report as the results record, retaining the registration as the planned-study/version relation. Outcome-only application to the old registration is insufficient.",
+      "proposed_changes": [
+        {
+          "field": "doi_r",
+          "old": "10.17605/osf.io/j9mfn",
+          "proposed": "10.17605/OSF.IO/HW4AV",
+          "identifier_scope": "Verified mutable OSF project containing the completed report; not an independently minted PDF/preprint DOI. Bind the exact file URL and hash as well.",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.identifiers.json"
+        },
+        {
+          "field": "url_r",
+          "old": "https://osf.io/8mqx5",
+          "proposed": "https://osf.io/hw4av/files/osfstorage/660b17efbba39a0ace72a1ab",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.preprint_files.json"
+        },
+        {
+          "field": "oa_url_r",
+          "proposed": "https://osf.io/download/hn6xt/",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.preprint_files.json"
+        },
+        {
+          "field": "title_r",
+          "old": "Kozak et al 2006 replication and extension",
+          "proposed": "Revisiting Action Identification and Mind Attribution: Replication and extensions of Kozak, Marsh, and Wegner (2006)",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "normalization": "Title-page whitespace collapsed only; wording retained."
+        },
+        {
+          "field": "author_r",
+          "old": "[{\"given\":\"Wong Ting\",\"family\":\"Hin\",\"sequence\":\"first\"},{\"given\":\"Gilad\",\"family\":\"Feldman\",\"sequence\":\"additional\"}]",
+          "proposed_author_order": [
+            "Ting Hin Wong",
+            "Gilad Feldman"
+          ],
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt"
+        },
+        {
+          "field": "year_r",
+          "old": "2021",
+          "proposed": "2021",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.project.json",
+          "meaning": "Project citation year from primary custom citation; not inferred from filename/upload date."
+        }
+      ],
+      "dependent_fields_to_refresh": [
+        "doi_r_hash",
+        "alt_identifier_r",
+        "journal_r",
+        "volume_r",
+        "issue_r",
+        "pages_r",
+        "apa_ref_r",
+        "bibtex_ref_r",
+        "outcome",
+        "outcome_quote",
+        "outcome_quote_source",
+        "source association and source hash"
+      ],
+      "dependent_field_policy": "Preserve current scientific decision as source-bound history. Rebind and review only the dependencies against the selected completed report before publishing a results row; no scientific field is changed by this review. Do not carry registration publisher/venue or date into a report citation without support. Rebuild APA/BibTeX from verified proposed values, omitting unknown year/venue/pages.",
+      "report_links": [
+        "https://osf.io/hw4av/files/osfstorage/660b17efbba39a0ace72a1ab",
+        "https://osf.io/download/hn6xt/",
+        "https://doi.org/10.17605/OSF.IO/HW4AV"
+      ],
+      "report_pdf_sha256": "845bc1dbdf2969df53fde534aef27f1428109ffb3b93d552358b0b6532517981",
+      "server_pdf_hash_matches": true,
+      "evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/texts/da421d9c29242ecc.txt",
+          "sha256": "3baa4a82bf4ee30caabca4acd678753aa1ddd7aa489586747ce0bef6913bc977",
+          "literal_contiguous_quote": "[IMPORTANT: Results were written using a randomized dataset produced by Qualtrics to simulate what these sections will look like after data collection. These will be updated following the",
+          "character_start": 3497,
+          "character_end": 3684,
+          "utf8_byte_start": 3504,
+          "utf8_byte_end": 3691,
+          "section": "abstract",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "sha256": "02f128aa006b27c5741be56791e64524ba5c8d131c9ebdc354ecb66ba306e10c",
+          "literal_contiguous_quote": "         Revisiting Action Identification and Mind Attribution:\n\n  Replication and extensions of Kozak, Marsh, and Wegner (2006)",
+          "character_start": 0,
+          "character_end": 128,
+          "utf8_byte_start": 0,
+          "utf8_byte_end": 128,
+          "section": "title",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "sha256": "02f128aa006b27c5741be56791e64524ba5c8d131c9ebdc354ecb66ba306e10c",
+          "literal_contiguous_quote": "a total of 1151 American Amazon Mechanical Turk (MTurk) participants\n\ncompleted the study using TurkPrime.com and 1086 of them passed the verification (Mage =\n\n42.83, SD = 13.28; 497 males, 579 females, 10 other/did not disclose).",
+          "character_start": 28243,
+          "character_end": 28473,
+          "utf8_byte_start": 28289,
+          "utf8_byte_end": 28519,
+          "section": "methods",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "sha256": "02f128aa006b27c5741be56791e64524ba5c8d131c9ebdc354ecb66ba306e10c",
+          "literal_contiguous_quote": "https://osf.io/j9mfn",
+          "character_start": 27262,
+          "character_end": 27282,
+          "utf8_byte_start": 27303,
+          "utf8_byte_end": 27323,
+          "section": "preregistration/project identity",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "sha256": "02f128aa006b27c5741be56791e64524ba5c8d131c9ebdc354ecb66ba306e10c",
+          "literal_contiguous_quote": "https://osf.io/hw4av",
+          "character_start": 5115,
+          "character_end": 5135,
+          "utf8_byte_start": 5128,
+          "utf8_byte_end": 5148,
+          "section": "preregistration/project identity",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.identifiers.json",
+          "sha256": "c2c5eb22073a9950f3e328ec21e8786922ae5b3b624a40863b9c79abecfb7869",
+          "literal_contiguous_quote": "\"value\":\"10.17605/OSF.IO/HW4AV\"",
+          "character_start": 94,
+          "character_end": 125,
+          "utf8_byte_start": 94,
+          "utf8_byte_end": 125,
+          "section": "primary OSF identifier metadata",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "sha256": "02f128aa006b27c5741be56791e64524ba5c8d131c9ebdc354ecb66ba306e10c",
+          "literal_contiguous_quote": "Ting Hin Wong",
+          "character_start": 170,
+          "character_end": 183,
+          "utf8_byte_start": 170,
+          "utf8_byte_end": 183,
+          "section": "title authors",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "sha256": "02f128aa006b27c5741be56791e64524ba5c8d131c9ebdc354ecb66ba306e10c",
+          "literal_contiguous_quote": "Gilad Feldman",
+          "character_start": 364,
+          "character_end": 377,
+          "utf8_byte_start": 364,
+          "utf8_byte_end": 377,
+          "section": "title authors",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.project.json",
+          "sha256": "0e4d9bbd5149362804deb91e3fbfaa2919191c5ae4e2d37e1f4b51ad0d4094e8",
+          "literal_contiguous_quote": "Wong, T., &amp; Feldman, G. (2021). Revisiting Action Identification and Mind Attribution: Replication and extensions of Kozak, Marsh, and Wegner (2006). https://doi.org/10.17605/OSF.IO/HW4AV",
+          "character_start": 236,
+          "character_end": 427,
+          "utf8_byte_start": 236,
+          "utf8_byte_end": 427,
+          "section": "primary project custom citation",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "sha256": "02f128aa006b27c5741be56791e64524ba5c8d131c9ebdc354ecb66ba306e10c",
+          "literal_contiguous_quote": "We found mixed support for the findings by Kozak et al. (2006).",
+          "character_start": 100755,
+          "character_end": 100818,
+          "utf8_byte_start": 101036,
+          "utf8_byte_end": 101099,
+          "section": "discussion/conclusion; eligibility context only, no new field adjudication",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ],
+      "latest_metadata_receipts": [
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.registration.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.project.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.root_files.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.preprint_files.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.identifiers.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.preprints.json"
+      ],
+      "limits": "Eligibility and positive report binding checked using title, registration links, methods, actual results and substantive discussion/conclusion. Not a new full-source field coding; no data/code downloaded or analyses run. The API preprints relation is empty despite a Preprint folder; file/folder relations, not that empty list, supply the binding.",
+      "contrary_evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/j9mfn.report.txt",
+          "sha256": "02f128aa006b27c5741be56791e64524ba5c8d131c9ebdc354ecb66ba306e10c",
+          "literal_contiguous_quote": "randomized dataset sampled from the Amazon mechanical Turk",
+          "character_start": 3397,
+          "character_end": 3455,
+          "utf8_byte_start": 3397,
+          "utf8_byte_end": 3455,
+          "section": "abstract",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ],
+      "contrary_evidence_resolution": "The abstract retains that ambiguous phrase, without the old explicit Qualtrics simulation warning. Methods identify 1151 actual MTurk participants, 1086 verified and analyzed; completed data collection is stated, results and substantive General Discussion/Conclusion are present. Treat this as a distinct completed-report candidate with a residual wording caution, not automatic exclusion triggered by a keyword. Verify source adoption before refreshing scientific fields."
+    },
+    {
+      "input_row_index": 1662,
+      "file_key": "c76e7f36731690f6",
+      "all_associated_input_rows": [
+        1662
+      ],
+      "baseline_r": {
+        "doi_r": "10.17605/osf.io/ahcpw",
+        "url_r": "https://osf.io/qbp4g/files/ue9gm",
+        "title_r": "Hsee and Rottenstreich (2004) replication & extension",
+        "author_r": "[{\"given\":\"Gilad\",\"family\":\"Feldman\",\"sequence\":\"first\"},{\"given\":\"Cheuk Yan\",\"family\":\"Tam\",\"sequence\":\"additional\"}]",
+        "year_r": "2021",
+        "journal_r": "OSF Registries"
+      },
+      "current_scientific_decision": {
+        "source": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+        "source_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+        "case_id": "row:1662",
+        "fields": {
+          "outcome": {
+            "disposition": "reviewed_unknown",
+            "confirmed_value": "cannot_be_determined",
+            "proposed_value": "cannot_be_determined"
+          }
+        }
+      },
+      "scientific_decision_changes_applied": false,
+      "current_bound_report_status": "prospective_simulated_stage1_draft",
+      "verified_candidate_report_status": "completed_results_bearing_preprint",
+      "record_action": "replace_r_with_verified_results_report_and_refresh_dependencies",
+      "reason": "Current source-specific cannot_be_determined remains valid for the frozen simulated draft. A separate public completed report is now verified through registration registered_from -> project root Preprint folder -> named PDF, matching authors/target, and explicit body registration link. Adopt this report as the results record, retaining the registration as the planned-study/version relation. Outcome-only application to the old registration is insufficient.",
+      "proposed_changes": [
+        {
+          "field": "doi_r",
+          "old": "10.17605/osf.io/ahcpw",
+          "proposed": "10.17605/OSF.IO/QBP4G",
+          "identifier_scope": "Verified mutable OSF project containing the completed report; not an independently minted PDF/preprint DOI. Bind the exact file URL and hash as well.",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.identifiers.json"
+        },
+        {
+          "field": "url_r",
+          "old": "https://osf.io/qbp4g/files/ue9gm",
+          "proposed": "https://osf.io/qbp4g/files/osfstorage/660b175abba39a0ac772a107",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.preprint_files.json"
+        },
+        {
+          "field": "oa_url_r",
+          "proposed": "https://osf.io/download/ue9gm/",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.preprint_files.json"
+        },
+        {
+          "field": "title_r",
+          "old": "Hsee and Rottenstreich (2004) replication & extension",
+          "proposed": "Revisiting the Affective Psychology of Value: Replication and extension of Hsee and Rottenstreich (2004)",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt",
+          "normalization": "Title-page whitespace collapsed only; wording retained."
+        },
+        {
+          "field": "author_r",
+          "old": "[{\"given\":\"Gilad\",\"family\":\"Feldman\",\"sequence\":\"first\"},{\"given\":\"Cheuk Yan\",\"family\":\"Tam\",\"sequence\":\"additional\"}]",
+          "proposed_author_order": [
+            "Cheuk Yan Tam",
+            "Gilad Feldman"
+          ],
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt"
+        },
+        {
+          "field": "year_r",
+          "old": "2021",
+          "proposed": "2021",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.project.json",
+          "meaning": "Project citation year from primary custom citation; not inferred from filename/upload date."
+        }
+      ],
+      "dependent_fields_to_refresh": [
+        "doi_r_hash",
+        "alt_identifier_r",
+        "journal_r",
+        "volume_r",
+        "issue_r",
+        "pages_r",
+        "apa_ref_r",
+        "bibtex_ref_r",
+        "outcome",
+        "outcome_quote",
+        "outcome_quote_source",
+        "source association and source hash"
+      ],
+      "dependent_field_policy": "Preserve current scientific decision as source-bound history. Rebind and review only the dependencies against the selected completed report before publishing a results row; no scientific field is changed by this review. Do not carry registration publisher/venue or date into a report citation without support. Rebuild APA/BibTeX from verified proposed values, omitting unknown year/venue/pages.",
+      "report_links": [
+        "https://osf.io/qbp4g/files/osfstorage/660b175abba39a0ac772a107",
+        "https://osf.io/download/ue9gm/",
+        "https://doi.org/10.17605/OSF.IO/QBP4G"
+      ],
+      "report_pdf_sha256": "8097da2968d115e56cf4c1d5faa7b7ca39c7fdd613fee09fd8d1d540f4a7095c",
+      "server_pdf_hash_matches": true,
+      "evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/texts/c76e7f36731690f6.txt",
+          "sha256": "63e6e4afe1b7530bf563f00836d2447dbf3e8f206abdb56e4853a665800dbc25",
+          "literal_contiguous_quote": "[Keep in Stage 1 (for pre-registration), remove after pre-registration and data collectionIMPORTANT: Method and results sections were written using randomized dataset produced by Qualtrics to simulate what these",
+          "character_start": 44249,
+          "character_end": 44460,
+          "utf8_byte_start": 44488,
+          "utf8_byte_end": 44699,
+          "section": "results",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt",
+          "sha256": "879e7a40dd85b70ec40df804c8cb4fe3e289721f2d55bdaebd531748a91dc3fa",
+          "literal_contiguous_quote": "               Revisiting the Affective Psychology of Value:\n\n      Replication and extension of Hsee and Rottenstreich (2004)",
+          "character_start": 0,
+          "character_end": 126,
+          "utf8_byte_start": 0,
+          "utf8_byte_end": 126,
+          "section": "title",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt",
+          "sha256": "879e7a40dd85b70ec40df804c8cb4fe3e289721f2d55bdaebd531748a91dc3fa",
+          "literal_contiguous_quote": "a total of 1041 American Amazon Mechanical Turk\n\n(MTurk) participants completed the study using TurkPrime.com (Mage = 42.41, SD = 13.28; 523\n\nmales, 507 females, 5 other, 6 rather not disclose). Please refer to Table 4 for a compa",
+          "character_start": 45016,
+          "character_end": 45246,
+          "utf8_byte_start": 45151,
+          "utf8_byte_end": 45381,
+          "section": "methods",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt",
+          "sha256": "879e7a40dd85b70ec40df804c8cb4fe3e289721f2d55bdaebd531748a91dc3fa",
+          "literal_contiguous_quote": "https://osf.io/ahcpw",
+          "character_start": 43739,
+          "character_end": 43759,
+          "utf8_byte_start": 43870,
+          "utf8_byte_end": 43890,
+          "section": "preregistration/project identity",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt",
+          "sha256": "879e7a40dd85b70ec40df804c8cb4fe3e289721f2d55bdaebd531748a91dc3fa",
+          "literal_contiguous_quote": "https://osf.io/qbp4g",
+          "character_start": 4572,
+          "character_end": 4592,
+          "utf8_byte_start": 4583,
+          "utf8_byte_end": 4603,
+          "section": "preregistration/project identity",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.identifiers.json",
+          "sha256": "aeb20a5ef4d45e6354cfde66b0353c4c41814f348e011d5db754846a0b681459",
+          "literal_contiguous_quote": "\"value\":\"10.17605/OSF.IO/QBP4G\"",
+          "character_start": 94,
+          "character_end": 125,
+          "utf8_byte_start": 94,
+          "utf8_byte_end": 125,
+          "section": "primary OSF identifier metadata",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt",
+          "sha256": "879e7a40dd85b70ec40df804c8cb4fe3e289721f2d55bdaebd531748a91dc3fa",
+          "literal_contiguous_quote": "Cheuk Yan Tam",
+          "character_start": 168,
+          "character_end": 181,
+          "utf8_byte_start": 168,
+          "utf8_byte_end": 181,
+          "section": "title authors",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt",
+          "sha256": "879e7a40dd85b70ec40df804c8cb4fe3e289721f2d55bdaebd531748a91dc3fa",
+          "literal_contiguous_quote": "Gilad Feldman",
+          "character_start": 351,
+          "character_end": 364,
+          "utf8_byte_start": 351,
+          "utf8_byte_end": 364,
+          "section": "title authors",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.project.json",
+          "sha256": "0338c43895428e462571b021a973a09627ecb611225c4cce881ed699fe17b6ec",
+          "literal_contiguous_quote": "Tam, C. Y., &amp; Feldman, G. (2021). Revisiting the Affective Psychology of Value: Replication and extension of Hsee and Rottenstreich (2004). https://doi.org/10.17605/OSF.IO/QBP4G",
+          "character_start": 224,
+          "character_end": 405,
+          "utf8_byte_start": 224,
+          "utf8_byte_end": 405,
+          "section": "primary project custom citation",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.report.txt",
+          "sha256": "879e7a40dd85b70ec40df804c8cb4fe3e289721f2d55bdaebd531748a91dc3fa",
+          "literal_contiguous_quote": "We found mixed support for the findings by Hsee and Rottenstreich (2004).",
+          "character_start": 115406,
+          "character_end": 115479,
+          "utf8_byte_start": 115764,
+          "utf8_byte_end": 115837,
+          "section": "discussion/conclusion; eligibility context only, no new field adjudication",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ],
+      "latest_metadata_receipts": [
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.registration.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.project.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.root_files.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.preprint_files.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.identifiers.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/ahcpw.preprints.json"
+      ],
+      "limits": "Eligibility and positive report binding checked using title, registration links, methods, actual results and substantive discussion/conclusion. Not a new full-source field coding; no data/code downloaded or analyses run. The API preprints relation is empty despite a Preprint folder; file/folder relations, not that empty list, supply the binding."
+    },
+    {
+      "input_row_index": 1710,
+      "file_key": "43639e83bd9e29d0",
+      "all_associated_input_rows": [
+        1710
+      ],
+      "baseline_r": {
+        "doi_r": "10.17605/osf.io/w34fb",
+        "url_r": "https://osf.io/8hdu3/files/7w5b6",
+        "title_r": "Gray et al (2011): Replication and extension",
+        "author_r": "[{\"given\":\"Gilad\",\"family\":\"Feldman\",\"sequence\":\"first\"},{\"given\":\"Tsz Ching TSANG\",\"family\":\"Ivard\",\"sequence\":\"additional\"}]",
+        "year_r": "2021",
+        "journal_r": "OSF Registries"
+      },
+      "current_scientific_decision": {
+        "source": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+        "source_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+        "case_id": "row:1710",
+        "fields": {
+          "outcome": {
+            "disposition": "correction_supported",
+            "confirmed_value": null,
+            "proposed_value": "cannot_be_determined"
+          }
+        }
+      },
+      "scientific_decision_changes_applied": false,
+      "current_bound_report_status": "prospective_simulated_stage1_draft",
+      "verified_candidate_report_status": "completed_results_bearing_preprint",
+      "record_action": "replace_r_with_verified_results_report_and_refresh_dependencies",
+      "reason": "Current source-specific cannot_be_determined remains valid for the frozen simulated draft. A separate public completed report is now verified through registration registered_from -> project root Preprint folder -> named PDF, matching authors/target, and explicit body registration link. Adopt this report as the results record, retaining the registration as the planned-study/version relation. Outcome-only application to the old registration is insufficient.",
+      "proposed_changes": [
+        {
+          "field": "doi_r",
+          "old": "10.17605/osf.io/w34fb",
+          "proposed": "10.17605/OSF.IO/8HDU3",
+          "identifier_scope": "Verified mutable OSF project containing the completed report; not an independently minted PDF/preprint DOI. Bind the exact file URL and hash as well.",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.identifiers.json"
+        },
+        {
+          "field": "url_r",
+          "old": "https://osf.io/8hdu3/files/7w5b6",
+          "proposed": "https://osf.io/8hdu3/files/osfstorage/65c5b36f3280d80c95a3b0fb",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.preprint_files.json"
+        },
+        {
+          "field": "oa_url_r",
+          "proposed": "https://osf.io/download/7w5b6/",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.preprint_files.json"
+        },
+        {
+          "field": "title_r",
+          "old": "Gray et al (2011): Replication and extension",
+          "proposed": "Revisiting the link between Mind Perception and Objectification: Replication and Extension of Gray et al (2011)",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt",
+          "normalization": "Title-page whitespace collapsed only; wording retained."
+        },
+        {
+          "field": "author_r",
+          "old": "[{\"given\":\"Gilad\",\"family\":\"Feldman\",\"sequence\":\"first\"},{\"given\":\"Tsz Ching TSANG\",\"family\":\"Ivard\",\"sequence\":\"additional\"}]",
+          "proposed_author_order": [
+            "Tsz Ching (Ivard) Tsang",
+            "Gilad Feldman"
+          ],
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt"
+        },
+        {
+          "field": "year_r",
+          "old": "2021",
+          "proposed": null,
+          "proof_source": null,
+          "meaning": "No verified report/citation year in bounded receipts. Clear unsupported carried registration year in report citation; retain its historical value on the registration."
+        }
+      ],
+      "dependent_fields_to_refresh": [
+        "doi_r_hash",
+        "alt_identifier_r",
+        "journal_r",
+        "volume_r",
+        "issue_r",
+        "pages_r",
+        "apa_ref_r",
+        "bibtex_ref_r",
+        "outcome",
+        "outcome_quote",
+        "outcome_quote_source",
+        "source association and source hash"
+      ],
+      "dependent_field_policy": "Preserve current scientific decision as source-bound history. Rebind and review only the dependencies against the selected completed report before publishing a results row; no scientific field is changed by this review. Do not carry registration publisher/venue or date into a report citation without support. Rebuild APA/BibTeX from verified proposed values, omitting unknown year/venue/pages.",
+      "report_links": [
+        "https://osf.io/8hdu3/files/osfstorage/65c5b36f3280d80c95a3b0fb",
+        "https://osf.io/download/7w5b6/",
+        "https://doi.org/10.17605/OSF.IO/8HDU3"
+      ],
+      "report_pdf_sha256": "2e120f9eac52edbf0fc50cfcddb62bb1ba262d098a1878bcf83c8bff260e4f31",
+      "server_pdf_hash_matches": true,
+      "evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/texts/43639e83bd9e29d0.txt",
+          "sha256": "056bab5c7ff1f14204c399a006fc8794e1438f312f6c7c68afab543c73c46f46",
+          "literal_contiguous_quote": "[IMPORTANT:Results were written using a randomized dataset produced by Qualtrics to simulate what these sections will look like after data collection. These will be updated following the data",
+          "character_start": 4371,
+          "character_end": 4562,
+          "utf8_byte_start": 4382,
+          "utf8_byte_end": 4573,
+          "section": "abstract",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt",
+          "sha256": "44d3f91da7efe4bde05b1775cdafc7bc4d383a39ef1ce79422d7c701f7653131",
+          "literal_contiguous_quote": "      Revisiting the link between Mind Perception and Objectification:\n               Replication and Extension of Gray et al (2011)",
+          "character_start": 0,
+          "character_end": 132,
+          "utf8_byte_start": 0,
+          "utf8_byte_end": 132,
+          "section": "title",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt",
+          "sha256": "44d3f91da7efe4bde05b1775cdafc7bc4d383a39ef1ce79422d7c701f7653131",
+          "literal_contiguous_quote": "A total of 1009 Amazon Mechanical Turk (MTurk) American participants completed the\n\nstudy on TurkPrime.com (Mage = 42.2, SD = 13.9; 462 females, 538 males, 6 others, and 3 rather not\n\ndisclose) by Qualtrics online survey. Compensa",
+          "character_start": 31064,
+          "character_end": 31294,
+          "utf8_byte_start": 31194,
+          "utf8_byte_end": 31424,
+          "section": "methods",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt",
+          "sha256": "44d3f91da7efe4bde05b1775cdafc7bc4d383a39ef1ce79422d7c701f7653131",
+          "literal_contiguous_quote": "https://osf.io/w34fb",
+          "character_start": 30257,
+          "character_end": 30277,
+          "utf8_byte_start": 30387,
+          "utf8_byte_end": 30407,
+          "section": "preregistration/project identity",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt",
+          "sha256": "44d3f91da7efe4bde05b1775cdafc7bc4d383a39ef1ce79422d7c701f7653131",
+          "literal_contiguous_quote": "https://osf.io/8hdu3",
+          "character_start": 5488,
+          "character_end": 5508,
+          "utf8_byte_start": 5524,
+          "utf8_byte_end": 5544,
+          "section": "preregistration/project identity",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.identifiers.json",
+          "sha256": "658d4343f6da15b12e2b2d94264f623a044d6f5a997f699ca25fd713b36de1ce",
+          "literal_contiguous_quote": "\"value\":\"10.17605/OSF.IO/8HDU3\"",
+          "character_start": 94,
+          "character_end": 125,
+          "utf8_byte_start": 94,
+          "utf8_byte_end": 125,
+          "section": "primary OSF identifier metadata",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt",
+          "sha256": "44d3f91da7efe4bde05b1775cdafc7bc4d383a39ef1ce79422d7c701f7653131",
+          "literal_contiguous_quote": "Tsz Ching (Ivard) Tsang",
+          "character_start": 172,
+          "character_end": 195,
+          "utf8_byte_start": 172,
+          "utf8_byte_end": 195,
+          "section": "title authors",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt",
+          "sha256": "44d3f91da7efe4bde05b1775cdafc7bc4d383a39ef1ce79422d7c701f7653131",
+          "literal_contiguous_quote": "Gilad Feldman",
+          "character_start": 384,
+          "character_end": 397,
+          "utf8_byte_start": 384,
+          "utf8_byte_end": 397,
+          "section": "title authors",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.report.txt",
+          "sha256": "44d3f91da7efe4bde05b1775cdafc7bc4d383a39ef1ce79422d7c701f7653131",
+          "literal_contiguous_quote": "we successfully replicated all the original effects",
+          "character_start": 72089,
+          "character_end": 72140,
+          "utf8_byte_start": 72451,
+          "utf8_byte_end": 72502,
+          "section": "discussion/conclusion; eligibility context only, no new field adjudication",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ],
+      "latest_metadata_receipts": [
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.registration.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.project.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.root_files.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.preprint_files.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.identifiers.json",
+        "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/w34fb.preprints.json"
+      ],
+      "limits": "Eligibility and positive report binding checked using title, registration links, methods, actual results and substantive discussion/conclusion. Not a new full-source field coding; no data/code downloaded or analyses run. The API preprints relation is empty despite a Preprint folder; file/folder relations, not that empty list, supply the binding."
+    },
+    {
+      "input_row_index": 1852,
+      "file_key": "79505c3ea3e1624e",
+      "all_associated_input_rows": [
+        1852
+      ],
+      "baseline_r": {
+        "doi_r": "10.17605/osf.io/evdp5",
+        "url_r": "https://osf.io/preprints/psyarxiv/3qaeu_v3",
+        "title_r": "Human adults prefer to cooperate even when it is costly: A replication of Curioni et al. (2022)",
+        "author_r": "[{\"given\":\"Mikayla\",\"family\":\"Lalli\",\"sequence\":\"first\"},{\"given\":\"Michael J\",\"family\":\"Carter\",\"sequence\":\"additional\"}]",
+        "year_r": "2023",
+        "journal_r": "OSF Registries"
+      },
+      "current_scientific_decision": {
+        "source": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+        "source_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+        "case_id": "row:1852",
+        "fields": {
+          "outcome": {
+            "disposition": "confirmed_correct",
+            "confirmed_value": "failed",
+            "proposed_value": null
+          }
+        }
+      },
+      "scientific_decision_changes_applied": false,
+      "current_bound_report_status": "completed_results_bearing_report_already_recovered",
+      "record_action": "bind_current_completed_report_and_refresh_r_bibliography",
+      "reason": "The current completed preprint explicitly names EVDP5 and has a retitled ten-author report. The failed decision is already current and is preserved. The registration DOI, two-author citation and 2023 year must not be left as though they describe this completed report.",
+      "proposed_changes": [
+        {
+          "field": "doi_r",
+          "old": "10.17605/osf.io/evdp5",
+          "proposed": "10.31234/osf.io/3qaeu_v3",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/curioni.identifiers.json"
+        },
+        {
+          "field": "url_r",
+          "old": "https://osf.io/preprints/psyarxiv/3qaeu_v3",
+          "proposed": "https://osf.io/preprints/psyarxiv/3qaeu_v3/",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/curioni_final/route0.response"
+        },
+        {
+          "field": "oa_url_r",
+          "proposed": "https://osf.io/download/uzwpj/",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/curioni_final/filemeta.response"
+        },
+        {
+          "field": "title_r",
+          "old": "Human adults prefer to cooperate even when it is costly: A replication of Curioni et al. (2022)",
+          "proposed": "Preferences for costly cooperation are highly individualized",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/curioni_final/route0.response"
+        },
+        {
+          "field": "author_r",
+          "old": "[{\"given\":\"Mikayla\",\"family\":\"Lalli\",\"sequence\":\"first\"},{\"given\":\"Michael J\",\"family\":\"Carter\",\"sequence\":\"additional\"}]",
+          "proposed_author_order": [
+            "Mikayla Lalli",
+            "Nour Al Afif",
+            "Jiaqiao Tang",
+            "Hibaa Hasan",
+            "Enuri Dissanayake",
+            "Vida Sussman",
+            "Rakshith Lokesh",
+            "Scott Rathwell",
+            "Joshua G.A. Cashaback",
+            "Michael J. Carter"
+          ],
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_curioni_final_v1/article.txt"
+        },
+        {
+          "field": "year_r",
+          "old": "2023",
+          "proposed": "2025",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/curioni_final/route0.response",
+          "meaning": "Primary preprint date_published year, version 3 file; not inferred from version modification date"
+        }
+      ],
+      "dependent_fields_to_refresh": [
+        "doi_r_hash",
+        "alt_identifier_r",
+        "journal_r",
+        "volume_r",
+        "issue_r",
+        "pages_r",
+        "apa_ref_r",
+        "bibtex_ref_r",
+        "outcome_quote",
+        "outcome_quote_source",
+        "exact source association/hash"
+      ],
+      "scientific_action": "Keep the latest completed-source scientific decision. Update quote/provenance to its existing verified proofs rather than applying old registration-only cannot_be_determined. No outcome recoding performed here.",
+      "report_links": [
+        "https://osf.io/preprints/psyarxiv/3qaeu_v3/",
+        "https://osf.io/download/uzwpj/",
+        "https://doi.org/10.31234/osf.io/3qaeu_v3"
+      ],
+      "evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_curioni_final_v1/article.txt",
+          "sha256": "1ba726a2c9a1b153b2164e29dacf8a13e225178a4b695a64d51f559a643eab14",
+          "literal_contiguous_quote": "Our failure to replicate a preference for joint action even when it is more costly was surprising\ngiven the robustness of this effect across",
+          "character_start": 46490,
+          "character_end": 46630,
+          "utf8_byte_start": 46766,
+          "utf8_byte_end": 46906,
+          "section": "discussion",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/curioni_final/route0.response",
+          "sha256": "1a15726ef7e0ff86597a17a8f25f7421bce1c5b9ff0371d6567ab0e207157088",
+          "literal_contiguous_quote": "Preferences for costly cooperation are highly individualized",
+          "character_start": 281,
+          "character_end": 341,
+          "utf8_byte_start": 281,
+          "utf8_byte_end": 341,
+          "section": "primary preprint metadata",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/curioni_final/route0.response",
+          "sha256": "1a15726ef7e0ff86597a17a8f25f7421bce1c5b9ff0371d6567ab0e207157088",
+          "literal_contiguous_quote": "\"date_published\":\"2025-03-25T13:30:09.031587\"",
+          "character_start": 147,
+          "character_end": 192,
+          "utf8_byte_start": 147,
+          "utf8_byte_end": 192,
+          "section": "primary preprint date",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/curioni.identifiers.json",
+          "sha256": "bb80a3dc5dfabd7dcefa0dab89c658552df1ff866bd6f395dcb3197d151adf6d",
+          "literal_contiguous_quote": "\"value\":\"10.31234/osf.io/3qaeu_v3\"",
+          "character_start": 94,
+          "character_end": 128,
+          "utf8_byte_start": 94,
+          "utf8_byte_end": 128,
+          "section": "primary preprint identifier",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_curioni_final_v1/article.txt",
+          "sha256": "1ba726a2c9a1b153b2164e29dacf8a13e225178a4b695a64d51f559a643eab14",
+          "literal_contiguous_quote": "Our preregistration can be accessed at https://\ndoi.org/10.17605/OSF.IO/EVDP5.",
+          "character_start": 10104,
+          "character_end": 10182,
+          "utf8_byte_start": 10146,
+          "utf8_byte_end": 10224,
+          "section": "methods",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_curioni_final_v1/article.txt",
+          "sha256": "1ba726a2c9a1b153b2164e29dacf8a13e225178a4b695a64d51f559a643eab14",
+          "literal_contiguous_quote": "Mikayla Lalli",
+          "character_start": 68,
+          "character_end": 81,
+          "utf8_byte_start": 68,
+          "utf8_byte_end": 81,
+          "section": "title author",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ],
+      "report_source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_curioni_final_v1/article.txt",
+      "report_source_sha256": "1ba726a2c9a1b153b2164e29dacf8a13e225178a4b695a64d51f559a643eab14"
+    },
+    {
+      "input_row_index": 2362,
+      "file_key": "3bc063814eb68859",
+      "all_associated_input_rows": [
+        2362
+      ],
+      "baseline_r": {
+        "doi_r": "10.17605/osf.io/yptua",
+        "url_r": "https://journals.sagepub.com/doi/full/10.1177/2515…",
+        "title_r": "ML5: Replication of Crosby, Monin & Richardson (2008)",
+        "author_r": "[{\"given\":\"Erica\",\"family\":\"Baranski\",\"sequence\":\"first\"},{\"given\":\"Nick\",\"family\":\"Buttrick\",\"sequence\":\"additional\"},{\"given\":\"Mallory C.\",\"family\":\"Kidwell\",\"sequence\":\"additional\"},{\"given\":\"Christopher R.\",\"family\":\"Chartier\",\"sequence\":\"additional\"},{\"given\":\"{J E\",\"family\":\"Loy}\",\"sequence\":\"additional\"},{\"given\":\"Thomas\",\"family\":\"Scherndl\",\"sequence\":\"additional\"},{\"given\":\"Peter JB\",\"family\":\"Hancock\",\"sequence\":\"additional\"},{\"given\":\"Brian A.\",\"family\":\"Nosek\",\"sequence\":\"additional\"},{\"given\":\"Lili\",\"family\":\"Lazarevic\",\"sequence\":\"additional\"},{\"given\":\"Charles R.\",\"family\":\"Ebersole\",\"sequence\":\"additional\"},{\"given\":\"Lorne\",\"family\":\"Campbell\",\"sequence\":\"additional\"},{\"given\":\"Joshua\",\"family\":\"Hartshorne\",\"sequence\":\"additional\"},{\"given\":\"Benjamin\",\"family\":\"Dering\",\"sequence\":\"additional\"},{\"given\":\"Josiah\",\"family\":\"King\",\"sequence\":\"additional\"},{\"given\":\"Hugh\",\"family\":\"Rabagliati\",\"sequence\":\"additional\"},{\"given\":\"Hans\",\"family\":\"IJzerman\",\"sequence\":\"additional\"},{\"given\":\"Maya\",\"family\":\"Mathur\",\"sequence\":\"additional\"},{\"given\":\"Martin\",\"family\":\"Corley\",\"sequence\":\"additional\"},{\"given\":\"Ailsa E\",\"family\":\"Millen\",\"sequence\":\"additional\"},{\"given\":\"Katherine S.\",\"family\":\"Corker\",\"sequence\":\"additional\"}]",
+        "year_r": "2019",
+        "journal_r": "NA"
+      },
+      "current_scientific_decision": {
+        "source": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+        "source_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+        "case_id": "row:2362",
+        "fields": {
+          "outcome": {
+            "disposition": "correction_supported",
+            "confirmed_value": null,
+            "proposed_value": "successful"
+          }
+        }
+      },
+      "scientific_decision_changes_applied": false,
+      "current_bound_report_status": "completed_results_bearing_report_already_recovered",
+      "record_action": "bind_current_completed_report_and_refresh_r_bibliography",
+      "reason": "The current accepted report reports actual results and is positively bound to registration YPTUA via WEUS5. It is an additional old results-blind source false positive, not another plan-only exclusion. Replace registration bibliographic identity with the verified publication citation; preserve the current successful decision.",
+      "proposed_changes": [
+        {
+          "field": "doi_r",
+          "old": "10.17605/osf.io/yptua",
+          "proposed": "10.1177/2515245919870737",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/crossref.response"
+        },
+        {
+          "field": "url_r",
+          "old": "https://journals.sagepub.com/doi/full/10.1177/2515…",
+          "proposed": "https://doi.org/10.1177/2515245919870737",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/crossref.response"
+        },
+        {
+          "field": "oa_url_r",
+          "proposed": "https://dspace.stir.ac.uk/bitstream/1893/30411/1/ML5%20CrosbyRevisedClean.pdf",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/parent_identity_completeness_receipt.json"
+        },
+        {
+          "field": "title_r",
+          "old": "ML5: Replication of Crosby, Monin & Richardson (2008)",
+          "proposed": "Many Labs 5: Registered Replication of Crosby, Monin, and Richardson (2008)",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/crossref.response"
+        },
+        {
+          "field": "author_r",
+          "old": "[{\"given\":\"Erica\",\"family\":\"Baranski\",\"sequence\":\"first\"},{\"given\":\"Nick\",\"family\":\"Buttrick\",\"sequence\":\"additional\"},{\"given\":\"Mallory C.\",\"family\":\"Kidwell\",\"sequence\":\"additional\"},{\"given\":\"Christopher R.\",\"family\":\"Chartier\",\"sequence\":\"additional\"},{\"given\":\"{J E\",\"family\":\"Loy}\",\"sequence\":\"additional\"},{\"given\":\"Thomas\",\"family\":\"Scherndl\",\"sequence\":\"additional\"},{\"given\":\"Peter JB\",\"family\":\"Hancock\",\"sequence\":\"additional\"},{\"given\":\"Brian A.\",\"family\":\"Nosek\",\"sequence\":\"additional\"},{\"given\":\"Lili\",\"family\":\"Lazarevic\",\"sequence\":\"additional\"},{\"given\":\"Charles R.\",\"family\":\"Ebersole\",\"sequence\":\"additional\"},{\"given\":\"Lorne\",\"family\":\"Campbell\",\"sequence\":\"additional\"},{\"given\":\"Joshua\",\"family\":\"Hartshorne\",\"sequence\":\"additional\"},{\"given\":\"Benjamin\",\"family\":\"Dering\",\"sequence\":\"additional\"},{\"given\":\"Josiah\",\"family\":\"King\",\"sequence\":\"additional\"},{\"given\":\"Hugh\",\"family\":\"Rabagliati\",\"sequence\":\"additional\"},{\"given\":\"Hans\",\"family\":\"IJzerman\",\"sequence\":\"additional\"},{\"given\":\"Maya\",\"family\":\"Mathur\",\"sequence\":\"additional\"},{\"given\":\"Martin\",\"family\":\"Corley\",\"sequence\":\"additional\"},{\"given\":\"Ailsa E\",\"family\":\"Millen\",\"sequence\":\"additional\"},{\"given\":\"Katherine S.\",\"family\":\"Corker\",\"sequence\":\"additional\"}]",
+          "proposed_author_order": [
+            "Hugh Rabagliati",
+            "Martin Corley",
+            "Benjamin Dering",
+            "Peter J. B. Hancock",
+            "Josiah P. J. King",
+            "Carmel A. Levitan",
+            "Jia E. Loy",
+            "Ailsa E. Millen"
+          ],
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/crossref.response"
+        },
+        {
+          "field": "year_r",
+          "old": "2019",
+          "proposed": "2020",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/crossref.response",
+          "meaning": "Primary publication published year"
+        }
+      ],
+      "dependent_fields_to_refresh": [
+        "doi_r_hash",
+        "alt_identifier_r",
+        "journal_r",
+        "volume_r",
+        "issue_r",
+        "pages_r",
+        "apa_ref_r",
+        "bibtex_ref_r",
+        "outcome_quote",
+        "outcome_quote_source",
+        "exact source association/hash"
+      ],
+      "scientific_action": "Keep the latest completed-source scientific decision. Update quote/provenance to its existing verified proofs rather than applying old registration-only cannot_be_determined. No outcome recoding performed here.",
+      "report_links": [
+        "https://doi.org/10.1177/2515245919870737",
+        "https://dspace.stir.ac.uk/bitstream/1893/30411/1/ML5%20CrosbyRevisedClean.pdf",
+        "https://doi.org/10.1177/2515245919870737"
+      ],
+      "evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_ml5_crosby_final_v1/article.txt",
+          "sha256": "8eaf0fed2e587b31110e5604ec2a68d18617de553e576f81fc138eb2075b9a3b",
+          "literal_contiguous_quote": "Interestingly, our overall results were consistent with Crosby and colleagues’ original report.",
+          "character_start": 33954,
+          "character_end": 34049,
+          "utf8_byte_start": 33995,
+          "utf8_byte_end": 34092,
+          "section": "discussion",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/crossref.response",
+          "sha256": "a1ae2aa02dcf927fecbb1c7d29af5cd167b812523ba03130e8329f3b2a5ddf95",
+          "literal_contiguous_quote": "10.1177\\/2515245919870737",
+          "character_start": 2184,
+          "character_end": 2209,
+          "utf8_byte_start": 2184,
+          "utf8_byte_end": 2209,
+          "section": "primary Crossref DOI",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/crossref.response",
+          "sha256": "a1ae2aa02dcf927fecbb1c7d29af5cd167b812523ba03130e8329f3b2a5ddf95",
+          "literal_contiguous_quote": "Many Labs 5: Registered Replication of Crosby, Monin, and Richardson (2008)",
+          "character_start": 2485,
+          "character_end": 2560,
+          "utf8_byte_start": 2485,
+          "utf8_byte_end": 2560,
+          "section": "primary Crossref title",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_ml5_crosby_final_v1/article.txt",
+          "sha256": "8eaf0fed2e587b31110e5604ec2a68d18617de553e576f81fc138eb2075b9a3b",
+          "literal_contiguous_quote": "Data and registered protocols: https://osf.io/weus5/",
+          "character_start": 1324,
+          "character_end": 1376,
+          "utf8_byte_start": 1325,
+          "utf8_byte_end": 1377,
+          "section": "report project link",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_ml5_crosby_final_v1/article.txt",
+          "sha256": "8eaf0fed2e587b31110e5604ec2a68d18617de553e576f81fc138eb2075b9a3b",
+          "literal_contiguous_quote": "Hugh Rabagliati",
+          "character_start": 504,
+          "character_end": 519,
+          "utf8_byte_start": 505,
+          "utf8_byte_end": 520,
+          "section": "title author",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ],
+      "report_source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/sanitized_ml5_crosby_final_v1/article.txt",
+      "report_source_sha256": "8eaf0fed2e587b31110e5604ec2a68d18617de553e576f81fc138eb2075b9a3b",
+      "additional_verified_bibliography": {
+        "container-title": [
+          "Advances in Methods and Practices in Psychological Science"
+        ],
+        "volume": "3",
+        "issue": "3",
+        "page": "353-365"
+      },
+      "year_metadata_evidence": {
+        "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/ml5_crosby_final/crossref.response",
+        "sha256": "a1ae2aa02dcf927fecbb1c7d29af5cd167b812523ba03130e8329f3b2a5ddf95",
+        "literal_contiguous_quote": "\"published\":{\"date-parts\":[[2020,9]]}",
+        "character_start": 8052,
+        "character_end": 8089,
+        "utf8_byte_start": 8052,
+        "utf8_byte_end": 8089,
+        "section": "Crossref published year",
+        "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+      }
+    },
+    {
+      "input_row_index": 2388,
+      "file_key": "655d0511c65e4482",
+      "all_associated_input_rows": [
+        2388
+      ],
+      "baseline_r": {
+        "doi_r": "10.17605/osf.io/2egqr",
+        "url_r": "https://osf.io/2egqr/files/5eygn",
+        "title_r": "Revisiting the role of intent across moral domains: Replication and extension of Young and Saxe (2011)",
+        "author_r": "[{\"given\":\"{On Ying\",\"family\":\"Chan}\",\"sequence\":\"first\"},{\"given\":\"{Gilad\",\"family\":\"Feldman}\",\"sequence\":\"additional\"}]",
+        "year_r": "2021",
+        "journal_r": "NA"
+      },
+      "current_scientific_decision": {
+        "source": "audit/flora_blind_2026-10/handoff/sol_review_decisions.json",
+        "source_sha256": "b67201cf27f9e78f6ea34dd039fce16d68fba5168279775232eb3e99d5435c32",
+        "case_id": "row:2388",
+        "fields": {
+          "outcome": {
+            "disposition": "correction_supported",
+            "confirmed_value": null,
+            "proposed_value": "successful"
+          }
+        }
+      },
+      "scientific_decision_changes_applied": false,
+      "current_bound_report_status": "completed_results_bearing_report_already_recovered",
+      "record_action": "bind_current_completed_report_and_refresh_r_bibliography",
+      "reason": "The current decision already uses the completed 99-page report, not the old simulated draft or the distinct qswe3/u59ab thesis. The project DOI remains valid; bind its exact results-bearing file so a re-fetch cannot silently select the old Stage 1 document.",
+      "proposed_changes": [
+        {
+          "field": "doi_r",
+          "old": "10.17605/osf.io/2egqr",
+          "proposed": "10.17605/OSF.IO/2EGQR",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/2egqr.identifiers.json"
+        },
+        {
+          "field": "url_r",
+          "old": "https://osf.io/2egqr/files/5eygn",
+          "proposed": "https://osf.io/download/5eygn/",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/young_saxe_preprint/identity_completeness_receipt.json"
+        },
+        {
+          "field": "oa_url_r",
+          "proposed": "https://osf.io/download/5eygn/",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/young_saxe_preprint/identity_completeness_receipt.json"
+        },
+        {
+          "field": "title_r",
+          "old": "Revisiting the role of intent across moral domains: Replication and extension of Young and Saxe (2011)",
+          "proposed": "Revisiting the role of intent across moral domains: Replication and extension of Young and Saxe (2011)",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/prospective_identity/2egqr.node.response.json"
+        },
+        {
+          "field": "author_r",
+          "old": "[{\"given\":\"{On Ying\",\"family\":\"Chan}\",\"sequence\":\"first\"},{\"given\":\"{Gilad\",\"family\":\"Feldman}\",\"sequence\":\"additional\"}]",
+          "proposed_author_order": [
+            "On Ying Kelly Chan",
+            "Gilad Feldman"
+          ],
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/young_saxe_preprint/preprint.raw.txt"
+        },
+        {
+          "field": "year_r",
+          "old": "2021",
+          "proposed": "2021",
+          "proof_source": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/prospective_identity/2egqr.node.response.json",
+          "meaning": "Primary project citation year"
+        }
+      ],
+      "dependent_fields_to_refresh": [
+        "doi_r_hash",
+        "alt_identifier_r",
+        "journal_r",
+        "volume_r",
+        "issue_r",
+        "pages_r",
+        "apa_ref_r",
+        "bibtex_ref_r",
+        "outcome_quote",
+        "outcome_quote_source",
+        "exact source association/hash"
+      ],
+      "scientific_action": "Keep the latest completed-source scientific decision. Update quote/provenance to its existing verified proofs rather than applying old registration-only cannot_be_determined. No outcome recoding performed here.",
+      "report_links": [
+        "https://osf.io/download/5eygn/",
+        "https://osf.io/download/5eygn/",
+        "https://doi.org/10.17605/OSF.IO/2EGQR"
+      ],
+      "evidence": [
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/young_saxe_preprint/preprint.raw.txt",
+          "sha256": "72f68dbf77ef0e7d49110d262ccee321af2d982a0eacf86d3d91e4d34ba38dc2",
+          "literal_contiguous_quote": "we\nsuccessfully replicated and extended Experiments 1A, and 2 to 4 from Young and Saxe (2011).",
+          "character_start": 3132,
+          "character_end": 3226,
+          "utf8_byte_start": 3132,
+          "utf8_byte_end": 3226,
+          "section": "abstract",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/prospective_identity/2egqr.node.response.json",
+          "sha256": "302b93b0f91214369bcbf21014256fe10ee68beab147e15edf8e1e6341175a61",
+          "literal_contiguous_quote": "Chan, O., &amp; Feldman, G. (2021). Revisiting the role of intent across moral domains: Replication and extension of Young and Saxe (2011). https://doi.org/10.17605/OSF.IO/2EGQR",
+          "character_start": 222,
+          "character_end": 399,
+          "utf8_byte_start": 222,
+          "utf8_byte_end": 399,
+          "section": "primary project citation",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/record_scope_20261101/2egqr.identifiers.json",
+          "sha256": "4e5af59d5a1313dca67c6a4d9479d976817313940293017b1c34ce980b556781",
+          "literal_contiguous_quote": "\"value\":\"10.17605/OSF.IO/2EGQR\"",
+          "character_start": 94,
+          "character_end": 125,
+          "utf8_byte_start": 94,
+          "utf8_byte_end": 125,
+          "section": "primary identifier",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        },
+        {
+          "source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/young_saxe_preprint/identity_completeness_receipt.json",
+          "sha256": "235848229c684085b12fa8c2d3f970207a017b82ffee0e382e0ed1af2c2a83f0",
+          "literal_contiguous_quote": "\"download\": \"https://osf.io/download/5eygn/\"",
+          "character_start": 223,
+          "character_end": 267,
+          "utf8_byte_start": 223,
+          "utf8_byte_end": 267,
+          "section": "saved primary-file identity receipt",
+          "offset_convention": "zero-based Unicode code points / UTF-8 bytes, end exclusive, raw source without normalization"
+        }
+      ],
+      "report_source_path": "audit/flora_blind_2026-10/evidence_followup/private/sol_closure_20261031/new_sources/young_saxe_preprint/preprint.raw.txt",
+      "report_source_sha256": "72f68dbf77ef0e7d49110d262ccee321af2d982a0eacf86d3d91e4d34ba38dc2"
+    }
+  ],
+  "current_scope_screen": [
+    {
+      "input_row_index": 192,
+      "file_key": "84d0bc422fa2217a",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 417,
+      "file_key": "e162eb8c790c8662",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 111,
+      "file_key": "ff94f0e817af2f69",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1845,
+      "file_key": "8c0c49400a0b107f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1846,
+      "file_key": "8c0c49400a0b107f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2099,
+      "file_key": "8c0c49400a0b107f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2100,
+      "file_key": "8c0c49400a0b107f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2105,
+      "file_key": "8c0c49400a0b107f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2106,
+      "file_key": "8c0c49400a0b107f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2107,
+      "file_key": "8c0c49400a0b107f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2108,
+      "file_key": "8c0c49400a0b107f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1300,
+      "file_key": "09f36a193376d39a",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1937,
+      "file_key": "f0d7e94a060e237c",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1990,
+      "file_key": "f0d7e94a060e237c",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1329,
+      "file_key": "00319989aba88467",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2707,
+      "file_key": "0b59ef6fa0b80901",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2216,
+      "file_key": "1b7fc823a4051074",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 229,
+      "file_key": "186c024fa1d798a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 107,
+      "file_key": "40ccd08bd9187947",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 5,
+      "file_key": "2bc46f9913bebe1f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 540,
+      "file_key": "3a38b19c2c639877",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1710,
+      "file_key": "43639e83bd9e29d0",
+      "status": "detailed_record_action_proposed",
+      "reason": "See findings entry; scientific decisions preserved."
+    },
+    {
+      "input_row_index": 1086,
+      "file_key": "58a35ece138af789",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2388,
+      "file_key": "655d0511c65e4482",
+      "status": "detailed_record_action_proposed",
+      "reason": "See findings entry; scientific decisions preserved."
+    },
+    {
+      "input_row_index": 1254,
+      "file_key": "7875ec5de5e2a126",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1751,
+      "file_key": "643e1bb7a06e2a12",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2418,
+      "file_key": "7b2b32efc497e733",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2156,
+      "file_key": "9eaa0739aff1d246",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 428,
+      "file_key": "934a15db1ceb11ec",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 242,
+      "file_key": "b73243da6a1469dd",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2587,
+      "file_key": "868656160b957cbf",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 381,
+      "file_key": "be2d94a92695a1d0",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1662,
+      "file_key": "c76e7f36731690f6",
+      "status": "detailed_record_action_proposed",
+      "reason": "See findings entry; scientific decisions preserved."
+    },
+    {
+      "input_row_index": 63,
+      "file_key": "d3bc6ee11df9df07",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1616,
+      "file_key": "da421d9c29242ecc",
+      "status": "detailed_record_action_proposed",
+      "reason": "See findings entry; scientific decisions preserved."
+    },
+    {
+      "input_row_index": 462,
+      "file_key": "6070e18087845e69",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 15,
+      "file_key": "e4f670f3d39012f1",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 171,
+      "file_key": "f4d25be27257ce81",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 833,
+      "file_key": "9b3c6d39a871d365",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1499,
+      "file_key": "ff70bf5ad942cddd",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2456,
+      "file_key": "a3c1f67db07c1e62",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1773,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1820,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1982,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 368,
+      "file_key": "bbcdfa8d1e6f7ef2",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2429,
+      "file_key": "d004173d837cb2ee",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 264,
+      "file_key": "c3f747dedfc50320",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1737,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1983,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2030,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1532,
+      "file_key": "d6fc9c6efb321353",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 532,
+      "file_key": "f3e52ebc50180bd2",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 799,
+      "file_key": "8d5eccbe2686d4da",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1326,
+      "file_key": "fb73474d773742da",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2034,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2051,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2072,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2047,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2087,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2110,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2510,
+      "file_key": "0731f4ebafe3b503",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1677,
+      "file_key": "9fed70371eeb17ff",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1689,
+      "file_key": "9fed70371eeb17ff",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1697,
+      "file_key": "9fed70371eeb17ff",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1698,
+      "file_key": "9fed70371eeb17ff",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 248,
+      "file_key": "0018f0ea7c04acc8",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 509,
+      "file_key": "892323f18e7fe3f9",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 559,
+      "file_key": "892323f18e7fe3f9",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 431,
+      "file_key": "96352dbf16f3074d",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 466,
+      "file_key": "96352dbf16f3074d",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 499,
+      "file_key": "96352dbf16f3074d",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 554,
+      "file_key": "1737bf0366e698d3",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 836,
+      "file_key": "0a890d4d83e34b67",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1754,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2052,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1739,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 0,
+      "file_key": "5746d10c18005a08",
+      "status": "detailed_record_action_proposed",
+      "reason": "See findings entry; scientific decisions preserved."
+    },
+    {
+      "input_row_index": 267,
+      "file_key": "1b507bc76f274ffa",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 169,
+      "file_key": "5c05f28875a7f8ba",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 936,
+      "file_key": "61f48e1df20dd65a",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1284,
+      "file_key": "4288dae9ad317eb8",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 427,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1762,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1792,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1793,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1860,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1954,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2022,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2029,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2041,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2518,
+      "file_key": "2736b815e9f115a4",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 731,
+      "file_key": "654919670700751a",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1341,
+      "file_key": "7037134338f0556f",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2362,
+      "file_key": "3bc063814eb68859",
+      "status": "detailed_record_action_proposed",
+      "reason": "See findings entry; scientific decisions preserved."
+    },
+    {
+      "input_row_index": 1363,
+      "file_key": "2ba6df61c0980259",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 520,
+      "file_key": "8c158b1f567dad84",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2659,
+      "file_key": "38baf95d879fe931",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 533,
+      "file_key": "964819c2019d5385",
+      "status": "detailed_record_action_proposed",
+      "reason": "See findings entry; scientific decisions preserved."
+    },
+    {
+      "input_row_index": 422,
+      "file_key": "9ef6ecc175c27dd6",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 1852,
+      "file_key": "79505c3ea3e1624e",
+      "status": "detailed_record_action_proposed",
+      "reason": "See findings entry; scientific decisions preserved."
+    },
+    {
+      "input_row_index": 1242,
+      "file_key": "ba7108835832c361",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2325,
+      "file_key": "c92527a87696f730",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2543,
+      "file_key": "c2ce02faa87b6213",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 478,
+      "file_key": "da46803ed980caec",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 2724,
+      "file_key": "d67b4655a3b9a721",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 241,
+      "file_key": "f66846e3d82b606c",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 587,
+      "file_key": "eef5ae27bbc775a1",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 266,
+      "file_key": "7c772579daf4141a",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    },
+    {
+      "input_row_index": 937,
+      "file_key": "ff87921f978478fb",
+      "status": "no_additional_plan_only_current_scope_identified",
+      "reason": "Screened current final decision and source manifests for report/plan scope; no clear current Stage 1/registration-only empirical-results absence identified. Existing field/target decisions are outside this review and unchanged."
+    }
+  ],
+  "limits": [
+    "Only the owned publication JSON was written in the repository; private receipts/extractions are under /tmp/flora_record_scope_20261101 and existing private source closure. Parent should retain needed receipts before temporary-directory cleanup.",
+    "New network checks used public OSF metadata and three public report PDFs only, bounded to registrations, registered_from projects, root Preprint folder, exact PDF files, identifier metadata and preprints relationships. No datasets, analysis code, paid APIs, credentials or study execution.",
+    "BU3GM source project and file endpoint return HTTP 401. The public registration does not supply new-attempt results; absence elsewhere is not established.",
+    "No title/year/DOI inferred from filename. Upload timestamps are not publication years. W34FB report year is unknown in bounded primary receipts; missing bibliographic date does not postpone the concrete source replacement recommendation.",
+    "Current field decisions and their read-completeness statements were inspected as existing evidence, not claimed as this reviewer's independent full reread. Newly downloaded reports were inspected specifically for positive identity and empirical report eligibility, not recoded for outcomes.",
+    "No scientific decisions, frozen baseline, codings, adjudications, results.csv or handoff decisions were modified; no commits, git mutations, child agents or old tick files."
+  ]
+}
