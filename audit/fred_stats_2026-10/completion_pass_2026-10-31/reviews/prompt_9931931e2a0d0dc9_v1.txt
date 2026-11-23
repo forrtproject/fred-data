@@ -1,0 +1,325 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1211": {
+      "source_key": "9931931e2a0d0dc9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Perez, M., Jaundoo, R., Hilton, K., Del Alamo, A., Gemayel, K., Klimas, N. G., Craddock, T. J. A., & Nathanson, L. (2019). Genetic Predisposition for Immune System, Hormone, and Metabolic Dysfunction in Myalgic Encephalomyelitis/Chronic Fatigue Syndrome: A Pilot Study. Frontiers in Pediatrics, 7. https://doi.org/10.3389/fped.2019.00206",
+        "doi_o": "10.3389/fped.2019.00206",
+        "study_o": null,
+        "ref_r": "Bedford, F. L., & Greshake Tzovaras, B. (2021). Re-analysis of Genetic Risks for Chronic Fatigue Syndrome From 23andMe Data Finds Few Remain. Frontiers in Pediatrics, 9. https://doi.org/10.3389/fped.2021.590040",
+        "doi_r": "10.3389/fped.2021.590040",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "OR",
+        "es_type_r": "or",
+        "description": "Relationships of EFCAB4B with calcium signaling, muscle function, and immune regulation.",
+        "locators_o": "p.5",
+        "locators_r": "p. 5; Table 1",
+        "audit_id": 1211,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "EFCAB4B, rs11062745: ME/CFS allele frequency divided by comparable 23andMe control allele frequency; primary 23andMe-control reanalysis in Table 1. Neutral-description biological functions identify the gene; mechanisms are not tested here.",
+      "worker_notes": "Identity independently checked: title Re-analysis of Genetic Risks for Chronic Fatigue Syndrome From 23andMe Data Finds Few Remain; Felice L. Bedford and Bastian Greshake Tzovaras; DOI 10.3389/fped.2021.590040; published 18 March 2021. Document labelled OPINION, but contains the authors’ primary reanalysis (Method, Results, Table 1, Discussion), not merely an abstract or secondary quotation. Supplied canonical text spans all four article pages and references. No PDF supplied. Target mapped by named gene and unique rsID, independently of row order or numeric matching. Input locator p. 5 differs from article pagination: Table 1 is p. 3 of this four-page article. Primary comparison is comparable 23andMe control; printed frequency ratio 2.02 retained without conversion to requested OR. ALFA is an additional control with printed alternative ratio 1.80, not merged into the primary comparison. No inferential test or p value is reported for this comparison: paper uses descriptive ratio-of-two criterion. Reported success is authors’ explicit gene-specific retention verdict, not an inference of statistical significance. Original side and replication N are unassigned placeholders and must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "EFCAB4B: Involved in calcium signaling; may affect muscle function and immune regulation.",
+        "es_repr_o": "p.5",
+        "es_repr_r": "p. 5, Table 1 (ME/CFS frequency)",
+        "es_type_o": "OR",
+        "es_type_r": "or",
+        "pval_type_o": null,
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The genetic predispositions reported for Chronic Fatigue Syndrome are not supported when reanalyzed with more appropriate control data including those drawn from the same 23andMe pool as the CFS patients."
+      }
+    },
+    "1212": {
+      "source_key": "9931931e2a0d0dc9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Perez, M., Jaundoo, R., Hilton, K., Del Alamo, A., Gemayel, K., Klimas, N. G., Craddock, T. J. A., & Nathanson, L. (2019). Genetic Predisposition for Immune System, Hormone, and Metabolic Dysfunction in Myalgic Encephalomyelitis/Chronic Fatigue Syndrome: A Pilot Study. Frontiers in Pediatrics, 7. https://doi.org/10.3389/fped.2019.00206",
+        "doi_o": "10.3389/fped.2019.00206",
+        "study_o": null,
+        "ref_r": "Bedford, F. L., & Greshake Tzovaras, B. (2021). Re-analysis of Genetic Risks for Chronic Fatigue Syndrome From 23andMe Data Finds Few Remain. Frontiers in Pediatrics, 9. https://doi.org/10.3389/fped.2021.590040",
+        "doi_r": "10.3389/fped.2021.590040",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "OR",
+        "es_type_r": "or",
+        "description": "Relationships of the long non-coding RNA LINC01171 with immune- and stress-related gene expression.",
+        "locators_o": "p.5",
+        "locators_r": "p. 5; Table 1",
+        "audit_id": 1212,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "LINC01171, rs11605546: ME/CFS allele frequency divided by comparable 23andMe control allele frequency; primary 23andMe-control reanalysis in Table 1. Neutral-description biological functions identify the gene; mechanisms are not tested here.",
+      "worker_notes": "Identity independently checked: title Re-analysis of Genetic Risks for Chronic Fatigue Syndrome From 23andMe Data Finds Few Remain; Felice L. Bedford and Bastian Greshake Tzovaras; DOI 10.3389/fped.2021.590040; published 18 March 2021. Document labelled OPINION, but contains the authors’ primary reanalysis (Method, Results, Table 1, Discussion), not merely an abstract or secondary quotation. Supplied canonical text spans all four article pages and references. No PDF supplied. Target mapped by named gene and unique rsID, independently of row order or numeric matching. Input locator p. 5 differs from article pagination: Table 1 is p. 3 of this four-page article. Primary comparison is comparable 23andMe control; printed frequency ratio 2.15 retained without conversion to requested OR. ALFA is an additional control with printed alternative ratio 2.21, not merged into the primary comparison. No inferential test or p value is reported for this comparison: paper uses descriptive ratio-of-two criterion. Reported success is authors’ explicit gene-specific retention verdict, not an inference of statistical significance. Original side and replication N are unassigned placeholders and must not overwrite verified fields.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "LINC01171: Long non-coding RNA; potentially regulates immune and stress-related gene expression.",
+        "es_repr_o": "p.5",
+        "es_repr_r": "p. 5, Table 1 (ME/CFS frequency)",
+        "es_type_o": "OR",
+        "es_type_r": "or",
+        "pval_type_o": null,
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The genetic predispositions reported for Chronic Fatigue Syndrome are not supported when reanalyzed with more appropriate control data including those drawn from the same 23andMe pool as the CFS patients."
+      }
+    },
+    "1213": {
+      "source_key": "9931931e2a0d0dc9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Perez, M., Jaundoo, R., Hilton, K., Del Alamo, A., Gemayel, K., Klimas, N. G., Craddock, T. J. A., & Nathanson, L. (2019). Genetic Predisposition for Immune System, Hormone, and Metabolic Dysfunction in Myalgic Encephalomyelitis/Chronic Fatigue Syndrome: A Pilot Study. Frontiers in Pediatrics, 7. https://doi.org/10.3389/fped.2019.00206",
+        "doi_o": "10.3389/fped.2019.00206",
+        "study_o": null,
+        "ref_r": "Bedford, F. L., & Greshake Tzovaras, B. (2021). Re-analysis of Genetic Risks for Chronic Fatigue Syndrome From 23andMe Data Finds Few Remain. Frontiers in Pediatrics, 9. https://doi.org/10.3389/fped.2021.590040",
+        "doi_r": "10.3389/fped.2021.590040",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "OR",
+        "es_type_r": "or",
+        "description": "Relationships of MORN2 with cell differentiation, autophagy, tissue repair, and immune response.",
+        "locators_o": "p.5",
+        "locators_r": "p. 5; Table 1",
+        "audit_id": 1213,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "MORN2, rs3099950: ME/CFS allele frequency divided by comparable 23andMe control allele frequency; primary 23andMe-control reanalysis in Table 1. Neutral-description biological functions identify the gene; mechanisms are not tested here.",
+      "worker_notes": "Identity independently checked: title Re-analysis of Genetic Risks for Chronic Fatigue Syndrome From 23andMe Data Finds Few Remain; Felice L. Bedford and Bastian Greshake Tzovaras; DOI 10.3389/fped.2021.590040; published 18 March 2021. Document labelled OPINION, but contains the authors’ primary reanalysis (Method, Results, Table 1, Discussion), not merely an abstract or secondary quotation. Supplied canonical text spans all four article pages and references. No PDF supplied. Target mapped by named gene and unique rsID, independently of row order or numeric matching. Input locator p. 5 differs from article pagination: Table 1 is p. 3 of this four-page article. Primary comparison is comparable 23andMe control; printed frequency ratio 1.98 retained without conversion to requested OR. ALFA is an additional control with printed alternative ratio 1.81, not merged into the primary comparison. No inferential test or p value is reported for this comparison: paper uses descriptive ratio-of-two criterion. Reported success is authors’ explicit gene-specific retention verdict, not an inference of statistical significance. Original side and replication N are unassigned placeholders and must not overwrite verified fields. Table 1 prints 1.98 for MORN2 with the 23andMe control, whereas authors include MORN2 among the three meeting at-least-double criteria and describe ratios as about 2.0. Printed value and narrative verdict are both preserved; no rounding correction applied.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "MORN2: Plays a role in cell differentiation and autophagy; linked to tissue repair and immune response.",
+        "es_repr_o": "p.5",
+        "es_repr_r": "p. 5, Table 1 (ME/CFS frequency)",
+        "es_type_o": "OR",
+        "es_type_r": "or",
+        "pval_type_o": null,
+        "pval_type_r": null,
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "The genetic predispositions reported for Chronic Fatigue Syndrome are not supported when reanalyzed with more appropriate control data including those drawn from the same 23andMe pool as the CFS patients."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1211,
+      "field": "es_value_r",
+      "blind": {
+        "value": "2.02",
+        "metric": "ratio of allele frequency in CFS patients to control subjects",
+        "test_statistic": null,
+        "location": "Article p. 3, Table 1, EFCAB4B / rs11062745, Ratio of CFS to CONTROL, With 23andMe column",
+        "quote": "EFCAB4B                rs11062745            27.9         3.39         13.78        15.5        T to C                  8          2.02        1.80           3,783",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1211,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Unique named gene/rsID identifies target independently. Primary comparable-23andMe control column prints 2.02; metric is allele-frequency ratio, not converted to OR. Additional ALFA control prints 1.80.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "location": "Article p. 3, Table 1, EFCAB4B / rs11062745, Ratio of CFS to CONTROL, With 23andMe column",
+        "quote": "EFCAB4B                rs11062745            27.9         3.39         13.78        15.5        T to C                  8          2.02        1.80           3,783",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "2.79E-01",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1211,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Article p. 2, Results, paragraph naming EFCAB4B, LINC01171 and MORN2",
+        "quote": "Only three snps of 50 remained, on genes EFCAB4B, ... LINC01171, and MORN2, that could be shown to meet the ... original criterion of at least double in CFS patients compared to ... a comparable 23andMe control, all hovering at a ratio of about ... 2.0.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1211,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly name this gene among three retaining original descriptive frequency-ratio criterion. Successful records narrative verdict only, not statistical significance.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "location": "Article p. 2, Results, paragraph naming three retained genes",
+        "quote": "Only three snps of 50 remained, on genes EFCAB4B, ... LINC01171, and MORN2, that could be shown to meet the ... original criterion of at least double in CFS patients compared to ... a comparable 23andMe control, all hovering at a ratio of about ... 2.0.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1212,
+      "field": "es_value_r",
+      "blind": {
+        "value": "2.15",
+        "metric": "ratio of allele frequency in CFS patients to control subjects",
+        "test_statistic": null,
+        "location": "Article p. 3, Table 1, LINC01171 / rs11605546, Ratio of CFS to CONTROL, With 23andMe column",
+        "quote": "LINC01171              rs11605546               23        2.97         10.68        10.4        G to A                  8          2.15        2.21           3,826",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1212,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Unique named gene/rsID identifies target independently. Primary comparable-23andMe control column prints 2.15; metric is allele-frequency ratio, not converted to OR. Additional ALFA control prints 2.21.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "location": "Article p. 3, Table 1, LINC01171 / rs11605546, Ratio of CFS to CONTROL, With 23andMe column",
+        "quote": "LINC01171              rs11605546               23        2.97         10.68        10.4        G to A                  8          2.15        2.21           3,826",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "2.30E-01",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1212,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Article p. 2, Results, paragraph naming EFCAB4B, LINC01171 and MORN2",
+        "quote": "Only three snps of 50 remained, on genes EFCAB4B, ... LINC01171, and MORN2, that could be shown to meet the ... original criterion of at least double in CFS patients compared to ... a comparable 23andMe control, all hovering at a ratio of about ... 2.0.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1212,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly name this gene among three retaining original descriptive frequency-ratio criterion. Successful records narrative verdict only, not statistical significance.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "location": "Article p. 2, Results, paragraph naming three retained genes",
+        "quote": "Only three snps of 50 remained, on genes EFCAB4B, ... LINC01171, and MORN2, that could be shown to meet the ... original criterion of at least double in CFS patients compared to ... a comparable 23andMe control, all hovering at a ratio of about ... 2.0.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1213,
+      "field": "es_value_r",
+      "blind": {
+        "value": "1.98",
+        "metric": "ratio of allele frequency in CFS patients to control subjects",
+        "test_statistic": null,
+        "location": "Article p. 3, Table 1, MORN2 / rs3099950, Ratio of CFS to CONTROL, With 23andMe column",
+        "quote": "MORN2                  rs3099950             21.9         3.37         11.08        12.1        G to A                  7          1.98        1.81           2,990",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1213,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Unique named gene/rsID identifies target independently. Primary comparable-23andMe control column prints 1.98; metric is allele-frequency ratio, not converted to OR. Additional ALFA control prints 1.81.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "location": "Article p. 3, Table 1, MORN2 / rs3099950, Ratio of CFS to CONTROL, With 23andMe column",
+        "quote": "MORN2                  rs3099950             21.9         3.37         11.08        12.1        G to A                  7          1.98        1.81           2,990",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "2.19E-01",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1213,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "Article p. 2, Results, paragraph naming EFCAB4B, LINC01171 and MORN2",
+        "quote": "Only three snps of 50 remained, on genes EFCAB4B, ... LINC01171, and MORN2, that could be shown to meet the ... original criterion of at least double in CFS patients compared to ... a comparable 23andMe control, all hovering at a ratio of about ... 2.0.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1213,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly name this gene among three retaining original descriptive frequency-ratio criterion. Successful records narrative verdict only, not statistical significance. Table 1 prints 1.98 for MORN2 with the 23andMe control, whereas authors include MORN2 among the three meeting at-least-double criteria and describe ratios as about 2.0. Printed value and narrative verdict are both preserved; no rounding correction applied.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1e48c86755be830112ec6f36.txt",
+        "location": "Article p. 2, Results, paragraph naming three retained genes",
+        "quote": "Only three snps of 50 remained, on genes EFCAB4B, ... LINC01171, and MORN2, that could be shown to meet the ... original criterion of at least double in CFS patients compared to ... a comparable 23andMe control, all hovering at a ratio of about ... 2.0.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/9931931e2a0d0dc9. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_9931931e2a0d0dc9_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

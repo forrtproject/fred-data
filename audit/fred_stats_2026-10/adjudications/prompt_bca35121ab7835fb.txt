@@ -1,0 +1,165 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1550,
+    "field": "n_r",
+    "comparison": "mismatched_target",
+    "shipped": "60",
+    "shipped_metric": "etasq",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "60",
+      "sample_role": "participants in Study 2 original-subset ANOVA",
+      "exclusions": "No exclusions reported; 60 recruited, ANOVA denominator df 58 with two participant-gender groups, paired post hoc df 59.",
+      "location": "accepted manuscript p. 12 Method; p. 13 Results",
+      "quote": "Sixty adults (50% women, mean age 34.5 years, SD = 13.4, range from 19 to 69 [...] F(1, 58) = 10.48",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e540a103275aea405e683190.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Bernard, P., Gervais, S. J., Allen, J., Campomizzi, S., & Klein, O. (2012). Integrating Sexual Objectification With Object Versus Person Recognition. Psychological Science, 23(5), 469–471. https://doi.org/10.1177/0956797611434748",
+      "doi_o": "10.1177/0956797611434748",
+      "study_o": "1",
+      "ref_r": "Schmidt, A. F., & Kistemaker, L. M. (2015). The sexualized-body-inversion hypothesis revisited: Valid indicator of sexual objectification or methodological artifact? Cognition, 134, 77–84. https://doi.org/10.1016/j.cognition.2014.09.003",
+      "doi_r": "10.1016/j.cognition.2014.09.003",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq",
+      "audit_id": 1550,
+      "description": "Comparison of recognition of sexualized women, sexualized men, and objects (interaction analysis).",
+      "locators_o": "p.3",
+      "locators_r": "p.5",
+      "text_paths": {}
+    },
+    "work_key": "10.1016/j.cognition.2014.09.003",
+    "coding_context": {
+      "es_repr": "p.5",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1550,
+    "field": "es_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.150",
+    "shipped_metric": "etasq",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".15",
+      "metric": "η²",
+      "test_statistic": "F(1, 58) = 10.48",
+      "location": "accepted manuscript p. 13 Results, Figure 2A",
+      "quote": "F(1, 58) = 10.48, p = .002, η² = .15",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e540a103275aea405e683190.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Bernard, P., Gervais, S. J., Allen, J., Campomizzi, S., & Klein, O. (2012). Integrating Sexual Objectification With Object Versus Person Recognition. Psychological Science, 23(5), 469–471. https://doi.org/10.1177/0956797611434748",
+      "doi_o": "10.1177/0956797611434748",
+      "study_o": "1",
+      "ref_r": "Schmidt, A. F., & Kistemaker, L. M. (2015). The sexualized-body-inversion hypothesis revisited: Valid indicator of sexual objectification or methodological artifact? Cognition, 134, 77–84. https://doi.org/10.1016/j.cognition.2014.09.003",
+      "doi_r": "10.1016/j.cognition.2014.09.003",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq",
+      "audit_id": 1550,
+      "description": "Comparison of recognition of sexualized women, sexualized men, and objects (interaction analysis).",
+      "locators_o": "p.3",
+      "locators_r": "p.5",
+      "text_paths": {}
+    },
+    "work_key": "10.1016/j.cognition.2014.09.003",
+    "coding_context": {
+      "es_repr": "p.5",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1550,
+    "field": "pval_value_r",
+    "comparison": "mismatched_target",
+    "shipped": "0.002",
+    "shipped_metric": "etasq",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".002",
+      "bound": "e",
+      "location": "accepted manuscript p. 13 Results, Figure 2A",
+      "quote": "F(1, 58) = 10.48, p = .002, η² = .15",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e540a103275aea405e683190.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Bernard, P., Gervais, S. J., Allen, J., Campomizzi, S., & Klein, O. (2012). Integrating Sexual Objectification With Object Versus Person Recognition. Psychological Science, 23(5), 469–471. https://doi.org/10.1177/0956797611434748",
+      "doi_o": "10.1177/0956797611434748",
+      "study_o": "1",
+      "ref_r": "Schmidt, A. F., & Kistemaker, L. M. (2015). The sexualized-body-inversion hypothesis revisited: Valid indicator of sexual objectification or methodological artifact? Cognition, 134, 77–84. https://doi.org/10.1016/j.cognition.2014.09.003",
+      "doi_r": "10.1016/j.cognition.2014.09.003",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq",
+      "audit_id": 1550,
+      "description": "Comparison of recognition of sexualized women, sexualized men, and objects (interaction analysis).",
+      "locators_o": "p.3",
+      "locators_r": "p.5",
+      "text_paths": {}
+    },
+    "work_key": "10.1016/j.cognition.2014.09.003",
+    "coding_context": {
+      "es_repr": "p.5",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1550,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "statistically successful but flawed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "statistically successful but flawed",
+      "location": "Study 2, Results and Discussion; accepted manuscript pp. 13, 18",
+      "quote": "Replicating Bernard et al. (2012), the critical interaction effect of Stimulus Gender and Stimulus Orientation was significant [...] the original results from Bernard et al. (2012) are based on stimulus subsets effects that are highly likely to be symmetry-confounds",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e540a103275aea405e683190.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Bernard, P., Gervais, S. J., Allen, J., Campomizzi, S., & Klein, O. (2012). Integrating Sexual Objectification With Object Versus Person Recognition. Psychological Science, 23(5), 469–471. https://doi.org/10.1177/0956797611434748",
+      "doi_o": "10.1177/0956797611434748",
+      "study_o": "1",
+      "ref_r": "Schmidt, A. F., & Kistemaker, L. M. (2015). The sexualized-body-inversion hypothesis revisited: Valid indicator of sexual objectification or methodological artifact? Cognition, 134, 77–84. https://doi.org/10.1016/j.cognition.2014.09.003",
+      "doi_r": "10.1016/j.cognition.2014.09.003",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "etasq (partial)",
+      "es_type_r": "etasq",
+      "audit_id": 1550,
+      "description": "Comparison of recognition of sexualized women, sexualized men, and objects (interaction analysis).",
+      "locators_o": "p.3",
+      "locators_r": "p.5",
+      "text_paths": {}
+    },
+    "work_key": "10.1016/j.cognition.2014.09.003",
+    "coding_context": {
+      "es_repr": "p.5",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

@@ -1,0 +1,63 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 779,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "X2(1, N = 100) = 21.7",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "0.03",
+      "metric": "η²_G",
+      "test_statistic": "χ²(1) = 24.3",
+      "location": "p. 4 (10399), behavioral experiment Fig. 5",
+      "quote": "The interaction between role and round is significant (likelihood ratio test, χ 2 ( 1 ) = 24.3 , P < 0.001 ; η G 2 = 0.03 , 95% CI = [0.024, 0.24]).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b573a87f9f2818a6fbae95c5.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Morris, A., MacGlashan, J., Littman, M. L., & Cushman, F. (2017). Evolution of flexibility and rigidity in retaliatory punishment. Proceedings of the National Academy of Sciences, 114(39), 10396–10401. https://doi.org/10.1073/pnas.1704032114",
+      "doi_o": "10.1073/pnas.1704032114",
+      "study_o": "1",
+      "ref_r": "Holzmeister, F., Johannesson, M., Camerer, C. F., Chen, Y., Ho, T.-H., Hoogeveen, S., Huber, J., Imai, N., Imai, T., Jin, L., Kirchler, M., Ly, A., Mandl, B., Manfredi, D., Nave, G., Nosek, B. A., Pfeiffer, T., Sarafoglou, A., Schwaiger, R., … Dreber, A. (2024). Examining the replicability of online experiments selected by a decision market. Nature Human Behaviour, 9(2), 316–330. https://doi.org/10.1038/s41562-024-02062-9",
+      "doi_r": "10.1038/s41562-024-02062-9",
+      "url_r": "https://osf.io/sejyp",
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 779,
+      "description": "Proximate cognitive mechanisms, including reward learning, and evolutionary outcomes of behavior in social conflicts.",
+      "locators_o": "p.4",
+      "locators_r": "p.2",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b573a87f9f2818a6fbae95c5.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e32821a9655733390446fb2b.txt"
+      }
+    },
+    "work_key": "10.1038/s41562-024-02062-9",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 779,
+      "field": "es_value_o",
+      "verdict": "blind_right",
+      "correct_value": "0.03",
+      "location": "p. 4 (10399), Rigid Punishment in Humans (Fig. 5)",
+      "quote": "The interaction between role and round is significant (likelihood ratio test, χ 2 ( 1 ) = 24.3 , P < 0.001 ; η G 2 = 0.03 , 95% CI = [0.024, 0.24]).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b573a87f9f2818a6fbae95c5.txt",
+      "reason": "For the focal role-by-round interaction in the human behavioral experiment (N = 100), the supplied original paper reports an effect size of η²_G = 0.03 alongside the likelihood ratio test statistic χ²(1) = 24.3. The shipped value X2(1, N = 100) = 21.7 does not appear in the supplied primary text (likely reflecting an external replication summary or the unattached 2023 correction notice).",
+      "resolution": "argon"
+    },
+    "parent_response": "The prior response substituted generalized eta squared 0.03 for the requested test statistic, which is not an admissible correction. Blind extraction separately records chi-square(1)=24.3 for the same role-by-round interaction. Inspect full primary source context, any correction notice/versions available in supplied texts, and the locator. Adjudicate the requested chi-square statistic and any N annotation, not eta squared. If an error is established give the full corrected chi-square expression. A missing printed value alone is not proof it is wrong; consider documented inference/version differences. Reconcile prior response explicitly.",
+    "coding_context": {
+      "es_repr": "p.4",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

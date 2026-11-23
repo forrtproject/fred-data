@@ -1,0 +1,478 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1709": {
+      "source_key": "8a469c57f2012222",
+      "side": "replication",
+      "input": {
+        "ref_o": "Risen, J. L., & Gilovich, T. (2008). Why people are reluctant to tempt fate. Journal of Personality and Social Psychology, 95(2), 293–307. https://doi.org/10.1037/0022-3514.95.2.293",
+        "doi_o": "10.1037/0022-3514.95.2.293",
+        "study_o": "6",
+        "ref_r": "Ebersole, C. R., Mathur, M. B., Baranski, E., Bart-Plange, D.-J., Buttrick, N. R., Chartier, C. R., Corker, K. S., Corley, M., Hartshorne, J. K., IJzerman, H., Lazarević, L. B., Rabagliati, H., Ropovik, I., Aczel, B., Aeschbach, L. F., Andrighetto, L., Arnal, J. D., Arrow, H., Babincak, P., … Nosek, B. A. (2020). Many Labs 5: Testing Pre-Data-Collection Peer Review as an Intervention to Increase Replicability. Advances in Methods and Practices in Psychological Science, 3(3), 309–331. https://doi.org/10.1177/2515245920958687",
+        "doi_r": "10.1177/2515245920958687",
+        "url_r": null,
+        "study_r": "7_RPP",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Perceived likelihood of being called on after imagining not having done the reading, under no cognitive load.",
+        "locators_o": "p. 10",
+        "locators_r": "p.11; Table 3",
+        "audit_id": 1709,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Perceived likelihood of being called on after imagining not having done the reading, under no cognitive load.; 7_RPP; primary ML5 summary protocol aggregate.",
+      "worker_notes": "Identity assessment: supplied text is a substantive primary Many Labs 5 summary results report, with Method, Results, Discussion and Tables 1–4, not merely an abstract or preregistration. Internal supplement URL contains 10.1177/251524592095 8687, matching the assigned DOI despite inserted space; the narrative identifies organizers C. R. Ebersole and B. A. Nosek and the 10-study expert-review intervention. These independently support the assigned Ebersole et al. (2020) project identity. The canonical parse omits its own title/byline, so full title and complete author list cannot independently be checked. No PDF supplied; table layout not visually verified. Only assigned fields examined; unassigned fields/sides are null placeholders, not findings of absence. No N derivations or metric conversions. Same-test printed Table 4 effect, retained in notes because es is unassigned: r=-.04; 95% CI=[-.08, -.01]. This is a negative effect; do not treat its p as evidence of replication in the original direction. Table 4 note explicitly identifies estimates and p values as meta-analytic; no conversion or p computation.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "When participants were not under load, those who imagined that they had not done the reading believed that it was more likely that they would be called on",
+        "es_repr_o": "p. 10",
+        "es_repr_r": "p.11/ Table 3",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Table 3 ML5:RP:P Protocol CI includes 0"
+      }
+    },
+    "1712": {
+      "source_key": "8a469c57f2012222",
+      "side": "replication",
+      "input": {
+        "ref_o": "Shnabel, N., & Nadler, A. (2008). A needs-based model of reconciliation: Satisfying the differential emotional needs of victim and perpetrator as a key to promoting reconciliation. Journal of Personality and Social Psychology, 94(1), 116–132. https://doi.org/10.1037/0022-3514.94.1.116",
+        "doi_o": "10.1037/0022-3514.94.1.116",
+        "study_o": "4",
+        "ref_r": "Ebersole, C. R., Mathur, M. B., Baranski, E., Bart-Plange, D.-J., Buttrick, N. R., Chartier, C. R., Corker, K. S., Corley, M., Hartshorne, J. K., IJzerman, H., Lazarević, L. B., Rabagliati, H., Ropovik, I., Aczel, B., Aeschbach, L. F., Andrighetto, L., Arnal, J. D., Arrow, H., Babincak, P., … Nosek, B. A. (2020). Many Labs 5: Testing Pre-Data-Collection Peer Review as an Intervention to Increase Replicability. Advances in Methods and Practices in Psychological Science, 3(3), 309–331. https://doi.org/10.1177/2515245920958687",
+        "doi_r": "10.1177/2515245920958687",
+        "url_r": null,
+        "study_r": "8_rev",
+        "es_type_o": "etasq",
+        "es_type_r": "r",
+        "description": "Reconciliation following acceptance versus empowerment messages among perpetrators versus victims.",
+        "locators_o": "p. 14",
+        "locators_r": "p.11; Table 3",
+        "audit_id": 1712,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Reconciliation following acceptance versus empowerment messages among perpetrators versus victims.; 8_rev; primary ML5 summary protocol aggregate.",
+      "worker_notes": "Identity assessment: supplied text is a substantive primary Many Labs 5 summary results report, with Method, Results, Discussion and Tables 1–4, not merely an abstract or preregistration. Internal supplement URL contains 10.1177/251524592095 8687, matching the assigned DOI despite inserted space; the narrative identifies organizers C. R. Ebersole and B. A. Nosek and the 10-study expert-review intervention. These independently support the assigned Ebersole et al. (2020) project identity. The canonical parse omits its own title/byline, so full title and complete author list cannot independently be checked. No PDF supplied; table layout not visually verified. Only assigned fields examined; unassigned fields/sides are null placeholders, not findings of absence. No N derivations or metric conversions. Reported_success left null: This is a verdict on improvement through expert review, not an explicit categorical verdict on replication of the original effect; retain the caveated narrative without inventing a success category. Same-test printed Table 4 effect, retained in notes because es is unassigned: r=.09; 95% CI=[.03, .14] in Table 4. Preserve discrepancies: exploratory narrative gives revised significant p values .009 and .005 without individual assignment; Box 1 gives ps=.004,.350 without unambiguous protocol ordering. These are not substituted for Table 4. Table 3 has CI [.04,.14], unlike Table 4 [.03,.14]. Table 4 note explicitly identifies estimates and p values as meta-analytic; no conversion or p computation.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "After condition a message of acceptance was more effective in promoting reconciliation among perpetrators, whereas a message of empowerment was more effective in promoting reconciliation among victims",
+        "es_repr_o": "p. 14",
+        "es_repr_r": "p.11/ Table 3",
+        "es_type_o": "etasq",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Table 3 ML5 Revised CI does not include 0"
+      }
+    },
+    "1713": {
+      "source_key": "8a469c57f2012222",
+      "side": "replication",
+      "input": {
+        "ref_o": "van Dijk, E., van Kleef, G. A., Steinel, W., & van Beest, I. (2008). A social functional approach to emotions in bargaining: When communicating anger pays and when it backfires. Journal of Personality and Social Psychology, 94(4), 600–614. https://doi.org/10.1037/0022-3514.94.4.600",
+        "doi_o": "10.1037/0022-3514.94.4.600",
+        "study_o": "3",
+        "ref_r": "Ebersole, C. R., Mathur, M. B., Baranski, E., Bart-Plange, D.-J., Buttrick, N. R., Chartier, C. R., Corker, K. S., Corley, M., Hartshorne, J. K., IJzerman, H., Lazarević, L. B., Rabagliati, H., Ropovik, I., Aczel, B., Aeschbach, L. F., Andrighetto, L., Arnal, J. D., Arrow, H., Babincak, P., … Nosek, B. A. (2020). Many Labs 5: Testing Pre-Data-Collection Peer Review as an Intervention to Increase Replicability. Advances in Methods and Practices in Psychological Science, 3(3), 309–331. https://doi.org/10.1177/2515245920958687",
+        "doi_r": "10.1177/2515245920958687",
+        "url_r": null,
+        "study_r": "9_RPP",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Number of chips offered to angry versus happy recipients in low-consequence situations.",
+        "locators_o": "p. 10",
+        "locators_r": "p.11; Table 3",
+        "audit_id": 1713,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Number of chips offered to angry versus happy recipients in low-consequence situations.; 9_RPP; primary ML5 summary protocol aggregate.",
+      "worker_notes": "Identity assessment: supplied text is a substantive primary Many Labs 5 summary results report, with Method, Results, Discussion and Tables 1–4, not merely an abstract or preregistration. Internal supplement URL contains 10.1177/251524592095 8687, matching the assigned DOI despite inserted space; the narrative identifies organizers C. R. Ebersole and B. A. Nosek and the 10-study expert-review intervention. These independently support the assigned Ebersole et al. (2020) project identity. The canonical parse omits its own title/byline, so full title and complete author list cannot independently be checked. No PDF supplied; table layout not visually verified. Only assigned fields examined; unassigned fields/sides are null placeholders, not findings of absence. No N derivations or metric conversions. Reported_success left null: Narrative states RP:P-protocol aggregate nonsignificance and contrasts effect sizes, without an explicit study-specific replication-success verdict. Protocol comparison p=.315 is a different test. Same-test printed Table 4 effect, retained in notes because es is unassigned: r=.06; 95% CI=[-.06,.19]. Table 3 has upper CI .18, so retain Table 4 same-test p and estimate without merging CI versions. Table 4 note explicitly identifies estimates and p values as meta-analytic; no conversion or p computation.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants offered significantly fewer chips to angry recipients than to happy recipients in low consequence situations",
+        "es_repr_o": "p. 10",
+        "es_repr_r": "p.11/ Table 3",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "no",
+        "reported_success_quote": "Table 3 ML5:RP:P Protocol CI includes 0"
+      }
+    },
+    "1714": {
+      "source_key": "8a469c57f2012222",
+      "side": "replication",
+      "input": {
+        "ref_o": "van Dijk, E., van Kleef, G. A., Steinel, W., & van Beest, I. (2008). A social functional approach to emotions in bargaining: When communicating anger pays and when it backfires. Journal of Personality and Social Psychology, 94(4), 600–614. https://doi.org/10.1037/0022-3514.94.4.600",
+        "doi_o": "10.1037/0022-3514.94.4.600",
+        "study_o": "3",
+        "ref_r": "Ebersole, C. R., Mathur, M. B., Baranski, E., Bart-Plange, D.-J., Buttrick, N. R., Chartier, C. R., Corker, K. S., Corley, M., Hartshorne, J. K., IJzerman, H., Lazarević, L. B., Rabagliati, H., Ropovik, I., Aczel, B., Aeschbach, L. F., Andrighetto, L., Arnal, J. D., Arrow, H., Babincak, P., … Nosek, B. A. (2020). Many Labs 5: Testing Pre-Data-Collection Peer Review as an Intervention to Increase Replicability. Advances in Methods and Practices in Psychological Science, 3(3), 309–331. https://doi.org/10.1177/2515245920958687",
+        "doi_r": "10.1177/2515245920958687",
+        "url_r": null,
+        "study_r": "9_rev",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Number of chips offered to angry versus happy recipients in low-consequence situations.",
+        "locators_o": "p. 10",
+        "locators_r": "p.11; Table 3",
+        "audit_id": 1714,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Number of chips offered to angry versus happy recipients in low-consequence situations.; 9_rev; primary ML5 summary protocol aggregate.",
+      "worker_notes": "Identity assessment: supplied text is a substantive primary Many Labs 5 summary results report, with Method, Results, Discussion and Tables 1–4, not merely an abstract or preregistration. Internal supplement URL contains 10.1177/251524592095 8687, matching the assigned DOI despite inserted space; the narrative identifies organizers C. R. Ebersole and B. A. Nosek and the 10-study expert-review intervention. These independently support the assigned Ebersole et al. (2020) project identity. The canonical parse omits its own title/byline, so full title and complete author list cannot independently be checked. No PDF supplied; table layout not visually verified. Only assigned fields examined; unassigned fields/sides are null placeholders, not findings of absence. No N derivations or metric conversions. Reported_success left null: Authors say more consistent, not a categorical success verdict. The stated nonsignificance concerns the between-protocol contrast, not the revised critical effect. Same-test printed Table 4 effect, retained in notes because es is unassigned: r=.23; 95% CI=[-.03,.45]. Table 3 CI is [-.01,.44]; do not merge the versions. Protocol-comparison p=.315 is a different test. Table 4 note explicitly identifies estimates and p values as meta-analytic; no conversion or p computation.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants offered significantly fewer chips to angry recipients than to happy recipients in low consequence situations",
+        "es_repr_o": "p. 10",
+        "es_repr_r": "p.11/ Table 3",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "no",
+        "reported_success_quote": "Table 3 ML5 Revised CI includes 0"
+      }
+    },
+    "1715": {
+      "source_key": "8a469c57f2012222",
+      "side": "replication",
+      "input": {
+        "ref_o": "Vohs, K. D., & Schooler, J. W. (2008). The Value of Believing in Free Will. Psychological Science, 19(1), 49–54. https://doi.org/10.1111/j.1467-9280.2008.02045.x",
+        "doi_o": "10.1111/j.1467-9280.2008.02045.x",
+        "study_o": "1",
+        "ref_r": "Ebersole, C. R., Mathur, M. B., Baranski, E., Bart-Plange, D.-J., Buttrick, N. R., Chartier, C. R., Corker, K. S., Corley, M., Hartshorne, J. K., IJzerman, H., Lazarević, L. B., Rabagliati, H., Ropovik, I., Aczel, B., Aeschbach, L. F., Andrighetto, L., Arnal, J. D., Arrow, H., Babincak, P., … Nosek, B. A. (2020). Many Labs 5: Testing Pre-Data-Collection Peer Review as an Intervention to Increase Replicability. Advances in Methods and Practices in Psychological Science, 3(3), 309–331. https://doi.org/10.1177/2515245920958687",
+        "doi_r": "10.1177/2515245920958687",
+        "url_r": null,
+        "study_r": "10_RPP",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Cheating frequency after reading an anti-free-will essay versus a control essay.",
+        "locators_o": "p. 2",
+        "locators_r": "p.11; Table 3",
+        "audit_id": 1715,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Cheating frequency after reading an anti-free-will essay versus a control essay.; 10_RPP; primary ML5 summary protocol aggregate.",
+      "worker_notes": "Identity assessment: supplied text is a substantive primary Many Labs 5 summary results report, with Method, Results, Discussion and Tables 1–4, not merely an abstract or preregistration. Internal supplement URL contains 10.1177/251524592095 8687, matching the assigned DOI despite inserted space; the narrative identifies organizers C. R. Ebersole and B. A. Nosek and the 10-study expert-review intervention. These independently support the assigned Ebersole et al. (2020) project identity. The canonical parse omits its own title/byline, so full title and complete author list cannot independently be checked. No PDF supplied; table layout not visually verified. Only assigned fields examined; unassigned fields/sides are null placeholders, not findings of absence. No N derivations or metric conversions. Reported_success left null: Aggregate nonsignificance and study-specific effect sizes/CI are given, without an explicit protocol-specific narrative replication verdict. Same-test printed Table 4 effect, retained in notes because es is unassigned: r=.04; 95% CI=[-.15,.23]. RP:P means ML5 RP:P protocol, not the earlier RP:P replication column. Table 4 note explicitly identifies estimates and p values as meta-analytic; no conversion or p computation.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants cheated more frequently after reading the anti-free-will essay than after reading the control essay",
+        "es_repr_o": "p. 2",
+        "es_repr_r": "p.11/ Table 3",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Table 3 ML5:RP:P Protocol CI includes 0"
+      }
+    },
+    "1716": {
+      "source_key": "8a469c57f2012222",
+      "side": "replication",
+      "input": {
+        "ref_o": "Vohs, K. D., & Schooler, J. W. (2008). The Value of Believing in Free Will. Psychological Science, 19(1), 49–54. https://doi.org/10.1111/j.1467-9280.2008.02045.x",
+        "doi_o": "10.1111/j.1467-9280.2008.02045.x",
+        "study_o": "1",
+        "ref_r": "Ebersole, C. R., Mathur, M. B., Baranski, E., Bart-Plange, D.-J., Buttrick, N. R., Chartier, C. R., Corker, K. S., Corley, M., Hartshorne, J. K., IJzerman, H., Lazarević, L. B., Rabagliati, H., Ropovik, I., Aczel, B., Aeschbach, L. F., Andrighetto, L., Arnal, J. D., Arrow, H., Babincak, P., … Nosek, B. A. (2020). Many Labs 5: Testing Pre-Data-Collection Peer Review as an Intervention to Increase Replicability. Advances in Methods and Practices in Psychological Science, 3(3), 309–331. https://doi.org/10.1177/2515245920958687",
+        "doi_r": "10.1177/2515245920958687",
+        "url_r": null,
+        "study_r": "10_rev",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Cheating frequency after reading an anti-free-will essay versus a control essay.",
+        "locators_o": "p. 2",
+        "locators_r": "p.11; Table 3",
+        "audit_id": 1716,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Cheating frequency after reading an anti-free-will essay versus a control essay.; 10_rev; primary ML5 summary protocol aggregate.",
+      "worker_notes": "Identity assessment: supplied text is a substantive primary Many Labs 5 summary results report, with Method, Results, Discussion and Tables 1–4, not merely an abstract or preregistration. Internal supplement URL contains 10.1177/251524592095 8687, matching the assigned DOI despite inserted space; the narrative identifies organizers C. R. Ebersole and B. A. Nosek and the 10-study expert-review intervention. These independently support the assigned Ebersole et al. (2020) project identity. The canonical parse omits its own title/byline, so full title and complete author list cannot independently be checked. No PDF supplied; table layout not visually verified. Only assigned fields examined; unassigned fields/sides are null placeholders, not findings of absence. No N derivations or metric conversions. Reported_success left null: Aggregate revised-protocol significance count and study-specific effect size/CI are given, without an explicit protocol-specific narrative replication verdict. Same-test printed Table 4 effect, retained in notes because es is unassigned: r=.05; 95% CI=[-.16,.25]. Revised manipulation is a rewriting task per Table 1; neutral description refers to original reading task, and revision is documented rather than a separate target. Table 4 note explicitly identifies estimates and p values as meta-analytic; no conversion or p computation.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants cheated more frequently after reading the anti-free-will essay than after reading the control essay",
+        "es_repr_o": "p. 2",
+        "es_repr_r": "p.11/ Table 3",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Table 3 ML5 Revised CI includes 0"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1709,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".02",
+        "bound": "e",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; Risen & Gilovich (2008); RP:P protocol; p value column",
+        "quote": "Risen & Gilovich (2008) ... RP:P protocol1-.04 [-.08, -.01].020.02.95000",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1709,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Author-reported primary summary-table p value for named original-study block and explicit ML5 protocol label; matched by reference and protocol, not row order or numeric matching. r=-.04; 95% CI=[-.08, -.01]. This is a negative effect; do not treat its p as evidence of replication in the original direction.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; Risen & Gilovich (2008); RP:P protocol; p value column",
+        "quote": "Risen & Gilovich (2008) ... RP:P protocol1-.04 [-.08, -.01].020.02.95000",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "differ",
+      "prior_adjudication": {
+        "audit_id": 1709,
+        "field": "pval_value_r",
+        "verdict": "blind_right",
+        "correct_value": "0.02",
+        "location": "Table 4, Risen & Gilovich (2008), RP:P protocol row",
+        "quote": "RP:P protocol1-.04 [-.08, -.01].02",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "reason": "Even in Table 3 the 95% CI [-.08, -.01] for this single-sample protocol (k = 1, N = 2,811, r = -.04) excludes zero, and Table 4 reports the exact two-tailed p = .02; the shipped bound (p > .05) conflated two-tailed significance with narrative non-replication in the original positive direction.",
+        "resolution": "argon"
+      }
+    },
+    {
+      "audit_id": 1712,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".008",
+        "bound": "e",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; Shnabel & Nadler (2008); Revised protocol; p value column",
+        "quote": "Shnabel & Nadler (2008) ... Revised protocol8.09 [.03, .14].0080.08.9810000",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1712,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Author-reported primary summary-table p value for named original-study block and explicit ML5 protocol label; matched by reference and protocol, not row order or numeric matching. r=.09; 95% CI=[.03, .14] in Table 4. Preserve discrepancies: exploratory narrative gives revised significant p values .009 and .005 without individual assignment; Box 1 gives ps=.004,.350 without unambiguous protocol ordering. These are not substituted for Table 4. Table 3 has CI [.04,.14], unlike Table 4 [.03,.14].",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; Shnabel & Nadler (2008); Revised protocol; p value column",
+        "quote": "Shnabel & Nadler (2008) ... Revised protocol8.09 [.03, .14].0080.08.9810000",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "compatible",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1713,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".24",
+        "bound": "e",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; van Dijk, van Kleef, Steinel, & van Beest (2008); RP:P protocol; p value column",
+        "quote": "van Dijk, van Kleef,\nSteinel, & van Beest\n(2008) ... RP:P protocol6.06 [-.06, .19].240.002110000",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1713,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Author-reported primary summary-table p value for named original-study block and explicit ML5 protocol label; matched by reference and protocol, not row order or numeric matching. r=.06; 95% CI=[-.06,.19]. Table 3 has upper CI .18, so retain Table 4 same-test p and estimate without merging CI versions.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; van Dijk, van Kleef, Steinel, & van Beest (2008); RP:P protocol; p value column",
+        "quote": "van Dijk, van Kleef,\nSteinel, & van Beest\n(2008) ... RP:P protocol6.06 [-.06, .19].240.002110000",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "compatible",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1714,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".07",
+        "bound": "e",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; van Dijk, van Kleef, Steinel, & van Beest (2008); Revised protocol; p value column",
+        "quote": "van Dijk, van Kleef,\nSteinel, & van Beest\n(2008) ... Revised protocol4.23 [-.03, .45].070.19.97100100100",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1714,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Author-reported primary summary-table p value for named original-study block and explicit ML5 protocol label; matched by reference and protocol, not row order or numeric matching. r=.23; 95% CI=[-.03,.45]. Table 3 CI is [-.01,.44]; do not merge the versions. Protocol-comparison p=.315 is a different test.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; van Dijk, van Kleef, Steinel, & van Beest (2008); Revised protocol; p value column",
+        "quote": "van Dijk, van Kleef,\nSteinel, & van Beest\n(2008) ... Revised protocol4.23 [-.03, .45].070.19.97100100100",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "compatible",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1715,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".55",
+        "bound": "e",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; Vohs & Schooler (2008); RP:P protocol; p value column",
+        "quote": "Vohs & Schooler (2008) ... RP:P protocol4.04 [-.15, .23].550.01.9810000",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1715,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Author-reported primary summary-table p value for named original-study block and explicit ML5 protocol label; matched by reference and protocol, not row order or numeric matching. r=.04; 95% CI=[-.15,.23]. RP:P means ML5 RP:P protocol, not the earlier RP:P replication column.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; Vohs & Schooler (2008); RP:P protocol; p value column",
+        "quote": "Vohs & Schooler (2008) ... RP:P protocol4.04 [-.15, .23].550.01.9810000",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "compatible",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1716,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".55",
+        "bound": "e",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; Vohs & Schooler (2008); Revised protocol; p value column",
+        "quote": "Vohs & Schooler (2008) ... Revised protocol5.05 [-.16, .25].55.11.03.948020 [0, 100]0",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1716,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Author-reported primary summary-table p value for named original-study block and explicit ML5 protocol label; matched by reference and protocol, not row order or numeric matching. r=.05; 95% CI=[-.16,.25]. Revised manipulation is a rewriting task per Table 1; neutral description refers to original reading task, and revision is documented rather than a separate target.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2c1e189b51bac638395817bd.txt",
+        "location": "Table 4, Metrics of Replication Success by Study and Protocol Version; Vohs & Schooler (2008); Revised protocol; p value column",
+        "quote": "Vohs & Schooler (2008) ... Revised protocol5.05 [-.16, .25].55.11.03.948020 [0, 100]0",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "compatible",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/8a469c57f2012222. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_8a469c57f2012222_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

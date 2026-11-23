@@ -1,0 +1,166 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1063": {
+      "source_key": "baa13e60bf76842d",
+      "side": "replication",
+      "input": {
+        "ref_o": "Schaffner, B. F., & Luks, S. (2018). Misinformation or Expressive Responding? Public Opinion Quarterly, 82(1), 135–147. https://doi.org/10.1093/poq/nfx042",
+        "doi_o": "10.1093/poq/nfx042",
+        "study_o": "1",
+        "ref_r": "Ross, R. M., & Levy, N. (2023). Expressive Responding in Support of Donald Trump: An Extended Replication of Schaffner and Luks (2018). Collabra: Psychology, 9(1). https://doi.org/10.1525/collabra.68054",
+        "doi_r": "10.1525/collabra.68054",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": null,
+        "es_type_r": "test statistic",
+        "description": "Accuracy of inauguration crowd photo selection among Trump voters/Republicans versus non-Trump voters/non-Republicans.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 4",
+        "audit_id": 1063,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fb90dcd6043616108bb5ff5c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Crowd-size photo selection: unresolved correspondence between H1 (Republicans versus Democrats) and H8 (Trump versus Clinton voters). Both ask which photo has more people; they are distinct samples/tests.",
+      "worker_notes": "Identity verified from the supplied text title, Robert M. Ross and Neil Levy byline, Collabra: Psychology Vol. 9 Issue 1 (2023), and DOI 10.1525/collabra.68054. This is the primary extended-replication report, with Methods, Results, Discussion and references, not an abstract-only excerpt or preregistration. No PDF was supplied; no render or acquisition attempted. Two candidate critical tests: H1, p. 4, Republican versus Democrat crowd-size accuracy, printed χ2(1) = 5.365, p = .021; H8, p. 5, Trump versus Clinton voter crowd-size accuracy, printed χ2(1) = 4.569, p = .033. Candidate analytic participant sums from explicitly mutually exclusive final groups: H1 532 + 422 = 954; H8 303 + 333 = 636. These are candidate sums only, not assigned n values. The neutral description combines voting and partisan group labels. The p. 4 locator favors H1 but does not independently resolve the description’s alternative voting-based comparison; no mapping by input order or numeric agreement was made. Prior to analysis: survey duration below 5 or above 60 minutes, age below 18 or above 100, duplicate IP of earlier completer, non-USA IP. Final sample 954 of 1018 complete respondents (1114 partial-or-complete respondents). H8 additionally includes Trump and Clinton voters only, excluding other candidates, nonvoters and cannot-remember respondents. Reported success is the authors’ explicit central-replication verdict; both candidate comparisons are described as statistically significant. It does not resolve row-specific test correspondence. Unassigned fields are null placeholders and were not re-extracted.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fb90dcd6043616108bb5ff5c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Trump voters/Republicans select the incorrect inauguration crowd photo more often than non-Trump voters/non-Republicans",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 4",
+        "es_type_o": null,
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We found that despite this delay the original result replicated, albeit with a smaller magnitude."
+      }
+    },
+    "1065": {
+      "source_key": "baa13e60bf76842d",
+      "side": "replication",
+      "input": {
+        "ref_o": "Schaffner, B. F., & Luks, S. (2018). Misinformation or Expressive Responding? Public Opinion Quarterly, 82(1), 135–147. https://doi.org/10.1093/poq/nfx042",
+        "doi_o": "10.1093/poq/nfx042",
+        "study_o": "1",
+        "ref_r": "Ross, R. M., & Levy, N. (2023). Expressive Responding in Support of Donald Trump: An Extended Replication of Schaffner and Luks (2018). Collabra: Psychology, 9(1). https://doi.org/10.1525/collabra.68054",
+        "doi_r": "10.1525/collabra.68054",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "OR",
+        "es_type_r": "test statistic",
+        "description": "Accuracy of picture identification among Trump voters/Republicans versus Clinton voters/Democrats.",
+        "locators_o": "p. 7",
+        "locators_r": "p. 4",
+        "audit_id": 1065,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fb90dcd6043616108bb5ff5c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": null,
+      "worker_target_description": "Crowd-size photo selection: unresolved correspondence between H1 (Republicans versus Democrats) and H8 (Trump versus Clinton voters). Both ask which photo has more people; they are distinct samples/tests.",
+      "worker_notes": "Identity verified from the supplied text title, Robert M. Ross and Neil Levy byline, Collabra: Psychology Vol. 9 Issue 1 (2023), and DOI 10.1525/collabra.68054. This is the primary extended-replication report, with Methods, Results, Discussion and references, not an abstract-only excerpt or preregistration. No PDF was supplied; no render or acquisition attempted. Two candidate critical tests: H1, p. 4, Republican versus Democrat crowd-size accuracy, printed χ2(1) = 5.365, p = .021; H8, p. 5, Trump versus Clinton voter crowd-size accuracy, printed χ2(1) = 4.569, p = .033. Candidate analytic participant sums from explicitly mutually exclusive final groups: H1 532 + 422 = 954; H8 303 + 333 = 636. These are candidate sums only, not assigned n values. The neutral description combines voting and partisan group labels. The p. 4 locator favors H1 but does not independently resolve the description’s alternative voting-based comparison; no mapping by input order or numeric agreement was made. Prior to analysis: survey duration below 5 or above 60 minutes, age below 18 or above 100, duplicate IP of earlier completer, non-USA IP. Final sample 954 of 1018 complete respondents (1114 partial-or-complete respondents). H8 additionally includes Trump and Clinton voters only, excluding other candidates, nonvoters and cannot-remember respondents. Reported success is the authors’ explicit central-replication verdict; both candidate comparisons are described as statistically significant. It does not resolve row-specific test correspondence. Unassigned fields are null placeholders and were not re-extracted.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fb90dcd6043616108bb5ff5c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Trump voters (republicants) identified correct picture more often than Clinton voter (democrats)",
+        "es_repr_o": "p. 7",
+        "es_repr_r": "p. 4",
+        "es_type_o": "OR",
+        "es_type_r": "test statistic",
+        "pval_type_o": null,
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "We found that despite this delay the original result replicated, albeit with a smaller magnitude."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1063,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 1, Abstract",
+        "quote": "We found that despite this delay the original result ... replicated, albeit with a smaller magnitude.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fb90dcd6043616108bb5ff5c.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1063,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the original central finding replicated, albeit with smaller magnitude. This is a narrative verdict, not a significance-based inference; it is independent of unresolved H1/H8 row correspondence.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fb90dcd6043616108bb5ff5c.txt",
+        "location": "p. 1, Abstract",
+        "quote": "We found that despite this delay the original result ... replicated, albeit with a smaller magnitude.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1065,
+      "field": "reported_success",
+      "blind": {
+        "value": "successful",
+        "location": "p. 1, Abstract",
+        "quote": "We found that despite this delay the original result ... replicated, albeit with a smaller magnitude.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fb90dcd6043616108bb5ff5c.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 1065,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the original central finding replicated, albeit with smaller magnitude. This is a narrative verdict, not a significance-based inference; it is independent of unresolved H1/H8 row correspondence.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fb90dcd6043616108bb5ff5c.txt",
+        "location": "p. 1, Abstract",
+        "quote": "We found that despite this delay the original result ... replicated, albeit with a smaller magnitude.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "successful",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/baa13e60bf76842d. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_baa13e60bf76842d_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

@@ -1,0 +1,50 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 326,
+    "field": "n_r",
+    "comparison": "near",
+    "shipped": "1036",
+    "shipped_metric": "r",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "1,032",
+      "location": "p. 13, Results",
+      "quote": "chi-square test (1, N = 1,032) = 0.68, p = .410",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/d88b917310681848f7bd5bf2.txt",
+      "confident": true,
+      "sample_role": "participants in target analysis",
+      "exclusions": "184 incomplete; 4 initial attention-check failures; 14 duplicate IPs; 0 duplicate Prolific IDs."
+    },
+    "locator": {
+      "ref_o": "Karataş, M., & Cutright, K. M. (2023). Thinking about God increases acceptance of artificial intelligence in decision-making. Proceedings of the National Academy of Sciences, 120(33). https://doi.org/10.1073/pnas.2218961120",
+      "doi_o": "10.1073/pnas.2218961120",
+      "study_o": "2b",
+      "ref_r": "Moore, D. A., Schroeder, J., Bailey, E. R., Gershon, R., Moore, J. E., & Simmons, J. P. (2024). Does thinking about God increase acceptance of artificial intelligence in decision-making? Proceedings of the National Academy of Sciences, 121(31). https://doi.org/10.1073/pnas.2402315121",
+      "doi_r": "10.1073/pnas.2402315121",
+      "url_r": null,
+      "study_r": "2b",
+      "es_type_o": "test statistic",
+      "es_type_r": "r",
+      "audit_id": 326,
+      "description": "Relationship between God salience and preference for AI recommendations in music selection.",
+      "locators_o": "p. 8",
+      "locators_r": "p. 12 & 13",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c571f609e9d5d6a21b29fea0.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/14388c169c0ae2d6f3cfee7b.txt"
+      }
+    },
+    "work_key": "10.1073/pnas.2402315121",
+    "coding_context": {
+      "es_repr": "p. 12 & 13",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

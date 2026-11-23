@@ -1,0 +1,368 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+FOCUSED FINAL TARGET CHECK1399 (four fields) only. V1 says the verbal description explicitly names driving SAFETY, yet treats unlabeled numeric es_repr quotations as a conflicting SKILL target because their values match the Skill row. Numeric matching cannot identify a target or create an alternative target by itself. Neutral description and coding_context description both explicitly say safely/safety; p4/Table5 identifies the Likert table, with Hedges g requested. Independently determine whether ANY NONNUMERIC provenance conflicts with Safety (an explicit Skill label, distinct named task/question, table heading/row locator, or other structural evidence). Do not use shipped or quoted means,medians,df,g values,row order,or assumed paired-row ordering to select Skill. If words plus Table5 uniquely identify the Safety Likert test as written, assess N,requested g,p and author verdict for that target, explaining that wrong numeric values do not override explicit outcome words. If a genuine nonnumeric target conflict remains, quote it and return undeterminable with false target flags, rather than silently assuming a description swap. Also distinguish explicit Table5 Likert scope from the other two response scales/Figure4. Do not fix the dataset description or assume what the coder intended. Row1398 author verdict is outside scope and unchanged. Every output MUST include boolean target_match_confirmed/effect_specific_verdict_confirmed,correct_value(null if undeterminable),correct_metric/correct_bound(null if irrelevant),literal quote/location/source_path and reason. Preserve raw V1/source. No acquisition,repo/dataset search,paidAPIs,Git or delegation.
+FULL FIELD PAYLOAD:
+[
+  {
+    "source_key": "bea088cc57ee55f8",
+    "audit_id": 1399,
+    "field": "n_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Svenson, O. (1981). Are we all less risky and more skillful than our fellow drivers? Acta Psychologica, 47(2), 143\u2013148. https://doi.org/10.1016/0001-6918(81)90005-6",
+      "doi_o": "10.1016/0001-6918(81)90005-6",
+      "study_o": "1",
+      "ref_r": "Koppel, L., Andersson, D., Tingh\u00f6g, G., V\u00e4stfj\u00e4ll, D., & Feldman, G. (2023). We are all less risky and more skillful than our fellow drivers: Successful replication and extension of Svenson (1981)\u200e. Meta-Psychology, 7. https://doi.org/10.15626/mp.2021.2932",
+      "doi_r": "10.15626/mp.2021.2932",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "description": "Comparison of perceived driving safety for oneself versus average drivers.",
+      "locators_o": "p.3",
+      "locators_r": "p.4; Table 5",
+      "audit_id": 1399,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "387",
+      "sample_role": "Participants contributing safety ratings in the Likert response-scale condition (analytic N for the Table 5 safety one-sample test).",
+      "exclusions": "Method reports 84 participants without a driver\u2019s license filtered out; no further safety/Likert-specific exclusions are stated in the inspected Method and Tables 3\u20135. Use the directly printed Table 3 N, not recruitment total or df.",
+      "location": "p. 5, Table 3, Panel C, Safety row; p. 3, Procedure preceding paragraph",
+      "quote": "Panel C: Likert response scale ... Safety 387 0.5% 2.6%",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1399,
+      "field": "n_r",
+      "code": "extracted_printed",
+      "reason": "Directly printed analytic participant N for Safety in Table 3 Panel C, corresponding to the Table 5 Likert safety test; no N inferred from df or whole-study total.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "location": "p. 5, Table 3, Panel C, Safety row",
+      "quote": "Panel C: Likert response scale ... Safety 387 0.5% 2.6%",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Replication driving safety versus average driver, 7-item Likert scale; Table 5 Safety row, one-sample t-test against scale midpoint 4. Table 5 locator identifies this test independently of row order or numeric matching.",
+    "worker_notes": "Identity independently checked: supplied text identifies Meta-Psychology 2023 vol. 7, MP.2021.2932, DOI 10.15626/MP.2021.2932, Replication Report, the matching title and all five named authors (Lina Koppel, David Andersson, Gustav Tingh\u00f6g, Daniel V\u00e4stfj\u00e4ll, Gilad Feldman). It contains the primary report through references (11 pages), not an abstract-only excerpt or preregistration. Canonical file is a JSON-wrapped text extraction; quotes refer to its decoded output text. No PDF was supplied. Table 5 explicitly identifies the safety Likert-scale test; Table 3 Panel C provides N=387 directly. No N arithmetic or effect-size conversion performed. Other safety tests in Table 4 concern two percentile response scales; Table 5 locator distinguishes the assigned test. Preserve discrepancy: Table 5 safety t=27.38 versus p. 4 narrative t=27.28; both print p<.001 and g=1.39. Table 5 value retained as the requested table test. Original side is unassigned and is a placeholder only.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+    "shipped": "1203",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "people think that they drive more safely than average drivers",
+      "es_repr_o": "p.3 Me1 =61-70 Me2 = 51-60",
+      "es_repr_r": "p.4 M = 5.28 (SD = 1.08), t(378) = 23.13, p < .001, g = 1.19, 95% CI [1.06, 1.32] (see Table 5).",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "pval_type_o": null,
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": "2 (two)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Thus, our findings are consistent with the original findings by Svenson\n(1981)."
+    },
+    "prior_adjudication": {
+      "audit_id": 1399,
+      "field": "n_r",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": false,
+      "effect_specific_verdict_confirmed": false,
+      "location": "p. 5, Table 3, Panel C; p. 6, Table 5",
+      "quote": "Panel C: Likert response scale\n           N       1       2        3         4        5           6          7\n Safety 387 0.5% 2.6%             1.8% 16.3% 25.3%               38.5%     17.3%\n Skill    379",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "reason": "The row metadata contains an irreconcilable target conflict: the neutral and coding_context descriptions explicitly specify perceived driving safety (Likert-scale analytic N = 387, df = 386), whereas coding_context.es_repr_o and coding_context.es_repr_r list unlabeled statistics matching driving skill (Likert-scale analytic N = 379, df = 378), and the locator (p. 4; Table 5) covers both outcomes. Because target identity cannot be established without circular numeric or row-order matching, the analytic sample size (387 vs. 379; shipped 1,203 is the whole-study total across all three response-scale conditions) is undeterminable."
+    },
+    "parent_response": "FOCUSED FINAL TARGET CHECK1399 (four fields) only. V1 says the verbal description explicitly names driving SAFETY, yet treats unlabeled numeric es_repr quotations as a conflicting SKILL target because their values match the Skill row. Numeric matching cannot identify a target or create an alternative target by itself. Neutral description and coding_context description both explicitly say safely/safety; p4/Table5 identifies the Likert table, with Hedges g requested. Independently determine whether ANY NONNUMERIC provenance conflicts with Safety (an explicit Skill label, distinct named task/question, table heading/row locator, or other structural evidence). Do not use shipped or quoted means,medians,df,g values,row order,or assumed paired-row ordering to select Skill. If words plus Table5 uniquely identify the Safety Likert test as written, assess N,requested g,p and author verdict for that target, explaining that wrong numeric values do not override explicit outcome words. If a genuine nonnumeric target conflict remains, quote it and return undeterminable with false target flags, rather than silently assuming a description swap. Also distinguish explicit Table5 Likert scope from the other two response scales/Figure4. Do not fix the dataset description or assume what the coder intended. Row1398 author verdict is outside scope and unchanged. Every output MUST include boolean target_match_confirmed/effect_specific_verdict_confirmed,correct_value(null if undeterminable),correct_metric/correct_bound(null if irrelevant),literal quote/location/source_path and reason. Preserve raw V1/source. No acquisition,repo/dataset search,paidAPIs,Git or delegation."
+  },
+  {
+    "source_key": "bea088cc57ee55f8",
+    "audit_id": 1399,
+    "field": "es_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Svenson, O. (1981). Are we all less risky and more skillful than our fellow drivers? Acta Psychologica, 47(2), 143\u2013148. https://doi.org/10.1016/0001-6918(81)90005-6",
+      "doi_o": "10.1016/0001-6918(81)90005-6",
+      "study_o": "1",
+      "ref_r": "Koppel, L., Andersson, D., Tingh\u00f6g, G., V\u00e4stfj\u00e4ll, D., & Feldman, G. (2023). We are all less risky and more skillful than our fellow drivers: Successful replication and extension of Svenson (1981)\u200e. Meta-Psychology, 7. https://doi.org/10.15626/mp.2021.2932",
+      "doi_r": "10.15626/mp.2021.2932",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "description": "Comparison of perceived driving safety for oneself versus average drivers.",
+      "locators_o": "p.3",
+      "locators_r": "p.4; Table 5",
+      "audit_id": 1399,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "1.39",
+      "metric": "Hedges\u2019s g",
+      "test_statistic": "t = 27.38, df = 386 (Table 5); p. 4 prose instead prints t(386) = 27.28",
+      "location": "p. 6, Table 5, Safety row, Hedges\u2019s g column",
+      "quote": "Safety         27.38   386    <.001      1.50 [1.40, 1.61]    1.39 [1.25, 1.53]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1399,
+      "field": "es_value_r",
+      "code": "extracted_printed",
+      "reason": "Table 5 Safety row explicitly prints Hedges\u2019s g=1.39. No conversion. Safety t differs between table (27.38) and prose (27.28); preserve table statistic and note discrepancy.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "location": "p. 6, Table 5, Safety row",
+      "quote": "Safety         27.38   386    <.001      1.50 [1.40, 1.61]    1.39 [1.25, 1.53]",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Replication driving safety versus average driver, 7-item Likert scale; Table 5 Safety row, one-sample t-test against scale midpoint 4. Table 5 locator identifies this test independently of row order or numeric matching.",
+    "worker_notes": "Identity independently checked: supplied text identifies Meta-Psychology 2023 vol. 7, MP.2021.2932, DOI 10.15626/MP.2021.2932, Replication Report, the matching title and all five named authors (Lina Koppel, David Andersson, Gustav Tingh\u00f6g, Daniel V\u00e4stfj\u00e4ll, Gilad Feldman). It contains the primary report through references (11 pages), not an abstract-only excerpt or preregistration. Canonical file is a JSON-wrapped text extraction; quotes refer to its decoded output text. No PDF was supplied. Table 5 explicitly identifies the safety Likert-scale test; Table 3 Panel C provides N=387 directly. No N arithmetic or effect-size conversion performed. Other safety tests in Table 4 concern two percentile response scales; Table 5 locator distinguishes the assigned test. Preserve discrepancy: Table 5 safety t=27.38 versus p. 4 narrative t=27.28; both print p<.001 and g=1.39. Table 5 value retained as the requested table test. Original side is unassigned and is a placeholder only.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+    "shipped": "1.19",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "people think that they drive more safely than average drivers",
+      "es_repr_o": "p.3 Me1 =61-70 Me2 = 51-60",
+      "es_repr_r": "p.4 M = 5.28 (SD = 1.08), t(378) = 23.13, p < .001, g = 1.19, 95% CI [1.06, 1.32] (see Table 5).",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "pval_type_o": null,
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": "2 (two)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Thus, our findings are consistent with the original findings by Svenson\n(1981)."
+    },
+    "prior_adjudication": {
+      "audit_id": 1399,
+      "field": "es_value_r",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": false,
+      "effect_specific_verdict_confirmed": false,
+      "location": "p. 4, Results; p. 6, Table 5",
+      "quote": "Safety         27.38   386    <.001      1.50 [1.40, 1.61]    1.39 [1.25, 1.53]           Signal \u2013 consistent\n    Skill          23.13   378    <.001      1.28 [1.17, 1.39]    1.19 [1.06, 1.32]           Signal \u2013 consistent",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "reason": "Because the verbal outcome descriptions specify perceived driving safety (Hedges's g = 1.39, extracted by blind) while coding_context.es_repr_r contains the unlabeled test statistics matching driving skill (Hedges's g = 1.19, reported by shipped) and both appear on p. 4 and in Table 5, the target outcome cannot be uniquely identified without circular numeric or row-order matching."
+    },
+    "parent_response": "FOCUSED FINAL TARGET CHECK1399 (four fields) only. V1 says the verbal description explicitly names driving SAFETY, yet treats unlabeled numeric es_repr quotations as a conflicting SKILL target because their values match the Skill row. Numeric matching cannot identify a target or create an alternative target by itself. Neutral description and coding_context description both explicitly say safely/safety; p4/Table5 identifies the Likert table, with Hedges g requested. Independently determine whether ANY NONNUMERIC provenance conflicts with Safety (an explicit Skill label, distinct named task/question, table heading/row locator, or other structural evidence). Do not use shipped or quoted means,medians,df,g values,row order,or assumed paired-row ordering to select Skill. If words plus Table5 uniquely identify the Safety Likert test as written, assess N,requested g,p and author verdict for that target, explaining that wrong numeric values do not override explicit outcome words. If a genuine nonnumeric target conflict remains, quote it and return undeterminable with false target flags, rather than silently assuming a description swap. Also distinguish explicit Table5 Likert scope from the other two response scales/Figure4. Do not fix the dataset description or assume what the coder intended. Row1398 author verdict is outside scope and unchanged. Every output MUST include boolean target_match_confirmed/effect_specific_verdict_confirmed,correct_value(null if undeterminable),correct_metric/correct_bound(null if irrelevant),literal quote/location/source_path and reason. Preserve raw V1/source. No acquisition,repo/dataset search,paidAPIs,Git or delegation."
+  },
+  {
+    "source_key": "bea088cc57ee55f8",
+    "audit_id": 1399,
+    "field": "pval_value_r",
+    "side": "replication",
+    "input": {
+      "ref_o": "Svenson, O. (1981). Are we all less risky and more skillful than our fellow drivers? Acta Psychologica, 47(2), 143\u2013148. https://doi.org/10.1016/0001-6918(81)90005-6",
+      "doi_o": "10.1016/0001-6918(81)90005-6",
+      "study_o": "1",
+      "ref_r": "Koppel, L., Andersson, D., Tingh\u00f6g, G., V\u00e4stfj\u00e4ll, D., & Feldman, G. (2023). We are all less risky and more skillful than our fellow drivers: Successful replication and extension of Svenson (1981)\u200e. Meta-Psychology, 7. https://doi.org/10.15626/mp.2021.2932",
+      "doi_r": "10.15626/mp.2021.2932",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "description": "Comparison of perceived driving safety for oneself versus average drivers.",
+      "locators_o": "p.3",
+      "locators_r": "p.4; Table 5",
+      "audit_id": 1399,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": ".001",
+      "bound": "l",
+      "location": "p. 6, Table 5, Safety row, p column",
+      "quote": "Safety         27.38   386    <.001      1.50 [1.40, 1.61]    1.39 [1.25, 1.53]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1399,
+      "field": "pval_value_r",
+      "code": "extracted_printed",
+      "reason": "The same Table 5 Safety test prints p<.001; preserve strict upper bound.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "location": "p. 6, Table 5, Safety row",
+      "quote": "Safety         27.38   386    <.001      1.50 [1.40, 1.61]    1.39 [1.25, 1.53]",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Replication driving safety versus average driver, 7-item Likert scale; Table 5 Safety row, one-sample t-test against scale midpoint 4. Table 5 locator identifies this test independently of row order or numeric matching.",
+    "worker_notes": "Identity independently checked: supplied text identifies Meta-Psychology 2023 vol. 7, MP.2021.2932, DOI 10.15626/MP.2021.2932, Replication Report, the matching title and all five named authors (Lina Koppel, David Andersson, Gustav Tingh\u00f6g, Daniel V\u00e4stfj\u00e4ll, Gilad Feldman). It contains the primary report through references (11 pages), not an abstract-only excerpt or preregistration. Canonical file is a JSON-wrapped text extraction; quotes refer to its decoded output text. No PDF was supplied. Table 5 explicitly identifies the safety Likert-scale test; Table 3 Panel C provides N=387 directly. No N arithmetic or effect-size conversion performed. Other safety tests in Table 4 concern two percentile response scales; Table 5 locator distinguishes the assigned test. Preserve discrepancy: Table 5 safety t=27.38 versus p. 4 narrative t=27.28; both print p<.001 and g=1.39. Table 5 value retained as the requested table test. Original side is unassigned and is a placeholder only.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+    "shipped": "0.001",
+    "comparison": "identical",
+    "coding_context": {
+      "description": "people think that they drive more safely than average drivers",
+      "es_repr_o": "p.3 Me1 =61-70 Me2 = 51-60",
+      "es_repr_r": "p.4 M = 5.28 (SD = 1.08), t(378) = 23.13, p < .001, g = 1.19, 95% CI [1.06, 1.32] (see Table 5).",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "pval_type_o": null,
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": "2 (two)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Thus, our findings are consistent with the original findings by Svenson\n(1981)."
+    },
+    "prior_adjudication": {
+      "audit_id": 1399,
+      "field": "pval_value_r",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": false,
+      "effect_specific_verdict_confirmed": false,
+      "location": "p. 6, Table 5",
+      "quote": "Safety         27.38   386    <.001      1.50 [1.40, 1.61]    1.39 [1.25, 1.53]           Signal \u2013 consistent\n    Skill          23.13   378    <.001      1.28 [1.17, 1.39]    1.19 [1.06, 1.32]           Signal \u2013 consistent",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "reason": "Although both the Likert-scale driving safety test (t(386) = 27.28 in prose / 27.38 in Table 5) and driving skill test (t(378) = 23.13) report p < .001, the row's target outcome cannot be uniquely identified without circular numeric or row-order matching because the verbal descriptions specify driving safety while coding_context.es_repr_r quotes the unlabeled statistics for driving skill."
+    },
+    "parent_response": "FOCUSED FINAL TARGET CHECK1399 (four fields) only. V1 says the verbal description explicitly names driving SAFETY, yet treats unlabeled numeric es_repr quotations as a conflicting SKILL target because their values match the Skill row. Numeric matching cannot identify a target or create an alternative target by itself. Neutral description and coding_context description both explicitly say safely/safety; p4/Table5 identifies the Likert table, with Hedges g requested. Independently determine whether ANY NONNUMERIC provenance conflicts with Safety (an explicit Skill label, distinct named task/question, table heading/row locator, or other structural evidence). Do not use shipped or quoted means,medians,df,g values,row order,or assumed paired-row ordering to select Skill. If words plus Table5 uniquely identify the Safety Likert test as written, assess N,requested g,p and author verdict for that target, explaining that wrong numeric values do not override explicit outcome words. If a genuine nonnumeric target conflict remains, quote it and return undeterminable with false target flags, rather than silently assuming a description swap. Also distinguish explicit Table5 Likert scope from the other two response scales/Figure4. Do not fix the dataset description or assume what the coder intended. Row1398 author verdict is outside scope and unchanged. Every output MUST include boolean target_match_confirmed/effect_specific_verdict_confirmed,correct_value(null if undeterminable),correct_metric/correct_bound(null if irrelevant),literal quote/location/source_path and reason. Preserve raw V1/source. No acquisition,repo/dataset search,paidAPIs,Git or delegation."
+  },
+  {
+    "source_key": "bea088cc57ee55f8",
+    "audit_id": 1399,
+    "field": "reported_success",
+    "side": "replication",
+    "input": {
+      "ref_o": "Svenson, O. (1981). Are we all less risky and more skillful than our fellow drivers? Acta Psychologica, 47(2), 143\u2013148. https://doi.org/10.1016/0001-6918(81)90005-6",
+      "doi_o": "10.1016/0001-6918(81)90005-6",
+      "study_o": "1",
+      "ref_r": "Koppel, L., Andersson, D., Tingh\u00f6g, G., V\u00e4stfj\u00e4ll, D., & Feldman, G. (2023). We are all less risky and more skillful than our fellow drivers: Successful replication and extension of Svenson (1981)\u200e. Meta-Psychology, 7. https://doi.org/10.15626/mp.2021.2932",
+      "doi_r": "10.15626/mp.2021.2932",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "description": "Comparison of perceived driving safety for oneself versus average drivers.",
+      "locators_o": "p.3",
+      "locators_r": "p.4; Table 5",
+      "audit_id": 1399,
+      "target_side": "replication",
+      "unfinished_fields": [
+        "n_r",
+        "es_value_r",
+        "pval_value_r",
+        "reported_success"
+      ],
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "successful",
+      "location": "p. 7, Discussion",
+      "quote": "The findings from our replication are consistent with ... the original findings.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "disposition": {
+      "audit_id": 1399,
+      "field": "reported_success",
+      "code": "extracted_printed",
+      "reason": "Authors explicitly describe the replication findings as consistent with the original; narrative covers safety across all scales.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "location": "p. 7, Discussion",
+      "quote": "The findings from our replication are consistent with ... the original findings.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Replication driving safety versus average driver, 7-item Likert scale; Table 5 Safety row, one-sample t-test against scale midpoint 4. Table 5 locator identifies this test independently of row order or numeric matching.",
+    "worker_notes": "Identity independently checked: supplied text identifies Meta-Psychology 2023 vol. 7, MP.2021.2932, DOI 10.15626/MP.2021.2932, Replication Report, the matching title and all five named authors (Lina Koppel, David Andersson, Gustav Tingh\u00f6g, Daniel V\u00e4stfj\u00e4ll, Gilad Feldman). It contains the primary report through references (11 pages), not an abstract-only excerpt or preregistration. Canonical file is a JSON-wrapped text extraction; quotes refer to its decoded output text. No PDF was supplied. Table 5 explicitly identifies the safety Likert-scale test; Table 3 Panel C provides N=387 directly. No N arithmetic or effect-size conversion performed. Other safety tests in Table 4 concern two percentile response scales; Table 5 locator distinguishes the assigned test. Preserve discrepancy: Table 5 safety t=27.38 versus p. 4 narrative t=27.28; both print p<.001 and g=1.39. Table 5 value retained as the requested table test. Original side is unassigned and is a placeholder only.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+    "shipped": "successful",
+    "comparison": "agree",
+    "coding_context": {
+      "description": "people think that they drive more safely than average drivers",
+      "es_repr_o": "p.3 Me1 =61-70 Me2 = 51-60",
+      "es_repr_r": "p.4 M = 5.28 (SD = 1.08), t(378) = 23.13, p < .001, g = 1.19, 95% CI [1.06, 1.32] (see Table 5).",
+      "es_type_o": null,
+      "es_type_r": "hedges' g",
+      "pval_type_o": null,
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": "2 (two)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Thus, our findings are consistent with the original findings by Svenson\n(1981)."
+    },
+    "prior_adjudication": {
+      "audit_id": 1399,
+      "field": "reported_success",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": false,
+      "effect_specific_verdict_confirmed": false,
+      "location": "p. 6, Table 5; p. 7, Discussion",
+      "quote": "Safety         27.38   386    <.001      1.50 [1.40, 1.61]    1.39 [1.25, 1.53]           Signal \u2013 consistent\n    Skill          23.13   378    <.001      1.28 [1.17, 1.39]    1.19 [1.06, 1.32]           Signal \u2013 consistent",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7aa816b32184c95a8c907300.txt",
+      "reason": "Although the authors report 'Signal \u2013 consistent' and narrative replication consistency for both Likert-scale driving safety and driving skill, this row's target outcome is conflicted between perceived driving safety (verbal descriptions) and driving skill (unlabeled statistics in coding_context.es_repr_o and coding_context.es_repr_r), preventing a confirmed effect-specific target match without circular numeric or row-order matching."
+    },
+    "parent_response": "FOCUSED FINAL TARGET CHECK1399 (four fields) only. V1 says the verbal description explicitly names driving SAFETY, yet treats unlabeled numeric es_repr quotations as a conflicting SKILL target because their values match the Skill row. Numeric matching cannot identify a target or create an alternative target by itself. Neutral description and coding_context description both explicitly say safely/safety; p4/Table5 identifies the Likert table, with Hedges g requested. Independently determine whether ANY NONNUMERIC provenance conflicts with Safety (an explicit Skill label, distinct named task/question, table heading/row locator, or other structural evidence). Do not use shipped or quoted means,medians,df,g values,row order,or assumed paired-row ordering to select Skill. If words plus Table5 uniquely identify the Safety Likert test as written, assess N,requested g,p and author verdict for that target, explaining that wrong numeric values do not override explicit outcome words. If a genuine nonnumeric target conflict remains, quote it and return undeterminable with false target flags, rather than silently assuming a description swap. Also distinguish explicit Table5 Likert scope from the other two response scales/Figure4. Do not fix the dataset description or assume what the coder intended. Row1398 author verdict is outside scope and unchanged. Every output MUST include boolean target_match_confirmed/effect_specific_verdict_confirmed,correct_value(null if undeterminable),correct_metric/correct_bound(null if irrelevant),literal quote/location/source_path and reason. Preserve raw V1/source. No acquisition,repo/dataset search,paidAPIs,Git or delegation."
+  }
+]
+Write complete strict JSON array only to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_bea088cc57ee55f8_v2.json and include same array under ## Answer.

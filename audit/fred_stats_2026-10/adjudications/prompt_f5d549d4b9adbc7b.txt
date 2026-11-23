@@ -1,0 +1,92 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 88,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "Z = 2.81, N = 34",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "1.73",
+      "metric": "z",
+      "test_statistic": "z = 1.73",
+      "location": "HTML Results, Figure 4 discussion, paragraph beginning Overall, DE training reduced impulsive choice; IE versus CONT at 15-s delay",
+      "quote": "At the 15-s delay, IE training produced a near-significant difference in percent LLR choice relative to CONT rats (8.43% vs. 20.92%, respectively; z = 1.73, p = .08)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fd43227e90fe98e50603de85.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Renee Renda, C., Rung, J. M., Hinnenkamp, J. E., Lenzini, S. N., & Madden, G. J. (2018). Impulsive choice and pre‐exposure to delays: iv. effects of delay‐ and immediacy‐exposure training relative to maturational changes in impulsivity. Journal of the Experimental Analysis of Behavior, 109(3), 587–599. Portico. https://doi.org/10.1002/jeab.432",
+      "doi_o": "10.1002/jeab.432",
+      "study_o": "1",
+      "ref_r": "Fox, A. E. (2024). Immediate Reinforcement Training Has Moderate Effect on Delay Discounting Behavior in Rats: A Systematic Replication. The Psychological Record, 74(2), 213–218. https://doi.org/10.1007/s40732-024-00597-x",
+      "doi_r": "10.1007/s40732-024-00597-x",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 88,
+      "description": "Immediate Reinforcement Training and Delay Discounting Behavior in Rats",
+      "locators_o": "p. 8",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fd43227e90fe98e50603de85.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7137b2b0d9b6936498cba857.txt"
+      }
+    },
+    "work_key": "10.1007/s40732-024-00597-x",
+    "coding_context": {
+      "es_repr": "The article uses — z = 1.73, p = .08 — a. r needs to be calculated using z and both sample groups size (17 in both), so we have r = 1,73/ √34 =0,297",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 88,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.005",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".08",
+      "bound": "e",
+      "location": "HTML Results, Figure 4 discussion, IE versus CONT at 15-s delay",
+      "quote": "At the 15-s delay, IE training produced a near-significant difference in percent LLR choice relative to CONT rats (8.43% vs. 20.92%, respectively; z = 1.73, p = .08)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fd43227e90fe98e50603de85.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Renee Renda, C., Rung, J. M., Hinnenkamp, J. E., Lenzini, S. N., & Madden, G. J. (2018). Impulsive choice and pre‐exposure to delays: iv. effects of delay‐ and immediacy‐exposure training relative to maturational changes in impulsivity. Journal of the Experimental Analysis of Behavior, 109(3), 587–599. Portico. https://doi.org/10.1002/jeab.432",
+      "doi_o": "10.1002/jeab.432",
+      "study_o": "1",
+      "ref_r": "Fox, A. E. (2024). Immediate Reinforcement Training Has Moderate Effect on Delay Discounting Behavior in Rats: A Systematic Replication. The Psychological Record, 74(2), 213–218. https://doi.org/10.1007/s40732-024-00597-x",
+      "doi_r": "10.1007/s40732-024-00597-x",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 88,
+      "description": "Immediate Reinforcement Training and Delay Discounting Behavior in Rats",
+      "locators_o": "p. 8",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fd43227e90fe98e50603de85.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7137b2b0d9b6936498cba857.txt"
+      }
+    },
+    "work_key": "10.1007/s40732-024-00597-x",
+    "coding_context": {
+      "es_repr": "The article uses — z = 1.73, p = .08 — a. r needs to be calculated using z and both sample groups size (17 in both), so we have r = 1,73/ √34 =0,297",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

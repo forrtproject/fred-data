@@ -1,0 +1,1060 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "912": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Shrum, L. J., Lowrey, T. M., Luna, D., Lerman, D. B., & Liu, M. (2012). Sound symbolism effects across languages: Implications for global brand names. International Journal of Research in Marketing, 29(3), 275–279. https://doi.org/10.1016/j.ijresmar.2012.03.002",
+        "doi_o": "10.1016/j.ijresmar.2012.03.002",
+        "study_o": "1a-c",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Relationship between vowel sounds, product category and brand-name preference, examining consistency between phonetic connotations and product attributes (vowel sound-by-product category interaction).",
+        "locators_o": "p. 3",
+        "locators_r": "p. 9",
+        "audit_id": 912,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Relationship between vowel sounds, product category and brand-name preference, examining consistency between phonetic connotations and product attributes (vowel sound-by-product category interaction).",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Particular words will be preferred as brand names when the phonetic connotations of the words are consistent with the product attributes (Vowel sound-product category interaction)",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 9 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "913": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Shrum, L. J., Lowrey, T. M., Luna, D., Lerman, D. B., & Liu, M. (2012). Sound symbolism effects across languages: Implications for global brand names. International Journal of Research in Marketing, 29(3), 275–279. https://doi.org/10.1016/j.ijresmar.2012.03.002",
+        "doi_o": "10.1016/j.ijresmar.2012.03.002",
+        "study_o": "1a-c",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Preference for front versus back vowel sound words as brand names for a 2-seater convertible and a knife, examining consistency between phonetic connotations and product attributes.",
+        "locators_o": "p. 3",
+        "locators_r": "p. 9",
+        "audit_id": 913,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Preference for front versus back vowel sound words as brand names for a 2-seater convertible and a knife, examining consistency between phonetic connotations and product attributes.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Analytic category N: 208 + 210 = 418. Both constituent final product groups are explicitly printed in Table 3 and allocation is between participants. Overall 823 is not substituted for this category-specific N. Recruitment aimed at 1000, reported exclusions 247 and final total 823 are preserved as printed without attempting to reconcile recruitment arithmetic. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Particular words will be preferred as brand names when the phonetic connotations of the words are consistent with the product attributes (Front vowel sound words will be preferred over back vowel sound words for 2-seater convertible and knife)",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 9 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "914": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Shrum, L. J., Lowrey, T. M., Luna, D., Lerman, D. B., & Liu, M. (2012). Sound symbolism effects across languages: Implications for global brand names. International Journal of Research in Marketing, 29(3), 275–279. https://doi.org/10.1016/j.ijresmar.2012.03.002",
+        "doi_o": "10.1016/j.ijresmar.2012.03.002",
+        "study_o": "1a-c",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Preference for back versus front vowel sound words as brand names for a 4×4 vehicle and a hammer, examining consistency between phonetic connotations and product attributes.",
+        "locators_o": "p. 3",
+        "locators_r": "p. 9",
+        "audit_id": 914,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "n_r",
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Preference for back versus front vowel sound words as brand names for a 4×4 vehicle and a hammer, examining consistency between phonetic connotations and product attributes.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Analytic category N: 189 + 216 = 405. Both constituent final product groups are explicitly printed in Table 3 and allocation is between participants. Overall 823 is not substituted for this category-specific N. Recruitment aimed at 1000, reported exclusions 247 and final total 823 are preserved as printed without attempting to reconcile recruitment arithmetic. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Particular words will be preferred as brand names when the phonetic connotations of the words are consistent with the product attributes (Back vowel sound words will be preferred over front vowel sound words for 4×4 vehicle and hammer\"",
+        "es_repr_o": "p. 3",
+        "es_repr_r": "p. 9 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "1 (one)",
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "916": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Hagtvedt, H., & Adam Brasel, S. (2017). Color Saturation Increases Perceived Product Size. Journal of Consumer Research, ucx039. https://doi.org/10.1093/jcr/ucx039",
+        "doi_o": "10.1093/jcr/ucx039",
+        "study_o": "3",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "description": "Comparison of arousal under high versus low saturation.",
+        "locators_o": "p. 6",
+        "locators_r": "p. 5",
+        "audit_id": 916,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Comparison of arousal under high versus low saturation.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. The source narrates increased arousal but does not give an explicit arousal-specific replication-success verdict; the quoted failure rationale concerns size estimates.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "High (vs. low) saturation increases arousal",
+        "es_repr_o": "p. 6 (Mhigh = 6.05, SD = 1.34 vs. Mlow = 5.14, SD = 1.62, F(1, 75) = 7.35, p < .01, ηp2 = .09).",
+        "es_repr_r": "p. 5 (high saturation: M = 5.83, SD = 1.10; vs. low saturation: M = 5.41, SD = 1.20; F1,821 = 27.539, p <0.001, η2p = 0.033).",
+        "es_type_o": "test statistic",
+        "es_type_r": "etasq (partial)",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "918": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Romero, M., & Biswas, D. (2016). Healthy-Left, Unhealthy-Right: Can Displaying Healthy Items to the Left (versus Right) of Unhealthy Items Nudge Healthier Choices? Journal of Consumer Research, 43(1), 103–112. https://doi.org/10.1093/jcr/ucw008",
+        "doi_o": "10.1093/jcr/ucw008",
+        "study_o": "1b",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Preference for the healthy item (broccoli salad) when it appears on the left versus right of the images.",
+        "locators_o": "p. 8",
+        "locators_r": "p. 9",
+        "audit_id": 918,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Preference for the healthy item (broccoli salad) when it appears on the left versus right of the images.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants tend to prefer the healthy item (broccoli salad) when it is on the left (vs. right) of the images",
+        "es_repr_o": "p. 8",
+        "es_repr_r": "p. 9 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "919": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Yorkston, E., & Menon, G. (2004). A Sound Idea: Phonetic Effects of Brand Names on Consumer Judgments. Journal of Consumer Research, 31(1), 43–51. https://doi.org/10.1086/383422",
+        "doi_o": "10.1086/383422",
+        "study_o": "1",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Main effect of brand name on the Attribute Perception Index.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 9",
+        "audit_id": 919,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Main effect of brand name on the Attribute Perception Index.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Attribute Perception Index (Main effect of brand name)",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 9 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "920": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Yorkston, E., & Menon, G. (2004). A Sound Idea: Phonetic Effects of Brand Names on Consumer Judgments. Journal of Consumer Research, 31(1), 43–51. https://doi.org/10.1086/383422",
+        "doi_o": "10.1086/383422",
+        "study_o": "1",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Two-way interaction on the Attribute Perception Index.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 9",
+        "audit_id": 920,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Two-way interaction on the Attribute Perception Index.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Attribute Perception Index (2-way interaction)",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 9 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "921": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Yorkston, E., & Menon, G. (2004). A Sound Idea: Phonetic Effects of Brand Names on Consumer Judgments. Journal of Consumer Research, 31(1), 43–51. https://doi.org/10.1086/383422",
+        "doi_o": "10.1086/383422",
+        "study_o": "1",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Three-way interaction on the Attribute Perception Index.",
+        "locators_o": "p. 4",
+        "locators_r": "p. 9",
+        "audit_id": 921,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Three-way interaction on the Attribute Perception Index.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Attribute Perception Index (3-way interaction)",
+        "es_repr_o": "p. 4",
+        "es_repr_r": "p. 9 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "922": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Yorkston, E., & Menon, G. (2004). A Sound Idea: Phonetic Effects of Brand Names on Consumer Judgments. Journal of Consumer Research, 31(1), 43–51. https://doi.org/10.1086/383422",
+        "doi_o": "10.1086/383422",
+        "study_o": "1",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Main effect of brand name on the Brand Evaluation Index.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 9,10",
+        "audit_id": 922,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Main effect of brand name on the Brand Evaluation Index.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed. Table 5 explicitly names Brand Evaluation Index; Results prose calls the second index brand attribute index. Table outcome label directly matches assigned target; terminology discrepancy retained.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Brand Evaluation Index (Main effect of brand name)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 9,10 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "923": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Yorkston, E., & Menon, G. (2004). A Sound Idea: Phonetic Effects of Brand Names on Consumer Judgments. Journal of Consumer Research, 31(1), 43–51. https://doi.org/10.1086/383422",
+        "doi_o": "10.1086/383422",
+        "study_o": "1",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Two-way interaction on the Brand Evaluation Index.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 9,10",
+        "audit_id": 923,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Two-way interaction on the Brand Evaluation Index.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed. Table 5 explicitly names Brand Evaluation Index; Results prose calls the second index brand attribute index. Table outcome label directly matches assigned target; terminology discrepancy retained.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Brand Evaluation Index (2-way interaction)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 9,10 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "924": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Yorkston, E., & Menon, G. (2004). A Sound Idea: Phonetic Effects of Brand Names on Consumer Judgments. Journal of Consumer Research, 31(1), 43–51. https://doi.org/10.1086/383422",
+        "doi_o": "10.1086/383422",
+        "study_o": "1",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Three-way interaction on the Brand Evaluation Index.",
+        "locators_o": "p. 5",
+        "locators_r": "p. 9,10",
+        "audit_id": 924,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Three-way interaction on the Brand Evaluation Index.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed. Table 5 explicitly names Brand Evaluation Index; Results prose calls the second index brand attribute index. Table outcome label directly matches assigned target; terminology discrepancy retained.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Brand Evaluation Index (3-way interaction)",
+        "es_repr_o": "p. 5",
+        "es_repr_r": "p. 9,10 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "925": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Elder, R. S., & Krishna, A. (2012). The “Visual Depiction Effect” in Advertising: Facilitating Embodied Mental Simulation through Product Orientation. Journal of Consumer Research, 38(6), 988–1003. https://doi.org/10.1086/661531",
+        "doi_o": "10.1086/661531",
+        "study_o": "4",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Relationship between visual product depictions in advertisements, including orientation toward the participant’s dominant hand, and purchase intention.",
+        "locators_o": "p. 11",
+        "locators_r": "p. 10",
+        "audit_id": 925,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Relationship between visual product depictions in advertisements, including orientation toward the participant’s dominant hand, and purchase intention.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Visual product depictions within advertisements, such as the manipulation of orienting a product toward a participant’s dominant hand, facilitate purchase intention; Purchase intention",
+        "es_repr_o": "p. 11",
+        "es_repr_r": "p. 10 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    },
+    "926": {
+      "source_key": "634420df6a4d02c9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Elder, R. S., & Krishna, A. (2012). The “Visual Depiction Effect” in Advertising: Facilitating Embodied Mental Simulation through Product Orientation. Journal of Consumer Research, 38(6), 988–1003. https://doi.org/10.1086/661531",
+        "doi_o": "10.1086/661531",
+        "study_o": "4",
+        "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+        "doi_r": "10.3389/fcomm.2022.1048896",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "description": "Relationship between visual product depictions in advertisements, including orientation toward the participant’s dominant hand, and mental simulation, in the context of purchase intention.",
+        "locators_o": "p. 11",
+        "locators_r": "p. 10",
+        "audit_id": 926,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Relationship between visual product depictions in advertisements, including orientation toward the participant’s dominant hand, and mental simulation, in the context of purchase intention.",
+      "worker_notes": "Identity verified from supplied canonical text: title Evaluating replicability of ten influential research on sensory marketing; Kosuke Motoki and Sayo Iseki; DOI 10.3389/fcomm.2022.1048896; ORIGINAL RESEARCH article, Frontiers in Communication, 28 October 2022. This is the primary replication report, containing Methods, Results, Tables 1–5 and Discussion, not an abstract-only excerpt or preregistration. No PDF supplied; supplementary methodological appendix is referenced but not supplied. Original sides and unassigned fields are placeholders only. Table quote includes the original effect and its two CI limits followed by the replication effect and its two CI limits, in canonical table order. Only the explicitly headed replication Effect size column is extracted. No conversion performed.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Visual product depictions within advertisements, such as the manipulation of orienting a product toward a participant’s dominant hand, facilitate purchase intention; Mental simulation",
+        "es_repr_o": "p. 11",
+        "es_repr_r": "p. 10 / t. 5",
+        "es_type_o": "test statistic",
+        "es_type_r": "r",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 912,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.251",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Shrum et al. (2012), Vowel sound-product category interaction, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Vowel sound-product category interaction\n0.385\n0.295\n0.468\n0.251\n0.185\n0.314 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 912,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Shrum et al. (2012), Vowel sound-product category interaction, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Vowel sound-product category interaction\n0.385\n0.295\n0.468\n0.251\n0.185\n0.314 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.251",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 913,
+      "field": "n_r",
+      "blind": {
+        "value": "418",
+        "sample_role": "Participants in the two mutually exclusive final product groups forming the named category simple-effect test; vowel is within participant.",
+        "exclusions": "Final analyzed sample after reported pre-registered IMC/ACQ exclusions; paper reports 247 excluded and 823 analyzed overall. No extra target-specific exclusions reported.",
+        "location": "Table 3 footnote (final product-category groups), Methods random allocation and exclusion paragraphs, Results Shrum et al. (2012) mixed ANOVA",
+        "quote": "Within each study, participants were randomly allocated to one condition (e.g., one of the two conditions for Romero and Biswas,\n2016\n). ... Convertible (n = 208), knife (n = 210), 4 × 4 SUV (n = 189), hammer (n =216).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 913,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Explicit final groups are mutually exclusive because each participant was randomly allocated to one condition; sum only the two named product groups in the assigned category. Participants, not repeated vowel observations; no inference from df.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 3 footnote (final product-category groups), Methods random allocation and exclusion paragraphs, Results Shrum et al. (2012) mixed ANOVA",
+        "quote": "Within each study, participants were randomly allocated to one condition (e.g., one of the two conditions for Romero and Biswas,\n2016\n). ... Convertible (n = 208), knife (n = 210), 4 × 4 SUV (n = 189), hammer (n =216).",
+        "calculation": "208 + 210 = 418"
+      },
+      "supported": true,
+      "shipped": "823",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 913,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.106",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Shrum et al. (2012), Front vowel sounds for convertible and knife, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Front vowel sounds for convertible and knife\n0.362\n0.232\n0.480\n0.106\n0.010\n0.200 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 913,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Shrum et al. (2012), Front vowel sounds for convertible and knife, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Front vowel sounds for convertible and knife\n0.362\n0.232\n0.480\n0.106\n0.010\n0.200 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.106",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 914,
+      "field": "n_r",
+      "blind": {
+        "value": "405",
+        "sample_role": "Participants in the two mutually exclusive final product groups forming the named category simple-effect test; vowel is within participant.",
+        "exclusions": "Final analyzed sample after reported pre-registered IMC/ACQ exclusions; paper reports 247 excluded and 823 analyzed overall. No extra target-specific exclusions reported.",
+        "location": "Table 3 footnote (final product-category groups), Methods random allocation and exclusion paragraphs, Results Shrum et al. (2012) mixed ANOVA",
+        "quote": "Within each study, participants were randomly allocated to one condition (e.g., one of the two conditions for Romero and Biswas,\n2016\n). ... Convertible (n = 208), knife (n = 210), 4 × 4 SUV (n = 189), hammer (n =216).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 914,
+        "field": "n_r",
+        "code": "extracted_documented_n_sum",
+        "reason": "Explicit final groups are mutually exclusive because each participant was randomly allocated to one condition; sum only the two named product groups in the assigned category. Participants, not repeated vowel observations; no inference from df.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 3 footnote (final product-category groups), Methods random allocation and exclusion paragraphs, Results Shrum et al. (2012) mixed ANOVA",
+        "quote": "Within each study, participants were randomly allocated to one condition (e.g., one of the two conditions for Romero and Biswas,\n2016\n). ... Convertible (n = 208), knife (n = 210), 4 × 4 SUV (n = 189), hammer (n =216).",
+        "calculation": "189 + 216 = 405"
+      },
+      "supported": true,
+      "shipped": "823",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 914,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.387",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Shrum et al. (2012), Back vowel sounds for 4 × 4 SUV/Hammer, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Back vowel sounds for 4 × 4 SUV/Hammer\n0.367\n0.236\n0.485\n0.387\n0.300\n0.466 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 914,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Shrum et al. (2012), Back vowel sounds for 4 × 4 SUV/Hammer, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Back vowel sounds for 4 × 4 SUV/Hammer\n0.367\n0.236\n0.485\n0.387\n0.300\n0.466 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.387",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 916,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.033",
+        "metric": "partial eta-squared (η²p)",
+        "test_statistic": "F1,821 = 27.539",
+        "location": "Results, Hagtvedt and Brasel (2017), arousal ANOVA",
+        "quote": "F\n1,821\n= 27.539,\np\n< 0.001, η\n2\np\n= 0.033",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 916,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed partial eta-squared for the explicitly identified arousal test; same-test p < 0.001 is preserved in evidence.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Results, Hagtvedt and Brasel (2017), arousal ANOVA",
+        "quote": "F\n1,821\n= 27.539,\np\n< 0.001, η\n2\np\n= 0.033",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(1, 821) = 27.539",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 918,
+      "field": "es_value_r",
+      "blind": {
+        "value": "−0.011",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Romero and Biswas (2016), Choice, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Choice\n0.241\n0.040\n0.424\n−0.011\n−0.079\n0.058 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 918,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Romero and Biswas (2016), Choice, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Choice\n0.241\n0.040\n0.424\n−0.011\n−0.079\n0.058 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.011",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 919,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.095",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Yorkston and Menon (2004), Attribute Perception Index (Main effect of brand name), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Attribute Perception Index (Main effect of brand name)\n0.274\n0.104\n0.429\n0.095\n0.027\n0.163 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 919,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Yorkston and Menon (2004), Attribute Perception Index (Main effect of brand name), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Attribute Perception Index (Main effect of brand name)\n0.274\n0.104\n0.429\n0.095\n0.027\n0.163 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.095",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 920,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.012",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Yorkston and Menon (2004), Attribute Perception Index (2-way interaction), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Attribute Perception Index (2-way interaction)\n0.186\n0.012\n0.350\n0.012\n−0.056\n0.080 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 920,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Yorkston and Menon (2004), Attribute Perception Index (2-way interaction), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Attribute Perception Index (2-way interaction)\n0.186\n0.012\n0.350\n0.012\n−0.056\n0.080 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.012",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 921,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.036",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Yorkston and Menon (2004), Attribute Perception Index (3-way interaction), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Attribute Perception Index (3-way interaction)\n0.178\n0.003\n0.342\n0.036\n−0.033\n0.104 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 921,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Yorkston and Menon (2004), Attribute Perception Index (3-way interaction), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Attribute Perception Index (3-way interaction)\n0.178\n0.003\n0.342\n0.036\n−0.033\n0.104 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.036",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 922,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.012",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Yorkston and Menon (2004), Brand Evaluation Index (Main effect of brand name), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Brand Evaluation Index (Main effect of brand name)\n0.271\n0.101\n0.426\n0.012\n−0.057\n0.080 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 922,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Yorkston and Menon (2004), Brand Evaluation Index (Main effect of brand name), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Brand Evaluation Index (Main effect of brand name)\n0.271\n0.101\n0.426\n0.012\n−0.057\n0.080 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.012",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 923,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.038",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Yorkston and Menon (2004), Brand Evaluation Index (2-way interaction), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Brand Evaluation Index (2-way interaction)\n0.246\n0.074\n0.403\n0.038\n−0.030\n0.106 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 923,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Yorkston and Menon (2004), Brand Evaluation Index (2-way interaction), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Brand Evaluation Index (2-way interaction)\n0.246\n0.074\n0.403\n0.038\n−0.030\n0.106 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.038",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 924,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.041",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Yorkston and Menon (2004), Brand Evaluation Index (3-way interaction), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Brand Evaluation Index (3-way interaction)\n0.197\n0.023\n0.360\n0.041\n−0.027\n0.109 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 924,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Yorkston and Menon (2004), Brand Evaluation Index (3-way interaction), Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Brand Evaluation Index (3-way interaction)\n0.197\n0.023\n0.360\n0.041\n−0.027\n0.109 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.041",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 925,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.009",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Elder and Krishna (2011), Purchase intention, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Purchase intention\n0.400\n0.195\n0.572\n0.009\n−0.059\n0.077 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 925,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Elder and Krishna (2011), Purchase intention, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Purchase intention\n0.400\n0.195\n0.572\n0.009\n−0.059\n0.077 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.009",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 926,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.003",
+        "metric": "r (correlation coefficient; author-derived primary Table 5)",
+        "test_statistic": null,
+        "location": "Table 5, Elder and Krishna (2011), Mental simulation, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Mental simulation\n0.245\n0.024\n0.444\n0.003\n−0.066\n0.071 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 926,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Explicit study and outcome label identify the primary authors’ replication effect-size column; printed correlation coefficient retained without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt",
+        "location": "Table 5, Elder and Krishna (2011), Mental simulation, Replication effect / Effect size column; table caption establishes correlation-coefficient metric.",
+        "quote": "Mental simulation\n0.245\n0.024\n0.444\n0.003\n−0.066\n0.071 ... The Leftmost columns and the Middle columns depict effect size (correlation coefficients) and 95% CIs for the original and replication studies.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.003",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/634420df6a4d02c9. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_634420df6a4d02c9_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
+
+Large-batch reply override: write the COMPLETE strict JSON array to /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_634420df6a4d02c9_v1.json, but reply ONLY with its path and item count. Do not echo the array. This overrides earlier reply-format instructions only; all source/evidence/target requirements still apply.

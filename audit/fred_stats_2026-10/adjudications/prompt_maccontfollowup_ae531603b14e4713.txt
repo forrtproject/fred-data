@@ -1,0 +1,115 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 926,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "F(1, 76) = 3.20",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "4.87",
+      "metric": "F",
+      "test_statistic": "F(1, 76) = 4.87",
+      "location": "Published article p. 998 (PDF page 11), Study 4, Results; orientation match versus mismatch ANOVA.",
+      "quote": "F(1, 76) p 4.87, p ! .05).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_bba24990fc386c7ebfceb37f.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Elder, R. S., & Krishna, A. (2012). The “Visual Depiction Effect” in Advertising: Facilitating Embodied Mental Simulation through Product Orientation. Journal of Consumer Research, 38(6), 988–1003. https://doi.org/10.1086/661531",
+      "doi_o": "10.1086/661531",
+      "study_o": "4",
+      "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+      "doi_r": "10.3389/fcomm.2022.1048896",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "r",
+      "audit_id": 926,
+      "description": "Relationship between visual product depictions in advertisements, including orientation toward the participant’s dominant hand, and mental simulation, in the context of purchase intention.",
+      "locators_o": "p. 11",
+      "locators_r": "p. 10",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+      }
+    },
+    "work_key": "10.3389/fcomm.2022.1048896",
+    "coding_context": {
+      "es_repr": "p. 11",
+      "description": "Visual product depictions within advertisements, such as the manipulation of orienting a product toward a participant’s dominant hand, facilitate purchase intention; Mental simulation",
+      "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "78",
+        "es_value_o": "F(1, 76) = 3.20",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.08",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Published article supplied by licensed EBSCO all-database service; 17-page PDF comprises16 complete article pages988–1003 plus EBSCO notice. DOI/title/Elder and Krishna match reference and Crossref;2011copyright/online versus issue2012 retained. Four-study methods/results pp6–11, general discussion p11, stimulus appendix pp13–14 and references pp15–16. First page visually inspected.",
+    "source_identity_and_completeness": "17-page PDF comprises16 complete article pages988–1003 plus EBSCO notice. DOI/title/Elder and Krishna match reference and Crossref;2011copyright/online versus issue2012 retained. Four-study methods/results pp6–11, general discussion p11, stimulus appendix pp13–14 and references pp15–16. First page visually inspected."
+  },
+  {
+    "audit_id": 926,
+    "field": "pval_value_o",
+    "comparison": "differ",
+    "shipped": "0.08",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".05",
+      "bound": "l",
+      "location": "Published article p. 998 (PDF page 11), Study 4, Results; orientation match versus mismatch ANOVA.",
+      "quote": "F(1, 76) p 4.87, p ! .05).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_bba24990fc386c7ebfceb37f.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Elder, R. S., & Krishna, A. (2012). The “Visual Depiction Effect” in Advertising: Facilitating Embodied Mental Simulation through Product Orientation. Journal of Consumer Research, 38(6), 988–1003. https://doi.org/10.1086/661531",
+      "doi_o": "10.1086/661531",
+      "study_o": "4",
+      "ref_r": "Motoki, K., & Iseki, S. (2022). Evaluating replicability of ten influential research on sensory marketing. Frontiers in Communication, 7. https://doi.org/10.3389/fcomm.2022.1048896",
+      "doi_r": "10.3389/fcomm.2022.1048896",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "r",
+      "audit_id": 926,
+      "description": "Relationship between visual product depictions in advertisements, including orientation toward the participant’s dominant hand, and mental simulation, in the context of purchase intention.",
+      "locators_o": "p. 11",
+      "locators_r": "p. 10",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/8666341ece6eef03a45ffea8.txt"
+      }
+    },
+    "work_key": "10.3389/fcomm.2022.1048896",
+    "coding_context": {
+      "es_repr": "p. 11",
+      "description": "Visual product depictions within advertisements, such as the manipulation of orienting a product toward a participant’s dominant hand, facilitate purchase intention; Mental simulation",
+      "reported_success_quote": "Our replication attempts successfully replicated two findings (Klink, 2000; Shrum et al., 2012) and partially replicated one of them (Yorkston and Menon, 2004). [...] Only 20% (2/10) of study findings could be successfully replicated",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "78",
+        "es_value_o": "F(1, 76) = 3.20",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.08",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Published article supplied by licensed EBSCO all-database service; 17-page PDF comprises16 complete article pages988–1003 plus EBSCO notice. DOI/title/Elder and Krishna match reference and Crossref;2011copyright/online versus issue2012 retained. Four-study methods/results pp6–11, general discussion p11, stimulus appendix pp13–14 and references pp15–16. First page visually inspected.",
+    "source_identity_and_completeness": "17-page PDF comprises16 complete article pages988–1003 plus EBSCO notice. DOI/title/Elder and Krishna match reference and Crossref;2011copyright/online versus issue2012 retained. Four-study methods/results pp6–11, general discussion p11, stimulus appendix pp13–14 and references pp15–16. First page visually inspected."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

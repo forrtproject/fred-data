@@ -1,0 +1,242 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1781": {
+      "source_key": "9012f9f55359c6da",
+      "side": "original",
+      "input": {
+        "ref_o": "Zettler, I., & Hilbig, B. E. (2010). Attitudes of the selfless: Explaining political orientation with altruism. Personality and Individual Differences, 48(3), 338–342. https://doi.org/10.1016/j.paid.2009.11.002",
+        "doi_o": "10.1016/j.paid.2009.11.002",
+        "study_o": null,
+        "ref_r": "Zettler, I., Hilbig, B. E., & Haubrich, J. (2011). Altruism at the ballots: Predicting political attitudes and behavior. Journal of Research in Personality, 45(1), 130–133. https://doi.org/10.1016/j.jrp.2010.11.010",
+        "doi_r": "10.1016/j.jrp.2010.11.010",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "r",
+        "es_type_r": "r",
+        "description": "Relationship between altruism and political orientation.",
+        "locators_o": "p. 4; Table 1",
+        "locators_r": "p. 3; Table 1",
+        "audit_id": 1781,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Table 1 bivariate correlation of Altruism with political orientation in the web-based questionnaire study; political orientation row 8, named trait column.",
+      "worker_notes": "Identity verified from document contents: title Attitudes of the selﬂess: Explaining political orientation with altruism; authors Ingo Zettler and Benjamin E. Hilbig; Personality and Individual Differences 48 (2010) 338–342; doi:10.1016/j.paid.2009.11.002. Supplied text contains the primary journal article, including methods, results, tables and references, preceded by an author-copy cover. No PDF path supplied; independent visual verification unavailable. Only assigned unfinished fields assessed; other fields and replication side are placeholders. Table 1 is on journal p. 341 (fourth article page, matching locator p. 4). Canonical text prints .45, .27 and .01 without minus signs. Retained supplied text exactly; no signs inferred from scale direction or narrative, and possible text-extraction sign loss cannot be independently resolved without the PDF. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Altruism is negatively associated with the political orientation",
+        "es_repr_o": "p. 4/ Table 1",
+        "es_repr_r": "p. 3/ Table 1",
+        "es_type_o": "r",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "aiming to replicate this link, we assumed that altruism also influences hypothetical and actual voting behavior as well as endorsement of specific, currently debated political agendas. In a study which comprised two times of measurement prior to and after a nation-wide election in Germany, support for these hypotheses was obtained"
+      }
+    },
+    "1782": {
+      "source_key": "9012f9f55359c6da",
+      "side": "original",
+      "input": {
+        "ref_o": "Zettler, I., & Hilbig, B. E. (2010). Attitudes of the selfless: Explaining political orientation with altruism. Personality and Individual Differences, 48(3), 338–342. https://doi.org/10.1016/j.paid.2009.11.002",
+        "doi_o": "10.1016/j.paid.2009.11.002",
+        "study_o": null,
+        "ref_r": "Zettler, I., Hilbig, B. E., & Haubrich, J. (2011). Altruism at the ballots: Predicting political attitudes and behavior. Journal of Research in Personality, 45(1), 130–133. https://doi.org/10.1016/j.jrp.2010.11.010",
+        "doi_r": "10.1016/j.jrp.2010.11.010",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "r",
+        "es_type_r": "r",
+        "description": "Relationship between honesty and political orientation.",
+        "locators_o": "p. 4; Table 1",
+        "locators_r": "p. 3; Table 1",
+        "audit_id": 1782,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Table 1 bivariate correlation of Honesty–humility with political orientation in the web-based questionnaire study; political orientation row 8, named trait column.",
+      "worker_notes": "Identity verified from document contents: title Attitudes of the selﬂess: Explaining political orientation with altruism; authors Ingo Zettler and Benjamin E. Hilbig; Personality and Individual Differences 48 (2010) 338–342; doi:10.1016/j.paid.2009.11.002. Supplied text contains the primary journal article, including methods, results, tables and references, preceded by an author-copy cover. No PDF path supplied; independent visual verification unavailable. Only assigned unfinished fields assessed; other fields and replication side are placeholders. Table 1 is on journal p. 341 (fourth article page, matching locator p. 4). Canonical text prints .45, .27 and .01 without minus signs. Retained supplied text exactly; no signs inferred from scale direction or narrative, and possible text-extraction sign loss cannot be independently resolved without the PDF. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Honesty is negatively associated with the political orientation",
+        "es_repr_o": "p. 4/ Table 1",
+        "es_repr_r": "p. 3/ Table 1",
+        "es_type_o": "r",
+        "es_type_r": "r",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "aiming to replicate this link, we assumed that altruism also influences hypothetical and actual voting behavior as well as endorsement of specific, currently debated political agendas. In a study which comprised two times of measurement prior to and after a nation-wide election in Germany, support for these hypotheses was obtained"
+      }
+    },
+    "1783": {
+      "source_key": "9012f9f55359c6da",
+      "side": "original",
+      "input": {
+        "ref_o": "Zettler, I., & Hilbig, B. E. (2010). Attitudes of the selfless: Explaining political orientation with altruism. Personality and Individual Differences, 48(3), 338–342. https://doi.org/10.1016/j.paid.2009.11.002",
+        "doi_o": "10.1016/j.paid.2009.11.002",
+        "study_o": null,
+        "ref_r": "Zettler, I., Hilbig, B. E., & Haubrich, J. (2011). Altruism at the ballots: Predicting political attitudes and behavior. Journal of Research in Personality, 45(1), 130–133. https://doi.org/10.1016/j.jrp.2010.11.010",
+        "doi_r": "10.1016/j.jrp.2010.11.010",
+        "url_r": null,
+        "study_r": null,
+        "es_type_o": "r",
+        "es_type_r": "r",
+        "description": "Relationship between emotionality and political orientation.",
+        "locators_o": "p. 4; Table 1",
+        "locators_r": "p. 3; Table 1",
+        "audit_id": 1783,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Table 1 bivariate correlation of Emotionality with political orientation in the web-based questionnaire study; political orientation row 8, named trait column.",
+      "worker_notes": "Identity verified from document contents: title Attitudes of the selﬂess: Explaining political orientation with altruism; authors Ingo Zettler and Benjamin E. Hilbig; Personality and Individual Differences 48 (2010) 338–342; doi:10.1016/j.paid.2009.11.002. Supplied text contains the primary journal article, including methods, results, tables and references, preceded by an author-copy cover. No PDF path supplied; independent visual verification unavailable. Only assigned unfinished fields assessed; other fields and replication side are placeholders. Table 1 is on journal p. 341 (fourth article page, matching locator p. 4). Canonical text prints .45, .27 and .01 without minus signs. Retained supplied text exactly; no signs inferred from scale direction or narrative, and possible text-extraction sign loss cannot be independently resolved without the PDF. The emotionality cell is .01 without a significance marker. Table notes give thresholds for marked cells, but no exact p or explicit bound for this unmarked cell. No p computed from r/N or inferred from an absent marker.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Emotionality is not associated with the political orientation",
+        "es_repr_o": "p. 4/ Table 1",
+        "es_repr_r": "p. 3/ Table 1",
+        "es_type_o": "r",
+        "es_type_r": "r",
+        "pval_type_o": "g (>)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": "2 (two)",
+        "pval_tails_r": "2 (two)",
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "aiming to replicate this link, we assumed that altruism also influences hypothetical and actual voting behavior as well as endorsement of specific, currently debated political agendas. In a study which comprised two times of measurement prior to and after a nation-wide election in Germany, support for these hypotheses was obtained"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1781,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".45",
+        "metric": "r",
+        "test_statistic": null,
+        "location": "Journal p. 341, Table 1, political orientation row, Altruism column",
+        "quote": "            Variable                          m           Scale         Mean (SD)          1              2              3               4       5        6       7 ...    8        Political orientation             1           1–7           3.19 (1.20)          .45***         .27***         .01           .02       .21*   .05       .40***",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1781,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Table labels independently identify Altruism and political orientation; corresponding bivariate correlation is printed as .45. Metric r is established by the results discussion of correlations and Table 1 intercorrelations. Retained canonical printed sign and precision without conversion. Possible text-extraction sign loss cannot be visually checked because no PDF supplied.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+        "location": "Journal p. 341, Table 1, political orientation row, Altruism column",
+        "quote": "            Variable                          m           Scale         Mean (SD)          1              2              3               4       5        6       7 ...    8        Political orientation             1           1–7           3.19 (1.20)          .45***         .27***         .01           .02       .21*   .05       .40***",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.45",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1782,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".27",
+        "metric": "r",
+        "test_statistic": null,
+        "location": "Journal p. 341, Table 1, political orientation row, Honesty–humility column",
+        "quote": "            Variable                          m           Scale         Mean (SD)          1              2              3               4       5        6       7 ...    8        Political orientation             1           1–7           3.19 (1.20)          .45***         .27***         .01           .02       .21*   .05       .40***",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1782,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Table labels independently identify Honesty–humility and political orientation; corresponding bivariate correlation is printed as .27. Metric r is established by the results discussion of correlations and Table 1 intercorrelations. Retained canonical printed sign and precision without conversion. Possible text-extraction sign loss cannot be visually checked because no PDF supplied.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+        "location": "Journal p. 341, Table 1, political orientation row, Honesty–humility column",
+        "quote": "            Variable                          m           Scale         Mean (SD)          1              2              3               4       5        6       7 ...    8        Political orientation             1           1–7           3.19 (1.20)          .45***         .27***         .01           .02       .21*   .05       .40***",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.27",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1783,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".01",
+        "metric": "r",
+        "test_statistic": null,
+        "location": "Journal p. 341, Table 1, political orientation row, Emotionality column",
+        "quote": "            Variable                          m           Scale         Mean (SD)          1              2              3               4       5        6       7 ...    8        Political orientation             1           1–7           3.19 (1.20)          .45***         .27***         .01           .02       .21*   .05       .40***",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1783,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Table labels independently identify Emotionality and political orientation; corresponding bivariate correlation is printed as .01. Metric r is established by the results discussion of correlations and Table 1 intercorrelations. Retained canonical printed sign and precision without conversion. Possible text-extraction sign loss cannot be visually checked because no PDF supplied.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7b56ca2d4ba80110097a7388.txt",
+        "location": "Journal p. 341, Table 1, political orientation row, Emotionality column",
+        "quote": "            Variable                          m           Scale         Mean (SD)          1              2              3               4       5        6       7 ...    8        Political orientation             1           1–7           3.19 (1.20)          .45***         .27***         .01           .02       .21*   .05       .40***",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.01",
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/9012f9f55359c6da. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_9012f9f55359c6da_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

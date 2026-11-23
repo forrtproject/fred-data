@@ -1,0 +1,62 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 109,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "X2(8, N = 54) = 104.09",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "104.09",
+      "metric": "χ2",
+      "test_statistic": "χ2 = 104.09, df = 8",
+      "location": "Printed p. 105, Table 2, first comparison (PDF page 10)",
+      "quote": "VMSWO Rank 1-5 by Mean             104.09       8         .00001\n                                                                 Force Rank 1-5",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_7d42d5ca0c40ace98bbfab1f.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Davis, W. T., Rapp, J. T., Brogan, K. M., Pinkston, J. W., & Chinnappan, B. (2021). Comparing stimulus preference and response force in a conjugate preparation. Journal of the Experimental Analysis of Behavior, 116(1), 96–113. Portico. https://doi.org/10.1002/jeab.705",
+      "doi_o": "10.1002/jeab.705",
+      "study_o": "1",
+      "ref_r": "Cook, J. L., Baruni, R. R., Pinkston, J. W., Rapp, J. T., Miltenberger, R. G., Deshmukh, S., Walker, E., & Tai, S. (2024). Comparing stimulus preference and response force in a conjugate preparation: A replication with auditory stimulation. Journal of the Experimental Analysis of Behavior, 122(1), 11–24. Portico. https://doi.org/10.1002/jeab.915",
+      "doi_r": "10.1002/jeab.915",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "cramer's V",
+      "audit_id": 109,
+      "description": "Conjugate schedules are variations of continuous reinforcement schedules where the consequent events co-vary proportionally with a specific dimension of the response. The participants apply force to a dynamometer that adjusts the clarity of visual stimuli. The researchers investigate whether the force exerted by participants is correlated with their preference for specific stimuli.",
+      "locators_o": "p. 105",
+      "locators_r": "p. 20",
+      "text_paths": {}
+    },
+    "work_key": "10.1002/jeab.915",
+    "coding_context": {
+      "es_repr": "p. 105",
+      "description": "Conjugate schedules are variations of continuous reinforcement schedules where the consequent events co-vary proportionally with a specific dimension of the response. The participants apply force to a dynamometer that adjusts the clarity of visual stimuli. The researchers investigate whether the force exerted by participants is correlated with their preference for specific stimuli.",
+      "reported_success_quote": "These findings are consistent with those from Davis\net al. (2021) and further support using conjugate preparations for measuring the\nrelative value of some stimulus events.",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "54",
+        "es_value_o": "X2(8, N = 54) = 104.09",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.00001",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "Both papers were assessed independently. No full primary paper was acquired through checked free routes. No statistics or narrative verdict were extracted from abstracts, search snippets, or secondary sources. Acquisition records: /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/7d42d5ca0c40ace98bbfab1f.miss; /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/fa2a29a6bf372ce9fceba6b0.miss.\nSource follow-up: Table 2 numerics and n verified on rendered primary PDF page 10. Exact canonical text row quoted; χ2 column header identifies metric. No conversion.\nSource follow-up: Rendered PDF p.10 inspected. All 81 participants in table; negative force values replaced with zero for 11 participants, not exclusions.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/7d42d5ca0c40ace98bbfab1f_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Davis,Rapp,Brogan,Pinkston,Chinnappan. PDF has18pages; published range=96-113; source endmatter checked in model review. Methods-related material pages[1, 2, 3, 4, 5, 6, 7, 8]; results-related material pages[1, 2, 3, 4, 10, 12, 13, 14]; references atPDFpages[17]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. Inspect the primary PDF for flagged glyph/sign discrepancies: PDF text extraction can drop minus signs. Do not reverse signs from the parsed text alone when the worker flagged visual disagreement. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

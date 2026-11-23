@@ -1,0 +1,49 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 706,
+    "field": "n_r",
+    "comparison": "near",
+    "shipped": "2374",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "2,285",
+      "location": "manuscript pp. 25–26, section 6",
+      "quote": "Across all in-lab replications (N = 2,285)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2cc1b3af21a3e6fb337243bf.txt",
+      "confident": true,
+      "sample_role": "participants included in target aggregate analysis",
+      "exclusions": "Participants whose behavior diffused clipboard weight excluded."
+    },
+    "locator": {
+      "ref_o": "Jostmann, N. B., Lakens, D., & Schubert, T. W. (2009). Weight as an Embodiment of Importance. Psychological Science, 20(9), 1169–1174. https://doi.org/10.1111/j.1467-9280.2009.02426.x",
+      "doi_o": "10.1111/j.1467-9280.2009.02426.x",
+      "study_o": "2",
+      "ref_r": "Ebersole, C. R., Atherton, O. E., Belanger, A. L., Skulborstad, H. M., Allen, J. M., Banks, J. B., Baranski, E., Bernstein, M. J., Bonfiglio, D. B. V., Boucher, L., Brown, E. R., Budiman, N. I., Cairo, A. H., Capaldi, C. A., Chartier, C. R., Chung, J. M., Cicero, D. C., Coleman, J. A., Conway, J. G., … Nosek, B. A. (2016). Many Labs 3: Evaluating participant pool quality across the academic semester via replication. Journal of Experimental Social Psychology, 67, 68–82. https://doi.org/10.1016/j.jesp.2015.10.012",
+      "doi_r": "10.1016/j.jesp.2015.10.012",
+      "url_r": "https://osf.io/ct89g/",
+      "study_r": "4.6 (as labeled in Many Labs 3 supplement).",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 706,
+      "description": "Clipboard weight and perceived importance.",
+      "locators_o": "page 1171",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/2cc1b3af21a3e6fb337243bf.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2015.10.012",
+    "coding_context": {
+      "es_repr": "6",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

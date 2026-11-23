@@ -1,0 +1,123 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1630,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "-0.04",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.04",
+      "location": "Study 2, Distinction bias replication results, quantitatively different scenarios",
+      "quote": "t(172.35) = 0.3, p = .765, d = 0.04",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "confident": true,
+      "metric": "Cohen's d",
+      "test_statistic": "t(172.35) = 0.3"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Hsee, C. K., & Zhang, J. (2004). Distinction Bias: Misprediction and Mischoice Due to Joint Evaluation. Journal of Personality and Social Psychology, 86(5), 680–695. https://doi.org/10.1037/0022-3514.86.5.680",
+      "doi_o": "10.1037/0022-3514.86.5.680",
+      "study_o": "2",
+      "ref_r": "Anvari, F., Olsen, J., Hung, W. Y., & Feldman, G. (2021). Misprediction of affective outcomes due to different evaluation modes: Replication and extension of two distinction bias experiments by Hsee and Zhang (2004). Journal of Experimental Social Psychology, 92, 104052. https://doi.org/10.1016/j.jesp.2020.104052",
+      "doi_r": "10.1016/j.jesp.2020.104052",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1630,
+      "description": "SE-real- experience condition for 25 negative compared to 10 negative words",
+      "locators_o": "p.5",
+      "locators_r": "p. 50",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c699bd80cc735e7e56e390c2.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.104052",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1630,
+      "field": "es_value_r",
+      "verdict": "blind_right",
+      "correct_value": "0.04",
+      "correct_metric": "d",
+      "location": "Study 2, Results and Discussion, Distinction bias replication results",
+      "quote": "t(172.35) = 0.3, p = .765, d = 0.04, CI95%[-0.25, 0.34]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "reason": "In the preregistered full-sample analysis, the authors report d = 0.04 (with t(172.35) = 0.3 and means of 5.19 for 10 negative words vs. 5.11 for 25 negative words), and coding_context documents no sign reversal.",
+      "resolution": "argon"
+    },
+    "parent_response": "The original description specifies the contrast SE-real experience for25 NEGATIVE versus10 NEGATIVE words. The quoted means show M25negative=5.11 versus M10negative=5.19, so the signed25minus10 effect is negative, consistent with shipped d=-0.04 even though paper prints positive magnitude .04. Coding direction can be documented by the named contrast and means, not solely by an explicit calculation in es_repr. Reconcile this with prior claim of wrong sign. Also the exact locator is p.50 (supplemental analysis), not automatically the preregistered main-text analysis; examine that table and target sample where available. If multiple defensible contrast conventions remain, mark undeterminable rather than false error.",
+    "coding_context": {
+      "es_repr": "p. 50",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1632,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "-0.01",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.02",
+      "location": "Study 2, Distinction bias replication results, qualitatively different scenarios",
+      "quote": "t(179.58) = 0.13, p = .898, d = 0.02",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "confident": true,
+      "metric": "Cohen's d",
+      "test_statistic": "t(179.58) = 0.13"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Hsee, C. K., & Zhang, J. (2004). Distinction Bias: Misprediction and Mischoice Due to Joint Evaluation. Journal of Personality and Social Psychology, 86(5), 680–695. https://doi.org/10.1037/0022-3514.86.5.680",
+      "doi_o": "10.1037/0022-3514.86.5.680",
+      "study_o": "2",
+      "ref_r": "Anvari, F., Olsen, J., Hung, W. Y., & Feldman, G. (2021). Misprediction of affective outcomes due to different evaluation modes: Replication and extension of two distinction bias experiments by Hsee and Zhang (2004). Journal of Experimental Social Psychology, 92, 104052. https://doi.org/10.1016/j.jesp.2020.104052",
+      "doi_r": "10.1016/j.jesp.2020.104052",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1632,
+      "description": "SE-real- experience condition for 10 negative compared to 10 positive words",
+      "locators_o": "p. 6",
+      "locators_r": "p. 50",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c699bd80cc735e7e56e390c2.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.104052",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1632,
+      "field": "es_value_r",
+      "verdict": "blind_right",
+      "correct_value": "0.02",
+      "correct_metric": "d",
+      "location": "Study 2, Results and Discussion, Distinction bias replication results",
+      "quote": "t(179.58) = 0.13, p = .898, d = 0.02, CI95%[-0.27, 0.31]",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "reason": "The authors report d = 0.02 for the SE real-experience comparison between 10 positive and 10 negative words in both the preregistered full-sample analysis and the effect-size comparison section (dreplication = 0.02); the shipped value (-0.01) appears to come from an unparsed supplementary exclusion table.",
+      "resolution": "argon"
+    },
+    "parent_response": "The exact unblinded locator is p.50; original description specifies SE-real experience10 NEGATIVE versus10 POSITIVE words. Prior response selected preregistered main-text d=.02 and described shipped-.01 as from an unparsed supplementary exclusion table. Do not treat an UNPARSED table named in the locator as wrong merely because main-text analysis differs. Read the matching p.50 supplementary table (or state unavailable) and establish its sample/exclusions/contrast. Check whether-.01 comes from the specifically located analysis and signed contrast. Return undeterminable if the correct table cannot be read or target sample remains ambiguous, preserving main-text d separately.",
+    "coding_context": {
+      "es_repr": "p. 50",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

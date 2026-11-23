@@ -1,0 +1,44 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 767,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "t(700) = -2.15",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "−0.08",
+      "metric": "unstandardized regression coefficient B",
+      "test_statistic": "t = −2.15",
+      "location": "Table 2, Model 1, Income × Inequality condition row",
+      "quote": "Income × Inequality condition −0.08 0.04 −2.15* −0.07 0.04 −1.97*",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5689f2aab340e3c43cedc4d9.txt",
+      "confident": true
+    },
+    "locator": {
+      "ref_o": "Côté, S., House, J., & Willer, R. (2015). High economic inequality leads higher-income individuals to be less generous. Proceedings of the National Academy of Sciences, 112(52), 15838–15843. https://doi.org/10.1073/pnas.1511536112",
+      "doi_o": "10.1073/pnas.1511536112",
+      "study_o": "2",
+      "ref_r": "Holzmeister, F., Johannesson, M., Camerer, C. F., Chen, Y., Ho, T.-H., Hoogeveen, S., Huber, J., Imai, N., Imai, T., Jin, L., Kirchler, M., Ly, A., Mandl, B., Manfredi, D., Nave, G., Nosek, B. A., Pfeiffer, T., Sarafoglou, A., Schwaiger, R., … Dreber, A. (2024). Examining the replicability of online experiments selected by a decision market. Nature Human Behaviour, 9(2), 316–330. https://doi.org/10.1038/s41562-024-02062-9",
+      "doi_r": "10.1038/s41562-024-02062-9",
+      "url_r": "https://osf.io/sejyp",
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 767,
+      "description": "Income and generosity under economic inequality, using a nationally representative survey and an experiment involving residence in a highly unequal area or portrayal of relatively high inequality.",
+      "locators_o": "p.3",
+      "locators_r": "p.3",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/5689f2aab340e3c43cedc4d9.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e32821a9655733390446fb2b.txt"
+      }
+    },
+    "work_key": "10.1038/s41562-024-02062-9"
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

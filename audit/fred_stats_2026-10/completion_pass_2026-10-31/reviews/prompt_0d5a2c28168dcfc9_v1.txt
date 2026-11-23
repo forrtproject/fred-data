@@ -1,0 +1,143 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "718": {
+      "source_key": "0d5a2c28168dcfc9",
+      "side": "replication",
+      "input": {
+        "ref_o": "Bargh, J. A., & Shalev, I. (2012). The substitutability of physical and social warmth in daily life. Emotion, 12(1), 154–162. https://doi.org/10.1037/a0023527",
+        "doi_o": "10.1037/a0023527",
+        "study_o": "2",
+        "ref_r": "Wortman, J., Donnellan, M. B., & Lucas, R. E. (2014). Can physical warmth (or coldness) predict trait loneliness? A replication of Bargh and Shalev (2012). Archives of Scientific Psychology, 2(1), 13–19. https://doi.org/10.1037/arc0000007",
+        "doi_r": "10.1037/arc0000007",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "description": "Physical warmth or coldness, social warmth or coldness, and use of physical warmth for social-feeling regulation, including awareness of this behavior.",
+        "locators_o": "p.4",
+        "locators_r": "p.4",
+        "audit_id": 718,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r",
+          "reported_success"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1a773bfa2977a2bfe08a3cfd.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Wortman, Donnellan, and Lucas (2014), single replication of Bargh and Shalev Study 2: primary full-sample independent-samples t test comparing trait loneliness after holding cold versus warm packs; Critical Analyses on article p. 4. Supplemental correlations and restricted-sample tests are separately identified and are not the primary test.",
+      "worker_notes": "Identity independently checked from supplied text: printed title Can Physical Warmth (or Coldness) Predict Trait Loneliness? A Replication of Bargh and Shalev (2012), authors Jessica Wortman, M. Brent Donnellan, and Richard E. Lucas, Archives of Scientific Psychology 2014, 2, 13–19, and DOI 10.1037/arc0000007 match the neutral replication reference (canonical L20–31). This is a StudyLib-hosted transcription of the primary empirical article, not an original Study 2 source or a preregistration. The cached artifact contains overlapping line-numbered web-render sections and a truncation marker; the identity, full Critical Analyses paragraph, supplemental analyses, and discussion are visible. No supplied PDF exists, so no PDF rendering was possible. Primary target identified by the replication of original Study 2, loneliness outcome, warm/cold experimental comparison, and article p. 4 locator, independently of numeric values or row position. Retained printed d=.02 and p=.995 for the same primary test despite the very small printed t; no recomputation or metric conversion. The effect is explicitly scored with positive scores indicating greater loneliness in the cold group (L382–384). Supplemental analyses on the same page include correlations, a controlled regression, semester subsets, manipulation-check exclusions, and belief/suspicion subsets; those are explicitly supplemental rather than alternative primary target tests. Original and replication n are unassigned placeholders and must not overwrite previously verified fields. No analytic N was derived.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1a773bfa2977a2bfe08a3cfd.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "feelings of social warmth or coldness can be induced by experiences of physical warmth or coldness, and vice versa. Here we show that people tend to self-regulate their feelings of social warmth through applications of physical warmth, apparently without explicit awareness of doing so.",
+        "es_repr_o": "p.4",
+        "es_repr_r": "p.4",
+        "es_type_o": "test statistic",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "Using procedures that were very similar to those in the original\nstudy and a sample size that was more than 5 times larger, we found that there was no difference between conditions, a\nfinding that failed to replicate the original study."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 718,
+      "field": "es_value_r",
+      "blind": {
+        "value": ".02",
+        "metric": "d",
+        "test_statistic": "t(258) = −0.006",
+        "location": "Printed p. 16 (article p. 4), Critical Analyses; canonical L377–385",
+        "quote": "exactly zero—d ⫽ .02 (95% CI on the d of [–.23, .26]; scored so that",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1a773bfa2977a2bfe08a3cfd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 718,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed d=.02 for the primary full-sample warm-versus-cold loneliness comparison in Critical Analyses, matching article p. 4. Retained as printed; no conversion or recalculation. Identity verified from printed title, authors, journal, year, pages, and DOI. No PDF supplied.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1a773bfa2977a2bfe08a3cfd.txt",
+        "location": "Printed p. 16 (article p. 4), Critical Analyses; canonical L377–385",
+        "quote": "exactly zero—d ⫽ .02 (95% CI on the d of [–.23, .26]; scored so that",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.02",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 718,
+      "field": "pval_value_r",
+      "blind": {
+        "value": ".995",
+        "bound": "e",
+        "location": "Printed p. 16 (article p. 4), Critical Analyses; canonical L377–385",
+        "quote": "⫺0.006, p ⫽ .995. The effect size for this difference was almost",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1a773bfa2977a2bfe08a3cfd.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 718,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Printed exact p=.995 belongs to the same primary independent-samples loneliness t test as d=.02; excluded the separate effect-size-comparison p=.064 and supplemental analyses.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1a773bfa2977a2bfe08a3cfd.txt",
+        "location": "Printed p. 16 (article p. 4), Critical Analyses; canonical L377–385",
+        "quote": "⫺0.006, p ⫽ .995. The effect size for this difference was almost",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "1.00",
+      "comparison": "compatible",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 718,
+      "field": "reported_success",
+      "blind": {
+        "value": "failed",
+        "location": "Printed p. 16 (article p. 4), Critical Analyses; canonical L377–385",
+        "quote": "Thus, we did not duplicate the original results ... either in terms of effect sizes or statistical significance.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1a773bfa2977a2bfe08a3cfd.txt",
+        "confident": true,
+        "status": "done"
+      },
+      "disposition": {
+        "audit_id": 718,
+        "field": "reported_success",
+        "code": "extracted_printed",
+        "reason": "Authors explicitly state that the original results were not duplicated in effect sizes or statistical significance; failed is their narrative verdict, not inferred from p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1a773bfa2977a2bfe08a3cfd.txt",
+        "location": "Printed p. 16 (article p. 4), Critical Analyses; canonical L377–385",
+        "quote": "Thus, we did not duplicate the original results ... either in terms of effect sizes or statistical significance.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "failed",
+      "comparison": "agree",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/0d5a2c28168dcfc9. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_0d5a2c28168dcfc9_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

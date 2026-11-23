@@ -1,0 +1,440 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "source_key": "873c478e38450085",
+    "audit_id": 1722,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Harper, L. M., & Kim, Y. (2018). Attitudinal, normative, and resource factors affecting psychologists’ intentions to adopt an open data badge: An empirical analysis. International Journal of Information Management, 41, 23–32. https://doi.org/10.1016/j.ijinfomgt.2018.03.001",
+      "doi_o": "10.1016/j.ijinfomgt.2018.03.001",
+      "study_o": "1",
+      "ref_r": "Xu, J., & Zhang, R. (2024). Attitudinal, Normative, and Resource Factors Affecting Communication Scholars’ Data Sharing: A Replication Study. Media and Communication, 12. https://doi.org/10.17645/mac.7666",
+      "doi_r": "10.17645/mac.7666",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "description": "Relationship between perceived benefit and psychologists’ attitudes toward adopting an open data badge.",
+      "locators_o": "p. 6, p",
+      "locators_r": "p. 9",
+      "audit_id": 1722,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/1450c8a2b67ea8b1ddbff70a_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "0.361",
+      "metric": "β (PLS-SEM structural path coefficient; standardisation not explicitly stated)",
+      "test_statistic": null,
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "perceived beneﬁt (β = 0.361,",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1722,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Named predictor and outcome identify this structural path. Extracted printed beta without conversion; standardisation is not explicitly stated.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "perceived beneﬁt (β = 0.361,",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Psychologist Study 1 PLS-SEM structural model: Benefit to attitude, H1. Relationship between perceived benefit and psychologists’ attitudes toward adopting an open data badge.",
+    "worker_notes": "Unassigned fields are null placeholders. Printed β retained; standardisation is not explicitly stated in the supplied source and is not asserted.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+    "shipped": "0.361",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Perceived benefit positively affect a psychologist’s attitude toward adoption of open data badge.",
+      "es_repr_o": "p. 6, p. 7",
+      "es_repr_r": "p. 9",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "This study provides a theoretical framework for understanding data-sharing intentions and behaviors in the open science movement. The role of this research as a replication study serves as a compelling demonstration of scientific inquiry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "873c478e38450085",
+    "audit_id": 1723,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Harper, L. M., & Kim, Y. (2018). Attitudinal, normative, and resource factors affecting psychologists’ intentions to adopt an open data badge: An empirical analysis. International Journal of Information Management, 41, 23–32. https://doi.org/10.1016/j.ijinfomgt.2018.03.001",
+      "doi_o": "10.1016/j.ijinfomgt.2018.03.001",
+      "study_o": "1",
+      "ref_r": "Xu, J., & Zhang, R. (2024). Attitudinal, Normative, and Resource Factors Affecting Communication Scholars’ Data Sharing: A Replication Study. Media and Communication, 12. https://doi.org/10.17645/mac.7666",
+      "doi_r": "10.17645/mac.7666",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "description": "Relationship between perceived risk and psychologists’ attitudes toward adopting an open data badge.",
+      "locators_o": "p. 6, p",
+      "locators_r": "p. 9",
+      "audit_id": 1723,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/1450c8a2b67ea8b1ddbff70a_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "−0.192",
+      "metric": "β (PLS-SEM structural path coefficient; standardisation not explicitly stated)",
+      "test_statistic": null,
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "perceived risk (β = −0.192, p < 0.001)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1723,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Named predictor and outcome identify this structural path. Extracted printed beta without conversion; standardisation is not explicitly stated.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "perceived risk (β = −0.192, p < 0.001)",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Psychologist Study 1 PLS-SEM structural model: Risk to attitude, H2. Relationship between perceived risk and psychologists’ attitudes toward adopting an open data badge.",
+    "worker_notes": "Unassigned fields are null placeholders. Printed β retained; standardisation is not explicitly stated in the supplied source and is not asserted.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+    "shipped": "-0.192",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Perceived risk negatively affect a psychologist’s attitude toward adoption of open data badge",
+      "es_repr_o": "p. 6, p. 7",
+      "es_repr_r": "p. 9",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "This study provides a theoretical framework for understanding data-sharing intentions and behaviors in the open science movement. The role of this research as a replication study serves as a compelling demonstration of scientific inquiry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "873c478e38450085",
+    "audit_id": 1724,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Harper, L. M., & Kim, Y. (2018). Attitudinal, normative, and resource factors affecting psychologists’ intentions to adopt an open data badge: An empirical analysis. International Journal of Information Management, 41, 23–32. https://doi.org/10.1016/j.ijinfomgt.2018.03.001",
+      "doi_o": "10.1016/j.ijinfomgt.2018.03.001",
+      "study_o": "1",
+      "ref_r": "Xu, J., & Zhang, R. (2024). Attitudinal, Normative, and Resource Factors Affecting Communication Scholars’ Data Sharing: A Replication Study. Media and Communication, 12. https://doi.org/10.17645/mac.7666",
+      "doi_r": "10.17645/mac.7666",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "description": "Relationship between perceived effort and psychologists’ attitudes toward adopting an open data badge.",
+      "locators_o": "p. 6, p",
+      "locators_r": "p. 10",
+      "audit_id": 1724,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/1450c8a2b67ea8b1ddbff70a_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "−0.070",
+      "metric": "β (PLS-SEM structural path coefficient; standardisation not explicitly stated)",
+      "test_statistic": null,
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "(β = −0.070, p > 0.05)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1724,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Named predictor and outcome identify this structural path. Extracted printed beta without conversion; standardisation is not explicitly stated.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "(β = −0.070, p > 0.05)",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Psychologist Study 1 PLS-SEM structural model: Effort to attitude, H3. Relationship between perceived effort and psychologists’ attitudes toward adopting an open data badge.",
+    "worker_notes": "Unassigned fields are null placeholders. Printed β retained; standardisation is not explicitly stated in the supplied source and is not asserted.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+    "shipped": "-0.07",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Perceived effort negatively affect a psychologist’s attitude toward adoption of open data badge",
+      "es_repr_o": "p. 6, p. 7",
+      "es_repr_r": "p. 10",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "g (>)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "This study provides a theoretical framework for understanding data-sharing intentions and behaviors in the open science movement. The role of this research as a replication study serves as a compelling demonstration of scientific inquiry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "873c478e38450085",
+    "audit_id": 1725,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Harper, L. M., & Kim, Y. (2018). Attitudinal, normative, and resource factors affecting psychologists’ intentions to adopt an open data badge: An empirical analysis. International Journal of Information Management, 41, 23–32. https://doi.org/10.1016/j.ijinfomgt.2018.03.001",
+      "doi_o": "10.1016/j.ijinfomgt.2018.03.001",
+      "study_o": "1",
+      "ref_r": "Xu, J., & Zhang, R. (2024). Attitudinal, Normative, and Resource Factors Affecting Communication Scholars’ Data Sharing: A Replication Study. Media and Communication, 12. https://doi.org/10.17645/mac.7666",
+      "doi_r": "10.17645/mac.7666",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "description": "Relationship between perceived effort and psychologists’ intentions to adopt an open data badge.",
+      "locators_o": "p. 6, p",
+      "locators_r": "p. 10",
+      "audit_id": 1725,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/1450c8a2b67ea8b1ddbff70a_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "−0.226",
+      "metric": "β (PLS-SEM structural path coefficient; standardisation not explicitly stated)",
+      "test_statistic": null,
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "(β = −0.226, p < 0.001)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1725,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Named predictor and outcome identify this structural path. Extracted printed beta without conversion; standardisation is not explicitly stated.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "(β = −0.226, p < 0.001)",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Psychologist Study 1 PLS-SEM structural model: Effort to intention, H4. Relationship between perceived effort and psychologists’ intentions to adopt an open data badge.",
+    "worker_notes": "Unassigned fields are null placeholders. Printed β retained; standardisation is not explicitly stated in the supplied source and is not asserted.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+    "shipped": "-0.226",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Perceived effort negatively affects a psychologist’s intention to adopt open data badge.",
+      "es_repr_o": "p. 6, p. 7",
+      "es_repr_r": "p. 10",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "g (>)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "This study provides a theoretical framework for understanding data-sharing intentions and behaviors in the open science movement. The role of this research as a replication study serves as a compelling demonstration of scientific inquiry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "873c478e38450085",
+    "audit_id": 1726,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Harper, L. M., & Kim, Y. (2018). Attitudinal, normative, and resource factors affecting psychologists’ intentions to adopt an open data badge: An empirical analysis. International Journal of Information Management, 41, 23–32. https://doi.org/10.1016/j.ijinfomgt.2018.03.001",
+      "doi_o": "10.1016/j.ijinfomgt.2018.03.001",
+      "study_o": "1",
+      "ref_r": "Xu, J., & Zhang, R. (2024). Attitudinal, Normative, and Resource Factors Affecting Communication Scholars’ Data Sharing: A Replication Study. Media and Communication, 12. https://doi.org/10.17645/mac.7666",
+      "doi_r": "10.17645/mac.7666",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "description": "Relationship between data-sharing norms and psychologists’ intentions to adopt an open data badge.",
+      "locators_o": "p. 6, p",
+      "locators_r": "p. 11",
+      "audit_id": 1726,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/1450c8a2b67ea8b1ddbff70a_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "0.201",
+      "metric": "β (PLS-SEM structural path coefficient; standardisation not explicitly stated)",
+      "test_statistic": null,
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "norm of data sharing (β = 0.201, p < 0.001)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1726,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Named predictor and outcome identify this structural path. Extracted printed beta without conversion; standardisation is not explicitly stated. Table 5 prints −.201***; retained positive 0.201 from prose/Fig. 2 and recorded the discrepancy.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "norm of data sharing (β = 0.201, p < 0.001)",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Psychologist Study 1 PLS-SEM structural model: Norm to intention, H6. Relationship between data-sharing norms and psychologists’ intentions to adopt an open data badge.",
+    "worker_notes": "Unassigned fields are null placeholders. Printed β retained; standardisation is not explicitly stated in the supplied source and is not asserted. H6 discrepancy: p. 28 prose prints β = 0.201 and calls the influence positive; Fig. 2 p. 29 also prints 0.201***. Table 5 p. 29 prints −.201*** despite its positive hypothesis and Supported verdict. Retained p. 28 prose corroborated by the figure; the conflicting table value is preserved here.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+    "shipped": "0.201",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Norm of data sharing positively affect a psychologist’s intention to adopt open data badge",
+      "es_repr_o": "p. 6, p. 7",
+      "es_repr_r": "p. 11",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "This study provides a theoretical framework for understanding data-sharing intentions and behaviors in the open science movement. The role of this research as a replication study serves as a compelling demonstration of scientific inquiry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  },
+  {
+    "source_key": "873c478e38450085",
+    "audit_id": 1727,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Harper, L. M., & Kim, Y. (2018). Attitudinal, normative, and resource factors affecting psychologists’ intentions to adopt an open data badge: An empirical analysis. International Journal of Information Management, 41, 23–32. https://doi.org/10.1016/j.ijinfomgt.2018.03.001",
+      "doi_o": "10.1016/j.ijinfomgt.2018.03.001",
+      "study_o": "1",
+      "ref_r": "Xu, J., & Zhang, R. (2024). Attitudinal, Normative, and Resource Factors Affecting Communication Scholars’ Data Sharing: A Replication Study. Media and Communication, 12. https://doi.org/10.17645/mac.7666",
+      "doi_r": "10.17645/mac.7666",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "description": "Relationship between open science journal pressure and psychologists’ intentions to adopt an open data badge.",
+      "locators_o": "p. 6, p",
+      "locators_r": "p. 11",
+      "audit_id": 1727,
+      "target_side": "original",
+      "unfinished_fields": [
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt"
+      },
+      "source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/private_batch_01/artifacts/1450c8a2b67ea8b1ddbff70a_publisher.pdf",
+      "source_version_note": "Published article"
+    },
+    "blind": {
+      "value": "0.001",
+      "metric": "β (PLS-SEM structural path coefficient; standardisation not explicitly stated)",
+      "test_statistic": null,
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "ence journal pressure (β = 0.001, p > 0.05)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1727,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Named predictor and outcome identify this structural path. Extracted printed beta without conversion; standardisation is not explicitly stated.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+      "location": "p. 28, section 5.2; p. 29, Fig. 2/Table 5",
+      "quote": "ence journal pressure (β = 0.001, p > 0.05)",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Psychologist Study 1 PLS-SEM structural model: Journal pressure to intention, H7. Relationship between open science journal pressure and psychologists’ intentions to adopt an open data badge.",
+    "worker_notes": "Unassigned fields are null placeholders. Printed β retained; standardisation is not explicitly stated in the supplied source and is not asserted.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_1450c8a2b67ea8b1ddbff70a.txt",
+    "shipped": "0.001",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "Open science journal pressure does not affect a psychologist’s intention to adopt open data badge",
+      "es_repr_o": "p. 6, p. 7",
+      "es_repr_r": "p. 11",
+      "es_type_o": "beta (std)",
+      "es_type_r": "beta (std)",
+      "pval_type_o": "g (>)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "This study provides a theoretical framework for understanding data-sharing intentions and behaviors in the open science movement. The role of this research as a replication study serves as a compelling demonstration of scientific inquiry."
+    },
+    "prior_adjudication": null,
+    "parent_response": "New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label."
+  }
+]
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/873c478e38450085. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement may establish metric equivalence; otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_873c478e38450085_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

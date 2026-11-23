@@ -1,0 +1,60 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item carrying scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1423,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "successful",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "failed",
+      "location": "Discussion, paragraph beginning “Allele A of rs1447295”",
+      "quote": "Allele A of rs1447295 was not associated with risk of prostate cancer in Tobago men.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b6501b513c44f7990b1a3b57.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Amundadottir, L. T., Sulem, P., Gudmundsson, J., Helgason, A., Baker, A., Agnarsson, B. A., Sigurdsson, A., Benediktsdottir, K. R., Cazier, J.-B., Sainz, J., Jakobsdottir, M., Kostic, J., Magnusdottir, D. N., Ghosh, S., Agnarsson, K., Birgisdottir, B., Le Roux, L., Olafsdottir, A., Blondal, T., … Stefansson, K. (2006). A common variant associated with prostate cancer in European and African populations. Nature Genetics, 38(6), 652–658. https://doi.org/10.1038/ng1808",
+      "doi_o": "10.1038/ng1808",
+      "study_o": null,
+      "ref_r": "Okobia, M. N., Zmuda, J. M., Ferrell, R. E., Patrick, A. L., & Bunker, C. H. (2011). Chromosome 8q24 variants are associated with prostate cancer risk in a high risk population of African ancestry. The Prostate, 71(10), 1054–1063. Portico. https://doi.org/10.1002/pros.21320",
+      "doi_r": "10.1002/pros.21320",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "OR",
+      "es_type_r": "OR",
+      "audit_id": 1423,
+      "description": "Relationship between allele A of SNP rs1447295 and prostate cancer among African Americans.",
+      "locators_o": "p. 3; Table 1",
+      "locators_r": "p. 4; Table 1",
+      "text_paths": {}
+    },
+    "work_key": "10.1002/pros.21320",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1423,
+      "field": "reported_success",
+      "verdict": "blind_right",
+      "correct_value": "failed",
+      "location": "Discussion, paragraph 3 (and Results, Region 1 section; Table I)",
+      "quote": "Allele A of rs1447295 was not associated with risk of prostate cancer in Tobago men.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b6501b513c44f7990b1a3b57.txt",
+      "reason": "Paired against Amundadottir et al.'s (2006) African American cohort test for SNP rs1447295 allele A, Okobia et al. (2011, Table I) explicitly report no association between rs1447295 and prostate cancer in Tobago men.",
+      "resolution": "argon"
+    },
+    "parent_response": "This row specifically pairs the African American cohort of Amundadottir et al. with the Tobago replication, unlike1420–1422 positive European-cohort findings. The primary replication Discussion says that its rs1447295-A null finding supports prior African-ancestry reports and explicitly states that Amundadottir et al also found no association in African Americans. A null replication is not automatically a failed replication of an original NULL result. Re-read the exact cohort-specific authors interpretation, including the paragraph beginning Allele A of rs1447295 and Our findings support the reports, and distinguish the target-specific SNP/cohort narrative from the broad chromosome8q24 conclusion. Original numeric fields remain unverified without original primary text, but this field is the replication authors own interpretation and their explicit comparison. Do not infer failure from p>.05 alone. Reconcile the earlier failed correction against the authors support statement; shipped_right if the supported-null comparison establishes the coded successful label, otherwise undeterminable if scope truly cannot be established. Quote the matching author interpretation.",
+    "coding_context": {
+      "es_repr": "p. 4/ Table 1",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

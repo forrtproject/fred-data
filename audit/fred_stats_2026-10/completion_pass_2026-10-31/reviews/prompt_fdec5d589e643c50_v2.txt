@@ -1,0 +1,109 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+Reassess ONLY audit_id45 n_o. Full original input, blind evidence, v1 decision, related prior finding and unresolved objection follow.
+[
+  {
+    "source_key": "fdec5d589e643c50",
+    "audit_id": 45,
+    "field": "n_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Heath, C., Larrick, R. P., & Wu, G. (1999). Goals as Reference Points. Cognitive Psychology, 38(1), 79\u2013109. https://doi.org/10.1006/cogp.1998.0708",
+      "doi_o": "10.1006/cogp.1998.0708",
+      "study_o": "1",
+      "ref_r": "Au, I. N. Y., &amp; Feldman, G. (2024). Revisiting \"Goals as Reference Points\": Replication and extensions of Heath et al. (1999). <i>OSF</i>. https://doi.org/10.17605/OSF.IO/WMQTB",
+      "doi_r": "10.17605/osf.io/wmqtb",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "cohen's h",
+      "description": "Risk taking when falling behind specific goals versus when no specific goals are present (part 2 of Problem 11).",
+      "locators_o": "p.16",
+      "locators_r": "p. 41",
+      "audit_id": 45,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_70261a7726352a0c4136073d.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use."
+    },
+    "blind": {
+      "value": "131",
+      "location": "PDF p. 16; printed p. 94, Problem 11 response lines",
+      "quote": "Which plan will you choose? [Do your best, N \u2afd 65]           Plan N (24%)\n        Which plan will you choose? [Save $250,000, N \u2afd 66] Plan N (47%)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_70261a7726352a0c4136073d.txt",
+      "confident": true,
+      "sample_role": "Participants/respondents in the two mutually exclusive goal-condition groups of the Problem 11 comparison: do your best (65) and save $250,000 (66).",
+      "exclusions": "No exclusions or missing responses stated for the printed problem-specific counts."
+    },
+    "disposition": {
+      "audit_id": 45,
+      "field": "n_o",
+      "code": "extracted_documented_n_sum",
+      "reason": "Problem-specific counts explicitly identify the two goal-condition groups compared in the adjacent results paragraph. Sum their mutually exclusive participant counts; exclusions not stated.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_70261a7726352a0c4136073d.txt",
+      "location": "PDF p. 16; printed p. 94, Problem 11 response lines and results",
+      "quote": "Which plan will you choose? [Do your best, N \u2afd 65]           Plan N (24%)\n        Which plan will you choose? [Save $250,000, N \u2afd 66] Plan N (47%) ... The number of people who choose the more risky Plan N doubles when\npeople have a specific rather than a \u2018\u2018do your best\u2019\u2019 goal (p \u2b0d .01 by \u03c7 2 ).",
+      "calculation": "65 (do-your-best participants) + 66 (specific-goal participants) = 131 participants. No exclusion adjustment documented; no df inference."
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Problem 11: choice of risky Plan N under specific save-$250,000 goal versus do-your-best goal, matching the described comparison on PDF p. 16 (printed p. 94).",
+    "worker_notes": "Replication and reported_success are unassigned placeholders; no extraction attempted for them. Primary source identity verified. Analytic N sum: 65 participants in the do-your-best group + 66 participants in the specific-goal group = 131 participants in the two-condition comparison; distinct condition counts, not whole-paper recruitment or N inferred from df. Chi-square is named but its numeric statistic is not printed. Same comparison reports p < .01, retained here only as context because pval_value_o is unassigned; the p field is a placeholder. No statistic computed from rounded percentages.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_70261a7726352a0c4136073d.txt",
+    "shipped": "66",
+    "comparison": "differ",
+    "coding_context": {
+      "description": "People are more risk taking when falling behind specific goals than when no specific goals are present (part 2 of Problem 11)",
+      "es_repr_o": "p.16 , \u03c7\u00b2 = 2*((ABS(31 - 66/2) - 0.5)^2)/(66/2)",
+      "es_repr_r": "p. 41",
+      "es_type_o": "test statistic",
+      "es_type_r": "cohen's h",
+      "pval_type_o": "l (<)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": "2 (two)",
+      "nested_o": "no",
+      "nested_r": "no",
+      "reported_success_quote": "Among the\nvarious findings on the multiple hypotheses, we found strong empirical support for more\nwillingness to exert effort on proximal goals than distal ones, together with higher likelihood in\nachieving the overall goal with closer subgoals as hypothesized."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.\nFOCUSED SECOND ROUND. Reconcile explicit analytic-target conflict: neutral description compares specific-goal versus no-goal risk taking (Problem11 part2), which supports the two-group total65+66=131, but coding_context.es_repr_o explicitly documents a one-sample goodness-of-fit chi-square against50% using31of66, for which the analytic N is66. The v1 correction does not address this formula. Does the supplied source/context positively identify a two-group target and establish that this formula is erroneous coding, or do two analytic targets remain plausible? Distinguish this part2 case from prior row43 part1, whose focused review found a similar description/formula conflict unresolved; do not copy that decision mechanically. Return undeterminable if intended analytic sample cannot be uniquely resolved. No N inferred merely from another row, numerical matching or row order. Explain the positive source/model evidence supporting any correction.",
+    "prior_round_findings": {
+      "audit_id": 45,
+      "field": "n_o",
+      "verdict": "blind_right",
+      "correct_value": "131",
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": false,
+      "location": "PDF p. 16; printed p. 94, Problem 11 response lines and results",
+      "quote": "Which plan will you choose? [Do your best, N \u2afd 65]           Plan N (24%)\n        Which plan will you choose? [Save $250,000, N \u2afd 66] Plan N (47%) ... The number of people who choose the more risky Plan N doubles when\npeople have a specific rather than a \u2018\u2018do your best\u2019\u2019 goal (p \u2b0d .01 by \u03c7 2 ).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_70261a7726352a0c4136073d.txt",
+      "reason": "Primary source identity (Heath, Larrick, & Wu, 1999, Cognitive Psychology 38, 79-109, doi:10.1006/cogp.1998.0708) and target match to Problem 11 are confirmed. The target effect compares risk taking in the specific-goal condition ('Save $250,000', N = 66) against the no-specific-goal condition ('Do your best', N = 65), so the total analytic sample size for the two-group comparison is 65 + 66 = 131 (whereas shipped 66 reflects only the specific-goal arm)."
+    },
+    "related_prior_scope_review": {
+      "audit_id": 43,
+      "field": "n_o",
+      "verdict": "undeterminable",
+      "correct_value": null,
+      "correct_metric": null,
+      "correct_bound": null,
+      "target_match_confirmed": false,
+      "effect_specific_verdict_confirmed": false,
+      "location": "Printed p. 94 (source page 16), Problem 11",
+      "quote": "Which plan will you choose? [Do your best, N \u2afd 65]           Plan N (24%)\n        Which plan will you choose? [Save $250,000, N \u2afd 66] Plan N (47%)\n\n   The number of people who choose the more risky Plan N doubles when\npeople have a specific rather than a \u2018\u2018do your best\u2019\u2019 goal (p \u2a7c .01 by \u03c7 2 ).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_70261a7726352a0c4136073d.txt",
+      "reason": "The first review summed the two Problem 11 conditions (65 + 66 = 131, matching blind) for the primary text's reported between-group comparison across the 'Do your best' (N = 65, 24% Plan N) and 'Save $250,000' (N = 66, 47% Plan N) arms ('p < .01 by \u03c72'), whereas the row locator specifies '(part 1 of Problem 11)' and coding_context.es_repr_o documents a one-sample Yates-corrected goodness-of-fit chi-square against 50% (\u03c7\u00b2 = 2*((ABS(16 - 65/2) - 0.5)^2)/(65/2) = 15.7538...) using N = 65 from the first listed arm ('[Do your best, N = 65]', 16/65 \u2248 24%), while shipped n_o = 66 reflects the second listed specific-goal arm ('[Save $250,000, N = 66]'). Because the between-group substantive description (N = 131), the 'part 1' locator and one-sample formula on the no-goal arm (N = 65), and the shipped specific-goal arm count (N = 66) cannot be uniquely reconciled to a single intended analytic sample, n_o is undeterminable."
+    }
+  }
+]

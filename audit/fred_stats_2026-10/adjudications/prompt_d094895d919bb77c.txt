@@ -1,0 +1,44 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 644,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "X2(1, N = 366) = 16.3",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "16.3",
+      "location": "p. 389, results, Fig. 1c test (source PDF p. 9)",
+      "quote": "bias), this individual becomes the new demonstrator, driving cultural                                     with group size (x2 5 16.3, d.f. 5 1, P , 0.0001; Fig. 1c).",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/603e3ff32a362a598e52ce1c.txt",
+      "confident": true,
+      "metric": "Wald chi-squared statistic",
+      "test_statistic": "χ² = 16.3, d.f. = 1"
+    },
+    "locator": {
+      "ref_o": "Derex, M., Beugin, M.-P., Godelle, B., & Raymond, M. (2013). Experimental evidence for the influence of group size on cultural complexity. Nature, 503(7476), 389–391. https://doi.org/10.1038/nature12774",
+      "doi_o": "10.1038/nature12774",
+      "study_o": "1",
+      "ref_r": "Camerer, C. F., Dreber, A., Holzmeister, F., Ho, T.-H., Huber, J., Johannesson, M., Kirchler, M., Nave, G., Nosek, B. A., Pfeiffer, T., Altmejd, A., Buttrick, N., Chan, T., Chen, Y., Forsell, E., Gampa, A., Heikensten, E., Hummer, L., Imai, T., … Wu, H. (2018). Evaluating the replicability of social science experiments in Nature and Science between 2010 and 2015. Nature Human Behaviour, 2(9), 637–644. https://doi.org/10.1038/s41562-018-0399-z",
+      "doi_r": "10.1038/s41562-018-0399-z",
+      "url_r": "https://osf.io/kchf9",
+      "study_r": "4",
+      "es_type_o": "test statistic",
+      "es_type_r": "r",
+      "audit_id": 644,
+      "description": "Group size and cultural complexity.",
+      "locators_o": "p. 389",
+      "locators_r": "p. 54",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/603e3ff32a362a598e52ce1c.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4a6f344e0de6c36ee8e52e1e.txt"
+      }
+    },
+    "work_key": "10.1038/s41562-018-0399-z"
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

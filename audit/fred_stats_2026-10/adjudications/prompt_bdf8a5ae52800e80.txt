@@ -1,0 +1,267 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item carrying scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1629,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "failed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "Supplemental Materials, Effect size comparisons, Study 2",
+      "quote": "These results from the replication study were signal consistent with the original study such that the replication detected a signal in the same direction and had an effect size confidence interval containing the point estimate from the original study.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Hsee, C. K., & Zhang, J. (2004). Distinction Bias: Misprediction and Mischoice Due to Joint Evaluation. Journal of Personality and Social Psychology, 86(5), 680–695. https://doi.org/10.1037/0022-3514.86.5.680",
+      "doi_o": "10.1037/0022-3514.86.5.680",
+      "study_o": "2",
+      "ref_r": "Anvari, F., Olsen, J., Hung, W. Y., & Feldman, G. (2021). Misprediction of affective outcomes due to different evaluation modes: Replication and extension of two distinction bias experiments by Hsee and Zhang (2004). Journal of Experimental Social Psychology, 92, 104052. https://doi.org/10.1016/j.jesp.2020.104052",
+      "doi_r": "10.1016/j.jesp.2020.104052",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1629,
+      "description": "JE-predicted- experience condition for 25 negative compared to 10 negative words",
+      "locators_o": "p.5",
+      "locators_r": "p. 50",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c699bd80cc735e7e56e390c2.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.104052",
+    "coding_context": {
+      "es_repr": "p. 50",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1630,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "-0.04",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.04",
+      "location": "Study 2, Distinction bias replication results, quantitatively different scenarios",
+      "quote": "t(172.35) = 0.3, p = .765, d = 0.04",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "confident": true,
+      "metric": "Cohen's d",
+      "test_statistic": "t(172.35) = 0.3"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Hsee, C. K., & Zhang, J. (2004). Distinction Bias: Misprediction and Mischoice Due to Joint Evaluation. Journal of Personality and Social Psychology, 86(5), 680–695. https://doi.org/10.1037/0022-3514.86.5.680",
+      "doi_o": "10.1037/0022-3514.86.5.680",
+      "study_o": "2",
+      "ref_r": "Anvari, F., Olsen, J., Hung, W. Y., & Feldman, G. (2021). Misprediction of affective outcomes due to different evaluation modes: Replication and extension of two distinction bias experiments by Hsee and Zhang (2004). Journal of Experimental Social Psychology, 92, 104052. https://doi.org/10.1016/j.jesp.2020.104052",
+      "doi_r": "10.1016/j.jesp.2020.104052",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1630,
+      "description": "SE-real- experience condition for 25 negative compared to 10 negative words",
+      "locators_o": "p.5",
+      "locators_r": "p. 50",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c699bd80cc735e7e56e390c2.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.104052",
+    "coding_context": {
+      "es_repr": "p. 50",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1630,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "failed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "Supplemental Materials, Effect size comparisons, Study 2",
+      "quote": "For people in SE real-experience groups, there were nonsignificant differences in unhappiness ratings between the 25 negative words than the 10 negative words in both studies, which aligned with the results of the original study.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Hsee, C. K., & Zhang, J. (2004). Distinction Bias: Misprediction and Mischoice Due to Joint Evaluation. Journal of Personality and Social Psychology, 86(5), 680–695. https://doi.org/10.1037/0022-3514.86.5.680",
+      "doi_o": "10.1037/0022-3514.86.5.680",
+      "study_o": "2",
+      "ref_r": "Anvari, F., Olsen, J., Hung, W. Y., & Feldman, G. (2021). Misprediction of affective outcomes due to different evaluation modes: Replication and extension of two distinction bias experiments by Hsee and Zhang (2004). Journal of Experimental Social Psychology, 92, 104052. https://doi.org/10.1016/j.jesp.2020.104052",
+      "doi_r": "10.1016/j.jesp.2020.104052",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1630,
+      "description": "SE-real- experience condition for 25 negative compared to 10 negative words",
+      "locators_o": "p.5",
+      "locators_r": "p. 50",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c699bd80cc735e7e56e390c2.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.104052",
+    "coding_context": {
+      "es_repr": "p. 50",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1631,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "failed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "Supplemental Materials, Effect size comparisons, Study 2",
+      "quote": "For JE predicted-experience, the replication study detected a signal in the same direction as the original study",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Hsee, C. K., & Zhang, J. (2004). Distinction Bias: Misprediction and Mischoice Due to Joint Evaluation. Journal of Personality and Social Psychology, 86(5), 680–695. https://doi.org/10.1037/0022-3514.86.5.680",
+      "doi_o": "10.1037/0022-3514.86.5.680",
+      "study_o": "2",
+      "ref_r": "Anvari, F., Olsen, J., Hung, W. Y., & Feldman, G. (2021). Misprediction of affective outcomes due to different evaluation modes: Replication and extension of two distinction bias experiments by Hsee and Zhang (2004). Journal of Experimental Social Psychology, 92, 104052. https://doi.org/10.1016/j.jesp.2020.104052",
+      "doi_r": "10.1016/j.jesp.2020.104052",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1631,
+      "description": "JE-predicted- experience condition for 10 negative compared to 10 positive words",
+      "locators_o": "p. 6",
+      "locators_r": "p. 50",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c699bd80cc735e7e56e390c2.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.104052",
+    "coding_context": {
+      "es_repr": "p. 50",
+      "pval_tails": "2 (two)",
+      "nested": "yes",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1632,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "-0.01",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.02",
+      "location": "Study 2, Distinction bias replication results, qualitatively different scenarios",
+      "quote": "t(179.58) = 0.13, p = .898, d = 0.02",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "confident": true,
+      "metric": "Cohen's d",
+      "test_statistic": "t(179.58) = 0.13"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Hsee, C. K., & Zhang, J. (2004). Distinction Bias: Misprediction and Mischoice Due to Joint Evaluation. Journal of Personality and Social Psychology, 86(5), 680–695. https://doi.org/10.1037/0022-3514.86.5.680",
+      "doi_o": "10.1037/0022-3514.86.5.680",
+      "study_o": "2",
+      "ref_r": "Anvari, F., Olsen, J., Hung, W. Y., & Feldman, G. (2021). Misprediction of affective outcomes due to different evaluation modes: Replication and extension of two distinction bias experiments by Hsee and Zhang (2004). Journal of Experimental Social Psychology, 92, 104052. https://doi.org/10.1016/j.jesp.2020.104052",
+      "doi_r": "10.1016/j.jesp.2020.104052",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1632,
+      "description": "SE-real- experience condition for 10 negative compared to 10 positive words",
+      "locators_o": "p. 6",
+      "locators_r": "p. 50",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c699bd80cc735e7e56e390c2.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.104052",
+    "coding_context": {
+      "es_repr": "p. 50",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  },
+  {
+    "audit_id": 1634,
+    "field": "reported_success",
+    "comparison": "differ",
+    "shipped": "failed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "successful",
+      "location": "Supplemental Materials, Effect size comparisons, Study 2",
+      "quote": "In line with the original study's results, these differences were not statistically significant for the SE real-experience or SE predictedexperience groups in the replication study.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Hsee, C. K., & Zhang, J. (2004). Distinction Bias: Misprediction and Mischoice Due to Joint Evaluation. Journal of Personality and Social Psychology, 86(5), 680–695. https://doi.org/10.1037/0022-3514.86.5.680",
+      "doi_o": "10.1037/0022-3514.86.5.680",
+      "study_o": "2",
+      "ref_r": "Anvari, F., Olsen, J., Hung, W. Y., & Feldman, G. (2021). Misprediction of affective outcomes due to different evaluation modes: Replication and extension of two distinction bias experiments by Hsee and Zhang (2004). Journal of Experimental Social Psychology, 92, 104052. https://doi.org/10.1016/j.jesp.2020.104052",
+      "doi_r": "10.1016/j.jesp.2020.104052",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1634,
+      "description": "SE-real- experience condition for 10 positive compared to 25 positive words",
+      "locators_o": "p. 6",
+      "locators_r": "p. 50",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c699bd80cc735e7e56e390c2.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/538793a7bc05ff774f1ae9d6.txt"
+      }
+    },
+    "work_key": "10.1016/j.jesp.2020.104052",
+    "coding_context": {
+      "es_repr": "p. 50",
+      "pval_tails": "2 (two)",
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

@@ -1,0 +1,706 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1362": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "2",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "beta (std)",
+        "es_type_r": "d",
+        "description": "Experiment 2: perceived usefulness for performing eager and vigilant tasks of recalling prevention-focus versus promotion-focus examples; main effect of recall activity.",
+        "locators_o": "p.6",
+        "locators_r": "p.7-8",
+        "audit_id": 1362,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 2 overall model without culture: recall activity main effect, promotion versus prevention, across contexts and tasks. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. Table 2 HDI [−0.46, 0.10] differs from narrative [−0.46, 0.11]; table gives explicit coefficient −0.18, whereas narrative beta sign is malformed. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants would report that recalling examples of prevention focus is more useful for performing well at eager and vigilant tasks than recalling examples of promotion focus. Experiment 2 main effect for recall activity",
+        "es_repr_o": "p.6",
+        "es_repr_r": "p.7-8; changed direction of effect to be in line with original effect",
+        "es_type_o": "beta (std)",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and\nwere in the same directions and had similar magnitudes in as the original experiments."
+      }
+    },
+    "1363": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "2",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "beta (std)",
+        "es_type_r": "d",
+        "description": "Experiment 2: perceived usefulness of promotion- and prevention-focus recall activities for eager versus vigilant tasks; main effect of task.",
+        "locators_o": "p.6",
+        "locators_r": "p.7-8",
+        "audit_id": 1363,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 2 overall model without culture: eager versus vigilant task main effect across recall activities and contexts. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants would report that the promotion and prevention recall activities are slightly but nonsignificantly more useful for the eager tasks than for the vigilant tasks. Experiment 2 main effect for task (eager vs. vigilant)",
+        "es_repr_o": "p.6",
+        "es_repr_r": "p.7-8",
+        "es_type_o": "beta (std)",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and\nwere in the same directions and had similar magnitudes in as the original experiments."
+      }
+    },
+    "1364": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "2",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "beta (std)",
+        "es_type_r": "d",
+        "description": "Experiment 2: interaction between task (eager versus vigilant) and recall activity (promotion versus prevention focus) on perceived usefulness for task performance.",
+        "locators_o": "p.6",
+        "locators_r": "p.7-8",
+        "audit_id": 1364,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 2 overall model without culture: task by recall activity interaction across contexts. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "There would be a significant Task x Recall Activity interaction effect, showing that participants believed promotion recall would be more useful for one task than the other, and that prevention recall would be more useful for the other task than the one. Experiment 2 Task x Recall Activity interaction effect (significance of overall interaction)",
+        "es_repr_o": "p.6",
+        "es_repr_r": "p.7-8",
+        "es_type_o": "beta (std)",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and\nwere in the same directions and had similar magnitudes in as the original experiments."
+      }
+    },
+    "1365": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "2",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "beta (std)",
+        "es_type_r": "d",
+        "description": "Experiment 2: perceived usefulness of promotion-focus recall for eager versus vigilant tasks; simple effect of task in the promotion-recall condition.",
+        "locators_o": "p.6",
+        "locators_r": "p.7-8",
+        "audit_id": 1365,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 2 overall model without culture: simple effect of eager versus vigilant task among promotion recall activities, across contexts. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants would report that promotion recall is significantly more useful for eager tasks than for vigilant tasks. Experiment 2 simple effect of task in the promotion condition of the Task x Recall Activity interaction",
+        "es_repr_o": "p.6",
+        "es_repr_r": "p.7-8",
+        "es_type_o": "beta (std)",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and\nwere in the same directions and had similar magnitudes in as the original experiments."
+      }
+    },
+    "1366": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "3",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "3",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Experiment 3: perceived usefulness for eager and vigilant task performance of gain-framed versus loss-framed incentive structures; main effect of incentive structure.",
+        "locators_o": "p.8",
+        "locators_r": "p.12-13",
+        "audit_id": 1366,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 3 overall model with culture: gain versus lose incentive structure main effect across tasks, contexts and cultures. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. Requested d is not printed for this target in inspected main article; retained printed coefficient. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants would report that the gain-framed incentive structure is significantly more useful for performing well at eager and vigilant tasks than the loss-framed incentive structure. Experiment 3 main effect for incentive structure (gain-framed vs. loss-framed)",
+        "es_repr_o": "p.8",
+        "es_repr_r": "p.12-13",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and were in the same directions and had similar magnitudes in as the original experiments."
+      }
+    },
+    "1367": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "3",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "3",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "description": "Experiment 3: perceived usefulness of gain- and loss-framed incentive structures for vigilant versus eager tasks; main effect of task.",
+        "locators_o": "p.8",
+        "locators_r": "p.12-13",
+        "audit_id": 1367,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 3 overall model with culture: eager versus vigilant task main effect across incentive structures, contexts and cultures. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. Requested etasq is not printed for this target in inspected main article; retained printed coefficient. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants would report that the gain-framed and loss-framed incentive structures are significantly more useful for the vigilant tasks than for the eager tasks. Experiment 3 main effect for task (eager vs. vigilant)",
+        "es_repr_o": "p.8",
+        "es_repr_r": "p.12-13",
+        "es_type_o": "etasq",
+        "es_type_r": "etasq",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and were in the same directions and had similar magnitudes in as the original experiments."
+      }
+    },
+    "1368": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "3",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "3",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Experiment 3: interaction between task (eager versus vigilant) and incentive structure (gain-framed versus loss-framed) on perceived usefulness for task performance.",
+        "locators_o": "p.8",
+        "locators_r": "p.12-13",
+        "audit_id": 1368,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 3 overall model with culture: task by incentive structure interaction across contexts and cultures. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. Requested d is not printed for this target in inspected main article; retained printed coefficient. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "There would be a significant Task x Incentive Structure interaction effect, showing that participants believed gain-framed incentives would be more useful for one task than the other, and that loss-framed incentives would be more useful for the other task than the one. Experiment 3 Task x Incentive Structure interaction effect (significance of overall interaction)",
+        "es_repr_o": "p.8",
+        "es_repr_r": "p.12-13",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and were in the same directions and had similar magnitudes in as the original experiments."
+      }
+    },
+    "1369": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "3",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "3",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Experiment 3: perceived usefulness of gain-framed incentives for eager versus vigilant tasks; simple effect of task in the gain-framed condition.",
+        "locators_o": "p.8",
+        "locators_r": "p.12-13",
+        "audit_id": 1369,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 3 overall model with culture: simple effect of eager versus vigilant task for Yours to Gain incentive structure, across contexts and cultures. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. Requested d is not printed for this target in inspected main article; retained printed coefficient. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants would report that gain-framed incentives are significantly more useful for eager tasks than for vigilant tasks. Experiment 3 simple effect of task in the gain-frame condition of the Task x Incentive Structure interaction",
+        "es_repr_o": "p.8",
+        "es_repr_r": "p.12-13",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and were in the same directions and had similar magnitudes in as the original experiments."
+      }
+    },
+    "1370": {
+      "source_key": "0de06cdcf2b0c9ac",
+      "side": "original",
+      "input": {
+        "ref_o": "Nguyen, T., Togawa, T., Scholer, A. A., Miele, D. B., & Fujita, K. (2021). A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit. Personality and Social Psychology Bulletin, 48(5), 807–820. https://doi.org/10.1177/01461672211025423",
+        "doi_o": "10.1177/01461672211025423",
+        "study_o": "3",
+        "ref_r": "Vaughn, L. A., Chun, D., & Ruddy, G. (2023). Beliefs about the Usefulness of Promotion and Prevention Focus: Replications of the American-Independent Conditions of Nguyen et al.’s (2021) Studies 2 and 3. https://doi.org/10.31234/osf.io/fmdqe",
+        "doi_r": "10.31234/osf.io/fmdqe",
+        "url_r": null,
+        "study_r": "3",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "description": "Experiment 3: perceived usefulness of loss-framed incentives for vigilant versus eager tasks; simple effect of task in the loss-framed condition.",
+        "locators_o": "p.8",
+        "locators_r": "p.12-13",
+        "audit_id": 1370,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 3 overall model with culture: simple effect of eager versus vigilant task for Yours to Lose incentive structure, across contexts and cultures; negative estimate indicates greater usefulness for vigilant tasks. Outcome: perceived usefulness ratings.",
+      "worker_notes": "Identity independently checked: supplied text matches title A Cross-Cultural Investigation of Metamotivational Beliefs About Regulatory Focus Task-Motivation Fit; authors Tina Nguyen, Taku Togawa, Abigail A. Scholer, David B. Miele, and Kentaro Fujita; DOI 10.1177/01461672211025423. Primary research article, PSPB 2022, 48(5), 807–820, accepted/copyright 2021, consistent with reference. Text extends through references. No source PDF supplied; no acquisition or rendering performed. Target matched by experiment, outcome, named factors and contrast. Original descriptions do not restrict culture or context; overall model effects are extracted rather than American-independent subgroup effects. All targets report Bayesian estimates, SEs and HDIs. Parallel frequentist analyses are directed to the SOM, which is not supplied; no p inferred from HDIs. Continuous variables were standardized within culture; categorical factors were effect coded. Printed βest is retained without conversion or assuming a fully standardized beta. Unassigned n, replication and reported_success are placeholders. Requested d is not printed for this target in inspected main article; retained printed coefficient. Retained printed eager-minus-vigilant sign; did not reverse contrast. ",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Participants would report that loss-framed incentives are significantly more useful for vigilant tasks than for eager tasks. Experiment 3 simple effect of task in the loss-frame condition of the Task x Incentive Structure interaction",
+        "es_repr_o": "p.8",
+        "es_repr_r": "p.12-13",
+        "es_type_o": "d",
+        "es_type_r": "d",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "Effect sizes and directions of effects tended to be large and were in the same directions and had similar magnitudes in as the original experiments."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1362,
+      "field": "es_value_o",
+      "blind": {
+        "value": "−0.18",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 813 (article p. 7), Table 2, Recall Activity row",
+        "quote": "Recall Activity (−0.5 = prevention, 0.5 = promotion)                            −0.18                      0.14                   [−0.46, 0.10]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1362,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 813 (article p. 7), Table 2, Recall Activity row",
+        "quote": "Recall Activity (−0.5 = prevention, 0.5 = promotion)                            −0.18                      0.14                   [−0.46, 0.10]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "-0.18",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1363,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.11",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 813 (article p. 7), Table 2, Task row",
+        "quote": "Task (−0.5 = vigilant, 0.5 = eager)                                              0.11                      0.14                   [−0.14, 0.40]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1363,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 813 (article p. 7), Table 2, Task row",
+        "quote": "Task (−0.5 = vigilant, 0.5 = eager)                                              0.11                      0.14                   [−0.14, 0.40]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.11",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1364,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.99",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 813 (article p. 7), Table 2, Task × Recall activity row",
+        "quote": "Task × Recall activity                                                           0.99                      0.28                   [0.43, 1.52]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1364,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 813 (article p. 7), Table 2, Task × Recall activity row",
+        "quote": "Task × Recall activity                                                           0.99                      0.28                   [0.43, 1.52]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.99",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1365,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.60",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 813 (article p. 7), Results, Task-motivation fit",
+        "quote": "Among promo- ... tion recall activities, there was a credible effect of task, ... βest = 0.60, SE = .20, 95% HDI = [0.22, 1.00]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1365,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 813 (article p. 7), Results, Task-motivation fit",
+        "quote": "Among promo- ... tion recall activities, there was a credible effect of task, ... βest = 0.60, SE = .20, 95% HDI = [0.22, 1.00]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.6",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1366,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.72",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 815 (article p. 9), Table 3, Incentive structure row",
+        "quote": "Incentive structure (−0.5 = lose, 0.5 = gain)                                    0.72                    0.05                   [0.63, 0.81]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1366,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 815 (article p. 9), Table 3, Incentive structure row",
+        "quote": "Incentive structure (−0.5 = lose, 0.5 = gain)                                    0.72                    0.05                   [0.63, 0.81]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "1.044",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1367,
+      "field": "es_value_o",
+      "blind": {
+        "value": "−0.07",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 815 (article p. 9), Table 3, Task row",
+        "quote": "Task (−0.5 = vigilant, 0.5 = eager)                                             −0.07                    0.05                   [−0.17, 0.02]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1367,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 815 (article p. 9), Table 3, Task row",
+        "quote": "Task (−0.5 = vigilant, 0.5 = eager)                                             −0.07                    0.05                   [−0.17, 0.02]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.029",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1368,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.45",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 815 (article p. 9), Table 3, Task × Incentive structure row",
+        "quote": "Task × Incentive structure                                                       0.45                    0.10                   [0.26, 0.64]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1368,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 815 (article p. 9), Table 3, Task × Incentive structure row",
+        "quote": "Task × Incentive structure                                                       0.45                    0.10                   [0.26, 0.64]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.61",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1369,
+      "field": "es_value_o",
+      "blind": {
+        "value": "0.15",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 815 (article p. 9), Results, Task-motivation fit",
+        "quote": "effect of task for the Yours to Gain incentive structure, ... βest = 0.15, SE = .07, 95% HDI = [0.02, 0.27]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1369,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 815 (article p. 9), Results, Task-motivation fit",
+        "quote": "effect of task for the Yours to Gain incentive structure, ... βest = 0.15, SE = .07, 95% HDI = [0.02, 0.27]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.171",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1370,
+      "field": "es_value_o",
+      "blind": {
+        "value": "−0.30",
+        "metric": "Bayesian mixed-effects coefficient (βest); continuous variables standardized within culture",
+        "test_statistic": null,
+        "location": "p. 815 (article p. 9), Results, Task-motivation fit",
+        "quote": "the Yours to Lose incentive structure, βest = −0.30 , SE = .07, ... 95% HDI = [−0.43, −0.16]",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1370,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Named factors and contrast identify the described target; retained printed Bayesian coefficient with its metric, without conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/e0536646824d118b74287765.txt",
+        "location": "p. 815 (article p. 9), Results, Task-motivation fit",
+        "quote": "the Yours to Lose incentive structure, βest = −0.30 , SE = .07, ... 95% HDI = [−0.43, −0.16]",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.305",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/0de06cdcf2b0c9ac. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_0de06cdcf2b0c9ac_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

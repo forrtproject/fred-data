@@ -1,0 +1,48 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 2134,
+    "field": "reported_success",
+    "comparison": "mismatched_target",
+    "shipped": "failed",
+    "shipped_metric": null,
+    "shipped_bound": null,
+    "blind": {
+      "value": "failed",
+      "location": "PDF p. 1, Replication Result; also p. 3, Deviations from preregistration",
+      "quote": "we fail to replicate Einstein and Glick (2017)’s main finding of differential friendliness between white and Hispanic constituents.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/806b2217a538fab6de0eb55c.txt",
+      "confident": true,
+      "status": "done"
+    },
+    "locator": {
+      "ref_o": "Einstein, K. L., & Glick, D. M. (2016). Does Race Affect Access to Government Services? An Experiment Exploring Street‐Level Bureaucrats and Access to Public Housing. American Journal of Political Science, 61(1), 100–116. Portico. https://doi.org/10.1111/ajps.12252",
+      "doi_o": "10.1111/ajps.12252",
+      "study_o": null,
+      "ref_r": "Weller, N., Tyner, A. H., Loomas, Z., Miske, O., Luis, B., & Landgrave, M. G. (2025, November 18). Einstein_AmJourPoliSci_2017_mxyQ - Weller - New Data Replication - g77m. Retrieved from osf.io/2ug8x",
+      "doi_r": null,
+      "url_r": "https://osf.io/fqdh4",
+      "study_r": null,
+      "es_type_o": null,
+      "es_type_r": "ser_method",
+      "audit_id": 2134,
+      "description": null,
+      "locators_o": "",
+      "locators_r": "",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b129914035066f93dbf302ae.txt"
+      }
+    },
+    "work_key": "https://osf.io/fqdh4",
+    "coding_context": {
+      "es_repr": null,
+      "pval_tails": "2",
+      "nested": null,
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

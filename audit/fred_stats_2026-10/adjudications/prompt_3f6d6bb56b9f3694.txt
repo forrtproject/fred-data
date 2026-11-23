@@ -1,0 +1,50 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant.
+
+[
+  {
+    "audit_id": 865,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "0.87",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.80",
+      "location": "p. 519, Table 1, Experiment 4, Trust in other people",
+      "quote": "Trust in other people 4.08 1.56 5.33 1.30 t(76) = –3.86 .001 0.80 L566: L567: Viewing other people L568: L569: as partner",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/38779ee7023bd55ba51470da.txt",
+      "confident": true,
+      "metric": "d",
+      "test_statistic": "t(76) = –3.86"
+    },
+    "locator": {
+      "ref_o": "Bauer, M. A., Wilkie, J. E. B., Kim, J. K., & Bodenhausen, G. V. (2012). Cuing Consumerism. Psychological Science, 23(5), 517–523. https://doi.org/10.1177/0956797611429579",
+      "doi_o": "10.1177/0956797611429579",
+      "study_o": "4",
+      "ref_r": "Klein, R. A., Vianello, M., Hasselman, F., Adams, B. G., Adams, R. B., Alper, S., Aveyard, M., Axt, J. R., Babalola, M. T., Bahník, Š., Batra, R., Berkics, M., Bernstein, M. J., Berry, D. R., Bialobrzeska, O., Binan, E. D., Bocian, K., Brandt, M. J., Busching, R., … Nosek, B. A. (2018). Many Labs 2: Investigating Variation in Replicability Across Samples and Settings. Advances in Methods and Practices in Psychological Science, 1(4), 443–490. https://doi.org/10.1177/2515245918810225",
+      "doi_r": "10.1177/2515245918810225",
+      "url_r": null,
+      "study_r": "19",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 865,
+      "description": "Relationship between consumerism and trust.",
+      "locators_o": "Table 1",
+      "locators_r": "p. 456",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/38779ee7023bd55ba51470da.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/1c40038a928d872c73eb42e0.txt"
+      }
+    },
+    "work_key": "10.1177/2515245918810225",
+    "coding_context": {
+      "es_repr": "Table 1: =(4.08-5.33)/SQRT((1.56^2+1.3^2)/2)",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

@@ -1,0 +1,97 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+
+Reassess ONLY1755 es_value_o. Full original input, blind expression, v1 copy-error rationale and unresolved compatible-bound objection follow.
+[
+  {
+    "source_key": "a30c4e39a66a4ad1",
+    "audit_id": 1755,
+    "field": "es_value_o",
+    "side": "original",
+    "input": {
+      "ref_o": "Boyle, J., Kennedy, D., & Shea, C. H. (2012). Optimizing the control of high ID movements: rethinking the obvious. Experimental Brain Research, 223(3), 377\u2013387. https://doi.org/10.1007/s00221-012-3266-6",
+      "doi_o": "10.1007/s00221-012-3266-6",
+      "study_o": null,
+      "ref_r": "Boyle, J. B., Kennedy, D. M., Wang, C., & Shea, C. H. (2014). The Sine Wave Protocol: Decrease Movement Time Without Increasing Errors. Journal of Motor Behavior, 46(4), 277\u2013285. https://doi.org/10.1080/00222895.2014.898608",
+      "doi_r": "10.1080/00222895.2014.898608",
+      "url_r": null,
+      "study_r": null,
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "description": "Total time across tests.",
+      "locators_o": "p. 5",
+      "locators_r": "p. 5",
+      "audit_id": 1755,
+      "target_side": "original",
+      "unfinished_fields": [
+        "n_o",
+        "es_value_o"
+      ],
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt"
+      },
+      "source_pdf_path": null,
+      "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+      "source_identity_pending": true,
+      "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+    },
+    "blind": {
+      "value": "<1",
+      "metric": "F",
+      "test_statistic": "F(2,30) <1",
+      "location": "p. 5, Total time (TT), L813\u2013815",
+      "quote": "or Test, F(2,30) \\1, p[.05.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "confident": true
+    },
+    "disposition": {
+      "audit_id": 1755,
+      "field": "es_value_o",
+      "code": "extracted_printed",
+      "reason": "Printed statistic for the identified Total time, omnibus Test main effect. Parser encodes < as backslash and > as [; direction is retained, without deriving an exact value.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "location": "p. 5, Total time (TT), L813\u2013815",
+      "quote": "or Test, F(2,30) \\1, p[.05.",
+      "calculation": null
+    },
+    "worker_target_match": true,
+    "worker_target_description": "Total time, omnibus Test main effect.",
+    "worker_notes": "Identity assessment: the displayed title, Optimizing the control of high ID movements: Rethinking the obvious, matches the original reference. The excerpts describe the primary Impulse/Fitts/Sine experiment and Methods/Results, consistent with that work, rather than a secondary summary or preregistration. Authors and DOI are not displayed in the supplied excerpts, so those identity elements cannot be independently verified here. The provenance describes an author-upload ResearchGate HTML parse; this is a frozen, incomplete set of excerpts, not a PDF. No PDF was assigned. Positive fields are provisional for independent parent identity review. Only assigned unfinished fields are populated; other fields are placeholders. The Participants paragraph reports recruitment N=27, not an explicit final analytic sample or final group counts. The analysis section specifies repeated-measures Group by Test ANOVAs but no critical-model N or exclusions. Printed denominator df=30 in results does not resolve this and is not used to derive N. No mutually exclusive final group counts are supplied; no arithmetic N is calculated. The supplied excerpts cannot establish whether omitted portions resolve this. The source prints the Test df as (2,30); retain as supplied. The parse uses a backslash for the less-than sign. No exact F value is printed; retain the <1 bound.",
+    "supported": true,
+    "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+    "shipped": "F(2, 30) < 1.03",
+    "comparison": "not_comparable",
+    "coding_context": {
+      "description": "There were no differences for Tests in total time",
+      "es_repr_o": "p. 5",
+      "es_repr_r": "p. 5",
+      "es_type_o": "test statistic",
+      "es_type_r": "etasq (partial)",
+      "pval_type_o": "g (>)",
+      "pval_type_r": "l (<)",
+      "pval_tails_o": null,
+      "pval_tails_r": null,
+      "nested_o": "yes",
+      "nested_r": "yes",
+      "reported_success_quote": "Practice tracking a sine wave template has been shown (J. B. Boyle, D. Kennedy, & C. H. Shea, 2012) to greatly enhance performance on a difficult Fitts task of the same amplitude. [...] Participants who practiced with the sine wave templates were able to move faster on Test 2 where a 16\u00b0 amplitude Fitts task was used than participants that had practiced either the 16\u00b0 or 24\u00b0 amplitude Fitts tasks."
+    },
+    "prior_adjudication": null,
+    "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.\nFOCUSED SECOND ROUND: Assess compatibility before treating the cutoff as a coding error. Source prints Group F(2,30)=1.03 and Test F(2,30)<1; shipped Test expression is F(2,30)<1.03. V1 plausibly identifies a copy/concatenation mistake, but the source tighter bound F<1 logically implies the coded weaker bound F<1.03; the actual F value is unprinted. Established audit rules preserve compatible precision/bounds (for example exact p=.26 is compatible with coded p>.05) rather than inventing exact values. Does this warrant shipped_right as a compatible weaker inequality, or does a supplied data contract explicitly require literal cutoff transcription? Do not count a field wrong merely because its bound is less informative when the source supports it; distinguish this from an incompatible cutoff or operator. If the required encoding precision is unresolved, say undeterminable instead of assuming an error. Do not infer or change the source denominator/numerator df; preserve the printed expression. No acquisition, repository/codebook search or paid APIs.",
+    "prior_round_findings": {
+      "audit_id": 1755,
+      "field": "es_value_o",
+      "verdict": "blind_right",
+      "correct_value": "F(2, 30) < 1",
+      "correct_metric": "F",
+      "correct_bound": null,
+      "target_match_confirmed": true,
+      "effect_specific_verdict_confirmed": false,
+      "location": "p. 5, Results, Total time (TT), L813\u2013815",
+      "quote": "The analysis failed to indicate main effects of Group, ... F(2,30) =1.03, p[.05, or Test, F(2,30) \\1, p[.05.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/b2d55a5a9a6e2a911d91222d.txt",
+      "reason": "Primary-work identity is confirmed by the title ('Optimizing the control of high ID movements: Rethinking the obvious'), journal header ('Exp Brain Res'), and the 3-group (Fitts, Sine, Impulse) by 2-test (retention, transfer) aiming design. For the omnibus Test main effect on total time, the paper prints F(2,30) < 1 ('F(2,30) \\1'); shipped ('F(2, 30) < 1.03') erroneously combined the '<' bound from Test with the '1.03' value from the preceding Group main effect ('F(2,30) =1.03')."
+    }
+  }
+]

@@ -1,0 +1,62 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1356,
+    "field": "n_r",
+    "comparison": "near",
+    "shipped": "40",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "38",
+      "sample_role": "participants, 19 in each trait-anxiety group",
+      "exclusions": "40 tested; two outlying social-desirability scores excluded. Error trials (1.2%) and RT outliers (1.8%) discarded.",
+      "location": "pp. 598–599, §§2.1, 3",
+      "quote": "of which 40 (20 M, 20 F) were tested. … Two participants had very high SDS\nscores (each scored 8 out of 10), and a box and whisker plot con®rmed that these were outliers\n(for the rest of the sample, mean SDS = 3.9, S.D. = 1.6). Their data were excluded",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_b95bf9798aeaf10be76705f8.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Bradley, B. P., Mogg, K., Falla, S. J., & Hamilton, L. R. (1998). Attentional Bias for Threatening Facial Expressions in Anxiety: Manipulation of Stimulus Duration. Cognition &amp; Emotion, 12(6), 737–753. https://doi.org/10.1080/026999398379411",
+      "doi_o": "10.1080/026999398379411",
+      "study_o": "1",
+      "ref_r": "Mogg, K., & Bradley, B. P. (1999). Some methodological issues in assessing attentional biases for threatening faces in anxiety: a replication study using a modified version of the probe detection task. Behaviour Research and Therapy, 37(6), 595–604. https://doi.org/10.1016/s0005-7967(98)00158-2",
+      "doi_r": "10.1016/s0005-7967(98)00158-2",
+      "url_r": null,
+      "study_r": "1",
+      "es_type_o": "test statistic",
+      "es_type_r": "test statistic",
+      "audit_id": 1356,
+      "description": "Probe detection task.",
+      "locators_o": "p.10",
+      "locators_r": "p.6",
+      "text_paths": {}
+    },
+    "work_key": "10.1016/s0005-7967(98)00158-2",
+    "coding_context": {
+      "es_repr": "p.6",
+      "description": "probe detection task",
+      "reported_success_quote": "The probe position task produced similar results to those obtained from the probe classification task, so providing further evidence of an anxiety-related attentional bias for threatening faces.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_r": "40",
+        "es_value_r": "F(1, 36) = 4.70",
+        "es_type_r": "test statistic",
+        "pval_value_r": "0.05",
+        "pval_type_r": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "blind_extraction_notes": "No parent-supplied cache text. Full-text acquisition failed independently for both papers. DOI landing requests were inaccessible through web tool; publisher PDF/article requests returned 403/challenge and were not retried. Unpaywall and OpenAlex reported no open-access location for either DOI. Targeted title/DOI searches yielded metadata, abstracts and citations rather than either primary full text. Replication Southampton repository record explicitly has no associated downloadable files; Europe PMC PMID 10372472 reports no PMC full text or PDF. Abstract-only records were not accepted as full papers; no statistics or narrative verdict inferred. No requested target test was examined in full text.\nSource follow-up: Fresh original-only blind validation. Supplied published article title/authors/year match the assigned reference. Visually inspected rendered PDF pp.7-10 (printed pp.743-746). PDF p.10 is entirely Figure 1, displaying both threat and happy bias scores for both anxiety groups at both exposure durations; it prints no F/t statistic or p value. Surrounding canonical text reports separate omnibus interactions, group effects for each face type, planned between-group contrasts at each duration, and within-group tests against zero. Description \"Probe detection task.\" plus locator \"p.10\" does not choose among these tests. Accordingly no statistic or p was selected and target_match remains unknown. The available paper is not classified unavailable. Ancillary sample evidence, not promoted into a target-specific n field under the failure-side rule: printed p.743 (PDF p.7), Attentional Task, states \"For the ® nal sam ple (n = 38), the mean percentage s of data lost\". Rendered page confirms final sample n = 38; canonical-text glyphs and spacing preserved in this quote. Participants section (printed p.741) describes two participant exclusions, poor eyesight and outlying reaction times; Attentional Task describes error-trial removal, RT outlier removal below 250 or above 850 msec, and exclusion of a volunteer with 25% missing data. Canonical text uses spacing artifacts, ® for the fi ligature, and 3 for multiplication signs; rendered p.745 confirms multiplication signs in the ANOVAs, but none was normalized into a quotation. No secondary-source original values used. Replication and reported_success are unassigned placeholders.\nSource follow-up: N=38 follows the explicitly documented 40 tested minus two excluded, also supported by both groups’ printed sex ratios (19 each). Rendered PDF page 6 confirms interaction numerics. Published article copy from private Google Drive archive; DOI is not printed in the artifact front matter. Independent Crossref record matches exact requested title and author surname(s), year/issue and page range 595-604. PDF has10pages, complete main paper with methods/results and end references; model-reviewed first-page and final-substantive-page excerpts. First-page authors=Mogg,Bradley; title coverage=0.95. No shipped audit-value comparison.",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/b95bf9798aeaf10be76705f8_drive.pdf",
+    "source_identity_and_completeness": "DOI is not printed in the artifact front matter. Independent Crossref record matches exact requested title and author surname(s), year/issue and page range 595-604. PDF has10pages, complete main paper with methods/results and end references; model-reviewed first-page and final-substantive-page excerpts. First-page authors=Mogg,Bradley; title coverage=0.95. No shipped audit-value comparison."
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. Typeset proofs also retain their version label; a version difference alone cannot establish a published coding error. Inspect the primary PDF for flagged glyph/sign discrepancies: PDF text extraction can drop minus signs. Do not reverse signs from the parsed text alone when the worker flagged visual disagreement. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

@@ -1,0 +1,274 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 202,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "-0.04",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "−0.08",
+      "metric": "d",
+      "test_statistic": "z = −0.60",
+      "location": "p. 120, Meta-analysis, paragraph beginning “We then tested the effect of process versus outcome account-”.",
+      "quote": "small (d ⫽ ⫺0.08), and the analysis led to substantial evidence in … favor of a null effect, BF10 ⫽ 0.167, z ⫽ ⫺0.60, p ⫽ .55",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_9084b854dc4e9104af886295.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Simonson, I., & Staw, B. M. (1992). Deescalation strategies: A comparison of techniques for reducing commitment to losing courses of action. Journal of Applied Psychology, 77(4), 419–426. https://doi.org/10.1037/0021-9010.77.4.419",
+      "doi_o": "10.1037/0021-9010.77.4.419",
+      "study_o": "1",
+      "ref_r": "Schulz-Hardt, S., Rollwage, J., Wanzel, S. K., Frisch, J. U., & Häusser, J. A. (2021). Effects of process and outcome accountability on escalating commitment: A two-study replication. Journal of Experimental Psychology: Applied, 27(1), 112–124. https://doi.org/10.1037/xap0000321",
+      "doi_r": "10.1037/xap0000321",
+      "url_r": null,
+      "study_r": "1 & 2 (Meta)",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 202,
+      "description": "Relationship between accountability for the decision process versus accountability for decision outcomes and escalating commitment.",
+      "locators_o": "p. 5",
+      "locators_r": "p.120",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a7df1eef322b32ea7e4025ea.txt"
+      }
+    },
+    "work_key": "10.1037/xap0000321",
+    "coding_context": {
+      "es_repr": "p.120",
+      "description": "Whether holding decision makers accountable for the decision process decreases escalating commitment, while accountability for the decision outcomes increases it.",
+      "reported_success_quote": "However, as we did\nnot replicate the original effects in a first experiment, in spite of the fact that our materials and our\nprocedure resembled the original study as closely as possible, we conducted a second experiment with\nan even stronger accountability manipulation as compared to the original study, and with an increased\nsample size. Once again, no effects of accountability were found. Taken together, the results of these two\nexperiments question the robustness of the original findings.",
+      "pval_tails": null,
+      "nested": null,
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 202,
+        "batch": "mac01_9084b854dc4e9104af886295_replication_000",
+        "fields": [
+          "es"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_9084b854dc4e9104af886295_replication_000/202.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:51:29.930969+00:00"
+      },
+      {
+        "audit_id": 202,
+        "batch": "mac01_9084b854dc4e9104af886295_replication_000",
+        "fields": [
+          "reported_success"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_9084b854dc4e9104af886295_replication_000/202.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:53:10.266585+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 202,
+    "field": "pval_value_r",
+    "comparison": "differ",
+    "shipped": "0.77",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".55",
+      "bound": "e",
+      "location": "p. 120, Meta-analysis, process versus outcome accountability across the two replication experiments.",
+      "quote": "BF10 ⫽ 0.167, z ⫽ ⫺0.60, p ⫽ .55",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_9084b854dc4e9104af886295.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Simonson, I., & Staw, B. M. (1992). Deescalation strategies: A comparison of techniques for reducing commitment to losing courses of action. Journal of Applied Psychology, 77(4), 419–426. https://doi.org/10.1037/0021-9010.77.4.419",
+      "doi_o": "10.1037/0021-9010.77.4.419",
+      "study_o": "1",
+      "ref_r": "Schulz-Hardt, S., Rollwage, J., Wanzel, S. K., Frisch, J. U., & Häusser, J. A. (2021). Effects of process and outcome accountability on escalating commitment: A two-study replication. Journal of Experimental Psychology: Applied, 27(1), 112–124. https://doi.org/10.1037/xap0000321",
+      "doi_r": "10.1037/xap0000321",
+      "url_r": null,
+      "study_r": "1 & 2 (Meta)",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 202,
+      "description": "Relationship between accountability for the decision process versus accountability for decision outcomes and escalating commitment.",
+      "locators_o": "p. 5",
+      "locators_r": "p.120",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a7df1eef322b32ea7e4025ea.txt"
+      }
+    },
+    "work_key": "10.1037/xap0000321",
+    "coding_context": {
+      "es_repr": "p.120",
+      "description": "Whether holding decision makers accountable for the decision process decreases escalating commitment, while accountability for the decision outcomes increases it.",
+      "reported_success_quote": "However, as we did\nnot replicate the original effects in a first experiment, in spite of the fact that our materials and our\nprocedure resembled the original study as closely as possible, we conducted a second experiment with\nan even stronger accountability manipulation as compared to the original study, and with an increased\nsample size. Once again, no effects of accountability were found. Taken together, the results of these two\nexperiments question the robustness of the original findings.",
+      "pval_tails": null,
+      "nested": null,
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 202,
+        "batch": "mac01_9084b854dc4e9104af886295_replication_000",
+        "fields": [
+          "es"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_9084b854dc4e9104af886295_replication_000/202.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:51:29.930969+00:00"
+      },
+      {
+        "audit_id": 202,
+        "batch": "mac01_9084b854dc4e9104af886295_replication_000",
+        "fields": [
+          "reported_success"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_9084b854dc4e9104af886295_replication_000/202.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:53:10.266585+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 203,
+    "field": "es_value_r",
+    "comparison": "differ",
+    "shipped": "0.03",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "−0.08",
+      "metric": "d",
+      "test_statistic": "z = −0.60",
+      "location": "p. 120, Meta-analysis, paragraph beginning “We then tested the effect of process versus outcome account-”.",
+      "quote": "small (d ⫽ ⫺0.08), and the analysis led to substantial evidence in … favor of a null effect, BF10 ⫽ 0.167, z ⫽ ⫺0.60, p ⫽ .55",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_9084b854dc4e9104af886295.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Simonson, I., & Staw, B. M. (1992). Deescalation strategies: A comparison of techniques for reducing commitment to losing courses of action. Journal of Applied Psychology, 77(4), 419–426. https://doi.org/10.1037/0021-9010.77.4.419",
+      "doi_o": "10.1037/0021-9010.77.4.419",
+      "study_o": "1",
+      "ref_r": "Schulz-Hardt, S., Rollwage, J., Wanzel, S. K., Frisch, J. U., & Häusser, J. A. (2021). Effects of process and outcome accountability on escalating commitment: A two-study replication. Journal of Experimental Psychology: Applied, 27(1), 112–124. https://doi.org/10.1037/xap0000321",
+      "doi_r": "10.1037/xap0000321",
+      "url_r": null,
+      "study_r": "1 & 2 (Meta)",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 203,
+      "description": "Relationship between accountability for the decision process versus accountability for decision outcomes and escalating commitment.",
+      "locators_o": "p. 5",
+      "locators_r": "p.120",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a7df1eef322b32ea7e4025ea.txt"
+      }
+    },
+    "work_key": "10.1037/xap0000321",
+    "coding_context": {
+      "es_repr": "p.120",
+      "description": "Whether holding decision makers accountable for the decision process decreases escalating commitment, while accountability for the decision outcomes increases it.",
+      "reported_success_quote": "However, as we did\nnot replicate the original effects in a first experiment, in spite of the fact that our materials and our\nprocedure resembled the original study as closely as possible, we conducted a second experiment with\nan even stronger accountability manipulation as compared to the original study, and with an increased\nsample size. Once again, no effects of accountability were found. Taken together, the results of these two\nexperiments question the robustness of the original findings.",
+      "pval_tails": null,
+      "nested": null,
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 203,
+        "batch": "mac01_9084b854dc4e9104af886295_replication_000",
+        "fields": [
+          "es"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_9084b854dc4e9104af886295_replication_000/203.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:51:29.959973+00:00"
+      },
+      {
+        "audit_id": 203,
+        "batch": "mac01_9084b854dc4e9104af886295_replication_000",
+        "fields": [
+          "reported_success"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_9084b854dc4e9104af886295_replication_000/203.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:53:10.274555+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 204,
+    "field": "pval_value_r",
+    "comparison": "differ",
+    "shipped": "0.82",
+    "shipped_metric": "d",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": ".55",
+      "bound": "e",
+      "location": "p. 120, Meta-analysis, process versus outcome accountability across the two replication experiments.",
+      "quote": "BF10 ⫽ 0.167, z ⫽ ⫺0.60, p ⫽ .55",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_9084b854dc4e9104af886295.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Simonson, I., & Staw, B. M. (1992). Deescalation strategies: A comparison of techniques for reducing commitment to losing courses of action. Journal of Applied Psychology, 77(4), 419–426. https://doi.org/10.1037/0021-9010.77.4.419",
+      "doi_o": "10.1037/0021-9010.77.4.419",
+      "study_o": "1",
+      "ref_r": "Schulz-Hardt, S., Rollwage, J., Wanzel, S. K., Frisch, J. U., & Häusser, J. A. (2021). Effects of process and outcome accountability on escalating commitment: A two-study replication. Journal of Experimental Psychology: Applied, 27(1), 112–124. https://doi.org/10.1037/xap0000321",
+      "doi_r": "10.1037/xap0000321",
+      "url_r": null,
+      "study_r": "1 & 2 (Meta)",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 204,
+      "description": "Relationship between accountability for the decision process versus accountability for decision outcomes and escalating commitment.",
+      "locators_o": "p. 6",
+      "locators_r": "p.120",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/a7df1eef322b32ea7e4025ea.txt"
+      }
+    },
+    "work_key": "10.1037/xap0000321",
+    "coding_context": {
+      "es_repr": "p.120",
+      "description": "Whether holding decision makers accountable for the decision process decreases escalating commitment, while accountability for the decision outcomes increases it.",
+      "reported_success_quote": "However, as we did\nnot replicate the original effects in a first experiment, in spite of the fact that our materials and our\nprocedure resembled the original study as closely as possible, we conducted a second experiment with\nan even stronger accountability manipulation as compared to the original study, and with an increased\nsample size. Once again, no effects of accountability were found. Taken together, the results of these two\nexperiments question the robustness of the original findings.",
+      "pval_tails": null,
+      "nested": null,
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 204,
+        "batch": "mac01_9084b854dc4e9104af886295_replication_000",
+        "fields": [
+          "es"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_9084b854dc4e9104af886295_replication_000/204.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:51:29.981482+00:00"
+      },
+      {
+        "audit_id": 204,
+        "batch": "mac01_9084b854dc4e9104af886295_replication_000",
+        "fields": [
+          "reported_success"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_9084b854dc4e9104af886295_replication_000/204.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:53:10.282385+00:00"
+      }
+    ]
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

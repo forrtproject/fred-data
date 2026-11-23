@@ -1,0 +1,208 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 1396,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "54",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "54",
+      "sample_role": "Participants completing the Study 2 web questionnaire, contributing eight within-participant scenario judgments each to the initial across-participants t test (df 53); not 432 independent participants.",
+      "exclusions": "No participant exclusions reported for this initial test. The later directness-agreement restriction and discounted-response analysis are separate tests and are not combined with this estimate.",
+      "location": "Typeset article/proof, printed p. 171 (PDF p. 7), Study 2 Method; printed p. 173 (PDF p. 9), initial Results and Discussion paragraph and 8 × 54 observations description.",
+      "quote": "Fifty-four subjects (ages 17–69, median age 34, 22% students, 69% females)\n               completed a questionnaire on the World Wide Web for $3.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_3bb7742824155474f39375c9.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Royzman, E. B., & Baron, J. (2002). The Preference for Indirect Harm. Social Justice Research, 15(2), 165–184. https://doi.org/10.1023/a:1019923923537",
+      "doi_o": "10.1023/a:1019923923537",
+      "study_o": "1",
+      "ref_r": "Ziano, I., Wang, Y. J., Sany, S. S., Ngai ‎, L. H., Lau, Y. K., Bhattal‎, I. K., Keung, P. S., Wong, Y. T., Tong, W. Z., Cheng, B. L., Chan, H. Y., & Feldman, G. (2021). Perceived morality of direct versus indirect harm: Replications of the preference for indirect harm effect. Meta-Psychology, 5. https://doi.org/10.15626/mp.2019.2134",
+      "doi_r": "10.15626/mp.2019.2134",
+      "url_r": null,
+      "study_r": "Study 2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1396,
+      "description": "Comparison of moral judgments of actions producing harm as a by-product versus actions producing harm directly.",
+      "locators_o": "p. 9-11",
+      "locators_r": "p.7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/99ade1057804aae863103639.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2019.2134",
+    "coding_context": {
+      "es_repr": "t7 = 3.47, p = 0.0052, one- tailed",
+      "description": "People judge actions that produce harm as a by- product to be more moral than actions that produce harm directly",
+      "reported_success_quote": "we successfully replicated Study 2 of Royzman and Baron (2002) with a Hong Kong student sample (N = 46) and an online American Mechanical Turk sample (N = 314). We found con- sistent evidential support for the preference for indirect harm phenomenon (d = 0.46 [0.26, 0.65] to 0.47 [0.18, 0.75]), weaker than effects reported in the original findings of the target article (d = 0.70 [0.40, 0.99]). We also successfully replicated findings regarding reasons underlying a preference for indirect harm (di- rectness, intent, omission, probability of harm, and appearance of harm).",
+      "pval_tails": "1 (one)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "54",
+        "es_value_o": "t(7) = 3.47",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.0052",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Complete typeset article/proof supplied by licensed EBSCO; production headers and crop marks retained; Exact title and Royzman/Baron on visually inspected first page, published2002 and complete20articlepages165–184 plus separately checked non-article copy/copyright notices. Crossref DOI/title/authors/year/page range match. Three studies methods/resultsPDF5–13, generaldiscussion14, refs19–20. Production headers/crop marks retained, so copy labelled typeset article/proof rather than assuming finalpressversion. End-page appearance checked with render/OCR; see end_page_checks.json.",
+    "source_identity_and_completeness": "Exact title and Royzman/Baron on visually inspected first page, published2002 and complete20articlepages165–184 plus separately checked non-article copy/copyright notices. Crossref DOI/title/authors/year/page range match. Three studies methods/resultsPDF5–13, generaldiscussion14, refs19–20. Production headers/crop marks retained, so copy labelled typeset article/proof rather than assuming finalpressversion. End-page appearance checked with render/OCR; see end_page_checks.json.",
+    "original_claim_text_as_coded": "\"Subjects considered the direct option to be wrong more often. They judged the direct option more immoral 26.2% of the time, and the indirect option 9.5% (t53 = 5.12, p = 0.0000, one-tailed; across the eight cases, t7 = 3.47, p = 0.0052, one- tailed).\", \"the effect of directness on moral judgment cannot be fully explained in terms of the effect of directness on judgments of appearance, probability, or intention that were thought to be relevant to moral judgment.\"",
+    "prior_independent_reply": [
+      {
+        "audit_id": 1396,
+        "field": "es_value_o",
+        "verdict": "blind_right",
+        "correct_value": "t(53) = 5.12",
+        "correct_metric": "test statistic",
+        "location": "Printed p. 173 (PDF p. 9), Study 2 Results and Discussion, paragraph 1",
+        "quote": "They judged the\n               direct option more immoral 26.2% of the time, and the indirect option 9.5% (t53 =\n               5.12, p = 0.0000, one-tailed; across the eight cases, t7 = 3.47, p = 0.0052, one-\n               tailed).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_3bb7742824155474f39375c9.txt",
+        "reason": "The target effect replicated in Ziano et al. (2021, p. 7, Table 4) and corresponding to n_o = 54 is the across-participants test t(53) = 5.12 (d = 0.70), whereas shipped recorded t(7) = 3.47 from the secondary by-scenario test across the 8 cases.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 1396,
+        "field": "n_o",
+        "verdict": "shipped_right",
+        "correct_value": "54",
+        "location": "Printed p. 171 (PDF p. 7), Study 2 Method; printed p. 173 (PDF p. 9), Study 2 Results and Discussion",
+        "quote": "Fifty-four subjects (ages 17–69, median age 34, 22% students, 69% females)\n               completed a questionnaire on the World Wide Web for $3.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_3bb7742824155474f39375c9.txt",
+        "reason": "Both shipped and blind correctly identify the Study 2 sample size of 54 participants completing the eight scenarios, which is the analytic unit for the primary across-subjects test (df = 53) replicated by Ziano et al. (2021).",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 1396,
+        "field": "pval_value_o",
+        "verdict": "blind_right",
+        "correct_value": "0.0000",
+        "location": "Printed p. 173 (PDF p. 9), Study 2 Results and Discussion, paragraph 1",
+        "quote": "They judged the\n               direct option more immoral 26.2% of the time, and the indirect option 9.5% (t53 =\n               5.12, p = 0.0000, one-tailed; across the eight cases, t7 = 3.47, p = 0.0052, one-\n               tailed).",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_3bb7742824155474f39375c9.txt",
+        "reason": "For the target across-participants comparison (t53 = 5.12), the reported one-tailed p-value is p = 0.0000; shipped's 0.0052 belongs to the across-scenarios test (t7 = 3.47).",
+        "resolution": "argon"
+      }
+    ],
+    "blind_extractor_target_warning": "Original full-text acquisition failed through attempted open routes (DOI landing inaccessible; author-hosted PDF 403; CiteSeer PDF 404; alternate PDF host 403). Original locator names Study 1, whereas the replication authors explicitly replicated original Study 2. Replication test is ambiguous: Table 4 reports MTurk organ d = 0.24, t(313) = 4.16, p < .001; MTurk zoo d = 0.36, t(313) = 6.31, p < .001. No scenario was specified, so neither is selected. Abstract d = 0.46 and 0.47 are mini-meta-analysis effects (p.8), not Study 2 effects.\nSource follow-up: Fresh original-only validation. Source retained as complete typeset article/proof, with production headers/crop marks; not silently relabelled final press version. Title/authors and printed 2002 date visually checked on PDF p. 1. Rendered PDF pp. 5, 7, 9 and 10 checked for study identity and numeric meanings. Locator conflict: study_o identifies Study 1, but PDF pp. 9–10 report Study 2 and PDF p. 11 starts Study 3. The located initial Study 2 moral-judgment test is recorded with target_match false rather than treated as a confirmed Study 1 result. Study 1 is on printed pp. 168–170 (PDF pp. 4–6); its p. 169 reports 176 total participants, scenario-specific samples, and a binomial p < 0.001 for each scenario, with no single printed binomial test statistic identifying a unique target. No Study 1 sample/test was merged into Study 2. Study 2 also prints an across-scenarios test t7 = 3.47, p = 0.0052, and a later restricted/discounted analysis t50 = 3.24, p = .0011; these are distinct tests and were not substituted. The selected p is retained exactly as printed (rounded 0.0000, not interpreted as mathematical zero). Canonical text flattens the visually subscripted df into t53; the preserved quote includes the canonical line break before 5.12. No numeric discrepancy between canonical text and rendered target page was found. Unassigned replication and reported_success remain null placeholders.",
+    "unresolved_parent_objection": "The same original claim paragraph explicitly prints BOTH t53=5.12,p=.0000 across54participants AND t7=3.47,p=.0052 across8cases. The shipped ES/p are literally printed valid by-scenario statistics for that same moral-judgment result; the shipped general participant N=54 does not by itself select a different statistic as the intended target. Prior review declared t7/p.0052 wrong by choosing the across-participant test, relying on N54 and the replication authors reported original d=.70. Distinguish source validity from unit alignment and never select target by numerical compatibility. Reassess all3fields: is there independently documented evidence that this audit row intended the participant-level rather than scenario-level original test, or are both legitimate source analyses of the identified claim? If intended unit remains unidentified, retain undeterminable for analytic N and avoid asserting ES/p errors; if the literal shipped test is defensibly identified, confirm it from the primary source without converting anything. Resolve the coded Study1 versus supplied page9/claim paragraph Study2 discrepancy and preserve typeset/proof caveat. Replication fields and prior verified findings stay unchanged. One focused round; unresolved scope remains unverified."
+  },
+  {
+    "audit_id": 1396,
+    "field": "es_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "t(7) = 3.47",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "5.12",
+      "metric": "t",
+      "test_statistic": "t53 = 5.12",
+      "location": "Typeset article/proof, printed p. 173 (PDF p. 9), Study 2 Results and Discussion, first paragraph; initial across-subjects comparison.",
+      "quote": "They judged the\n               direct option more immoral 26.2% of the time, and the indirect option 9.5% (t53 =\n               5.12, p = 0.0000, one-tailed;",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_3bb7742824155474f39375c9.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Royzman, E. B., & Baron, J. (2002). The Preference for Indirect Harm. Social Justice Research, 15(2), 165–184. https://doi.org/10.1023/a:1019923923537",
+      "doi_o": "10.1023/a:1019923923537",
+      "study_o": "1",
+      "ref_r": "Ziano, I., Wang, Y. J., Sany, S. S., Ngai ‎, L. H., Lau, Y. K., Bhattal‎, I. K., Keung, P. S., Wong, Y. T., Tong, W. Z., Cheng, B. L., Chan, H. Y., & Feldman, G. (2021). Perceived morality of direct versus indirect harm: Replications of the preference for indirect harm effect. Meta-Psychology, 5. https://doi.org/10.15626/mp.2019.2134",
+      "doi_r": "10.15626/mp.2019.2134",
+      "url_r": null,
+      "study_r": "Study 2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1396,
+      "description": "Comparison of moral judgments of actions producing harm as a by-product versus actions producing harm directly.",
+      "locators_o": "p. 9-11",
+      "locators_r": "p.7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/99ade1057804aae863103639.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2019.2134",
+    "coding_context": {
+      "es_repr": "t7 = 3.47, p = 0.0052, one- tailed",
+      "description": "People judge actions that produce harm as a by- product to be more moral than actions that produce harm directly",
+      "reported_success_quote": "we successfully replicated Study 2 of Royzman and Baron (2002) with a Hong Kong student sample (N = 46) and an online American Mechanical Turk sample (N = 314). We found con- sistent evidential support for the preference for indirect harm phenomenon (d = 0.46 [0.26, 0.65] to 0.47 [0.18, 0.75]), weaker than effects reported in the original findings of the target article (d = 0.70 [0.40, 0.99]). We also successfully replicated findings regarding reasons underlying a preference for indirect harm (di- rectness, intent, omission, probability of harm, and appearance of harm).",
+      "pval_tails": "1 (one)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "54",
+        "es_value_o": "t(7) = 3.47",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.0052",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Complete typeset article/proof supplied by licensed EBSCO; production headers and crop marks retained; Exact title and Royzman/Baron on visually inspected first page, published2002 and complete20articlepages165–184 plus separately checked non-article copy/copyright notices. Crossref DOI/title/authors/year/page range match. Three studies methods/resultsPDF5–13, generaldiscussion14, refs19–20. Production headers/crop marks retained, so copy labelled typeset article/proof rather than assuming finalpressversion. End-page appearance checked with render/OCR; see end_page_checks.json.",
+    "source_identity_and_completeness": "Exact title and Royzman/Baron on visually inspected first page, published2002 and complete20articlepages165–184 plus separately checked non-article copy/copyright notices. Crossref DOI/title/authors/year/page range match. Three studies methods/resultsPDF5–13, generaldiscussion14, refs19–20. Production headers/crop marks retained, so copy labelled typeset article/proof rather than assuming finalpressversion. End-page appearance checked with render/OCR; see end_page_checks.json."
+  },
+  {
+    "audit_id": 1396,
+    "field": "pval_value_o",
+    "comparison": "mismatched_target",
+    "shipped": "0.0052",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "e (=)",
+    "blind": {
+      "value": "0.0000",
+      "bound": "e",
+      "location": "Typeset article/proof, printed p. 173 (PDF p. 9), Study 2 Results and Discussion, first paragraph; initial across-subjects t53 = 5.12, one-tailed.",
+      "quote": "They judged the\n               direct option more immoral 26.2% of the time, and the indirect option 9.5% (t53 =\n               5.12, p = 0.0000, one-tailed;",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_maccont_3bb7742824155474f39375c9.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Royzman, E. B., & Baron, J. (2002). The Preference for Indirect Harm. Social Justice Research, 15(2), 165–184. https://doi.org/10.1023/a:1019923923537",
+      "doi_o": "10.1023/a:1019923923537",
+      "study_o": "1",
+      "ref_r": "Ziano, I., Wang, Y. J., Sany, S. S., Ngai ‎, L. H., Lau, Y. K., Bhattal‎, I. K., Keung, P. S., Wong, Y. T., Tong, W. Z., Cheng, B. L., Chan, H. Y., & Feldman, G. (2021). Perceived morality of direct versus indirect harm: Replications of the preference for indirect harm effect. Meta-Psychology, 5. https://doi.org/10.15626/mp.2019.2134",
+      "doi_r": "10.15626/mp.2019.2134",
+      "url_r": null,
+      "study_r": "Study 2",
+      "es_type_o": "test statistic",
+      "es_type_r": "d",
+      "audit_id": 1396,
+      "description": "Comparison of moral judgments of actions producing harm as a by-product versus actions producing harm directly.",
+      "locators_o": "p. 9-11",
+      "locators_r": "p.7",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/99ade1057804aae863103639.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2019.2134",
+    "coding_context": {
+      "es_repr": "t7 = 3.47, p = 0.0052, one- tailed",
+      "description": "People judge actions that produce harm as a by- product to be more moral than actions that produce harm directly",
+      "reported_success_quote": "we successfully replicated Study 2 of Royzman and Baron (2002) with a Hong Kong student sample (N = 46) and an online American Mechanical Turk sample (N = 314). We found con- sistent evidential support for the preference for indirect harm phenomenon (d = 0.46 [0.26, 0.65] to 0.47 [0.18, 0.75]), weaker than effects reported in the original findings of the target article (d = 0.70 [0.40, 0.99]). We also successfully replicated findings regarding reasons underlying a preference for indirect harm (di- rectness, intent, omission, probability of harm, and appearance of harm).",
+      "pval_tails": "1 (one)",
+      "nested": "no",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "54",
+        "es_value_o": "t(7) = 3.47",
+        "es_type_o": "test statistic",
+        "pval_value_o": "0.0052",
+        "pval_type_o": "e (=)"
+      }
+    },
+    "source_version_note": "Complete typeset article/proof supplied by licensed EBSCO; production headers and crop marks retained; Exact title and Royzman/Baron on visually inspected first page, published2002 and complete20articlepages165–184 plus separately checked non-article copy/copyright notices. Crossref DOI/title/authors/year/page range match. Three studies methods/resultsPDF5–13, generaldiscussion14, refs19–20. Production headers/crop marks retained, so copy labelled typeset article/proof rather than assuming finalpressversion. End-page appearance checked with render/OCR; see end_page_checks.json.",
+    "source_identity_and_completeness": "Exact title and Royzman/Baron on visually inspected first page, published2002 and complete20articlepages165–184 plus separately checked non-article copy/copyright notices. Crossref DOI/title/authors/year/page range match. Three studies methods/resultsPDF5–13, generaldiscussion14, refs19–20. Production headers/crop marks retained, so copy labelled typeset article/proof rather than assuming finalpressversion. End-page appearance checked with render/OCR; see end_page_checks.json."
+  }
+]
+
+Put whole result in reply; do not write files or run commands. End with ## Answer.

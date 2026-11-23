@@ -1,0 +1,64 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+[
+  {
+    "audit_id": 1310,
+    "field": "es_value_o",
+    "comparison": "differ",
+    "shipped": "t(2) = 4.59",
+    "shipped_metric": "test statistic",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "4.59",
+      "location": "p.12, Experiment 2, Results, logistic-regression paragraph",
+      "quote": "the effect of Default was due to the difference between the Participate and Not Participate groups (t ¼ 4.59, p < .001)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/51d4e6902b2b643fb7e67b0a.txt",
+      "confident": true,
+      "metric": "t (printed test statistic)",
+      "test_statistic": "t = 4.59"
+    },
+    "locator": {
+      "ref_o": "Johnson, E. J., Bellman, S., & Lohse, G. L. (2002). Defaults, Framing and Privacy: Why Opting In-Opting Out1. Marketing Letters, 13(1), 5–15. https://doi.org/10.1023/a:1015044207315",
+      "doi_o": "10.1023/a:1015044207315",
+      "study_o": "2",
+      "ref_r": "Chandrashekar, S. P., Adelina, N., Zeng, S., Chiu, Y. Y. E., Leung, G. Y. S., Henne, P., Cheng, B. L., & Feldman, G. (2023). Defaults versus framing: Revisiting Default Effect and Framing Effect with replications and extensions of Johnson and Goldstein (2003) and Johnson, Bellman, and Lohse (2002). Meta-Psychology, 7. https://doi.org/10.15626/mp.2022.3108",
+      "doi_r": "10.15626/mp.2022.3108",
+      "url_r": "https://osf.io/pqt82",
+      "study_r": "2",
+      "es_type_o": "test statistic",
+      "es_type_r": "OR",
+      "audit_id": 1310,
+      "description": "Comparison of opt-in and opt-out conditions on consent to receive health-related information.",
+      "locators_o": "p.8",
+      "locators_r": "p. 7",
+      "text_paths": {
+        "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/51d4e6902b2b643fb7e67b0a.txt",
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/dddeb34934681a93dbfca2ab.txt"
+      }
+    },
+    "work_key": "10.15626/mp.2022.3108",
+    "review_round": 2,
+    "prior_adjudication": {
+      "audit_id": 1310,
+      "field": "es_value_o",
+      "verdict": "blind_right",
+      "correct_value": "4.59",
+      "correct_metric": "test statistic",
+      "location": "p. 12 (PDF p. 8), Experiment 2, Section 3.2 Results",
+      "quote": "between the Participate and Not Participate groups (t ¼ 4.59, p < .001)",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/51d4e6902b2b643fb7e67b0a.txt",
+      "reason": "The original Experiment 2 logistic regression reports the test statistic for Participate versus Not Participate defaults as t = 4.59 without degrees of freedom. The shipped value erroneously inserts '(2)' degrees of freedom that do not appear in the source text.",
+      "resolution": "argon"
+    },
+    "parent_response": "The prior correction merely removes df=2 because it is not printed, which alone does not establish a coded inference is wrong. The requested metric permits a formatted test-statistic expression and consistent inferred df. Inspect the ORIGINAL logistic regression model, design, sample role, any stated reference distribution, and reported p/bound. Can finite df2 actually be contradicted (for example by the p-value/reference distribution or design), or is the df merely unprinted? If demonstrably wrong, explain the contradiction and give the FULL justified statistic expression (including a clear statement if the printed t is an asymptotic coefficient ratio with no finite df), preserving the as-printed metric. If a consistent inference is valid, shipped_right; if reference distribution/df cannot be securely established, undeterminable. Do not call formatting or absence of printed df a transcription error. Reconcile prior response explicitly.",
+    "coding_context": {
+      "es_repr": "p.8",
+      "pval_tails": null,
+      "nested": "no",
+      "analytic_n_definition": "sample size used for critical test after exclusions; record sample role"
+    }
+  }
+]
+
+End your response with the answer itself under a heading `## Answer`.
+Put your whole result in your reply; do not create files or run commands.

@@ -1,0 +1,937 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "306": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Frustration on Proximity effect 1/4, 1/3, 1/2, 1/1",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 306,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Frustration on Proximity effect 1/4, 1/3, 1/2, 1/1; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: 9.40 (p ¼ .005). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Frustration on Proximity effect 1/4, 1/3, 1/2, 1/1",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "307": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Frustration on Proximity effect 2/4, 2/3, 2/2",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 307,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Frustration on Proximity effect 2/4, 2/3, 2/2; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: 24.91 (p < .001). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Frustration on Proximity effect 2/4, 2/3, 2/2",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "308": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Frustration on Proximity effect 3/4, 3/3",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 308,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Frustration on Proximity effect 3/4, 3/3; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: 51.07 (p < .001). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Frustration on Proximity effect 3/4, 3/3",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "310": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Frustration on Effort effect 4/4, 3/3, 2/2, 1/1",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 310,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Frustration on Effort effect 4/4, 3/3, 2/2, 1/1; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: 9.20 (p ¼ .005). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Frustration on Effort effect 4/4, 3/3, 2/2, 1/1",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "311": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Frustration on Effort effect 3/4, 2/3, 1/2",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 311,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Frustration on Effort effect 3/4, 2/3, 1/2; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: 10.35 (p ¼ .003). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Frustration on Effort effect 3/4, 2/3, 1/2 3.88",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "312": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Frustration on Effort effect 2/4, 1/3",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 312,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Frustration on Effort effect 2/4, 1/3; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: 1.56 (p ¼ .223). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Frustration on Effort effect 2/4, 1/3",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "314": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Surprise on Proximity effect 1/4, 1/3, 1/2, 1/1",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 314,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Surprise on Proximity effect 1/4, 1/3, 1/2, 1/1; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: 3.85 (p ¼ .051). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Surprise on Proximity effect 1/4, 1/3, 1/2, 1/1",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "315": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Surprise on Proximity effect 2/4, 2/3, 2/2",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 315,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Surprise on Proximity effect 2/4, 2/3, 2/2; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: .37 (p ¼ .592). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Surprise on Proximity effect 2/4, 2/3, 2/2",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "316": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Surprise on Proximity effect 3/4, 3/3",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 316,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Surprise on Proximity effect 3/4, 3/3; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: .15 (p ¼ .886). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Surprise on Proximity effect 3/4, 3/3",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "318": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Surprise on Effort effect 4/4, 3/3, 2/2, 1/1",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 318,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Surprise on Effort effect 4/4, 3/3, 2/2, 1/1; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: 2.87 (p ¼ .072). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Surprise on Effort effect 4/4, 3/3, 2/2, 1/1",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "l (<)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "319": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Surprise on Effort effect 3/4, 2/3, 1/2",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 319,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Surprise on Effort effect 3/4, 2/3, 1/2; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: .811 (p ¼ .421). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Surprise on Effort effect 3/4, 2/3, 1/2 3.88",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    },
+    "320": {
+      "source_key": "fa1523ca49552892",
+      "side": "original",
+      "input": {
+        "ref_o": "Yu, R., Mobbs, D., Seymour, B., Rowe, J. B., & Calder, A. J. (2014). The neural signature of escalating frustration in humans. Cortex, 54, 165–178. https://doi.org/10.1016/j.cortex.2014.02.013",
+        "doi_o": "10.1016/j.cortex.2014.02.013",
+        "study_o": "1",
+        "ref_r": "Eben, C., Chen, Z., London, R. E., & Verbruggen, F. (2024). Escalating frustration - A replication attempt and extension of Yu et al. (2014). Open Research Europe, 4, 135. https://doi.org/10.12688/openreseurope.17749.1",
+        "doi_r": "10.12688/openreseurope.17749.1",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "description": "Surprise on Effort effect 2/4, 1/3",
+        "locators_o": "p. 5",
+        "locators_r": "",
+        "audit_id": 320,
+        "target_side": "original",
+        "unfinished_fields": [
+          "n_o",
+          "es_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Experiment 1a: Surprise on Effort effect 2/4, 1/3; linear effect ANOVA in Table 1.",
+      "worker_notes": "Identity independently checked: title The neural signature of escalating frustration in humans; Rongjun Yu, Dean Mobbs, Ben Seymour, James B. Rowe and Andrew J. Calder; DOI 10.1016/j.cortex.2014.02.013 all match the neutral original reference. Cached primary article proof (CORTEX1157_proof, 22 March 2014), 14 numbered article pages plus ResearchGate cover; not merely an abstract or secondary article. Proof pagination used. No PDF path supplied; no acquisition or rendering performed. Only assigned unfinished fields are completed; other statistic slots and replication/success are unassigned placeholders. Targets matched by Table 1 block, outcome column, and schedule conditions, not input order or numeric agreement. Candidate study participant count: 27. This is not promoted to target-test analytic N; no N inferred from degrees of freedom, trial counts or a participant-count assumption. Same-test printed cell: .47 (p ¼ .644). F metric identified by Table 1 caption; p is not an assigned unfinished field.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "Surprise on Effort effect 2/4, 1/3",
+        "es_repr_o": "5",
+        "es_repr_r": "9",
+        "es_type_o": "test statistic",
+        "es_type_r": "test statistic",
+        "pval_type_o": "e (=)",
+        "pval_type_r": "g (>)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "no",
+        "nested_r": "no",
+        "reported_success_quote": "In\nline with the original study, both goal proximity and exerted effort\nincreased participants’ self-reported motivation in the task and\nfrustration after being blocked."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 306,
+      "field": "es_value_o",
+      "blind": {
+        "value": "9.40",
+        "metric": "F",
+        "test_statistic": "F = 9.40",
+        "location": "Proof p. 5, Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1, Frustration column",
+        "quote": "9.40 (p ¼ .005)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 306,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1, Frustration column",
+        "quote": "9.40 (p ¼ .005)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(3, 78) = 9.4",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 307,
+      "field": "es_value_o",
+      "blind": {
+        "value": "24.91",
+        "metric": "F",
+        "test_statistic": "F = 24.91",
+        "location": "Proof p. 5, Table 1, Proximity effect, 2/4, 2/3, 2/2, Frustration column",
+        "quote": "24.91 (p < .001)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 307,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Proximity effect, 2/4, 2/3, 2/2, Frustration column",
+        "quote": "24.91 (p < .001)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 52) = 24.91",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 308,
+      "field": "es_value_o",
+      "blind": {
+        "value": "51.07",
+        "metric": "F",
+        "test_statistic": "F = 51.07",
+        "location": "Proof p. 5, Table 1, Proximity effect, 3/4, 3/3, Frustration column",
+        "quote": "51.07 (p < .001)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 308,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Proximity effect, 3/4, 3/3, Frustration column",
+        "quote": "51.07 (p < .001)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(1, 26) = 51.07",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 310,
+      "field": "es_value_o",
+      "blind": {
+        "value": "9.20",
+        "metric": "F",
+        "test_statistic": "F = 9.20",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 4/4, 3/3, 2/2, 1/1, Frustration column",
+        "quote": "9.20 (p ¼ .005)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 310,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 4/4, 3/3, 2/2, 1/1, Frustration column",
+        "quote": "9.20 (p ¼ .005)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(3, 78) = 9.2",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 311,
+      "field": "es_value_o",
+      "blind": {
+        "value": "10.35",
+        "metric": "F",
+        "test_statistic": "F = 10.35",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 3/4, 2/3, 1/2, Frustration column",
+        "quote": "10.35 (p ¼ .003)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 311,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 3/4, 2/3, 1/2, Frustration column",
+        "quote": "10.35 (p ¼ .003)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 52) = 10.35",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 312,
+      "field": "es_value_o",
+      "blind": {
+        "value": "1.56",
+        "metric": "F",
+        "test_statistic": "F = 1.56",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 2/4, 1/3, Frustration column",
+        "quote": "1.56 (p ¼ .223)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 312,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 2/4, 1/3, Frustration column",
+        "quote": "1.56 (p ¼ .223)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "1.56",
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 314,
+      "field": "es_value_o",
+      "blind": {
+        "value": "3.85",
+        "metric": "F",
+        "test_statistic": "F = 3.85",
+        "location": "Proof p. 5, Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1, Surprise column",
+        "quote": "3.85 (p ¼ .051)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 314,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Proximity effect, 1/4, 1/3, 1/2, 1/1, Surprise column",
+        "quote": "3.85 (p ¼ .051)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(3, 78) = 3.85",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 315,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".37",
+        "metric": "F",
+        "test_statistic": "F = .37",
+        "location": "Proof p. 5, Table 1, Proximity effect, 2/4, 2/3, 2/2, Surprise column",
+        "quote": ".37 (p ¼ .592)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 315,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Proximity effect, 2/4, 2/3, 2/2, Surprise column",
+        "quote": ".37 (p ¼ .592)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 52) = 0.37",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 316,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".15",
+        "metric": "F",
+        "test_statistic": "F = .15",
+        "location": "Proof p. 5, Table 1, Proximity effect, 3/4, 3/3, Surprise column",
+        "quote": ".15 (p ¼ .886)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 316,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Proximity effect, 3/4, 3/3, Surprise column",
+        "quote": ".15 (p ¼ .886)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(1, 26) = 0.15",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 318,
+      "field": "es_value_o",
+      "blind": {
+        "value": "2.87",
+        "metric": "F",
+        "test_statistic": "F = 2.87",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 4/4, 3/3, 2/2, 1/1, Surprise column",
+        "quote": "2.87 (p ¼ .072)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 318,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 4/4, 3/3, 2/2, 1/1, Surprise column",
+        "quote": "2.87 (p ¼ .072)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(3, 78) = 2.87",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 319,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".811",
+        "metric": "F",
+        "test_statistic": "F = .811",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 3/4, 2/3, 1/2, Surprise column",
+        "quote": ".811 (p ¼ .421)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 319,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 3/4, 2/3, 1/2, Surprise column",
+        "quote": ".811 (p ¼ .421)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(2, 52) = 0.811",
+      "comparison": "differ",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 320,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".47",
+        "metric": "F",
+        "test_statistic": "F = .47",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 2/4, 1/3, Surprise column",
+        "quote": ".47 (p ¼ .644)",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 320,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed F statistic in the named Table 1 effect block, schedule-condition row and outcome column; same-cell p retained literally in evidence. No conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/4c6cd7743a36a3b45851f470.txt",
+        "location": "Proof p. 5, Table 1, Expended effort effect, 2/4, 1/3, Surprise column",
+        "quote": ".47 (p ¼ .644)",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "F(1, 26) = 0.47",
+      "comparison": "differ",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/fa1523ca49552892. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_fa1523ca49552892_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

@@ -1,0 +1,733 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 158,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 158,
+      "description": "Relationship between expectations and disconfirmation, all else being equal (Hong Kong sample).",
+      "locators_o": "p. 11",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 11",
+      "description": "Higher expectations produce more negative disconfirmation, all else being equal (Hong Kong sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "-0.903",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 158,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/158.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.379194+00:00"
+      }
+    ],
+    "prior_round_findings": [
+      {
+        "audit_id": 158,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The critical test for the Expectations to Disconfirmation path coefficient is the regression-based path analysis in Figure 6, which explicitly reports an analytic sample size of n = 905; the shipped value of 908 comes from Table 2 (p. 608), which is a reduced main-and-interaction-effects regression omitting disconfirmation.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 160,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The Performance to Disconfirmation coefficient is estimated in the Figure 6 path analysis with n = 905, whereas the shipped value of 908 belongs to the separate Table 2 regression without disconfirmation.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 162,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The Disconfirmation to Satisfaction path is estimated in Figure 6 where the analytic sample size is n = 905, not 908 (which is for Table 2).",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 164,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The direct path from Performance to Satisfaction controlling for Disconfirmation is estimated in Figure 6 (n = 905), whereas n = 908 comes from the Table 2 regression that omits disconfirmation.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 166,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The direct path from Expectations to Satisfaction controlling for Disconfirmation comes from Figure 6 (n = 905), whereas n = 908 is from the Table 2 regression without disconfirmation.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 168,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The original Expectations to Disconfirmation path coefficient is estimated in Figure 6 with sample size n = 905, whereas 908 comes from the Table 2 regression omitting disconfirmation.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 169,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The original Performance to Disconfirmation path coefficient is estimated in Figure 6 with n = 905, whereas 908 is from the Table 2 regression model.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 170,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The original Disconfirmation to Satisfaction path is estimated in Figure 6 with analytic sample size n = 905, whereas 908 is from Table 2.",
+        "resolution": "argon"
+      },
+      {
+        "audit_id": 171,
+        "field": "n_o",
+        "verdict": "blind_right",
+        "correct_value": "905",
+        "location": "Published p. 606 (PDF p. 10), Figure 6 note",
+        "quote": "sample size n = 905",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+        "reason": "The original direct path from Performance to Satisfaction controlling for Disconfirmation is estimated in Figure 6 with sample size n = 905, whereas 908 comes from Table 2.",
+        "resolution": "argon"
+      }
+    ],
+    "new_target_scope_objection": "Blind set target_match=false because descriptions contain HongKong or Shenzhen, while original VanRyzin2013 sampled US citizens. Do not call a wrong-target extraction an original coding error. Independently resolve whether the named original reference plus original theoretical path and page locator identifies Figure6 despite the replication-country descriptor. Parent found an explicit conceptual mapping in Chen2022 primary replication, but asks independent assessment rather than assumes it. Distinguish Figure6 n905 from Table2 n908 using primary ORIGINAL evidence. Numeric agreement alone cannot select target.",
+    "additional_primary_replication_source": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt",
+    "mapping_locator": "Replication introduction pp779–780: narrow replication of VanRyzin2013 extended to HongKong and Shenzhen; Figure1 adapted original model. Use these for identity mapping only, not original statistic verification."
+  },
+  {
+    "audit_id": 160,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 160,
+      "description": "Relationship between performance and disconfirmation, all else being equal (Hong Kong sample).",
+      "locators_o": "p. 10",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Higher performance leads to more positive disconfirmation, all else being equal (Hong Kong sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "1.445",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 160,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/160.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.373481+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 162,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 162,
+      "description": "Relationship between positive disconfirmation (performance exceeding expectations) and satisfaction (Hong Kong sample).",
+      "locators_o": "p. 10",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Positive disconfirmation (performance exceeding expectations) leads to higher satisfaction (Hong Kong sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "0.354",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 162,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/162.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.403074+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 164,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 164,
+      "description": "Direct relationship between performance and satisfaction, considered separately from the pathway through disconfirmation (Hong Kong sample).",
+      "locators_o": "p. 10",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Performance directly and positively influences satisfaction, separate from its effect on disconfirmation. (Hong Kong sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "0.583",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 164,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/164.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.396933+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 166,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 166,
+      "description": "Direct relationship between expectations and satisfaction, considered separately from the pathway through disconfirmation (Hong Kong sample).",
+      "locators_o": "p. 10",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Expectations have a direct effect on satisfaction, separate from its effect on disformation (Hong Kong sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "0.314",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 166,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/166.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.408479+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 168,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 168,
+      "description": "Relationship between expectations and disconfirmation, all else being equal (Shenzhen sample).",
+      "locators_o": "p. 10",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Higher expectations produce more negative disconfirmation, all else being equal (Shenhzen sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "-0.903",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 168,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/168.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.385270+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 169,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 169,
+      "description": "Relationship between performance and disconfirmation, all else being equal (Shenzhen sample).",
+      "locators_o": "p. 10",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Higher performance leads to more positive disconfirmation, all else being equal. (Shenhzen sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "1.445",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 169,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/169.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.414952+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 170,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 170,
+      "description": "Relationship between positive disconfirmation (performance exceeding expectations) and satisfaction (Shenzhen sample).",
+      "locators_o": "p. 10",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Positive disconfirmation (performance exceeding expectations) leads to higher satisfaction (Shenhzen sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "0.354",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 170,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/170.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.420986+00:00"
+      }
+    ]
+  },
+  {
+    "audit_id": 171,
+    "field": "n_o",
+    "comparison": "mismatched_target",
+    "shipped": "908",
+    "shipped_metric": "b (unstd)",
+    "shipped_bound": "l (<)",
+    "blind": {
+      "value": "905",
+      "sample_role": "Participants in original Figure 6 path-analysis sample",
+      "exclusions": "964 recruited/responding participants reported in methods; Figure 6 analytic n is 905. Reasons for reduction not specified in the inspected methods/results.",
+      "location": "Published p. 606 (PDF p. 10), Figure 6 note; sampling context pp. 602–603 (PDF pp. 6–7)",
+      "quote": "sample size n = 905",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_drive_c8b34f2bdfb25eed77117a90.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Van Ryzin, G. G. (2013). An Experimental Test of the Expectancy-Disconfirmation Theory of Citizen Satisfaction. Journal of Policy Analysis and Management, 32(3), 597–614. Portico. https://doi.org/10.1002/pam.21702",
+      "doi_o": "10.1002/pam.21702",
+      "study_o": "1",
+      "ref_r": "Chen, W., Dong, B., Hsieh, C., Lee, M. J., Liu, N., Walker, R. M., Wang, Y., Wen, B., Wen, W., Wu, P., Wu, X., & Zhang, J. (2022). A replication of “an experimental test of the <scp>expectancy‐disconfirmation</scp> theory of citizen satisfaction.” Public Administration, 100(3), 778–791. Portico. https://doi.org/10.1111/padm.12860",
+      "doi_r": "10.1111/padm.12860",
+      "url_r": null,
+      "study_r": "2",
+      "es_type_o": "b (unstd)",
+      "es_type_r": "b (unstd)",
+      "audit_id": 171,
+      "description": "Direct relationship between performance and satisfaction, considered separately from the pathway through disconfirmation (Shenzhen sample).",
+      "locators_o": "p. 10",
+      "locators_r": "",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/ca6274cebcf4c0a6476c5cf5.txt"
+      }
+    },
+    "work_key": "10.1111/padm.12860",
+    "coding_context": {
+      "es_repr": "p. 10",
+      "description": "Performance directly and positively influences satisfaction, separate from its effect on disconfirmation. (Shenhzen sample)",
+      "reported_success_quote": "We found support for the findings reported in Van Ryzin (2013) and concluded that the expectancy-disconfirmation model holds promise in a variety of settings as a framework for measuring citizen satisfaction with public services.",
+      "pval_tails": null,
+      "nested": "yes",
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units",
+      "coded_statistics_for_target_selection": {
+        "n_o": "908",
+        "es_value_o": "0.583",
+        "es_type_o": "b (unstd)",
+        "pval_value_o": "0.001",
+        "pval_type_o": "l (<)"
+      }
+    },
+    "source_version_note": "Published article copy from private Google Drive archive",
+    "primary_source_pdf_path": "/home/lukas/work/fred-mac-recovery-20261030/drive-check/private_sources/artifacts/c8b34f2bdfb25eed77117a90_drive.pdf",
+    "source_identity_and_completeness": "Crossref independently matches requested DOI, title and authors; title coverage in first3PDFpages=1.0, author surnames found=Van Ryzin. PDF has18pages; published range=597-614; source endmatter checked in model review. Methods-related material pages[1, 2, 5, 6, 7, 8, 9, 11]; results-related material pages[1, 2, 4, 5, 6, 10, 11, 12]; references atPDFpages[15]. No statistical target comparison. Publisher cover sheets, online-first versions and end notices retained and labelled.",
+    "parent_evidence_review": [
+      {
+        "audit_id": 171,
+        "batch": "drive01_c8b34f2bdfb25eed77117a90_original_000",
+        "fields": [
+          "n:source_path",
+          "es:source_path",
+          "p:source_path"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/drive_source_followup/quote_repairs/drive01_c8b34f2bdfb25eed77117a90_original_000/171.json",
+        "repair": "Original quoted tokens retained in order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Where recorded, an exact accepted PDF citation was mapped to its hash-verified canonical text from that same PDF; no source substitution. Exact-source quote check required separately at integration; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T15:32:46.391471+00:00"
+      }
+    ]
+  }
+]
+
+FOCUSED ROUND: Include original brief above, prior findings and unresolved target-scope objection. For each n item state in reason whether PRIMARY reference, original path and documented replication mapping uniquely establish the original target; return undeterminable if not. Quote the ORIGINAL primary n and its matching model, and add a short exact replication mapping quote/location/source_path in mapping_quote, mapping_location, mapping_source_path if mapping is used. No numerical-coincidence target matching, no secondary-only original verification. Put whole result under ## Answer; no commands or writes.

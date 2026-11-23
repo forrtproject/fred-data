@@ -1,0 +1,66 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+[
+  {
+    "audit_id": 146,
+    "field": "pval_value_o",
+    "comparison": "differ",
+    "shipped": null,
+    "shipped_metric": "d",
+    "shipped_bound": null,
+    "blind": {
+      "value": ".001",
+      "bound": "l",
+      "location": "p. 149, §8.2 Results and discussion",
+      "quote": "main effect of hierarchy F(1, … 401) = 17.49, p < .001, ηp2 = 0.042",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/followup_mac_b1bd746869b8adb268c0cec0.txt",
+      "confident": true
+    },
+    "scope_note": null,
+    "locator": {
+      "ref_o": "Fath, S., & Kay, A. C. (2018). “If hierarchical, then corrupt”: Exploring people’s tendency to associate hierarchy with corruption in organizations. Organizational Behavior and Human Decision Processes, 149, 145–164. https://doi.org/10.1016/j.obhdp.2018.10.004",
+      "doi_o": "10.1016/j.obhdp.2018.10.004",
+      "study_o": "1c",
+      "ref_r": "Evans, T. R., Kviatkovskyte, R., O’Regan, S., Adolph, S. A., nishat, Chukwudi, F. O. N., Wildova, T., & Krzan, M. (2024). Corruption and Hierarchy: A Replication of Studies 1c and 6 of Fath &amp;amp; Kay 2018. https://doi.org/10.31234/osf.io/68jft",
+      "doi_r": "10.31234/osf.io/68jft",
+      "url_r": null,
+      "study_r": "1c",
+      "es_type_o": "d",
+      "es_type_r": "d",
+      "audit_id": 146,
+      "description": "Relationship between organizational hierarchy and expected corruption among employees.",
+      "locators_o": "p. 6",
+      "locators_r": "p. 9",
+      "text_paths": {
+        "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/3cc6a0aeea2e3456684ddfb6.txt"
+      }
+    },
+    "work_key": "10.31234/osf.io/68jft",
+    "coding_context": {
+      "es_repr": "p. 6",
+      "description": "\"We find that people expect more corruption to manifest among the employees of relatively more hierarchical organizations\"",
+      "reported_success_quote": "Two high-powered close replications of studies 1c and 6 by Fath and Kay provide further evidence for the claim that taller organizational structures are associated with greater perceived potential for cor-\nruption, and that these perceptions may compromise subsequent trust-related outcomes.",
+      "pval_tails": null,
+      "nested": null,
+      "analytic_n_definition": "sample used for the critical test after exclusions; distinguish counting units"
+    },
+    "parent_evidence_review": [
+      {
+        "audit_id": 146,
+        "batch": "mac01_b1bd746869b8adb268c0cec0_original_000",
+        "fields": [
+          "n",
+          "es",
+          "p"
+        ],
+        "original_output": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/mac_source_followup/quote_repairs/mac01_b1bd746869b8adb268c0cec0_original_000/146.json",
+        "repair": "All original quoted tokens retained in their original order, with explicit ellipses for interleaved/omitted PDF text and literal newline decoding. At most8contiguous source fragments and1500normalised characters between fragments. Exact-source check passed; no target/value/metric/bound/confidence changed.",
+        "reviewed_at": "2026-10-30T10:51:29.184831+00:00"
+      }
+    ]
+  }
+]
+
+These fields come from a newly retrieved primary source. Do not infer target identity from numerical coincidence. If only an author manuscript is available, explicitly consider version differences before calling the published coding wrong. End your response with the answer itself under a heading ## Answer. Put your whole result in your reply; do not create files or run commands.

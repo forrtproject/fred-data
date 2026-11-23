@@ -1,0 +1,116 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "2132": {
+      "source_key": "0a968031406501ac",
+      "side": "replication",
+      "input": {
+        "ref_o": "Buchner, A., Bell, R., Mehl, B., & Musch, J. (2009). No enhanced recognition memory, but better source memory for faces of cheaters. Evolution and Human Behavior, 30(3), 212–224. https://doi.org/10.1016/j.evolhumbehav.2009.01.004",
+        "doi_o": "10.1016/j.evolhumbehav.2009.01.004",
+        "study_o": null,
+        "ref_r": "Szabelska, A., Ghasemi, O., Tyner, A. H., Abatayo, A., Loomas, Z., Miske, O., & Luis, B. (2025, November 18). Buchner_EvoHumanBehavior_2009_j2yd - Ghasemi/Szabelska - Secondary Data Replication - 5796. Retrieved from osf.io/su48v",
+        "doi_r": null,
+        "url_r": "https://osf.io/hmune",
+        "study_r": null,
+        "es_type_o": "phi",
+        "es_type_r": null,
+        "description": null,
+        "locators_o": "p. 7",
+        "locators_r": "",
+        "audit_id": 2132,
+        "target_side": "replication",
+        "unfinished_fields": [
+          "es_value_r",
+          "pval_value_r"
+        ],
+        "text_paths": {
+          "r": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/96a8e408a3aeb8ba5b971f3c.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Secondary-data replication of the Buchner et al. (2009) source-memory advantage for cheating versus trustworthy contexts; new data from Kroneisen (2018); focal evaluation of the delta between G^2 values using a chi-squared goodness-of-fit test, df = 1.",
+      "worker_notes": "Identity assessment: supplied canonical text is a replication report headed “Replication of a Research Claim from Buchner et al. (2009),” naming Omid Ghasemi and Anna Szabelska, project ID Buchner_EvoHumanBehavior_2009_j2yd_5796, OSF project https://osf.io/su48v, and source URL https://osf.io/hmune/download. These match the assigned replication identifier, named lead team, project and download URL. The report does not reproduce the complete author list or date in the supplied reference, but explicitly presents replication results rather than only a preregistration or abstract. Original article title, authors and journal citation also match the assigned reference; no original primary source was supplied or examined. Target was identified from the report’s explicit focal-analysis statement and claim, not row order or numeric matching. The page-2 focal delta evaluation prints chi-squared = 2.7878, df = 1, p-value = 0.09498 followed by Phi = 0.2103587; Phi is retained without conversion. The earlier G^2 = 6.435107, p = 0.09225716 and G^2 = 1.678981, p = 0.19506 concern separate restricted models and are not substituted for the focal test. The report states that the formal delta evaluation and Phi were added after preregistration. Source is supplied canonical text with page breaks; no PDF supplied. Only replication es_value_r and pval_value_r are assigned; all other fields are unassigned placeholders.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/96a8e408a3aeb8ba5b971f3c.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": null,
+        "es_repr_o": null,
+        "es_repr_r": null,
+        "es_type_o": "phi",
+        "es_type_r": null,
+        "pval_type_o": "e (=)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": "2",
+        "pval_tails_r": "2",
+        "nested_o": null,
+        "nested_r": null,
+        "reported_success_quote": "NB: SCORE relied on statistical significance and direction as the leading success criterion - so reported_success coded based on that"
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 2132,
+      "field": "es_value_r",
+      "blind": {
+        "value": "0.2103587",
+        "metric": "Phi",
+        "test_statistic": "χ2 = 2.7878, df = 1",
+        "location": "Page 2, Replication result, immediately following the focal delta G^2 chi-squared evaluation.",
+        "quote": "Phi = 0.2103587",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/96a8e408a3aeb8ba5b971f3c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 2132,
+        "field": "es_value_r",
+        "code": "extracted_printed",
+        "reason": "Matching primary replication report explicitly prints Phi immediately after its identified focal delta G^2 chi-squared test. Retained the printed metric and precision without conversion; the report documents addition after preregistration.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/96a8e408a3aeb8ba5b971f3c.txt",
+        "location": "Page 2, Replication result, immediately following the focal delta G^2 chi-squared evaluation.",
+        "quote": "Phi = 0.2103587",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": null,
+      "comparison": "not_comparable",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 2132,
+      "field": "pval_value_r",
+      "blind": {
+        "value": "0.09498",
+        "bound": "e",
+        "location": "Page 2, Replication result, focal evaluation of the delta between the two G^2 values.",
+        "quote": "The evaluation of the delta between the two G^2 values using a chi-squared goodness-of-fit\ntest: ​𝝌2​​ = 2.7878, df = 1, p-value = 0.09498.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/96a8e408a3aeb8ba5b971f3c.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 2132,
+        "field": "pval_value_r",
+        "code": "extracted_printed",
+        "reason": "Exact p-value belongs to the explicitly identified focal delta G^2 chi-squared evaluation, the same test associated with the following printed Phi, rather than either separate model-fit p-value.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/96a8e408a3aeb8ba5b971f3c.txt",
+        "location": "Page 2, Replication result, focal evaluation of the delta between the two G^2 values.",
+        "quote": "The evaluation of the delta between the two G^2 values using a chi-squared goodness-of-fit\ntest: ​𝝌2​​ = 2.7878, df = 1, p-value = 0.09498.",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.09498",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/0a968031406501ac. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_0a968031406501ac_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.

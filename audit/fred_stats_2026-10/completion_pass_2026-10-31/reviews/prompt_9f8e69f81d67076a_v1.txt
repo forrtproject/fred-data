@@ -1,0 +1,322 @@
+Adjudicate paper-statistics disagreements for a read-only audit. Independently inspect the supplied paper texts and target locators. You can see shipped and blind values. Decide exact study/outcome/sample/test; a pilot sample may differ from final data, and narrative success cannot be inferred from significance alone. Do not treat a wrong-target blind extraction as a shipped error. Inspect coding_context for documented calculation or coding direction; a documented sign reversal or reproducible transformation may be valid, but do not assume one. Compatible rounding or formatting is shipped_right, not a precision error. A formatted test statistic may validly contain inferred df/N even if those annotations are not printed inline; only positive evidence from design, reference distribution, counts or p-values can establish a wrong annotation. If inference cannot be settled, undeterminable. Give the full corrected test-statistic expression for any established annotation error. For analytic n, distinguish participant/cluster counts from repeated observations in nested or panel models. Different valid sample-level counts alone do not prove a shipped error; if the intended unit or exact critical model is unidentified, return undeterminable and preserve the roles separately. Original primary papers are required for original verification; replication-summary values alone do not suffice. For each item return a JSON object with audit_id (int), field, verdict (shipped_right|blind_right|both_wrong|undeterminable), correct_value (string or null), location, quote (verbatim short evidence occurring in the source text), source_path, reason. Return one JSON array, all items, inside ## Answer. Keep each reason to one or two sentences unless additional detail is essential; quote only the shortest exact supporting span copied from the supplied text, preserving its spelling/OCR. Do not repeat shared background in every row. No markdown prose in the array. If a value is undeterminable, still quote the text showing ambiguity. Preserve bound types in correct_value when relevant. For a reported_success item with a nonempty scope_note, the worker explicitly identified only an overall paper narrative with insufficient individual-effect identification. Return effect_specific_verdict_confirmed true ONLY if neutral locator information uniquely identifies this row and the authors narrative applies specifically to it; otherwise false and undeterminable. Do not transfer a global mixed/successful label to all unidentified outcomes in the article. Explain the scope using a source quotation, never numerical coincidence with the shipped values. For effect sizes, preserve the requested metric; never replace a test statistic with an effect-size coefficient. If a different metric is the only available value and no documented transformation is reproducible, return undeterminable and explain not_comparable. Include correct_metric for ES corrections.
+
+
+
+Review payload format: each field_reviews item inherits row_context[str(audit_id)]. Merge that row context with its field item to recover the full assigned record. Shared references, neutral inputs, target notes and coding context are printed once per row; field-specific evidence, comparisons, prior findings and objections are retained. Review EVERY field_reviews item and return the required flat JSON answer array.
+{
+  "row_context": {
+    "1541": {
+      "source_key": "9f8e69f81d67076a",
+      "side": "original",
+      "input": {
+        "ref_o": "Eyal, T., Liberman, N., & Trope, Y. (2008). Judging near and distant virtue and vice. Journal of Experimental Social Psychology, 44(4), 1204–1209. https://doi.org/10.1016/j.jesp.2008.03.012",
+        "doi_o": "10.1016/j.jesp.2008.03.012",
+        "study_o": "2",
+        "ref_r": "Žeželj, I. L., & Jokić, B. R. (2014). Replication of Experiments Evaluating Impact of Psychological Distance on Moral Judgment. Social Psychology, 45(3), 223–231. https://doi.org/10.1027/1864-9335/a000188",
+        "doi_r": "10.1027/1864-9335/a000188",
+        "url_r": null,
+        "study_r": "1",
+        "es_type_o": "r",
+        "es_type_r": "etasq",
+        "description": "Judgments of the offensiveness of immoral acts and the virtuousness of moral acts under psychologically distant versus near conditions (replication of original Study 2; Serbian sample only, not pooled).",
+        "locators_o": "p. 1206",
+        "locators_r": "p. 225",
+        "audit_id": 1541,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Original Study 2: near (tomorrow) versus distant (next year) temporal perspective; wrongness ratings of three harmless moral transgressions; between-subjects main effect of temporal distance in the distance × story mixed ANOVA. Tel Aviv University undergraduates. The story main effect and interaction are not the distance contrast.",
+      "worker_notes": "Identity assessed from the supplied canonical text: title Judging near and distant virtue and vice; authors Tal Eyal, Nira Liberman, and Yaacov Trope; DOI 10.1016/j.jesp.2008.03.012; J Exp Soc Psychol. 2008 Jul 1;44(4):1204–1209. The cache is a PMC author-manuscript web parse (PMCID PMC2701315), with full study methods/results, general discussion and references; it is a primary research report, not an abstract-only excerpt or preregistration. No PDF path supplied; publisher pagination cannot be independently checked in this parse. Target matched using the explicit original study identifier, manipulation, outcome, sample and reported main effect, independently of row order and numeric values. The broad shared description covers both wrongness and virtuousness across studies; the explicit original study and its method identify the applicable outcome. Replication/Serbian-sample wording belongs to the unassigned replication side. Only assigned original es and p fields were completed; original n, replication and reported_success are unassigned placeholders. Printed r retained without conversion; p is the printed strict upper bound for the same distance main effect. No N derived.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "people judge immoral acts as more offensive and moral acts as more virtuous when the acts are psychologically distant than near (replication of original study 2 (only Serbian sample; not pooled sample))",
+        "es_repr_o": "p. 1206",
+        "es_repr_r": "p. 225",
+        "es_type_o": "r",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "As for the central research hypothesis, we ended up with conflicting findings: the original study found the expected impact of temporal distance to the wrongness assessment; the direct replication with the American sample yielded the opposite pattern of results, whereas direct replication with the Serbian sample yielded no significant effect."
+      }
+    },
+    "1542": {
+      "source_key": "9f8e69f81d67076a",
+      "side": "original",
+      "input": {
+        "ref_o": "Eyal, T., Liberman, N., & Trope, Y. (2008). Judging near and distant virtue and vice. Journal of Experimental Social Psychology, 44(4), 1204–1209. https://doi.org/10.1016/j.jesp.2008.03.012",
+        "doi_o": "10.1016/j.jesp.2008.03.012",
+        "study_o": "3",
+        "ref_r": "Žeželj, I. L., & Jokić, B. R. (2014). Replication of Experiments Evaluating Impact of Psychological Distance on Moral Judgment. Social Psychology, 45(3), 223–231. https://doi.org/10.1027/1864-9335/a000188",
+        "doi_r": "10.1027/1864-9335/a000188",
+        "url_r": null,
+        "study_r": "2",
+        "es_type_o": "r",
+        "es_type_r": "etasq",
+        "description": "Judgments of the offensiveness of immoral acts and the virtuousness of moral acts under psychologically distant versus near conditions (replication of original Study 3; Serbian sample only, not pooled).",
+        "locators_o": "p. 1207",
+        "locators_r": "p. 226",
+        "audit_id": 1542,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Original Study 3: self versus other (first-person versus third-person) social perspective; wrongness ratings across six vignettes; between-subjects main effect of social distance in the distance × story mixed ANOVA. Workers in an Israeli security-services organization. The story main effect and interaction are not the distance contrast.",
+      "worker_notes": "Identity assessed from the supplied canonical text: title Judging near and distant virtue and vice; authors Tal Eyal, Nira Liberman, and Yaacov Trope; DOI 10.1016/j.jesp.2008.03.012; J Exp Soc Psychol. 2008 Jul 1;44(4):1204–1209. The cache is a PMC author-manuscript web parse (PMCID PMC2701315), with full study methods/results, general discussion and references; it is a primary research report, not an abstract-only excerpt or preregistration. No PDF path supplied; publisher pagination cannot be independently checked in this parse. Target matched using the explicit original study identifier, manipulation, outcome, sample and reported main effect, independently of row order and numeric values. The broad shared description covers both wrongness and virtuousness across studies; the explicit original study and its method identify the applicable outcome. Replication/Serbian-sample wording belongs to the unassigned replication side. Only assigned original es and p fields were completed; original n, replication and reported_success are unassigned placeholders. Printed r retained without conversion; p is the printed strict upper bound for the same distance main effect. No N derived.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "people judge immoral acts as more offensive and moral acts as more virtuous when the acts are psychologically distant than near (replication of original study 3 (only Serbian sample; not pooled sample))",
+        "es_repr_o": "p. 1207",
+        "es_repr_r": "p. 226",
+        "es_type_o": "r",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We found no systematic effect of temporal distance, the effect of social distance consistent with Eyal et al., and the reversed effect of direct construal level manipulation, consistent with Gong and Medin."
+      }
+    },
+    "1543": {
+      "source_key": "9f8e69f81d67076a",
+      "side": "original",
+      "input": {
+        "ref_o": "Eyal, T., Liberman, N., & Trope, Y. (2008). Judging near and distant virtue and vice. Journal of Experimental Social Psychology, 44(4), 1204–1209. https://doi.org/10.1016/j.jesp.2008.03.012",
+        "doi_o": "10.1016/j.jesp.2008.03.012",
+        "study_o": "4",
+        "ref_r": "Žeželj, I. L., & Jokić, B. R. (2014). Replication of Experiments Evaluating Impact of Psychological Distance on Moral Judgment. Social Psychology, 45(3), 223–231. https://doi.org/10.1027/1864-9335/a000188",
+        "doi_r": "10.1027/1864-9335/a000188",
+        "url_r": null,
+        "study_r": "3",
+        "es_type_o": "r",
+        "es_type_r": "etasq",
+        "description": "Judgments of the offensiveness of immoral acts and the virtuousness of moral acts under psychologically distant versus near conditions (replication of original Study 4; Serbian sample only, not pooled).",
+        "locators_o": "p. 1208",
+        "locators_r": "p. 227",
+        "audit_id": 1543,
+        "target_side": "original",
+        "unfinished_fields": [
+          "es_value_o",
+          "pval_value_o"
+        ],
+        "text_paths": {
+          "o": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt"
+        },
+        "source_pdf_path": null,
+        "source_version_note": "Canonical primary source provenance; independently inspect document identity on use.",
+        "source_identity_pending": true,
+        "source_identity_note": "Unindexed DOI/URL-keyed cache candidate. Independently verify reference/title/authors/DOI and primary-source status before extracting. A hash match does not establish identity or completeness. Partial web excerpts cannot establish absence of a statistic elsewhere in the work."
+      },
+      "worker_target_match": true,
+      "worker_target_description": "Original Study 4: near (tomorrow) versus distant (one year) temporal perspective; virtuousness ratings of three moral actions under attenuating circumstances; between-subjects main effect of temporal distance in the distance × story mixed ANOVA. Ben-Gurion University psychology undergraduates. The story main effect and interaction are not the distance contrast.",
+      "worker_notes": "Identity assessed from the supplied canonical text: title Judging near and distant virtue and vice; authors Tal Eyal, Nira Liberman, and Yaacov Trope; DOI 10.1016/j.jesp.2008.03.012; J Exp Soc Psychol. 2008 Jul 1;44(4):1204–1209. The cache is a PMC author-manuscript web parse (PMCID PMC2701315), with full study methods/results, general discussion and references; it is a primary research report, not an abstract-only excerpt or preregistration. No PDF path supplied; publisher pagination cannot be independently checked in this parse. Target matched using the explicit original study identifier, manipulation, outcome, sample and reported main effect, independently of row order and numeric values. The broad shared description covers both wrongness and virtuousness across studies; the explicit original study and its method identify the applicable outcome. Replication/Serbian-sample wording belongs to the unassigned replication side. Only assigned original es and p fields were completed; original n, replication and reported_success are unassigned placeholders. Printed r retained without conversion; p is the printed strict upper bound for the same distance main effect. No N derived.",
+      "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+      "parent_response": "For source_identity_pending candidates independently confirm primary-work title/authors/DOI/project identity before a positive target confirmation; hash filenames alone are not identity evidence. Excerpts cannot establish unreported statistics. New separately authorised source-grouped completion. Fresh blind extraction and exact evidence now supplied. Reconcile prior findings/holds explicitly; numeric agreement alone is not target identification. Do not infer unknown sample roles or individual author verdicts from a shared paper-level label.",
+      "coding_context": {
+        "description": "people judge immoral acts as more offensive and moral acts as more virtuous when the acts are psychologically distant than near (replication of original study 4 (only Serbian sample; not pooled sample))",
+        "es_repr_o": "p. 1208",
+        "es_repr_r": "p. 227",
+        "es_type_o": "r",
+        "es_type_r": "etasq",
+        "pval_type_o": "l (<)",
+        "pval_type_r": "e (=)",
+        "pval_tails_o": null,
+        "pval_tails_r": null,
+        "nested_o": "yes",
+        "nested_r": "yes",
+        "reported_success_quote": "We found no systematic effect of temporal distance, the effect of social distance consistent with Eyal et al., and the reversed effect of direct construal level manipulation, consistent with Gong and Medin."
+      }
+    }
+  },
+  "field_reviews": [
+    {
+      "audit_id": 1541,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".38",
+        "metric": "r",
+        "test_statistic": "F(1,56) = 6.53",
+        "location": "Study 2, Results and discussion, main effect of temporal distance (canonical PMC author-manuscript text; supplied publisher locator p. 1206)",
+        "quote": "More important, a main effect of temporal distance,\nF\n(1,56) = 6.53,\np\n< .01,\nr\n= .38,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1541,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed r for the explicitly identified original-study distance main effect; no metric conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "location": "Study 2, Results and discussion, main effect of temporal distance (canonical PMC author-manuscript text; supplied publisher locator p. 1206)",
+        "quote": "More important, a main effect of temporal distance,\nF\n(1,56) = 6.53,\np\n< .01,\nr\n= .38,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.38",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1541,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".01",
+        "bound": "l",
+        "location": "Study 2, Results and discussion, main effect of temporal distance (canonical PMC author-manuscript text; supplied publisher locator p. 1206)",
+        "quote": "More important, a main effect of temporal distance,\nF\n(1,56) = 6.53,\np\n< .01,\nr\n= .38,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1541,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed strict p < .01 bound for the same distance main effect as the extracted r; not an exact p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "location": "Study 2, Results and discussion, main effect of temporal distance (canonical PMC author-manuscript text; supplied publisher locator p. 1206)",
+        "quote": "More important, a main effect of temporal distance,\nF\n(1,56) = 6.53,\np\n< .01,\nr\n= .38,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1542,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".35",
+        "metric": "r",
+        "test_statistic": "F(1,38) = 5.29",
+        "location": "Study 3, Results and discussion, main effect of social distance (canonical PMC author-manuscript text; supplied publisher locator p. 1207)",
+        "quote": "More important, a main effect of social distance,\nF\n(1,38) = 5.29,\np\n< .05,\nr\n= .35,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1542,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed r for the explicitly identified original-study distance main effect; no metric conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "location": "Study 3, Results and discussion, main effect of social distance (canonical PMC author-manuscript text; supplied publisher locator p. 1207)",
+        "quote": "More important, a main effect of social distance,\nF\n(1,38) = 5.29,\np\n< .05,\nr\n= .35,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.35",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1542,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".05",
+        "bound": "l",
+        "location": "Study 3, Results and discussion, main effect of social distance (canonical PMC author-manuscript text; supplied publisher locator p. 1207)",
+        "quote": "More important, a main effect of social distance,\nF\n(1,38) = 5.29,\np\n< .05,\nr\n= .35,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1542,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed strict p < .05 bound for the same distance main effect as the extracted r; not an exact p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "location": "Study 3, Results and discussion, main effect of social distance (canonical PMC author-manuscript text; supplied publisher locator p. 1207)",
+        "quote": "More important, a main effect of social distance,\nF\n(1,38) = 5.29,\np\n< .05,\nr\n= .35,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.05",
+      "comparison": "identical",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1543,
+      "field": "es_value_o",
+      "blind": {
+        "value": ".38",
+        "metric": "r",
+        "test_statistic": "F(1,45) = 7.65",
+        "location": "Study 4, Results and discussion, main effect of temporal distance (canonical PMC author-manuscript text; supplied publisher locator p. 1208)",
+        "quote": "More important, a main effect of temporal distance,\nF\n(1,45) = 7.65,\np\n< .01,\nr\n= .38,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1543,
+        "field": "es_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed r for the explicitly identified original-study distance main effect; no metric conversion.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "location": "Study 4, Results and discussion, main effect of temporal distance (canonical PMC author-manuscript text; supplied publisher locator p. 1208)",
+        "quote": "More important, a main effect of temporal distance,\nF\n(1,45) = 7.65,\np\n< .01,\nr\n= .38,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.38",
+      "comparison": "agree",
+      "prior_adjudication": null
+    },
+    {
+      "audit_id": 1543,
+      "field": "pval_value_o",
+      "blind": {
+        "value": ".01",
+        "bound": "l",
+        "location": "Study 4, Results and discussion, main effect of temporal distance (canonical PMC author-manuscript text; supplied publisher locator p. 1208)",
+        "quote": "More important, a main effect of temporal distance,\nF\n(1,45) = 7.65,\np\n< .01,\nr\n= .38,",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "confident": true
+      },
+      "disposition": {
+        "audit_id": 1543,
+        "field": "pval_value_o",
+        "code": "extracted_printed",
+        "reason": "Printed strict p < .01 bound for the same distance main effect as the extracted r; not an exact p.",
+        "source_path": "/home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/texts/c8d432ba06b2291914f86a04.txt",
+        "location": "Study 4, Results and discussion, main effect of temporal distance (canonical PMC author-manuscript text; supplied publisher locator p. 1208)",
+        "quote": "More important, a main effect of temporal distance,\nF\n(1,45) = 7.65,\np\n< .01,\nr\n= .38,",
+        "calculation": null
+      },
+      "supported": true,
+      "shipped": "0.01",
+      "comparison": "identical",
+      "prior_adjudication": null
+    }
+  ]
+}
+
+Additional completion requirements: Review ONLY the supplied primary text/PDF and payload. No acquisition, dataset/repository search, Git or edits outside your named answer file. PDF target-page rendering, if needed, ONLY under /home/lukas/.cache/fred-completion-review-renders/9f8e69f81d67076a. Use explicit true/false target_match_confirmed for each field. For author-reported success include effect_specific_verdict_confirmed true ONLY with positive row-specific mapping; a paper-level label cannot certify an unspecified ANOVA term. For analytic N check the intended critical test and counting unit, exclusions and any explicit component sum; df alone does not establish N. For ES preserve requested metric and give correct_metric; never call different metrics equivalent just because values agree. A documented source statement or an exact mathematical identity with all model/design assumptions positively established from the paper may establish equivalence. Explain any such identity; e.g. eta-squared equals partial eta-squared in a one-factor between-subjects ANOVA without covariates, but this does not extend to factorial, repeated-measures or covariate-adjusted models. Otherwise undeterminable. Include correct_bound for every p correction. Preserve literal short canonical-text evidence or ordered ... fragments; do not fabricate flattened tables. Return a COMPLETE JSON array, all items; no partial replies accepted. Fields: audit_id,field,verdict(shipped_right|blind_right|both_wrong|undeterminable),correct_value(string|null),correct_metric(string|null),correct_bound(e|l|g|le|ge|null),target_match_confirmed(boolean),effect_specific_verdict_confirmed(boolean),location,quote,source_path,reason. For undeterminable correct_value null. Write only /home/lukas/.t3/worktrees/fred-data/audit-fred-stats-2026-10/audit/fred_stats_2026-10/completion_pass_2026-10-31/reviews/answer_9f8e69f81d67076a_v1.json and put the same JSON under ## Answer in your reply. Aim8min hard12min. No delegation, no paid API calls.
