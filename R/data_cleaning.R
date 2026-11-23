@@ -267,3 +267,59 @@ clean_fred_data <- function(data) {
 
   return(list(cleaned_data = cleaned_data, report = final_report_string))
 }
+
+# Bibliographic text cleanup -------------------------------------------------
+# Crossref, DataCite and OpenAlex return titles, journals and formatted references
+# with HTML entities (&amp;) and inline markup (<i>, <scp>, <sup>). FReD stores
+# plain text, so entities are decoded everywhere and markup is removed from the
+# bibliographic columns. In BibTeX, a literal & must be written \&.
+
+decode_html_entities <- function(x) {
+  named <- c("&lt;" = "<", "&gt;" = ">", "&quot;" = "\"", "&apos;" = "'", "&nbsp;" = " ")
+  out <- x
+  for (e in names(named)) out <- gsub(e, named[[e]], out, fixed = TRUE)
+  hits <- !is.na(out) & grepl("&#x?[0-9a-fA-F]+;", out)
+  out[hits] <- vapply(out[hits], function(s) {
+    m <- gregexpr("&#(x?)([0-9a-fA-F]+);", s, perl = TRUE)
+    codes <- regmatches(s, m)[[1]]
+    chars <- vapply(codes, function(code) {
+      hex <- grepl("^&#x", code, ignore.case = TRUE)
+      num <- sub("^&#x?", "", sub(";$", "", code), ignore.case = TRUE)
+      intToUtf8(strtoi(num, base = if (hex) 16L else 10L))
+    }, character(1))
+    regmatches(s, m) <- list(chars)
+    s
+  }, character(1), USE.NAMES = FALSE)
+  # &amp; last, so "&amp;lt;" becomes the literal text "&lt;" rather than "<"
+  gsub("&amp;", "&", out, fixed = TRUE)
+}
+
+# Only tags Crossref-style metadata uses, so text such as "p <.05 and r> .3" is kept
+strip_markup_tags <- function(x) {
+  tags <- "i|b|em|strong|sup|sub|scp|sc|span|u|tt|br|p|mml:[a-z]+|jats:[a-z-]+"
+  gsub(sprintf("</?(%s)(\\s[^<>]*)?/?>", tags), "", x, perl = TRUE, ignore.case = TRUE)
+}
+
+# Escape & as \& in BibTeX, leaving url and doi fields (read verbatim) untouched
+escape_bibtex_ampersands <- function(x) {
+  vapply(x, function(s) {
+    if (is.na(s) || !grepl("&", s, fixed = TRUE)) return(s)
+    verbatim <- gregexpr("\\b(url|doi)\\s*=\\s*\\{[^{}]*\\}", s, perl = TRUE, ignore.case = TRUE)
+    kept <- regmatches(s, verbatim)[[1]]
+    parts <- regmatches(s, verbatim, invert = TRUE)[[1]]
+    parts <- gsub("(?<!\\\\)&", "\\\\&", parts, perl = TRUE)
+    paste0(c(rbind(parts, c(kept, ""))), collapse = "")
+  }, character(1), USE.NAMES = FALSE)
+}
+
+clean_bibliographic_text <- function(df,
+                                     markup_cols = c("ref_o", "ref_r", "title_o", "title_r",
+                                                     "author_o", "author_r", "journal_o", "journal_r",
+                                                     "bibtex_o", "bibtex_r"),
+                                     bibtex_cols = c("bibtex_o", "bibtex_r")) {
+  text_cols <- names(df)[vapply(df, is.character, logical(1))]
+  df[text_cols] <- lapply(df[text_cols], decode_html_entities)
+  for (col in intersect(markup_cols, names(df))) df[[col]] <- strip_markup_tags(df[[col]])
+  for (col in intersect(bibtex_cols, names(df))) df[[col]] <- escape_bibtex_ampersands(df[[col]])
+  df
+}

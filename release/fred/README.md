@@ -8,9 +8,13 @@ Versions use CalVer `YYYY.MM.N`, like FLoRA, and are defined in `versions.yml`:
 | --- | --- | --- | --- |
 | 2025.11.1 | SMART competition delivery of 30 November 2025 (phase 1), 2,164 effects | 2026-11-23 | [10.5281/zenodo.24461607](https://doi.org/10.5281/zenodo.24461607) |
 | 2026.11.1 | Pipeline build with SCORE effects and statistics-audit corrections (phase 2), 2,175 effects | 2026-11-23 | [10.5281/zenodo.24462293](https://doi.org/10.5281/zenodo.24462293) |
+| 2026.11.2 | Plain-text bibliographic fields (entities decoded, markup removed, BibTeX `\&`); full changelog | 2026-11-23 | [10.5281/zenodo.24475962](https://doi.org/10.5281/zenodo.24475962) |
 
 Creators are in `creators.yml`. Each bundle contains the data as CSV (UTF-8 with BOM) and
-xlsx, the codebook, README, changelog, citation file, provenance and checksums.
+xlsx, the codebook, README, changelog, citation file, provenance and checksums. Each
+`CHANGELOG.md` lists every version up to its own, followed by the OSF releases 1.0.0 to 2.4.2
+from `osf_changelog.md`. All versions are in the FORRT Zenodo community
+(https://zenodo.org/communities/forrt); new versions inherit it.
 
 ## Make a release
 
@@ -21,12 +25,12 @@ From the repository root, with Python 3 and `openpyxl`, `pyyaml` and `requests`:
 quarto render pipelines/fred/prepare_fred.qmd -P include_score:true
 
 # 2. Assemble offline; review every file in the bundle.
-python3 release/fred/zenodo_fred.py assemble 2026.11.1 release-bundles/fred/2026.11.1
+python3 release/fred/zenodo_fred.py assemble 2026.11.3 release-bundles/fred/2026.11.3
 
 # 3. After Lukas approves the bundle: draft (reserves the DOI and writes it into
 #    CITATION.cff), inspect the draft on Zenodo, then publish with the same command plus --publish.
-python3 release/fred/zenodo_fred.py upload release-bundles/fred/2026.11.1 \
-  --previous release-bundles/fred/2025.11.1 --approve-production
+python3 release/fred/zenodo_fred.py upload release-bundles/fred/2026.11.3 \
+  --previous release-bundles/fred/2026.11.2 --approve-production
 ```
 
 `--previous` takes the published bundle of the preceding version and creates a new version

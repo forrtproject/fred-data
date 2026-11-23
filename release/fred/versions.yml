@@ -64,3 +64,25 @@ versions:
       - "Statistics-audit corrections: an AI-assisted audit checked the coded statistics against the source articles, with independent verification of each finding. Corrections were applied under rules agreed by the team, and contested cases were decided by the team against the sources. In total, 963 cells in 419 effects were corrected (sample sizes, effect sizes, p-values, reported outcomes, and their quotes and locators)."
       - "Effect sizes from chi-squared tests that cannot be converted to r are flagged in es_not_convertible_o and es_not_convertible_r."
       - "Permanent effect_uid identifiers and bibliographic metadata columns were added; SMART-specific columns (fred_id_old, r_o, r_r, file_o, file_r, statistical_success, cos_phase1) are not included."
+
+  "2026.11.2":
+    creators: current
+    data: "output/FReD.xlsx"
+    build: "quarto render pipelines/fred/prepare_fred.qmd -P include_score:true"
+    codebook: "pipelines/fred/fred_codebook.xlsx"
+    score_column: effect_uid
+    score_prefix: "score_"
+    score_marker: "effect_uid beginning with score_"
+    summary: >-
+      This version is built from FReD's validated coding sheet together with the SCORE
+      replication effects coded by the Center for Open Science (COS). It includes the
+      corrections from the 2026 statistics audit.
+    notes:
+      - "effect_uid is the permanent effect identifier: an fe-number for effects coded by FORRT, score_<id> for SCORE effects."
+      - "For SCORE effects, reported_success is derived from statistical success (significance in the original direction), SCORE's main replication criterion."
+      - "Bibliographic fields (titles, authors, journals, years, BibTeX, languages) are filled from Crossref, DataCite and OpenAlex."
+    changes:
+      - "Text cleanup: HTML entities are decoded (`&amp;` is now `&`), and markup tags from Crossref (`<i>`, `<scp>`, `<sup>`) are removed from references, titles, journal names and BibTeX entries. This changed 765 cells in 308 effects; all other data are the same as in 2026.11.1."
+      - "In bibtex_o and bibtex_r, `&` is escaped as `\\&` (except in url and doi fields), as BibTeX requires."
+      - "fred.xlsx stores text in a shared-strings table, so readers that do not decode inline strings (such as R's openxlsx) return `&` rather than `&amp;`."
+      - "CHANGELOG.md now lists every version, including the FReD releases on OSF (1.0.0 to 2.4.2)."
