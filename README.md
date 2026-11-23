@@ -119,7 +119,7 @@ cp .env.example .env
 # - OPENALEX_MAILTO (your email for API)
 
 # Install R dependencies (one-time setup)
-Rscript -e "install.packages(c('tidyverse', 'readxl', 'openxlsx', 'rcrossref', 'osfr', 'quarto'))"
+Rscript -e "install.packages(c('tidyverse', 'readxl', 'openxlsx', 'openxlsx2', 'rcrossref', 'osfr', 'quarto'))"
 ```
 
 ### Running Pipelines

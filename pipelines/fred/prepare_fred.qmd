@@ -773,12 +773,14 @@ if (!dir.exists(here::here("output"))) {
   dir.create(here::here("output"))
 }
 
-# Save as Excel with formatting
-openxlsx::write.xlsx(
+# Save as an Excel table. openxlsx2, not openxlsx: openxlsx links drawing parts it
+# never writes, which strict readers (e.g., openpyxl) reject as a damaged package.
+openxlsx2::write_xlsx(
   fred_final,
   FRED_OUTPUT,
-  overwrite = TRUE,
-  asTable = TRUE
+  as_table = TRUE,
+  na.strings = NULL, # leave missing values blank
+  overwrite = TRUE
 )
 
 cat(sprintf("✓ Saved to: %s\n", FRED_OUTPUT))

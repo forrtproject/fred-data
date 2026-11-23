@@ -23,7 +23,6 @@ import sys
 from pathlib import Path
 
 import openpyxl
-from openpyxl.cell import WriteOnlyCell
 import requests
 import yaml
 
@@ -77,25 +76,6 @@ def read_values(path):
 def read_sheet(path):
     header, rows = read_values(path)
     return header, [[cell_text(v) for v in r] for r in rows]
-
-
-def write_clean_xlsx(path, header, rows):
-    """Rewrite a workbook from its typed values, dropping dangling package parts."""
-    wb = openpyxl.Workbook(write_only=True)
-    ws = wb.create_sheet("FReD")
-    ws.freeze_panes = "A2"
-    ws.append(header)
-
-    def cell(v):
-        if isinstance(v, str) and v.startswith("="):  # calculation notes stay text, not formulas
-            c = WriteOnlyCell(ws, value=v)
-            c.data_type = "s"
-            return c
-        return v
-
-    for r in rows:
-        ws.append([cell(v) for v in r])
-    wb.save(path)
 
 
 def write_csv(path, header, rows):
@@ -162,12 +142,7 @@ def assemble(version, bundle):
 
     header, rows = read_sheet(ROOT / v["data"])
     write_csv(bundle / "fred.csv", header, rows)
-    if v.get("rebuild_xlsx"):
-        write_clean_xlsx(bundle / "fred.xlsx", *read_values(ROOT / v["data"]))
-        check = read_sheet(bundle / "fred.xlsx")
-        assert check == (header, rows), "rebuilt workbook differs from the source values"
-    else:
-        shutil.copyfile(ROOT / v["data"], bundle / "fred.xlsx")
+    shutil.copyfile(ROOT / v["data"], bundle / "fred.xlsx")
 
     cb_header, cb_rows = read_sheet(ROOT / v["codebook"])
     for add in v.get("codebook_additions", []):
