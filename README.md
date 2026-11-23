@@ -445,14 +445,15 @@ For API issues:
 This chart is automatically updated after each daily sync from flora-validation, showing the size of `output/flora.csv` over time.
 
 <!-- FLORA_UPDATE_LOG_START -->
-> **Latest (2026-11-22):** Total = 2,884 | Replications = 2,659 | Reproductions = 225
+> **Latest (2026-11-23):** Total = 2,884 | Replications = 2,659 | Reproductions = 225
 
 ![FLoRA dataset size over time](output/flora_history.png)
 
-<details><summary>Full history (240 entries)</summary>
+<details><summary>Full history (241 entries)</summary>
 
 | Date | Total | Replications | Reproductions |
 |------|------:|-------------:|--------------:|
+| 2026-11-23 | 2884 | 2659 | 225 |
 | 2026-11-22 | 2884 | 2659 | 225 |
 | 2026-11-21 | 2884 | 2659 | 225 |
 | 2026-11-20 | 2884 | 2659 | 225 |
