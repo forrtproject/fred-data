@@ -1,0 +1,66 @@
+# Release definitions for FReD deposits on Zenodo (see release/fred/README.md).
+# Paths are relative to the repository root. Versions use CalVer YYYY.MM.N, like FLoRA.
+
+title: "FORRT Replication Database (FReD)"
+license: cc-by-4.0
+keywords: [replication, replicability, effect sizes, meta-science, open science]
+
+# Acknowledgement and references for the Center for Open Science (COS) and SCORE.
+# DOIs checked against Crossref on 23 November 2026.
+cos_acknowledgement: >-
+  SCORE effects ({marker}) come from the SCORE phase 1 test data of the Center for Open
+  Science (COS), produced in its Systematizing Confidence in Open Research and Evidence
+  (SCORE) programme, and are redistributed here with acknowledgement. When you use them, please also cite the
+  SCORE replication results (Tyner et al., 2026) and the SCORE data
+  (https://doi.org/10.17605/OSF.IO/DTZX4).
+cos_references:
+  - "Tyner, A. H., Abatayo, A. L., et al. (2026). Investigating the replicability of the social and behavioural sciences. Nature, 652, 143–150. https://doi.org/10.1038/s41586-025-10078-y"
+  - "Alipourfard, N., et al. (2021). Systematizing Confidence in Open Research and Evidence (SCORE). SocArXiv. https://doi.org/10.31235/osf.io/46mnb"
+related_identifiers:
+  - {identifier: "https://github.com/forrtproject/fred-data", relation: isSupplementTo, resource_type: software}
+  - {identifier: "10.1038/s41586-025-10078-y", relation: references, resource_type: publication-article}
+  - {identifier: "10.17605/OSF.IO/DTZX4", relation: isDerivedFrom, resource_type: dataset}
+
+versions:
+  "2025.11.1":
+    creators: smart
+    data: "archive/COS Reports/2025-11-30_COSdata_validated.xlsx"
+    codebook: "archive/COS Reports/cos_codebook.xlsx"
+    codebook_additions:
+      - {Variable: cos_phase1, Description: "TRUE for effects taken from the SCORE phase 1 test data coded by the Center for Open Science (COS); FALSE for effects coded by FORRT. (Description added for the Zenodo deposit.)"}
+    extra_files:
+      smart_data_report.html: "archive/COS Reports/cos_report.html"
+    score_column: cos_phase1
+    score_marker: "cos_phase1 = TRUE"
+    summary: >-
+      This version is the dataset delivered on 30 November 2025 as training data for the
+      SMART replication-prediction competition run by the Center for Open Science (COS) in
+      partnership with FORRT. It is deposited as delivered (data report version 2.0).
+    notes:
+      - "smart_data_report.html is the data report delivered with the dataset. It describes the coding process, effect-size conversions and caveats. Its ORCID link for Julia Fabienne Sandkühler is wrong; her ORCID is 0000-0002-5585-9539."
+      - "Effect IDs in this version (entry_id, effect_id, fred_id) are not the permanent effect_uid identifiers used from version 2026.11.1 onwards."
+      - "Later versions apply corrections from a 2026 statistics audit; use the latest version for new analyses."
+    changes:
+      - "First Zenodo deposit of FReD: the SMART competition delivery of 30 November 2025."
+  "2026.11.1":
+    creators: current
+    data: "output/FReD.xlsx"
+    build: "quarto render pipelines/fred/prepare_fred.qmd -P include_score:true"
+    codebook: "pipelines/fred/fred_codebook.xlsx"
+    score_column: effect_uid
+    score_prefix: "score_"
+    score_marker: "effect_uid beginning with score_"
+    summary: >-
+      This version is built from FReD's validated coding sheet together with the SCORE
+      replication effects coded by the Center for Open Science (COS). It includes the
+      corrections from the 2026 statistics audit.
+    notes:
+      - "effect_uid is the permanent effect identifier: an fe-number for effects coded by FORRT, score_<id> for SCORE effects."
+      - "For SCORE effects, reported_success is derived from statistical success (significance in the original direction), SCORE's main replication criterion."
+      - "Bibliographic fields (titles, authors, journals, years, BibTeX, languages) are filled from Crossref, DataCite and OpenAlex."
+    changes:
+      - "Built from the live FReD coding sheet (effects with status 'validated - chosen', exclusions removed) rather than the SMART delivery, so it includes effects coded or corrected since November 2025."
+      - "SCORE effects are merged through the pipeline, and superseded pooled SCORE results are excluded."
+      - "Statistics-audit corrections: an AI-assisted audit checked the coded statistics against the source articles, with independent verification of each finding. Corrections were applied under rules agreed by the team, and contested cases were decided by the team against the sources. In total, 963 cells in 419 effects were corrected (sample sizes, effect sizes, p-values, reported outcomes, and their quotes and locators)."
+      - "Effect sizes from chi-squared tests that cannot be converted to r are flagged in es_not_convertible_o and es_not_convertible_r."
+      - "Permanent effect_uid identifiers and bibliographic metadata columns were added; SMART-specific columns (fred_id_old, r_o, r_r, file_o, file_r, statistical_success, cos_phase1) are not included."
