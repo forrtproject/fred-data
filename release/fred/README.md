@@ -1,11 +1,13 @@
 # FReD releases on Zenodo
 
-FReD has its own Zenodo concept record, separate from FLoRA's
-([10.5281/zenodo.24461022](https://doi.org/10.5281/zenodo.24461022)). Versions use
-CalVer `YYYY.MM.N`, like FLoRA, and are defined in `versions.yml`:
+FReD has its own Zenodo concept record, [10.5281/zenodo.24461606](https://doi.org/10.5281/zenodo.24461606),
+separate from FLoRA's ([10.5281/zenodo.24461022](https://doi.org/10.5281/zenodo.24461022)).
+Versions use CalVer `YYYY.MM.N`, like FLoRA, and are defined in `versions.yml`:
 
-- `2025.11.1`: the SMART competition delivery of 30 November 2025 (phase 1).
-- `2026.11.1`: the pipeline build with SCORE effects and the statistics-audit corrections (phase 2).
+| Version | Contents | Published | Record |
+| --- | --- | --- | --- |
+| 2025.11.1 | SMART competition delivery of 30 November 2025 (phase 1), 2,164 effects | 2026-11-23 | [10.5281/zenodo.24461607](https://doi.org/10.5281/zenodo.24461607) |
+| 2026.11.1 | Pipeline build with SCORE effects and statistics-audit corrections (phase 2), 2,175 effects | 2026-11-23 | [10.5281/zenodo.24462293](https://doi.org/10.5281/zenodo.24462293) |
 
 Creators are in `creators.yml`. Each bundle contains the data as CSV (UTF-8 with BOM) and
 xlsx, the codebook, README, changelog, citation file, provenance and checksums.
