@@ -127,7 +127,7 @@ if (length(other_apa) > 0) {
 apa_citation <- glue(
  "{apa_authors} ({current_year}). ",
   "FORRT Library of Reproduction and Replication Attempts (FLoRA) [Data set]. ",
-  "OSF. https://doi.org/10.17605/OSF.IO/9R62X"
+  "Zenodo. https://doi.org/10.5281/zenodo.24461022"
 )
 
 # Add note about equal contribution
@@ -183,11 +183,10 @@ cff_content <- list(
   title = "FORRT Library of Reproduction and Replication Attempts (FLoRA)",
   authors = cff_authors,
   `date-released` = current_date,
-  version = "1.0.0",
-  doi = "10.17605/OSF.IO/9R62X",
+  doi = "10.5281/zenodo.24461022", # Zenodo concept DOI: resolves to the latest version
   license = "CC-BY-4.0",
-  repository = "https://osf.io/9r62x/",
-  url = "https://osf.io/9r62x/",
+  url = "https://doi.org/10.5281/zenodo.24461022",
+  `repository-code` = "https://github.com/forrtproject/fred-data",
   abstract = "A comprehensive database of reproduction and replication studies in the social and behavioural sciences.",
   keywords = c("replication", "reproducibility", "meta-science", "open science")
 )

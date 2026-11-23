@@ -410,7 +410,9 @@ refs <- get_apa_references(c("10.1234/example"))
 ## Related Resources
 
 - **FORRT Project**: https://forrt.org
-- **FReD Dataset**: https://osf.io/9r62x (OSF project)
+- **FReD on Zenodo**: https://doi.org/10.5281/zenodo.24461606 (all versions)
+- **FLoRA on Zenodo**: https://doi.org/10.5281/zenodo.24461022 (all versions)
+- **OSF project** (app data files): https://osf.io/9r62x
 - **Zotero Plugin**: Replication Checker plugin in Zotero marketplace
 - **API Backend**: `fred_dynamodb_loader/` (AWS Lambda + DynamoDB)
 
