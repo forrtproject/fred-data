@@ -17,6 +17,7 @@ import hashlib
 import html
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -164,8 +165,7 @@ def assemble(version, bundle):
     counts["forrt_effects"] = counts["effects"] - counts["score_effects"]
 
     (bundle / "CITATION.cff").write_text(cff(conf, version, people), encoding="utf-8")
-    (bundle / "CHANGELOG.md").write_text(
-        f"# FReD {version}\n\n" + "\n".join(f"- {c}" for c in v["changes"]) + "\n", encoding="utf-8")
+    (bundle / "CHANGELOG.md").write_text(changelog(conf, version), encoding="utf-8")
     (bundle / "README.md").write_text(readme(conf, version, v, counts), encoding="utf-8")
     provenance = {
         "version": version,
@@ -182,6 +182,23 @@ def assemble(version, bundle):
                                                  encoding="utf-8")
     write_checksums(bundle)
     print(json.dumps(counts))
+
+
+def calver(version):
+    return tuple(int(x) for x in version.split("."))
+
+
+def changelog(conf, version):
+    """Every version up to this one, newest first, then the earlier OSF releases."""
+    lines = ["# FReD changelog", "",
+             "Newest first. Each Zenodo version of FReD carries the full history up to that version.", ""]
+    for ver in sorted((k for k in conf["versions"] if calver(k) <= calver(version)), key=calver, reverse=True):
+        lines += [f"## {ver}", ""] + [f"- {c}" for c in conf["versions"][ver]["changes"]] + [""]
+    osf = (CONF / "osf_changelog.md").read_text(encoding="utf-8").split("-->", 1)[1].strip()
+    lines += ["## Releases on OSF (1.0.0 to 2.4.2)", "",
+              "Before Zenodo, FReD was released on OSF (https://osf.io/9r62x). Release notes as recorded",
+              "in the OSF changelog (https://osf.io/fj3xc):", "", osf.replace("### ", "### OSF "), ""]
+    return "\n".join(lines)
 
 
 def readme(conf, version, v, counts):
@@ -203,7 +220,8 @@ def readme(conf, version, v, counts):
     for name in (v.get("extra_files") or {}):
         lines.append(f"- `{name}`: see notes below.")
     lines += [
-        "- `CHANGELOG.md`: what changed in this version.",
+        "- `CHANGELOG.md`: changes in this and all earlier versions, newest first, including the",
+        "  releases on OSF (1.0.0 to 2.4.2).",
         "- `CITATION.cff`: how to cite this version, with its DOI.",
         "- `provenance.json`: source file, its SHA-256 hash and the fred-data commit used.",
         "- `checksums.json`: SHA-256 hashes of the deposited files.", "",
@@ -226,7 +244,8 @@ def readme(conf, version, v, counts):
 
 
 def metadata(conf, version, v, people, counts):
-    e = html.escape
+    def e(text):  # HTML-escape; `code` spans from versions.yml become <code>
+        return re.sub(r"`([^`]+)`", r"<code>\1</code>", html.escape(text))
     desc = [
         "<p>FReD is an effect-level database of replication attempts in the social and behavioural "
         "sciences. Each row pairs one original effect with one replication effect: sample sizes, effect "

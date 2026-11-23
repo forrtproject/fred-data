@@ -757,7 +757,9 @@ if (length(missing_cols) > 0) {
 }
 
 fred_final <- fred_augmented %>%
-  select(all_of(available_cols))
+  select(all_of(available_cols)) %>%
+  # Plain text: decode HTML entities, drop Crossref markup, escape & in BibTeX
+  clean_bibliographic_text()
 
 cat(sprintf("✓ Selected %d columns for final output\n", ncol(fred_final)))
 cat(sprintf("  Dropped %d internal/working columns\n", ncol(fred_augmented) - ncol(fred_final)))
@@ -775,13 +777,12 @@ if (!dir.exists(here::here("output"))) {
 
 # Save as an Excel table. openxlsx2, not openxlsx: openxlsx links drawing parts it
 # never writes, which strict readers (e.g., openpyxl) reject as a damaged package.
-openxlsx2::write_xlsx(
-  fred_final,
-  FRED_OUTPUT,
-  as_table = TRUE,
-  na.strings = NULL, # leave missing values blank
-  overwrite = TRUE
-)
+# Shared strings, not inline strings: openxlsx's reader does not decode inline
+# strings, so "&" would come back as "&amp;".
+openxlsx2::wb_workbook()$
+  add_worksheet("Sheet 1")$
+  add_data_table(x = fred_final, na = NULL, inline_strings = FALSE)$
+  save(FRED_OUTPUT, overwrite = TRUE)
 
 cat(sprintf("✓ Saved to: %s\n", FRED_OUTPUT))
 cat(sprintf("  Rows: %d\n", nrow(fred_final)))
